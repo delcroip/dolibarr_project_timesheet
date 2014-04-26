@@ -129,7 +129,8 @@ switch($action)
            
    default:
        dol_include_once('/timesheet/timesheet/list.php');  
-       echo ' <script type="text/javascript" src="timesheet.js"></script>';
+       echo ' <script type="text/javascript" src="timesheet.js"></script>
+           ';
        echo getTimesheetForm($db,$user->id, $yearWeek,"?action=submit&yearweek=".$yearWeek,'POST');
        break;
 }

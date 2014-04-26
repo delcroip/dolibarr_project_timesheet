@@ -53,8 +53,14 @@ function validate(event) {
       {
           case 'time':
               var regex= /^[0-9]{1,2}:[0-9]{2}$/;
+              var regex2=/^[0-9]{1,2}$/;
               if(!regex.test(objet.value))
-                objet.value='';
+              { 
+                  if(regex2.test(objet.value))
+                    objet.value=objet.value+':00';
+                  else
+                    objet.value='';
+              }
               break;
           case 'timeChar':
               //var regex= /^[0-9:]{1}$/;
@@ -72,3 +78,57 @@ function validate(event) {
   }    
   
 
+function pad(n) {
+    return (n < 10) ? ("0" + n) : n;
+}
+
+
+
+//function from http://www.timlabonne.com/2013/07/parsing-a-time-string-with-javascript/
+function parseTime(timeStr, dt) {
+    if (!dt) {
+        dt = new Date();
+    }
+ 
+    var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
+    if (!time) {
+        return NaN;
+    }
+    var hours = parseInt(time[1], 10);
+    if (hours == 12 && !time[3]) {
+        hours = 0;
+    }
+    else {
+        hours += (hours < 12 && time[3]) ? 12 : 0;
+    }
+ 
+    dt.setHours(hours);
+    dt.setMinutes(parseInt(time[2], 10) || 0);
+    dt.setSeconds(0, 0);
+    return dt;
+}
+
+function updateTotal(days){
+    var total = new Date(0);
+    total.setHours(0);
+    total.setMinutes(0);   
+    var nbline = document.getElementById('numberOfLines').value;
+    for (var i=0;i<nbline;i++)
+    { 
+        var id='task['+i+'][weekDays]['+days+'][value]';   
+        var taskTime= new Date(0);
+        var element=document.getElementById(id);
+        if (element.value)
+        {   
+            parseTime(element.value,taskTime);
+        }
+        else
+        {
+            parseTime(element.innerHTML,taskTime);
+        }
+        total.setHours(total.getHours()+taskTime.getHours());
+        total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+    }
+    document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
+    //addText(,total.getHours()+':'+total.getMinutes());
+}

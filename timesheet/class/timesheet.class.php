@@ -129,35 +129,47 @@ class timesheet extends Task
 	  //don't show task without open day in the week
 		#$dateStart=strtotime($yearWeek);
 		 # insert the task id and the form line to retrieve the data later 
-		$tableRow = "<tr>";
-		//$tableRow .= '<input type="hidden" name="task_'.$lineNumber.'" ';
-		//$tableRow .='value="'.$this->id.'" />';
-		$tableRow .= "<th>".$this->ProjectTitle."</th><th>".$this->description."</th>";
-		$tableRow .= "<th>".date('d/m/y',$this->date_start)."</th><th>".date('d/m/y',$this->date_end)."</th>";
-                $tableRow .='<input type="hidden" name="task['.$lineNumber.'][taskid]" ';
-		$tableRow .='value="'.$this->id.'"/> ';               
-		foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
-		{
-			$today= strtotime($yearWeek.' +'.$dayOfWeek.' day');
-			# to avoid editing if the task is closed
-                        $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
-			if(($this->date_start > $today) OR ($this->date_end < $today ))
-			{
-				$tableRow .= "<th>".$dayWorkLoad."</th>";
-			}else
-			{
-                                $tableRow .='<th><input type="hidden" name="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][tasktimeid]" ';
-				$tableRow .='value="'.$this->taskTimeId[$dayOfWeek].'" /> ';
-				$tableRow .='<input type="text" name="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]" ';
-				$tableRow .='id="task_'.$lineNumber.'_'.$dayOfWeek.'" ';
-                                $tableRow .=' value="'.$dayWorkLoad.'" maxlength="5" style="width: 90%" ';
-                                $tableRow .='onkeydown="return regexEvent(this,event,\'timeChar\')" ';
-                                $tableRow .='onblur="regexEvent(this,event,\'time\')" ';
-                                $tableRow .= '/> </th>';
-			}
-		}
-		$tableRow .= "</tr>";
-		return $tableRow;
+            $tableRow = "<tr>
+                                <th>
+                                    ".$this->ProjectTitle."</th><th>".$this->description."
+                                </th>
+                                <th>
+                                    ".date('d/m/y',$this->date_start)."
+                                </th>
+                                <th>
+                                    ".date('d/m/y',$this->date_end).
+                                    '<input type="hidden" name="task['.$lineNumber.'][taskid]" '.
+                                    'value="'.$this->id.'"/> 
+                                </th>
+                                ';               
+            foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
+            {
+                    $today= strtotime($yearWeek.' +'.$dayOfWeek.' day');
+                    # to avoid editing if the task is closed 
+                    $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
+                    if(($this->date_start > $today) OR ($this->date_end < $today ))
+                    {
+                        $tableRow .='<th> <div id="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]">'.$dayWorkLoad.'</div></th>
+                                ';
+                            //id="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]"
+                    }else
+                    {
+                        $tableRow .='<th>
+                                <input type="hidden" name="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][tasktimeid]" '.
+                                    'value="'.$this->taskTimeId[$dayOfWeek].'" /> '.
+                                    '<input type="text" id="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]" '.
+                                    'name="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]" '.
+                                    ' value="'.$dayWorkLoad.'" maxlength="5" style="width: 90%" '.
+                                    'onkeydown="return regexEvent(this,event,\'timeChar\')" '.
+                                    'onblur="regexEvent(this,event,\'time\');updateTotal('.$dayOfWeek.')" />
+                                </th>
+                                ';
+                    }
+            }
+            $tableRow .= "
+                        </tr>
+                        ";
+            return $tableRow;
 	  
 	}
 
