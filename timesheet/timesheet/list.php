@@ -52,7 +52,7 @@ dol_include_once('/timesheet/class/timesheet.class.php');
 	{
 
 		
-		$Form =  '<table class="noborder" width="100%">
+		$Form =  '<table class="noborder" width="50%">
                             <tr> 
                                 <th> 
                                     <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek." -1 week")).
@@ -88,36 +88,36 @@ dol_include_once('/timesheet/class/timesheet.class.php');
                                 <th>
                                     End date
                                 </th>
-                                <th> 
+                                <th width="10%"> 
                                     <input type="hidden" name="weekDays[0]" value="'.date('d-m-Y',strtotime( $yearWeek.' +0 day')).
                                      '"/>
                                      '.date('l \<\b\r\>d/m/y',strtotime( $yearWeek.' +0 day'))."
                                 </th>
-                                <th> 
+                                <th width='10%'> 
                                     <input type='hidden' name=weekDays[1] value='".date('d-m-Y',strtotime( $yearWeek.' +1 day')).
                                     "'/>
                                     ".date('l \<\b\r\>d/m/y',strtotime( $yearWeek.' +1 day'))."</th> 
-                                <th> 
+                                <th width='10%'> 
                                     <input type='hidden' name=weekDays[2] value='".date('d-m-Y',strtotime( $yearWeek.' +2 day')).
                                     "'/>
                                     ".date('l \<\b\r\>d/m/y',strtotime( $yearWeek.' +2 day'))."</th>
-                                <th> 
+                                <th width='10%'> 
                                     <input type='hidden' name=weekDays[3] value='".date('d-m-Y',strtotime( $yearWeek.' +3 day')).
                                     "'/>
                                     ".date('l \<\b\r\>d/m/y',strtotime( $yearWeek.' +3 day'))."
                                 </th>
-                                <th> 
+                                <th width='10%'> 
                                     <input type='hidden' name=weekDays[4] value='".date('d-m-Y',strtotime( $yearWeek.' +4 day')).
                                     "'/>
                                     ".date('l \<\b\r\>d/m/y',strtotime( $yearWeek.' +4 day'))."
                                         
                                  </th>
-                                <th> 
+                                <th width='10%'> 
                                     <input type='hidden' name=weekDays[5] value='".date('d-m-Y',strtotime( $yearWeek.' +5 day')).
                                     "'/>
                                     ".date('l \<\b\r\>d/m/y',strtotime( $yearWeek.' +5 day'))."
                                 </th>
-                                <th> 
+                                <th width='10%'> 
                                     <input type='hidden' name=weekDays[6] value='".date('d-m-Y',strtotime( $yearWeek.' +6 day')).
                                     "'/>
                                     ".date('l \<\b\r\>d/m/y',strtotime( $yearWeek.' +6 day')).'
@@ -140,18 +140,23 @@ dol_include_once('/timesheet/class/timesheet.class.php');
 			}
 			
 		}
-		$Form .= '<tr><th><input type="hidden" id="numberOfLines" name="numberOfLines" ';
-		$Form .='value="'.$i.'"/></th>';
-                $Form .='<th></th><th></th><th>Total</th>
-                        <th><div id="totalDay[0]">&nbsp;</div></th>
-                        <th><div id="totalDay[1]">&nbsp;</div></th>
-                        <th><div id="totalDay[2]">&nbsp;</div></th>
-                        <th><div id="totalDay[3]">&nbsp;</div></th>
-                        <th><div id="totalDay[4]">&nbsp;</div></th>
-                        <th><div id="totalDay[5]">&nbsp;</div></th>
-                        <th><div id="totalDay[6]">&nbsp;</div></th>
-                            </tr>';
-		$Form .="</table > ";
+                $Form .= '
+                    </table>
+                    <input type="hidden" id="numberOfLines" name="numberOfLines" '.
+                    'value="'.$i.'"/>
+                        ';
+		$Form .= '<table class="noborder" width="80%" align="right">
+                            <tr>
+                                <th width="10%">Total</th>
+                                <th width="10%"><div id="totalDay[0]">&nbsp;</div></th>
+                                <th width="10%"><div id="totalDay[1]">&nbsp;</div></th>
+                                <th width="10%"><div id="totalDay[2]">&nbsp;</div></th>
+                                <th width="10%"><div id="totalDay[3]">&nbsp;</div></th>
+                                <th width="10%"><div id="totalDay[4]">&nbsp;</div></th>
+                                <th width="10%"><div id="totalDay[5]">&nbsp;</div></th>
+                                <th width="10%"><div id="totalDay[6]">&nbsp;</div></th>
+                            </tr>
+                        </table>';
 		$Form .= '<input type="submit" value="SUBMIT" />';
 		$Form .="</form> ";
                 $Form .='<script type="text/javascript">';
