@@ -8,4 +8,7 @@ Timesheet view for project in Dolibarr
 
 Principle
 - get the task opened with the dolibarr user configured as contributor
-- the timesheet class herit from the task class therefore all the change use task method as delTimeSpent, updateTimeSpent, addTimeSpent
+- the timesheet class herit from the task class therefore all the changes use task methods as delTimeSpent, updateTimeSpent, addTimeSpent
+
+Next dev:
+langs support
