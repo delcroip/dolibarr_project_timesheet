@@ -12,3 +12,4 @@ Principle
 
 Next dev:
 langs support
+Submission result page
