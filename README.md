@@ -11,5 +11,5 @@ Principle
 - the timesheet class herit from the task class therefore all the changes use task methods as delTimeSpent, updateTimeSpent, addTimeSpent
 
 Next dev:
-langs support
-Submission result page
+- langs support
+- Submission result page
