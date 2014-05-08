@@ -65,11 +65,11 @@ function postActuals($db,$user,$weekDays,$tabPost)
                             
                     }
                     elseif ($duration>0)
-                    { 
+                    { /*FIXME: avoid creating a new task when refreshing the webpage*/
                         $task->timespent_duration=$duration; 
                         $task->timespent_date=strtotime($weekDays[$dayKey]);
                         
-                        if($task->addTimeSpent($user,0)>0)
+                        if($task->addTimeSpent($user,0)>=0)
                             $ret++;
                     }
                            

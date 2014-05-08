@@ -116,11 +116,15 @@ switch($action)
     case 'submit':
        dol_include_once('/timesheet/timesheet/submit.php');
         if (!empty($_POST['task'])&& !empty($_POST['weekDays']))
-        {      
-            echo "Line processed: ".postActuals($db,$user->id,$_POST['weekDays'],$_POST['task']);
+        {    
+            $ret =postActuals($db,$user->id,$_POST['weekDays'],$_POST['task']);
+            if($ret)
+                setEventMessage("tasktime processed: ".$ret);
+            else
+                setEventMessage("Not tasktime changed",'errors');
         }else
-            echo "Error no task to update";
-        break;
+            setEventMessage( "Error no task to update",'errors');
+        
     case 'goToDate':
         if (!empty($_POST['toDate']))
         {
@@ -130,6 +134,7 @@ switch($action)
        //goes to default
            
    default:
+       a:
        $_SESSION["yearWeek"]=$yearWeek;
        $_SESSION["db"]=$db;
        dol_include_once('/timesheet/timesheet/list.php');  

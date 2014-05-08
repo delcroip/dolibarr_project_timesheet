@@ -11,5 +11,5 @@ Principle
 - the timesheet class herit from the task class therefore all the changes use task methods as delTimeSpent, updateTimeSpent, addTimeSpent
 
 Next dev:
-- langs support
-- Submission result page
+- extended lang support ( other lang than fr_FR & submission messages translation) 
+- Submission result page (avoid creating a new tasktime when refreshing the browser)
