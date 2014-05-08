@@ -134,8 +134,7 @@ switch($action)
        $_SESSION["db"]=$db;
        dol_include_once('/timesheet/timesheet/list.php');  
       
-       echo ' <script type="text/javascript" src="timesheet.js"></script>
-           ';  
+ 
        break;
 }
 

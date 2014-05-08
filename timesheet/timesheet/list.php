@@ -22,79 +22,79 @@ dol_include_once('/timesheet/class/timesheet.class.php');
  # will generate the form line
 
 		
-		$Form =  '<table class="noborder" width="50%">
-                            <tr> 
-                                <th> 
-                                    <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek." -1 week")).
-                                    '">  &lt&lt '.$langs->trans("NextWeek").' </a> 
-                                </th> 
-                                <th>
-                                    <form name="goToDate" action="?action=goToDate" method="POST" >
-                                     Go to date: <input type="date" name="toDate" size="10" value="'.date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/>   '.
-                                    '<input type="submit" value="Go" /></form>
-                                </th> 
-                                <th> 
-                                    <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek." +1 week")).
-                                    '">'.$langs->trans("PreviousWeek").' &gt&gt </a> 
-                                 </th>
-                            </tr> 
-                          </table>
-                          ';
-                
-                
-		
-		$Form .='<form name="timesheet" action="?action=submit&yearweek='.$yearWeek.'" method="POST" > 
-                          <table class="noborder" width="100%">
-                            <tr class="liste_titre" >
-                                <th>
-                                    '.$langs->trans('Project').'
-                                </th>
-                                <th>
-                                    '.$langs->trans('Tasks').'
-                                </th>
-                                <th>
-                                    '.$langs->trans('TaskDateStart').'
-                                </th>
-                                <th>
-                                    '.$langs->trans('TaskDateEnd').'
-                                </th>
-                                <th width="10%"> 
-                                    <input type="hidden" name="weekDays[0]" value="'.date('d-m-Y',strtotime( $yearWeek.' +0 day')).
-                                     '"/>
-                                     '.$langs->trans(date('l',strtotime( $yearWeek.' +0 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +0 day'))."
-                                </th>
-                                <th width='10%'> 
-                                    <input type='hidden' name=weekDays[1] value='".date('d-m-Y',strtotime( $yearWeek.' +1 day')).
-                                    "'/>
-                                    ".$langs->trans(date('l',strtotime( $yearWeek.' +1 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +1 day'))."</th> 
-                                <th width='10%'> 
-                                    <input type='hidden' name=weekDays[2] value='".date('d-m-Y',strtotime( $yearWeek.' +2 day')).
-                                    "'/>
-                                    ".$langs->trans(date('l',strtotime( $yearWeek.' +2 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +2 day'))."</th>
-                                <th width='10%'> 
-                                    <input type='hidden' name=weekDays[3] value='".date('d-m-Y',strtotime( $yearWeek.' +3 day')).
-                                    "'/>
-                                    ".$langs->trans(date('l',strtotime( $yearWeek.' +3 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +3 day'))."
-                                </th>
-                                <th width='10%'> 
-                                    <input type='hidden' name=weekDays[4] value='".date('d-m-Y',strtotime( $yearWeek.' +4 day')).
-                                    "'/>
-                                    ".$langs->trans(date('l',strtotime( $yearWeek.' +4 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +4 day'))."
-                                        
-                                 </th>
-                                <th width='10%'> 
-                                    <input type='hidden' name=weekDays[5] value='".date('d-m-Y',strtotime( $yearWeek.' +5 day')).
-                                    "'/>
-                                    ".$langs->trans(date('l',strtotime( $yearWeek.' +5 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +5 day'))."
-                                </th>
-                                <th width='10%'> 
-                                    <input type='hidden' name=weekDays[6] value='".date('d-m-Y',strtotime( $yearWeek.' +6 day')).
-                                    "'/>
-                                    ".$langs->trans(date('l',strtotime( $yearWeek.' +6 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +6 day')).'
-                                    <input type="hidden" name="yearWeek" value="'.$yearWeek.'" /> 
-                                </th>
-                            </tr>
-                            ';
+        $Form =  '<table class="noborder" width="50%">
+                    <tr> 
+                        <th> 
+                            <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek." -1 week")).
+                            '">  &lt&lt '.$langs->trans("NextWeek").' </a> 
+                        </th> 
+                        <th>
+                            <form name="goToDate" action="?action=goToDate" method="POST" >
+                             Go to date: <input type="date" name="toDate" size="10" value="'.date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/>   '.
+                            '<input type="submit" value="Go" /></form>
+                        </th> 
+                        <th> 
+                            <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek." +1 week")).
+                            '">'.$langs->trans("PreviousWeek").' &gt&gt </a> 
+                         </th>
+                    </tr> 
+                  </table>
+                  ';
+
+
+
+        $Form .='<form name="timesheet" action="?action=submit&yearweek='.$yearWeek.'" method="POST" > 
+                  <table class="noborder" width="100%">
+                    <tr class="liste_titre" >
+                        <th>
+                            '.$langs->trans('Project').'
+                        </th>
+                        <th>
+                            '.$langs->trans('Tasks').'
+                        </th>
+                        <th>
+                            '.$langs->trans('TaskDateStart').'
+                        </th>
+                        <th>
+                            '.$langs->trans('TaskDateEnd').'
+                        </th>
+                        <th width="10%"> 
+                            <input type="hidden" name="weekDays[0]" value="'.date('d-m-Y',strtotime( $yearWeek.' +0 day')).
+                             '"/>
+                             '.$langs->trans(date('l',strtotime( $yearWeek.' +0 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +0 day'))."
+                        </th>
+                        <th width='10%'> 
+                            <input type='hidden' name=weekDays[1] value='".date('d-m-Y',strtotime( $yearWeek.' +1 day')).
+                            "'/>
+                            ".$langs->trans(date('l',strtotime( $yearWeek.' +1 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +1 day'))."</th> 
+                        <th width='10%'> 
+                            <input type='hidden' name=weekDays[2] value='".date('d-m-Y',strtotime( $yearWeek.' +2 day')).
+                            "'/>
+                            ".$langs->trans(date('l',strtotime( $yearWeek.' +2 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +2 day'))."</th>
+                        <th width='10%'> 
+                            <input type='hidden' name=weekDays[3] value='".date('d-m-Y',strtotime( $yearWeek.' +3 day')).
+                            "'/>
+                            ".$langs->trans(date('l',strtotime( $yearWeek.' +3 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +3 day'))."
+                        </th>
+                        <th width='10%'> 
+                            <input type='hidden' name=weekDays[4] value='".date('d-m-Y',strtotime( $yearWeek.' +4 day')).
+                            "'/>
+                            ".$langs->trans(date('l',strtotime( $yearWeek.' +4 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +4 day'))."
+
+                         </th>
+                        <th width='10%'> 
+                            <input type='hidden' name=weekDays[5] value='".date('d-m-Y',strtotime( $yearWeek.' +5 day')).
+                            "'/>
+                            ".$langs->trans(date('l',strtotime( $yearWeek.' +5 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +5 day'))."
+                        </th>
+                        <th width='10%'> 
+                            <input type='hidden' name=weekDays[6] value='".date('d-m-Y',strtotime( $yearWeek.' +6 day')).
+                            "'/>
+                            ".$langs->trans(date('l',strtotime( $yearWeek.' +6 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +6 day')).'
+                            <input type="hidden" name="yearWeek" value="'.$yearWeek.'" /> 
+                        </th>
+                    </tr>
+                    ';
                 //retrivetask
                 $tasksList=array();
 		$sql ="SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
@@ -154,11 +154,11 @@ dol_include_once('/timesheet/class/timesheet.class.php');
                             </tr>
                         </table>';
 		$Form .= '<input type="submit" value="'.$langs->trans('Save').'" />';
-		$Form .="</form> ";
-                $Form .='<script type="text/javascript">';
-                $Form .='updateTotal(0);updateTotal(1);updateTotal(2);updateTotal(3);';
-                $Form .='updateTotal(4);updateTotal(5);updateTotal(6);';
-                $Form .='</script>';
+		$Form .='</form> 
+                         <script type="text/javascript" src="timesheet.js"></script>
+                         <script type="text/javascript">
+                         updateTotal(0);updateTotal(1);updateTotal(2);updateTotal(3);updateTotal(4);updateTotal(5);updateTotal(6);
+                         </script>';
                // $db->close();
                 echo$Form;
 
