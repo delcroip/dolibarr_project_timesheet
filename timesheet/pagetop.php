@@ -50,11 +50,14 @@ $id		= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $yearWeek	= GETPOST('yearweek');
 
-/*
-// Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("other");
 
+// Load traductions files requiredby by page
+//$langs->load("companies");
+$langs->load("main");
+$langs->load("projects");
+$langs->load('timesheet@timesheet');
+
+/*
 // Get parameters
 
 $id			= GETPOST('id','int');
@@ -108,7 +111,6 @@ if(empty($_GET['yearweek']) || !is_string($_GET['yearweek']))
         $yearWeek=date('Y\WW');
 }
 
-
 switch($action)
 {
     case 'submit':
@@ -128,10 +130,12 @@ switch($action)
        //goes to default
            
    default:
+       $_SESSION["yearWeek"]=$yearWeek;
+       $_SESSION["db"]=$db;
        dol_include_once('/timesheet/timesheet/list.php');  
+      
        echo ' <script type="text/javascript" src="timesheet.js"></script>
-           ';
-       echo getTimesheetForm($db,$user->id, $yearWeek,"?action=submit&yearweek=".$yearWeek,'POST');
+           ';  
        break;
 }
 
