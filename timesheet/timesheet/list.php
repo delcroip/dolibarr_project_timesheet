@@ -98,7 +98,7 @@ dol_include_once('/timesheet/class/timesheet.class.php');
                 //retrivetask
                 $tasksList=array();
 		$sql ="SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
-		$sql.="WHERE fk_c_type_contact='181' AND fk_socpeople='".$user->id."'";
+		$sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$user->id."'";
                 
 		dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
                 //$db->begin();
