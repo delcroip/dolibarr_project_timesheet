@@ -110,13 +110,17 @@ if(empty($_GET['yearweek']) || !is_string($_GET['yearweek']))
 {
         $yearWeek=date('Y\WW');
 }
+$_SESSION['timestamps']=array();
 
 switch($action)
 {
     case 'submit':
        dol_include_once('/timesheet/timesheet/submit.php');
-        if (!empty($_POST['task'])&& !empty($_POST['weekDays']))
+        //check the if the needed POST value are defined and is those value weren't already posted
+        if (!empty($_POST['task'])&& !empty($_POST['weekDays'])&& 
+                !empty($_POST['timestamp']) && !in_array($_POST['timestamp'],$_SESSION['timestamps'],TRUE))
         {    
+            $_SESSION['timestamps'][]=$_POST['timestamp'];
             $ret =postActuals($db,$user->id,$_POST['weekDays'],$_POST['task']);
             if($ret)
                 setEventMessage("tasktime processed: ".$ret);

@@ -59,6 +59,7 @@ dol_include_once('/timesheet/class/timesheet.class.php');
                             '.$langs->trans('TaskDateEnd').'
                         </th>
                         <th width="10%"> 
+                            <input type="hidden" name="timestamp" value="'.time().'"/>
                             <input type="hidden" name="weekDays[0]" value="'.date('d-m-Y',strtotime( $yearWeek.' +0 day')).
                              '"/>
                              '.$langs->trans(date('l',strtotime( $yearWeek.' +0 day'))).'<br>'.date('d/m/y',strtotime( $yearWeek.' +0 day'))."

@@ -17,35 +17,6 @@
  */
 
 
-function validate(event) {
-    //test it is not a number or :
-    var keycode = event.keyCode;
-    alert(keycode);
-    if (((keycode < 48 || keycode > 58))&(keycode != 8)) {
-       event.returnValue = false;
-       return false;
-    }
-    else
-    {
-        evt=event;
-        //evt=document.getElementById(ident)
-        var s_time = evt.value;   
-        //alert(event);
-        var dblpoint = s_time.indexOf(":");
-        var Hrs = s_time.substring(0, dblpoint);
-        if (dblpoint != -1) {
-            minuts = s_time.substring(dblpoint + 1, s_time.length);
-            if ((minuts.length == 2) & (Hrs.length > 0)) {
-                if (Hrs.length ==2 )
-                {            
-                 evt.returnValue = false;
-                 return false;
-                }
-            }
-        }
-    }
-
-  }
   
   function regexEvent(objet,event,type)
   {
@@ -59,16 +30,24 @@ function validate(event) {
                   if(regex2.test(objet.value))
                     objet.value=objet.value+':00';
                   else
-                    objet.value='';
+                    objet.value='00:00';
               }
               break;
           case 'timeChar':
               //var regex= /^[0-9:]{1}$/;
               //alert(event.keyCode);
-              if(((event.keyCode<96) || (event.keyCode>106)) && (event.keyCode!= 58) && (event.keyCode!= 8))
+              if(((event.keyCode >= 48) && (event.keyCode <= 57)) || 
+                    ((event.keyCode>=96) && (event.keyCode<=106)) ||
+                    (event.keyCode === 58) || (event.keycode === 39) ||
+                    (event.keyCode === 8) || (event.keycode === 9) ||
+                    (event.keycode === 46) || (event.keycode === 37))
               {
-                return false;
-               }
+                return true;
+         
+              }else
+              {
+                  return false;
+              }
                 
               break;    
           default:
