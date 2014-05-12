@@ -12,4 +12,3 @@ Principle
 
 Next dev:
 - extended lang support ( other lang than fr_FR & submission messages translation) 
-- Submission result page (avoid creating a new tasktime when refreshing the browser)
