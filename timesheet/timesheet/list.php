@@ -154,7 +154,9 @@ dol_include_once('/timesheet/class/timesheet.class.php');
                                 <th width="10%"><div id="totalDay[6]">&nbsp;</div></th>
                             </tr>
                         </table>';
-		$Form .= '<input type="submit" value="'.$langs->trans('Save').'" />';
+		$Form .= '<input type="submit" value="'.$langs->trans('Save').'" />
+                         <input type="button" value="'.$langs->trans('Cancel').'" onClick="document.location.href=\'?action=list&yearweek='.$yearWeek.'\'"/>';
+                
 		$Form .='</form> 
                          <script type="text/javascript" src="timesheet.js"></script>
                          <script type="text/javascript">
