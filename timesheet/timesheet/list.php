@@ -21,7 +21,7 @@ $db=$_SESSION["db"];
 dol_include_once('/timesheet/class/timesheet.class.php');
  # will generate the form line
 
-		
+	// navigation form 	
         $Form =  '<table class="noborder" width="50%">
                     <tr> 
                         <th> 
@@ -30,7 +30,7 @@ dol_include_once('/timesheet/class/timesheet.class.php');
                         </th> 
                         <th>
                             <form name="goToDate" action="?action=goToDate" method="POST" >
-                             Go to date: <input type="date" name="toDate" size="10" value="'.date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/>   '.
+                             '.$langs->trans("GoToDate").': <input type="date" name="toDate" size="10" value="'.date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/>   '.
                             '<input type="submit" value="Go" /></form>
                         </th> 
                         <th> 
@@ -42,7 +42,7 @@ dol_include_once('/timesheet/class/timesheet.class.php');
                   ';
 
 
-
+        // Show the title of the form 
         $Form .='<form name="timesheet" action="?action=submit&yearweek='.$yearWeek.'" method="POST" > 
                   <table class="noborder" width="100%">
                     <tr class="liste_titre" >
@@ -53,10 +53,10 @@ dol_include_once('/timesheet/class/timesheet.class.php');
                             '.$langs->trans('Tasks').'
                         </th>
                         <th>
-                            '.$langs->trans('TaskDateStart').'
+                            '.$langs->trans('DateStart').'
                         </th>
                         <th>
-                            '.$langs->trans('TaskDateEnd').'
+                            '.$langs->trans('DateEnd').'
                         </th>
                         <th width="10%"> 
                             <input type="hidden" name="timestamp" value="'.time().'"/>
@@ -96,13 +96,12 @@ dol_include_once('/timesheet/class/timesheet.class.php');
                         </th>
                     </tr>
                     ';
-                //retrivetask
+                //retrives and show all the task where the user is defined as responsible or contributor
                 $tasksList=array();
 		$sql ="SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
 		$sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$user->id."'";
                 
 		dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
-                //$db->begin();
                 $resql=$db->query($sql);
 		if ($resql)
 		{
@@ -137,6 +136,7 @@ dol_include_once('/timesheet/class/timesheet.class.php');
 			}
 			
 		}
+                // Total fields
                 $Form .= '
                     </table>
                     <input type="hidden" id="numberOfLines" name="numberOfLines" '.

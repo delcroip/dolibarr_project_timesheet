@@ -34,7 +34,8 @@
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
 //if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
-
+// hide left menu
+$_POST['dol_hide_leftmenu']=1;
 // Change this following line to use the correct relative path (../, ../../, etc)
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
@@ -123,11 +124,15 @@ switch($action)
             $_SESSION['timestamps'][]=$_POST['timestamp'];
             $ret =postActuals($db,$user->id,$_POST['weekDays'],$_POST['task']);
             if($ret)
-                setEventMessage("tasktime processed: ".$ret);
+            {
+                if($_SESSION['timeSpendCreated'])setEventMessage($langs->trans("NumberOfTimeSpendCreated").$_SESSION['timeSpendCreated']);
+                if($_SESSION['timeSpendModified'])setEventMessage($langs->trans("NumberOfTimeSpendModified").$_SESSION['timeSpendModified']);
+                if($_SESSION['timeSpendDeleted'])setEventMessage($langs->trans("NumberOfTimeSpendDeleted").$_SESSION['timeSpendDeleted']);
+            }
             else
-                setEventMessage("Not tasktime changed",'errors');
+                setEventMessage($langs->trans("NothingChanged"),'errors');
         }else
-            setEventMessage( "Error no task to update",'errors');
+            setEventMessage( $langs->trans("NoTaskToUpdate"),'errors');
         
     case 'goToDate':
         if (!empty($_POST['toDate']))
