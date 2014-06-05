@@ -11,4 +11,4 @@ Principle
 - the timesheet class herit from the task class therefore all the changes use task methods as delTimeSpent, updateTimeSpent, addTimeSpent
 
 Next dev:
-- extended lang support ( other lang than fr_FR & submission messages translation) 
+- More secure way to handle the timesheet commitment ( avoid sending the db key in the post message)
