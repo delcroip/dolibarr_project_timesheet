@@ -123,8 +123,11 @@ else
  * create the Session parameters
  */
 $tmstp=time();
-if(!isset($_SESSION["timestamps"]))
+if(!isset($_SESSION["timestamps"])){
         $_SESSION["timestamps"]=array();
+        $_SESSION["timestamps"][0]=1;
+}
+
 //FIXME: LIMIT the size of the timestamps table
 //FIXME: ERROR handling: timestamp already present
 $_SESSION["timestamps"][]=$tmstp;

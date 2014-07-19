@@ -98,47 +98,66 @@ function postActuals($db,$user,$weekDays,$tabPost)
 
 function postActualsSecured($db,$user,$tabPost,$timestamp)
 {
-    $ret=0;
     
-        $_SESSION["timestamps"][$timestamp]=array();
-        $_SESSION["timestamps"][$timestamp]['tasks']=array();
-        $yearWeek=$_SESSION["timestamps"][$timestamp]["YearWeek"];
-        $_SESSION['timeSpendCreated']=0;
-        $_SESSION['timeSpendDeleted']=0;
-        $_SESSION['timeSpendModified']=0;
+    $storedTab=array();
+    $storedTab=$_SESSION["timestamps"][$timestamp];
+    if(isset($storedTab["YearWeek"])) {
+        $yearWeek=$storedTab["YearWeek"];
+    }else {
+        return -1;
+    }
+    $storedTasks=array();
+    if(isset($storedTab['tasks'])) {
+        $storedTasks=$storedTab['tasks'];
+    }else {
+        return -1;
+    }
+    if(isset($storedTab['weekDays'])) {
+        $storedWeekdays=$storedTab['weekDays'];
+    }else {
+        return -1;
+    }
+        
+    $ret=0;
+    $_SESSION['timeSpendCreated']=0;
+    $_SESSION['timeSpendDeleted']=0;
+    $_SESSION['timeSpendModified']=0;
         /*
          * For each task store in matching the session timestamp
          */
-        foreach($_SESSION["timestamps"][$timestamp]['tasks'] as  $taskItem)
+    foreach($storedTasks as  $taskItem)
+    {
+        $taskId=$taskItem["id"];
+        $tasktimeIds=array();
+        $tasktimeIds=$taskItem["taskTimeId"];
+        $tasktime=new timesheet($db,$taskId);
+        $tasktime->timespent_fk_user=$user;
+        $tasktime->fetch($taskId);
+        dol_syslog("Timesheet::Submit.php::postActuals  task=".$tasktime->id, LOG_DEBUG);
+        //use the data stored
+        //$tasktime->initTimeSheet($taskItem['weekWorkLoad'], $taskItem['taskTimeId']);
+        //refetch actuals
+        $tasktime->getActuals($yearWeek, $user); 
+        /*
+         * for each day of the task store in matching the session timestamp
+         */
+        //foreach($taskItem['taskTimeId'] as $dayKey => $tasktimeid)
+        foreach($tabPost[$taskId] as $dayKey => $wkload)
         {
-            $taskId=$taskItem["id"];
-            $tasktimeIds=array();
-            $tasktimeIds=$taskItem["taskTimeId"];
-            $tasktime=new timesheet($db,$taskId);
-            $tasktime->fetch($taskId);
-            dol_syslog("Timesheet::Submit.php::postActuals  task=".$tasktime->id, LOG_DEBUG);
-            //use the data stored
-            //$tasktime->initTimeSheet($taskItem['weekWorkLoad'], $taskItem['taskTimeId']);
-            //refetch actuals
-            $tasktime->getActuals($yearWeek, $user); 
-            /*
-             * for each day of the task store in matching the session timestamp
-             */
-            //foreach($taskItem['taskTimeId'] as $dayKey => $tasktimeid)
-            foreach($tabPost[$taskId] as $dayKey => $wkload)
-            {
-                dol_syslog("Timesheet::Submit.php::postActuals  tabPost[".$dayKey."]=".$wkload, LOG_DEBUG);
-                dol_syslog_array("taskItem['taskTimeId']",$tasktimeIds,0);
-                $tasktimeid=$tasktimeIds[$dayKey];
-                $ret+=postTaskTimeActual($tasktime,$tasktimeid,$wkload,$_SESSION["timestamps"][$timestamp]["weekDays"][$dayKey]);
-            }
-        } 
+            dol_syslog("Timesheet::Submit.php::postActuals  tabPost[".$dayKey."]=".$wkload, LOG_DEBUG);
+           // dol_syslog_array("taskItem['taskTimeId']",$tasktimeIds,0);
+            $tasktimeid=$tasktimeIds[$dayKey];
+            
+            $ret+=postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$storedWeekdays[$dayKey]);
+        }
+    } 
     unset($_SESSION["timestamps"][$timestamp]);
     return $ret;
 }
 
-function postTaskTimeActual($tasktime,$tasktimeid,$wkload,$date)
+function postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$date)
 {
+
    $ret=0;         
     $durationTab=date_parse($wkload);
     $duration=$durationTab['minute']*60+$durationTab['hour']*3600;
@@ -171,6 +190,7 @@ function postTaskTimeActual($tasktime,$tasktimeid,$wkload,$date)
         $tasktime->timespent_duration=$duration; 
         //FIXME
         $tasktime->timespent_date=strtotime($date);
+        
         if($tasktime->addTimeSpent($user,0)>=0)
         {
             $ret++;
