@@ -111,7 +111,7 @@ class timesheet extends Task
                         //$day=(intval(date('w',strtotime($obj->task_date)))+1)%6;
                         // if several tasktime in one day then only the last is used
                         $this->weekWorkLoad[$day] =  $obj->task_duration;
-                        $this->taskTimeId[$day]= $obj->rowid;
+                        $this->taskTimeId[$day]= ($obj->rowid)?($obj->rowid):0;
                         $i++;
                 }
                 $this->db->free($resql);

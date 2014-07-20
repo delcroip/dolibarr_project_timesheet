@@ -125,15 +125,15 @@ function postActualsSecured($db,$user,$tabPost,$timestamp)
         /*
          * For each task store in matching the session timestamp
          */
-    foreach($storedTasks as  $taskItem)
+    foreach($storedTasks as  $taskId => $taskItem)
     {
-        $taskId=$taskItem["id"];
+      //  $taskId=$taskItem["id"];
         $tasktimeIds=array();
         $tasktimeIds=$taskItem["taskTimeId"];
         $tasktime=new timesheet($db,$taskId);
         $tasktime->timespent_fk_user=$user;
         $tasktime->fetch($taskId);
-        dol_syslog("Timesheet::Submit.php::postActuals  task=".$tasktime->id, LOG_DEBUG);
+        dol_syslog("Timesheet::Submit.php::postActualsSecured  task=".$tasktime->id, LOG_DEBUG);
         //use the data stored
         //$tasktime->initTimeSheet($taskItem['weekWorkLoad'], $taskItem['taskTimeId']);
         //refetch actuals
@@ -144,8 +144,8 @@ function postActualsSecured($db,$user,$tabPost,$timestamp)
         //foreach($taskItem['taskTimeId'] as $dayKey => $tasktimeid)
         foreach($tabPost[$taskId] as $dayKey => $wkload)
         {
-            dol_syslog("Timesheet::Submit.php::postActuals  tabPost[".$dayKey."]=".$wkload, LOG_DEBUG);
-           // dol_syslog_array("taskItem['taskTimeId']",$tasktimeIds,0);
+            dol_syslog("Timesheet::Submit.php::postActualsSecured  task = ".$taskId." tabPost[".$dayKey."]=".$wkload, LOG_DEBUG);
+
             $tasktimeid=$tasktimeIds[$dayKey];
             
             $ret+=postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$storedWeekdays[$dayKey]);
@@ -162,7 +162,7 @@ function postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$date)
     $durationTab=date_parse($wkload);
     $duration=$durationTab['minute']*60+$durationTab['hour']*3600;
 
-    dol_syslog("Timesheet::Submit.php::postTaskTimeActual  timespent_duration=".$duration, LOG_DEBUG);
+    dol_syslog("Timesheet::Submit.php::postTaskTimeActualSecured   timespent_duration=".$duration." taskTimeId=".$tasktimeid, LOG_DEBUG);
 
     if($tasktimeid>0)
     {
@@ -170,19 +170,21 @@ function postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$date)
         $tasktime->timespent_old_duration=$tasktime->timespent_duration;
         $tasktime->timespent_duration=$duration; 
         if($tasktime->timespent_old_duration!=$duration)
-        if($tasktime->timespent_duration>0){ 
-            dol_syslog("Timesheet::Submit.php  taskTimeUpdate", LOG_DEBUG);
-            if($tasktime->updateTimeSpent($user)>=0)
-            {
-                $ret++; 
-                $_SESSION['timeSpendModified']++;
-            }
-        }else {
-            dol_syslog("Timesheet::Submit.php  taskTimeDelete", LOG_DEBUG);
-            if($tasktime->delTimeSpent($user)>=0)
-            {
-                $ret++;
-                $_SESSION['timeSpendDeleted']++;
+        {
+            if($tasktime->timespent_duration>0){ 
+                dol_syslog("Timesheet::Submit.php  taskTimeUpdate", LOG_DEBUG);
+                if($tasktime->updateTimeSpent($user)>=0)
+                {
+                    $ret++; 
+                    $_SESSION['timeSpendModified']++;
+                }
+            }else {
+                dol_syslog("Timesheet::Submit.php  taskTimeDelete", LOG_DEBUG);
+                if($tasktime->delTimeSpent($user)>=0)
+                {
+                    $ret++;
+                    $_SESSION['timeSpendDeleted']++;
+                }
             }
         }
     } elseif ($duration>0)

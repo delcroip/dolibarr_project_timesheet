@@ -119,7 +119,7 @@ switch($action)
        dol_include_once('/timesheet/timesheet/submit.php');
         //check the if the needed POST value are defined and is those value weren't already posted
         $timestamp=$_POST['timestamp'];
-        if (in_array($timestamp,$_SESSION['timestamps'],FALSE))
+        if (isset($_SESSION['timestamps'][$timestamp]))
         {
             if (!empty($_POST['task']))
             {    

@@ -91,7 +91,7 @@ $Form .='<form name="timesheet" action="?action=submit&yearweek='.$yearWeek.'" m
             ';
 //retrives and show all the task where the user is defined as responsible or contributor
 $tasksList=array();
-$sql ="SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
+$sql ="SELECT DISTINCT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
 $sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$user->id."'";
 
 dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
@@ -130,7 +130,6 @@ if(!isset($_SESSION["timestamps"])){
 
 //FIXME: LIMIT the size of the timestamps table
 //FIXME: ERROR handling: timestamp already present
-$_SESSION["timestamps"][]=$tmstp;
 $_SESSION['timestamps'][$tmstp]=array() ;
 //to avoid resend when refresh
 $_SESSION["timestamps"][$tmstp]["sent"]=false;
@@ -142,12 +141,12 @@ $_SESSION["timestamps"][$tmstp]["YearWeek"]['tasks']=array();
 $i=0;
 foreach($tasksList as $row)
 {
-
+         dol_syslog("Timesheet::list.php task=".$row->id, LOG_DEBUG);
         $row->getTaskInfo();
         if($row->isOpenThisWeek($yearWeek))
         {
                 $row->getActuals($yearWeek,$user->id); 
-                $_SESSION["timestamps"][$tmstp]['tasks'][]=$row->id;
+                $_SESSION["timestamps"][$tmstp]['tasks'][$row->id]=array();
                 $_SESSION["timestamps"][$tmstp]['tasks'][$row->id]=$row->getTaskTab();
                 $Form.=$row->getFormLineSecured( $yearWeek,$i); 
                 //$Form.=$row->getFormLine( $yearWeek,$i);
