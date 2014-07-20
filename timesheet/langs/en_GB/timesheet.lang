@@ -1,0 +1,9 @@
+# Dolibarr language file - en_GB - timesheet
+NextWeek=Next week
+PreviousWeek=Previous Week
+GoToDate= Go to
+NumberOfTimeSpendModified =  Number of time spend modified :
+NumberOfTimeSpendCreated = Number of time spend created :
+NumberOfTimeSpendDeleted = Number of  time spend deleted :
+NothingChanged = Nothing to change
+NoTaskToUpdate = No task for this week

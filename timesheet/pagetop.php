@@ -111,39 +111,54 @@ if(empty($_GET['yearweek']) || !is_string($_GET['yearweek']))
 {
         $yearWeek=date('Y\WW');
 }
-$_SESSION['timestamps']=array();
+
 
 switch($action)
 {
     case 'submit':
        dol_include_once('/timesheet/timesheet/submit.php');
         //check the if the needed POST value are defined and is those value weren't already posted
-        if (!empty($_POST['task'])&& !empty($_POST['weekDays'])&& 
-                !empty($_POST['timestamp']) && !in_array($_POST['timestamp'],$_SESSION['timestamps'],TRUE))
-        {    
-            $_SESSION['timestamps'][]=$_POST['timestamp'];
-            $ret =postActuals($db,$user->id,$_POST['weekDays'],$_POST['task']);
-            if($ret)
-            {
-                if($_SESSION['timeSpendCreated'])setEventMessage($langs->trans("NumberOfTimeSpendCreated").$_SESSION['timeSpendCreated']);
-                if($_SESSION['timeSpendModified'])setEventMessage($langs->trans("NumberOfTimeSpendModified").$_SESSION['timeSpendModified']);
-                if($_SESSION['timeSpendDeleted'])setEventMessage($langs->trans("NumberOfTimeSpendDeleted").$_SESSION['timeSpendDeleted']);
-            }
-            else
-                setEventMessage($langs->trans("NothingChanged"),'errors');
+        $timestamp=$_POST['timestamp'];
+        if (isset($_SESSION['timestamps'][$timestamp]))
+        {
+            if (!empty($_POST['task']))
+            {    
+
+               // $_SESSION['timestamps'][]=$_POST['timestamp'];
+                    //$ret =postActuals($db,$user->id,$_POST['weekDays'],$_POST['task']);
+                    $ret =postActualsSecured($db,$user->id,$_POST['task'],$timestamp);
+                    if($ret)
+                    {
+                        if($_SESSION['timeSpendCreated'])setEventMessage($langs->trans("NumberOfTimeSpendCreated").$_SESSION['timeSpendCreated']);
+                        if($_SESSION['timeSpendModified'])setEventMessage($langs->trans("NumberOfTimeSpendModified").$_SESSION['timeSpendModified']);
+                        if($_SESSION['timeSpendDeleted'])setEventMessage($langs->trans("NumberOfTimeSpendDeleted").$_SESSION['timeSpendDeleted']);
+                    }
+                    else
+                    {
+                        if($ret==0){
+                            setEventMessage($langs->trans("NothingChanged"),'errors');
+                        }else {
+                            setEventMessage( $langs->trans("InternalError1"),'errors');
+                        }
+                    }
+
+                        
+            }else
+                    setEventMessage( $langs->trans("NoTaskToUpdate"),'errors');
         }else
-            setEventMessage( $langs->trans("NoTaskToUpdate"),'errors');
-        
+                setEventMessage( $langs->trans("InternalError"),'errors');
+         
     case 'goToDate':
         if (!empty($_POST['toDate']))
         {
             $yearWeek=date('Y\WW',strtotime(str_replace('/', '-',$_POST['toDate'])));   
         }
     case 'list':
+		
        //goes to default
            
    default:
-       a:
+	 
        $_SESSION["yearWeek"]=$yearWeek;
        $_SESSION["db"]=$db;
        dol_include_once('/timesheet/timesheet/list.php');  
