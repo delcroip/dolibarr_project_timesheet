@@ -149,12 +149,9 @@ class timesheet extends Task
                 $today= strtotime($yearWeek.' +'.$dayOfWeek.' day');
                 # to avoid editing if the task is closed 
                 $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
-                if(($this->date_start > $today) OR ($this->date_end < $today ))
-                {
-                    $tableRow .='<th> <div id="task['.$this->id.']['.$dayOfWeek.']">'.$dayWorkLoad.'</div></th>
-                            ';
-                        //id="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]"
-                }else
+                //if(($this->date_start > $today) OR ($this->date_end < $today ))
+              
+                if((empty($this->date_start) || ($this->date_start <= $today)) && (empty($this->date_end) ||($this->date_end >= $today )))
                 {
                     $tableRow .='<th>
                                 <input type="text" id="task['.$this->id.']['.$dayOfWeek.']" '.
@@ -163,7 +160,12 @@ class timesheet extends Task
                                 'onkeydown="return regexEvent(this,event,\'timeChar\')" '.
                                 'onblur="regexEvent(this,event,\'time\');updateTotal('.$dayOfWeek.')" />
                             </th>
+                            ';                    
+                }else
+                {
+                    $tableRow .='<th> <div id="task['.$this->id.']['.$dayOfWeek.']">'.$dayWorkLoad.'</div></th>
                             ';
+                        //id="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]"
                 }
         }
         $tableRow .= "
@@ -172,7 +174,7 @@ class timesheet extends Task
         return $tableRow;
 
     }	
-    public function getFormLine( $yearWeek,$lineNumber)
+   /* public function getFormLine( $yearWeek,$lineNumber)
     {
 
       //don't show task without open day in the week
@@ -220,7 +222,7 @@ class timesheet extends Task
                     ";
         return $tableRow;
 
-    }
+    }*/
 
     public function test(){
             $Result=$this->id.' / ';
@@ -236,7 +238,7 @@ class timesheet extends Task
     {
             $yearWeekMonday=strtotime($yearWeek.' +0 days');
             $yearWeekSunday=strtotime($yearWeek.' +6 day');
-            if(($this->date_start <= $yearWeekSunday) AND ($this->date_end >= $yearWeekMonday ))
+            if((empty($this->date_start) || ($this->date_start <= $yearWeekSunday)) && (empty($this->date_end) ||($this->date_end >= $yearWeekMonday )))
             {	
                     return true;
             }else
