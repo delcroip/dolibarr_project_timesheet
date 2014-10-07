@@ -94,7 +94,7 @@ function updateTotal(days){
     var nbline = document.getElementById('numberOfLines').value;
     for (var i=0;i<nbline;i++)
     { 
-        var id='task['+i+'][weekDays]['+days+'][value]';   
+        var id='task['+i+']['+days+']';   
         var taskTime= new Date(0);
         var element=document.getElementById(id);
         if (element.value)

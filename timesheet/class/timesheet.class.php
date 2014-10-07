@@ -21,13 +21,15 @@
 #require_once('mysql.class.php');
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-
+dol_include_once('/timesheet/class/projectTimesheet.class.php');
+//require_once './projectTimesheet.class.php';
 
 class timesheet extends Task 
 {
         private $ProjectTitle		=	"Not defined";
 	private $taskTimeId = array(0=>0,0,0,0,0,0,0);
         private $weekWorkLoad  = array(0=>0,0,0,0,0,0,0);
+        private $fk_project2;
 	
 
     public function __construct($db,$taskId) 
@@ -45,7 +47,7 @@ class timesheet extends Task
     }
     public function getTaskInfo()
     {
-            $sql = "SELECT p.title, pt.label,pt.dateo,pt.datee ";	
+            $sql = "SELECT p.title,p.rowid, pt.label,pt.dateo,pt.datee ";	
             $sql .= "FROM ".MAIN_DB_PREFIX."projet_task AS pt ";
             $sql .= "LEFT JOIN ".MAIN_DB_PREFIX."projet as p ";
             $sql .= "ON pt.fk_projet=p.rowid ";
@@ -62,7 +64,9 @@ class timesheet extends Task
                     {
 
                             $obj = $this->db->fetch_object($resql);
+                              
                             $this->description			= $obj->label;
+                            $this->fk_project2                   = $obj->rowid;
                             $this->ProjectTitle			= $obj->title;
                             #$this->date_start			= strtotime($obj->dateo.' +0 day');
                             #$this->date_end			= strtotime($obj->datee.' +0 day');
@@ -135,7 +139,13 @@ class timesheet extends Task
              # insert the task id and the form line to retrieve the data later 
         $tableRow = "<tr>
                             <th>
-                                ".$this->ProjectTitle."</th><th>".$this->description."
+                            <a href=\"".DOL_URL_ROOT."/projet/fiche.php?id=".$this->fk_project2."\">"
+                                .$this->ProjectTitle
+                            ."</th>
+                            <th>
+                            <a href=\"".DOL_URL_ROOT."/projet/tasks/task.php?id=".$this->id."&withproject=".$this->fk_project2."\">"
+                            .$this->description
+                            ."</a>
                             </th>
                             <th>
                                 ".date('d/m/y',$this->date_start)."
@@ -152,9 +162,9 @@ class timesheet extends Task
                 //if(($this->date_start > $today) OR ($this->date_end < $today ))
               
                 if((empty($this->date_start) || ($this->date_start <= $today)) && (empty($this->date_end) ||($this->date_end >= $today )))
-                {
+                {             
                     $tableRow .='<th>
-                                <input type="text" id="task['.$this->id.']['.$dayOfWeek.']" '.
+                                <input type="text" id="task['.$lineNumber.']['.$dayOfWeek.']" '.
                                 'name="task['.$this->id.']['.$dayOfWeek.']" '.
                                 ' value="'.$dayWorkLoad.'" maxlength="5" style="width: 90%" '.
                                 'onkeydown="return regexEvent(this,event,\'timeChar\')" '.
@@ -238,7 +248,12 @@ class timesheet extends Task
     {
             $yearWeekMonday=strtotime($yearWeek.' +0 days');
             $yearWeekSunday=strtotime($yearWeek.' +6 day');
-            if((empty($this->date_start) || ($this->date_start <= $yearWeekSunday)) && (empty($this->date_end) ||($this->date_end >= $yearWeekMonday )))
+ 
+            $projectstatic=new ProjectTimesheet($this->db);
+	    $projectstatic->fetch($this->fk_project2);
+            if((empty($this->date_start) || ($this->date_start <= $yearWeekSunday)) 
+                    && (empty($this->date_end) ||($this->date_end >= $yearWeekMonday )) 
+                    && ($projectstatic->isOpen($yearWeekMonday, $yearWeekSunday)))
             {	
                     return true;
             }else
