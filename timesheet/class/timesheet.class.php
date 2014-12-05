@@ -131,7 +131,7 @@ class timesheet extends Task
     }	 
 
 
-    public function getFormLineSecured( $yearWeek,$lineNumber)
+    public function getFormLineSecured( $yearWeek,$lineNumber,$timetype="hours",$dayshours="8")
     {
 
       //don't show task without open day in the week
@@ -158,7 +158,13 @@ class timesheet extends Task
         {
                 $today= strtotime($yearWeek.' +'.$dayOfWeek.' day');
                 # to avoid editing if the task is closed 
-                $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
+                if ($timetype=="days")
+                {
+                    $dayWorkLoad=$dayWorkLoadSec/3600/$dayshours;
+                }else {
+                    
+                    $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
+                }
                 //if(($this->date_start > $today) OR ($this->date_end < $today ))
               
                 if((empty($this->date_start) || ($this->date_start <= $today)) && (empty($this->date_end) ||($this->date_end >= $today )))
@@ -167,9 +173,9 @@ class timesheet extends Task
                                 <input type="text" id="task['.$lineNumber.']['.$dayOfWeek.']" '.
                                 'name="task['.$this->id.']['.$dayOfWeek.']" '.
                                 ' value="'.$dayWorkLoad.'" maxlength="5" style="width: 90%" '.
-                                'onkeydown="return regexEvent(this,event,\'timeChar\')" '.
-                                'onblur="regexEvent(this,event,\'time\');updateTotal('.$dayOfWeek.')" />
-                            </th>
+                                'onkeydown="return regexEvent(this,event,\'timeChar\')" ';
+                    $tableRow .='onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$dayOfWeek.','.$timetype.')" />';
+                    $tableRow .='</th>
                             ';                    
                 }else
                 {

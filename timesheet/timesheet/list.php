@@ -30,7 +30,7 @@ $Form =  '<table class="noborder" width="50%">
                 </th> 
                 <th>
                     <form name="goToDate" action="?action=goToDate" method="POST" >
-                     '.$langs->trans("GoToDate").': <input type="date" name="toDate" size="10" value="'.date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/>   '.
+                     '.$langs->trans("GoToDate").': <input type="date" id="toDate" name="toDate" size="10" value="'.date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/>   '.
                     '<input type="submit" value="Go" /></form>
                 </th> 
                 <th> 
@@ -180,7 +180,7 @@ $Form .= '<input type="submit" value="'.$langs->trans('Save').'" />
 $Form .='</form> 
          <script type="text/javascript" src="timesheet.js"></script>
          <script type="text/javascript">
-         updateTotal(0);updateTotal(1);updateTotal(2);updateTotal(3);updateTotal(4);updateTotal(5);updateTotal(6);
+         updateTotal(0,'.TIMESHEET_TIME_TYPE.');updateTotal(1,'.TIMESHEET_TIME_TYPE.');updateTotal(2,'.TIMESHEET_TIME_TYPE.');updateTotal(3,'.TIMESHEET_TIME_TYPE.');updateTotal(4,'.TIMESHEET_TIME_TYPE.');updateTotal(5,'.TIMESHEET_TIME_TYPE.');updateTotal(6,'.TIMESHEET_TIME_TYPE.');
          </script>';
 // $db->close();
 echo$Form;

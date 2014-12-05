@@ -106,6 +106,8 @@ if ($action == 'add')
 ****************************************************/
 
 llxHeader('','timesheet','');
+
+
 //if week set go to the current week
 if(empty($_GET['yearweek']) || !is_string($_GET['yearweek']))
 {
