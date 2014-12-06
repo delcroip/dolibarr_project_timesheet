@@ -141,7 +141,7 @@ class timesheet extends Task
                             <th>
                             <a href=\"".DOL_URL_ROOT."/projet/fiche.php?id=".$this->fk_project2."\">"
                                 .$this->ProjectTitle
-                            ."</th>
+                            ."</a></th>
                             <th>
                             <a href=\"".DOL_URL_ROOT."/projet/tasks/task.php?id=".$this->id."&withproject=".$this->fk_project2."\">"
                             .$this->description
@@ -162,7 +162,6 @@ class timesheet extends Task
                 {
                     $dayWorkLoad=$dayWorkLoadSec/3600/$dayshours;
                 }else {
-                    
                     $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
                 }
                 //if(($this->date_start > $today) OR ($this->date_end < $today ))

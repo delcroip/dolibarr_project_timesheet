@@ -19,7 +19,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 dol_include_once('/timesheet/class/timesheet.class.php');
-
+/*
 function postActuals($db,$user,$weekDays,$tabPost)
 {
     //$db->begin();
@@ -95,7 +95,7 @@ function postActuals($db,$user,$weekDays,$tabPost)
     }
     return $ret;
 }
-
+*/
 function postActualsSecured($db,$user,$tabPost,$timestamp)
 {
     
@@ -158,10 +158,15 @@ function postActualsSecured($db,$user,$tabPost,$timestamp)
 function postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$date)
 {
 
-   $ret=0;         
+   $ret=0;
+   if(TIMESHEET_TIME_TYPE=="days")
+   {
+      $duration=$wkload*TIMESHEET_DAY_DURATION*3600;
+   }else
+   {
     $durationTab=date_parse($wkload);
     $duration=$durationTab['minute']*60+$durationTab['hour']*3600;
-
+   }
     dol_syslog("Timesheet::Submit.php::postTaskTimeActualSecured   timespent_duration=".$duration." taskTimeId=".$tasktimeid, LOG_DEBUG);
 
     if($tasktimeid>0)

@@ -148,7 +148,7 @@ foreach($tasksList as $row)
                 $row->getActuals($yearWeek,$user->id); 
                 $_SESSION["timestamps"][$tmstp]['tasks'][$row->id]=array();
                 $_SESSION["timestamps"][$tmstp]['tasks'][$row->id]=$row->getTaskTab();
-                $Form.=$row->getFormLineSecured( $yearWeek,$i); 
+                $Form.=$row->getFormLineSecured( $yearWeek,$i,TIMESHEET_TIME_TYPE,TIMESHEET_DAY_DURATION); 
                 //$Form.=$row->getFormLine( $yearWeek,$i);
                 $i++;
                 

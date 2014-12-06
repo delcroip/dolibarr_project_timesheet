@@ -23,9 +23,9 @@
       switch(type)
       {
           case 'days':
-              var regex= /^[0-9]{1},[0-9]{1}$/;
-              var regex2=/^[0-9]{1}$/;
-              if(!regex.test(objet.value) || regex2.test(objet.value))
+              var regex= /^[0-2]{1},[0-9]{1}$/;
+              var regex2=/^[0-2]{1}$/;
+              if(!regex.test(objet.value) && !regex2.test(objet.value))
               { 
                     objet.value='0';
               }
