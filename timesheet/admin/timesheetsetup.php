@@ -35,27 +35,30 @@ if (!$user->admin) {
     $accessforbidden = accessforbidden("you need to be admin");           
 }
 $action = GETPOST('action','alpha');
+$timetype=TIMESHEET_TIME_TYPE;
 switch($action)
 {
     case save:
-        $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", GETPOST('timeType','alpha'), 'chaine', 0, '', $conf->entity);
+        $timetype=GETPOST('timeType','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", GETPOST('hoursperday','alpha'), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
+        // error handling
+        if (! $error)
+        {
+            setEventMessage($langs->trans("SetupSaved"));
+        }
+        else
+        {
+            setEventMessage($langs->trans("Error"),'errors');
+        }
         break;
     default:
         break;
 }
 	
-// error handling
-    if (! $error)
-    {
-        setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
-        setEventMessage($langs->trans("Error"),'errors');
-    }
+
 //permet d'afficher la structure dolibarr
 llxHeader("",$langs->trans("timesheetSetupModule"));
 
@@ -70,7 +73,7 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                     '.$langs->trans("hours").'
                 <th>
                 <th>
-                    <input type="radio" name="timeType" value="hours" checked>
+                    <input type="radio" name="timeType" value="hours" '.($timetype=="hours"?"checked":"").'>
                 </th>
             </tr>
             <tr>
@@ -78,7 +81,7 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                     '.$langs->trans("days").'
                 <th>
                 <th>
-                    <input type="radio" name="timeType" value="days" >
+                    <input type="radio" name="timeType" value="days" '.($timetype=="days"?"checked":"").'>
                 </th>
             </tr>
             <tr>
@@ -86,12 +89,13 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                     '.$langs->trans("hoursperdays").'
                 <th>
                 <th>
-                    <input type="text" name="hoursperday" value="8" >
+                    <input type="text" name="hoursperday" value="8" onblur="regexEvent(this,event,\''.$timetype.'\')" >
                 </th>
             </tr>
             </table>
             <input type="submit" value="'.$langs->trans('save').'">
             </from>';
-
+$Form.='<script type="text/javascript" src="timesheet.js"></script>';
 print $Form;
+llxFooter();
 ?>
