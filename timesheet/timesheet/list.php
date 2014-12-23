@@ -25,7 +25,7 @@ dol_include_once('/timesheet/class/timesheet.class.php');
 $Form =  '<table class="noborder" width="50%">
             <tr> 
                 <th> 
-                    <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek." -1 week")).
+                    <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days  -1 week")).
                     '">  &lt&lt '.$langs->trans("PreviousWeek").' </a> 
                 </th> 
                 <th>
@@ -34,7 +34,7 @@ $Form =  '<table class="noborder" width="50%">
                     '<input type="submit" value="Go" /></form>
                 </th> 
                 <th> 
-                    <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek." +1 week")).
+                    <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days +1 week")).
                     '">'.$langs->trans("NextWeek").' &gt&gt </a> 
                  </th>
             </tr> 
