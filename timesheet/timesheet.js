@@ -1,4 +1,4 @@
-
+    
 /* 
  *Copyright (C) 2014 delcroip <delcroip@gmail.com>
  *
@@ -48,7 +48,8 @@
                     ((event.keyCode>=96) && (event.keyCode<=106)) ||
                     (event.keyCode === 58) || (event.keycode === 39) ||
                     (event.keyCode === 8) || (event.keycode === 9) ||
-                    (event.keycode === 46) || (event.keycode === 37))
+                    (event.keycode === 46) || (event.keycode === 37) ||
+                    (event.keycode === 44))
               {
                 return true;
          
