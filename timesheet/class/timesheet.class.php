@@ -172,7 +172,7 @@ class timesheet extends Task
                                 <input type="text" id="task['.$lineNumber.']['.$dayOfWeek.']" '.
                                 'name="task['.$this->id.']['.$dayOfWeek.']" '.
                                 ' value="'.$dayWorkLoad.'" maxlength="5" style="width: 90%" '.
-                                'onkeydown="return regexEvent(this,event,\'timeChar\')" ';
+                                'onkeypress="return regexEvent(this,event,\'timeChar\')" ';
                     $tableRow .='onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$dayOfWeek.','.$timetype.')" />';
                     $tableRow .='</th>
                             ';                    
