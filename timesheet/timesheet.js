@@ -18,17 +18,29 @@
 
 
   
-  function regexEvent(objet,event,type)
+  function regexEvent(objet,evt,type)
   {
       switch(type)
       {
           case 'days':
-              var regex= /^[0-2]{1},[0-9]{1}$/;
-              var regex2=/^[0-2]{1}$/;
-              if(!regex.test(objet.value) && !regex2.test(objet.value))
+              var regex= /^[0-9]{1}([.,]{1}[0-9]{1})?$/;
+   
+              if(regex.test(objet.value) )
               { 
-                    objet.value='0';
-              }
+                var tmp=objet.value.replace(',','.');
+                if(tmp<=1.5){
+                    var tmpint=parseInt(tmp);
+                    if(tmp-tmpint>=0.5){
+                        objet.value= tmpint+0.5;
+                    }else{
+                        objet.value= tmpint;
+                    }
+                }else{
+                    objet.value= '1.5';
+                }
+              }else{
+                 objet.value= '0';
+            }
           break; 
           case 'hours':
               var regex= /^[0-9]{1,2}:[0-9]{2}$/;
@@ -43,14 +55,14 @@
               break;
           case 'timeChar':
               //var regex= /^[0-9:]{1}$/;
-              //alert(event.keyCode);
-              if(((event.keyCode >= 48) && (event.keyCode <= 57)) || 
-                    ((event.keyCode>=96) && (event.keyCode<=106)) ||
-                    (event.keyCode === 58) || (event.keycode === 39) ||
-                    (event.keyCode === 8) || (event.keycode === 9) ||
-                    (event.keycode === 46) || (event.keycode === 37) ||
-                    (event.keycode === 44))
+              //alert(event.charCode);
+              var charCode = (evt.which) ? evt.which : event.keyCode;
+              
+              if(((charCode >= 48) && (charCode <= 57)) || //num
+                    (charCode===46) || (charCode===8)||// comma & periode
+                    (charCode === 58) || (charCode==44) )// : & all charcode
               {
+                  // ((charCode>=96) && (charCode<=105)) || //numpad
                 return true;
          
               }else
