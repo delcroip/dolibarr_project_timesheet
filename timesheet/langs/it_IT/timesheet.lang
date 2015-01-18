@@ -1,0 +1,11 @@
+# Dolibarr language file - it_IT - timesheet
+# translate by Nicola Pulvirenti.
+Timesheet= Timesheet
+NextWeek=settimana successiva
+PreviousWeek=settimana precedente
+GoToDate= vai a 
+NumberOfTimeSpendModified =  Tempo impiegato modificato :
+NumberOfTimeSpendCreated = Tempo impiegato creato :
+NumberOfTimeSpendDeleted = Tempo impiegato eliminato :
+NothingChanged = Nessuna modifica
+NoTaskToUpdate = Nessuna attività per questa settimana

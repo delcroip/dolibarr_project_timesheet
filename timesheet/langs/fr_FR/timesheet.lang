@@ -1,0 +1,10 @@
+# Dolibarr language file - fr_FR - timesheet
+Timesheet= Feuille de temps
+NextWeek=semaine suivante
+PreviousWeek=semaine précédente
+GoToDate= allez à
+NumberOfTimeSpendModified =  Nombre de temps consommé changé :
+NumberOfTimeSpendCreated = Nombre de temps consommé crée :
+NumberOfTimeSpendDeleted = Nombre de temps consommé supprimé :
+NothingChanged = Rien n'a été modifié
+NoTaskToUpdate = Pas de tâche pour cette semaine
