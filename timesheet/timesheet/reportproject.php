@@ -75,7 +75,7 @@ $Form.='</select></td>'
         .date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/> </td>
         <td><input type="submit" value="'.$langs->trans('getReport').'"></td>
         <td><input type="checkbox" name="short" value="1" '
-        .(($mode==1)?'checked>':'>').$langs->trans('Short').'</td>
+        .(($mode==1)?'checked>':'>').$langs->trans('short').'</td>
         </tr>
          
         </table>
