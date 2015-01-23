@@ -93,7 +93,7 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
     $firstDay=  strtotime('first day of this month',$month);
     $lastDay=  strtotime('last day of this month',$month);
         if($projectSelected->isOpen($firstDay, $lastDay)){
-            $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,NULL);
+            $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$langs->trans(date('F',$month)));
         }else{
             $querryRes=$langs->trans('projectClosed');
         }   

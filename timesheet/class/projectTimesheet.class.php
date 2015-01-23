@@ -80,7 +80,7 @@ class ProjectTimesheet extends Project
     }
 
     
-    public function getHTMLreport($startDay,$stopDay,$mode,$langs){
+    public function getHTMLreport($startDay,$stopDay,$mode,$langsMonth){
     //
     
     $HTMLuser='';
@@ -206,7 +206,7 @@ class ProjectTimesheet extends Project
             $HTMLRes='<table class="list">'
                     .'<tr class="liste_titre"><th width="30%">'.$this->ref.' - '
                     .$this->title.'</th><th width="30%">'
-                    .date('F', strtotime($startDay)).'</th><th width="30%">'
+                    .$langsMonth.'</th><th width="30%">'
                     .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
             $HTMLRes.=$HTMLProject;
             $HTMLRes.='</table>';
@@ -357,7 +357,7 @@ class ProjectTimesheet extends Project
             $HTMLRes='<table class="list">'
                     .'<tr class="liste_titre"><th width="30%">'.$this->ref.' - '
                     .$this->title.'</th><th width="30%">'
-                    .date('F', strtotime($startDay)).'</th><th width="30%">'
+                    .$langsMonth.'</th><th width="30%">'
                     .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
             $HTMLRes.=$HTMLProject;
             $HTMLRes.='</table>';
