@@ -109,19 +109,30 @@ llxHeader('','timesheet','');
 
 
 //if week set go to the current week
-if(empty($_GET['yearweek']) || !is_string($_GET['yearweek']))
+if (isset($_GET['yearweek'])) {
+    $_SESSION["yearWeek"]=$yearWeek=$_GET['yearweek'];
+}else if(isset($_SESSION["yearWeek"])){
+    $yearWeek=$_SESSION["yearWeek"];
+}else if(empty($_GET['yearweek']) || !is_string($_GET['yearweek']))
 {
         $yearWeek=date('Y\WW');
 }
 
 $_SESSION["db"]=$db;
-$_SESSION["yearWeek"]=$yearWeek;
+
+
 switch($action)
 {
-    case 'report':
-        dol_include_once('/timesheet/timesheet/report.php');
+    case 'reportproject':
+        if (!empty($_POST['Date']))
+        {
+            $_SESSION["yearWeek"]=date('Y\WW',strtotime(str_replace('/', '-',$_POST['Date'])));   
+        }
+        dol_include_once('/timesheet/timesheet/reportproject.php');
         break;
-    
+     case 'reportuser':
+        dol_include_once('/timesheet/timesheet/reportuser.php');
+        break;  
     case 'submit':
        dol_include_once('/timesheet/timesheet/submit.php');
         //check the if the needed POST value are defined and is those value weren't already posted
@@ -158,7 +169,7 @@ switch($action)
     case 'goToDate':
         if (!empty($_POST['toDate']))
         {
-            $yearWeek=date('Y\WW',strtotime(str_replace('/', '-',$_POST['toDate'])));   
+             $_SESSION["yearWeek"]=date('Y\WW',strtotime(str_replace('/', '-',$_POST['toDate'])));   
         }
     case 'list':
 		
@@ -166,7 +177,7 @@ switch($action)
            
    default:
 	 
-       $_SESSION["yearWeek"]=$yearWeek;
+
        dol_include_once('/timesheet/timesheet/list.php');  
       
  

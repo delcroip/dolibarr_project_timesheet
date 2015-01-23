@@ -180,7 +180,7 @@ $Form .= '<input type="submit" value="'.$langs->trans('Save').'" />
 $Form .='</form> 
          <script type="text/javascript" src="timesheet.js"></script>
          <script type="text/javascript">
-         updateTotal(0,'.TIMESHEET_TIME_TYPE.');updateTotal(1,'.TIMESHEET_TIME_TYPE.');updateTotal(2,'.TIMESHEET_TIME_TYPE.');updateTotal(3,'.TIMESHEET_TIME_TYPE.');updateTotal(4,'.TIMESHEET_TIME_TYPE.');updateTotal(5,'.TIMESHEET_TIME_TYPE.');updateTotal(6,'.TIMESHEET_TIME_TYPE.');
+         updateTotal(0,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(1,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(2,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(3,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(4,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(5,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(6,\''.TIMESHEET_TIME_TYPE.'\');
          </script>';
 // $db->close();
 echo$Form;

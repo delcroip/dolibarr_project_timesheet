@@ -173,7 +173,7 @@ class timesheet extends Task
                                 'name="task['.$this->id.']['.$dayOfWeek.']" '.
                                 ' value="'.$dayWorkLoad.'" maxlength="5" style="width: 90%" '.
                                 'onkeypress="return regexEvent(this,event,\'timeChar\')" ';
-                    $tableRow .='onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$dayOfWeek.','.$timetype.')" />';
+                    $tableRow .='onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$dayOfWeek.',\''.$timetype.'\')" />';
                     $tableRow .='</th>
                             ';                    
                 }else
