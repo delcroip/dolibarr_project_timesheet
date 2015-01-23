@@ -23,7 +23,12 @@ $yearWeek=$_SESSION["yearWeek"];
 $id=$_SESSION["id"];
 $mode=($_POST['short']==1)?1:2;
 dol_include_once('/timesheet/class/projectTimesheet.class.php');
+
+
+
+
 //querry to get the project where the user have priviledge; either project responsible or admin
+
 $sql='SELECT llx_projet.rowid,ref,title,dateo,datee FROM llx_projet ';
 if(!$user->admin){    
     $sql.='JOIN llx_element_contact ON llx_projet.rowid= element_id ';
@@ -55,8 +60,9 @@ if ($resql)
 {
         dol_print_error($db);
 }
+
 $Form='<form action="?action=reportproject" method="POST">
-        <table class="noborder">
+        <table class="noborder"  width="100%">
         <tr>
         <td>'.$langs->trans('Project').'</td>
         <td>'.$langs->trans('Month').'</td>
@@ -66,7 +72,7 @@ $Form='<form action="?action=reportproject" method="POST">
         <td><select  name="projectSelected">
         ';
 foreach($projectList as $pjt){
-    $Form.='<option value="'.$pjt->id.'">'.$pjt->ref.' - '.$pjt->title.'</option>
+    $Form.='<option value="'.$pjt->id.'" '.(($_POST['projectSelected']==$pjt->id)?"selected":'').' >'.$pjt->ref.' - '.$pjt->title.'</option>
             ';
 }
 
@@ -84,6 +90,7 @@ $Form.='</select></td>'
 echo $Form;
 // section to generate
 $querryRes='';
+$projectSelected='';
 if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected']) 
         &&!empty($_POST['Date']))
 {
@@ -97,5 +104,6 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
         }else{
             $querryRes=$langs->trans('projectClosed');
         }   
-        echo $querryRes;
+        
 }
+echo $querryRes;

@@ -203,7 +203,7 @@ class ProjectTimesheet extends Project
             $TotalMin=(($projectTotal-$TotalSec)/60)%60;
             $TotalHours=($projectTotal-$TotalMin)/3600;
 
-            $HTMLRes='<table class="list">'
+            $HTMLRes='<table class="noborder" width="100%">'
                     .'<tr class="liste_titre"><th width="30%">'.$this->ref.' - '
                     .$this->title.'</th><th width="30%">'
                     .$langsMonth.'</th><th width="30%">'
@@ -354,7 +354,7 @@ class ProjectTimesheet extends Project
             $TotalMin=(($projectTotal-$TotalSec)/60)%60;
             $TotalHours=($projectTotal-$TotalMin)/3600;
 
-            $HTMLRes='<table class="list">'
+            $HTMLRes='<table class="noborder" width="100%">'
                     .'<tr class="liste_titre"><th width="30%">'.$this->ref.' - '
                     .$this->title.'</th><th width="30%">'
                     .$langsMonth.'</th><th width="30%">'
