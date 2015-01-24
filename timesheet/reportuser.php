@@ -17,10 +17,39 @@
  * 
  */
 
-//retrieve the db
-$db=$_SESSION["db"];
-$yearWeek=$_SESSION["yearWeek"];
-$id=$_SESSION["id"];
+$res=0;
+if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
+if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
+if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // Used on dev env only
+if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
+if (! $res) die("Include of main fails");
+// Change this following line to use the correct relative path from htdocs
+
+
+
+$id		= GETPOST('id','int');
+$action		= GETPOST('action','alpha');
+$yearWeek	= GETPOST('yearweek');
+
+
+// Load traductions files requiredby by page
+//$langs->load("companies");
+$langs->load("main");
+$langs->load("projects");
+$langs->load('timesheet@timesheet');
+
+//find the right week
+if(isset($_POST['Date'])){
+    $yearWeek==date('Y\WW',strtotime(str_replace('/', '-',$_POST['Date'])));   
+}else if (isset($_GET['yearweek'])) {
+    $_SESSION["yearWeek"]=$yearWeek=$_GET['yearweek'];
+}else if(empty($_GET['yearweek']) || !is_string($_GET['yearweek']))
+{
+        $yearWeek=date('Y\WW');
+}
+
+llxHeader('','timesheet','');
+
 dol_include_once('/timesheet/class/projectTimesheet.class.php');
 //querry to get the project where the user have priviledge; either project responsible or admin
 $sql='SELECT llx_projet.rowid,ref,title,dateo,datee FROM llx_projet ';
@@ -94,3 +123,6 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
         }   
         echo $querryRes;
 }
+llxFooter();
+$db->close();
+?>
