@@ -130,7 +130,7 @@ class userTimesheet extends user
             //html part init
             $HTMLTask='';
             $HTMLDay='';
-            $HTMLProject='';
+            $HTMLProject=$numTaskTime.' <br>';
             $HTMLRes='';
             //totals init
             $dayTotal=0;
@@ -143,13 +143,6 @@ class userTimesheet extends user
         foreach($resArray as $key => $item)
         {
             
-            if($key==$numTaskTime-1){
-                $HTMLDay.='<tr class="impair"><th></th><th></th><th>'
-                    .$resArray[$key][3].'</th><th>'
-                    .date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
-                $dayTotal+=$resArray[$key][5];
-                
-            }
 
             if(($resArray[$CurDay][4]!=$resArray[$key][4])|| ($key==$numTaskTime-1) 
                     ||($resArray[$CurProjectId][0]!=$resArray[$key][0]))
@@ -174,20 +167,37 @@ class userTimesheet extends user
                             .$resArray[$CurProjectId][1].'</th><th></th></th><th><th>'
                             .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
                     $HTMLuser.=$HTMLProject;
-                    $HTMLDay='';
+                    $HTMLProject='';
                     $userTotal+=$projectTotal;
                     $projectTotal=0;   
                     $CurProjectId=$key;
                 }
             }
-            if($key!=$numTaskTime-1){
                 $HTMLDay.='<tr class="impair"><th></th><th></th><th>'
                     .$resArray[$key][3].'</th><th>'
                     .date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
                 $dayTotal+=$resArray[$key][5];
-            }
+            
 
-        }               
+        }
+       //handle the last line 
+        $TotalSec=$dayTotal%60;
+        $TotalMin=(($dayTotal-$TotalSec)/60)%60;
+        $TotalHours=($dayTotal-$TotalMin)/3600;
+        $HTMLProject.='<tr class="pair"><th></th><th>'
+                .$resArray[$CurDay][4].'</th><th></th><th>'
+                .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
+        $HTMLProject.=$HTMLDay;
+        $projectTotal+=$dayTotal;
+        $TotalSec=$projectTotal%60;
+        $TotalMin=(($projectTotal-$TotalSec)/60)%60;
+        $TotalHours=($projectTotal-$TotalMin)/3600;
+        $HTMLuser.='<tr class="pair"><th>'
+                .$resArray[$CurProjectId][1].'</th><th></th></th><th><th>'
+                .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
+        $HTMLuser.=$HTMLProject;
+        $userTotal+=$projectTotal;
+        // make the whole result
         $TotalSec=$userTotal%60;
         $TotalMin=(($userTotal-$TotalSec)/60)%60;
         $TotalHours=($userTotal-$TotalMin)/3600;
