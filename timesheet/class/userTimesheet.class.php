@@ -143,14 +143,16 @@ class userTimesheet extends user
         foreach($resArray as $key => $item)
         {
             
-            if($key==$numTaskTime+1){
+            if($key==$numTaskTime-1){
                 $HTMLDay.='<tr class="impair"><th></th><th></th><th>'
                     .$resArray[$key][3].'</th><th>'
                     .date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
                 $dayTotal+=$resArray[$key][5];
+                
             }
 
-            if(($resArray[$CurDay][4]!=$resArray[$key][4])|| ($key==$numTaskTime+1))
+            if(($resArray[$CurDay][4]!=$resArray[$key][4])|| ($key==$numTaskTime-1) 
+                    ||($resArray[$CurProjectId][0]!=$resArray[$key][0]))
             {
                 $TotalSec=$dayTotal%60;
                 $TotalMin=(($dayTotal-$TotalSec)/60)%60;
@@ -162,7 +164,8 @@ class userTimesheet extends user
                 $HTMLDay='';
                 $projectTotal+=$dayTotal;
                 $dayTotal=0;
-                if(($resArray[$CurProjectId][0]!=$resArray[$key][0])|| ($key==$numTaskTime+1))
+                $CurDay=$key;
+                if(($resArray[$CurProjectId][0]!=$resArray[$key][0])|| ($key==$numTaskTime-1))
                 {
                     $TotalSec=$projectTotal%60;
                     $TotalMin=(($projectTotal-$TotalSec)/60)%60;
@@ -174,9 +177,10 @@ class userTimesheet extends user
                     $HTMLDay='';
                     $userTotal+=$projectTotal;
                     $projectTotal=0;   
+                    $CurProjectId=$key;
                 }
             }
-            if($key!=$numTaskTime+1){
+            if($key!=$numTaskTime-1){
                 $HTMLDay.='<tr class="impair"><th></th><th></th><th>'
                     .$resArray[$key][3].'</th><th>'
                     .date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
