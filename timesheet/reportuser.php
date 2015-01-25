@@ -50,32 +50,38 @@ if(isset($_POST['Date'])){
 
 llxHeader('','timesheet','');
 
-dol_include_once('/timesheet/class/projectTimesheet.class.php');
+dol_include_once('/timesheet/class/userTimesheet.class.php');
 //querry to get the project where the user have priviledge; either project responsible or admin
-$sql='SELECT llx_projet.rowid,ref,title,dateo,datee FROM llx_projet ';
-if(!$user->admin){    
-    $sql.='JOIN llx_element_contact ON llx_projet.rowid= element_id ';
-    $sql.='WHERE fk_c_type_contact = "160" ';
-    $sql.='AND fk_socpeople='.$user->id;
+$sql='SELECT DISTINCT usr.rowid as userId, usr.lastname , usr.firstname '
+     .'FROM '.MAIN_DB_PREFIX.'user as usr ';
+        
+if($user->admin){    
+$sql='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
+     .'ON ctc.fk_socpeople=usr.rowid '
+     .'WHERE ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="180"';
+}else
+{
+$sql.='WHERE usr.rowid='.$user->id.' ';
 }
+    
 
-dol_syslog("timesheet::report::projectList sql=".$sql, LOG_DEBUG);
+dol_syslog("timesheet::reportuser::userList sql=".$sql, LOG_DEBUG);
 //launch the sql querry
 
 $resql=$db->query($sql);
-$numProject=0;
-$projectList=array();
+$numUser=0;
+$userList=array();
 if ($resql)
 {
-        $numProject = $db->num_rows($resql);
+        $numUser = $db->num_rows($resql);
         $i = 0;
         // Loop on each record found, so each couple (project id, task id)
-        while ($i < $numProject)
+        while ($i < $numUser)
         {
                 $error=0;
                 $obj = $db->fetch_object($resql);
-                $projectList[$obj->rowid]=new ProjectTimesheet($db);
-                $projectList[$obj->rowid]->initBasic($obj->rowid,$obj->ref,$obj->title,$obj->dateo,$obj->datee);
+                $userList[$obj->userId]=new userTimesheet($db);
+                $userList[$obj->userId]->initBasic($obj->userId,$obj->firstname,$obj->lastname);
                 $i++;
         }
         $db->free($resql);
@@ -84,17 +90,17 @@ if ($resql)
         dol_print_error($db);
 }
 $Form='<form action="?action=reportuser" method="POST">
-        <table class="noborder">
+        <table class="noborder"  width="100%">
         <tr>
-        <td>'.$langs->trans('Project').'</td>
+        <td>'.$langs->trans('User').'</td>
         <td>'.$langs->trans('Month').'</td>
         <td></td>
         </tr>
         <tr >
-        <td><select  name="projectSelected">
+        <td><select  name="userSelected">
         ';
-foreach($projectList as $pjt){
-    $Form.='<option value="'.$pjt->id.'">'.$pjt->ref.' - '.$pjt->title.'</option>
+foreach($userList as $usr){
+    $Form.='<option value="'.$usr->id.'">'.$usr->lastname.' - '.$usr->firstname.'</option>
             ';
 }
 
@@ -108,20 +114,15 @@ $Form.='</select></td>'
 echo $Form;
 // section to generate
 $querryRes='';
-if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected']) 
+if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected']) 
         &&!empty($_POST['Date']))
-{
-    $projectSelected=$projectList[$_POST['projectSelected']];
-    
+{  
+    $userSelected=$userList[$_POST['userSelected']];
     $month=strtotime(str_replace('/', '-',$_POST['Date']));  
     $firstDay=  strtotime('first day of this month',$month);
     $lastDay=  strtotime('last day of this month',$month);
-        if($projectSelected->isOpen($firstDay, $lastDay)){
-            $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,1,NULL);
-        }else{
-            $querryRes=$langs->trans('projectClosed');
-        }   
-        echo $querryRes;
+    $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,'PDT',0,$langs->trans(date('F',$month)));
+    echo $querryRes;
 }
 llxFooter();
 $db->close();
