@@ -17,38 +17,11 @@
  * 
  */
 
-/*Project data
- * 
-    public $element = 'project';    //!< Id that identify managed objects
-    public $table_element = 'projet';  //!< Name of table without prefix where object is stored
-    public $table_element_line = 'projet_task';
-    public $fk_element = 'fk_projet';
-    protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $id;
-    var $ref;
-    var $description;
-    var $statut;
-    var $title;
-    var $date_start;
-    var $date_end;
-    var $socid;
-    var $user_author_id;    //!< Id of project creator. Not defined if shared project.
-    var $public;      //!< Tell if this is a public or private project
-    var $note_private;
-    var $note_public;
-    var $statuts_short;
-    var $statuts;
-    var $oldcopy;
- * 
-    */
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 class userTimesheet extends user
 {
-
-	
-
     public function __construct($db) 
 	{
             $this->db = $db;
@@ -83,18 +56,15 @@ class userTimesheet extends user
                     .'prj.title as projectTitle,tsk.rowid as taskId, '
                     .'tsk.`ref` as taskRef,tsk.label as taskTitle,'
                     .'ptt.task_date, SUM(ptt.task_duration) as duration '
-                    .'FROM llx_projet_task_time as ptt '
-                    .'JOIN llx_projet_task as tsk ON tsk.rowid=fk_task '
-                    .'JOIN llx_projet as prj ON prj.rowid= tsk.fk_projet '
+                    .'FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt '
+                    .'JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task '
+                    .'JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet '
                     .'WHERE fk_user="'.$this->id.'" '
                     .'AND task_date>=FROM_UNIXTIME("'.$startDay.'") '
                     .'AND task_date<=FROM_UNIXTIME("'.$stopDay.'")  '
                     .'GROUP BY prj.rowid, ptt.task_date,ptt.fk_task '
                     .'ORDER BY prj.rowid,ptt.task_date,ptt.fk_task ASC   ';
             
-            /*$sql='SELECT DISTINCT firstname,lastname,userId '
-                .'FROM view_pjtTskUsr '
-                . 'WHERE projectId="'.$this->id.'" ';  */ 
             dol_syslog("timesheet::userreport::tasktimeList sql=".$sql, LOG_DEBUG);
             $resql=$this->db->query($sql);
             $numTaskTime=0;
@@ -104,7 +74,7 @@ class userTimesheet extends user
                     $numTaskTime = $this->db->num_rows($resql);
                     $i = 0;
                    
-                    // Loop on each record found, so each couple (project id, task id)
+                    // Loop on each record found,
                     while ($i < $numTaskTime)
                     {
                             
@@ -130,7 +100,7 @@ class userTimesheet extends user
             //html part init
             $HTMLTask='';
             $HTMLDay='';
-            $HTMLProject=$numTaskTime.' <br>';
+            $HTMLProject='';
             $HTMLRes='';
             //totals init
             $dayTotal=0;
@@ -144,7 +114,7 @@ class userTimesheet extends user
         {
             
 
-            if(($resArray[$CurDay][4]!=$resArray[$key][4])|| ($key==$numTaskTime-1) 
+            if(($resArray[$CurDay][4]!=$resArray[$key][4])
                     ||($resArray[$CurProjectId][0]!=$resArray[$key][0]))
             {
                 $TotalSec=$dayTotal%60;
@@ -158,7 +128,7 @@ class userTimesheet extends user
                 $projectTotal+=$dayTotal;
                 $dayTotal=0;
                 $CurDay=$key;
-                if(($resArray[$CurProjectId][0]!=$resArray[$key][0])|| ($key==$numTaskTime-1))
+                if(($resArray[$CurProjectId][0]!=$resArray[$key][0]))
                 {
                     $TotalSec=$projectTotal%60;
                     $TotalMin=(($projectTotal-$TotalSec)/60)%60;
