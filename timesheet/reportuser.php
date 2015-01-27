@@ -103,27 +103,36 @@ foreach($userList as $usr){
     $Form.='<option value="'.$usr->id.'">'.$usr->lastname.' - '.$usr->firstname.'</option>
             ';
 }
-
+$mode='PTD';
+$querryRes='';
+if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected']) 
+        &&!empty($_POST['Date']))
+{
+    $mode=$_POST['mode'];
+    $short=$_POST['short'];
+    $userSelected=$userList[$_POST['userSelected']];
+    $month=strtotime(str_replace('/', '-',$_POST['Date']));  
+    $firstDay=  strtotime('first day of this month',$month);
+    $lastDay=  strtotime('last day of this month',$month);
+    $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,$langs->trans(date('F',$month)));
+    
+}
 $Form.='</select></td>'
         .'<td><input type="date" id="Date" name="Date" size="10" value="'
         .date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/> </td>
-        <td><input type="submit" value="'.$langs->trans('getReport').'"></td>
+        <td><input type="checkbox" name="short" value="1" '
+        .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
+        . '<td><input type="radio" name="mode" value="PTD" '.($mode=='PTD'?'checked':'').'> Project/task/date<br>'
+        . '<input type="radio" name="mode" value="PDT" '.($mode=='PDT'?'checked':'').'>Project/date/task<br>'
+        . '<input type="radio" name="mode" value="DPT" '.($mode=='DPT'?'checked':'').'>Date/project/task</td>'
+        .'<td><input type="submit" value="'.$langs->trans('getReport').'"></td>
         </tr>
          
         </table></form>';
 echo $Form;
 // section to generate
-$querryRes='';
-if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected']) 
-        &&!empty($_POST['Date']))
-{  
-    $userSelected=$userList[$_POST['userSelected']];
-    $month=strtotime(str_replace('/', '-',$_POST['Date']));  
-    $firstDay=  strtotime('first day of this month',$month);
-    $lastDay=  strtotime('last day of this month',$month);
-    $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,'PTD',0,$langs->trans(date('F',$month)));
-    echo $querryRes;
-}
+
+echo $querryRes;
 llxFooter();
 $db->close();
 ?>
