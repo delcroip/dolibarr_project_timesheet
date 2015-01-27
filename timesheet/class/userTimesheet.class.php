@@ -35,14 +35,20 @@ class userTimesheet extends user
 	}
            
     public function getHTMLreport($startDay,$stopDay,$mode,$short,$periodTitle){
-    //
+    // HTML buffer
     
-    $HTMLuser='';
-    $HTMLTask='';
-    $HTMLproject='';
-    $taskTotal=0;
-    $projectTotal=0;
-    $userTotal=0;
+    $lvl1HTML='';
+    $lvl3HTML='';
+    $lvl2HTML='';
+    // partial totals
+    $lvl3Total=0;
+    $lvl2Total=0;
+    $lvl1Total=0;
+    
+    $Curlvl1=0;
+    $Curlvl2=0;
+    $Curlvl3=0;
+
     //mode 1, PER USER
     //get the list of user
     //get the list of task per user
@@ -50,9 +56,7 @@ class userTimesheet extends user
     //mode 2, PER TASK
     //list of task
     //list of user per task
-    switch ($mode) {
-        case 'PDT': //project  / task / Days //FIXME dayoff missing
-                $sql='SELECT prj.rowid as projectId, prj.`ref` as projectRef, '
+    $sql='SELECT prj.rowid as projectId, prj.`ref` as projectRef, '
                     .'prj.title as projectTitle,tsk.rowid as taskId, '
                     .'tsk.`ref` as taskRef,tsk.label as taskTitle,'
                     .'ptt.task_date, SUM(ptt.task_duration) as duration '
@@ -62,8 +66,43 @@ class userTimesheet extends user
                     .'WHERE fk_user="'.$this->id.'" '
                     .'AND task_date>=FROM_UNIXTIME("'.$startDay.'") '
                     .'AND task_date<=FROM_UNIXTIME("'.$stopDay.'")  '
-                    .'GROUP BY prj.rowid, ptt.task_date,ptt.fk_task '
-                    .'ORDER BY prj.rowid,ptt.task_date,ptt.fk_task ASC   ';
+                    .'GROUP BY prj.rowid, ptt.task_date,ptt.fk_task ';
+    switch ($mode) {
+        case 'PDT': //project  / task / Days //FIXME dayoff missing
+                
+                $sql.='ORDER BY prj.rowid,ptt.task_date,ptt.fk_task ASC   ';
+                //title
+                $lvl1Title=1;
+                $lvl2Title=4;
+                $lvl3Title=3;
+                //keys
+                $lvl1Key=0;
+                $lvl2Key=4;
+                break;
+        
+        case 'DPT'://day /project /task
+                $sql.='ORDER BY ptt.task_date,prj.rowid,ptt.fk_task ASC   ';
+                //title
+                $lvl1Title=4;
+                $lvl2Title=1;
+                $lvl3Title=3;
+                //keys
+                $lvl1Key=4;
+                $lvl2Key=0;
+                break;
+        case 'PTD'://day /project /task
+                $sql.='ORDER BY prj.rowid,ptt.fk_task,ptt.task_date ASC   ';
+                //title
+                $lvl1Title=1;
+                $lvl2Title=3;
+                $lvl3Title=4;
+                //keys
+                $lvl1Key=0;
+                $lvl2Key=1;
+                break;
+        default:
+            break;
+    }
             
             dol_syslog("timesheet::userreport::tasktimeList sql=".$sql, LOG_DEBUG);
             $resql=$this->db->query($sql);
@@ -96,96 +135,82 @@ class userTimesheet extends user
                     dol_print_error($this->db);
             }
         if($numTaskTime>0) 
-        {
-            //html part init
-            $HTMLTask='';
-            $HTMLDay='';
-            $HTMLProject='';
-            $HTMLRes='';
-            //totals init
-            $dayTotal=0;
-            $taskTotal=0;
-            $projectTotal=0;
-            // current
-            $CurProjectId=0;
-            $CurDay=0;
-            $CurTask=0;
+        {       
+           // current
+
+            
         foreach($resArray as $key => $item)
         {
             
 
-            if(($resArray[$CurDay][4]!=$resArray[$key][4])
-                    ||($resArray[$CurProjectId][0]!=$resArray[$key][0]))
+            if(($resArray[$Curlvl2][$lvl2Key]!=$resArray[$key][$lvl2Key])
+                    ||($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
             {
-                $TotalSec=$dayTotal%60;
-                $TotalMin=(($dayTotal-$TotalSec)/60)%60;
-                $TotalHours=($dayTotal-$TotalMin)/3600;
-                $HTMLProject.='<tr class="pair"><th></th><th>'
-                        .$resArray[$CurDay][4].'</th><th></th><th>'
+                $TotalSec=$lvl2Total%60;
+                $TotalMin=(($lvl2Total-$TotalSec)/60)%60;
+                $TotalHours=($lvl2Total-$TotalMin)/3600;
+                $lvl2HTML.='<tr class="pair"><th></th><th>'
+                        .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
                         .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
-                $HTMLProject.=$HTMLDay;
-                $HTMLDay='';
-                $projectTotal+=$dayTotal;
-                $dayTotal=0;
-                $CurDay=$key;
-                if(($resArray[$CurProjectId][0]!=$resArray[$key][0]))
+                $lvl2HTML.=$lvl3HTML;
+                $lvl3HTML='';
+                $lvl2Total+=$lvl2Total;
+                $lvl2Total=0;
+                $Curlvl2=$key;
+                if(($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
                 {
-                    $TotalSec=$projectTotal%60;
-                    $TotalMin=(($projectTotal-$TotalSec)/60)%60;
-                    $TotalHours=($projectTotal-$TotalMin)/3600;
-                    $HTMLuser.='<tr class="pair"><th>'
-                            .$resArray[$CurProjectId][1].'</th><th></th></th><th><th>'
+                    $TotalSec=$lvl2Total%60;
+                    $TotalMin=(($lvl2Total-$TotalSec)/60)%60;
+                    $TotalHours=($lvl2Total-$TotalMin)/3600;
+                    $lvl1HTML.='<tr class="pair"><th>'
+                            .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
                             .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
-                    $HTMLuser.=$HTMLProject;
-                    $HTMLProject='';
-                    $userTotal+=$projectTotal;
-                    $projectTotal=0;   
-                    $CurProjectId=$key;
+                    $lvl1HTML.=$lvl2HTML;
+                    $lvl2HTML='';
+                    $lvl1Total+=$lvl2Total;
+                    $lvl2Total=0;   
+                    $Curlvl1=$key;
                 }
             }
-                $HTMLDay.='<tr class="impair"><th></th><th></th><th>'
-                    .$resArray[$key][3].'</th><th>'
+            if(!$short)
+                $lvl3HTML.='<tr class="impair"><th></th><th></th><th>'
+                    .$resArray[$key][$lvl3Title].'</th><th>'
                     .date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
-                $dayTotal+=$resArray[$key][5];
+            $lvl2Total+=$resArray[$key][5];
             
 
         }
        //handle the last line 
-        $TotalSec=$dayTotal%60;
-        $TotalMin=(($dayTotal-$TotalSec)/60)%60;
-        $TotalHours=($dayTotal-$TotalMin)/3600;
-        $HTMLProject.='<tr class="pair"><th></th><th>'
-                .$resArray[$CurDay][4].'</th><th></th><th>'
+        $TotalSec=$lvl2Total%60;
+        $TotalMin=(($lvl2Total-$TotalSec)/60)%60;
+        $TotalHours=($lvl2Total-$TotalMin)/3600;
+        $lvl2HTML.='<tr class="pair"><th></th><th>'
+                    .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
+                    .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
+        $lvl2HTML.=$lvl3HTML;
+        $lvl2Total+=$lvl2Total;
+        $TotalSec=$lvl2Total%60;
+        $TotalMin=(($lvl2Total-$TotalSec)/60)%60;
+        $TotalHours=($lvl2Total-$TotalMin)/3600;
+        $lvl1HTML.='<tr class="pair"><th>'
+                .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
                 .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
-        $HTMLProject.=$HTMLDay;
-        $projectTotal+=$dayTotal;
-        $TotalSec=$projectTotal%60;
-        $TotalMin=(($projectTotal-$TotalSec)/60)%60;
-        $TotalHours=($projectTotal-$TotalMin)/3600;
-        $HTMLuser.='<tr class="pair"><th>'
-                .$resArray[$CurProjectId][1].'</th><th></th></th><th><th>'
-                .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
-        $HTMLuser.=$HTMLProject;
-        $userTotal+=$projectTotal;
+        $lvl1HTML.=$lvl2HTML;
+        $lvl1Total+=$lvl2Total;
         // make the whole result
-        $TotalSec=$userTotal%60;
-        $TotalMin=(($userTotal-$TotalSec)/60)%60;
-        $TotalHours=($userTotal-$TotalMin)/3600;
+        $TotalSec=$lvl1Total%60;
+        $TotalMin=(($lvl1Total-$TotalSec)/60)%60;
+        $TotalHours=($lvl1Total-$TotalMin)/3600;
 
         $HTMLRes='<table class="noborder" width="100%">'
                 .'<tr class="liste_titre"><th>'.$this->firstname.' - '
                 .$this->lastname.'</th><th></th><th>'
                 .$periodTitle.'</th><th>'
                 .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
-        $HTMLRes.=$HTMLuser;
+        $HTMLRes.=$lvl1HTML;
         $HTMLRes.='</table>';
         } // end is numtasktime
-            break;
-        
-        case 'DPT'://Project /user/task
-        default:
-            break;
-    }
+
 
 
 

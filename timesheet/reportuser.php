@@ -121,7 +121,7 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
     $month=strtotime(str_replace('/', '-',$_POST['Date']));  
     $firstDay=  strtotime('first day of this month',$month);
     $lastDay=  strtotime('last day of this month',$month);
-    $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,'PDT',0,$langs->trans(date('F',$month)));
+    $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,'PTD',0,$langs->trans(date('F',$month)));
     echo $querryRes;
 }
 llxFooter();
