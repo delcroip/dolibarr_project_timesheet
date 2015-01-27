@@ -56,7 +56,7 @@ $sql='SELECT DISTINCT usr.rowid as userId, usr.lastname , usr.firstname '
      .'FROM '.MAIN_DB_PREFIX.'user as usr ';
         
 if($user->admin){    
-$sql='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
+$sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
      .'ON ctc.fk_socpeople=usr.rowid '
      .'WHERE ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="180"';
 }else
