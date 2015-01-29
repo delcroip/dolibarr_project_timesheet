@@ -233,9 +233,9 @@ class modTimesheet extends DolibarrModules
                   $r++;
                   $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=Timesheet,fk_leftmenu=Report',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
-									'titre'=>'Report Project',
+									'titre'=>'projectReport',
 									'mainmenu'=>'project',
-                                                                        'leftmenu'=>'ReportProject',
+                                                                        'leftmenu'=>'projectReport',
 									'url'=>'/timesheet/reportproject.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>101,
@@ -247,9 +247,9 @@ class modTimesheet extends DolibarrModules
                   $r++;
                   $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=Timesheet,fk_leftmenu=Report',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
-									'titre'=>'Report User',
+									'titre'=>'userReport',
                                                                         'mainmenu'=>'project',
-                                                                        'leftmenu'=>'ReportUser',
+                                                                        'leftmenu'=>'userReport',
 									'url'=>'/timesheet/reportuser.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>102,
