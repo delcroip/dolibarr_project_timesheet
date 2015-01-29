@@ -156,7 +156,7 @@ class timesheet extends Task
                             ';               
         foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
         {
-                $today= strtotime($yearWeek.' +'.$dayOfWeek.' day');
+                $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
                 # to avoid editing if the task is closed 
                 if ($timetype=="days")
                 {
@@ -166,7 +166,7 @@ class timesheet extends Task
                 }
                 //if(($this->date_start > $today) OR ($this->date_end < $today ))
               
-                if((empty($this->date_start) || ($this->date_start <= $today)) && (empty($this->date_end) ||($this->date_end >= $today )))
+                if((empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today )))
                 {             
                     $tableRow .='<th>
                                 <input type="text" id="task['.$lineNumber.']['.$dayOfWeek.']" '.
