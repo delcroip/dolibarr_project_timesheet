@@ -79,16 +79,22 @@ class ProjectTimesheet extends Project
             }
     }
 
+
+    public function getHTMLreport($startDay,$stopDay,$mode,$short,$periodTitle){
+    // HTML buffer
     
-    public function getHTMLreport($startDay,$stopDay,$mode,$langsMonth){
-    //
+    $lvl1HTML='';
+    $lvl3HTML='';
+    $lvl2HTML='';
+    // partial totals
+    $lvl3Total=0;
+    $lvl2Total=0;
+    $lvl1Total=0;
     
-    $HTMLuser='';
-    $HTMLTask='';
-    $HTMLproject='';
-    $taskTotal=0;
-    $projectTotal=0;
-    $userTotal=0;
+    $Curlvl1=0;
+    $Curlvl2=0;
+    $Curlvl3=0;
+
     //mode 1, PER USER
     //get the list of user
     //get the list of task per user
@@ -96,286 +102,159 @@ class ProjectTimesheet extends Project
     //mode 2, PER TASK
     //list of task
     //list of user per task
-    switch ($mode) {
-        case 1:
-            $sql='SELECT DISTINCT usr.firstname, usr.lastname, usr.rowid as userId '
-                .'FROM '.MAIN_DB_PREFIX.'user as usr ' 
-                .'JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
-                .'ON ctc.fk_socpeople=usr.rowid '
-                .'JOIN '.MAIN_DB_PREFIX.'projet_task as tsk '
-                .'ON ctc.element_id=tsk.rowid '
-                .'WHERE tsk.fk_projet="'.$this->id.'" ';  
-            
-            /*$sql='SELECT DISTINCT firstname,lastname,userId '
-                .'FROM view_pjtTskUsr '
-                . 'WHERE projectId="'.$this->id.'" ';  */ 
-            dol_syslog("timesheet::report::userList sql=".$sql, LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            $numUsers=0;
-            $userList=array();
-            if ($resql)
-            {
-                    $numUsers = $this->db->num_rows($resql);
-                    $i = 0;
-                   
-                    // Loop on each record found, so each couple (project id, task id)
-                    while ($i < $numUsers)
-                    {
-                            $error=0;
-                            $obj = $this->db->fetch_object($resql);
-                            //$userList[$obj->userId]=$obj->firstname.' '.$obj->lastname;
-                            $userList[$obj->userId]=$obj->firstname.' '.$obj->lastname;
-                            $i++;
-                            
-                    }
-                    $this->db->free($resql);
-            }else
-            {
-                    dol_print_error($this->db);
-            }
- 
-            foreach($userList as $rowid => $user) {
-                
-                $sql='SELECT ptt.fk_task,tsk.`ref` as taskRef,tsk.label as taskTitle,'
-                    .'SUM(ptt.task_duration) as duration '
-                    .'FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt '
-                    .'JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task '
-                    .'WHERE fk_user="'.$rowid.'" '
-                    .'AND tsk.fk_projet="'.$this->id.'" '
-                    .'AND task_date>=FROM_UNIXTIME("'.$startDay.'") '
-                    .'AND task_date<=FROM_UNIXTIME("'.$stopDay.'") '
-                    .'GROUP BY ptt.fk_task '
-                    .'ORDER BY ptt.fk_task ASC';  
-                
-                        
-                dol_syslog("timesheet::report::userTaskList sql=".$sql, LOG_DEBUG);
-                $resql=$this->db->query($sql);
-                $numTask=0;
-                if ($resql)
-                {
-                    
-                        $numTask = $this->db->num_rows($resql);
-                        //to mask an user if there is no task found
-                       
-                        $i = 0;
-
-                        //
-                        while ($i < $numTask)
-                        {
-                                $error=0;
-                                $obj = $this->db->fetch_object($resql);
-                                $taskTotal=intval($obj->duration);
-                                $TotalSec=$taskTotal%60;
-                                $TotalMin=(($taskTotal-$TotalSec)/60)%60;
-                                $TotalHours=($taskTotal-$TotalMin)/3600;
-                                $HTMLuser.='<tr class="pair"><th></th><th>'.$obj->taskRef
-                                         .' - '.$obj->taskTitle.'</th><th>'
-                                         .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>
-                                    ';
-                                $HTMLuser.=$HTMLTask;
-                                $HTMLTask='';
-                                $userTotal+=$taskTotal;
-                                    
-                                $i++;
-                                
-                        }
-
-                        
-                        $this->db->free($resql);
-                }else
-                {
-                        dol_print_error($this->db);
-                }
-                if($userTotal>0){
-                    $TotalSec=$userTotal%60;
-                    $TotalMin=(($userTotal-$TotalSec)/60)%60;
-                    $TotalHours=($userTotal-$TotalMin)/3600;
-                    $HTMLProject.='<tr class="pair"><th>'.$user.'</th><th></th><th>'
-                            .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
-                    $HTMLProject.=$HTMLuser;
-                    $HTMLuser='';
-                    $projectTotal+=$userTotal;
-                    $userTotal=0;
-                }
-                
-            }
-            $TotalSec=$projectTotal%60;
-            $TotalMin=(($projectTotal-$TotalSec)/60)%60;
-            $TotalHours=($projectTotal-$TotalMin)/3600;
-
-            $HTMLRes='<table class="noborder" width="100%">'
-                    .'<tr class="liste_titre"><th width="30%">'.$this->ref.' - '
-                    .$this->title.'</th><th width="30%">'
-                    .$langsMonth.'</th><th width="30%">'
-                    .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
-            $HTMLRes.=$HTMLProject;
-            $HTMLRes.='</table>';
-            break;
-        
-        case 2://Project /user/task
-        default:
-                        $sql='SELECT DISTINCT usr.firstname, usr.lastname, usr.rowid as userId '
-                .'FROM '.MAIN_DB_PREFIX.'user as usr ' 
-                .'JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
-                .'ON ctc.fk_socpeople=usr.rowid '
-                .'JOIN '.MAIN_DB_PREFIX.'projet_task as tsk '
-                .'ON ctc.element_id=tsk.rowid '
-                .'WHERE tsk.fk_projet="'.$this->id.'" ';  
-            
-            /*$sql='SELECT DISTINCT firstname,lastname,userId '
-                .'FROM view_pjtTskUsr '
-                . 'WHERE projectId="'.$this->id.'" ';  */ 
-            dol_syslog("timesheet::report::userList sql=".$sql, LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            $numUsers=0;
-            $userList=array();
-            if ($resql)
-            {
-                    $numUsers = $this->db->num_rows($resql);
-                    $i = 0;
-                   
-                    // Loop on each record found, so each couple (project id, task id)
-                    while ($i < $numUsers)
-                    {
-                            $error=0;
-                            $obj = $this->db->fetch_object($resql);
-                            //$userList[$obj->userId]=$obj->firstname.' '.$obj->lastname;
-                            $userList[$obj->userId]=$obj->firstname.' '.$obj->lastname;
-                            $i++;
-                            
-                    }
-                    $this->db->free($resql);
-            }else
-            {
-                    dol_print_error($this->db);
-            }
- 
-            foreach($userList as $rowid => $user) {
-                
-                $sql='SELECT ptt.fk_task,tsk.`ref` as taskRef,tsk.label as taskTitle,'
+    
+  $sql='SELECT usr.firstname, usr.lastname, usr.rowid as userId, '
+                    .'ptt.fk_task,tsk.`ref` as taskRef,tsk.label as taskTitle,'
                     .'ptt.task_date, SUM(ptt.task_duration) as duration '
                     .'FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt '
+                    .'JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user=usr.rowid '
                     .'JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task '
-                    .'WHERE fk_user="'.$rowid.'" '
-                    .'AND tsk.fk_projet="'.$this->id.'" '
+                    .'WHERE tsk.fk_projet="'.$this->id.'" '
                     .'AND task_date>=FROM_UNIXTIME("'.$startDay.'") '
                     .'AND task_date<=FROM_UNIXTIME("'.$stopDay.'") '
-                    .'GROUP BY ptt.fk_task,ptt.task_date '
-                    .'ORDER BY ptt.fk_task,ptt.task_date ASC';  
+                    .'GROUP BY ptt.fk_user,ptt.fk_task,ptt.task_date '; 
+    switch ($mode) {
+        case 'UDT': //project  / task / Days //FIXME dayoff missing
                 
-                        
-                dol_syslog("timesheet::report::userTaskList sql=".$sql, LOG_DEBUG);
-                $resql=$this->db->query($sql);
-                $numTask=0;
-                $currentfkTask='';
-                $currentTaskTitle='';
-                $currentTaskRef='';
-                if ($resql)
-                {
-                    
-                        $numTask = $this->db->num_rows($resql);
-                        //to mask an user if there is no task found
-                       
-                        $i = 0;
-
-                        //
-                        while ($i < $numTask)
-                        {
-                                $error=0;
-                                $obj = $this->db->fetch_object($resql);
-                                if($i==0){
-                                    $currentTask=$obj->fk_task; 
-                                    $currentTaskRef=$obj->taskRef;
-                                    $currentTaskTitle=$obj->taskTitle;
-                                }
-                                if(($currentTask!=$obj->fk_task) 
-                                         && ($taskTotal>0))
-                                {
-                                $TotalSec=$taskTotal%60;
-                                $TotalMin=(($taskTotal-$TotalSec)/60)%60;
-                                $TotalHours=($taskTotal-$TotalMin)/3600;
-                                $HTMLuser.='<tr class="pair"><th></th><th>'.$currentTaskRef
-                                         .' - '.$currentTaskTitle.'</th><th>'
-                                         .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>
-                                    ';
-                                    $HTMLuser.=$HTMLTask;
-                                    $HTMLTask='';
-                                    $userTotal+=$taskTotal;
-                                    $taskTotal=0;
-                                    $currentTask=$obj->fk_task;
-                                    $currentTaskRef=$obj->taskRef;
-                                    $currentTaskTitle=$obj->taskTitle;
-                                    
-                                }
-                                $HTMLTask.='<tr class="impair"><th></th><th>'
-                                        .date('d/m/Y',  strtotime($obj->task_date)).'</th><th>'
-                                        .date('H:i',mktime(0,0,$obj->duration))
-                                        .'</th></tr>
-                                            ';
-                                $taskTotal+=intval($obj->duration);    
-                                $i++;
-                                
-                        }
-
-                        
-                        $this->db->free($resql);
-                }else
-                {
-                        dol_print_error($this->db);
-                }
-                if($taskTotal>0)
-                {
-                    $TotalSec=$taskTotal%60;
-                    $TotalMin=(($taskTotal-$TotalSec)/60)%60;
-                    $TotalHours=($taskTotal-$TotalMin)/3600;
-                    $HTMLuser.='<tr class="pair"><th></th><th>'.$currentTaskRef
-                             .' - '.$currentTaskTitle.'</th><th>'
-                             .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>
-                                    ';
-                    $HTMLuser.=$HTMLTask;
-                    $HTMLTask='';
-                    $userTotal+=$taskTotal;
-                    $taskTotal=0;
-                }
-                if($userTotal>0){
-                    $TotalSec=$userTotal%60;
-                    $TotalMin=(($userTotal-$TotalSec)/60)%60;
-                    $TotalHours=($userTotal-$TotalMin)/3600;
-                    $HTMLProject.='<tr class="pair"><th>'.$user.'</th><th></th><th>'
-                            .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
-                    $HTMLProject.=$HTMLuser;
-                    $HTMLuser='';
-                    $projectTotal+=$userTotal;
-                    $userTotal=0;
-                }
-                
-            }
-            $TotalSec=$projectTotal%60;
-            $TotalMin=(($projectTotal-$TotalSec)/60)%60;
-            $TotalHours=($projectTotal-$TotalMin)/3600;
-
-            $HTMLRes='<table class="noborder" width="100%">'
-                    .'<tr class="liste_titre"><th width="30%">'.$this->ref.' - '
-                    .$this->title.'</th><th width="30%">'
-                    .$langsMonth.'</th><th width="30%">'
-                    .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
-            $HTMLRes.=$HTMLProject;
-            $HTMLRes.='</table>';
-                 $sql='SELECT fk_task,task_date, SUM(task_duration) '
-                    .'FROM '.MAIN_DB_PREFIX.'projet_task_time'
-                    .'WHERE fk_user="'.$user.'" AND task_date>="'.$startDay.'" '
-                    .'AND task_date<="'.$stopDay.'" '
-                    .'GROUP BY fk_task,task_date'
-                    .'ORDER BY task_date,fk_task ASC';  
-            
+                $sql.='ORDER BY ptt.fk_user,ptt.task_date,ptt.fk_task ASC   ';
+                //title
+                $lvl1Title=1;
+                $lvl2Title=4;
+                $lvl3Title=3;
+                //keys
+                $lvl1Key=0;
+                $lvl2Key=4;
+                break;
         
-        
+        case 'DUT'://day /project /task
+                $sql.='ORDER BY ptt.task_date,ptt.fk_user,ptt.fk_task ASC   ';
+                //title
+                $lvl1Title=4;
+                $lvl2Title=1;
+                $lvl3Title=3;
+                //keys
+                $lvl1Key=4;
+                $lvl2Key=0;
+                break;
+        case 'UTD'://day /project /task
+                $sql.='ORDER BY ptt.fk_user,ptt.fk_task,ptt.task_date ASC   ';
+                //title
+                $lvl1Title=1;
+                $lvl2Title=3;
+                $lvl3Title=4;
+                //keys
+                $lvl1Key=0;
+                $lvl2Key=1;
+                break;
+        default:
             break;
     }
+            
+            dol_syslog("timesheet::userreport::tasktimeList sql=".$sql, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            $numTaskTime=0;
+            $resArray=array();
+            if ($resql)
+            {
+                    $numTaskTime = $this->db->num_rows($resql);
+                    $i = 0;
+                   
+                    // Loop on each record found,
+                    while ($i < $numTaskTime)
+                    {
+                            
+                        $error=0;
+                        $obj = $this->db->fetch_object($resql);
+                        $resArray[$i]=[$obj->userId,
+                                    $obj->lastname.' - '.$obj->firstname,
+                                    $obj->taskId,
+                                    $obj->taskRef.' - '.$obj->taskTitle,
+                                    $obj->task_date,
+                                    $obj->duration ];
+                            
+                        $i++;
+                            
+                    }
+                    $this->db->free($resql);
+            }else
+            {
+                    dol_print_error($this->db);
+            }
+        if($numTaskTime>0) 
+        {       
+           // current
+
+            
+        foreach($resArray as $key => $item)
+        {
+            
+
+            if(($resArray[$Curlvl2][$lvl2Key]!=$resArray[$key][$lvl2Key])
+                    ||($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
+            {
+                $lvl2HTML.='<tr class="pair"><th></th><th>'
+                        .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
+                        .$this->formatTime($lvl3Total).'</th></tr>';
+                $lvl2HTML.=$lvl3HTML;
+                $lvl3HTML='';
+                $lvl2Total+=$lvl3Total;
+                $lvl3Total=0;
+                $Curlvl2=$key;
+                if(($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
+                {
+                    $lvl1HTML.='<tr class="pair"><th>'
+                            .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
+                            .$this->formatTime($lvl2Total).'</th></tr>';
+                    $lvl1HTML.=$lvl2HTML;
+                    $lvl2HTML='';
+                    $lvl1Total+=$lvl2Total;
+                    $lvl2Total=0;   
+                    $Curlvl1=$key;
+                }
+            }
+            if(!$short){
+                $lvl3HTML.='<tr class="impair"><th></th><th></th><th>'
+                    .$resArray[$key][$lvl3Title].'</th><th>'
+                    .date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
+            }
+            $lvl3Total+=$resArray[$key][5];
+            
+
+        }
+       //handle the last line 
+        $lvl2HTML.='<tr class="pair"><th></th><th>'
+                    .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
+                    .$this->formatTime($lvl3Total).'</th></tr>';
+        $lvl2HTML.=$lvl3HTML;
+        $lvl2Total+=$lvl3Total;
+        $lvl1HTML.='<tr class="pair"><th>'
+                .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
+                .$this->formatTime($lvl2Total).'</th></tr>';
+        $lvl1HTML.=$lvl2HTML;
+        $lvl1Total+=$lvl2Total;
+        // make the whole result
+        $HTMLRes='<table class="noborder" width="100%">'
+                .'<tr class="liste_titre"><th>'.$this->ref.' - '
+                .$this->title.'</th><th>'
+                .$periodTitle.'</th><th></th><th>'
+                .$this->formatTime($lvl1Total).'</th></tr>';
+        $HTMLRes.=$lvl1HTML;
+        $HTMLRes.='</table>';
+        } // end is numtasktime
+
 
 
 
     return $HTMLRes;
     }
+    private function formatTime($duration)
+    {
+        $TotalSec=$duration%60;
+        $TotalMin=(($duration-$TotalSec)/60)%60;
+        $TotalHours=($duration-$TotalMin)/3600;
+        return $TotalHours.':'.sprintf("%02s",$TotalMin);
+
+    }
     
  }
+ 

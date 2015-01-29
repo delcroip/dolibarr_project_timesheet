@@ -103,37 +103,40 @@ foreach($projectList as $pjt){
     $Form.='<option value="'.$pjt->id.'" '.(($_POST['projectSelected']==$pjt->id)?"selected":'').' >'.$pjt->ref.' - '.$pjt->title.'</option>
             ';
 }
-
-$Form.='</select></td>'
-        .'<td><input type="date" id="Date" name="Date" size="10" value="'
-        .date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/> </td>
-        <td><input type="submit" value="'.$langs->trans('getReport').'"></td>
-        <td><input type="checkbox" name="short" value="1" '
-        .(($mode==1)?'checked>':'>').$langs->trans('short').'</td>
-        </tr>
-         
-        </table>
-        
-        </form>';
-echo $Form;
-// section to generate
+$mode='UTD';
 $querryRes='';
-$projectSelected='';
 if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected']) 
         &&!empty($_POST['Date']))
 {
+    $mode=$_POST['mode'];
+    $short=$_POST['short'];
     $projectSelected=$projectList[$_POST['projectSelected']];
-    $mode=($_POST['short'])?1:2;
     $month=strtotime(str_replace('/', '-',$_POST['Date']));  
     $firstDay=  strtotime('first day of this month',$month);
     $lastDay=  strtotime('last day of this month',$month);
-        if($projectSelected->isOpen($firstDay, $lastDay)){
-            $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$langs->trans(date('F',$month)));
-        }else{
-            $querryRes=$langs->trans('projectClosed');
-        }   
-        
+    $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,$langs->trans(date('F',$month)));
+    
 }
+$Form.='</select></td>'
+        .'<td><input type="date" id="Date" name="Date" size="10" value="'
+        .date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/> </td>
+        <td><input type="checkbox" name="short" value="1" '
+        .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
+        . '<td><input type="radio" name="mode" value="UTD" '.($mode=='UTD'?'checked':'')
+        .'> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>'
+        . '<input type="radio" name="mode" value="UDT" '.($mode=='UDT'?'checked':'')
+        .'> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>'
+        . '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'')
+        .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
+        .'<td><input type="submit" value="'.$langs->trans('getReport').'"></td>
+        </tr>
+         
+        </table></form>';
+echo $Form;
+
+
+
+
 echo $querryRes;
 llxFooter();
 $db->close();
