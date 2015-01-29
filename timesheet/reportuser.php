@@ -122,9 +122,12 @@ $Form.='</select></td>'
         .date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/> </td>
         <td><input type="checkbox" name="short" value="1" '
         .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
-        . '<td><input type="radio" name="mode" value="PTD" '.($mode=='PTD'?'checked':'').'> Project/task/date<br>'
-        . '<input type="radio" name="mode" value="PDT" '.($mode=='PDT'?'checked':'').'>Project/date/task<br>'
-        . '<input type="radio" name="mode" value="DPT" '.($mode=='DPT'?'checked':'').'>Date/project/task</td>'
+        . '<td><input type="radio" name="mode" value="PTD" '.($mode=='PTD'?'checked':'')
+        .'> '.$langs->trans('Project').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>'
+        . '<input type="radio" name="mode" value="PDT" '.($mode=='PDT'?'checked':'')
+        .'> '.$langs->trans('Project').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>'
+        . '<input type="radio" name="mode" value="DPT" '.($mode=='DPT'?'checked':'')
+        .'> '.$langs->trans('Date').' / '.$langs->trans('Project').' / '.$langs->trans('Task').'<br>'
         .'<td><input type="submit" value="'.$langs->trans('getReport').'"></td>
         </tr>
          
