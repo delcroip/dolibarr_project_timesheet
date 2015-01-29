@@ -146,15 +146,15 @@ class userTimesheet extends user
             if(($resArray[$Curlvl2][$lvl2Key]!=$resArray[$key][$lvl2Key])
                     ||($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
             {
-                $TotalSec=$lvl2Total%60;
-                $TotalMin=(($lvl2Total-$TotalSec)/60)%60;
-                $TotalHours=($lvl2Total-$TotalMin)/3600;
+                $TotalSec=$lvl3Total%60;
+                $TotalMin=(($lvl3Total-$TotalSec)/60)%60;
+                $TotalHours=($lvl3Total-$TotalMin)/3600;
                 $lvl2HTML.='<tr class="pair"><th></th><th>'
                         .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
                         .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
                 $lvl2HTML.=$lvl3HTML;
                 $lvl3HTML='';
-                $lvl2Total+=$lvl2Total;
+                $lvl2Total+=$lvl3Total;
                 $lvl2Total=0;
                 $Curlvl2=$key;
                 if(($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
@@ -176,19 +176,19 @@ class userTimesheet extends user
                 $lvl3HTML.='<tr class="impair"><th></th><th></th><th>'
                     .$resArray[$key][$lvl3Title].'</th><th>'
                     .date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
-            $lvl2Total+=$resArray[$key][5];
+            $lvl3Total+=$resArray[$key][5];
             
 
         }
        //handle the last line 
-        $TotalSec=$lvl2Total%60;
-        $TotalMin=(($lvl2Total-$TotalSec)/60)%60;
-        $TotalHours=($lvl2Total-$TotalMin)/3600;
+        $TotalSec=$lvl3Total%60;
+        $TotalMin=(($lvl3Total-$TotalSec)/60)%60;
+        $TotalHours=($lvl3Total-$TotalMin)/3600;
         $lvl2HTML.='<tr class="pair"><th></th><th>'
                     .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
                     .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
         $lvl2HTML.=$lvl3HTML;
-        $lvl2Total+=$lvl2Total;
+        $lvl2Total+=$lvl3Total;
         $TotalSec=$lvl2Total%60;
         $TotalMin=(($lvl2Total-$TotalSec)/60)%60;
         $TotalHours=($lvl2Total-$TotalMin)/3600;
