@@ -146,25 +146,19 @@ class userTimesheet extends user
             if(($resArray[$Curlvl2][$lvl2Key]!=$resArray[$key][$lvl2Key])
                     ||($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
             {
-                $TotalSec=$lvl3Total%60;
-                $TotalMin=(($lvl3Total-$TotalSec)/60)%60;
-                $TotalHours=($lvl3Total-$TotalMin)/3600;
                 $lvl2HTML.='<tr class="pair"><th></th><th>'
                         .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
-                        .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
+                        .$this->formatTime($lvl3Total).'</th></tr>';
                 $lvl2HTML.=$lvl3HTML;
                 $lvl3HTML='';
                 $lvl2Total+=$lvl3Total;
-                $lvl2Total=0;
+                $lvl3Total=0;
                 $Curlvl2=$key;
                 if(($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
                 {
-                    $TotalSec=$lvl2Total%60;
-                    $TotalMin=(($lvl2Total-$TotalSec)/60)%60;
-                    $TotalHours=($lvl2Total-$TotalMin)/3600;
                     $lvl1HTML.='<tr class="pair"><th>'
                             .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
-                            .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
+                            .$this->formatTime($lvl2Total).'</th></tr>';
                     $lvl1HTML.=$lvl2HTML;
                     $lvl2HTML='';
                     $lvl1Total+=$lvl2Total;
@@ -181,32 +175,22 @@ class userTimesheet extends user
 
         }
        //handle the last line 
-        $TotalSec=$lvl3Total%60;
-        $TotalMin=(($lvl3Total-$TotalSec)/60)%60;
-        $TotalHours=($lvl3Total-$TotalMin)/3600;
         $lvl2HTML.='<tr class="pair"><th></th><th>'
                     .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
-                    .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
+                    .$this->formatTime($lvl3Total).'</th></tr>';
         $lvl2HTML.=$lvl3HTML;
         $lvl2Total+=$lvl3Total;
-        $TotalSec=$lvl2Total%60;
-        $TotalMin=(($lvl2Total-$TotalSec)/60)%60;
-        $TotalHours=($lvl2Total-$TotalMin)/3600;
         $lvl1HTML.='<tr class="pair"><th>'
                 .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
-                .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
+                .$this->formatTime($lvl2Total).'</th></tr>';
         $lvl1HTML.=$lvl2HTML;
         $lvl1Total+=$lvl2Total;
         // make the whole result
-        $TotalSec=$lvl1Total%60;
-        $TotalMin=(($lvl1Total-$TotalSec)/60)%60;
-        $TotalHours=($lvl1Total-$TotalMin)/3600;
-
         $HTMLRes='<table class="noborder" width="100%">'
                 .'<tr class="liste_titre"><th>'.$this->firstname.' - '
-                .$this->lastname.'</th><th></th><th>'
-                .$periodTitle.'</th><th>'
-                .$TotalHours.':'.sprintf("%02s",$TotalMin).'</th></tr>';
+                .$this->lastname.'</th><th>'
+                .$periodTitle.'</th><th></th><th>'
+                .$this->formatTime($lvl1Total).'</th></tr>';
         $HTMLRes.=$lvl1HTML;
         $HTMLRes.='</table>';
         } // end is numtasktime
@@ -215,6 +199,15 @@ class userTimesheet extends user
 
 
     return $HTMLRes;
+    }
+    
+    private function formatTime($duration)
+    {
+        $TotalSec=$duration%60;
+        $TotalMin=(($duration-$TotalSec)/60)%60;
+        $TotalHours=($duration-$TotalMin)/3600;
+        return $TotalHours.':'.sprintf("%02s",$TotalMin);
+
     }
     
  }      
