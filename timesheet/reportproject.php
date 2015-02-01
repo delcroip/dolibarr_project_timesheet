@@ -48,7 +48,7 @@ if(isset($_POST['Date'])){
 {
         $yearWeek=date('Y\WW');
 }
-llxHeader('','timesheet','');
+llxHeader('',$langs->trans('projectReport'),'');
 $mode=($_POST['short']==1)?1:2;
 dol_include_once('/timesheet/class/projectTimesheet.class.php');
 

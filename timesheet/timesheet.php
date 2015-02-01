@@ -105,7 +105,7 @@ if ($action == 'add')
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','timesheet','');
+llxHeader('',$langs->trans('Timesheet'),'');
 
 
 //if week set go to the current week

@@ -48,7 +48,7 @@ if(isset($_POST['Date'])){
         $yearWeek=date('Y\WW');
 }
 
-llxHeader('','timesheet','');
+llxHeader('',$langs->trans('userReport'),'');
 
 dol_include_once('/timesheet/class/userTimesheet.class.php');
 //querry to get the project where the user have priviledge; either project responsible or admin

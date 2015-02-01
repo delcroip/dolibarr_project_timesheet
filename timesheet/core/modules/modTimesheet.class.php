@@ -204,11 +204,11 @@ class modTimesheet extends DolibarrModules
 		 $r++;
 		//
 		// Example to declare a Left Menu entry into an existing Top menu entry:
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=Timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'Timesheet',
-									'mainmenu'=>'Timesheet',
-                                                                        'leftmenu'=>'Timesheet',
+									'mainmenu'=>'timesheet',
+                                                                        'leftmenu'=>'timesheet',
 									'url'=>'/timesheet/timesheet.php?action=list',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
@@ -217,12 +217,12 @@ class modTimesheet extends DolibarrModules
 									'target'=>'',
 									'user'=>2);
                   $r++;
-                $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=Timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
-									'titre'=>'Report',
-									'mainmenu'=>'Timesheet',
-                                                                        'leftmenu'=>'Report',
-									'url'=>'/timesheet/reportproject.php?action=report',
+									'titre'=>'userReport',
+									'mainmenu'=>'timesheet',
+                                                                        'leftmenu'=>'timesheet',
+									'url'=>'/timesheet/reportuser.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
 									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -231,7 +231,7 @@ class modTimesheet extends DolibarrModules
 									'user'=>2);
                
                   $r++;
-                  $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=Timesheet,fk_leftmenu=Report',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                  $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'projectReport',
 									'mainmenu'=>'project',
@@ -245,6 +245,7 @@ class modTimesheet extends DolibarrModules
 									'user'=>2);
                
                   $r++;
+                  /*
                   $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=Timesheet,fk_leftmenu=Report',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'userReport',
@@ -258,6 +259,9 @@ class modTimesheet extends DolibarrModules
 									'target'=>'',
 									'user'=>2);
                   $r++;
+                   
+                   */
+                  
 //                 $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=project',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 //									'type'=>'left',			                // This is a Left menu entry
 //									'titre'=>'Project',
