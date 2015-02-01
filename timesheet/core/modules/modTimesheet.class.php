@@ -192,8 +192,8 @@ class modTimesheet extends DolibarrModules
 		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
 									'type'=>'top',			                // This is a Top menu entry
 									'titre'=>'Timesheet',
-									'mainmenu'=>'Timesheet',
-									'leftmenu'=>'Timesheet',
+									'mainmenu'=>'timesheet',
+									'leftmenu'=>'timesheet',
 									'url'=>'/timesheet/timesheet.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
