@@ -41,13 +41,19 @@ $langs->load('timesheet@timesheet');
 
 //find the right week
 if(isset($_POST['Date'])){
-    $yearWeek==date('Y\WW',strtotime(str_replace('/', '-',$_POST['Date'])));   
+    $yearWeek=date('Y\WW',strtotime(str_replace('/', '-',$_POST['Date']).' first monday of this month'));
+    $_SESSION["yearWeek"]=$yearWeek;
 }else if (isset($_GET['yearweek'])) {
-    $_SESSION["yearWeek"]=$yearWeek=$_GET['yearweek'];
-}else if(empty($_GET['yearweek']) || !is_string($_GET['yearweek']))
+    $yearWeek=$_GET['yearweek'];
+    $_SESSION["yearWeek"]=$yearWeek;
+}else if(isset($_SESSION["yearWeek"]))
 {
-        $yearWeek=date('Y\WW');
+    $yearWeek=$_SESSION["yearWeek"];
+}else
+{
+    $yearWeek=date('Y\WW');
 }
+
 llxHeader('',$langs->trans('projectReport'),'');
 $mode=($_POST['short']==1)?1:2;
 dol_include_once('/timesheet/class/projectTimesheet.class.php');
@@ -114,13 +120,15 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
     $month=strtotime(str_replace('/', '-',$_POST['Date']));  
     $firstDay=  strtotime('first day of this month',$month);
     $lastDay=  strtotime('last day of this month',$month);
-    $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,$langs->trans(date('F',$month)));
+    $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
+            $langs->trans(date('F',$month)),
+            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
     
 }
 $Form.='</select></td>'
         .'<td><input type="date" id="Date" name="Date" size="10" value="'
-        .date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/> </td>
-        <td><input type="checkbox" name="short" value="1" '
+        .((isset($_POST['Date']))?$_POST['Date']:date('d/m/Y',strtotime( $yearWeek.' +0 day'))
+        .'"/> </td><td><input type="checkbox" name="short" value="1" '
         .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
         . '<td><input type="radio" name="mode" value="UTD" '.($mode=='UTD'?'checked':'')
         .'> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>'
@@ -129,9 +137,9 @@ $Form.='</select></td>'
         . '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'')
         .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
         .'<td><input type="submit" value="'.$langs->trans('getReport').'"></td>
-        </tr>
-         
+        </tr>         
         </table></form>';
+
 echo $Form;
 
 
