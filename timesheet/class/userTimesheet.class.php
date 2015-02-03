@@ -33,8 +33,15 @@ class userTimesheet extends user
             $this->firstname =$firstname;
             $this->lastname= $lastname;
 	}
-           
-    public function getHTMLreport($startDay,$stopDay,$mode,$short,$periodTitle){
+    
+     /*
+      * startday ; start of report
+      * stopday: end of Querry
+      * mode layout PTD project/task /day , PDT, DPT
+      * periodeTitle give a name to the report
+      * timemode show time using day or hours (==0)
+      */
+    public function getHTMLreport($startDay,$stopDay,$mode,$short,$periodTitle,$hoursperdays){
     // HTML buffer
     
     $lvl1HTML='';
@@ -148,7 +155,7 @@ class userTimesheet extends user
             {
                 $lvl2HTML.='<tr class="pair"><th></th><th>'
                         .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
-                        .$this->formatTime($lvl3Total).'</th></tr>';
+                        .$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
                 $lvl2HTML.=$lvl3HTML;
                 $lvl3HTML='';
                 $lvl2Total+=$lvl3Total;
@@ -158,7 +165,7 @@ class userTimesheet extends user
                 {
                     $lvl1HTML.='<tr class="pair"><th>'
                             .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
-                            .$this->formatTime($lvl2Total).'</th></tr>';
+                            .$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
                     $lvl1HTML.=$lvl2HTML;
                     $lvl2HTML='';
                     $lvl1Total+=$lvl2Total;
@@ -167,9 +174,16 @@ class userTimesheet extends user
                 }
             }
             if(!$short)
+            {
                 $lvl3HTML.='<tr class="impair"><th></th><th></th><th>'
-                    .$resArray[$key][$lvl3Title].'</th><th>'
-                    .date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
+                    .$resArray[$key][$lvl3Title].'</th><th>';
+                if($hoursperdays==0)
+                {
+                    $lvl3HTML.=date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
+                }else{
+                    $lvl3HTML.=$resArray[$key][5]/3600/$hoursperdays.'</th></tr>';
+                }
+            }
             $lvl3Total+=$resArray[$key][5];
             
 
@@ -177,12 +191,12 @@ class userTimesheet extends user
        //handle the last line 
         $lvl2HTML.='<tr class="pair"><th></th><th>'
                     .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
-                    .$this->formatTime($lvl3Total).'</th></tr>';
+                    .$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
         $lvl2HTML.=$lvl3HTML;
         $lvl2Total+=$lvl3Total;
         $lvl1HTML.='<tr class="pair"><th>'
                 .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
-                .$this->formatTime($lvl2Total).'</th></tr>';
+                .$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
         $lvl1HTML.=$lvl2HTML;
         $lvl1Total+=$lvl2Total;
         // make the whole result
@@ -190,7 +204,7 @@ class userTimesheet extends user
                 .'<tr class="liste_titre"><th>'.$this->firstname.' - '
                 .$this->lastname.'</th><th>'
                 .$periodTitle.'</th><th></th><th>'
-                .$this->formatTime($lvl1Total).'</th></tr>';
+                .$this->formatTime($lvl1Total,$hoursperdays).'</th></tr>';
         $HTMLRes.=$lvl1HTML;
         $HTMLRes.='</table>';
         } // end is numtasktime
@@ -201,12 +215,20 @@ class userTimesheet extends user
     return $HTMLRes;
     }
     
-    private function formatTime($duration)
+    private function formatTime($duration,$hoursperdays)
     {
-        $TotalSec=$duration%60;
-        $TotalMin=(($duration-$TotalSec)/60)%60;
-        $TotalHours=($duration-$TotalMin)/3600;
-        return $TotalHours.':'.sprintf("%02s",$TotalMin);
+        if($hoursperdays==0)
+        {
+            $TotalSec=$duration%60;
+            $TotalMin=(($duration-$TotalSec)/60)%60;
+            $TotalHours=($duration-$TotalMin)/3600;
+            return $TotalHours.':'.sprintf("%02s",$TotalMin);
+        }else
+        {
+            $totalDay=$duration/3600/$hoursperdays;
+            return strval($totalDay);
+            
+        }
 
     }
     

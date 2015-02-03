@@ -99,12 +99,15 @@ $Form='<form action="?action=reportuser" method="POST">
         <tr >
         <td><select  name="userSelected">
         ';
+
 foreach($userList as $usr){
     $Form.='<option value="'.$usr->id.'">'.$usr->lastname.' - '.$usr->firstname.'</option>
             ';
 }
 $mode='PTD';
 $querryRes='';
+$hoursperdays=(TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0;
+print 'hoursperdays:'.$hoursperdays.' '.TIMESHEET_TIME_TYPE.' '.TIMESHEET_DAY_DURATION.'<br>';
 if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected']) 
         &&!empty($_POST['Date']))
 {
@@ -114,7 +117,8 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
     $month=strtotime(str_replace('/', '-',$_POST['Date']));  
     $firstDay=  strtotime('first day of this month',$month);
     $lastDay=  strtotime('last day of this month',$month);
-    $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,$langs->trans(date('F',$month)));
+    $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
+            $langs->trans(date('F',$month)),$hoursperdays);
     
 }
 $Form.='</select></td>'
