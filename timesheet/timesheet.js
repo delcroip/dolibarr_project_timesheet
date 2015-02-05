@@ -121,16 +121,19 @@ function updateTotal(days,mode){
             var id='task['+i+']['+days+']';   
             var taskTime= new Date(0);
             var element=document.getElementById(id);
-            if (element.value)
-            {   
-                parseTime(element.value,taskTime);
-            }
-            else
+            if(element)
             {
-                parseTime(element.innerHTML,taskTime);
+                if (element.value)
+                {   
+                    parseTime(element.value,taskTime);
+                }
+                else
+                {
+                    parseTime(element.innerHTML,taskTime);
+                }
+                total.setHours(total.getHours()+taskTime.getHours());
+                total.setMinutes(total.getMinutes()+taskTime.getMinutes());
             }
-            total.setHours(total.getHours()+taskTime.getHours());
-            total.setMinutes(total.getMinutes()+taskTime.getMinutes());
         }
         document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
         //addText(,total.getHours()+':'+total.getMinutes());
@@ -143,14 +146,17 @@ function updateTotal(days,mode){
             var id='task['+i+']['+days+']';   
             var taskTime= new Date(0);
             var element=document.getElementById(id);
-            if (element.value)
-            {   
-                total+=element.value;
-
-               }
-            else
+            if(element)
             {
-                total+=element.innerHTML;
+                if (element.value)
+                {   
+                    total+=parseInt(element.value);
+
+                   }
+                else
+                {
+                    total+=parseInt(element.innerHTML);
+                }
             }
         }
         document.getElementById('totalDay['+days+']').innerHTML = total;
