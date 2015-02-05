@@ -49,7 +49,7 @@ if (! $res) die("Include of main fails");
 
 $id		= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$yearWeek	= GETPOST('yearweek');
+
 
 
 // Load traductions files requiredby by page
@@ -109,13 +109,15 @@ llxHeader('',$langs->trans('Timesheet'),'');
 
 
 //if week set go to the current week
-if (isset($_GET['yearweek'])) {
-    $_SESSION["yearWeek"]=$yearWeek=$_GET['yearweek'];
+if (isset($_GET['yearweek']) && $_GET['yearweek']!='') {
+    $yearWeek=$_GET['yearweek'];
+    $_SESSION["yearWeek"]=$yearWeek;
 }else if(isset($_SESSION["yearWeek"])){
     $yearWeek=$_SESSION["yearWeek"];
-}else if(empty($_GET['yearweek']) || !is_string($_GET['yearweek']))
+}else 
 {
         $yearWeek=date('Y\WW');
+        $_SESSION["yearWeek"]=$yearWeek;
 }
 
 $_SESSION["db"]=$db;
