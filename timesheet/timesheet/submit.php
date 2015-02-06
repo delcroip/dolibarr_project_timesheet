@@ -119,6 +119,7 @@ function postActualsSecured($db,$user,$tabPost,$timestamp)
     }
         
     $ret=0;
+    $tmpRet=0;
     $_SESSION['timeSpendCreated']=0;
     $_SESSION['timeSpendDeleted']=0;
     $_SESSION['timeSpendModified']=0;
@@ -150,6 +151,9 @@ function postActualsSecured($db,$user,$tabPost,$timestamp)
             
             $ret+=postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$storedWeekdays[$dayKey]);
         }
+        if($ret!=$tmpRet){ // something changed so need to updae the total duration
+            $tasktime->updateTimeUsed();
+        }
     } 
     unset($_SESSION["timestamps"][$timestamp]);
     return $ret;
@@ -178,14 +182,14 @@ function postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$date)
         {
             if($tasktime->timespent_duration>0){ 
                 dol_syslog("Timesheet::Submit.php  taskTimeUpdate", LOG_DEBUG);
-                if($tasktime->updateTimeSpent($user)>=0)
+                if($tasktime->updateTimeSpent($user,0)>=0)
                 {
                     $ret++; 
                     $_SESSION['timeSpendModified']++;
                 }
             }else {
                 dol_syslog("Timesheet::Submit.php  taskTimeDelete", LOG_DEBUG);
-                if($tasktime->delTimeSpent($user)>=0)
+                if($tasktime->delTimeSpent($user,0)>=0)
                 {
                     $ret++;
                     $_SESSION['timeSpendDeleted']++;

@@ -287,6 +287,31 @@ class timesheet extends Task
         }
         return $taskTab;
     }
+        public function updateTimeUsed()
+    {
+          $sql ="UPDATE ".MAIN_DB_PREFIX."projet_task AS pt "
+               ."SET pt.duration_effective=(SELECT SUM(ptt.task_duration) "
+               ."FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt "
+               ."WHERE ptt.fk_task ='".$this->id."') "
+               ."WHERE pt.rowid='".$this->id."' ";
+   
+            dol_syslog(get_class($this)."::UpdateTimeUsed sql=".$sql, LOG_DEBUG);
+
+
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                    return 1;
+            }
+            else
+            {
+                    $this->error="Error ".$this->db->lasterror();
+                    dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+
+                    return -1;
+            }	
+
+    }
 	
 	
 }
