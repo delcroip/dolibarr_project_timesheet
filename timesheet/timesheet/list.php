@@ -162,7 +162,7 @@ $Form .= '
     <input type="hidden" id="numberOfLines" name="numberOfLines" '.
     'value="'.$i.'"/>
         ';
-$Form .= '<table class="noborder"  align="right">
+$Form .= '<table class="noborder"  width="100%">
             <tr>
                 <th width="19%"></th>
                 <th width="18%"></th>
