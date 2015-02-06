@@ -92,7 +92,14 @@ $Form .='<form name="timesheet" action="?action=submit&yearweek='.$yearWeek.'" m
 //retrives and show all the task where the user is defined as responsible or contributor
 $tasksList=array();
 $sql ="SELECT DISTINCT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
-$sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$user->id."'";
+$sql.='JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
+if(TIMESHEET_HIDE_DRAFT)
+     $sql.='JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
+$sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$user->id."' ";
+if(TIMESHEET_HIDE_DRAFT)
+     $sql.='AND prj.fk_statut="1" ';
+$sql.="ORDER BY tsk.fk_projet,tsk.dateo ";
+
 
 dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
 $resql=$db->query($sql);

@@ -20,7 +20,13 @@
  *  \brief      Page to setup project module
  */
 
-require '../../../main.inc.php';
+// Change this following line to use the correct relative path (../, ../../, etc)
+$res=0;
+if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
+if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
+if (! $res && file_exists("../../../main.inc.php")) $res=@include '../../../main.inc.php';     // Used on dev env only
+
+if (! $res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -43,6 +49,8 @@ switch($action)
         $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", GETPOST('hoursperday','alpha'), 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", GETPOST('hidedraft','alpha'), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         // error handling
         if (! $error)
@@ -89,7 +97,15 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                     '.$langs->trans("hoursperdays").'
                 <th>
                 <th>
-                    <input type="text" name="hoursperday" value="8" onblur="regexEvent(this,event,\''.$timetype.'\')" >
+                    <input type="text" name="hoursperday" value="'.TIMESHEET_DAY_DURATION.'"  >
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    '.$langs->trans("hidedraft").'
+                <th>
+                <th>
+                    <input type="checkbox" name="hidedraft" value="1" '.((TIMESHEET_HIDE_DRAFT=='1')?'checked':'').' >
                 </th>
             </tr>
             </table>

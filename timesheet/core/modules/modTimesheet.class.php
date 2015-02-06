@@ -113,6 +113,7 @@ class modTimesheet extends DolibarrModules
 		$this->const = array();
                 $this->const[0] = array("TIMESHEET_TIME_TYPE","chaine","hours","mode d'affichage des timesheet"); // hours or days
                 $this->const[1] = array("TIMESHEET_DAY_DURATION","chaine","8","nombre d'heure par jour, utilisé dans l'affichage par jour"); 
+                $this->const[2] = array("TIMESHEET_HIDE_DRAFT","chaine","0","option pour masquer les projet brouillion"); 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1
