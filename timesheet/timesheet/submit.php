@@ -154,6 +154,7 @@ function postActualsSecured($db,$user,$tabPost,$timestamp)
         if($ret!=$tmpRet){ // something changed so need to updae the total duration
             $tasktime->updateTimeUsed();
         }
+        $tmpRet=$ret;
     } 
     unset($_SESSION["timestamps"][$timestamp]);
     return $ret;
