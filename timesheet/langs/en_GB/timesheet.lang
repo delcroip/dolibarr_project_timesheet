@@ -14,3 +14,4 @@ projectReport=   Project report
 userReport =   User report
 getReport = Get report
 short = Short version
+hidedraft = Hide the draft projects

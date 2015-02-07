@@ -109,7 +109,7 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                 </th>
             </tr>
             </table>
-            <input type="submit" value="'.$langs->trans('save').'">
+            <input type="submit" value="'.$langs->trans('Save').'">
             </from>';
 $Form.='<script type="text/javascript" src="timesheet.js"></script>';
 print $Form;
