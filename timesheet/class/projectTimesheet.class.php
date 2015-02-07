@@ -104,7 +104,7 @@ class ProjectTimesheet extends Project
     //list of user per task
     
   $sql='SELECT usr.firstname, usr.lastname, usr.rowid as userId, '
-                    .'ptt.fk_task,tsk.`ref` as taskRef,tsk.label as taskTitle,'
+                    .'ptt.fk_task as taskId,tsk.`ref` as taskRef,tsk.label as taskTitle,'
                     .'ptt.task_date, SUM(ptt.task_duration) as duration '
                     .'FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt '
                     .'JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user=usr.rowid '
@@ -144,7 +144,7 @@ class ProjectTimesheet extends Project
                 $lvl3Title=4;
                 //keys
                 $lvl1Key=0;
-                $lvl2Key=1;
+                $lvl2Key=2;
                 break;
         default:
             break;

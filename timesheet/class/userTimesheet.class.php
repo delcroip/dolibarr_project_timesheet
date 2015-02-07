@@ -105,7 +105,7 @@ class userTimesheet extends user
                 $lvl3Title=4;
                 //keys
                 $lvl1Key=0;
-                $lvl2Key=1;
+                $lvl2Key=2;
                 break;
         default:
             break;

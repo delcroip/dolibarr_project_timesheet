@@ -127,7 +127,7 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
 }
 $Form.='</select></td>'
         .'<td><input type="date" id="Date" name="Date" size="10" value="'
-        .((isset($_POST['Date']))?$_POST['Date']:date('d/m/Y',strtotime( $yearWeek.' +0 day'))
+        .((isset($_POST['Date']))?$_POST['Date']:date('d/m/Y',strtotime( $yearWeek.' +0 day')))
         .'"/> </td><td><input type="checkbox" name="short" value="1" '
         .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
         . '<td><input type="radio" name="mode" value="UTD" '.($mode=='UTD'?'checked':'')
@@ -136,9 +136,8 @@ $Form.='</select></td>'
         .'> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>'
         . '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'')
         .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
-        .'<td><input type="submit" value="'.$langs->trans('getReport').'"></td>
-        </tr>         
-        </table></form>';
+        .'<td><input type="submit" value="'.$langs->trans('getReport')
+        .'"></td></tr></table></form>';
 
 echo $Form;
 
