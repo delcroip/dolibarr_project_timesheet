@@ -94,8 +94,8 @@ class timesheet extends Task
         $sql .= "AND (ptt.fk_user='".$userid."') ";
        # $sql .= "AND WEEKOFYEAR(ptt.task_date)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
-        $sql .= "AND (ptt.task_date>FROM_UNIXTIME('".strtotime($yearWeek.' -1 day')."')) ";
-        $sql .= "AND (ptt.task_date<FROM_UNIXTIME('".strtotime($yearWeek.' +6 day')."'));";
+        $sql .= "AND (ptt.task_date>=FROM_UNIXTIME('".strtotime($yearWeek)."')) ";
+        $sql .= "AND (ptt.task_date<FROM_UNIXTIME('".strtotime($yearWeek.' + 7 days')."'));";
 
         dol_syslog(get_class($this)."::fetchActuals sql=".$sql, LOG_DEBUG);
 
