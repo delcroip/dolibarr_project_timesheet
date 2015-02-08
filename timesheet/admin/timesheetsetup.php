@@ -42,15 +42,19 @@ if (!$user->admin) {
 }
 $action = GETPOST('action','alpha');
 $timetype=TIMESHEET_TIME_TYPE;
+$hoursperday=TIMESHEET_DAY_DURATION;
+$hidedraft=TIMESHEET_HIDE_DRAFT;
 switch($action)
 {
     case save:
         $timetype=GETPOST('timeType','alpha');
+        $hoursperday=GETPOST('hoursperday','alpha');
+        $hidedraft=GETPOST('hidedraft','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
-        $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", GETPOST('hoursperday','alpha'), 'chaine', 0, '', $conf->entity);
+        $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
-        $res=dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", GETPOST('hidedraft','alpha'), 'chaine', 0, '', $conf->entity);
+        $res=dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", $hidedraft, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         // error handling
         if (! $error)
@@ -97,7 +101,7 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                     '.$langs->trans("hoursperdays").'
                 <th>
                 <th>
-                    <input type="text" name="hoursperday" value="'.TIMESHEET_DAY_DURATION.'"  >
+                    <input type="text" name="hoursperday" value="'.$hoursperday.'"  >
                 </th>
             </tr>
             <tr>
@@ -105,7 +109,7 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                     '.$langs->trans("hidedraft").'
                 <th>
                 <th>
-                    <input type="checkbox" name="hidedraft" value="1" '.((TIMESHEET_HIDE_DRAFT=='1')?'checked':'').' >
+                    <input type="checkbox" name="hidedraft" value="1" '.(($hidedraft=='1')?'checked':'').' >
                 </th>
             </tr>
             </table>
