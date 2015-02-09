@@ -23,8 +23,10 @@
       switch(type)
       {
           case 'days':
+              if(objet.value!=objet.defaultValue)
+                objet.style.backgroundColor = "lightgreen";
               var regex= /^[0-9]{1}([.,]{1}[0-9]{1})?$/;
-   
+
               if(regex.test(objet.value) )
               { 
                 var tmp=objet.value.replace(',','.');
@@ -39,18 +41,23 @@
                     objet.value= '1.5';
                 }
               }else{
+                 objet.style.backgroundColor = "red";
                  objet.value= '0';
             }
           break; 
           case 'hours':
+              if(objet.value!=objet.defaultValue)
+                objet.style.backgroundColor = "lightgreen";
               var regex= /^[0-9]{1,2}:[0-9]{2}$/;
               var regex2=/^[0-9]{1,2}$/;
               if(!regex.test(objet.value))
               { 
                   if(regex2.test(objet.value))
                     objet.value=objet.value+':00';
-                  else
+                  else{
                     objet.value='00:00';
+                    objet.style.backgroundColor = "red";
+                }
               }
               break;
           case 'timeChar':
