@@ -125,7 +125,7 @@ $_SESSION["db"]=$db;
 
 switch($action)
 {
-    case 'reportproject':
+ /*   case 'reportproject':
         if (!empty($_POST['Date']))
         {
             $_SESSION["yearWeek"]=date('Y\WW',strtotime(str_replace('/', '-',$_POST['Date'])));   
@@ -134,7 +134,7 @@ switch($action)
         break;
      case 'reportuser':
         dol_include_once('/timesheet/timesheet/reportuser.php');
-        break;  
+        break;  */
     case 'submit':
        dol_include_once('/timesheet/timesheet/submit.php');
         //check the if the needed POST value are defined and is those value weren't already posted
