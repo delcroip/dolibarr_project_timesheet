@@ -93,11 +93,11 @@ $Form .='<form name="timesheet" action="?action=submit&yearweek='.$yearWeek.'" m
 $tasksList=array();
 $sql ="SELECT DISTINCT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
 $sql.='JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
-if(TIMESHEET_HIDE_DRAFT)
-     $sql.='JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
+if(TIMESHEET_HIDE_DRAFT=='1'){
+     $sql.='JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';}
 $sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$user->id."' ";
-if(TIMESHEET_HIDE_DRAFT)
-     $sql.='AND prj.fk_statut="1" ';
+if(TIMESHEET_HIDE_DRAFT=='1'){
+     $sql.='AND prj.fk_statut="1" ';}
 $sql.="ORDER BY tsk.fk_projet,tsk.dateo ";
 
 
@@ -193,7 +193,7 @@ $Form .='</form>
          updateTotal(0,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(1,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(2,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(3,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(4,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(5,\''.TIMESHEET_TIME_TYPE.'\');updateTotal(6,\''.TIMESHEET_TIME_TYPE.'\');
          </script>';
 // $db->close();
-echo$Form;
+echo $Form;
 
 
 
