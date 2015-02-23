@@ -221,7 +221,7 @@ class userTimesheet extends user
         {
             $TotalSec=$duration%60;
             $TotalMin=(($duration-$TotalSec)/60)%60;
-            $TotalHours=($duration-$TotalMin)/3600;
+            $TotalHours=$TotalHours=($duration-$TotalMin*60- $TotalSec)/3600;
             return $TotalHours.':'.sprintf("%02s",$TotalMin);
         }else
         {
