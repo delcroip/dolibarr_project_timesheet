@@ -165,12 +165,12 @@ class ProjectTimesheet extends Project
                             
                         $error=0;
                         $obj = $this->db->fetch_object($resql);
-                        $resArray[$i]=[$obj->userId,
+                        $resArray[$i]=array($obj->userId,
                                     $obj->lastname.' - '.$obj->firstname,
                                     $obj->taskId,
                                     $obj->taskRef.' - '.$obj->taskTitle,
                                     $obj->task_date,
-                                    $obj->duration ];
+                                    $obj->duration );
                             
                         $i++;
                             

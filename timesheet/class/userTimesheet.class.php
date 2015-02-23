@@ -126,12 +126,12 @@ class userTimesheet extends user
                             
                         $error=0;
                         $obj = $this->db->fetch_object($resql);
-                        $resArray[$i]=[$obj->projectId,
+                        $resArray[$i]=array($obj->projectId,
                                     $obj->projectRef.' - '.$obj->projectTitle,
                                     $obj->taskId,
                                     $obj->taskRef.' - '.$obj->taskTitle,
                                     $obj->task_date,
-                                    $obj->duration ];
+                                    $obj->duration );
                             
                         $i++;
                             
