@@ -42,7 +42,7 @@
                 }
               }else{
                  objet.style.backgroundColor = "red";
-                 objet.value= '0';
+                 objet.value= objet.defaultValue;
             }
           break; 
           case 'hours':
@@ -55,7 +55,7 @@
                   if(regex2.test(objet.value))
                     objet.value=objet.value+':00';
                   else{
-                    objet.value='00:00';
+                    objet.value=objet.defaultValue;
                     objet.style.backgroundColor = "red";
                 }
               }
