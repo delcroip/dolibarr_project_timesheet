@@ -25,6 +25,7 @@ $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
 if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
 if (! $res && file_exists("../../../main.inc.php")) $res=@include '../../../main.inc.php';     // Used on dev env only
+if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include "/var/www/dolibarr/htdocs/main.inc.php";     // Used on dev env only
 
 if (! $res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -48,9 +49,13 @@ $hidezeros=TIMESHEET_HIDE_ZEROS;
 switch($action)
 {
     case save:
+        if(GETPOST('timeType','alpha')==''){ // if no POST data
+           break;
+        }
         $timetype=GETPOST('timeType','alpha');
         $hoursperday=GETPOST('hoursperday','alpha');
         $hidedraft=GETPOST('hidedraft','alpha');
+        $hidezeros=GETPOST('hidezeros','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
@@ -120,7 +125,7 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                     '.$langs->trans("hidezeros").'
                 <th>
                 <th>
-                    <input type="checkbox" name="hidedraft" value="1" '.(($hidezeros=='1')?'checked':'').' >
+                    <input type="checkbox" name="hidezeros" value="1" '.(($hidezeros=='1')?'checked':'').' >
                 </th>
             </tr>
             </table>

@@ -110,6 +110,7 @@ function parseTime(timeStr, dt) {
  
     var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
     if (!time) {
+        dt.setHours(0);
         return NaN;
     }
     var hours = parseInt(time[1], 10);
