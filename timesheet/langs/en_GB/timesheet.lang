@@ -16,3 +16,5 @@ getReport = Get report
 short = Short version
 hidedraft = Hide the draft projects
 hidezeros = Hide the 00:00
+Progress= Progress
+hideprogress= Hide task progress

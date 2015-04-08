@@ -53,37 +53,51 @@ for ($i=0;$i<7;$i++)
 $Form .='<form name="timesheet" action="?action=submit&yearweek='.$yearWeek.'" method="POST" > 
           <table class="noborder" width="100%">
             <tr class="liste_titre" >
-                <th width="19%">
+                <th width="18%">
                     '.$langs->trans('Project').'
                 </th>
                 <th width="18%">
                     '.$langs->trans('Tasks').'
-                </th>
-                <th width="7%">
+                </th>';
+if (TIMESHEET_HIDE_PROGRESS==0)
+{
+$Form .='       <th width="6%">
                     '.$langs->trans('DateStart').'
                 </th>
-                <th width="7%">
+                <th width="6%">
                     '.$langs->trans('DateEnd').'
                 </th>
-                <th width="7%">
+                <th width="10%">
+                    '.$langs->trans('Progress').'
+                </th>';
+}else{
+   $Form .='    <th width="11%">
+                    '.$langs->trans('DateStart').'
+                </th>
+                <th width="11%">
+                    '.$langs->trans('DateEnd').'
+                </th>';
+}
+
+$Form .='       <th width="6%">
                      '.$langs->trans(date('l',strtotime($weekDays[0]))).'<br>'.$weekDays[0]."
                 </th>
-                <th width='7%'> 
+                <th width='6%'> 
                     ".$langs->trans(date('l',strtotime($weekDays[1]))).'<br>'.$weekDays[1]."
                 </th> 
-                <th width='7%'> 
+                <th width='6%'> 
                     ".$langs->trans(date('l',strtotime($weekDays[2]))).'<br>'.$weekDays[2]."
                 </th>
-                <th width='7%'> 
+                <th width='6%'> 
                     ".$langs->trans(date('l',strtotime($weekDays[3]))).'<br>'.$weekDays[3]."
                 </th>
-                <th width='7%'> 
+                <th width='6%'> 
                     ".$langs->trans(date('l',strtotime($weekDays[4]))).'<br>'.$weekDays[4]."
                  </th>
-                <th width='7%'> 
+                <th width='6%'> 
                     ".$langs->trans(date('l',strtotime($weekDays[5]))).'<br>'.$weekDays[5]."
                 </th>
-                <th width='7%'> 
+                <th width='6%'> 
                     ".$langs->trans(date('l',strtotime($weekDays[6]))).'<br>'.$weekDays[6].'
                     <input type="hidden" name="yearWeek" value="'.$yearWeek.'" /> 
                 </th>
@@ -155,7 +169,7 @@ foreach($tasksList as $row)
                 $row->getActuals($yearWeek,$user->id); 
                 $_SESSION["timestamps"][$tmstp]['tasks'][$row->id]=array();
                 $_SESSION["timestamps"][$tmstp]['tasks'][$row->id]=$row->getTaskTab();
-                $Form.=$row->getFormLineSecured( $yearWeek,$i,TIMESHEET_TIME_TYPE,TIMESHEET_DAY_DURATION,TIMESHEET_HIDE_ZEROS); 
+                $Form.=$row->getFormLineSecured( $yearWeek,$i,TIMESHEET_TIME_TYPE,TIMESHEET_DAY_DURATION,TIMESHEET_HIDE_ZEROS,TIMESHEET_HIDE_PROGRESS); 
                 //$Form.=$row->getFormLine( $yearWeek,$i);
                 $i++;
                 
@@ -163,27 +177,32 @@ foreach($tasksList as $row)
 
 }
 // Total fields
+
+$Form .= '<tr><th> </th></tr>
+            <tr>
+                <th></th>
+                <th></th>';
+if(TIMESHEET_HIDE_PROGRESS==0)
+{
+$Form .= '      <th></th>
+                ';
+}
+$Form .='       <th></th>
+                <th> TOTAL </th>
+                <th><div id="totalDay[0]">&nbsp;</div></th>
+                <th><div id="totalDay[1]">&nbsp;</div></th>
+                <th><div id="totalDay[2]">&nbsp;</div></th>
+                <th><div id="totalDay[3]">&nbsp;</div></th>
+                <th><div id="totalDay[4]">&nbsp;</div></th>
+                <th><div id="totalDay[5]">&nbsp;</div></th>
+                <th><div id="totalDay[6]">&nbsp;</div></th>
+            </tr>
+        </table>';
 $Form .= '
-    </table>
     <input type="hidden" name="timestamp" value="'.$tmstp.'"/>
     <input type="hidden" id="numberOfLines" name="numberOfLines" '.
     'value="'.$i.'"/>
         ';
-$Form .= '<table class="noborder"  width="100%">
-            <tr>
-                <th width="19%"></th>
-                <th width="18%"></th>
-                <th width="7%"></th>
-                <th width="7%">Total</th>
-                <th width="7%"><div id="totalDay[0]">&nbsp;</div></th>
-                <th width="7%"><div id="totalDay[1]">&nbsp;</div></th>
-                <th width="7%"><div id="totalDay[2]">&nbsp;</div></th>
-                <th width="7%"><div id="totalDay[3]">&nbsp;</div></th>
-                <th width="7%"><div id="totalDay[4]">&nbsp;</div></th>
-                <th width="7%"><div id="totalDay[5]">&nbsp;</div></th>
-                <th width="7%"><div id="totalDay[6]">&nbsp;</div></th>
-            </tr>
-        </table>';
 $Form .= '<input type="submit" value="'.$langs->trans('Save').'" />
          <input type="button" value="'.$langs->trans('Cancel').'" onClick="document.location.href=\'?action=list&yearweek='.$yearWeek.'\'"/>';
 

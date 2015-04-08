@@ -47,11 +47,11 @@ class timesheet extends Task
     }
     public function getTaskInfo()
     {
-            $sql = "SELECT p.title,p.rowid, pt.label,pt.dateo,pt.datee ";	
-            $sql .= "FROM ".MAIN_DB_PREFIX."projet_task AS pt ";
-            $sql .= "LEFT JOIN ".MAIN_DB_PREFIX."projet as p ";
-            $sql .= "ON pt.fk_projet=p.rowid ";
-            $sql .= "WHERE pt.rowid ='".$this->id."';";
+            $sql = "SELECT p.title,p.rowid, pt.label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective";	
+            $sql .=" FROM ".MAIN_DB_PREFIX."projet_task AS pt";
+            $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
+            $sql .=" ON pt.fk_projet=p.rowid";
+            $sql .=" WHERE pt.rowid ='".$this->id."'";
             #$sql .= "WHERE pt.rowid ='1'";
             dol_syslog(get_class($this)."::fetchtasks sql=".$sql, LOG_DEBUG);
 
@@ -72,6 +72,8 @@ class timesheet extends Task
                             #$this->date_end			= strtotime($obj->datee.' +0 day');
                             $this->date_start			= $this->db->jdate($obj->dateo);
                             $this->date_end			= $this->db->jdate($obj->datee);
+                            $this->duration_effective           = $obj->duration_effective;		// total of time spent on this task
+                            $this->planned_workload             = $obj->planned_workload;
                     }
                     $this->db->free($resql);
                     return 1;
@@ -88,14 +90,14 @@ class timesheet extends Task
     public function getActuals( $yearWeek,$userid)
     {
 
-        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date ";	
-        $sql .= "FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt ";
-        $sql .= "WHERE ptt.fk_task='".$this->id."' ";
-        $sql .= "AND (ptt.fk_user='".$userid."') ";
+        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
+        $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
+        $sql .= " WHERE ptt.fk_task='".$this->id."' ";
+        $sql .= " AND (ptt.fk_user='".$userid."') ";
        # $sql .= "AND WEEKOFYEAR(ptt.task_date)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
-        $sql .= "AND (ptt.task_date>=FROM_UNIXTIME('".strtotime($yearWeek)."')) ";
-        $sql .= "AND (ptt.task_date<FROM_UNIXTIME('".strtotime($yearWeek.' + 7 days')."'));";
+        $sql .= " AND (ptt.task_date>=FROM_UNIXTIME('".strtotime($yearWeek)."')) ";
+        $sql .= " AND (ptt.task_date<FROM_UNIXTIME('".strtotime($yearWeek.' + 7 days')."'));";
 
         dol_syslog(get_class($this)."::fetchActuals sql=".$sql, LOG_DEBUG);
 
@@ -130,8 +132,7 @@ class timesheet extends Task
         }
     }	 
 
-
-    public function getFormLineSecured( $yearWeek,$lineNumber,$timetype="hours",$dayshours="8",$hidezeros="0")
+    public function getFormLineSecured( $yearWeek,$lineNumber,$timetype="hours",$dayshours="8",$hidezeros="0",$hideprogress="0")
     {
 
       //don't show task without open day in the week
@@ -154,6 +155,11 @@ class timesheet extends Task
                                 ".date('d/m/y',$this->date_end).'
                             </th>
                             ';               
+        if($hideprogress==0){
+                $tableRow .='<th>'.$this->parseTaskTime($this->duration_effective)
+                                .'/'.$this->parseTaskTime($this->planned_workload)
+                        .'('.floor($this->duration_effective/$this->planned_workload*100).'%)</th>';
+        }
         foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
         {
                 $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
@@ -311,6 +317,14 @@ class timesheet extends Task
                     return -1;
             }	
 
+    }
+    function parseTaskTime($taskTime){
+        
+        $ret=floor($taskTime/3600).":".str_pad (floor($taskTime%3600/60),2,"0",STR_PAD_LEFT);
+        
+        return $ret;
+        //return '00:00';
+          
     }
 	
 	

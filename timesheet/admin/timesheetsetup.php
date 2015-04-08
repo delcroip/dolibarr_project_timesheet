@@ -46,6 +46,7 @@ $timetype=TIMESHEET_TIME_TYPE;
 $hoursperday=TIMESHEET_DAY_DURATION;
 $hidedraft=TIMESHEET_HIDE_DRAFT;
 $hidezeros=TIMESHEET_HIDE_ZEROS;
+$hideprogress=TIMESHEET_HIDE_PROGRESS;
 switch($action)
 {
     case save:
@@ -56,6 +57,7 @@ switch($action)
         $hoursperday=GETPOST('hoursperday','alpha');
         $hidedraft=GETPOST('hidedraft','alpha');
         $hidezeros=GETPOST('hidezeros','alpha');
+        $hideprogress=GETPOST('hideprogress','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
@@ -63,6 +65,8 @@ switch($action)
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", $hidedraft, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_ZEROS", $hidezeros, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db, "TIMESHEET_HIDE_PROGRESS", $hideprogress, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         // error handling
         if (! $error)
@@ -126,6 +130,14 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                 <th>
                 <th>
                     <input type="checkbox" name="hidezeros" value="1" '.(($hidezeros=='1')?'checked':'').' >
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    '.$langs->trans("hideprogress").'
+                <th>
+                <th>
+                    <input type="checkbox" name="hideprogress" value="1" '.(($hideprogress=='1')?'checked':'').' >
                 </th>
             </tr>
             </table>

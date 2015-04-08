@@ -17,3 +17,5 @@ getReport = Get relazione
 short = Versione corta
 hidedraft = Nascondere i progetti di progetti
 hidezeros = Nascondere i 00:00
+Progress= Avanzamento
+hideprogress= Nascondi avanzamento dell'attività
