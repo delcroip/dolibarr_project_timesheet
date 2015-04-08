@@ -16,3 +16,4 @@ userReport =   Rapporto utente
 getReport = Get relazione
 short = Versione corta
 hidedraft = Nascondere i progetti di progetti
+hidezeros = Nascondere i 00:00

@@ -15,3 +15,4 @@ userReport =   Rapport d'utilisateur
 getReport = Obtenir le rapport
 short = Version courte
 hidedraft = Masquer les projets brouillon
+hidezeros = Masquer les 00:00

@@ -44,6 +44,7 @@ $action = GETPOST('action','alpha');
 $timetype=TIMESHEET_TIME_TYPE;
 $hoursperday=TIMESHEET_DAY_DURATION;
 $hidedraft=TIMESHEET_HIDE_DRAFT;
+$hidezeros=TIMESHEET_HIDE_ZEROS;
 switch($action)
 {
     case save:
@@ -55,6 +56,8 @@ switch($action)
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", $hidedraft, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db, "TIMESHEET_HIDE_ZEROS", $hidezeros, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         // error handling
         if (! $error)
@@ -110,6 +113,14 @@ $Form ='<form name="settings" action="?action=save" method="POST" >
                 <th>
                 <th>
                     <input type="checkbox" name="hidedraft" value="1" '.(($hidedraft=='1')?'checked':'').' >
+                </th>
+            </tr>
+              <tr>
+                <th>
+                    '.$langs->trans("hidezeros").'
+                <th>
+                <th>
+                    <input type="checkbox" name="hidedraft" value="1" '.(($hidezeros=='1')?'checked':'').' >
                 </th>
             </tr>
             </table>
