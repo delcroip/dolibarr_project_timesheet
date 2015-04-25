@@ -138,7 +138,7 @@ class timesheet extends Task
       //don't show task without open day in the week
             #$dateStart=strtotime($yearWeek);
              # insert the task id and the form line to retrieve the data later 
-        $tableRow = "<tr>
+        $tableRow = "<tr class=\"".(($lineNumber%2=='0')?'pair':'impair')."\">
                             <th>
                             <a href=\"".DOL_URL_ROOT."/projet/fiche.php?id=".$this->fk_project2."\">"
                                 .$this->ProjectTitle
