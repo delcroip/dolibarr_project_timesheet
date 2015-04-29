@@ -22,10 +22,12 @@ $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
 if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
 if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // Used on dev env only
-if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
+if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include '/var/www/dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
-
+//month / year form
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+$htmlother = new FormOther($db);
 
 
 $id		= GETPOST('id','int');
@@ -112,23 +114,28 @@ foreach($projectList as $pjt){
 $mode='UTD';
 $querryRes='';
 if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected']) 
-        &&!empty($_POST['Date']))
+        &&!empty($_POST['month']))
 {
     $mode=$_POST['mode'];
     $short=$_POST['short'];
     $projectSelected=$projectList[$_POST['projectSelected']];
-    $month=strtotime(str_replace('/', '-',$_POST['Date']));  
-    $firstDay=  strtotime('first day of this month',$month);
-    $lastDay=  strtotime('last day of this month',$month);
+    $year=$_POST['year'];
+    $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
+    $firstDay= strtotime('01-'.$month.'-'. $year);
+    $lastDay=  strtotime('last day of this month',$firstDay);
     $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',$month)),
             (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
     
+}else
+{
+    $year=date('Y',strtotime( $yearWeek.' +0 day'));
+    $month=date('m',strtotime( $yearWeek.' +0 day'));
 }
+
 $Form.='</select></td>'
-        .'<td><input type="date" id="Date" name="Date" size="10" value="'
-        .((isset($_POST['Date']))?$_POST['Date']:date('d/m/Y',strtotime( $yearWeek.' +0 day')))
-        .'"/> </td><td><input type="checkbox" name="short" value="1" '
+        .'<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3)
+        .' </td><td><input type="checkbox" name="short" value="1" '
         .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
         . '<td><input type="radio" name="mode" value="UTD" '.($mode=='UTD'?'checked':'')
         .'> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>'
