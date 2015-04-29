@@ -20,7 +20,8 @@ $yearWeek=$_SESSION["yearWeek"];
 $db=$_SESSION["db"];
 dol_include_once('/timesheet/class/timesheet.class.php');
  # will generate the form line
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+$form = new Form($db);
 // navigation form 	
 $Form =  '<table class="noborder" width="50%">
             <tr> 
@@ -30,8 +31,8 @@ $Form =  '<table class="noborder" width="50%">
                 </th> 
                 <th>
                     <form name="goToDate" action="?action=goToDate" method="POST" >
-                     '.$langs->trans("GoToDate").': <input type="date" id="toDate" name="toDate" size="10" value="'.date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/>   '.
-                    '<input type="submit" value="Go" /></form>
+                     '.$langs->trans("GoToDate").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)//<input type="date" id="toDate" name="toDate" size="10" value="'.date('d/m/Y',strtotime( $yearWeek.' +0 day')).'"/>   '.
+                    .'<input type="submit" value="Go" /></form>
                 </th> 
                 <th> 
                     <a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days +1 week")).
