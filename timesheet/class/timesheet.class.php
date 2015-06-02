@@ -39,12 +39,13 @@ class timesheet extends Task
 		$this->date_end=strtotime('now -1 year');
 		$this->date_start=strtotime('now -1 year');
 	}
-    public function initTimeSheet($weekWorkLoad,$taskTimeId) 
+
+        /*public function initTimeSheet($weekWorkLoad,$taskTimeId) 
     {
             $this->weekWorkLoad=$weekWorkLoad;
             $this->taskTimeId=$taskTimeId;
 
-    }
+    }*/
     public function getTaskInfo()
     {
             $sql = "SELECT p.title,p.rowid, pt.label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective";	
@@ -283,17 +284,17 @@ class timesheet extends Task
         $taskTab['weekWorkLoad']=array();
         foreach($this->weekWorkload as $key => $value)
         {
-            $taskTab['weekWorkLoad'][$key]=$this->weekWorkload[$key];
+            $taskTab['weekWorkLoad'][$key]=$value;
         }
         $taskTab[]='taskTimeId';
         $taskTab['taskTimeId']=array();
         foreach($this->taskTimeId as $key => $value)
         {
-            $taskTab['taskTimeId'][$key]=$this->taskTimeId[$key];
+           $taskTab['taskTimeId'][$key]=$this->taskTimeId[$key];
         }
         return $taskTab;
     }
-        public function updateTimeUsed()
+public function updateTimeUsed()
     {
           $sql ="UPDATE ".MAIN_DB_PREFIX."projet_task AS pt "
                ."SET pt.duration_effective=(SELECT SUM(ptt.task_duration) "

@@ -159,7 +159,7 @@ $_SESSION["timestamps"][$tmstp]["sent"]=false;
 $_SESSION["timestamps"][$tmstp]["YearWeek"]=$yearWeek;
 $_SESSION["timestamps"][$tmstp]["weekDays"]=$weekDays;
 //create the task list:
-$_SESSION["timestamps"][$tmstp]["YearWeek"]['tasks']=array();
+$_SESSION["timestamps"][$tmstp]['tasks']=array();
 $i=0;
 foreach($tasksList as $row)
 {

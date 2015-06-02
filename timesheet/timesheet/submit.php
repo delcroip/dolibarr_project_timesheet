@@ -126,19 +126,20 @@ function postActualsSecured($db,$user,$tabPost,$timestamp)
         /*
          * For each task store in matching the session timestamp
          */
+    $userid=(version_compare(DOL_VERSION, "3.7", "<"))?$user:$user->id;
     foreach($storedTasks as  $taskId => $taskItem)
     {
       //  $taskId=$taskItem["id"];
         $tasktimeIds=array();
         $tasktimeIds=$taskItem["taskTimeId"];
         $tasktime=new timesheet($db,$taskId);
-        $tasktime->timespent_fk_user=$user;
+        $tasktime->timespent_fk_user=$userid;
         $tasktime->fetch($taskId);
         dol_syslog("Timesheet::Submit.php::postActualsSecured  task=".$tasktime->id, LOG_DEBUG);
         //use the data stored
         //$tasktime->initTimeSheet($taskItem['weekWorkLoad'], $taskItem['taskTimeId']);
         //refetch actuals
-        $tasktime->getActuals($yearWeek, $user); 
+        $tasktime->getActuals($yearWeek, $userid); 
         /*
          * for each day of the task store in matching the session timestamp
          */

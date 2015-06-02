@@ -147,7 +147,7 @@ switch($action)
 
                // $_SESSION['timestamps'][]=$_POST['timestamp'];
                     //$ret =postActuals($db,$user->id,$_POST['weekDays'],$_POST['task']);
-                    $ret =postActualsSecured($db,$user->id,$_POST['task'],$timestamp);
+                    $ret =postActualsSecured($db,$user,$_POST['task'],$timestamp);
                     if($ret)
                     {
                         if($_SESSION['timeSpendCreated'])setEventMessage($langs->trans("NumberOfTimeSpendCreated").$_SESSION['timeSpendCreated']);
