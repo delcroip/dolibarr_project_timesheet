@@ -150,16 +150,23 @@ class timesheet extends Task
                             ."</a>
                             </th>
                             <th>
-                                ".date('d/m/y',$this->date_start)."
+                                ".($this->date_start?date('d/m/y',$this->date_start):'')."
                             </th>
                             <th>
-                                ".date('d/m/y',$this->date_end).'
+                                ".($this->date_end?date('d/m/y',$this->date_end):'').'
                             </th>
                             ';               
         if($hideprogress==0){
-                $tableRow .='<th>'.$this->parseTaskTime($this->duration_effective)
-                                .'/'.$this->parseTaskTime($this->planned_workload)
-                        .'('.floor($this->duration_effective/$this->planned_workload*100).'%)</th>';
+                $tableRow .='<th>'.$this->parseTaskTime($this->duration_effective).'/';
+                if($this->planned_workload)
+                {
+                  $tableRow .= $this->parseTaskTime($this->planned_workload)
+                        .'('.floor($this->duration_effective/$this->planned_workload*100);
+                }else{
+                    $tableRow .= "-:--(-";
+                }
+                
+                $tableRow .=  '%)</th>';
         }
         foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
         {
@@ -282,7 +289,9 @@ class timesheet extends Task
         $taskTab['id']=$this->id;
         $taskTab[]='weekWorkLoad';
         $taskTab['weekWorkLoad']=array();
-        foreach($this->weekWorkload as $key => $value)
+        $weekWorkload=array();
+        
+        foreach((array)$this->weekWorkload as $key => $value)
         {
             $taskTab['weekWorkLoad'][$key]=$value;
         }
