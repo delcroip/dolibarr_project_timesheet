@@ -145,21 +145,21 @@ else
  * create the Session parameters
  */
 $tmstp=time();
-if(!isset($_SESSION["timestamps"])){
-        $_SESSION["timestamps"]=array();
-        $_SESSION["timestamps"][0]=1;
-}
+//if(!isset($_SESSION["timestamps"])){
+       // $_SESSION["timestamps"]=array();
+//        $_SESSION["timestamps"][0]=1;
+//}
 
 //FIXME: LIMIT the size of the timestamps table
 //FIXME: ERROR handling: timestamp already present
-$_SESSION['timestamps'][$tmstp]=array() ;
+//$_SESSION['timestamps'][$tmstp]=array() ;
 //to avoid resend when refresh
 $_SESSION["timestamps"][$tmstp]["sent"]=false;
 //Yearweek stored so to avoid modifying an otherweek by hacking
 $_SESSION["timestamps"][$tmstp]["YearWeek"]=$yearWeek;
 $_SESSION["timestamps"][$tmstp]["weekDays"]=$weekDays;
 //create the task list:
-$_SESSION["timestamps"][$tmstp]['tasks']=array();
+//$_SESSION["timestamps"][$tmstp]['tasks']=array();
 $i=0;
 foreach($tasksList as $row)
 {
