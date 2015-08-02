@@ -177,7 +177,7 @@ class Timesheetwhitelist extends CommonObject
 
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
+        if ($ref) $sql.= ' WHERE t.ref = "'.$ref.'"';
         else $sql.= " WHERE t.rowid = ".$id;
 
     	dol_syslog(get_class($this)."::fetch");
@@ -240,10 +240,10 @@ class Timesheetwhitelist extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         
-		$sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'"'.$this->user."'").',';
-		$sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'"'.$this->project."'").',';
-		$sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'"'.$this->project_task."'").',';
-		$sql.=' subtask='.(empty($this->subtask)!=0 ? 'null':'"'.$this->subtask."'").',';
+		$sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'"'.$this->user.'"').',';
+		$sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'"'.$this->project.'"').',';
+		$sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'"'.$this->project_task.'"').',';
+		$sql.=' subtask='.(empty($this->subtask)!=0 ? 'null':'"'.$this->subtask.'"').',';
 		$sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '"'.$this->db->idate($this->date_start).'"':'null').',';
 		$sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '"'.$this->db->idate($this->date_end).'"':'null').'';
 
