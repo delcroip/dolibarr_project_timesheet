@@ -154,6 +154,69 @@ class Timesheetwhitelist extends CommonObject
 		}
     }
 
+        /**
+     *  Load the list of the user whitelist open between those date
+     *
+     *  @param	int		$user   	Id object
+    *  @param	date	$datestart	start date
+    *  @param	date	$datestop	stopdate
+     *  @return             array)timesheetwhitelist          return the list of the user whiteliste	
+     */
+    function fetchUserList($user,$datestart,$datestop,$ref='')
+    {
+        global $langs;
+        $sql = "SELECT";
+		$sql.= " t.rowid,";
+		
+		$sql.=' t.fk_user,';
+		$sql.=' t.fk_project,';
+		$sql.=' t.fk_project_task,';
+		$sql.=' t.subtask,';
+		$sql.=' t.date_start,';
+		$sql.=' t.date_end';
+
+		
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        $sql.= " WHERE t.user = ".$user;
+        if($datestart)
+                $sql.= ' AND t.date_end > FROM_UNIXTIME( '.$datestart.')';
+        if($datestop)
+                $sql.= ' AND t.date_start < FROM_UNIXTIME( '.$datestop.')';
+
+    	dol_syslog(get_class($this)."::fetch");
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num=$this->db->num_rows($resql);
+            
+            $i=0;
+            while($i<$num)
+            {
+                
+                $obj = $this->db->fetch_object($resql);
+
+                $List[$i]->id    = $obj->rowid;          
+                $List[$i]->user = $obj->fk_user;
+                $List[$i]->project = $obj->fk_project;
+                $List[$i]->project_task = $obj->fk_project_task;
+                $List[$i]->subtask = $obj->subtask;
+                $List[$i]->date_start = $this->db->jdate($obj->date_start);
+                $List[$i]->date_end = $this->db->jdate($obj->date_end);
+
+                $i++;
+            }
+            $this->db->free($resql);
+
+            return  $List;
+        }
+        else
+        {
+      	    $this->error="Error ".$this->db->lasterror();
+            return -1;
+        }
+    }
+
+    
 
     /**
      *  Load object in memory from the database

@@ -1,5 +1,5 @@
 <?php
-/* 
+/* Copyright (C) 2015 Patrick Delcoix  <delcroip@gmail.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
@@ -155,9 +155,9 @@ if ($cancel){
     }else if ($action == 'create'){
         $object->user=GETPOST('User');
         $object->project=GETPOST('Project');		
-        $formProject=' WHERE fk_projet="'.GETPOST('Project').'"';
+        
     }
-            
+    
 }else if (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
         //block resubmit
@@ -166,12 +166,12 @@ if ($cancel){
                 $action=($action=='add')?'create':'edit';
         }
         //retrive the data
-        	$object->user=($user->admin)?GETPOST('User'):$user->id;
-		$object->project=GETPOST('Project');
-		$object->project_task=GETPOST('Projecttask');
-		$object->subtask=GETPOST('Subtask');
-		$object->date_start=dol_mktime(0, 0, 0,GETPOST('Datestartmonth'),GETPOST('Datestartday'),GETPOST('Datestartyear'));
-		$object->date_end=dol_mktime(0, 0, 0,GETPOST('Dateendmonth'),GETPOST('Dateendday'),GETPOST('Dateendyear'));
+             $object->user=($user->admin)?GETPOST('User'):$user->id;
+            $object->project=GETPOST('Project');
+            $object->project_task=GETPOST('Projecttask');
+            $object->subtask=GETPOST('Subtask');
+            $object->date_start=dol_mktime(0, 0, 0,GETPOST('Datestartmonth'),GETPOST('Datestartday'),GETPOST('Datestartyear'));
+            $object->date_end=dol_mktime(0, 0, 0,GETPOST('Dateendmonth'),GETPOST('Dateendday'),GETPOST('Dateendyear'));
 
         
         
@@ -220,6 +220,11 @@ if ($cancel){
                             if ($id > 0 || !empty($ref) )
                             {
                                     $result=$object->fetch($id,$ref);
+                                    // only admin can check the whitelist of other
+                                    if(!$user->admin && $user->id != $object->user){
+                                        setEventMessage( $langs->trans('notYourWhitelist').' id:'.$id,'errors');
+                                        $action='list';
+                                    }
                                     if ($result < 0){ 
                                         dol_print_error($db);
                                     }else { // fill the id & ref
@@ -299,10 +304,10 @@ $formother=new FormOther($db);
 // Put here content of your page
 //javascript to reload the page with the poject selected
 print '
-<SCRIPT language=JavaScript>
+<SCRIPT type="text/javascript">
 function reload(form){
-var pjt=form.Project.options[form.Project.options.selectedIndex].value;
-var usr=form.User.options[form.User.options.selectedIndex].value;
+var pjt=document.getElementById("Project").value;
+var usr=document.getElementById("User").value;
 self.location="'.$PHP_SELF.'?action=create&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
 }
 </script>';
@@ -337,7 +342,7 @@ switch ($action) {
     case 'view':
     {
         // to avoid showing the whitelist of other
-        if(!$user->admin)$object->next_prev_filter='fk_user="'.$user->id.'"';
+       // if(!$user->admin)$object->next_prev_filter=' fk_user="'.$user->id.'"';
         print_fiche_titre($langs->trans('Timesheetwhitelist'));
 
         // tabs
@@ -364,7 +369,7 @@ switch ($action) {
             $linkback = '<a href="'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
             if(!isset($object->ref))//save ref if any
                 $object->ref=$object->id;
-            print $form->showrefnav($object, 'action=view&id', $linkback, 1, 'rowid', 'ref', '');
+            print $form->showrefnav($object, 'action=view&id', $linkback, 1, 'rowid', 'rowid', '');
             //reloqd the ref
 
         }
@@ -376,16 +381,16 @@ switch ($action) {
 
 // show the field user
                
-		print '<td class="fieldrequired">'.$langs->trans('User').' </td><td>';
-		if($edit==1){
-                   
-                        print $form->select_dolusers(($new)?$user->id:$object->user, 'User', 1, '', !$user->admin );
+            print '<td class="fieldrequired" width="200px">'.$langs->trans('User').' </td><td>';
+            if($edit==1){
 
-		}else{
-		print print_generic($db,'user', 'rowid',$object->user,'lastname','firstname',' ');
-		}
-		print "</td>";
-		print "\n</tr>\n";
+                                 print $form->select_dolusers(($new==1)?$user->id:$object->user, 'User', 1, '', !$user->admin );
+
+            }else{
+            print print_generic($db,'user', 'rowid',$object->user,'lastname','firstname',' ');
+            }
+            print "</td>";
+            print "\n</tr>\n";
                 print "<tr>\n";
 // show the field project
 
@@ -409,8 +414,9 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Projecttask').' </td><td>';
 		if($edit==1){
+                    if($object->project) $formProject=' WHERE fk_projet="'.$object->project.'"';
                   //if (isset($formProject)){  
-                        print select_generic($db,'projet_task','rowid','Project','ref','label',$object->project_task,' - ',(isset($formProject)?$formProject:' WHERE 1=2'));
+                        print select_generic($db,'projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',(isset($formProject)?$formProject:' WHERE 1=2'));
                   //}else{
                   //      print '<select class="flat minwidth200" id="Projecttask" name="Projecttask"></select>';
                   //}
@@ -426,9 +432,9 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Subtask').' </td><td>';
 		if($edit==1){
-			print '<input type="text" value="'.$object->subtask.'" name="Subtask">';
+			print ' <input type="checkbox" value="1" name="Subtask" '.($object->subtask?'checked':'').'>';
 		}else{
-			print $object->subtask;
+			print '<input type="checkbox" '.($object->subtask?'checked':'').' onclick="return false" readonly>';
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -441,6 +447,8 @@ switch ($action) {
 		if($new==1){
 			print $form->select_date(-1,'Datestart');
 		}else{
+                                                    if($object->date_start=='')
+                                                            $object->date_start=-1;
 			print $form->select_date($object->date_start,'Datestart');
 		}
 		}else{
@@ -457,6 +465,8 @@ switch ($action) {
 		if($new==1){
 			print $form->select_date(-1,'Dateend');
 		}else{
+                                                    if($object->date_end=='')
+                                                            $object->date_end=-1;
 			print $form->select_date($object->date_end,'Dateend');
 		}
 		}else{

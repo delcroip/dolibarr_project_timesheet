@@ -58,7 +58,7 @@ global $langs;
             if ($obj && strpos($obj->Type,'enum(')===0)
             {
                 if(empty($selected) && !empty($obj->Default))$selected="'{$obj->Default}'";
-                    $select.='<select class="flat minwidth200" id="'.$htmlName.'" name="'.$htmlName.'"'.$nodatarole.' '.$selectparam.'>';
+                    $select.='<select class="flat minwidth200" id="'.$htmlName.'Select" name="'.$htmlName.'"'.$nodatarole.' '.$selectparam.'>';
                     $select.= '<option value="-1" '.(empty($selected)?'selected="selected"':'').">&nbsp;</option>\n";
 
                 $enums= explode(',',substr($obj->Type, 5,-1));
