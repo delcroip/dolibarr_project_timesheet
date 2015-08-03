@@ -17,8 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 $yearWeek=$_SESSION["yearWeek"];
-$db=$_SESSION["db"];
+//$db=$_SESSION["db"];
+global $db;
 dol_include_once('/timesheet/class/timesheet.class.php');
+dol_include_once('/timesheet/class/timesheetwhitelist.class.php');
  # will generate the form line
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 $form = new Form($db);
@@ -106,6 +108,7 @@ $Form .='       <th width="6%">
             ';
 //retrives and show all the task where the user is defined as responsible or contributor
 $tasksList=array();
+
 $sql ="SELECT DISTINCT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
 $sql.='JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
 if(TIMESHEET_HIDE_DRAFT=='1'){
@@ -161,11 +164,17 @@ $_SESSION["timestamps"][$tmstp]["weekDays"]=$weekDays;
 //create the task list:
 //$_SESSION["timestamps"][$tmstp]['tasks']=array();
 $i=0;
+$whiteList=array();
+$staticWhiteList=new Timesheetwhitelist($db);
+$datestart=strtotime($yearWeek.' +0 day');
+$datestop=strtotime($yearWeek.' +6 day');
+$whiteList=$staticWhiteList->fetchUserList($user->id, $datestart, $datestop);
+
 foreach($tasksList as $row)
 {
          dol_syslog("Timesheet::list.php task=".$row->id, LOG_DEBUG);
         $row->getTaskInfo();
-        if($row->isOpenThisWeek($yearWeek))
+        if($row->isOpenThisWeek($yearWeek) && (count($whiteList)==0 || in_array($row->id,$whiteList,TRUE)))
         {
                 $row->getActuals($yearWeek,$user->id); 
                 $_SESSION["timestamps"][$tmstp]['tasks'][$row->id]=array();

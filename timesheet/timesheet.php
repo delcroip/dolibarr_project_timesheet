@@ -121,7 +121,7 @@ if (isset($_GET['yearweek']) && $_GET['yearweek']!='') {
         $_SESSION["yearWeek"]=$yearWeek;
 }
 
-$_SESSION["db"]=$db;
+//$_SESSION["db"]=$db;
 
 
 switch($action)

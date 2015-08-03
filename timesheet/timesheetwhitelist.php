@@ -168,7 +168,9 @@ if ($cancel){
         //retrive the data
              $object->user=($user->admin)?GETPOST('User'):$user->id;
             $object->project=GETPOST('Project');
+            if($object->project==-1)$object->project='';
             $object->project_task=GETPOST('Projecttask');
+            if($object->project_task==-1)$object->project_task='';
             $object->subtask=GETPOST('Subtask');
             $object->date_start=dol_mktime(0, 0, 0,GETPOST('Datestartmonth'),GETPOST('Datestartday'),GETPOST('Datestartyear'));
             $object->date_end=dol_mktime(0, 0, 0,GETPOST('Dateendmonth'),GETPOST('Dateendday'),GETPOST('Dateendyear'));

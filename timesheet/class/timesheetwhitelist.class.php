@@ -162,10 +162,11 @@ class Timesheetwhitelist extends CommonObject
     *  @param	date	$datestop	stopdate
      *  @return             array)timesheetwhitelist          return the list of the user whiteliste	
      */
-    function fetchUserList($user,$datestart,$datestop,$ref='')
+    function fetchUserList($user,$datestart,$datestop)
     {
-        global $langs;
-        $sql = "SELECT";
+      $List=array();
+      $Listtask=array();
+       $sql = "SELECT";
 		$sql.= " t.rowid,";
 		
 		$sql.=' t.fk_user,';
@@ -177,13 +178,13 @@ class Timesheetwhitelist extends CommonObject
 
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        $sql.= " WHERE t.user = ".$user;
+        $sql.= " WHERE t.fk_user = ".$user;
         if($datestart)
-                $sql.= ' AND t.date_end > FROM_UNIXTIME( '.$datestart.')';
+                $sql.= ' AND (t.date_end > FROM_UNIXTIME( '.$datestart.') OR t.date_end IS NULL)';
         if($datestop)
-                $sql.= ' AND t.date_start < FROM_UNIXTIME( '.$datestop.')';
+                $sql.= ' AND (t.date_start < FROM_UNIXTIME( '.$datestop.')OR t.date_start IS NULL)';
 
-    	dol_syslog(get_class($this)."::fetch");
+        dol_syslog(get_class($this)."::fetchUserList");
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -194,7 +195,7 @@ class Timesheetwhitelist extends CommonObject
             {
                 
                 $obj = $this->db->fetch_object($resql);
-
+                $List[$i]=new Timesheetwhitelist($this->db);
                 $List[$i]->id    = $obj->rowid;          
                 $List[$i]->user = $obj->fk_user;
                 $List[$i]->project = $obj->fk_project;
@@ -206,17 +207,65 @@ class Timesheetwhitelist extends CommonObject
                 $i++;
             }
             $this->db->free($resql);
-
-            return  $List;
+            
+            foreach($List as $row){
+                $Listtask=array_merge($Listtask,$row->getTaskList());
+            }
         }
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            return -1;
         }
+        if(count($Listtask)>0)
+                        return  $Listtask;
+        else
+                        return  NULL;
     }
 
-    
+   /**
+     *  get all the task open with this line
+     *
+     *  @return int          	task list
+     */
+    function getTaskList()
+    {
+              $sql = "SELECT";
+		$sql.= " t.rowid";		
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+         if($this->project_task && $this->subtask){
+             $sql.= '  WHERE  (t.rowid="'.$this->project_task.'"';  
+             $sql.= '  OR  t.fk_task_parent="'.$this->project_task.'")';               
+         }else if($this->project_task ){
+            $sql.= '  WHERE t.rowid="'.$this->project_task.'"';
+         }else{
+            $sql.= ' WHERE t.fk_projet="'.$this->project.'"';
+        }
+        
+    	dol_syslog(get_class($this)."::getTaskList");
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $Listtask=Array();
+            $num=$this->db->num_rows($resql);
+            
+            $i=0;
+            while($i<$num)
+            {
+                $obj = $this->db->fetch_object($resql);
+                $Listtask[$i]    = $obj->rowid;
+                $i++;
+            }
+            $this->db->free($resql);
+
+            return $Listtask;
+        }
+        else
+        {
+      	    $this->error="Error ".$this->db->lasterror();
+            return NULL;
+        }
+
+    }  
 
     /**
      *  Load object in memory from the database
