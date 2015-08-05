@@ -17,7 +17,9 @@
  */
 //global $db;     
 global $langs;
-
+// to get the whitlist object
+dol_include_once('/timesheet/class/timesheetwhitelist.class.php');
+dol_include_once('/timesheet/class/timesheet.class.php');
 /*
  * function to genegate a select list from a table, the showed text will be a concatenation of some 
  * column defined in column bit, the Least sinificative bit will represent the first colum 
@@ -260,3 +262,254 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
       $select.="\n";
       return $select;
  }
+ 
+ 
+ /*
+ * function to genegate the timesheet table header
+ * 
+  *  @param    array(string)           $headers            array of the header to show
+ *  @param    array(int)              	$headersWidth    array defining the header width
+ *  @param     int              	$yearWeek           timesheetweek
+  *  @return     string                                                   html code
+ */
+ function timesheetHeader($headers,$headersWidth , $weekDays){
+     global $langs;
+     if(!is_array($weekDays )){
+            setEventMessage($langs->trans("InternalError2"),'errors');
+            return '';
+     }
+
+     $html='<tr class="liste_titre" >'."\n";
+     
+     foreach ($headers as $key => $value){
+         $html.="\t<th ";
+         if ($headersWidth[$key]){
+                $html.='width="'.$headersWidth[$key].'"';
+         }
+         $html.=">".$langs->trans($value)."</th>\n";
+     }
+    
+    for ($i=0;$i<7;$i++)
+    {
+         $html.="\t".'<th width="20px">'.$langs->trans(date('l',strtotime($weekDays[$i]))).'<br>'.$weekDays[$i]."</th>\n";
+    }
+
+     
+     $html.="</tr>\n";
+     return $html;
+     
+ }
+ 
+  /*
+ * function to genegate the timesheet list
+ * 
+ *  @param    object             	$db                 db Object to do the querry
+ *  @param    array(string)           $headers            array of the header to show
+ *  @param    int              	$user                   user id to fetch the timesheets
+ *  @param     int              	$yearWeek           timesheetweek
+ *  @param    array(int)              	$whiteList    array defining the header width
+ *  @param     int              	$timestamp         timestamp
+ *  @return     string                                                   html code
+ */
+ function timesheetList($db,$headers,$user,$yearWeek,$timestamp){
+     $Lines='';
+    // get the whitelist
+    $whiteList=array();
+    $staticWhiteList=new Timesheetwhitelist($db);
+    $datestart=strtotime($yearWeek.' +0 day');
+    $datestop=strtotime($yearWeek.' +6 day');
+    $whiteList=$staticWhiteList->fetchUserList($user, $datestart, $datestop);
+     // Save the param in the SeSSION
+     $tasksList=array();
+
+    $sql ="SELECT DISTINCT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
+    $sql.='JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
+    $sql.='JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
+    $sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$user."' ";
+    if(TIMESHEET_HIDE_DRAFT=='1'){
+         $sql.=' AND prj.fk_statut="1" ';
+    }
+    $sql.=' AND (prj.datee>=FROM_UNIXTIME("'.$datestart.'") OR prj.datee IS NULL)';
+    $sql.=' AND (prj.dateo<=FROM_UNIXTIME("'.$datestop.'") OR prj.dateo IS NULL)';
+    $sql.=' AND (tsk.datee>=FROM_UNIXTIME("'.$datestart.'") OR tsk.datee IS NULL)';
+    $sql.=' AND (tsk.dateo<=FROM_UNIXTIME("'.$datestop.'") OR tsk.dateo IS NULL)';
+    if(empty($whitList)){ 
+    }else if(is_array($whitList)){
+        $sql.=' AND tsk.rowid in (';
+        foreach($whiteList as $value) {
+            $sql.=$value.',';
+        }              
+         $sql.='0) ';
+    }else {
+        $sql.=' AND tsk.rowid=" '.$whiteList.'" ';
+    }
+    $sql.=" ORDER BY tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
+
+    dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+            $num = $db->num_rows($resql);
+            $i = 0;
+            // Loop on each record found, so each couple (project id, task id)
+            while ($i < $num)
+            {
+                    $error=0;
+                    $obj = $db->fetch_object($resql);
+                    $tasksList[$i] = NEW timesheet($db, $obj->element_id);
+                    $i++;
+            }
+            $db->free($resql);
+
+             foreach($tasksList as $row)
+            {
+                    dol_syslog("Timesheet::list.php task=".$row->id, LOG_DEBUG);
+                    $row->getTaskInfo();
+                    $row->getActuals($yearWeek,$user); 
+                    $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
+                    $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab();
+                    $Lines.=$row->getFormLine( $yearWeek,$i,$headers); 
+                    //$Form.=$row->getFormLine( $yearWeek,$i);
+                    $i++;
+            }
+    }else
+    {
+            dol_print_error($db);
+    }
+    return $Lines;
+     
+ }
+ /*
+ * function to post the all actual submitted
+ * 
+ *  @param    object             	$db                      db Object to do the querry
+ *  @param    int              	$user                   user id to fetch the timesheets
+ *  @param    array(int)              	$tabPost               array sent by POST with all info about the task
+ *  @param     int              	$timestamp          timestamp
+ *  @return     int                                                        number of tasktime creatd/changed
+ */
+ function postActuals($db,$user,$tabPost,$timestamp)
+{
+    
+    $storedTab=array();
+    $storedTab=$_SESSION["timestamps"][$timestamp];
+    if(isset($storedTab["YearWeek"])) {
+        $yearWeek=$storedTab["YearWeek"];
+    }else {
+        return -1;
+    }
+    $storedTasks=array();
+    if(isset($storedTab['tasks'])) {
+        $storedTasks=$storedTab['tasks'];
+    }else {
+        return -2;
+    }
+    if(isset($storedTab['weekDays'])) {
+        $storedWeekdays=$storedTab['weekDays'];
+    }else {
+        return -3;
+    }
+        
+    $ret=0;
+    $tmpRet=0;
+    $_SESSION['timeSpendCreated']=0;
+    $_SESSION['timeSpendDeleted']=0;
+    $_SESSION['timeSpendModified']=0;
+        /*
+         * For each task store in matching the session timestamp
+         */
+    $userid=(version_compare(DOL_VERSION, "3.7", "<"))?$user:$user->id;
+    foreach($storedTasks as  $taskId => $taskItem)
+    {
+      //  $taskId=$taskItem["id"];
+        $tasktimeIds=array();
+        $tasktimeIds=$taskItem["taskTimeId"];
+        $tasktime=new timesheet($db,$taskId);
+        $tasktime->timespent_fk_user=$userid;
+        $tasktime->fetch($taskId);
+        dol_syslog("Timesheet::Submit.php::postActualsSecured  task=".$tasktime->id, LOG_DEBUG);
+        //use the data stored
+        //$tasktime->initTimeSheet($taskItem['weekWorkLoad'], $taskItem['taskTimeId']);
+        //refetch actuals
+        $tasktime->getActuals($yearWeek, $userid); 
+        /*
+         * for each day of the task store in matching the session timestamp
+         */
+        //foreach($taskItem['taskTimeId'] as $dayKey => $tasktimeid)
+        foreach($tabPost[$taskId] as $dayKey => $wkload)
+        {
+            dol_syslog("Timesheet::Submit.php::postActualsSecured  task = ".$taskId." tabPost[".$dayKey."]=".$wkload, LOG_DEBUG);
+
+            $tasktimeid=$tasktimeIds[$dayKey];
+            
+            $ret+=postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$storedWeekdays[$dayKey]);
+        }
+        if($ret!=$tmpRet){ // something changed so need to updae the total duration
+            $tasktime->updateTimeUsed();
+        }
+        $tmpRet=$ret;
+    } 
+    unset($_SESSION["timestamps"][$timestamp]);
+    return $ret;
+}
+
+/*
+ * function to post on task_time
+ * 
+ *  @param    int              	$user                    user id to fetch the timesheets
+ *  @param    object             	$tasktime             timesheet object, (task)
+ *  @param    array(int)              	$tasktimeid          the id of the tasktime if any
+ *  @param     int              	$timestamp          timesheetweek
+ *  @return     int                                                       1 => succes , 0 => Failure
+ */
+function postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$date)
+{
+
+   $ret=0;
+   if(TIMESHEET_TIME_TYPE=="days")
+   {
+      $duration=$wkload*TIMESHEET_DAY_DURATION*3600;
+   }else
+   {
+    $durationTab=date_parse($wkload);
+    $duration=$durationTab['minute']*60+$durationTab['hour']*3600;
+   }
+    dol_syslog("Timesheet::Submit.php::postTaskTimeActualSecured   timespent_duration=".$duration." taskTimeId=".$tasktimeid, LOG_DEBUG);
+
+    if($tasktimeid>0)
+    {
+        $tasktime->fetchTimeSpent($tasktimeid); ////////////////////////////
+        $tasktime->timespent_old_duration=$tasktime->timespent_duration;
+        $tasktime->timespent_duration=$duration; 
+        if($tasktime->timespent_old_duration!=$duration)
+        {
+            if($tasktime->timespent_duration>0){ 
+                dol_syslog("Timesheet::Submit.php  taskTimeUpdate", LOG_DEBUG);
+                if($tasktime->updateTimeSpent($user,0)>=0)
+                {
+                    $ret++; 
+                    $_SESSION['timeSpendModified']++;
+                }
+            }else {
+                dol_syslog("Timesheet::Submit.php  taskTimeDelete", LOG_DEBUG);
+                if($tasktime->delTimeSpent($user,0)>=0)
+                {
+                    $ret++;
+                    $_SESSION['timeSpendDeleted']++;
+                }
+            }
+        }
+    } elseif ($duration>0)
+    { 
+        $tasktime->timespent_duration=$duration; 
+        //FIXME
+        $tasktime->timespent_date=strtotime($date);
+        
+        if($tasktime->addTimeSpent($user,0)>=0)
+        {
+            $ret++;
+            $_SESSION['timeSpendCreated']++;
+        }
+    }
+    return $ret;
+}

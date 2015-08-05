@@ -179,6 +179,7 @@ function updateTotal(days,mode){
             }
         }
         document.getElementById('totalDay['+days+']').innerHTML = total;
+        document.getElementById('totalDayb['+days+']').innerHTML = total;
     }
     
 }

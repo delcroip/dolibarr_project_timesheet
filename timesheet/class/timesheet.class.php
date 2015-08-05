@@ -27,9 +27,10 @@ dol_include_once('/timesheet/class/projectTimesheet.class.php');
 class timesheet extends Task 
 {
         private $ProjectTitle		=	"Not defined";
-	private $taskTimeId = array(0=>0,0,0,0,0,0,0);
+        private $taskTimeId = array(0=>0,0,0,0,0,0,0);
         private $weekWorkLoad  = array(0=>0,0,0,0,0,0,0);
         private $fk_project2;
+        private $taskParentDesc;
 	
 
     public function __construct($db,$taskId) 
@@ -48,10 +49,12 @@ class timesheet extends Task
     }*/
     public function getTaskInfo()
     {
-            $sql = "SELECT p.title,p.rowid, pt.label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective";	
+            $sql = "SELECT p.title,p.rowid, pt.label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective,ptp.label as taskParentLabel";	
             $sql .=" FROM ".MAIN_DB_PREFIX."projet_task AS pt";
             $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
             $sql .=" ON pt.fk_projet=p.rowid";
+            $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet_task as ptp";
+            $sql .=" ON pt.fk_task_parent=ptp.rowid";
             $sql .=" WHERE pt.rowid ='".$this->id."'";
             #$sql .= "WHERE pt.rowid ='1'";
             dol_syslog(get_class($this)."::fetchtasks sql=".$sql, LOG_DEBUG);
@@ -69,6 +72,7 @@ class timesheet extends Task
                             $this->description			= $obj->label;
                             $this->fk_project2                   = $obj->rowid;
                             $this->ProjectTitle			= $obj->title;
+                            $this->taskParentDesc                                           =$obj->taskParentLabel;
                             #$this->date_start			= strtotime($obj->dateo.' +0 day');
                             #$this->date_end			= strtotime($obj->datee.' +0 day');
                             $this->date_start			= $this->db->jdate($obj->dateo);
@@ -203,55 +207,80 @@ class timesheet extends Task
         return $tableRow;
 
     }	
-   /* public function getFormLine( $yearWeek,$lineNumber)
+       public function getFormLine( $yearWeek,$lineNumber,$headers)
     {
+       if(empty($yearWeek)||empty($lineNumber)||empty($headers))
+           return '<tr>ERROR: wrong parameters for getFormLine</tr>';
+        
+    $timetype=TIMESHEET_TIME_TYPE;
+    $dayshours=TIMESHEET_DAY_DURATION;
+    $hidezeros=TIMESHEET_HIDE_ZEROS;
 
-      //don't show task without open day in the week
-            #$dateStart=strtotime($yearWeek);
-             # insert the task id and the form line to retrieve the data later 
-        $tableRow = "<tr>
-                            <th>
-                                ".$this->ProjectTitle."</th><th>".$this->description."
-                            </th>
-                            <th>
-                                ".date('d/m/y',$this->date_start)."
-                            </th>
-                            <th>
-                                ".date('d/m/y',$this->date_end).
-                                '<input type="hidden" name="task['.$lineNumber.'][taskid]" '.
-                                'value="'.$this->id.'"/> 
-                            </th>
-                            ';               
+    $html= '<tr class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
+    //title section
+     foreach ($headers as $key => $title){
+         $html.="\t<th>";
+         switch($title){
+             case 'Project':
+                 $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';
+                 break;
+             case 'TaskParent':
+                 $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->fk_task_parent.'&withproject='.$this->fk_project2.'">'.$this->taskParentDesc.'</a>';
+                 break;
+             case 'Tasks':
+                 $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->id.'&withproject='.$this->fk_project2.'">'.$this->description.'</a>';
+                 break;
+             case 'DateStart':
+                 $html.=$this->date_start?date('d/m/y',$this->date_start):'';
+                 break;
+             case 'DateEnd':
+                 $html.=$this->date_end?date('d/m/y',$this->date_end):'';
+                 break;
+             case 'Progress':
+                 $html .=$this->parseTaskTime($this->duration_effective).'/';
+                if($this->planned_workload)
+                {
+                     $html .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
+                }else{
+                    $html .= "-:--(-%)";
+                }
+                 break;
+         }
+  
+         $html.="</th>\n";
+     }
+    
+  // day section
         foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
         {
-                $today= strtotime($yearWeek.' +'.$dayOfWeek.' day');
+                $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
                 # to avoid editing if the task is closed 
-                $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
-                if(($this->date_start > $today) OR ($this->date_end < $today ))
+                if ($timetype=="days")
                 {
-                    $tableRow .='<th> <div id="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]">'.$dayWorkLoad.'</div></th>
-                            ';
-                        //id="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]"
+                    $dayWorkLoad=$dayWorkLoadSec/3600/$dayshours;
+                }else {
+                    $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
+                }
+              
+                if((empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today )))
+                {             
+                    $html .= '<th><input type="text" id="task['.$lineNumber.']['.$dayOfWeek.']" ';
+                    $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" ';
+                    $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
+                    $html .='" maxlength="5" style="width: 90%;'.(($dayWorkLoadSec==0)?'':' background:#f0fff0; ').'" ';
+                    $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
+                    $html .= 'onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$dayOfWeek.',\''.$timetype.'\')" />';
+                    $html .= "</th>\n";                    
                 }else
                 {
-                    $tableRow .='<th>
-                            <input type="hidden" name="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][tasktimeid]" '.
-                                'value="'.$this->taskTimeId[$dayOfWeek].'" /> '.
-                                '<input type="text" id="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]" '.
-                                'name="task['.$lineNumber.'][weekDays]['.$dayOfWeek.'][value]" '.
-                                ' value="'.$dayWorkLoad.'" maxlength="5" style="width: 90%" '.
-                                'onkeydown="return regexEvent(this,event,\'timeChar\')" '.
-                                'onblur="regexEvent(this,event,\'time\');updateTotal('.$dayOfWeek.')" />
-                            </th>
-                            ';
+                    $html .= '<th> <div id="task['.$this->id.']['.$dayOfWeek.']">'.$dayWorkLoad."</div></th>\n";
                 }
         }
-        $tableRow .= "
-                    </tr>
-                    ";
-        return $tableRow;
+        $html .= "</tr>\n";
+        return $html;
 
-    }*/
+    }	
+
 
     public function test(){
             $Result=$this->id.' / ';
