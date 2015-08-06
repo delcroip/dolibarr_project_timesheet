@@ -360,7 +360,7 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
                     $i++;
             }
             $db->free($resql);
-
+             $i = 0;
              foreach($tasksList as $row)
             {
                     dol_syslog("Timesheet::list.php task=".$row->id, LOG_DEBUG);
