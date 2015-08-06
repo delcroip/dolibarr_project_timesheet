@@ -136,7 +136,7 @@ class timesheet extends Task
                 return -1;
         }
     }	 
-
+/*
     public function getFormLineSecured( $yearWeek,$lineNumber,$timetype="hours",$dayshours="8",$hidezeros="0",$hideprogress="0")
     {
 
@@ -206,11 +206,13 @@ class timesheet extends Task
                     ";
         return $tableRow;
 
-    }	
+    }	*/
+    
+    
        public function getFormLine( $yearWeek,$lineNumber,$headers)
     {
-       if(empty($yearWeek)||empty($lineNumber)||empty($headers))
-           return '<tr>ERROR: wrong parameters for getFormLine</tr>';
+       if(empty($yearWeek)||empty($headers))
+           return '<tr>ERROR: wrong parameters for getFormLine'.empty($yearWeek).'|'.empty($headers).'</tr>';
         
     $timetype=TIMESHEET_TIME_TYPE;
     $dayshours=TIMESHEET_DAY_DURATION;
@@ -291,7 +293,7 @@ class timesheet extends Task
             //$Result.=$this->$weekWorkLoad.' / '; 
             return $Result;
 }
-
+/*
     public function isOpenThisWeek($yearWeek)
     {
             $yearWeekMonday=strtotime($yearWeek.' +0 days');
@@ -311,6 +313,8 @@ class timesheet extends Task
 
             }
     }
+ * */
+ 
     public function getTaskTab()
     {
         $taskTab=array();

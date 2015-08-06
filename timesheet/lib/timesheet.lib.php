@@ -333,14 +333,13 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
     $sql.=' AND (prj.dateo<=FROM_UNIXTIME("'.$datestop.'") OR prj.dateo IS NULL)';
     $sql.=' AND (tsk.datee>=FROM_UNIXTIME("'.$datestart.'") OR tsk.datee IS NULL)';
     $sql.=' AND (tsk.dateo<=FROM_UNIXTIME("'.$datestop.'") OR tsk.dateo IS NULL)';
-    if(empty($whitList)){ 
-    }else if(is_array($whitList)){
+   if(is_array($whiteList)){
         $sql.=' AND tsk.rowid in (';
         foreach($whiteList as $value) {
             $sql.=$value.',';
         }              
          $sql.='0) ';
-    }else {
+    }else  if(!empty($whiteList)){ 
         $sql.=' AND tsk.rowid=" '.$whiteList.'" ';
     }
     $sql.=" ORDER BY tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
@@ -372,6 +371,10 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
                     //$Form.=$row->getFormLine( $yearWeek,$i);
                     $i++;
             }
+            // form hiden param
+            $Lines .= '<input type="hidden" name="timestamp" value="'.$timestamp."\"/>\n";
+            $Lines .= '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.$i."\"/>\n";
+            $Lines .= '<input type="hidden" name="yearWeek" value="'.$yearWeek.'" />'; 
     }else
     {
             dol_print_error($db);

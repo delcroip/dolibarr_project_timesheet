@@ -154,6 +154,7 @@ function updateTotal(days,mode){
                 total.setMinutes(total.getMinutes()+taskTime.getMinutes());
             }
         }
+        document.getElementById('totalDayb['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
         document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
         //addText(,total.getHours()+':'+total.getMinutes());
     }else

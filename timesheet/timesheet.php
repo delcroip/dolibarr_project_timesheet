@@ -195,12 +195,7 @@ $Form .='<th colspan="'.$num.'" align="right"> TOTAL </th>
 </tr>';
 
 $Form .="</table >\n";
-// form hiden param
 
-$nbLine=0;
-$Form .= '<input type="hidden" name="timestamp" value="'.$tmstp."\"/>\n";
-$Form .= '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.$nbLine."\"/>\n";
-$Form .= '<input type="hidden" name="yearWeek" value="'.$yearWeek.'" />'; 
 //form button
 $Form .= '<input type="submit" value="'.$langs->trans('Save')."\" />\n";
 $Form .= '<input type="button" value="'.$langs->trans('Cancel');

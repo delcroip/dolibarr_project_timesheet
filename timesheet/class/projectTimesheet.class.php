@@ -62,7 +62,7 @@ class ProjectTimesheet extends Project
             $this->date_start = $date_open;
             $this->date_end=$date_end;
 	}
-        
+/*        
     public function isOpen($startDate,$stopDate)
     {
 
@@ -78,7 +78,7 @@ class ProjectTimesheet extends Project
 
             }
     }
-
+*/
 
     public function getHTMLreport($startDay,$stopDay,$mode,$short,$periodTitle,$hoursperdays){
     // HTML buffer
