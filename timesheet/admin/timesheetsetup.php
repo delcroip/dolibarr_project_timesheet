@@ -84,65 +84,83 @@ switch($action)
 	
 
 //permet d'afficher la structure dolibarr
-llxHeader("",$langs->trans("timesheetSetupModule"));
+llxHeader("",$langs->trans("timesheetSetup"));
 
 
-$Form ='<form name="settings" action="?action=save" method="POST" > 
-          <table class="noborder" width="100%">
-            <tr class="liste_titre" >
-               <th>Affichage du temps</th><th></th><th> </th>
-            </tr>
-            <tr>
-                <th>
-                    '.$langs->trans("hours").'
-                <th>
-                <th>
-                    <input type="radio" name="timeType" value="hours" '.($timetype=="hours"?"checked":"").'>
-                </th>
-            </tr>
-            <tr>
-                <th>
-                    '.$langs->trans("days").'
-                <th>
-                <th>
-                    <input type="radio" name="timeType" value="days" '.($timetype=="days"?"checked":"").'>
-                </th>
-            </tr>
-            <tr>
-                <th>
-                    '.$langs->trans("hoursperdays").'
-                <th>
-                <th>
-                    <input type="text" name="hoursperday" value="'.$hoursperday.'"  >
-                </th>
-            </tr>
-            <tr>
-                <th>
-                    '.$langs->trans("hidedraft").'
-                <th>
-                <th>
-                    <input type="checkbox" name="hidedraft" value="1" '.(($hidedraft=='1')?'checked':'').' >
-                </th>
-            </tr>
-              <tr>
-                <th>
-                    '.$langs->trans("hidezeros").'
-                <th>
-                <th>
-                    <input type="checkbox" name="hidezeros" value="1" '.(($hidezeros=='1')?'checked':'').' >
-                </th>
-            </tr>
-            <tr>
-                <th>
-                    '.$langs->trans("hideprogress").'
-                <th>
-                <th>
-                    <input type="checkbox" name="hideprogress" value="1" '.(($hideprogress=='1')?'checked':'').' >
-                </th>
-            </tr>
-            </table>
-            <input type="submit" value="'.$langs->trans('Save').'">
-            </from>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("timesheetSetup"),$linkback,'title_setup');
+print_titre($langs->trans("GeneralOption"));
+$Form ='<form name="settings" action="?action=save" method="POST" >'."\n\t";
+$Form .='<table class="noborder" width="100%">'."\n\t\t";
+$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+// type time
+$Form .='<tr class="impair"><th align="left">'.$langs->trans("timeType").'</th><th align="left">'.$langs->trans("timeTypeDesc").'</th>';
+$Form .='<th align="left"><input type="radio" name="timeType" value="hours" ';
+$Form .=($timetype=="hours"?"checked":"").'> '.$langs->trans("hours").'</br>';
+$Form .='<input type="radio" name="timeType" value="days" ';
+$Form .=($timetype=="days"?"checked":"").'> '.$langs->trans("days")."</th></tr>\n\t\t";
+//hours perdays
+$Form .='<tr class="pair"><th align="left">'.$langs->trans("hoursperdays");
+$Form .='</th><th align="left">'.$langs->trans("hoursPerDaysDesc").'</th>';
+$Form .='<th align="left"><input type="text" name="hoursperday" value="'.$hoursperday;
+$Form .="\" size=\"4\" ></th></tr>\n\t\t";
+// hide draft
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("hidedraft");
+$Form .='</th><th align="left">'.$langs->trans("hideDraftDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="hidedraft" value="1" ';
+$Form .=(($hidedraft=='1')?'checked':'')."</th></tr>\n\t\t";
+// hide zeros
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("hidezeros");
+$Form .='</th><th align="left">'.$langs->trans("hideZerosDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="hidezeros" value="1" ';
+$Form .=(($hidezeros=='1')?'checked':'')."</th></tr>\n\t</table>\n";
+print $Form.'</br>';
+
+print_titre($langs->trans("ColumnToShow"));
+$Form ='<table class="noborder" width="100%">'."\n\t\t";
+$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+//'Project||TaskParent||Tasks||DateStart||DateEnd||Progress');
+// Project
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("Project");
+$Form .='</th><th align="left">'.$langs->trans("ProjectColDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="showProject" value="1" ';
+$Form .=(($showProject=='1')?'checked':'')."</th></tr>\n\t\t";
+// task parent
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("TaskParent");
+$Form .='</th><th align="left">'.$langs->trans("TaskParentColDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="showTaskPatent" value="1" ';
+$Form .=(($showTaskPatent=='1')?'checked':'')."</th></tr>\n\t\t";
+// task
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("Tasks");
+$Form .='</th><th align="left">'.$langs->trans("TasksColDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="showTasks" value="1" ';
+$Form .=(($showTask=='1')?'checked':'')."</th></tr>\n\t\t";
+// date de debut
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("DateStart");
+$Form .='</th><th align="left">'.$langs->trans("DateStartColDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="showDateStart" value="1" ';
+$Form .=(($showDateStart=='1')?'checked':'')."</th></tr>\n\t\t";
+// date de fin
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("DateEnd");
+$Form .='</th><th align="left">'.$langs->trans("DateEndColDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="showDateEnd" value="1" ';
+$Form .=(($showDateEnd=='1')?'checked':'')."</th></tr>\n\t\t";
+// Progres
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("Progress");
+$Form .='</th><th align="left">'.$langs->trans("ProgressColDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="showProgress" value="1" ';
+$Form .=(($showProgress=='1')?'checked':'')."</th></tr>\n\t\t";
+/*
+// custom FIXME
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("CustomCol");
+$Form .='</th><th align="left">'.$langs->trans("CustomColDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="showCustomCol" value="1" ';
+$Form .=(($showCustomCol=='1')?'checked':'')."</th></tr>\n\t\t";
+*/
+$Form .='</table></br>';
+$Form .='<input type="submit" value="'.$langs->trans('Save')."\">\n</from>";
 $Form.='<script type="text/javascript" src="timesheet.js"></script>';
 print $Form;
 llxFooter();
