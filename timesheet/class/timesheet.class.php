@@ -49,7 +49,7 @@ class timesheet extends Task
     }*/
     public function getTaskInfo()
     {
-            $sql = "SELECT p.title,p.rowid, pt.label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective,ptp.label as taskParentLabel";	
+            $sql = "SELECT CONCAT(p.`ref`,' - ',p.title) as title,p.rowid, CONCAT(pt.`ref`,' - ',pt.label) as label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective,CONCAT(ptp.`ref`,' - ',ptp.label) as taskParentLabel";	
             $sql .=" FROM ".MAIN_DB_PREFIX."projet_task AS pt";
             $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
             $sql .=" ON pt.fk_projet=p.rowid";

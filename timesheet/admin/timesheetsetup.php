@@ -46,18 +46,18 @@ $timetype=TIMESHEET_TIME_TYPE;
 $hoursperday=TIMESHEET_DAY_DURATION;
 $hidedraft=TIMESHEET_HIDE_DRAFT;
 $hidezeros=TIMESHEET_HIDE_ZEROS;
-$hideprogress=TIMESHEET_HIDE_PROGRESS;
+$headers=TIMESHEET_HEADERS;
 switch($action)
 {
     case save:
         if(GETPOST('timeType','alpha')==''){ // if no POST data
            break;
         }
+        //general option
         $timetype=GETPOST('timeType','alpha');
         $hoursperday=GETPOST('hoursperday','alpha');
         $hidedraft=GETPOST('hidedraft','alpha');
         $hidezeros=GETPOST('hidezeros','alpha');
-        $hideprogress=GETPOST('hideprogress','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
@@ -66,9 +66,26 @@ switch($action)
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_ZEROS", $hidezeros, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
-        $res=dolibarr_set_const($db, "TIMESHEET_HIDE_PROGRESS", $hideprogress, 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
+
+        //headers handling
+        $showProject=GETPOST('showProject','int');
+        $showTaskParent=GETPOST('showTaskParent','int');
+        $showTasks=GETPOST('showTasks','int');
+        $showDateStart=GETPOST('showDateStart','int');
+        $showDateEnd=GETPOST('showDateEnd','int');
+        $showProgress=GETPOST('showProgress','int');
+
+
+        $headers=$showProject?'Project':'';
+        $headers.=$showTaskParent?(empty($headers)?'':'||').'TaskParent':'';
+        $headers.=$showTasks?(empty($headers)?'':'||').'Tasks':'';
+        $headers.=$showDateStart?(empty($headers)?'':'||').'DateStart':'';
+        $headers.=$showDateEnd?(empty($headers)?'':'||').'DateEnd':'';
+        $headers.=$showProgress?(empty($headers)?'':'||').'Progress':'';
+        $res=dolibarr_set_const($db, "TIMESHEET_HEADERS", $headers, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;       
         // error handling
+        
         if (! $error)
         {
             setEventMessage($langs->trans("SetupSaved"));
@@ -81,7 +98,37 @@ switch($action)
     default:
         break;
 }
-	
+
+
+/* 
+ *  VIEW
+ *  */
+$headersT=explode('||',$headers);
+foreach ($headersT as $header) {
+    switch($header){
+        case 'Project':
+            $showProject=1;
+            Break;
+        case 'TaskParent':
+            $showTaskParent=1;
+            Break;
+        case 'Tasks':
+            $showTasks=1;
+            Break;
+        case 'DateStart':
+            $showDateStart=1;
+            Break;
+        case 'DateEnd':
+            $showDateEnd=1;
+            Break;
+        case 'Progress':
+            $showProgress=1;
+            Break;
+        default:
+            break;
+    }
+    
+}
 
 //permet d'afficher la structure dolibarr
 llxHeader("",$langs->trans("timesheetSetup"));
@@ -97,7 +144,7 @@ $Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Va
 // type time
 $Form .='<tr class="impair"><th align="left">'.$langs->trans("timeType").'</th><th align="left">'.$langs->trans("timeTypeDesc").'</th>';
 $Form .='<th align="left"><input type="radio" name="timeType" value="hours" ';
-$Form .=($timetype=="hours"?"checked":"").'> '.$langs->trans("hours").'</br>';
+$Form .=($timetype=="hours"?"checked":"").'> '.$langs->trans("hours").'<br>';
 $Form .='<input type="radio" name="timeType" value="days" ';
 $Form .=($timetype=="days"?"checked":"").'> '.$langs->trans("days")."</th></tr>\n\t\t";
 //hours perdays
@@ -109,49 +156,48 @@ $Form .="\" size=\"4\" ></th></tr>\n\t\t";
 $Form .= '<tr class="impair"><th align="left">'.$langs->trans("hidedraft");
 $Form .='</th><th align="left">'.$langs->trans("hideDraftDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="hidedraft" value="1" ';
-$Form .=(($hidedraft=='1')?'checked':'')."</th></tr>\n\t\t";
+$Form .=(($hidedraft=='1')?'checked':'')."></th></tr>\n\t\t";
 // hide zeros
 $Form .= '<tr class="pair"><th align="left">'.$langs->trans("hidezeros");
 $Form .='</th><th align="left">'.$langs->trans("hideZerosDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="hidezeros" value="1" ';
-$Form .=(($hidezeros=='1')?'checked':'')."</th></tr>\n\t</table>\n";
-print $Form.'</br>';
+$Form .=(($hidezeros=='1')?'checked':'')."></th></tr>\n\t</table>\n";
+print $Form.'<br>';
 
 print_titre($langs->trans("ColumnToShow"));
 $Form ='<table class="noborder" width="100%">'."\n\t\t";
 $Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
 $Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
-//'Project||TaskParent||Tasks||DateStart||DateEnd||Progress');
 // Project
 $Form .= '<tr class="impair"><th align="left">'.$langs->trans("Project");
 $Form .='</th><th align="left">'.$langs->trans("ProjectColDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="showProject" value="1" ';
-$Form .=(($showProject=='1')?'checked':'')."</th></tr>\n\t\t";
+$Form .=(($showProject=='1')?'checked':'')."></th></tr>\n\t\t";
 // task parent
 $Form .= '<tr class="pair"><th align="left">'.$langs->trans("TaskParent");
 $Form .='</th><th align="left">'.$langs->trans("TaskParentColDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="showTaskPatent" value="1" ';
-$Form .=(($showTaskPatent=='1')?'checked':'')."</th></tr>\n\t\t";
+$Form .= '<th align="left"><input type="checkbox" name="showTaskParent" value="1" ';
+$Form .=(($showTaskParent=='1')?'checked':'')."></th></tr>\n\t\t";
 // task
 $Form .= '<tr class="impair"><th align="left">'.$langs->trans("Tasks");
 $Form .='</th><th align="left">'.$langs->trans("TasksColDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="showTasks" value="1" ';
-$Form .=(($showTask=='1')?'checked':'')."</th></tr>\n\t\t";
+$Form .=(($showTasks=='1')?'checked':'')."></th></tr>\n\t\t";
 // date de debut
 $Form .= '<tr class="pair"><th align="left">'.$langs->trans("DateStart");
 $Form .='</th><th align="left">'.$langs->trans("DateStartColDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="showDateStart" value="1" ';
-$Form .=(($showDateStart=='1')?'checked':'')."</th></tr>\n\t\t";
+$Form .=(($showDateStart=='1')?'checked':'')."></th></tr>\n\t\t";
 // date de fin
 $Form .= '<tr class="impair"><th align="left">'.$langs->trans("DateEnd");
 $Form .='</th><th align="left">'.$langs->trans("DateEndColDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="showDateEnd" value="1" ';
-$Form .=(($showDateEnd=='1')?'checked':'')."</th></tr>\n\t\t";
+$Form .=(($showDateEnd=='1')?'checked':'')."></th></tr>\n\t\t";
 // Progres
 $Form .= '<tr class="pair"><th align="left">'.$langs->trans("Progress");
 $Form .='</th><th align="left">'.$langs->trans("ProgressColDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="showProgress" value="1" ';
-$Form .=(($showProgress=='1')?'checked':'')."</th></tr>\n\t\t";
+$Form .=(($showProgress=='1')?'checked':'')."></th></tr>\n\t\t";
 /*
 // custom FIXME
 $Form .= '<tr class="pair"><th align="left">'.$langs->trans("CustomCol");
@@ -159,7 +205,7 @@ $Form .='</th><th align="left">'.$langs->trans("CustomColDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="showCustomCol" value="1" ';
 $Form .=(($showCustomCol=='1')?'checked':'')."</th></tr>\n\t\t";
 */
-$Form .='</table></br>';
+$Form .='</table><br>';
 $Form .='<input type="submit" value="'.$langs->trans('Save')."\">\n</from>";
 $Form.='<script type="text/javascript" src="timesheet.js"></script>';
 print $Form;

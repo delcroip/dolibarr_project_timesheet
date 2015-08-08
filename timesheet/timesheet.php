@@ -153,8 +153,8 @@ $Form .='<form name="timesheet" action="?action=submit&yearweek='.$yearWeek.'" m
 $Form .="\n<table class=\"noborder\" width=\"100%\">\n";
 //headers
 
-//$headers=explode('||', TIMESHEET_HEADERS);
-$headers=explode('||', 'Project||TaskParent||Tasks||DateStart||DateEnd||Progress');
+$headers=explode('||', TIMESHEET_HEADERS);
+//$headers=explode('||', 'Project||TaskParent||Tasks||DateStart||DateEnd||Progress');
 //$headersWidth=explode('||', TIMESHEET_HEADERS_WIDTH);
 $headersWidth=explode('||', '');
 for ($i=0;$i<7;$i++)
