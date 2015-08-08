@@ -379,7 +379,7 @@ switch ($action) {
 	print '<table class="border centpercent">'."\n";
 
             
-		print "<tr>\n";
+		print "<tr>";
 
 // show the field user
                
@@ -392,8 +392,8 @@ switch ($action) {
             print print_generic($db,'user', 'rowid',$object->user,'lastname','firstname',' ');
             }
             print "</td>";
-            print "\n</tr>\n";
-                print "<tr>\n";
+            print "</tr>\n";
+                print "<tr>";
 // show the field project
 
 		print '<td class="fieldrequired">'.$langs->trans('Project').' </td><td>';
@@ -409,12 +409,12 @@ switch ($action) {
 		print print_generic($db,'projet','rowid',$object->project,'ref','title');
 		}
 		print "</td>";
-		print "\n</tr>\n";
-		print "<tr>\n";
+		print "</tr>\n";
+		print "<tr>";
 
 // show the field project_task
 
-		print '<td>'.$langs->trans('Projecttask').' </td><td>';
+		print '<td>'.$langs->trans('Task').' </td><td>';
 		if($edit==1){
                     if($object->project) $formProject=' WHERE fk_projet="'.$object->project.'"';
                   //if (isset($formProject)){  
@@ -427,8 +427,8 @@ switch ($action) {
 		print print_generic($db,'projet_task','rowid',$object->project_task,'ref','label');
 		}
 		print "</td>";
-		print "\n</tr>\n";
-                print "<tr>\n";
+		print "</tr>\n";
+                print "<tr>";
 
 // show the field subtask
 
@@ -436,15 +436,15 @@ switch ($action) {
 		if($edit==1){
 			print ' <input type="checkbox" value="1" name="Subtask" '.($object->subtask?'checked':'').'>';
 		}else{
-			print '<input type="checkbox" '.($object->subtask?'checked':'').' onclick="return false" readonly>';
+                        print '<input type="checkbox" '.($object->subtask?'checked':'').' onclick="return false" readonly>';
 		}
 		print "</td>";
-		print "\n</tr>\n";
-		print "<tr>\n";
+		print "</tr>\n";
+		print "<tr>";
 
 // show the field date_start
 
-		print '<td>'.$langs->trans('Datestart').' </td><td>';
+		print '<td>'.$langs->trans('DateStart').' </td><td>';
 		if($edit==1){
 		if($new==1){
 			print $form->select_date(-1,'Datestart');
@@ -457,12 +457,12 @@ switch ($action) {
 			print dol_print_date($object->date_start,'day');
 		}
 		print "</td>";
-		print "\n</tr>\n";
+		print "</tr>\n";
 
 // show the field date_end
-                print "<tr>\n";
+                print "<tr>";
 
-		print '<td>'.$langs->trans('Dateend').' </td><td>';
+		print '<td>'.$langs->trans('DateEnd').' </td><td>';
 		if($edit==1){
 		if($new==1){
 			print $form->select_date(-1,'Dateend');
@@ -475,7 +475,7 @@ switch ($action) {
 			print dol_print_date($object->date_end,'day');
 		}
 		print "</td>";
-		print "\n</tr>\n";
+		print "</tr>\n";
 
             
 
@@ -484,7 +484,7 @@ switch ($action) {
 	print '<div class="center">';
         if($edit==1){
         if($new==1){
-                print '<input type="submit" class="button" name="add" value="'.$langs->trans('Create').'">';
+                print '<input type="submit" class="button" name="add" value="'.$langs->trans('Add').'">';
             }else{
                 print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="button">';
             }
@@ -660,17 +660,17 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<table class="liste" width="100%">'."\n";
         //TITLE
         print '<tr class="liste_titre">';
-        if($user->admin)print_liste_field_titre($langs->trans('user'),$PHP_SELF,'t.fk_user','',$param,'',$sortfield,$sortorder);
+        if($user->admin)print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_user','',$param,'',$sortfield,$sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('project'),$PHP_SELF,'t.fk_project','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Project'),$PHP_SELF,'t.fk_project','',$param,'',$sortfield,$sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('project_task'),$PHP_SELF,'t.fk_project_task','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Task'),$PHP_SELF,'t.fk_project_task','',$param,'',$sortfield,$sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('subtask'),$PHP_SELF,'t.subtask','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Subtask'),$PHP_SELF,'t.subtask','',$param,'',$sortfield,$sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('date_start'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DateStart'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('date_end'),$PHP_SELF,'t.date_end','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DateEnd'),$PHP_SELF,'t.date_end','',$param,'',$sortfield,$sortorder);
 	print "\n";
 
         
@@ -750,7 +750,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '</table>'."\n";
     print '</from>'."\n";
     // new button
-    print '<a href="?action=create" class="button" role="button">NewTimesheetwhitelist</a>'."\n";
+        print '<a href="?action=create" class="button" role="button">'.$langs->trans('New');
+    print ' '.$langs->trans('Timesheetwhitelist')."</a>\n";
+
 
     
 }

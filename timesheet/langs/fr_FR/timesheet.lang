@@ -34,3 +34,11 @@ TasksColDesc = Contient la référence et le label de la tâche
 ProgressColDesc = Contient la progression de la tâche par rapport au temps estimé 
 DateStartColDesc = Contient la date de départ de la tâche
 DateEndColDesc = Contient la date de fin de la tâche
+#whiteist
+notYourWhitelist=Ce favori ne vous concerne pas
+noIdPresent= Référence (id) non presente 
+RecordDeleted = Enregistement supprimé
+DeleteTimesheetwhitelist = Favori supprimé
+Timesheetwhitelist = Favoris
+#BackToList 
+Subtask = Tâche enfant

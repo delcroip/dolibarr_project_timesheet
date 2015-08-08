@@ -221,7 +221,7 @@ class timesheet extends Task
     $html= '<tr class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
     //title section
      foreach ($headers as $key => $title){
-         $html.="\t<th>";
+         $html.="\t<th align=\"left\">";
          switch($title){
              case 'Project':
                  $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';

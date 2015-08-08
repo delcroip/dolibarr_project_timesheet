@@ -236,7 +236,7 @@ class modTimesheet extends DolibarrModules
                   $r++;
                 $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
-									'titre'=>'whiteList',
+									'titre'=>'Timesheetwhitelist',
 									'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'timesheet',
 									'url'=>'/timesheet/timesheetwhitelist.php',

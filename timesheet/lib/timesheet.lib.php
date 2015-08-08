@@ -259,7 +259,7 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
         dol_print_error($db);
        $select.= "ERROR";
     }
-      $select.="\n";
+      //$select.="\n";
       return $select;
  }
  
