@@ -248,7 +248,7 @@ if ($cancel){
                                     // Creation OK
                                 // remove the tms
                                    unset($_SESSION['Timesheetwhitelist_'.$tms]);
-                                   setEventMessages('Timesheetwhitelist SucessfullyCreated',null, 'mesgs');
+                                   setEventMessages('TimesheetwhitelistSucessfullyCreated',null, 'mesgs');
                                    reloadpage($backtopage,$result,$ref);
                                     
                             }else
