@@ -100,7 +100,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$upload_dir = $conf->timesheet->dir_output.'/Timesheetwhitelist/'.dol_sanitizeFileName($object->ref);
+//$upload_dir = $conf->timesheet->dir_output.'/Timesheetwhitelist/'.dol_sanitizeFileName($object->ref);
 
 
  // uncomment to avoid resubmision
@@ -202,7 +202,7 @@ if ($cancel){
                             {
                                 // Creation OK
                                 unset($_SESSION['Timesheetwhitelist_'.$tms]);
-                                    setEventMessages('hrcontractfullyUpdated',null, 'mesgs');
+                                    setEventMessages('TimesheetwhitelistUpdated',null, 'mesgs');
                                     reloadpage($backtopage,$object->id,$ref); 
                             }
                             else
@@ -248,7 +248,7 @@ if ($cancel){
                                     // Creation OK
                                 // remove the tms
                                    unset($_SESSION['Timesheetwhitelist_'.$tms]);
-                                   setEventMessages('hrcontractSucessfullyCreated',null, 'mesgs');
+                                   setEventMessages('Timesheetwhitelist SucessfullyCreated',null, 'mesgs');
                                    reloadpage($backtopage,$result,$ref);
                                     
                             }else
@@ -337,7 +337,7 @@ switch ($action) {
         $edit=1;
    case 'delete';
         if( $action=='delete' && ($id>0 || $ref!="")){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
+         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDeleteTimesheetwhitelist'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -519,6 +519,7 @@ switch ($action) {
         }
         break;
     }
+  /*
         case 'viewinfo':
         print_fiche_titre($langs->trans('Timesheetwhitelist'));
         $head=Timesheetwhitelist_prepare_head($object);
@@ -562,12 +563,12 @@ switch ($action) {
         $permission = $user->rights->timesheet->add;
         $param = '&id='.$object->id;
         include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
+*/
         
         break;
     case 'delete':
         if( ($id>0 || $ref!='')){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
+         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDeleteTimesheetwhitelist'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background        
         }
@@ -791,6 +792,7 @@ function Timesheetwhitelist_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'timesheet');
     complete_head_from_modules($conf,$langs,$object,$head,$h,'timesheet','remove');
+    /*
     $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewdoc&id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
     $head[$h][2] = 'documents';
@@ -800,6 +802,8 @@ function Timesheetwhitelist_prepare_head($object)
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;
+     */
+     
 
     return $head;
 }
