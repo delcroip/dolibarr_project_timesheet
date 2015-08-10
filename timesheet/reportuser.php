@@ -128,7 +128,7 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
     $firstDay= strtotime('01-'.$month.'-'. $year);
     $lastDay=  strtotime('last day of this month',$firstDay);
     $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
-            $langs->trans(date('F',$month)),
+            $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
             (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
     
 }else
@@ -153,8 +153,12 @@ $Form.='</select></td>'
         </table></form>';
 echo $Form;
 // section to generate
+if(!empty($querryRes)){
+   
+    echo $querryRes;
+}
 
-echo $querryRes;
+
 llxFooter();
 $db->close();
 ?>

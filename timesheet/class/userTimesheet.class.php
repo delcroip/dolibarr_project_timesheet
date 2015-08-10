@@ -43,7 +43,7 @@ class userTimesheet extends user
       */
     public function getHTMLreport($startDay,$stopDay,$mode,$short,$periodTitle,$hoursperdays){
     // HTML buffer
-    
+    global $langs;
     $lvl1HTML='';
     $lvl3HTML='';
     $lvl2HTML='';
@@ -62,7 +62,8 @@ class userTimesheet extends user
     //sum user
     //mode 2, PER TASK
     //list of task
-    //list of user per task
+    //list of user per 
+    $title=['1'=>'Project','2'=>'','4'=>'Day','3'=>'Tasks'];
     $sql='SELECT prj.rowid as projectId, prj.`ref` as projectRef, '
                     .'prj.title as projectTitle,tsk.rowid as taskId, '
                     .'tsk.`ref` as taskRef,tsk.label as taskTitle,'
@@ -140,6 +141,7 @@ class userTimesheet extends user
             }else
             {
                     dol_print_error($this->db);
+                    return '';
             }
         if($numTaskTime>0) 
         {       
@@ -153,7 +155,7 @@ class userTimesheet extends user
             if(($resArray[$Curlvl2][$lvl2Key]!=$resArray[$key][$lvl2Key])
                     ||($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
             {
-                $lvl2HTML.='<tr class="pair"><th></th><th>'
+                $lvl2HTML.='<tr class="pair" align="left"><th></th><th>'
                         .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
                         .$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
                 $lvl2HTML.=$lvl3HTML;
@@ -163,7 +165,7 @@ class userTimesheet extends user
                 $Curlvl2=$key;
                 if(($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
                 {
-                    $lvl1HTML.='<tr class="pair"><th>'
+                    $lvl1HTML.='<tr class="pair" align="left"><th >'
                             .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
                             .$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
                     $lvl1HTML.=$lvl2HTML;
@@ -175,7 +177,7 @@ class userTimesheet extends user
             }
             if(!$short)
             {
-                $lvl3HTML.='<tr class="impair"><th></th><th></th><th>'
+                $lvl3HTML.='<tr class="impair" align="left"><th></th><th></th><th>'
                     .$resArray[$key][$lvl3Title].'</th><th>';
                 if($hoursperdays==0)
                 {
@@ -189,22 +191,23 @@ class userTimesheet extends user
 
         }
        //handle the last line 
-        $lvl2HTML.='<tr class="pair"><th></th><th>'
+        $lvl2HTML.='<tr class="pair" align="left"><th></th><th>'
                     .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
                     .$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
         $lvl2HTML.=$lvl3HTML;
         $lvl2Total+=$lvl3Total;
-        $lvl1HTML.='<tr class="pair"><th>'
+        $lvl1HTML.='<tr class="pair" align="left"><th>'
                 .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
                 .$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
         $lvl1HTML.=$lvl2HTML;
         $lvl1Total+=$lvl2Total;
         // make the whole result
-        $HTMLRes='<table class="noborder" width="100%">'
-                .'<tr class="liste_titre"><th>'.$this->firstname.' - '
-                .$this->lastname.'</th><th>'
-                .$periodTitle.'</th><th></th><th>'
-                .$this->formatTime($lvl1Total,$hoursperdays).'</th></tr>';
+         $HTMLRes='<br><div class="titre">'.$this->firstname.' - '.$this->lastname.', '.$periodTitle.'</div>';
+         $HTMLRes.='<table class="noborder" width="100%">';
+         $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans($title[$lvl1Title]).'</th><th>'
+                .$langs->trans($title[$lvl2Title]).'</th>';
+         $HTMLRes.=(!$short)?'<th>'.$langs->trans($title[$lvl3Title]).'</th>':'';
+         $HTMLRes.='<th>'.$this->formatTime($lvl1Total,$hoursperdays).'</th></tr>';
         $HTMLRes.=$lvl1HTML;
         $HTMLRes.='</table>';
         } // end is numtasktime
@@ -213,6 +216,7 @@ class userTimesheet extends user
 
 
     return $HTMLRes;
+
     }
     
     private function formatTime($duration,$hoursperdays)

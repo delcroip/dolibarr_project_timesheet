@@ -40,7 +40,6 @@ noIdPresent= Référence (id) non presente
 RecordDeleted = Enregistement supprimé
 DeleteTimesheetwhitelist = Favori supprimé
 Timesheetwhitelist = Favoris
-#BackToList 
 Subtask = Tâche enfant
 ConfirmDeleteTimesheetwhitelist = Confirmez vous la suppression du favoris ?
 DeleteTimesheetwhitelist = Favoris supprimé
