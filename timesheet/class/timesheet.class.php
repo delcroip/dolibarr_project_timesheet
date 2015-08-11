@@ -49,7 +49,7 @@ class timesheet extends Task
     }*/
     public function getTaskInfo()
     {
-            $sql = "SELECT CONCAT(p.`ref`,' - ',p.title) as title,p.rowid, CONCAT(pt.`ref`,' - ',pt.label) as label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective,CONCAT(ptp.`ref`,' - ',ptp.label) as taskParentLabel";	
+            $sql = "SELECT CONCAT(p.`ref`,' - ',p.title) as title,p.rowid, CONCAT(pt.`ref`,' - ',pt.label) as label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective, pt.fk_task_parent ,CONCAT(ptp.`ref`,' - ',ptp.label) as taskParentLabel";	
             $sql .=" FROM ".MAIN_DB_PREFIX."projet_task AS pt";
             $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
             $sql .=" ON pt.fk_projet=p.rowid";
@@ -79,6 +79,8 @@ class timesheet extends Task
                             $this->date_end			= $this->db->jdate($obj->datee);
                             $this->duration_effective           = $obj->duration_effective;		// total of time spent on this task
                             $this->planned_workload             = $obj->planned_workload;
+                            $this->fk_task_parent               = $obj->fk_task_parent;
+                            
                     }
                     $this->db->free($resql);
                     return 1;
