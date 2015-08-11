@@ -30,7 +30,8 @@ $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
 if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';// to work if your module directory is into a subdir of root htdocs directory
 //if (! $res && file_exists("/home/patrick/gitrespo/dolibarr/htdocs/main.inc.php")) $res=@include "/home/patrick/gitrespo/dolibarr/htdocs/main.inc.php";     // Used on dev env only
-if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include "/var/www/dolibarr/htdocs/main.inc.php";     // Used on dev env only
+if(strpos($_SERVER['PHP_SELF'], 'dolibarr_min')>0 && !$res && file_exists("/var/www/dolibarr_min/htdocs/main.inc.php")) $res=@include "/var/www/dolibarr_min/htdocs/main.inc.php";     // Used on dev env only
+else if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include '/var/www/dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
@@ -55,6 +56,7 @@ if ($yearWeek!=0) {
         $_SESSION["yearWeek"]=$yearWeek;
 }
 $timestamp=GETPOST('timestamp');
+$userid=  is_object($user)?$user->id:$user;
 
 
 
@@ -92,6 +94,7 @@ switch($action)
         {
             if (!empty($_POST['task']))
             {    
+                    
                     $ret =postActuals($db,$user,$_POST['task'],$timestamp);
                     if($ret>0)
                     {
@@ -180,7 +183,7 @@ $Form .='<th colspan="'.$num.'" align="right"> TOTAL </th>
 
 //line
 
-$Form .=timesheetList($db,$headers,$user->id,$yearWeek,$tmstp);
+$Form .=timesheetList($db,$headers,$userid,$yearWeek,$tmstp);
 
 //total Bot
 $Form .="<tr>\n";

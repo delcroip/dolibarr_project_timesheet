@@ -21,7 +21,8 @@ $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
 if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
 if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // Used on dev env only
-if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include '/var/www/dolibarr/htdocs/main.inc.php';   // Used on dev env only
+if(strpos($_SERVER['PHP_SELF'], 'dolibarr_min')>0 && !$res && file_exists("/var/www/dolibarr_min/htdocs/main.inc.php")) $res=@include "/var/www/dolibarr_min/htdocs/main.inc.php";     // Used on dev env only
+else if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include '/var/www/dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
 //month / year form
@@ -39,6 +40,7 @@ $yearWeek	= GETPOST('yearweek');
 $langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
+$userid=  is_object($user)?$user->id:$user;
 
 //find the right week
 if(isset($_POST['Date'])){
@@ -68,7 +70,7 @@ $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
      .'WHERE ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="180"';
 }else
 {
-$sql.='WHERE (usr.rowid='.$user->id.') OR (usr.fk_user='.$user->id.' ) ';
+$sql.='WHERE (usr.rowid='.$userid.') OR (usr.fk_user='.$userid.' ) ';
 }
     
 

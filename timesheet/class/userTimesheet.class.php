@@ -156,8 +156,9 @@ class userTimesheet extends user
                     ||($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
             {
                 $lvl2HTML.='<tr class="pair" align="left"><th></th><th>'
-                        .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
-                        .$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
+                        .$resArray[$Curlvl2][$lvl2Title].'</th>';
+                if(!$short)$lvl2HTML.='<th></th>';
+                $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
                 $lvl2HTML.=$lvl3HTML;
                 $lvl3HTML='';
                 $lvl2Total+=$lvl3Total;
@@ -166,8 +167,9 @@ class userTimesheet extends user
                 if(($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
                 {
                     $lvl1HTML.='<tr class="pair" align="left"><th >'
-                            .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
-                            .$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
+                            .$resArray[$Curlvl1][$lvl1Title].'</th><th></th>';
+                    if(!$short)$lvl1HTML.='<th></th>';
+                    $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
                     $lvl1HTML.=$lvl2HTML;
                     $lvl2HTML='';
                     $lvl1Total+=$lvl2Total;
@@ -192,13 +194,15 @@ class userTimesheet extends user
         }
        //handle the last line 
         $lvl2HTML.='<tr class="pair" align="left"><th></th><th>'
-                    .$resArray[$Curlvl2][$lvl2Title].'</th><th></th><th>'
-                    .$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
+                .$resArray[$Curlvl2][$lvl2Title].'</th>';
+        if(!$short)$lvl2HTML.='<th></th>';
+        $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
         $lvl2HTML.=$lvl3HTML;
         $lvl2Total+=$lvl3Total;
-        $lvl1HTML.='<tr class="pair" align="left"><th>'
-                .$resArray[$Curlvl1][$lvl1Title].'</th><th></th></th><th><th>'
-                .$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
+        $lvl1HTML.='<tr class="pair" align="left"><th >'
+                .$resArray[$Curlvl1][$lvl1Title].'</th><th></th>';
+        if(!$short)$lvl1HTML.='<th></th>';
+        $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
         $lvl1HTML.=$lvl2HTML;
         $lvl1Total+=$lvl2Total;
         // make the whole result

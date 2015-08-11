@@ -22,7 +22,8 @@ $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
 if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
 if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // Used on dev env only
-if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include '/var/www/dolibarr/htdocs/main.inc.php';   // Used on dev env only
+if(strpos($_SERVER['PHP_SELF'], 'dolibarr_min')>0 && !$res && file_exists("/var/www/dolibarr_min/htdocs/main.inc.php")) $res=@include "/var/www/dolibarr_min/htdocs/main.inc.php";     // Used on dev env only
+else if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include '/var/www/dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
 //month / year form
@@ -59,7 +60,7 @@ if(isset($_POST['Date'])){
 llxHeader('',$langs->trans('projectReport'),'');
 $mode=($_POST['short']==1)?1:2;
 dol_include_once('/timesheet/class/projectTimesheet.class.php');
-
+$userid=  is_object($user)?$user->id:$user;
 
 
 
@@ -69,7 +70,7 @@ $sql='SELECT llx_projet.rowid,ref,title,dateo,datee FROM llx_projet ';
 if(!$user->admin){    
     $sql.='JOIN llx_element_contact ON llx_projet.rowid= element_id ';
     $sql.='WHERE fk_c_type_contact = "160" ';
-    $sql.='AND fk_socpeople='.$user->id;
+    $sql.='AND fk_socpeople='.$userid;
 }
 
 dol_syslog("timesheet::report::projectList sql=".$sql, LOG_DEBUG);

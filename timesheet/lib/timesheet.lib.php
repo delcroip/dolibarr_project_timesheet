@@ -311,21 +311,21 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
  *  @param     int              	$timestamp         timestamp
  *  @return     string                                                   html code
  */
- function timesheetList($db,$headers,$user,$yearWeek,$timestamp){
+ function timesheetList($db,$headers,$userid,$yearWeek,$timestamp){
      $Lines='';
     // get the whitelist
     $whiteList=array();
     $staticWhiteList=new Timesheetwhitelist($db);
     $datestart=strtotime($yearWeek.' +0 day');
     $datestop=strtotime($yearWeek.' +6 day');
-    $whiteList=$staticWhiteList->fetchUserList($user, $datestart, $datestop);
+    $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
      $tasksList=array();
 
     $sql ="SELECT DISTINCT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
     $sql.='JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
     $sql.='JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
-    $sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$user."' ";
+    $sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$userid."' ";
     if(TIMESHEET_HIDE_DRAFT=='1'){
          $sql.=' AND prj.fk_statut="1" ';
     }
@@ -364,7 +364,7 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
             {
                     dol_syslog("Timesheet::list.php task=".$row->id, LOG_DEBUG);
                     $row->getTaskInfo();
-                    $row->getActuals($yearWeek,$user); 
+                    $row->getActuals($yearWeek,$userid); 
                     $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
                     $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab();
                     $Lines.=$row->getFormLine( $yearWeek,$i,$headers); 
@@ -421,8 +421,8 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
         /*
          * For each task store in matching the session timestamp
          */
-    $userid=(version_compare(DOL_VERSION, "3.7", "<"))?$user:$user->id;
-    foreach($storedTasks as  $taskId => $taskItem)
+$userid=  is_object($user)?$user->id:$user;
+foreach($storedTasks as  $taskId => $taskItem)
     {
       //  $taskId=$taskItem["id"];
         $tasktimeIds=array();

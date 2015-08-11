@@ -162,7 +162,7 @@ class Timesheetwhitelist extends CommonObject
     *  @param	date	$datestop	stopdate
      *  @return             array)timesheetwhitelist          return the list of the user whiteliste	
      */
-    function fetchUserList($user,$datestart,$datestop)
+    function fetchUserList($userid,$datestart,$datestop)
     {
       $List=array();
       $Listtask=array();
@@ -178,7 +178,7 @@ class Timesheetwhitelist extends CommonObject
 
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        $sql.= " WHERE t.fk_user = ".$user;
+        $sql.= " WHERE t.fk_user = ".$userid;
         if($datestart)
                 $sql.= ' AND (t.date_end > FROM_UNIXTIME( '.$datestart.') OR t.date_end IS NULL)';
         if($datestop)
