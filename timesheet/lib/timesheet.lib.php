@@ -342,7 +342,7 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
     }else  if(!empty($whiteList)){ 
         $sql.=' AND tsk.rowid=" '.$whiteList.'" ';
     }
-    $sql.=" ORDER BY tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
+    $sql.=" ORDER BY prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
 
     dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
     $resql=$db->query($sql);

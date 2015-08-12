@@ -31,6 +31,8 @@ class timesheet extends Task
         private $weekWorkLoad  = array(0=>0,0,0,0,0,0,0);
         private $fk_project2;
         private $taskParentDesc;
+        private $companyName;
+        private $companyId;
 	
 
     public function __construct($db,$taskId) 
@@ -49,53 +51,72 @@ class timesheet extends Task
     }*/
     public function getTaskInfo()
     {
-            if(TIMESHEET_HIDE_REF){
-                $sql = "SELECT p.title as title,p.rowid, pt.label as label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective, pt.fk_task_parent ,ptp.label as taskParentLabel";	 
-            }else {
-                $sql = "SELECT CONCAT(p.`ref`,' - ',p.title) as title,p.rowid, CONCAT(pt.`ref`,' - ',pt.label) as label,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective, pt.fk_task_parent ,CONCAT(ptp.`ref`,' - ',ptp.label) as taskParentLabel";	
-            
-            }$sql .=" FROM ".MAIN_DB_PREFIX."projet_task AS pt";
-            $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
-            $sql .=" ON pt.fk_projet=p.rowid";
+        $Company=strpos(TIMESHEET_HEADERS, 'Company')===0;
+        $taskParent=strpos(TIMESHEET_HEADERS, 'TaskParent')>0;
+        $sql ='SELECT p.rowid,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective';
+        if(TIMESHEET_HIDE_REF==1){
+            $sql .= ',p.title as title, pt.label as label';
+            if($taskParent)$sql .= ',pt.fk_task_parent,ptp.label as taskParentLabel';	        	
+        }else{
+            $sql .= ",CONCAT(p.`ref`,' - ',p.title) as title";
+            $sql .= ",CONCAT(pt.`ref`,' - ',pt.label) as label";
+            if($taskParent)$sql .= ",pt.fk_task_parent,CONCAT(ptp.`ref`,' - ',ptp.label) as taskParentLabel";	
+        }
+        if($Company)$sql .= ',p.fk_soc as companyId,s.nom as companyName';
+
+        $sql .=" FROM ".MAIN_DB_PREFIX."projet_task AS pt";
+        $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
+        $sql .=" ON pt.fk_projet=p.rowid";
+        if($taskParent){
             $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet_task as ptp";
             $sql .=" ON pt.fk_task_parent=ptp.rowid";
-            $sql .=" WHERE pt.rowid ='".$this->id."'";
-            #$sql .= "WHERE pt.rowid ='1'";
-            dol_syslog(get_class($this)."::fetchtasks sql=".$sql, LOG_DEBUG);
+        }
+        if($Company){
+            $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."societe as s";
+            $sql .=" ON p.fk_soc=s.rowid";
+        }
+        $sql .=" WHERE pt.rowid ='".$this->id."'";
+        #$sql .= "WHERE pt.rowid ='1'";
+        dol_syslog(get_class($this)."::fetchtasks sql=".$sql, LOG_DEBUG);
 
 
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
 
-                    if ($this->db->num_rows($resql))
-                    {
+                if ($this->db->num_rows($resql))
+                {
 
-                            $obj = $this->db->fetch_object($resql);
-                              
-                            $this->description			= $obj->label;
-                            $this->fk_project2                   = $obj->rowid;
-                            $this->ProjectTitle			= $obj->title;
-                            $this->taskParentDesc                                           =$obj->taskParentLabel;
-                            #$this->date_start			= strtotime($obj->dateo.' +0 day');
-                            #$this->date_end			= strtotime($obj->datee.' +0 day');
-                            $this->date_start			= $this->db->jdate($obj->dateo);
-                            $this->date_end			= $this->db->jdate($obj->datee);
-                            $this->duration_effective           = $obj->duration_effective;		// total of time spent on this task
-                            $this->planned_workload             = $obj->planned_workload;
+                        $obj = $this->db->fetch_object($resql);
+
+                        $this->description			= $obj->label;
+                        $this->fk_project2                      = $obj->rowid;
+                        $this->ProjectTitle			= $obj->title;
+                        #$this->date_start			= strtotime($obj->dateo.' +0 day');
+                        #$this->date_end			= strtotime($obj->datee.' +0 day');
+                        $this->date_start			= $this->db->jdate($obj->dateo);
+                        $this->date_end			= $this->db->jdate($obj->datee);
+                        $this->duration_effective           = $obj->duration_effective;		// total of time spent on this task
+                        $this->planned_workload             = $obj->planned_workload;
+                        if($taskParent){
                             $this->fk_task_parent               = $obj->fk_task_parent;
-                            
-                    }
-                    $this->db->free($resql);
-                    return 1;
-            }
-            else
-            {
-                    $this->error="Error ".$this->db->lasterror();
-                    dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+                            $this->taskParentDesc               =$obj->taskParentLabel;
+                        }
+                        if($Company){
+                            $this->companyName                  =$obj->companyName;
+                            $this->companyId                    =$obj->companyId;
+                        }
+                }
+                $this->db->free($resql);
+                return 1;
+        }
+        else
+        {
+                $this->error="Error ".$this->db->lasterror();
+                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 
-                    return -1;
-            }	
+                return -1;
+        }	
     }
 
     public function getActuals( $yearWeek,$userid)
@@ -159,7 +180,12 @@ class timesheet extends Task
          $html.="\t<th align=\"left\">";
          switch($title){
              case 'Project':
-                 $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';
+                 if(file_exists("../projet/card.php")||file_exists("../../projet/card.php")){
+                    $html.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';
+                 }else{
+                    $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';
+                     
+                 }
                  break;
              case 'TaskParent':
                  $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->fk_task_parent.'&withproject='.$this->fk_project2.'">'.$this->taskParentDesc.'</a>';
@@ -172,6 +198,9 @@ class timesheet extends Task
                  break;
              case 'DateEnd':
                  $html.=$this->date_end?date('d/m/y',$this->date_end):'';
+                 break;
+             case 'Company':
+                 $html.='<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->companyId.'">'.$this->companyName.'</a>';
                  break;
              case 'Progress':
                  $html .=$this->parseTaskTime($this->duration_effective).'/';

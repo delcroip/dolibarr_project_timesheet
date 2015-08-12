@@ -25,9 +25,8 @@ $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
 if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
 if (! $res && file_exists("../../../main.inc.php")) $res=@include '../../../main.inc.php';     // Used on dev env only
-//if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include "/var/www/dolibarr/htdocs/main.inc.php";     // Used on dev env only
-if (! $res && file_exists("/var/www/dolibarr_min/htdocs/main.inc.php")) $res=@include "/var/www/dolibarr_min/htdocs/main.inc.php";     // Used on dev env only
-
+if(strpos($_SERVER['PHP_SELF'], 'dolibarr_min')>0 && !$res && file_exists("/var/www/dolibarr_min/htdocs/main.inc.php")) $res=@include "/var/www/dolibarr_min/htdocs/main.inc.php";     // Used on dev env only
+else if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include '/var/www/dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -46,6 +45,7 @@ $action = GETPOST('action','alpha');
 $timetype=TIMESHEET_TIME_TYPE;
 $hoursperday=TIMESHEET_DAY_DURATION;
 $hidedraft=TIMESHEET_HIDE_DRAFT;
+$hideref=TIMESHEET_HIDE_REF;
 $hidezeros=TIMESHEET_HIDE_ZEROS;
 $headers=TIMESHEET_HEADERS;
 switch($action)
@@ -59,6 +59,7 @@ switch($action)
         $hoursperday=GETPOST('hoursperday','alpha');
         $hidedraft=GETPOST('hidedraft','alpha');
         $hidezeros=GETPOST('hidezeros','alpha');
+        $hideref=GETPOST('hideref','alpha');        
         $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
@@ -67,7 +68,8 @@ switch($action)
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_ZEROS", $hidezeros, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
-
+        $res=dolibarr_set_const($db, "TIMESHEET_HIDE_REF", $hideref, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
         //headers handling
         $showProject=GETPOST('showProject','int');
         $showTaskParent=GETPOST('showTaskParent','int');
@@ -75,14 +77,16 @@ switch($action)
         $showDateStart=GETPOST('showDateStart','int');
         $showDateEnd=GETPOST('showDateEnd','int');
         $showProgress=GETPOST('showProgress','int');
+        $showCompany=GETPOST('showCompany','int');
 
-
-        $headers=$showProject?'Project':'';
+        $headers=$showCompany?'Company':'';
+        $headers.=$showProject?(empty($headers)?'':'||').'Project':'';
         $headers.=$showTaskParent?(empty($headers)?'':'||').'TaskParent':'';
         $headers.=$showTasks?(empty($headers)?'':'||').'Tasks':'';
         $headers.=$showDateStart?(empty($headers)?'':'||').'DateStart':'';
         $headers.=$showDateEnd?(empty($headers)?'':'||').'DateEnd':'';
         $headers.=$showProgress?(empty($headers)?'':'||').'Progress':'';
+        
         $res=dolibarr_set_const($db, "TIMESHEET_HEADERS", $headers, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;       
         // error handling
@@ -125,6 +129,9 @@ foreach ($headersT as $header) {
         case 'Progress':
             $showProgress=1;
             Break;
+        case 'Company':
+            $showCompany=1;
+            Break;
         default:
             break;
     }
@@ -158,12 +165,20 @@ $Form .= '<tr class="impair"><th align="left">'.$langs->trans("hidedraft");
 $Form .='</th><th align="left">'.$langs->trans("hideDraftDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="hidedraft" value="1" ';
 $Form .=(($hidedraft=='1')?'checked':'')."></th></tr>\n\t\t";
+// hide ref
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("hideref");
+$Form .='</th><th align="left">'.$langs->trans("hideRefDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="hideref" value="1" ';
+$Form .=(($hideref=='1')?'checked':'')."></th></tr>\n\t\t";
+
 // hide zeros
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("hidezeros");
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("hidezeros");
 $Form .='</th><th align="left">'.$langs->trans("hideZerosDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="hidezeros" value="1" ';
 $Form .=(($hidezeros=='1')?'checked':'')."></th></tr>\n\t</table>\n";
 print $Form.'<br>';
+
+
 
 print_titre($langs->trans("ColumnToShow"));
 $Form ='<table class="noborder" width="100%">'."\n\t\t";
@@ -199,6 +214,11 @@ $Form .= '<tr class="pair"><th align="left">'.$langs->trans("Progress");
 $Form .='</th><th align="left">'.$langs->trans("ProgressColDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="showProgress" value="1" ';
 $Form .=(($showProgress=='1')?'checked':'')."></th></tr>\n\t\t";
+// Company
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("Company");
+$Form .='</th><th align="left">'.$langs->trans("CompanyColDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="showCompany" value="1" ';
+$Form .=(($showCompany=='1')?'checked':'')."></th></tr>\n\t\t";
 /*
 // custom FIXME
 $Form .= '<tr class="pair"><th align="left">'.$langs->trans("CustomCol");

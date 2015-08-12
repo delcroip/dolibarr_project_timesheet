@@ -58,7 +58,7 @@ class modTimesheet extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Timesheet view";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.4.alpha';
+		$this->version = '1.4.beta';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -111,11 +111,12 @@ class modTimesheet extends DolibarrModules
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array();
-                $this->const[0] = array("TIMESHEET_TIME_TYPE","chaine","hours","mode d'affichage des timesheet"); // hours or days
-                $this->const[1] = array("TIMESHEET_DAY_DURATION","chaine","8","nombre d'heure par jour, utilisé dans l'affichage par jour"); 
-                $this->const[2] = array("TIMESHEET_HIDE_DRAFT","chaine","0","option pour masquer les projet brouillion"); 
-                $this->const[3] = array("TIMESHEET_HIDE_ZEROS","chaine","0","option pour masquer les 00:00"); 
-                $this->const[3] = array("TIMESHEET_HEADERS","chaine","0","option pour masquer les 00:00"); 
+                $this->const[0] = array("TIMESHEET_TIME_TYPE","chaine","hours","layout mode of the timesheets"); // hours or days
+                $this->const[1] = array("TIMESHEET_DAY_DURATION","chaine","8","number of hour per day (used for the layout per day)"); 
+                $this->const[2] = array("TIMESHEET_HIDE_DRAFT","chaine","0","option to mask to task belonging to draft project"); 
+                $this->const[3] = array("TIMESHEET_HIDE_ZEROS","chaine","0","option to hide the 00:00"); 
+                $this->const[3] = array("TIMESHEET_HEADERS","chaine","0","list of headers to show inthe timesheets"); 
+                $this->const[3] = array("TIMESHEET_HIDE_REF","chaine","0","option to hide the ref in the timesheets"); 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1
