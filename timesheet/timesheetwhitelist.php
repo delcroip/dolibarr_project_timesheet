@@ -153,9 +153,9 @@ if ($cancel){
         $tms=time();
         $_SESSION['Timesheetwhitelist_'.$tms]=array();
         $_SESSION['Timesheetwhitelist_'.$tms]['action']=$action;
-    }else if ($action == 'create'){
-        $object->user=GETPOST('User');
-        $object->project=GETPOST('Project');		
+    }else {
+        $editedUser=GETPOST('User');
+        $editedProject=GETPOST('Project');		
         
     }
     
@@ -163,7 +163,7 @@ if ($cancel){
 {
         //block resubmit
         if(empty($tms) || (!isset($_SESSION['Timesheetwhitelist_'.$tms]))){
-                setEventMessages(null,'WrongTimeStamp_requestNotExpected', 'errors');
+                setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
                 $action=($action=='add')?'create':'edit';
         }
         //retrive the data
@@ -191,6 +191,7 @@ if ($cancel){
         
  }else if ($id==0 && $ref=='' && $action!='create') 
  {
+     
      $action='list';
  }
  
@@ -203,14 +204,14 @@ if ($cancel){
                             {
                                 // Creation OK
                                 unset($_SESSION['Timesheetwhitelist_'.$tms]);
-                                    setEventMessages('TimesheetwhitelistUpdated',null, 'mesgs');
+                                    setEventMessage('RecordUpdated', 'mesgs');
                                     reloadpage($backtopage,$object->id,$ref); 
                             }
                             else
                             {
                                     // Creation KO
-                                    if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-                                    else setEventMessages($object->error, null, 'errors');
+                                    if (! empty($object->errors)) setEventMessage( $object->errors, 'errors');
+                                    else setEventMessage('RecordNotUpdated', 'errors');
                                     $action='edit';
                             }
                     case 'delete':
@@ -226,7 +227,7 @@ if ($cancel){
                                     // only admin can check the whitelist of other
                                     if(!$user->admin && $user->id != $object->user){
                                         setEventMessage( $langs->trans('notYourWhitelist').' id:'.$id,'errors');
-                                        $action='list';
+                                        reloadpage();
                                     }
                                     if ($result < 0){ 
                                         dol_print_error($db);
@@ -239,7 +240,7 @@ if ($cancel){
                             }else
                             {
                                     setEventMessage( $langs->trans('noIdPresent').' id:'.$id,'errors');
-                                    $action='list';
+                                    reloadpage(null,$id,$ref);
                             }
                             break;
                     case 'add':
@@ -249,14 +250,14 @@ if ($cancel){
                                     // Creation OK
                                 // remove the tms
                                    unset($_SESSION['Timesheetwhitelist_'.$tms]);
-                                   setEventMessages('TimesheetwhitelistSucessfullyCreated',null, 'mesgs');
+                                   setEventMessage('RecordSucessfullyCreated', 'mesgs');
                                    reloadpage($backtopage,$result,$ref);
                                     
                             }else
                             {
                                     // Creation KO
-                                    if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-                                    else  setEventMessages($object->error, null, 'errors');
+                                    if (! empty($object->errors)) setEventMessage( $object->errors, 'errors');
+                                    else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
                                     $action='create';
                             }                            
                             break;
@@ -267,16 +268,16 @@ if ($cancel){
                             if ($result > 0)
                             {
                                     // Delete OK
-                                    setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
-                                    $action='list';
+                                    setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
+                                    reloadpage();
                                     
                             }
                             else
                             {
                                     // Delete NOK
-                                    if (! empty($object->errors)) setEventMessages(null,$object->errors,'errors');
-                                    else setEventMessages($object->error,null,'errors');
-                                    $action='list';
+                                    if (! empty($object->errors)) setEventMessage($object->errors,'errors');
+                                    else setEventMessage('RecordNotDeleted','errors');
+                                    reloadpage(null,$id,$ref);
                             }
                          break;
                     case 'list':
@@ -309,9 +310,23 @@ $formother=new FormOther($db);
 print '
 <SCRIPT type="text/javascript">
 function reload(form){
+var param_array = window.location.href.split(\'?\')[1].split(\'&\');
+var index;
+var id="";
+var action="create";
+for(index = 0; index < param_array.length; ++index){
+    x = param_array[index].split(\'=\');
+    if(x[0]=="action"){
+        action= x[1];
+    }
+    if(x[0]=="id"){
+        id= "&id="+x[1];
+    }
+}
+
 var pjt=document.getElementById("Project").value;
 var usr=document.getElementById("User").value;
-self.location="'.$PHP_SELF.'?action=create&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
+self.location="'.$PHP_SELF.'?action=" + action + id +"&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
 }
 </script>';
 
@@ -346,12 +361,14 @@ switch ($action) {
     {
         // to avoid showing the whitelist of other
        // if(!$user->admin)$object->next_prev_filter=' fk_user="'.$user->id.'"';
-        print_fiche_titre($langs->trans('Timesheetwhitelist'));
+ //       
 
         // tabs
         if($edit==0 && $new==0){ //show tabs
             $head=Timesheetwhitelist_prepare_head($object);
             dol_fiche_head($head,'card',$langs->trans('Timesheetwhitelist'),0,'timesheet@timesheet');            
+        }else{
+            print_fiche_titre($langs->trans('Timesheetwhitelist'));
         }
 
 	print '<br>';
@@ -386,8 +403,8 @@ switch ($action) {
                
             print '<td class="fieldrequired" width="200px">'.$langs->trans('User').' </td><td>';
             if($edit==1){
-
-                                 print $form->select_dolusers(($new==1)?$user->id:$object->user, 'User', 1, '', !$user->admin );
+                    if(!empty($editedUser))$object->user=$editedUser;
+                    print $form->select_dolusers(($new==1)?$user->id:$object->user, 'User', 1, '', !$user->admin );
 
             }else{
             print print_generic($db,'user', 'rowid',$object->user,'lastname','firstname',' ');
@@ -399,6 +416,7 @@ switch ($action) {
 
 		print '<td class="fieldrequired">'.$langs->trans('Project').' </td><td>';
 		if($edit==1){
+                    if(!empty($editedProject))$object->project=$editedProject;
                 if(!$user->admin)
                 {
                         $formUser=' RIGHT JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
