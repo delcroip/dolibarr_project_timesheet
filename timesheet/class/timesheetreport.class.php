@@ -20,18 +20,23 @@
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-class userTimesheet extends user
+class timesheetReport 
 {
+    var $db;
+    var $projectid;
+    var $userid;
+    var $name;
+    
     public function __construct($db) 
 	{
             $this->db = $db;
 	}
         
-    public function initBasic($id,$firstname,$lastname) 
+    public function initBasic($projectid,$userid,$name) 
 	{
-            $this->id =$id;
-            $this->firstname =$firstname;
-            $this->lastname= $lastname;
+            $this->projectid =$projectid; // coul
+            $this->userid =$userid; // coul
+            $this->name =$name; // coul
 	}
     
      /*
@@ -63,18 +68,26 @@ class userTimesheet extends user
     //mode 2, PER TASK
     //list of task
     //list of user per 
-    $title=['1'=>'Project','2'=>'','4'=>'Day','3'=>'Tasks'];
-    $sql='SELECT prj.rowid as projectId, prj.`ref` as projectRef, '
-                    .'prj.title as projectTitle,tsk.rowid as taskId, '
-                    .'tsk.`ref` as taskRef,tsk.label as taskTitle,'
-                    .'ptt.task_date, SUM(ptt.task_duration) as duration '
-                    .'FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt '
-                    .'JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task '
-                    .'JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet '
-                    .'WHERE fk_user="'.$this->id.'" '
-                    .'AND task_date>=FROM_UNIXTIME("'.$startDay.'") '
+    $title=['1'=>'Project','2'=>'','4'=>'Day','3'=>'Tasks','7'=>'User'];
+    
+    $sql='SELECT prj.rowid as projectId, prj.`ref` as projectRef, ptt.fk_user as userId,';
+    $sql.= ' prj.title as projectTitle,tsk.rowid as taskId, CONCAT(usr.firstname,\' - \',usr.lastname) as userName,';
+    $sql.= ' tsk.`ref` as taskRef,tsk.label as taskTitle,';
+    $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
+    $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task ';
+    $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
+    $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';      
+    if(!empty($this->userid)){
+        $sql.='WHERE ptt.fk_user="'.$this->userid.'" ';
+    }else{
+        
+        $sql.='WHERE tsk.fk_projet="'.$this->projectid.'" ';
+    }
+            
+     $sql.='AND task_date>=FROM_UNIXTIME("'.$startDay.'") '
                     .'AND task_date<=FROM_UNIXTIME("'.$stopDay.'")  '
-                    .'GROUP BY prj.rowid, ptt.task_date,ptt.fk_task ';
+                    .'GROUP BY ptt.fk_user,prj.rowid, ptt.task_date,ptt.fk_task ';
     switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing
                 
@@ -108,6 +121,39 @@ class userTimesheet extends user
                 $lvl1Key=0;
                 $lvl2Key=2;
                 break;
+        case 'UDT': //project  / task / Days //FIXME dayoff missing
+                
+    $sql.='ORDER BY ptt.fk_user,ptt.task_date,ptt.fk_task ASC   ';
+                //title
+                $lvl1Title=7;
+                $lvl2Title=4;
+                $lvl3Title=3;
+                //keys
+                $lvl1Key=6;
+                $lvl2Key=4;
+                break;
+        
+        case 'DUT'://day /project /task
+                $sql.='ORDER BY ptt.task_date,ptt.fk_user,ptt.fk_task ASC   ';
+                //title
+                $lvl1Title=4;
+                $lvl2Title=7;
+                $lvl3Title=3;
+                //keys
+                $lvl1Key=4;
+                $lvl2Key=6;
+                break;
+        case 'UTD'://day /project /task
+                $sql.='ORDER BY ptt.fk_user,ptt.fk_task,ptt.task_date ASC   ';
+                //title
+                $lvl1Title=7;
+                $lvl2Title=3;
+                $lvl3Title=4;
+                //keys
+                $lvl1Key=6;
+                $lvl2Key=2;
+                break;
+
         default:
             break;
     }
@@ -132,7 +178,9 @@ class userTimesheet extends user
                                     $obj->taskId,
                                     $obj->taskRef.' - '.$obj->taskTitle,
                                     $obj->task_date,
-                                    $obj->duration );
+                                    $obj->duration,
+                                    $obj->userId,
+                                    $obj->userName);
                             
                         $i++;
                             
@@ -206,7 +254,7 @@ class userTimesheet extends user
         $lvl1HTML.=$lvl2HTML;
         $lvl1Total+=$lvl2Total;
         // make the whole result
-         $HTMLRes='<br><div class="titre">'.$this->firstname.' - '.$this->lastname.', '.$periodTitle.'</div>';
+         $HTMLRes='<br><div class="titre">'.$this->name.', '.$periodTitle.'</div>';
          $HTMLRes.='<table class="noborder" width="100%">';
          $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans($title[$lvl1Title]).'</th><th>'
                 .$langs->trans($title[$lvl2Title]).'</th>';

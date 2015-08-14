@@ -59,14 +59,14 @@ if(isset($_POST['Date'])){
 
 llxHeader('',$langs->trans('projectReport'),'');
 $mode=($_POST['short']==1)?1:2;
-dol_include_once('/timesheet/class/projectTimesheet.class.php');
+dol_include_once('/timesheet/class/timesheetreport.class.php');
 $userid=  is_object($user)?$user->id:$user;
 
 
 
 //querry to get the project where the user have priviledge; either project responsible or admin
 
-$sql='SELECT llx_projet.rowid,ref,title,dateo,datee FROM llx_projet ';
+$sql='SELECT pjt.rowid,pjt.ref,pjt.title,pjt.dateo,pjt.datee FROM llx_projet as pjt';
 if(!$user->admin){    
     $sql.='JOIN llx_element_contact ON llx_projet.rowid= element_id ';
     $sql.='WHERE fk_c_type_contact = "160" ';
@@ -88,8 +88,8 @@ if ($resql)
         {
                 $error=0;
                 $obj = $db->fetch_object($resql);
-                $projectList[$obj->rowid]=new ProjectTimesheet($db);
-                $projectList[$obj->rowid]->initBasic($obj->rowid,$obj->ref,$obj->title,$obj->dateo,$obj->datee);
+                $projectList[$obj->rowid]=new timesheetReport($db);
+                $projectList[$obj->rowid]->initBasic($obj->rowid,'',$obj->ref.' - '.$obj->title);
                 $i++;
         }
         $db->free($resql);
@@ -109,8 +109,7 @@ $Form='<form action="?action=reportproject" method="POST">
         <td><select  name="projectSelected">
         ';
 foreach($projectList as $pjt){
-    $Form.='<option value="'.$pjt->id.'" '.(($_POST['projectSelected']==$pjt->id)?"selected":'').' >'.$pjt->ref.' - '.$pjt->title.'</option>
-            ';
+    $Form.='<option value="'.$pjt->projectid.'" '.(($_POST['projectSelected']==$pjt->projectid)?"selected":'').' >'.$pjt->name.'</option>'."\n";
 }
 $mode='UTD';
 $querryRes='';
@@ -125,7 +124,7 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
     $firstDay= strtotime('01-'.$month.'-'. $year);
     $lastDay=  strtotime('last day of this month',$firstDay);
     $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
-            $langs->trans(date('F',$month)),
+            $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
             (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
     
 }else

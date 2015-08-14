@@ -59,7 +59,7 @@ if(isset($_POST['Date'])){
 
 llxHeader('',$langs->trans('userReport'),'');
 
-dol_include_once('/timesheet/class/userTimesheet.class.php');
+dol_include_once('/timesheet/class/timesheetreport.class.php');
 //querry to get the project where the user have priviledge; either project responsible or admin
 $sql='SELECT DISTINCT usr.rowid as userId, usr.lastname , usr.firstname '
      .'FROM '.MAIN_DB_PREFIX.'user as usr ';
@@ -89,8 +89,8 @@ if ($resql)
         {
                 $error=0;
                 $obj = $db->fetch_object($resql);
-                $userList[$obj->userId]=new userTimesheet($db);
-                $userList[$obj->userId]->initBasic($obj->userId,$obj->firstname,$obj->lastname);
+                $userList[$obj->userId]=new timesheetReport($db);
+                $userList[$obj->userId]->initBasic('',$obj->userId,$obj->firstname.' '.$obj->lastname);
                 $i++;
         }
         $db->free($resql);
@@ -112,8 +112,9 @@ $Form='<form action="?action=reportuser" method="POST">
         ';
 
 foreach($userList as $usr){
-    $Form.='<option value="'.$usr->id.'">'.$usr->lastname.' - '.$usr->firstname.'</option>
-            ';
+   // $Form.='<option value="'.$usr->id.'">'.$usr->name.'</option> ';
+    $Form.='<option value="'.$usr->userid.'" '.(($_POST['userSelected']==$usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
+
 }
 $mode='PTD';
 $querryRes='';
