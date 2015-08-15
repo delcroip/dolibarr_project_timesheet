@@ -116,6 +116,8 @@ foreach($userList as $usr){
     $Form.='<option value="'.$usr->userid.'" '.(($_POST['userSelected']==$usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
 
 }
+    $Form.='<option value="-999" '.(($_POST['projectSelected']=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+
 $mode='PTD';
 $querryRes='';
 
@@ -130,9 +132,17 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
     
     $firstDay= strtotime('01-'.$month.'-'. $year);
     $lastDay=  strtotime('last day of this month',$firstDay);
-    $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
+    if($_POST['projectSelected']=-999){
+        foreach($userList as $userSt){
+        $querryRes.=$userSt->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
             (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
+        }
+    }else{
+        $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
+            $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
+            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
+    }
     
 }else
 {

@@ -111,6 +111,10 @@ $Form='<form action="?action=reportproject" method="POST">
 foreach($projectList as $pjt){
     $Form.='<option value="'.$pjt->projectid.'" '.(($_POST['projectSelected']==$pjt->projectid)?"selected":'').' >'.$pjt->name.'</option>'."\n";
 }
+//    if($user->admin){
+        $Form.='<option value="-999" '.(($_POST['projectSelected']=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+//    }
+   
 $mode='UTD';
 $querryRes='';
 if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected']) 
@@ -123,9 +127,17 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
     $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
     $firstDay= strtotime('01-'.$month.'-'. $year);
     $lastDay=  strtotime('last day of this month',$firstDay);
+    if($_POST['projectSelected']=-999){
+        foreach($projectList as $project){
+        $querryRes.=$project->getHTMLreport($firstDay,$lastDay,$mode,$short,
+            $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
+            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
+        }
+    }else{
     $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
             (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
+    }
     
 }else
 {
