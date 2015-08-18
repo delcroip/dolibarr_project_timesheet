@@ -10,6 +10,7 @@ Timesheet view for project in Dolibarr
 
 # known bug/limitation
 - If the combo box ajax bug, it's not possible to enter new whitelist, this happen with Doibarr 3.5.7 (To disable the AJAX combo box in dolibarr you have to set the variable MAIN_DISABLE_AJAX_COMBOX to 1 in setup>others)
+- Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
 
 # Next developement
 - Timesheet approval/rejection by N+1
