@@ -68,7 +68,7 @@ class timesheetReport
     //mode 2, PER TASK
     //list of task
     //list of user per 
-    $title=['1'=>'Project','2'=>'','4'=>'Day','3'=>'Tasks','7'=>'User'];
+    $title=array('1'=>'Project','2'=>'','4'=>'Day','3'=>'Tasks','7'=>'User');
     
     $sql='SELECT prj.rowid as projectId, prj.`ref` as projectRef, ptt.fk_user as userId,';
     $sql.= ' prj.title as projectTitle,tsk.rowid as taskId, CONCAT(usr.firstname,\' - \',usr.lastname) as userName,';
