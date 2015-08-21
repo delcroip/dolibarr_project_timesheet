@@ -404,7 +404,8 @@ switch ($action) {
             print '<td class="fieldrequired" width="200px">'.$langs->trans('User').' </td><td>';
             if($edit==1){
                     if(!empty($editedUser))$object->user=$editedUser;
-                    print $form->select_dolusers(($new==1)?$user->id:$object->user, 'User', 1, '', !$user->admin );
+                    else if ($new==1) $object->user=$user->id;
+                    print $form->select_dolusers($object->user, 'User', 1, '', !$user->admin );
 
             }else{
             print print_generic($db,'user', 'rowid',$object->user,'lastname','firstname',' ');
@@ -705,11 +706,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         }
 //Search field forproject
 	print '<td class="liste_titre" colspan="1" >';
-		print select_generic($db,'projet','rowid','ls_project','rowid','title',$ls_project);
+		print select_generic($db,'projet','rowid','ls_project','ref','title',$ls_project);
 	print '</td>';
 //Search field forproject_task
 	print '<td class="liste_titre" colspan="1" >';
-		print select_generic($db,'projet_task','rowid','ls_project_task','rowid','label',$ls_project_task);
+		print select_generic($db,'projet_task','rowid','ls_project_task','ref','label',$ls_project_task);
 	print '</td>';
 //Search field forsubtask
 	print '<td class="liste_titre" colspan="1" >';
