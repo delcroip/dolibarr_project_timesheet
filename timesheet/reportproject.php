@@ -68,9 +68,9 @@ $userid=  is_object($user)?$user->id:$user;
 
 $sql='SELECT pjt.rowid,pjt.ref,pjt.title,pjt.dateo,pjt.datee FROM llx_projet as pjt';
 if(!$user->admin){    
-    $sql.='JOIN llx_element_contact ON llx_projet.rowid= element_id ';
-    $sql.='WHERE fk_c_type_contact = "160" ';
-    $sql.='AND fk_socpeople='.$userid;
+    $sql.=' JOIN llx_element_contact ON pjt.rowid= element_id ';
+    $sql.=' WHERE fk_c_type_contact = "160" ';
+    $sql.=' AND fk_socpeople="'.$userid.'"';
 }
 
 dol_syslog("timesheet::report::projectList sql=".$sql, LOG_DEBUG);
@@ -127,7 +127,7 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
     $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
     $firstDay= strtotime('01-'.$month.'-'. $year);
     $lastDay=  strtotime('last day of this month',$firstDay);
-    if($_POST['projectSelected']=-999){
+    if($_POST['projectSelected']=='-999'){
         foreach($projectList as $project){
         $querryRes.=$project->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),

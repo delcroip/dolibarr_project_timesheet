@@ -262,7 +262,91 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
       //$select.="\n";
       return $select;
  }
- 
+
+ /*
+ * function to genegate a select list from a table, the showed text will be a concatenation of some 
+ * column defined in column bit, the Least sinificative bit will represent the first colum 
+ * 
+ *  @param    object             	$db                 db Object to do the querry
+ *  @param    int/array                       $userid             ID of the user you want to get the subordinate liste *  @param    int                       $userid             ID of the user you want to get the subordinate liste
+ *  @param    int                       $entity             entity 
+ *  @return   array                                         List of the subordinate ids  and level [[id][lvl]]                                          
+ */
+function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1'){
+    if($userid=="")
+    {
+        return array();
+    }
+    
+    $sql="SELECT usr.rowid FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
+    if(is_array($userid)){
+        $ecludeduserid=array_merge($userid,$ecludeduserid);
+        $sql.=' usr.fk_user in (';
+        foreach($userid as $id)
+        {
+            $sql.='"'.$id.'",';
+        }
+        $sql.='-999)';
+    }else{
+        $ecludeduserid[]=$userid;
+        $sql.=' usr.fk_user ="'.$userid.'"';
+    }
+    if(is_array($ecludeduserid)){
+        $sql.=' AND usr.rowid not in (';
+        foreach($ecludeduserid as $id)
+        {
+            $sql.='"'.$id.'",';
+        }
+        $sql.='0)';
+    }else if (!empty($ecludeduserid)){
+        $sql.=' AND usr.rowid <>"'.$ecludeduserid.'"';
+    } 
+       
+    dol_syslog("form::get_subordinate sql=".$sql, LOG_DEBUG);
+    
+    $resql=$db->query($sql);
+    
+    if ($resql)
+    {
+        $i=0;
+        $num = $db->num_rows($resql);
+        while ( $i<$num)
+        {
+            $obj = $db->fetch_object($resql);
+            
+            if ($obj)
+            {
+                $list[]=$obj->rowid;        
+            }
+            $i++;
+        }
+        if(count($list)>0 && $depth>1){
+            //this will get the same result plus the subordinate of the subordinate
+            $result=get_subordinate($db,$list,$depth-1,$ecludeduserid, $entity);
+            if(is_array($result))
+            {
+                $list=array_merge($list,$result);
+            }
+        }
+        if(is_array($userid))
+        {
+            $list=array_merge($list,$userid);
+        }else
+        {
+            $list[]=$userid;
+        }
+        
+    }
+    else
+    {
+        $error++;
+        dol_print_error($db);
+        $list= array();
+    }
+      //$select.="\n";
+      return $list;
+ }
+
  
  /*
  * function to genegate the timesheet table header
@@ -291,7 +375,7 @@ function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToS
     
     for ($i=0;$i<7;$i++)
     {
-         $html.="\t".'<th width="20px">'.$langs->trans(date('l',strtotime($weekDays[$i]))).'<br>'.$weekDays[$i]."</th>\n";
+         $html.="\t".'<th width="60px">'.$langs->trans(date('l',strtotime($weekDays[$i]))).'<br>'.date('d/m/y',strtotime($weekDays[$i]))."</th>\n";
     }
 
      

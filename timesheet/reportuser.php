@@ -27,20 +27,21 @@ if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
 //month / year form
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+dol_include_once('/timesheet/lib/timesheet.lib.php');
 $htmlother = new FormOther($db);
 
-
+$userid=  is_object($user)?$user->id:$user;
 $id		= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $yearWeek	= GETPOST('yearweek');
-
-
+$userIdSelected   = GETPOST('userSelected');
+if(empty($userIdSelected))$userIdSelected=$userid;
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
-$userid=  is_object($user)?$user->id:$user;
+
 
 //find the right week
 if(isset($_POST['Date'])){
@@ -70,7 +71,12 @@ $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
      .'WHERE ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="180"';
 }else
 {
-$sql.='WHERE (usr.rowid='.$userid.') OR (usr.fk_user='.$userid.' ) ';
+    $list=get_subordinate($db,$userid,2);
+    $sql.='WHERE (usr.rowid in (';
+    foreach($list as $id){
+        $sql.= '"'.$id.'",';
+    }
+    $sql.='-999))';
 }
     
 
@@ -113,10 +119,10 @@ $Form='<form action="?action=reportuser" method="POST">
 
 foreach($userList as $usr){
    // $Form.='<option value="'.$usr->id.'">'.$usr->name.'</option> ';
-    $Form.='<option value="'.$usr->userid.'" '.(($_POST['userSelected']==$usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
+    $Form.='<option value="'.$usr->userid.'" '.(($userIdSelected==$usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
 
 }
-    $Form.='<option value="-999" '.(($_POST['projectSelected']=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+    $Form.='<option value="-999" '.(($userIdSelected=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
 
 $mode='PTD';
 $querryRes='';
@@ -126,13 +132,13 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
 {
     $mode=$_POST['mode'];
     $short=$_POST['short'];
-    $userSelected=$userList[$_POST['userSelected']];
+    $userSelected=$userList[$userIdSelected];
     $year=$_POST['year'];
     $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
     
     $firstDay= strtotime('01-'.$month.'-'. $year);
     $lastDay=  strtotime('last day of this month',$firstDay);
-    if($_POST['projectSelected']=-999){
+    if($userIdSelected=='-999'){
         foreach($userList as $userSt){
         $querryRes.=$userSt->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
