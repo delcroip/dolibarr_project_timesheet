@@ -50,3 +50,4 @@ RecordUpdated= Record updated
 RecordSucessfullyCreated = Record created
 RecordNotUpdated = Record not updated
 RecordNotSucessfullyCreated = Record not created 
+exportfriendly= Export friendly

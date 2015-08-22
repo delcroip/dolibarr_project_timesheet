@@ -36,6 +36,7 @@ $action		= GETPOST('action','alpha');
 $yearWeek	= GETPOST('yearweek');
 $userIdSelected   = GETPOST('userSelected');
 if(empty($userIdSelected))$userIdSelected=$userid;
+$exportfriendly=GETPOST('exportfriendly');
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("main");
@@ -68,7 +69,7 @@ $sql='SELECT DISTINCT usr.rowid as userId, usr.lastname , usr.firstname '
 if($user->admin){    
 $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
      .'ON ctc.fk_socpeople=usr.rowid '
-     .'WHERE ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="180"';
+     .'WHERE ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="181"';
 }else
 {
     $list=get_subordinate($db,$userid,2);
@@ -142,12 +143,12 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         foreach($userList as $userSt){
         $querryRes.=$userSt->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
+            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0,$exportfriendly);
         }
     }else{
         $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
+            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0,$exportfriendly);
     }
     
 }else
@@ -160,6 +161,8 @@ $Form.='</select></td>'
         .'<td>'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3).' </td>' 
         .'<td><input type="checkbox" name="short" value="1" '
         .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
+        .'<td><input type="checkbox" name="exportfriendly" value="1" '
+        .(($exportfriendly==1)?'checked>':'>').$langs->trans('exportfriendly').'</td>'
         . '<td><input type="radio" name="mode" value="PTD" '.($mode=='PTD'?'checked':'')
         .'> '.$langs->trans('Project').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>'
         . '<input type="radio" name="mode" value="PDT" '.($mode=='PDT'?'checked':'')

@@ -46,7 +46,7 @@ class timesheetReport
       * periodeTitle give a name to the report
       * timemode show time using day or hours (==0)
       */
-    public function getHTMLreport($startDay,$stopDay,$mode,$short,$periodTitle,$hoursperdays){
+    public function getHTMLreport($startDay,$stopDay,$mode,$short,$periodTitle,$hoursperdays,$reportfriendly=0){
     // HTML buffer
     global $langs;
     $lvl1HTML='';
@@ -68,7 +68,8 @@ class timesheetReport
     //mode 2, PER TASK
     //list of task
     //list of user per 
-    $title=array('1'=>'Project','2'=>'','4'=>'Day','3'=>'Tasks','7'=>'User');
+    $title=array('1'=>'Project','4'=>'Day','3'=>'Tasks','7'=>'User');
+    $titleWidth=array('4'=>'120','7'=>'200');
     
     $sql='SELECT prj.rowid as projectId, prj.`ref` as projectRef, ptt.fk_user as userId,';
     $sql.= ' prj.title as projectTitle,tsk.rowid as taskId, CONCAT(usr.firstname,\' - \',usr.lastname) as userName,';
@@ -195,7 +196,25 @@ class timesheetReport
         {       
            // current
 
-            
+        if($reportfriendly){
+            //$HTMLRes='<br><div class="titre">'.$this->name.', '.$periodTitle.'</div>';
+            $HTMLRes.='<table class="noborder" width="100%">';
+            $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans('Name');
+            $HTMLRes.='</th><th>'.$langs->trans($title[$lvl1Title]).'</th><th>';
+            $HTMLRes.=$langs->trans($title[$lvl2Title]).'</th>';
+            $HTMLRes.=(!$short)?'<th>'.$langs->trans($title[$lvl3Title]).'</th>':'';
+            $HTMLRes.='<th>'.$langs->trans('Duration').'</th></tr>';
+            foreach($resArray as $key => $item)
+            {
+               $HTMLRes.= '<tr class="pair" align="left"><th width="200px">'.$this->name.'</th>';
+               $HTMLRes.= '<th '.(isset($titleWidth[$lvl1Title])?'width="'.$titleWidth[$lvl1Title].'"':'' ).'>'.$item[$lvl1Title].'</th>';
+               $HTMLRes.='<th '.(isset($titleWidth[$lvl2Title])?'width="'.$titleWidth[$lvl2Title].'"':'' ).'>'.$item[$lvl2Title].'</th>';
+                if(!$short)$HTMLRes.='<th '.(isset($titleWidth[$lvl3Title])?'width="'.$titleWidth[$lvl3Title].'"':'' ).'>'.$item[$lvl3Title].'</th>';
+               $HTMLRes.='<th width="70px">'.$this->formatTime($item[5],$hoursperdays).'</th></tr>';
+            } 
+            $HTMLRes.='</table>';
+        }else   
+        {
         foreach($resArray as $key => $item)
         {
             
@@ -262,7 +281,8 @@ class timesheetReport
          $HTMLRes.='<th>'.$this->formatTime($lvl1Total,$hoursperdays).'</th></tr>';
         $HTMLRes.=$lvl1HTML;
         $HTMLRes.='</table>';
-        } // end is numtasktime
+        } // end else reportfiendly
+      } // end is numtasktime
 
 
 

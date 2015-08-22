@@ -50,3 +50,4 @@ RecordUpdated= Mis à jours avec succés
 RecordSucessfullyCreated = Créé avec succès
 RecordNotUpdated = Echec de la mis à jour
 RecordNoSucessfullyCreated = Echec de l'enregistrement 
+exportfriendly= Compatible export
