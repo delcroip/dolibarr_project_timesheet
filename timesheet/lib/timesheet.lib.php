@@ -303,7 +303,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
     } 
        
     dol_syslog("form::get_subordinate sql=".$sql, LOG_DEBUG);
-    
+    $list=array();
     $resql=$db->query($sql);
     
     if ($resql)
@@ -330,6 +330,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
         }
         if(is_array($userid))
         {
+            
             $list=array_merge($list,$userid);
         }else
         {
