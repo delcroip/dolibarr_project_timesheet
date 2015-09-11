@@ -34,7 +34,7 @@ $htmlother = new FormOther($db);
 $id		= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $yearWeek	= GETPOST('yearweek');
-
+$exportfriendly=GETPOST('exportfriendly');
 
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -131,12 +131,12 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
         foreach($projectList as $project){
         $querryRes.=$project->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
+            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0,$exportfriendly);
         }
     }else{
     $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0);
+            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0,$exportfriendly);
     }
     
 }else
@@ -149,6 +149,8 @@ $Form.='</select></td>'
         .'<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3)
         .' </td><td><input type="checkbox" name="short" value="1" '
         .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
+        .'<td><input type="checkbox" name="exportfriendly" value="1" '
+        .(($exportfriendly==1)?'checked>':'>').$langs->trans('exportfriendly').'</td>'
         . '<td><input type="radio" name="mode" value="UTD" '.($mode=='UTD'?'checked':'')
         .'> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>'
         . '<input type="radio" name="mode" value="UDT" '.($mode=='UDT'?'checked':'')
