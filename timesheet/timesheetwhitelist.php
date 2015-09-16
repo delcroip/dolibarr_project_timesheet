@@ -45,18 +45,18 @@ if(strpos($_SERVER['PHP_SELF'], 'dolibarr_min')>0 && !$res && file_exists("/var/
 else if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include '/var/www/dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
-//include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
-dol_include_once('/timesheet/class/timesheetwhitelist.class.php');
-dol_include_once('/core/lib/functions2.lib.php');
+require_once 'class/timesheetwhitelist.class.php';
+require_once 'lib/timesheet.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 //document handling
-dol_include_once('/core/lib/files.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 //dol_include_once('/core/lib/images.lib.php');
-dol_include_once('/core/class/html.formfile.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // include conditionnally of the dolibarr version
 //if((version_compare(DOL_VERSION, "3.8", "<"))){
-        dol_include_once('/timesheet/lib/timesheet.lib.php');
+
 //}
-dol_include_once('/core/class/html.formother.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");

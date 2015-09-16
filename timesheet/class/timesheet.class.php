@@ -21,7 +21,7 @@
 #require_once('mysql.class.php');
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-dol_include_once('/timesheet/class/projectTimesheet.class.php');
+//dol_include_once('/timesheet/class/projectTimesheet.class.php');
 //require_once './projectTimesheet.class.php';
 
 class timesheet extends Task 

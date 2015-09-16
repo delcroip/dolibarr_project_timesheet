@@ -28,6 +28,8 @@ if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
 //month / year form
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once './lib/timesheet.lib.php';
+require_once './class/timesheetreport.class.php';
 $htmlother = new FormOther($db);
 
 
@@ -59,7 +61,7 @@ if(isset($_POST['Date'])){
 
 llxHeader('',$langs->trans('projectReport'),'');
 $mode=($_POST['short']==1)?1:2;
-dol_include_once('/timesheet/class/timesheetreport.class.php');
+
 $userid=  is_object($user)?$user->id:$user;
 
 

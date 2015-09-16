@@ -18,8 +18,8 @@
 //global $db;     
 global $langs;
 // to get the whitlist object
-dol_include_once('/timesheet/class/timesheetwhitelist.class.php');
-dol_include_once('/timesheet/class/timesheet.class.php');
+require_once 'class/timesheetwhitelist.class.php';
+require_once 'class/timesheet.class.php';
 /*
  * function to genegate a select list from a table, the showed text will be a concatenation of some 
  * column defined in column bit, the Least sinificative bit will represent the first colum 
@@ -394,9 +394,10 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
  *  @param     int              	$yearWeek           timesheetweek
  *  @param    array(int)              	$whiteList    array defining the header width
  *  @param     int              	$timestamp         timestamp
+ *  @param     int              	$whitelistemode           0-whiteliste,1-blackliste,2-non impact
  *  @return     string                                                   html code
  */
- function timesheetList($db,$headers,$userid,$yearWeek,$timestamp){
+ function timesheetList($db,$headers,$userid,$yearWeek,$timestamp,$whitelistmode=0){
      $Lines='';
     // get the whitelist
     $whiteList=array();
@@ -418,14 +419,16 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
     $sql.=' AND (prj.dateo<=FROM_UNIXTIME("'.$datestop.'") OR prj.dateo IS NULL)';
     $sql.=' AND (tsk.datee>=FROM_UNIXTIME("'.$datestart.'") OR tsk.datee IS NULL)';
     $sql.=' AND (tsk.dateo<=FROM_UNIXTIME("'.$datestop.'") OR tsk.dateo IS NULL)';
-   if(is_array($whiteList)){
-        $sql.=' AND tsk.rowid in (';
-        foreach($whiteList as $value) {
-            $sql.=$value.',';
-        }              
-         $sql.='0) ';
-    }else  if(!empty($whiteList)){ 
-        $sql.=' AND tsk.rowid=" '.$whiteList.'" ';
+    if ($whitelistmode!=2){
+        if(is_array($whiteList)){
+             $sql.=' AND tsk.rowid '.(($whitelistmode==1)?'not ':'').'in (';
+             foreach($whiteList as $value) {
+                 $sql.=$value.',';
+             }              
+              $sql.='0) ';
+         }else  if(!empty($whiteList)){ 
+             $sql.=' AND tsk.rowid'.(($whitelistmode==1)?'!':'').'=" '.$whiteList.'" ';
+         }
     }
     $sql.=" ORDER BY prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
 

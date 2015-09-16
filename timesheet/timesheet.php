@@ -37,9 +37,9 @@ if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
 // 
 //to get the form funciton
-dol_include_once('/core/class/html.form.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 //to get the timesheet lib
-dol_include_once('/timesheet/lib/timesheet.lib.php');
+require_once 'lib/timesheet.lib.php';
 
 
 $action                 = GETPOST('action');
@@ -56,6 +56,7 @@ if ($yearWeek!=0) {
         $_SESSION["yearWeek"]=$yearWeek;
 }
 $timestamp=GETPOST('timestamp');
+$whitelistmode=GETPOST('wlm');
 $userid=  is_object($user)?$user->id:$user;
 
 
@@ -183,7 +184,7 @@ $Form .='<th colspan="'.$num.'" align="right"> TOTAL </th>
 
 //line
 
-$Form .=timesheetList($db,$headers,$userid,$yearWeek,$tmstp);
+$Form .=timesheetList($db,$headers,$userid,$yearWeek,$tmstp,$whitelistmode);
 
 //total Bot
 $Form .="<tr>\n";
