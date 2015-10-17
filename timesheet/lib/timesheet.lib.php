@@ -595,7 +595,10 @@ function postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$date)
         $tasktime->timespent_duration=$duration; 
         //FIXME
         $tasktime->timespent_date=strtotime($date);
-        
+        if(isset( $tasktime->timespent_datehour))
+        {
+            $tasktime->timespent_datehour=strtotime($date.'+ 8 hours');
+        }
         if($tasktime->addTimeSpent($user,0)>=0)
         {
             $ret++;
