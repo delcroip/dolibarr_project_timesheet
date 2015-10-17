@@ -137,9 +137,9 @@ foreach ($headersT as $header) {
     }
     
 }
-
 //permet d'afficher la structure dolibarr
-llxHeader("",$langs->trans("timesheetSetup"));
+$morejs=array("/timesheet/js/timesheet.js");
+llxHeader("",$langs->trans("timesheetSetup"),'','','','',$morejs,'',0,0);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -228,7 +228,7 @@ $Form .=(($showCustomCol=='1')?'checked':'')."</th></tr>\n\t\t";
 */
 $Form .='</table><br>';
 $Form .='<input type="submit" value="'.$langs->trans('Save')."\">\n</from>";
-$Form.='<script type="text/javascript" src="timesheet.js"></script>';
+
 print $Form;
 llxFooter();
 ?>

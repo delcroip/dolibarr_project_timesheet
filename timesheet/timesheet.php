@@ -42,8 +42,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once 'lib/timesheet.lib.php';
 
 
-$action                 = GETPOST('action');
-$yearWeek          = GETPOST('yearweek');
+$action             = GETPOST('action');
+$yearWeek           = GETPOST('yearweek');
+$ajax               = GETPOST('ajax');
+
+
 //$toDate                 = GETPOST('toDate');
 $toDate                 = GETPOST('toDate');
 if ($yearWeek!=0) {
@@ -58,7 +61,11 @@ if ($yearWeek!=0) {
 $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm');
 $userid=  is_object($user)?$user->id:$user;
-
+if($ajax){
+    //renew timestqmp
+    echo GetTimeSheetXML($userid,$yearWeek,$whitelistmode);
+    exit;
+}
 
 
 // Load traductions files requiredby by page
@@ -134,8 +141,8 @@ switch($action)
 *
 * Put here all code to build page
 ****************************************************/
-
-llxHeader('',$langs->trans('Timesheet'),'');
+$morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
+llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 
 $tmstp=time();
@@ -207,7 +214,7 @@ $Form .= '" onClick="document.location.href=\'?action=list&yearweek='.$yearWeek.
 $Form .= "</form>\n";
 //Javascript
 $timetype=TIMESHEET_TIME_TYPE;
-$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
+//$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
 $Form .= 'updateTotal(0,\''.$timetype.'\');'."\n\t";
 $Form .= 'updateTotal(1,\''.$timetype.'\');'."\n\t";

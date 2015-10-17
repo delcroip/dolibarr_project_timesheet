@@ -398,79 +398,25 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
  *  @return     string                                                   html code
  */
  function timesheetList($db,$headers,$userid,$yearWeek,$timestamp,$whitelistmode=0){
-     $Lines='';
-    // get the whitelist
-    $whiteList=array();
-    $staticWhiteList=new Timesheetwhitelist($db);
-    $datestart=strtotime($yearWeek.' +0 day');
-    $datestop=strtotime($yearWeek.' +6 day');
-    $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
-     // Save the param in the SeSSION
-     $tasksList=array();
-
-    $sql ="SELECT DISTINCT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
-    $sql.='JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
-    $sql.='JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
-    $sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$userid."' ";
-    if(TIMESHEET_HIDE_DRAFT=='1'){
-         $sql.=' AND prj.fk_statut="1" ';
-    }
-    $sql.=' AND (prj.datee>=FROM_UNIXTIME("'.$datestart.'") OR prj.datee IS NULL)';
-    $sql.=' AND (prj.dateo<=FROM_UNIXTIME("'.$datestop.'") OR prj.dateo IS NULL)';
-    $sql.=' AND (tsk.datee>=FROM_UNIXTIME("'.$datestart.'") OR tsk.datee IS NULL)';
-    $sql.=' AND (tsk.dateo<=FROM_UNIXTIME("'.$datestop.'") OR tsk.dateo IS NULL)';
-    if ($whitelistmode!=2){
-        if(is_array($whiteList)){
-             $sql.=' AND tsk.rowid '.(($whitelistmode==1)?'not ':'').'in (';
-             foreach($whiteList as $value) {
-                 $sql.=$value.',';
-             }              
-              $sql.='0) ';
-         }else  if(!empty($whiteList)){ 
-             $sql.=' AND tsk.rowid'.(($whitelistmode==1)?'!':'').'=" '.$whiteList.'" ';
-         }
-    }
-    $sql.=" ORDER BY prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
-
-    dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            // Loop on each record found, so each couple (project id, task id)
-            while ($i < $num)
-            {
-                    $error=0;
-                    $obj = $db->fetch_object($resql);
-                    $tasksList[$i] = NEW timesheet($db, $obj->element_id);
-                    $i++;
-            }
-            $db->free($resql);
-             $i = 0;
-             foreach($tasksList as $row)
-            {
-                    dol_syslog("Timesheet::list.php task=".$row->id, LOG_DEBUG);
-                    $row->getTaskInfo();
-                    $row->getActuals($yearWeek,$userid); 
-                    $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
-                    $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab();
-                    $Lines.=$row->getFormLine( $yearWeek,$i,$headers); 
-                    //$Form.=$row->getFormLine( $yearWeek,$i);
-                    $i++;
-            }
-            // form hiden param
-            $Lines .= '<input type="hidden" name="timestamp" value="'.$timestamp."\"/>\n";
-            $Lines .= '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.$i."\"/>\n";
-            $Lines .= '<input type="hidden" name="yearWeek" value="'.$yearWeek.'" />'; 
-    }else
-    {
-            dol_print_error($db);
-    }
-    return $Lines;
-     
- }
- /*
+        $Lines='';
+        //FIXME unset timestamp
+        $staticTimesheet=New timesheet($db,0);
+        
+        $tab=$staticTimesheet->timesheetTab($headers,$userid,$yearWeek,$timestamp,$whitelistmode);
+        $i=0;
+        foreach ($tab as $timesheet) {
+            $row=unserialize($timesheet);
+            $Lines.=$row->getFormLine( $yearWeek,$i,$headers);
+            $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
+            $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab(); 
+            $i++;
+        }
+        $Lines .= '<input type="hidden" name="timestamp" value="'.$timestamp."\"/>\n";
+        $Lines .= '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tab)."\"/>\n";
+        $Lines .= '<input type="hidden" name="yearWeek" value="'.$yearWeek.'" />'; 
+        return $Lines;
+ }    
+  /*
  * function to post the all actual submitted
  * 
  *  @param    object             	$db                      db Object to do the querry
@@ -607,6 +553,70 @@ function postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$date)
     }
     return $ret;
 }
+
+/*
+ * function to post on task_time
+ * 
+ *  @param    object              	$db                  database object
+ *  @param    int                       $userid              timesheet object, (task)
+ *  @param    string              	$yearWeek            year week like 2015W09
+ *  @param     int              	$whitelistmode        whitelist mode, shows favoite o not 0-whiteliste,1-blackliste,2-non impact
+ *  @return     string                                         XML result containing the timesheet info
+ */
+function GetTimeSheetXML($userid,$yearWeek,$whitelistmode)
+{
+    global $langs;
+    global $db;
+    
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+    $timestamp=time();
+    
+    
+    
+    $xml.= "<timesheet yearweek=\"{$yearWeek}\" timestamp= \"{$timestamp}\">\n";
+    $headers=explode('||', TIMESHEET_HEADERS);
+    //header
+    $i=0;
+    $xmlheaders='';      
+    foreach($headers as $header){
+        $xmlheaders.= "\t\t<header col=\"{$i}\" name=\"{$header}\" link=\"FIXME\">{$langs->trans($header)}</header>\n";;
+        $i++;
+    }
+    $xml.= "\t<headers>\n{$xmlheaders}\t</headers>\n";
+        //days
+    $xmldays='';
+    for ($i=0;$i<7;$i++)
+    {
+       $weekDays[$i]=date('d-m-Y',strtotime( $yearWeek.' +'.$i.' day'));
+       $xmldays.="\t\t<day col=\"{$i}\">{$weekDays[$i]}</day>\n";
+    }
+    $xml.= "\t<days>\n{$xmldays}\t</days>\n";
+        //FIXME unset timestamp
+    $staticTimesheet=New timesheet($db,0);
+    $tab=$staticTimesheet->timesheetTab($headers,$userid,$yearWeek,$timestamp,$whitelistmode);
+    $i=0;
+    $xml.="\t<tasks count=\"".count($tab)."\">\n";
+    foreach ($tab as $timesheet) {
+        $row=unserialize($timesheet);
+        $xml.= "\t\t".$row->getXML($yearWeek,$i);//FIXME
+       // $Lines.=$row->getFormLine( $yearWeek,$i,$headers);
+        $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
+        $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab(); 
+        $i++;
+    }  
+    $xml.="\t</tasks>\n</timesheet>\n";
+   
+
+
+
+
+
+    
+    return $xml;
+
+}
+
+
 
 if (!is_callable(setEventMessages)){
     // function from /htdocs/core/lib/function.lib.php in Dolibarr 3.8
