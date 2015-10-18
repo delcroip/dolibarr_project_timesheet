@@ -279,28 +279,28 @@ class timesheet extends Task
     $timetype=TIMESHEET_TIME_TYPE;
     $dayshours=TIMESHEET_DAY_DURATION;
     $hidezeros=TIMESHEET_HIDE_ZEROS;
-    $xml= "<task line=\"{$lineNumber}\">\n"; 
+    $xml= "\t\t<task line=\"{$lineNumber}\" id=\"{$this->id}\" name=\"{$this->description}\">\n"; 
     //title section
-    $xml.="<project id=\"{$this->fk_project2}\">{$this->ProjectTitle}</project>\n";
-    $xml.="<parenttask id=\"{$this->fk_task_parent}\">{$this->taskParentDesc}</parenttask>\n";
-    $xml.="<task id=\"{$this->id}\">{$this->description}</task>\n";
-    $xml.="<datestart unix=\"$this->date_start\">";
+    $xml.="\t\t\t<project id=\"{$this->fk_project2}\">{$this->ProjectTitle}</project>\n";
+    $xml.="\t\t\t<parenttask id=\"{$this->fk_task_parent}\">{$this->taskParentDesc}</parenttask>\n";
+    //$xml.="<task id=\"{$this->id}\" name=\"{$this->description}\">\n";
+    $xml.="\t\t\t<datestart unix=\"$this->date_start\">";
     if($this->date_start)
         $xml.=date('d/m/y',$this->date_start);
-    $xml.="<datestart>\n";
-    $xml.="<dateend unix=\"$this->date_end\">";
+    $xml.="</datestart>\n";
+    $xml.="\t\t\t<dateend unix=\"$this->date_end\">";
     if($this->date_end)
         $xml.=date('d/m/y',$this->date_end);
-    $xml.="<dateend>\n";
-     $xml.="<company id=\"{$this->companyId}\">{$this->companyName}</company>\n";
-    $xml.="<progress id=\"{$this->companyId}\">";
+    $xml.="</dateend>\n";
+     $xml.="\t\t\t<company id=\"{$this->companyId}\">{$this->companyName}</company>\n";
+    $xml.="\t\t\t<taskprogress id=\"{$this->companyId}\">";
     if($this->planned_workload)
     {
         $xml .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
     }else{
         $xml .= "-:--(-%)";
     }
-    $xml.="</progress>\n";
+    $xml.="</taskprogress>\n";
 
         
   // day section
@@ -319,10 +319,10 @@ class timesheet extends Task
                 {             
                     $open='1';                   
                 }
-                $xml .= "<day col=\"{$dayOfWeek}\" open=\"{$open}\"> {$dayWorkLoad}</day>\n";
+                $xml .= "\t\t\t<day col=\"{$dayOfWeek}\" open=\"{$open}\"> {$dayWorkLoad}</day>\n";
                 
         } 
-        $xml.="</task>\n"; 
+        $xml.="\t\t</task>\n"; 
         return $xml;
 
     }	

@@ -568,12 +568,12 @@ function GetTimeSheetXML($userid,$yearWeek,$whitelistmode)
     global $langs;
     global $db;
     
-    $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+    $xml = '<?xml version="1.0" encoding="ISO-8859-1" ?>'."\n";
     $timestamp=time();
     
     
     
-    $xml.= "<timesheet yearweek=\"{$yearWeek}\" timestamp= \"{$timestamp}\">\n";
+    $xml.= "<timesheet yearweek=\"{$yearWeek}\" timestamp=\"{$timestamp}\" >\n";
     $headers=explode('||', TIMESHEET_HEADERS);
     //header
     $i=0;
@@ -598,7 +598,7 @@ function GetTimeSheetXML($userid,$yearWeek,$whitelistmode)
     $xml.="\t<tasks count=\"".count($tab)."\">\n";
     foreach ($tab as $timesheet) {
         $row=unserialize($timesheet);
-        $xml.= "\t\t".$row->getXML($yearWeek,$i);//FIXME
+        $xml.= $row->getXML($yearWeek,$i);//FIXME
        // $Lines.=$row->getFormLine( $yearWeek,$i,$headers);
         $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
         $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab(); 
