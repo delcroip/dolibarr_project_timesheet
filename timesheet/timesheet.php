@@ -60,7 +60,8 @@ if ($yearWeek!=0) {
         $_SESSION["yearWeek"]=$yearWeek;
 }
 $timestamp=GETPOST('timestamp');
-$whitelistmode=GETPOST('wlm');
+$whitelistmode=GETPOST('wlm','int');
+if(!is_numeric($whitelistmode))$whitelistmode=TIMESHEET_WHITELIST_MODE;
 $userid=  is_object($user)?$user->id:$user;
 if($ajax){
     //renew timestqmp
@@ -153,14 +154,15 @@ $tmstp=time();
 // navigation form 	
 $Form =  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
 $Form.=  '<a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days  -1 week"));
+<<<<<<< HEAD
 if ($optioncss != '') $Form.=  '&amp;optioncss='.$optioncss;
-$Form.=  '">  &lt&lt '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+$Form.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 $Form.=  '<form name="goToDate" action="?action=goToDate" method="POST" >'."\n\t\t\t";
 $Form.=   $langs->trans("GoToDate").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)."\n\t\t\t";;
 $Form.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 $Form.=  '<a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days +1 week"));
 if ($optioncss != '') $Form.=  '&amp;optioncss='.$optioncss;
-$Form.=  '">'.$langs->trans("NextWeek").' &gt&gt </a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
+$Form.=  '">'.$langs->trans("NextWeek").' &gt;&gt; </a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
 
 //timesheet
 $Form .='<form name="timesheet" action="?action=submit&yearweek='.$yearWeek.'" method="POST" >'; 

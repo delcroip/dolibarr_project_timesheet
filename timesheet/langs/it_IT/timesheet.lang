@@ -1,5 +1,5 @@
 # Dolibarr language file - it_IT - timesheet
-# translate by Nicola Pulvirenti.
+# translate by Nicola Pulvirenti. & P.Delcroix (google trad)
 Timesheet= Timesheet
 NextWeek=settimana successiva
 PreviousWeek=settimana precedente
@@ -9,13 +9,52 @@ NumberOfTimeSpendCreated = Tempo impiegato creato :
 NumberOfTimeSpendDeleted = Tempo impiegato eliminato :
 NothingChanged = Nessuna modifica
 NoTaskToUpdate = Nessuna attività per questa settimana
-hoursperdays = Numeri di ore al giorno
 hours = orario
 projectReport=   Relazione di progetto
 userReport =   Rapporto utente
 getReport = Get relazione
 short = Versione corta
-hidedraft = Nascondere i progetti di progetti
-hidezeros = Nascondere i 00:00
 Progress= Avanzamento
-hideprogress= Nascondi avanzamento dell'attività
+TaskParent= attività principale
+#Setup
+timesheetSetup= Configurazione del modulo Timesheet
+hidedraft = Nascondere i progetti di progetti
+hideDraftDesc = Consente di non visualizzare il compito progetti non validati (bozza)
+hidezeros = Nascondere i 00:00
+hideZerosDesc= Vediamo nulla nella scatola di un compito invece di 00:00
+timeType= Visualizzazione del tempo
+timeTypeDesc= Mostra il tempo in giorni o ore formato 00:00
+hoursperdays = Numeri di ore al giorno
+hoursPerDaysDesc = Numero di ore che contiene un giorno (Utilizzato per visualizzare l'ora in giorni)
+hideRefDesc = Nasconde progetti di riferimento e le attività per visualizzare solo solo il titolo
+hideref =  Nascondi riferimenti
+GeneralOption= Opzioni generali
+ColumnToShow = Colonne da visualizzare
+ProjectColDesc= Contiene il riferimento e il titolo del progetto che il compito appartiene
+TaskParentColDesc = Contiene il riferimento e l'etichetta del compito genitore a compito
+TasksColDesc =Contiene il riferimento e il compito di etichette
+ProgressColDesc = Contiene il progresso del compito rispetto al vostro orario
+DateStartColDesc =Contiene la data di inizio per l'attività
+DateEndColDesc = Contiene la data di fine del compito
+CompanyColDesc = Contiene il nome della società relativo al progetto
+Company = Azienda
+#whiteist
+notYourWhitelist=Questo non ti riguarda
+noIdPresent= Riferimento (id) non presente
+DeleteTimesheetwhitelist = Cancellato preferito 
+Timesheetwhitelist = Preferiti
+Subtask = Bambino Task 
+ConfirmDeleteTimesheetwhitelist = Conferma la cancellazione dei tuoi preferiti?
+RecordDeleted = Risparmio cancellato
+RecordUpdated= Oltre giorni con successo
+RecordSucessfullyCreated = Creato con successo
+RecordNotUpdated = Impossibile aggiornare
+RecordNoSucessfullyCreated = Registrazione fallita
+exportfriendly= esportazione Compatibile
+blackWhiteList = preferiti
+blackWhiteListDesc = Attivare o disattivare Preferiti
+blackWhiteListMode = preferiti di moda
+blackWhiteListModeDesc = Moda considerazione favoriti default
+modeBlackList = tutto tranne preferiti
+modeWhiteList =solo preferiti
+modeNone = tutte le attività
