@@ -48,6 +48,8 @@ $hidedraft=TIMESHEET_HIDE_DRAFT;
 $hideref=TIMESHEET_HIDE_REF;
 $hidezeros=TIMESHEET_HIDE_ZEROS;
 $headers=TIMESHEET_HEADERS;
+$whiteListMode=TIMESHEET_WHITELIST_MODE;
+$whiteList=TIMESHEET_WHITELIST;
 switch($action)
 {
     case save:
@@ -60,6 +62,8 @@ switch($action)
         $hidedraft=GETPOST('hidedraft','alpha');
         $hidezeros=GETPOST('hidezeros','alpha');
         $hideref=GETPOST('hideref','alpha');        
+        $whiteListMode=GETPOST('blackWhiteListMode','int');
+        $whiteList=GETPOST('blackWhiteList','int');
         $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
@@ -69,6 +73,10 @@ switch($action)
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_ZEROS", $hidezeros, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_REF", $hideref, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+         $res=dolibarr_set_const($db, "TIMESHEET_WHITELIST_MODE", $whiteList?$whiteListMode:2, 'int', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db, "TIMESHEET_WHITELIST", $whiteList, 'int', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         //headers handling
         $showProject=GETPOST('showProject','int');
@@ -227,6 +235,32 @@ $Form .= '<th align="left"><input type="checkbox" name="showCustomCol" value="1"
 $Form .=(($showCustomCol=='1')?'checked':'')."</th></tr>\n\t\t";
 */
 $Form .='</table><br>';
+print $Form.'<br>';
+
+//whitelist mode
+print_titre($langs->trans("WhiteList"));
+$Form ='<table class="noborder" width="100%">'."\n\t\t";
+$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+// whitelist on/off
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("blackWhiteList");
+$Form .='</th><th align="left">'.$langs->trans("blackWhiteListDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="blackWhiteList" value="1" ';
+$Form .=(($whiteList=='1')?'checked':'')."></th></tr>\n\t\t";
+// Project
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("blackWhiteListMode").'</th>';
+$Form .='<th align="left">'.$langs->trans("blackWhiteListModeDesc").'</th>';
+$Form .='<th align="left"><input type="radio" name="blackWhiteListMode" value="0" ';
+$Form .=($whiteListMode=="0"?"checked":"").'> '.$langs->trans("modeWhiteList").'<br>';
+$Form .='<input type="radio" name="blackWhiteListMode" value="1" ';
+$Form .=($whiteListMode=="1"?"checked":"").'> '.$langs->trans("modeBlackList")."<br>";
+$Form .='<input type="radio" name="blackWhiteListMode" value="2" ';
+$Form .=($whiteListMode=="2"?"checked":"").'> '.$langs->trans("modeNone")."</th></tr>\n\t\t";
+$Form .='</table><br>';
+
+
+
+
 $Form .='<input type="submit" value="'.$langs->trans('Save')."\">\n</from>";
 
 print $Form;

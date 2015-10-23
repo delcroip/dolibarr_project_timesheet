@@ -59,7 +59,8 @@ if ($yearWeek!=0) {
         $_SESSION["yearWeek"]=$yearWeek;
 }
 $timestamp=GETPOST('timestamp');
-$whitelistmode=GETPOST('wlm');
+$whitelistmode=GETPOST('wlm','int');
+if(!is_numeric($whitelistmode))$whitelistmode=TIMESHEET_WHITELIST_MODE;
 $userid=  is_object($user)?$user->id:$user;
 if($ajax){
     //renew timestqmp

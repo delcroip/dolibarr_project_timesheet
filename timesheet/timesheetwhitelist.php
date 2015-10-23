@@ -418,13 +418,17 @@ switch ($action) {
 		print '<td class="fieldrequired">'.$langs->trans('Project').' </td><td>';
 		if($edit==1){
                     if(!empty($editedProject))$object->project=$editedProject;
+                $formUserWhere=' WHERE (t.datee>=FROM_UNIXTIME("'.time().'") OR t.datee IS NULL)';
+ //               $formUserWhere.=' AND (projet.dateo<=FROM_UNIXTIME("'.time().'") OR prj.dateo IS NULL)';
                 if(!$user->admin)
                 {
-                        $formUser=' RIGHT JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
-                        $formUser.=" WHERE (fk_c_type_contact='161' OR fk_c_type_contact='160') AND ec.fk_socpeople='".$user->id."' ";
+                        $formUserJoin=' RIGHT JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
+                        $formUserWhere.=" AND (((fk_c_type_contact='161' OR fk_c_type_contact='160') AND ec.fk_socpeople='".$user->id."' )";
+                        $formUserWhere.=" OR (t.public='1') )";
 
                 }
-		print select_generic($db,'projet','rowid','Project','ref','title',$object->project,' - ',(isset($formUser)?$formUser:''),'onchange="reload(this.form)"');
+                $formUser.=$formUserJoin.$formUserWhere;
+		print select_generic($db,'projet','rowid','Project','ref','title',$object->project,' - ',$formUser,'onchange="reload(this.form)"');
 		}else{
 		print print_generic($db,'projet','rowid',$object->project,'ref','title');
 		}
