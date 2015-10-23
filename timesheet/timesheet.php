@@ -154,7 +154,6 @@ $tmstp=time();
 // navigation form 	
 $Form =  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
 $Form.=  '<a href="?action=list&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days  -1 week"));
-<<<<<<< HEAD
 if ($optioncss != '') $Form.=  '&amp;optioncss='.$optioncss;
 $Form.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 $Form.=  '<form name="goToDate" action="?action=goToDate" method="POST" >'."\n\t\t\t";
