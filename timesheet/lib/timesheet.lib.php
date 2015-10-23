@@ -123,7 +123,7 @@ function select_generic($db, $table, $fieldValue,$htmlName,$fieldToShow1,$fieldT
         $nodatarole=($comboenhancement?' data-role="none"':'');
     }
     $select.='<select class="flat minwidth200" id="'.$htmlName.'" name="'.$htmlName.'"'.$nodatarole.' '.$selectparam.'>';
-    $sql='SELECT';
+    $sql='SELECT DISTINCT';
     $sql.=' t.'.$fieldValue;
     $sql.=' ,'.$fieldToShow1;
     if(!empty($fieldToShow2))
@@ -402,11 +402,11 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
         //FIXME unset timestamp
         $staticTimesheet=New timesheet($db,0);
         
-        $tab=$staticTimesheet->timesheetTab($headers,$userid,$yearWeek,$timestamp,$whitelistmode);
+        $tab=$staticTimesheet->timesheetTab($headers,$userid,$yearWeek,$timestamp);
         $i=0;
         foreach ($tab as $timesheet) {
             $row=unserialize($timesheet);
-            $Lines.=$row->getFormLine( $yearWeek,$i,$headers);
+            $Lines.=$row->getFormLine( $yearWeek,$i,$headers,$whitelistmode);
             $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
             $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab(); 
             $i++;

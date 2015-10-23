@@ -33,6 +33,7 @@ class timesheet extends Task
         private $taskParentDesc;
         private $companyName;
         private $companyId;
+        private $hidden; // in the whitelist 
 	
 
     public function __construct($db,$taskId) 
@@ -172,9 +173,10 @@ class timesheet extends Task
  *  @param    string              	$yearWeek            year week like 2015W09
  *  @param     int              	$line number         used in the form processing
  *  @param    string              	$headers             header to shows
+ *  @param     int              	$whitelistemode           0-whiteliste,1-blackliste,2-non impact
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getFormLine( $yearWeek,$lineNumber,$headers)
+       public function getFormLine( $yearWeek,$lineNumber,$headers,$whitelistemode)
     {
        if(empty($yearWeek)||empty($headers))
            return '<tr>ERROR: wrong parameters for getFormLine'.empty($yearWeek).'|'.empty($headers).'</tr>';
@@ -182,48 +184,52 @@ class timesheet extends Task
     $timetype=TIMESHEET_TIME_TYPE;
     $dayshours=TIMESHEET_DAY_DURATION;
     $hidezeros=TIMESHEET_HIDE_ZEROS;
+    $hidden=false;
+    if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
+    
+    if(!$hidden){
+        $html= '<tr class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
+        //title section
+         foreach ($headers as $key => $title){
+             $html.="\t<th align=\"left\">";
+             switch($title){
+                 case 'Project':
+                     if(file_exists("../projet/card.php")||file_exists("../../projet/card.php")){
+                        $html.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';
+                     }else{
+                        $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';
 
-    $html= '<tr class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
-    //title section
-     foreach ($headers as $key => $title){
-         $html.="\t<th align=\"left\">";
-         switch($title){
-             case 'Project':
-                 if(file_exists("../projet/card.php")||file_exists("../../projet/card.php")){
-                    $html.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';
-                 }else{
-                    $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';
-                     
-                 }
-                 break;
-             case 'TaskParent':
-                 $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->fk_task_parent.'&withproject='.$this->fk_project2.'">'.$this->taskParentDesc.'</a>';
-                 break;
-             case 'Tasks':
-                 $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->id.'&withproject='.$this->fk_project2.'">'.$this->description.'</a>';
-                 break;
-             case 'DateStart':
-                 $html.=$this->date_start?date('d/m/y',$this->date_start):'';
-                 break;
-             case 'DateEnd':
-                 $html.=$this->date_end?date('d/m/y',$this->date_end):'';
-                 break;
-             case 'Company':
-                 $html.='<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->companyId.'">'.$this->companyName.'</a>';
-                 break;
-             case 'Progress':
-                 $html .=$this->parseTaskTime($this->duration_effective).'/';
-                if($this->planned_workload)
-                {
-                     $html .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
-                }else{
-                    $html .= "-:--(-%)";
-                }
-                 break;
+                     }
+                     break;
+                 case 'TaskParent':
+                     $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->fk_task_parent.'&withproject='.$this->fk_project2.'">'.$this->taskParentDesc.'</a>';
+                     break;
+                 case 'Tasks':
+                     $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->id.'&withproject='.$this->fk_project2.'">'.$this->description.'</a>';
+                     break;
+                 case 'DateStart':
+                     $html.=$this->date_start?date('d/m/y',$this->date_start):'';
+                     break;
+                 case 'DateEnd':
+                     $html.=$this->date_end?date('d/m/y',$this->date_end):'';
+                     break;
+                 case 'Company':
+                     $html.='<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->companyId.'">'.$this->companyName.'</a>';
+                     break;
+                 case 'Progress':
+                     $html .=$this->parseTaskTime($this->duration_effective).'/';
+                    if($this->planned_workload)
+                    {
+                         $html .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
+                    }else{
+                        $html .= "-:--(-%)";
+                    }
+                     break;
+             }
+
+             $html.="</th>\n";
          }
-  
-         $html.="</th>\n";
-     }
+    }
     
   // day section
         foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
@@ -237,7 +243,10 @@ class timesheet extends Task
                     $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
                 }
               
-                if((empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today )))
+                if($hidden){
+                    $html .= ' <input type="hidden" id="task['.$lineNumber.']['.$dayOfWeek.']" value="'.$dayWorkLoad.'" ';
+                    $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" >'."\n";
+                }else if((empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today )))
                 {             
                     $html .= '<th><input type="text" id="task['.$lineNumber.']['.$dayOfWeek.']" ';
                     $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" ';
@@ -251,7 +260,7 @@ class timesheet extends Task
                     $html .= '<th> <div id="task['.$this->id.']['.$dayOfWeek.']">'.$dayWorkLoad."</div></th>\n";
                 }
         }
-        $html .= "</tr>\n";
+        if(!$hidden)$html .= "</tr>\n";
         return $html;
 
     }	
@@ -415,10 +424,9 @@ public function updateTimeUsed()
  *  @param     int              	$yearWeek           timesheetweek
  *  @param    array(int)              	$whiteList    array defining the header width
  *  @param     int              	$timestamp         timestamp
- *  @param     int              	$whitelistemode           0-whiteliste,1-blackliste,2-non impact
  *  @return     array(string)                                             array of timesheet (serialized)
  */
- function timesheetTab($headers,$userid,$yearWeek,$timestamp,$whitelistmode=0){     
+ function timesheetTab($headers,$userid,$yearWeek,$timestamp){     
     // get the whitelist
     $whiteList=array();
     $staticWhiteList=new Timesheetwhitelist($this->db);
@@ -439,7 +447,7 @@ public function updateTimeUsed()
     $sql.=' AND (prj.dateo<=FROM_UNIXTIME("'.$datestop.'") OR prj.dateo IS NULL)';
     $sql.=' AND (tsk.datee>=FROM_UNIXTIME("'.$datestart.'") OR tsk.datee IS NULL)';
     $sql.=' AND (tsk.dateo<=FROM_UNIXTIME("'.$datestop.'") OR tsk.dateo IS NULL)';
-    if ($whitelistmode!=2){
+    /*if ($whitelistmode!=2){
         if(is_array($whiteList)){
              $sql.=' AND tsk.rowid '.(($whitelistmode==1)?'not ':'').'in (';
              foreach($whiteList as $value) {
@@ -449,7 +457,7 @@ public function updateTimeUsed()
          }else  if(!empty($whiteList)){ 
              $sql.=' AND tsk.rowid'.(($whitelistmode==1)?'!':'').'=" '.$whiteList.'" ';
          }
-    }
+    }*/
     $sql.=" ORDER BY prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
 
     dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
@@ -464,6 +472,10 @@ public function updateTimeUsed()
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
                     $tasksList[$i] = NEW timesheet($this->db, $obj->element_id);
+                    if((is_array($whiteList) && in_array($obj->element_id, $whiteList)) OR $whiteList==$obj->element_id ){
+                        $tasksList[$i]->listed=true;
+                    }              
+
                     //$tasksList[$i]->getTaskInfo();
                     //$tasksList[$i]->getActuals($yearWeek,$userid); 
                     $i++;
