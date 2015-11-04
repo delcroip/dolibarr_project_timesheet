@@ -57,3 +57,5 @@ blackWhiteListModeDesc =Mode de prise en compte des favoris par default
 modeBlackList =Tout sauf les favoris
 modeWhiteList =Seulement les favoris
 modeNone =Toutes les tâches
+dropdownAjaxDesc= Désactiver l'ajax pour les lists déroulantes Dolibarr (en cas de problème pour entrer un nouveau favoris)
+dropdownAjax = Déactiver l'Ajax des dropdown

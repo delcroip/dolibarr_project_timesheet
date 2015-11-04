@@ -40,6 +40,8 @@ $userIdSelected   = GETPOST('userSelected');
 $exportFriendly = GETPOST('exportFriendly');
 if(empty($userIdSelected))$userIdSelected=$userid;
 $exportfriendly=GETPOST('exportfriendly');
+$optioncss = GETPOST('optioncss','alpha');
+
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("main");
@@ -109,7 +111,7 @@ if ($resql)
 }
 
 
-$Form='<form action="?action=reportuser" method="POST">
+$Form='<form action="?action=reportuser'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method="POST">
         <table class="noborder"  width="100%">
         <tr>
         <td>'.$langs->trans('User').'</td>
@@ -129,6 +131,8 @@ foreach($userList as $usr){
 
 $mode='PTD';
 $querryRes='';
+
+
 
 if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected']) 
         &&!empty($_POST['month']))
@@ -175,7 +179,7 @@ $Form.='</select></td>'
         </tr>
          
         </table></form>';
-echo $Form;
+if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 // section to generate
 if(!empty($querryRes)){
    

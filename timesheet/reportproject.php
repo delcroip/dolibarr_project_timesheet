@@ -37,6 +37,7 @@ $id		= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $yearWeek	= GETPOST('yearweek');
 $exportfriendly=GETPOST('exportfriendly');
+$optioncss = GETPOST('optioncss','alpha');
 
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -100,7 +101,7 @@ if ($resql)
         dol_print_error($db);
 }
 
-$Form='<form action="?action=reportproject" method="POST">
+$Form='<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method="POST">
         <table class="noborder"  width="100%">
         <tr>
         <td>'.$langs->trans('Project').'</td>
@@ -161,8 +162,7 @@ $Form.='</select></td>'
         .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
         .'<td><input type="submit" value="'.$langs->trans('getReport')
         .'"></td></tr></table></form>';
-
-echo $Form;
+if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 
 
 

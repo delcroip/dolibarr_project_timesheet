@@ -58,3 +58,5 @@ blackWhiteListModeDesc = Moda considerazione favoriti default
 modeBlackList = tutto tranne preferiti
 modeWhiteList =solo preferiti
 modeNone = tutte le attività
+dropdownAjaxDesc= Disattivare il ajax per gli elenchi a discesa Dolibarr (nel caso in cui alla data di rilascio per inserire una nuova whitelist)
+dropdownAjax = Disabilita discesa Ajax

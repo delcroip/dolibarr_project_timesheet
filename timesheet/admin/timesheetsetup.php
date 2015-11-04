@@ -50,6 +50,7 @@ $hidezeros=TIMESHEET_HIDE_ZEROS;
 $headers=TIMESHEET_HEADERS;
 $whiteListMode=TIMESHEET_WHITELIST_MODE;
 $whiteList=TIMESHEET_WHITELIST;
+$dropdownAjax=MAIN_DISABLE_AJAX_COMBOX;
 switch($action)
 {
     case save:
@@ -64,6 +65,7 @@ switch($action)
         $hideref=GETPOST('hideref','alpha');        
         $whiteListMode=GETPOST('blackWhiteListMode','int');
         $whiteList=GETPOST('blackWhiteList','int');
+        $dropdownAjax=GETPOST('dropdownAjax','int');
         $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
@@ -77,6 +79,8 @@ switch($action)
          $res=dolibarr_set_const($db, "TIMESHEET_WHITELIST_MODE", $whiteList?$whiteListMode:2, 'int', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_WHITELIST", $whiteList, 'int', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db, "MAIN_DISABLE_AJAX_COMBOX", $dropdownAjax, 'int', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         //headers handling
         $showProject=GETPOST('showProject','int');
@@ -234,7 +238,7 @@ $Form .='</th><th align="left">'.$langs->trans("CustomColDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="showCustomCol" value="1" ';
 $Form .=(($showCustomCol=='1')?'checked':'')."</th></tr>\n\t\t";
 */
-$Form .='</table><br>';
+$Form .='</table>';
 print $Form.'<br>';
 
 //whitelist mode
@@ -259,6 +263,21 @@ $Form .=($whiteListMode=="2"?"checked":"").'> '.$langs->trans("modeNone")."</th>
 $Form .='</table><br>';
 
 
+print $Form.'<br>';
+
+
+// Ajax on/off
+
+print_titre($langs->trans("Dolibarr"));
+$Form ='<table class="noborder" width="100%">'."\n\t\t";
+$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("dropdownAjax");
+$Form .='</th><th align="left">'.$langs->trans("dropdownAjaxDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="dropdownAjax" value="1" ';
+$Form .=(($dropdownAjax=='1')?'checked':'')."></th></tr>\n\t\t";
+
+$Form .='</table><br>';
 
 
 $Form .='<input type="submit" value="'.$langs->trans('Save')."\">\n</from>";
