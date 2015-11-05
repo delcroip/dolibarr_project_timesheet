@@ -436,10 +436,14 @@ public function updateTimeUsed()
      // Save the param in the SeSSION
      $tasksList=array();
 
-    $sql ="SELECT DISTINCT element_id FROM ".MAIN_DB_PREFIX."element_contact "; 
-    $sql.='JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
-    $sql.='JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
-    $sql.="WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$userid."' ";
+    $sql ="SELECT DISTINCT element_id,";
+    $sql.=' CASE listed';
+    $sql.=' WHEN tsk.rowid IN ('.implode(",",  $whiteList).') THEN \'1\' ';
+    $sql.=' ELSE \'0\' END';
+    $sql.=" FROM ".MAIN_DB_PREFIX."element_contact "; 
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
+    $sql.=" WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$userid."' ";
     if(TIMESHEET_HIDE_DRAFT=='1'){
          $sql.=' AND prj.fk_statut="1" ';
     }
@@ -458,7 +462,7 @@ public function updateTimeUsed()
              $sql.=' AND tsk.rowid'.(($whitelistmode==1)?'!':'').'=" '.$whiteList.'" ';
          }
     }*/
-    $sql.=" ORDER BY prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
+    $sql.="  ORDER BY listed,prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
 
     dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
     $resql=$this->db->query($sql);
@@ -472,9 +476,10 @@ public function updateTimeUsed()
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
                     $tasksList[$i] = NEW timesheet($this->db, $obj->element_id);
-                    if((is_array($whiteList) && in_array($obj->element_id, $whiteList)) OR $whiteList==$obj->element_id ){
+                    $tasksList[$i]->listed=$obj->listed;
+                   /* if((is_array($whiteList) && in_array($obj->element_id, $whiteList)) OR $whiteList==$obj->element_id ){
                         $tasksList[$i]->listed=true;
-                    }              
+                    }       */       
 
                     //$tasksList[$i]->getTaskInfo();
                     //$tasksList[$i]->getActuals($yearWeek,$userid); 
