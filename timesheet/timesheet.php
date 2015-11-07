@@ -44,7 +44,9 @@ require_once 'lib/timesheet.lib.php';
 
 $action             = GETPOST('action');
 $yearWeek           = GETPOST('yearweek');
+//should return the XMLDoc
 $ajax               = GETPOST('ajax');
+$xml               = GETPOST('xml');
 $optioncss = GETPOST('optioncss','alpha');
 
 
@@ -63,12 +65,16 @@ $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
 if(!is_numeric($whitelistmode))$whitelistmode=TIMESHEET_WHITELIST_MODE;
 $userid=  is_object($user)?$user->id:$user;
-if($ajax){
+if($xml){
     //renew timestqmp
     echo GetTimeSheetXML($userid,$yearWeek,$whitelistmode);
     exit;
 }
-
+if($ajax){
+    //return the XMLDoc
+//    echo GetTimeSheetXML($userid,$yearWeek,$whitelistmode);
+        exit;
+}
 
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -157,7 +163,7 @@ $Form.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',st
 if ($optioncss != '') $Form.=  '&amp;optioncss='.$optioncss;
 $Form.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 $Form.=  '<form name="goToDate" action="?action=goToDate&wlm='.$whitelistmode.'" method="POST" >'."\n\t\t\t";
-$Form.=   $langs->trans("GoToDate").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)."\n\t\t\t";;
+$Form.=   $langs->trans("GoToDate").': '.$form->select_date(-1,'toDate',0,0,0,"",1,0,1)."\n\t\t\t";;
 $Form.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 $Form.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days +1 week"));
 if ($optioncss != '') $Form.=  '&amp;optioncss='.$optioncss;

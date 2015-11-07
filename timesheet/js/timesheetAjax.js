@@ -28,7 +28,7 @@ function refreshTimesheet(){
 }
 
 
-function loadXMLDoc()
+function loadXMLTimesheet()
 {
     // create and init AJAX object
     var xmlhttp;
