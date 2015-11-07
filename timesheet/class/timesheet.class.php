@@ -437,9 +437,8 @@ public function updateTimeUsed()
      $tasksList=array();
 
     $sql ="SELECT DISTINCT element_id,";
-    $sql.=' CASE listed';
-    $sql.=' WHEN tsk.rowid IN ('.implode(",",  $whiteList).') THEN \'1\' ';
-    $sql.=' ELSE \'0\' END';
+    $sql.=' (CASE WHEN tsk.rowid IN ('.implode(",",  $whiteList).') THEN \'1\' ';
+    $sql.=' ELSE \'0\' END ) AS listed';
     $sql.=" FROM ".MAIN_DB_PREFIX."element_contact "; 
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
