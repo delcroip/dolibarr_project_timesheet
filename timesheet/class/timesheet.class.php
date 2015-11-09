@@ -363,9 +363,9 @@ class timesheet extends Task
     public function getTaskTab()
     {
         $taskTab=array();
-        $taskTab[]='id';
+        //$taskTab[]='id';
         $taskTab['id']=$this->id;
-        $taskTab[]='weekWorkLoad';
+        //$taskTab[]='weekWorkLoad';
         $taskTab['weekWorkLoad']=array();
         $weekWorkload=array();
         
@@ -373,7 +373,7 @@ class timesheet extends Task
         {
             $taskTab['weekWorkLoad'][$key]=$value;
         }
-        $taskTab[]='taskTimeId';
+        //$taskTab[]='taskTimeId';
         $taskTab['taskTimeId']=array();
         foreach($this->taskTimeId as $key => $value)
         {
