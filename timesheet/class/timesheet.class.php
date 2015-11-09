@@ -119,7 +119,42 @@ class timesheet extends Task
                 return -1;
         }	
     }
-
+    
+    
+     /*
+ * put the timesheet task in a approuved status
+ * 
+ *  @param      string            $yearWeek      year week like 2015W09
+ *  @param      int               $userid        change the status for this userid 
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+    Public function setAppouved($yearWeek,$userid){
+        
+    }
+    
+ /*
+ * put the timesheet task in a rejected status
+ * 
+ *  @param    string              	$yearWeek            year week like 2015W09
+ *  @param      int               $userid        change the status for this userid 
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+    Public function setRejected($yearWeek,$userid){
+        
+    }
+    
+ /*
+ * put the timesheet task in a pending status
+ * 
+ *  @param    string              	$yearWeek            year week like 2015W09
+  *  @param      int               $userid        change the status for this userid 
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+*/
+    Public function setPending($yearWeek,$userid){
+        
+    }
+    
+    
     public function getActuals( $yearWeek,$userid)
     {
 
@@ -435,10 +470,12 @@ public function updateTimeUsed()
     $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
      $tasksList=array();
-
-    $sql ="SELECT DISTINCT element_id,";
-    $sql.=' (CASE WHEN tsk.rowid IN ('.implode(",",  $whiteList).') THEN \'1\' ';
-    $sql.=' ELSE \'0\' END ) AS listed';
+     $whiteListNumber=count($whiteList);
+    $sql ="SELECT DISTINCT element_id";
+    if($whiteListNumber){
+        $sql.=', (CASE WHEN tsk.rowid IN ('.implode(",",  $whiteList).') THEN \'1\' ';
+        $sql.=' ELSE \'0\' END ) AS listed';
+    }
     $sql.=" FROM ".MAIN_DB_PREFIX."element_contact "; 
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
@@ -450,18 +487,7 @@ public function updateTimeUsed()
     $sql.=' AND (prj.dateo<=FROM_UNIXTIME("'.$datestop.'") OR prj.dateo IS NULL)';
     $sql.=' AND (tsk.datee>=FROM_UNIXTIME("'.$datestart.'") OR tsk.datee IS NULL)';
     $sql.=' AND (tsk.dateo<=FROM_UNIXTIME("'.$datestop.'") OR tsk.dateo IS NULL)';
-    /*if ($whitelistmode!=2){
-        if(is_array($whiteList)){
-             $sql.=' AND tsk.rowid '.(($whitelistmode==1)?'not ':'').'in (';
-             foreach($whiteList as $value) {
-                 $sql.=$value.',';
-             }              
-              $sql.='0) ';
-         }else  if(!empty($whiteList)){ 
-             $sql.=' AND tsk.rowid'.(($whitelistmode==1)?'!':'').'=" '.$whiteList.'" ';
-         }
-    }*/
-    $sql.="  ORDER BY listed,prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ";
+    $sql.='  ORDER BY '.($whiteListNumber?'listed,':'').'prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ';
 
     dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
     $resql=$this->db->query($sql);
