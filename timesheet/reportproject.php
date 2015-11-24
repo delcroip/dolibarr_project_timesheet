@@ -129,7 +129,7 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
     $year=$_POST['year'];
     $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
     $firstDay= strtotime('01-'.$month.'-'. $year);
-    $lastDay=  strtotime('last day of this month',$firstDay);
+    $lastDay=  strtotime('first day of next month',$firstDay) -1;
     if($_POST['projectSelected']=='-999'){
         foreach($projectList as $project){
         $querryRes.=$project->getHTMLreport($firstDay,$lastDay,$mode,$short,

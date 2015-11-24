@@ -144,7 +144,7 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
     $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
     
     $firstDay= strtotime('01-'.$month.'-'. $year);
-    $lastDay=  strtotime('last day of this month',$firstDay);
+    $lastDay=  strtotime('first day of next month',$firstDay) -1;
     if($userIdSelected=='-999'){
         foreach($userList as $userSt){
         $querryRes.=$userSt->getHTMLreport($firstDay,$lastDay,$mode,$short,
