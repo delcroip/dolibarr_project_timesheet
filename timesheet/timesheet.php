@@ -23,19 +23,12 @@
  *					Put here some comments
  */
 
+
 // hide left menu
 //$_POST['dol_hide_leftmenu']=1;
 // Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
-if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';// to work if your module directory is into a subdir of root htdocs directory
-//if (! $res && file_exists("/home/patrick/gitrespo/dolibarr/htdocs/main.inc.php")) $res=@include "/home/patrick/gitrespo/dolibarr/htdocs/main.inc.php";     // Used on dev env only
-if(strpos($_SERVER['PHP_SELF'], 'dolibarr_min')>0 && !$res && file_exists("/var/www/dolibarr_min/htdocs/main.inc.php")) $res=@include "/var/www/dolibarr_min/htdocs/main.inc.php";     // Used on dev env only
-else if (! $res && file_exists("/var/www/dolibarr/htdocs/main.inc.php")) $res=@include '/var/www/dolibarr/htdocs/main.inc.php';   // Used on dev env only
-if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
-if (! $res) die("Include of main fails");
-// Change this following line to use the correct relative path from htdocs
-// 
+include 'lib/includeMain.lib.php';
+
 //to get the form funciton
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 //to get the timesheet lib
@@ -70,11 +63,7 @@ if($xml){
     echo GetTimeSheetXML($userid,$yearWeek,$whitelistmode);
     exit;
 }
-if($ajax){
-    //return the XMLDoc
-//    echo GetTimeSheetXML($userid,$yearWeek,$whitelistmode);
-        exit;
-}
+
 
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -105,13 +94,11 @@ if ($user->societe_id > 0)
 switch($action)
 {
     case 'submit':
-        
         if (isset($_SESSION['timestamps'][$timestamp]))
         {
             if (!empty($_POST['task']))
-            {    
-                    
-                    $ret =postActuals($db,$user,$_POST['task'],$timestamp);
+            {
+				$ret =postActuals($db,$user,$_POST['task'],$timestamp);
                     if($ret>0)
                     {
                         if($_SESSION['timeSpendCreated'])setEventMessage($langs->trans("NumberOfTimeSpendCreated").$_SESSION['timeSpendCreated']);
@@ -130,19 +117,20 @@ switch($action)
                     setEventMessage( $langs->trans("NoTaskToUpdate"),'errors');
         }else
                 setEventMessage( $langs->trans("InternalError"),'errors');
+		break;
     case 'goToDate':
         if (!empty($toDate))
         {
             $yearWeek =date('Y\WW',strtotime(str_replace('/', '-',$toDate)));  
             $_SESSION["yearWeek"]=$yearWeek ;      
         }
+		break;
     default:
-        if(!empty($timestamp)){
-             unset($_SESSION["timestamps"][$timestamp]);
-        }
             break;
 }
-
+if(!empty($timestamp)){
+       unset($_SESSION["timestamps"][$timestamp]);
+}
 
 /***************************************************
 * VIEW
@@ -154,28 +142,19 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 
 $tmstp=time();
-	 
 
  $form = new Form($db);
+
 // navigation form 	
-$Form =  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
-$Form.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days  -1 week"));
-if ($optioncss != '') $Form.=  '&amp;optioncss='.$optioncss;
-$Form.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-$Form.=  '<form name="goToDate" action="?action=goToDate&wlm='.$whitelistmode.'" method="POST" >'."\n\t\t\t";
-$Form.=   $langs->trans("GoToDate").': '.$form->select_date(-1,'toDate',0,0,0,"",1,0,1)."\n\t\t\t";;
-$Form.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-$Form.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days +1 week"));
-if ($optioncss != '') $Form.=  '&amp;optioncss='.$optioncss;
-$Form.=  '">'.$langs->trans("NextWeek").' &gt;&gt; </a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
+print pintNavigationHeader($yearWeek,$whitelistmode,$optioncss,$form);
+
 
 //timesheet
-$Form .='<form name="timesheet" action="?action=submit&wlm='.$whitelistmode.'&yearweek='.$yearWeek.'" method="POST" >'; 
+$Form ='<form name="timesheet" action="?action=submit&wlm='.$whitelistmode.'&yearweek='.$yearWeek.'" method="POST" >'; 
 $Form .="\n<table class=\"noborder\" width=\"100%\">\n";
 //headers
 
 $headers=explode('||', TIMESHEET_HEADERS);
-//$headers=explode('||', 'Project||TaskParent||Tasks||DateStart||DateEnd||Progress');
 //$headersWidth=explode('||', TIMESHEET_HEADERS_WIDTH);
 $headersWidth=explode('||', '');
 for ($i=0;$i<7;$i++)
@@ -189,57 +168,47 @@ $Form .=timesheetHeader($headers,$headersWidth, $weekDays );
 
 $num=count($headers);
 $Form .="<tr>\n";
-$Form .='<th colspan="'.$num.'" align="right"> TOTAL </th>
-<th><div id="totalDay[0]">&nbsp;</div></th>
-<th><div id="totalDay[1]">&nbsp;</div></th>
-<th><div id="totalDay[2]">&nbsp;</div></th>
-<th><div id="totalDay[3]">&nbsp;</div></th>
-<th><div id="totalDay[4]">&nbsp;</div></th>
-<th><div id="totalDay[5]">&nbsp;</div></th>
-<th><div id="totalDay[6]">&nbsp;</div></th>
-</tr>';
+$Form .='<th colspan="'.$num.'" align="right"> TOTAL </th>';
+for ($i=0;$i<7;$i++)
+{
+   $Form .='<th><div id="totalDay['.$i.']">&nbsp;</div></th>';
+ }
+$Form .='</tr>';
 
 //line
+
 
 $Form .=timesheetList($db,$headers,$userid,$yearWeek,$tmstp,$whitelistmode);
 
 //total Bot
 $Form .="<tr>\n";
-$Form .='<th colspan="'.$num.'" align="right"> TOTAL </th>
-<th><div id="totalDayb[0]">&nbsp;</div></th>
-<th><div id="totalDayb[1]">&nbsp;</div></th>
-<th><div id="totalDayb[2]">&nbsp;</div></th>
-<th><div id="totalDayb[3]">&nbsp;</div></th>
-<th><div id="totalDayb[4]">&nbsp;</div></th>
-<th><div id="totalDayb[5]">&nbsp;</div></th>
-<th><div id="totalDayb[6]">&nbsp;</div></th>
-</tr>';
-
+$Form .='<th colspan="'.$num.'" align="right"> TOTAL </th>';
+for ($i=0;$i<7;$i++)
+{
+   $Form .='<th><div id="totalDayb['.$i.']">&nbsp;</div></th>';
+ }
+$Form .='</tr>';
 $Form .="</table >\n";
 
 //form button
 $Form .= '<input type="submit" value="'.$langs->trans('Save')."\" />\n";
+//$Form .= '<input type="button" value="'.$langs->trans('Submit');
+//$Form .= '" onClick="document.location.href=\'?action=submit&yearweek='.$yearWeek."'\"/>\n"; /*FIXME*/
 $Form .= '<input type="button" value="'.$langs->trans('Cancel');
-$Form .= '" onClick="document.location.href=\'?action=list&yearweek='.$yearWeek."\"/>\n";
+$Form .= '" onClick="document.location.href=\'?action=list&yearweek='.$yearWeek."'\"/>\n";
 $Form .= "</form>\n";
 //Javascript
 $timetype=TIMESHEET_TIME_TYPE;
 //$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
-$Form .= 'updateTotal(0,\''.$timetype.'\');'."\n\t";
-$Form .= 'updateTotal(1,\''.$timetype.'\');'."\n\t";
-$Form .= 'updateTotal(2,\''.$timetype.'\');'."\n\t";
-$Form .= 'updateTotal(3,\''.$timetype.'\');'."\n\t";
-$Form .= 'updateTotal(4,\''.$timetype.'\');'."\n\t";
-$Form .= 'updateTotal(5,\''.$timetype.'\');'."\n\t";
-$Form .= 'updateTotal(6,\''.$timetype.'\');'."\n";
-$Form .= '</script>'."\n";
-// $db->close();
-
-
-
+for ($i=0;$i<7;$i++)
+{
+   $Form .='updateTotal('.$i.',\''.$timetype.'\');';
+ }
+$Form .= "\n\t".'</script>'."\n";
 
 print $Form;
+
 
 // End of page
 llxFooter();
