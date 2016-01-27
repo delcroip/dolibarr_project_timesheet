@@ -164,7 +164,8 @@ for ($i=0;$i<7;$i++)
 }
 $_SESSION["timestamps"][$tmstp]["YearWeek"]=$yearWeek;
 $_SESSION["timestamps"][$tmstp]["weekDays"]=$weekDays;
-$Form .=timesheetHeader($headers,$headersWidth, $weekDays );
+$Form .=timesheetHeader($headers,$headersWidth, $yearWeek, $tmstp );
+
 //total top
 
 $num=count($headers);

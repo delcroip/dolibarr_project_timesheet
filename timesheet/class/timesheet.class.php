@@ -296,7 +296,7 @@ class timesheet extends Task
               //      $html .= '<th> <div id="task['.$this->id.']['.$dayOfWeek.']">'.$dayWorkLoad."</div></th>\n";
               //  }
         }
-        if(!$hidden)$html .= "</tr>\n";
+        $html .= "</tr>\n";
         return $html;
 
     }	
@@ -315,18 +315,16 @@ class timesheet extends Task
  * function to form a XML for this timesheet
  * 
  *  @param    string              	$yearWeek            year week like 2015W09
- *  @param     int              	$line number         used in the form processing
- *  @param    string              	$headers             header to shows
- *  @return     string                                         XML result containing the timesheet info
+  *  @return     string                                         XML result containing the timesheet info
  */
-    public function getXML( $yearWeek,$lineNumber)
+    public function getXML( $yearWeek)
     {
     $timetype=TIMESHEET_TIME_TYPE;
     $dayshours=TIMESHEET_DAY_DURATION;
     $hidezeros=TIMESHEET_HIDE_ZEROS;
-    $xml= "<task id=\"{$lineNumber}\" >";
+    $xml= "<task id=\"{$this->id}\" >";
     //title section
-	$xml.="<Tasks id=\"{$this->id}\">{$this->description} </Tasks>";
+    $xml.="<Tasks id=\"{$this->id}\">{$this->description} </Tasks>";
     $xml.="<Project id=\"{$this->fk_project2}\">{$this->ProjectTitle} </Project>";
     $xml.="<TaskParent id=\"{$this->fk_task_parent}\">{$this->taskParentDesc} </TaskParent>";
     //$xml.="<task id=\"{$this->id}\" name=\"{$this->description}\">\n";

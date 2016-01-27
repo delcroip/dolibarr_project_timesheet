@@ -157,13 +157,9 @@ $Form .="\n<table id=\"timesheetTable\" class=\"noborder\" width=\"100%\">\n";
 $headers=explode('||', TIMESHEET_HEADERS);
 //$headersWidth=explode('||', TIMESHEET_HEADERS_WIDTH);
 $headersWidth=explode('||', '');
-for ($i=0;$i<7;$i++)
-{
-   $weekDays[$i]=date('d-m-Y',strtotime( $yearWeek.' +'.$i.' day'));
-}
-$_SESSION["timestamps"][$tmstp]["YearWeek"]=$yearWeek;
-$_SESSION["timestamps"][$tmstp]["weekDays"]=$weekDays;
-$Form .=timesheetHeader($headers,$headersWidth, $weekDays );
+
+$Form .=timesheetHeader($headers,$headersWidth, $yearWeek, $tmstp );
+
 //total top
 
 $num=count($headers);

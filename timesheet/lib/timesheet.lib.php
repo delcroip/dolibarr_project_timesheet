@@ -170,14 +170,12 @@ function get_userName($userids){
   *  @param    array(string)           $headers            array of the header to show
  *  @param    array(int)              	$headersWidth    array defining the header width
  *  @param     int              	$yearWeek           timesheetweek
+ *  @param     int              	$timestamp         timestamp
   *  @return     string                                                   html code
  */
- function timesheetHeader($headers,$headersWidth , $weekDays){
+ function timesheetHeader($headers,$headersWidth , $yearWeek,$tmstp){
      global $langs;
-     if(!is_array($weekDays )){
-            setEventMessage($langs->trans("InternalError2"),'errors');
-            return '';
-     }
+    
 
      $html='<tr class="liste_titre" id="">'."\n";
      
@@ -191,11 +189,18 @@ function get_userName($userids){
     
     for ($i=0;$i<7;$i++)
     {
-         $html.="\t".'<th width="60px">'.$langs->trans(date('l',strtotime($weekDays[$i]))).'<br>'.date('d/m/y',strtotime($weekDays[$i]))."</th>\n";
+        $curDay=strtotime( $yearWeek.' +'.$i.' day');
+        $weekDays[$i]=date('d-m-Y',$curDay);
+        $html.="\t".'<th width="60px">'.$langs->trans(date('l',$curDay)).'<br>'.date('d/m/y',$curDay)."</th>\n";
     }
-
+        $_SESSION["timestamps"][$tmstp]["YearWeek"]=$yearWeek;
+        $_SESSION["timestamps"][$tmstp]["weekDays"]=$weekDays;
      
      $html.="</tr>\n";
+     $html.='<tr id="hiddenParam" style="display:none;"><td colspan="'.($headers.lenght+7).'"> ';
+    $html .= '<input type="hidden" name="timestamp" value="'.$tmstp."\"/>\n";
+    $html .= '<input type="hidden" name="yearWeek" value="'.$yearWeek.'" />';        
+    $html .='</td></tr>';
      return $html;
      
  }
@@ -213,12 +218,10 @@ function get_userName($userids){
  *  @return     string                                                   html code
  */
  function timesheetList($db,$headers,$userid,$yearWeek,$timestamp,$whitelistmode=0){
-        $Lines='';
-        //FIXME unset timestamp
-        $staticTimesheet=New timesheet($db,0);
-        
-        $tab=$staticTimesheet->timesheetTab($headers,$userid,$yearWeek,$timestamp);
+
         $i=0;
+        $staticTimesheet=New timesheet($db,0);
+        $tab=$staticTimesheet->timesheetTab($headers,$userid,$yearWeek,$timestamp);
         foreach ($tab as $timesheet) {
             $row=unserialize($timesheet);
             $Lines.=$row->getFormLine( $yearWeek,$i,$headers,$whitelistmode);
@@ -226,9 +229,7 @@ function get_userName($userids){
             $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab(); 
             $i++;
         }
-        $Lines .= '<input type="hidden" name="timestamp" value="'.$timestamp."\"/>\n";
-        $Lines .= '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tab)."\"/>\n";
-        $Lines .= '<input type="hidden" name="yearWeek" value="'.$yearWeek.'" />'; 
+        
         return $Lines;
  }    
   /*
@@ -412,14 +413,18 @@ function GetTimeSheetXML($userids,$yearWeek,$whitelistmode)
     for ($i=0;$i<7;$i++)
     {
        $curDay=strtotime( $yearWeek.' +'.$i.' day');
-       $weekDays[$i]=$langs->trans(date('l',$curDay)).'  '.date('d/m/y',$curDay);
-       $xmldays.="<day col=\"{$i}\">{$weekDays[$i]}</day>";
+       $weekDays[$i]=date('d-m-Y',$curDay);
+       $curDayTrad=$langs->trans(date('l',$curDay)).'  '.date('d/m/y',$curDay);
+       $xmldays.="<day col=\"{$i}\">{$curDayTrad}</day>";
     }
+    $_SESSION["timestamps"][$timestamp]['YearWeek']=$yearWeek;
+    $_SESSION["timestamps"][$timestamp]["weekDays"]=$weekDays;
     $xml.= "<days>{$xmldays}</days>";
         //FIXME unset timestamp
     $staticTimesheet=New timesheet($db,0);
     if (!is_array($userids))$userids=array('0'=>$userids);
     $userNames=get_userName($userids);
+    
     foreach($userNames as $userid => $userName)
     {
         $tab=$staticTimesheet->timesheetTab($headers,$userid,$yearWeek,$timestamp,$whitelistmode);
@@ -427,7 +432,7 @@ function GetTimeSheetXML($userids,$yearWeek,$whitelistmode)
         $xml.="<userTs userid=\"{$userid}\"  count=\"".count($tab)."\" userName=\"{$userName}\" >";
         foreach ($tab as $timesheet) {
             $row=unserialize($timesheet);
-            $xml.= $row->getXML($yearWeek,$i);//FIXME
+            $xml.= $row->getXML($yearWeek);//FIXME
            // $Lines.=$row->getFormLine( $yearWeek,$i,$headers);
             $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
             $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab(); 

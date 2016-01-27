@@ -15,54 +15,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function refreshTimesheet( xmlDoc){
+var xmlTs;
+
+function refreshTimesheet(Wlmode){
       var i;
-      // parse the response
-	//var xmlDoc = xml.responseXML;
-	// adapt the navigation menu
-	//var yearWeek = xmlDoc.getElementsByTagName("timesheet").getAttribute("yearweek");
-	//document.getElementById("timesheetTable").innerHTML = 
-	// adapt the table header
+      var xmlDoc=xmlTs;
+	// extrat important info from XML
         var timesheet=xmlDoc.getElementsByTagName("timesheet");
         if (!timesheet)throw "Bad XML: no timesheet Node";
         var timestamp=timesheet[0].getAttribute('timestamp');
         var yearWeek=timesheet[0].getAttribute('yearweek');
         var timetype=timesheet[0].getAttribute('timetype');
 	var headers = xmlDoc.getElementsByTagName("headers");
+        var days = xmlDoc.getElementsByTagName("days");
+        var tasks=  xmlDoc.getElementsByTagName("userTs");
+        //get the DOM table
 	var MT=document.getElementById("timesheetTable");
-	var hearderRow='';
-	for( i =0; i< headers[0].childNodes.length; i++){
-		hearderRow+="<th>"+headers[0].childNodes[i].childNodes[0].nodeValue+"</th>";
-	}
-	//day
-	var days = xmlDoc.getElementsByTagName("days");
-	for( i =0; i< days[0].childNodes.length; i++){
-		hearderRow+="<th width='60px'>"+days[0].childNodes[i].childNodes[0].nodeValue+"</th>";
-	}
-	MT.rows[0].innerHTML=hearderRow;
-	//adapt the table lines 
-	 var TotalT=document.getElementById("totalT");
-	//remove the old line
-	var idxT = TotalT.rowIndex;
+        //update the header
+	MT.rows[0].innerHTML=generateHeader(headers,days);
+        // update the hidden param
+        MT.rows[1].cells[0].innerHTML=generateHiddenParam(timestamp,yearWeek);
+        
+	//delete the old lines
+	var idxT = document.getElementById("totalT").rowIndex;
 	var idxB = document.getElementById("totalB").rowIndex;
 	for (i=idxT+1; i<idxB;i++)
 	{
 		MT.deleteRow(idxT+1);
 	}
-	var tasks=  xmlDoc.getElementsByTagName("userTs");
-	var line=0;
- 
+        //generate teh task line
         for (j=0;j<tasks.length;j++)
 	{
             
             for (i=0;i<tasks[j].childNodes.length;i++)    
             {
                     var CurRow = MT.insertRow(idxT+1);
-					CurRow.className =(i%2==0)?'pair':'impair';
+                    //FIXEME mode whitelist
+                    CurRow.className =(i%2==0)?'pair':'impair';
                     var rowContent=generateTaskLine(headers[0],tasks[j].childNodes[i],timetype);
                     CurRow.innerHTML=rowContent;
                     // document.getElementById("timesheetTable").innerHTML = table;
-                    line++;
+                
             }
             if(tasks.length>1){
                 var nameRow=MT.insertRow(idxT+1);
@@ -70,6 +63,27 @@ function refreshTimesheet( xmlDoc){
             }
         }
         updateAll(timetype);
+        
+}
+
+function generateHeader(headers,days){
+    //make the header title
+        var hearderRow='';
+	for( i =0; i< headers[0].childNodes.length; i++){
+		hearderRow+="<th>"+headers[0].childNodes[i].childNodes[0].nodeValue+"</th>";
+	}
+	//make the  header day
+	
+	for( i =0; i< days[0].childNodes.length; i++){
+		hearderRow+="<th width='60px'>"+days[0].childNodes[i].childNodes[0].nodeValue+"</th>";
+	}
+        return hearderRow;
+}
+
+function generateHiddenParam(timestamp,yearWeek){
+    var hiddenParam='<input type="hidden" name="timestamp" value="'+timestamp+"\"/>\n";
+    hiddenParam+= '<input type="hidden" name="yearWeek" value="'+yearWeek+'" />';      
+    return hiddenParam;
 }
 
 function generateTaskLine(headers,task,timetype){
@@ -110,10 +124,13 @@ $.ajax({
     type: "GET",
     url: "timesheet.php?xml=1&yearWeek="+yearWeek+"&user="+user,
     dataType: "xml",
-    success: refreshTimesheet
+    success: loadXMLSuccess
    });
 }
-
+ function loadXMLSuccess(XMLdoc){
+     xmlTs=XMLdoc;
+     refreshTimesheet();
+ }
 
 function updateTotal(days,mode){
 	try{
