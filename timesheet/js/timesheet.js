@@ -1,4 +1,3 @@
-
 /* 
  *Copyright (C) 2014 delcroip <delcroip@gmail.com>
  *
@@ -126,63 +125,66 @@ function parseTime(timeStr, dt) {
     dt.setSeconds(0, 0);
     return dt;
 }
-
+/*
 function updateTotal(days,mode){
-    
-    if(mode=="hours")
-    {
-        var total = new Date(0);
-        total.setHours(0);
-        total.setMinutes(0);   
-        var nbline = document.getElementById('numberOfLines').value;
-        for (var i=0;i<nbline;i++)
-        { 
-            var id='task['+i+']['+days+']';   
-            var taskTime= new Date(0);
-            var element=document.getElementById(id);
-            if(element)
-            {
-                if (element.value)
-                {   
-                    parseTime(element.value,taskTime);
-                }
-                else
-                {
-                    parseTime(element.innerHTML,taskTime);
-                }
-                total.setHours(total.getHours()+taskTime.getHours());
-                total.setMinutes(total.getMinutes()+taskTime.getMinutes());
-            }
-        }
-        document.getElementById('totalDayb['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
-        document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
-        //addText(,total.getHours()+':'+total.getMinutes());
-    }else
-    {
-        var total =0;
-        var nbline = document.getElementById('numberOfLines').value;
-        for (var i=0;i<nbline;i++)
-        { 
-            var id='task['+i+']['+days+']';   
-            var taskTime= new Date(0);
-            var element=document.getElementById(id);
-            if(element)
-            {
-                if (element.value)
-                {   
-                    total+=parseInt(element.value);
+	try{    
+		if(mode=="hours")
+		{
+			var total = new Date(0);
+			total.setHours(0);
+			total.setMinutes(0);   
+			var nbline = document.getElementById('numberOfLines').value;
+			for (var i=0;i<nbline;i++)
+			{ 
+				var id='task['+i+']['+days+']';   
+				var taskTime= new Date(0);
+				var element=document.getElementById(id);
+				if(element)
+				{
+					if (element.value)
+					{   
+						parseTime(element.value,taskTime);
+					}
+					else
+					{
+						parseTime(element.innerHTML,taskTime);
+					}
+					total.setHours(total.getHours()+taskTime.getHours());
+					total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+				}
+			}
+		document.getElementById('totalDayb['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
+		document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
+		//addText(,total.getHours()+':'+total.getMinutes());
+	}else
+	{
+		var total =0;
+		var nbline = document.getElementById('numberOfLines').value;
+		for (var i=0;i<nbline;i++)
+		{ 
+			var id='task['+i+']['+days+']';   
+			var taskTime= new Date(0);
+			var element=document.getElementById(id);
+			if(element)
+			{
+				if (element.value)
+				{   
+					total+=parseInt(element.value);
 
-                   }
-                else
-                {
-                    total+=parseInt(element.innerHTML);
-                }
-            }
-        }
-        document.getElementById('totalDay['+days+']').innerHTML = total;
-        document.getElementById('totalDayb['+days+']').innerHTML = total;
-    }
-    
+				}
+				else
+				{
+					total+=parseInt(element.innerHTML);
+				}
+			}
+		}
+		document.getElementById('totalDay['+days+']').innerHTML = total;
+		document.getElementById('totalDayb['+days+']').innerHTML = total;
+	}
+	}
+	catch(err) {
+		//document.getElementById("demo").innerHTML = err.message;
+	}
 }
+*/
 
-   

@@ -22,12 +22,23 @@ require_once 'class/timesheetwhitelist.class.php';
 require_once 'class/timesheet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+
+ /*
+ * function to genegate list of the subordinate ID
+ * 
+  *  @param    object           	$db             database objet
+ *  @param    array(int)/int        $id    		    array of manager id 
+ *  @param     int              	$depth          depth of the recursivity
+ *  @param    array(int)/int 		$ecludeduserid  exection that shouldn't be part of the result ( to avoid recursive loop)
+ *  @param     int              	$entity         entity where to look for
+  *  @return     string                                                   html code
+ */
 function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1'){
     if($userid=="")
     {
         return array();
     }
-    
+
     $sql="SELECT usr.rowid FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
     if(is_array($userid)){
         $ecludeduserid=array_merge($userid,$ecludeduserid);
@@ -51,7 +62,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
     }else if (!empty($ecludeduserid)){
         $sql.=' AND usr.rowid <>"'.$ecludeduserid.'"';
     } 
-       
+
     dol_syslog("form::get_subordinate sql=".$sql, LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
@@ -98,7 +109,61 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
       return $list;
  }
 
- 
+ /*
+ * function to get the name from a list of ID
+ * 
+  *  @param    object           	$db             database objet
+ *  @param    array(int)/int        $userids    	array of manager id 
+  *  @return  array (int => String)  				array( ID => userName)
+ */
+function get_userName($userids){
+    global $db;
+	if($userids=="")
+    {
+        return array();
+    }
+
+    $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as userName FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
+
+	$sql.=' usr.rowid in (';
+	$nbIds=(is_array($userids))?count($userids)-1:0;
+	for($i=0; $i<$nbIds ; $i++)
+	{
+		$sql.='"'.$userids[$i].'",';
+	}
+	$sql.=((is_array($userids))?('"'.$userids[$i].'"'):('"'.$userids.'"')).')';
+        $sql.='ORDER BY usr.lastname ASC';
+
+    dol_syslog("form::get_userName sql=".$sql, LOG_DEBUG);
+    $list=array();
+    $resql=$db->query($sql);
+    
+    if ($resql)
+    {
+        $i=0;
+        $num = $db->num_rows($resql);
+        while ( $i<$num)
+        {
+            $obj = $db->fetch_object($resql);
+            
+            if ($obj)
+            {
+                $list[$obj->rowid]=$obj->userName;        
+            }
+            $i++;
+        }
+
+    }
+    else
+    {
+        $error++;
+        dol_print_error($db);
+        $list= array();
+    }
+      //$select.="\n";
+      return $list;
+ }
+
  /*
  * function to genegate the timesheet table header
  * 
@@ -114,7 +179,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
             return '';
      }
 
-     $html='<tr class="liste_titre" >'."\n";
+     $html='<tr class="liste_titre" id="">'."\n";
      
      foreach ($headers as $key => $value){
          $html.="\t<th ";
@@ -313,55 +378,71 @@ function postTaskTimeActual($user,$tasktime,$tasktimeid,$wkload,$date)
  *  @param     int              	$whitelistmode        whitelist mode, shows favoite o not 0-whiteliste,1-blackliste,2-non impact
  *  @return     string                                         XML result containing the timesheet info
  */
-function GetTimeSheetXML($userid,$yearWeek,$whitelistmode)
+function GetTimeSheetXML($userids,$yearWeek,$whitelistmode)
 {
     global $langs;
     global $db;
-    
-    $xml = '<?xml version="1.0" encoding="ISO-8859-1" ?>'."\n";
+
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>';
     $timestamp=time();
-    
-    
-    
-    $xml.= "<timesheet yearweek=\"{$yearWeek}\" timestamp=\"{$timestamp}\" >\n";
+
+
+
+    $xml.= "<timesheet yearweek=\"{$yearWeek}\" timestamp=\"{$timestamp}\" timetype=\"".TIMESHEET_TIME_TYPE."\" >";
     $headers=explode('||', TIMESHEET_HEADERS);
     //header
     $i=0;
-    $xmlheaders='';      
+    $xmlheaders=''; 
     foreach($headers as $header){
-        $xmlheaders.= "\t\t<header col=\"{$i}\" name=\"{$header}\" link=\"FIXME\">{$langs->trans($header)}</header>\n";;
+        if ($header=='Project'){
+            $link=' link="'.DOL_URL_ROOT.'/projet/card.php?id="';
+        }elseif ($header=='Tasks' || $header=='TaskParent'){
+            $link=' link="'.DOL_URL_ROOT.'/projet/tasks/task.php?withproject=1&amp;id="';
+        }elseif ($header=='Company'){
+            $link=' link="'.DOL_URL_ROOT.'/societe/soc.php?socid="';
+        }else{
+            $link='';
+        }
+        $xmlheaders.= "<header col=\"{$i}\" name=\"{$header}\" {$link}>{$langs->transnoentitiesnoconv($header)}</header>";
         $i++;
     }
-    $xml.= "\t<headers>\n{$xmlheaders}\t</headers>\n";
+    $xml.= "<headers>{$xmlheaders}</headers>";
         //days
     $xmldays='';
     for ($i=0;$i<7;$i++)
     {
-       $weekDays[$i]=date('d-m-Y',strtotime( $yearWeek.' +'.$i.' day'));
-       $xmldays.="\t\t<day col=\"{$i}\">{$weekDays[$i]}</day>\n";
+       $curDay=strtotime( $yearWeek.' +'.$i.' day');
+       $weekDays[$i]=$langs->trans(date('l',$curDay)).'  '.date('d/m/y',$curDay);
+       $xmldays.="<day col=\"{$i}\">{$weekDays[$i]}</day>";
     }
-    $xml.= "\t<days>\n{$xmldays}\t</days>\n";
+    $xml.= "<days>{$xmldays}</days>";
         //FIXME unset timestamp
     $staticTimesheet=New timesheet($db,0);
-    $tab=$staticTimesheet->timesheetTab($headers,$userid,$yearWeek,$timestamp,$whitelistmode);
-    $i=0;
-    $xml.="\t<tasks count=\"".count($tab)."\">\n";
-    foreach ($tab as $timesheet) {
-        $row=unserialize($timesheet);
-        $xml.= $row->getXML($yearWeek,$i);//FIXME
-       // $Lines.=$row->getFormLine( $yearWeek,$i,$headers);
-        $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
-        $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab(); 
-        $i++;
-    }  
-    $xml.="\t</tasks>\n</timesheet>\n";
-   
+    if (!is_array($userids))$userids=array('0'=>$userids);
+    $userNames=get_userName($userids);
+    foreach($userNames as $userid => $userName)
+    {
+        $tab=$staticTimesheet->timesheetTab($headers,$userid,$yearWeek,$timestamp,$whitelistmode);
+        $i=0;
+        $xml.="<userTs userid=\"{$userid}\"  count=\"".count($tab)."\" userName=\"{$userName}\" >";
+        foreach ($tab as $timesheet) {
+            $row=unserialize($timesheet);
+            $xml.= $row->getXML($yearWeek,$i);//FIXME
+           // $Lines.=$row->getFormLine( $yearWeek,$i,$headers);
+            $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
+            $_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab(); 
+            $i++;
+        }  
+        $xml.="</userTs>";
+    }
+    $xml.="</timesheet>";
 
 
 
 
 
-    
+
+
     return $xml;
 
 }

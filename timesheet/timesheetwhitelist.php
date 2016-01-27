@@ -41,6 +41,7 @@ include 'lib/includeMain.lib.php';;
 // Change this following line to use the correct relative path from htdocs
 require_once 'class/timesheetwhitelist.class.php';
 require_once 'lib/timesheet.lib.php';
+require_once 'lib/generic.lib.php'; 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 //document handling
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

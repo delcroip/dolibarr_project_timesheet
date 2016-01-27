@@ -23,7 +23,8 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
 //require_once './projectTimesheet.class.php';
-
+define('TIMESHEET_BC_FREEZED','909090');
+define('TIMESHEET_BC_VALUE','f0fff0');
 class timesheet extends Task 
 {
         private $ProjectTitle		=	"Not defined";
@@ -222,8 +223,8 @@ class timesheet extends Task
     $hidden=false;
     if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
     
-    if(!$hidden){
-        $html= '<tr class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
+    //if(!$hidden){
+        $html= '<tr '.(($hidden)?'style="display:none;"':'').' class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
         //title section
          foreach ($headers as $key => $title){
              $html.="\t<th align=\"left\">";
@@ -264,7 +265,7 @@ class timesheet extends Task
 
              $html.="</th>\n";
          }
-    }
+    //}
     
   // day section
         foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
@@ -277,23 +278,23 @@ class timesheet extends Task
                 }else {
                     $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
                 }
-              
-                if($hidden){
-                    $html .= ' <input type="hidden" id="task['.$lineNumber.']['.$dayOfWeek.']" value="'.$dayWorkLoad.'" ';
-                    $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" >'."\n";
-                }else if((empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today )))
-                {             
-                    $html .= '<th><input type="text" id="task['.$lineNumber.']['.$dayOfWeek.']" ';
+                $isOpen=(empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today ));
+               // if($hidden || $isOpen){
+               //     $html .= ' <input type="hidden" id="task['.$lineNumber.']['.$dayOfWeek.']" value="'.$dayWorkLoad.'" ';
+                //    $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" >'."\n";
+               // }else if()
+               // {             
+                    $html .= '<th ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$dayOfWeek.']" ';
                     $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" ';
                     $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
-                    $html .='" maxlength="5" style="width: 90%;'.(($dayWorkLoadSec==0)?'':' background:#f0fff0; ').'" ';
+                    $html .='" maxlength="5" style="width: 90%;'.(($dayWorkLoadSec==0)?(($isOpen)?'':' background:#'.TIMESHEET_BC_FREEZED.'; '):' background:#'.TIMESHEET_BC_VALUE.'; ').'" ';
                     $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
                     $html .= 'onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$dayOfWeek.',\''.$timetype.'\')" />';
                     $html .= "</th>\n";                    
-                }else
-                {
-                    $html .= '<th> <div id="task['.$this->id.']['.$dayOfWeek.']">'.$dayWorkLoad."</div></th>\n";
-                }
+               // }else
+               // {
+              //      $html .= '<th> <div id="task['.$this->id.']['.$dayOfWeek.']">'.$dayWorkLoad."</div></th>\n";
+              //  }
         }
         if(!$hidden)$html .= "</tr>\n";
         return $html;
@@ -323,36 +324,39 @@ class timesheet extends Task
     $timetype=TIMESHEET_TIME_TYPE;
     $dayshours=TIMESHEET_DAY_DURATION;
     $hidezeros=TIMESHEET_HIDE_ZEROS;
-    $xml= "\t\t<task line=\"{$lineNumber}\" id=\"{$this->id}\" name=\"{$this->description}\">\n"; 
+    $xml= "<task id=\"{$lineNumber}\" >";
     //title section
-    $xml.="\t\t\t<project id=\"{$this->fk_project2}\">{$this->ProjectTitle}</project>\n";
-    $xml.="\t\t\t<parenttask id=\"{$this->fk_task_parent}\">{$this->taskParentDesc}</parenttask>\n";
+	$xml.="<Tasks id=\"{$this->id}\">{$this->description} </Tasks>";
+    $xml.="<Project id=\"{$this->fk_project2}\">{$this->ProjectTitle} </Project>";
+    $xml.="<TaskParent id=\"{$this->fk_task_parent}\">{$this->taskParentDesc} </TaskParent>";
     //$xml.="<task id=\"{$this->id}\" name=\"{$this->description}\">\n";
-    $xml.="\t\t\t<datestart unix=\"$this->date_start\">";
+    $xml.="<DateStart unix=\"$this->date_start\">";
     if($this->date_start)
         $xml.=date('d/m/y',$this->date_start);
-    $xml.="</datestart>\n";
-    $xml.="\t\t\t<dateend unix=\"$this->date_end\">";
+    $xml.=" </DateStart>";
+    $xml.="<DateEnd unix=\"$this->date_end\">";
     if($this->date_end)
         $xml.=date('d/m/y',$this->date_end);
-    $xml.="</dateend>\n";
-     $xml.="\t\t\t<company id=\"{$this->companyId}\">{$this->companyName}</company>\n";
-    $xml.="\t\t\t<taskprogress id=\"{$this->companyId}\">";
+    $xml.=" </DateEnd>";
+     $xml.="<Company id=\"{$this->companyId}\">{$this->companyName} </Company>";
+    $xml.="<TaskProgress id=\"{$this->companyId}\">";
     if($this->planned_workload)
     {
         $xml .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
     }else{
         $xml .= "-:--(-%)";
     }
-    $xml.="</taskprogress>\n";
+    $xml.="</TaskProgress>";
 
-        
+
   // day section
         foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
         {
                 $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
                 # to avoid editing if the task is closed 
-                if ($timetype=="days")
+				if($hidezeros==1 && $dayWorkLoadSec==0){
+					$dayWorkLoad=' ';
+				}else if ($timetype=="days")
                 {
                     $dayWorkLoad=$dayWorkLoadSec/3600/$dayshours;
                 }else {
@@ -363,11 +367,12 @@ class timesheet extends Task
                 {             
                     $open='1';                   
                 }
-                $xml .= "\t\t\t<day col=\"{$dayOfWeek}\" open=\"{$open}\"> {$dayWorkLoad}</day>\n";
-                
+                $xml .= "<day col=\"{$dayOfWeek}\" open=\"{$open}\">{$dayWorkLoad}</day>";
+
         } 
-        $xml.="\t\t</task>\n"; 
+        $xml.="</task>"; 
         return $xml;
+        //return utf8_encode($xml);
 
     }	
 
