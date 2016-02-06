@@ -389,7 +389,8 @@ function GetTimeSheetXML($userids,$yearWeek,$whitelistmode)
 
 
 
-    $xml.= "<timesheet yearweek=\"{$yearWeek}\" timestamp=\"{$timestamp}\" timetype=\"".TIMESHEET_TIME_TYPE."\" >";
+    $xml.= "<timesheet yearWeek=\"{$yearWeek}\" timestamp=\"{$timestamp}\" timetype=\"".TIMESHEET_TIME_TYPE."\"";
+    $xml.=' nextWeek="'.date('Y\WW',strtotime($yearWeek."+3 days +1 week")).'" prevWeek="'.date('Y\WW',strtotime($yearWeek."+3 days -1 week")).'">';
     $headers=explode('||', TIMESHEET_HEADERS);
     //header
     $i=0;
@@ -461,17 +462,19 @@ function GetTimeSheetXML($userids,$yearWeek,$whitelistmode)
  */
 function pintNavigationHeader($yearWeek,$whitelistmode,$optioncss,$form){
 	global $langs;
-	$Nav =  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
-	$Nav.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days  -1 week"));
-	if ($optioncss != '') $Form.=  '&amp;optioncss='.$optioncss;
-	$Nav.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+        $Nav=  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
+	//$Nav.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days  -1 week"));
+	//if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
+	$Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.date('Y\WW',strtotime($yearWeek."+3 days  -1 week")).'\',0);';
+        $Nav.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	$Nav.=  '<form name="goToDate" action="?action=goToDate&wlm='.$whitelistmode.'" method="POST" >'."\n\t\t\t";
 	$Nav.=   $langs->trans("GoToDate").': '.$form->select_date(-1,'toDate',0,0,0,"",1,0,1)."\n\t\t\t";;
 	$Nav.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-	$Nav.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days +1 week"));
-	if ($optioncss != '') $Form.=  '&amp;optioncss='.$optioncss;
+//	$Nav.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',strtotime($yearWeek."+3 days +1 week"));
+//	if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
+	$Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.date('Y\WW',strtotime($yearWeek."+3 days  +1 week")).'\',0);';
 	$Nav.=  '">'.$langs->trans("NextWeek").' &gt;&gt; </a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
-	return $Nav;
+        return $Nav;
 }
 
 

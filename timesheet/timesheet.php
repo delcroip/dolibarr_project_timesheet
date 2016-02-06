@@ -60,6 +60,7 @@ if(!is_numeric($whitelistmode))$whitelistmode=TIMESHEET_WHITELIST_MODE;
 $userid=  is_object($user)?$user->id:$user;
 if($xml){
     //renew timestqmp
+   header("Content-type: text/xml; charset=utf-8");
     echo GetTimeSheetXML($userid,$yearWeek,$whitelistmode);
     exit;
 }
@@ -146,25 +147,31 @@ $tmstp=time();
  $form = new Form($db);
 
 // navigation form 	
+ $Form ='<div id="navigation">';
 print pintNavigationHeader($yearWeek,$whitelistmode,$optioncss,$form);
-
+$Form .='</div>';
 
 //timesheet
-$Form ='<form name="timesheet" action="?action=submit&wlm='.$whitelistmode.'&yearweek='.$yearWeek.'" method="POST" >'; 
+$Form .='<form name="timesheet" action="?action=submit&wlm='.$whitelistmode.'" method="POST" >'; 
 $Form .="\n<table id=\"timesheetTable\" class=\"noborder\" width=\"100%\">\n";
 //headers
 
 $headers=explode('||', TIMESHEET_HEADERS);
 //$headersWidth=explode('||', TIMESHEET_HEADERS_WIDTH);
 $headersWidth=explode('||', '');
-
+for ($i=0;$i<7;$i++)
+{
+   $weekDays[$i]=date('d-m-Y',strtotime( $yearWeek.' +'.$i.' day'));
+}
+$_SESSION["timestamps"][$tmstp]["YearWeek"]=$yearWeek;
+$_SESSION["timestamps"][$tmstp]["weekDays"]=$weekDays;
 $Form .=timesheetHeader($headers,$headersWidth, $yearWeek, $tmstp );
 
 //total top
 
 $num=count($headers);
-$Form .="<tr>\n";
-$Form .='<th colspan="'.$num.'" align="right"> TOTAL </th>';
+$Form .="<tr id='totalT'>\n";
+$Form .='<th colspan="'.$num.'" align="right" > TOTAL </th>';
 for ($i=0;$i<7;$i++)
 {
    $Form .='<th><div id="totalDay['.$i.']">&nbsp;</div></th>';
@@ -174,11 +181,11 @@ $Form .='</tr>';
 //line
 
 
-$Form .=timesheetList($db,$headers,$userid,$yearWeek,$tmstp,$whitelistmode);
+//$Form .=timesheetList($db,$headers,$userid,$yearWeek,$tmstp,$whitelistmode);
 
 //total Bot
-$Form .="<tr>\n";
-$Form .='<th colspan="'.$num.'" align="right"> TOTAL </th>';
+$Form .="<tr id='totalB'>\n";
+$Form .='<th colspan="'.$num.'" align="right" > TOTAL </th>';
 for ($i=0;$i<7;$i++)
 {
    $Form .='<th><div id="totalDayb['.$i.']">&nbsp;</div></th>';
@@ -197,15 +204,18 @@ $Form .= "</form>\n";
 $timetype=TIMESHEET_TIME_TYPE;
 //$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
-for ($i=0;$i<7;$i++)
-{
-   $Form .='updateTotal('.$i.',\''.$timetype.'\');';
- }
+
+$Form .='updateAll(\''.$timetype.'\');';
+
+$Form .='loadXMLTimesheet("'.$yearWeek.'",'.$userid.');';
 $Form .= "\n\t".'</script>'."\n";
 
 print $Form;
+$Params ='<param id="nextWeek" value="'.$langs->trans("NextWeek").'">';
+$Params .='<param id="prevWeek" value="'.$langs->trans("PreviousWeek").'">';
 
-
+//$Params .='<param id="nextWeek" value="'.$langs->trans("NextWeek").'">';
+print $Params;
 // End of page
 llxFooter();
 $db->close();

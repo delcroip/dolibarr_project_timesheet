@@ -24,7 +24,9 @@ function refreshTimesheet(Wlmode){
         var timesheet=xmlDoc.getElementsByTagName("timesheet");
         if (!timesheet)throw "Bad XML: no timesheet Node";
         var timestamp=timesheet[0].getAttribute('timestamp');
-        var yearWeek=timesheet[0].getAttribute('yearweek');
+        var yearWeek=timesheet[0].getAttribute('yearWeek');
+        var prevWeek=timesheet[0].getAttribute('prevWeek');
+        var nextWeek=timesheet[0].getAttribute('nextWeek');
         var timetype=timesheet[0].getAttribute('timetype');
 	var headers = xmlDoc.getElementsByTagName("headers");
         var days = xmlDoc.getElementsByTagName("days");
@@ -62,6 +64,7 @@ function refreshTimesheet(Wlmode){
                 CurRow.innerHTML='<td colspan="'+headers[0].childNodes.length+'">'+tasks[j].getAttribute('userName')+'</td><td colspan="7"></td>';
             }
         }
+        UpdateNavigation(nextWeek,prevWeek);
         updateAll(timetype);
         
 }
@@ -117,12 +120,19 @@ function generateTaskLine(headers,task,timetype){
 	}
 	return html;
 }
-
+function UpdateNavigation(nextWeek,prevWeek){
+    var nav=document.getElementById('navPrev');
+    nav.setAttribute( "onClick",'loadXMLTimesheet("'+prevWeek+'",0);');
+    nav=document.getElementById('navNext');
+    nav.setAttribute( "onClick",'loadXMLTimesheet("'+nextWeek+'",0);');
+}
 function loadXMLTimesheet(yearWeek, user)
 {
+    var Url="timesheet.php?xml=1&yearweek="+yearWeek;
+    if(user!==0) Url+="&user="+user;
 $.ajax({
     type: "GET",
-    url: "timesheet.php?xml=1&yearWeek="+yearWeek+"&user="+user,
+    url: Url,
     dataType: "xml",
     success: loadXMLSuccess
    });
