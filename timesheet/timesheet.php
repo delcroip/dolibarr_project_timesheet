@@ -45,11 +45,15 @@ $optioncss = GETPOST('optioncss','alpha');
 
 //$toDate                 = GETPOST('toDate');
 $toDate                 = GETPOST('toDate');
-if ($yearWeek!=0) {
+if (!empty($toDate) && $action=='goToDate')
+{
+    $yearWeek =date('Y\WW',strtotime(str_replace('/', '-',$toDate)));  
+    $_SESSION["yearWeek"]=$yearWeek ;      
+}else if ($yearWeek!=0) {
         $_SESSION["yearWeek"]=$yearWeek;
 }else if(isset($_SESSION["yearWeek"])){
         $yearWeek=$_SESSION["yearWeek"];
-}else 
+}else
 {
         $yearWeek=date('Y\WW');
         $_SESSION["yearWeek"]=$yearWeek;
@@ -92,9 +96,7 @@ if ($user->societe_id > 0)
 *
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
-switch($action)
-{
-    case 'submit':
+if($action== 'submit'){
         if (isset($_SESSION['timestamps'][$timestamp]))
         {
             if (!empty($_POST['task']))
@@ -118,16 +120,8 @@ switch($action)
                     setEventMessage( $langs->trans("NoTaskToUpdate"),'errors');
         }else
                 setEventMessage( $langs->trans("InternalError"),'errors');
-		break;
-    case 'goToDate':
-        if (!empty($toDate))
-        {
-            $yearWeek =date('Y\WW',strtotime(str_replace('/', '-',$toDate)));  
-            $_SESSION["yearWeek"]=$yearWeek ;      
-        }
-		break;
-    default:
-            break;
+	
+
 }
 if(!empty($timestamp)){
        unset($_SESSION["timestamps"][$timestamp]);

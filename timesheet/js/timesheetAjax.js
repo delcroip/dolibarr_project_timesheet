@@ -120,12 +120,14 @@ function generateTaskLine(headers,task,timetype){
 	}
 	return html;
 }
+//function to update the next and prev week
 function UpdateNavigation(nextWeek,prevWeek){
     var nav=document.getElementById('navPrev');
     nav.setAttribute( "onClick",'loadXMLTimesheet("'+prevWeek+'",0);');
     nav=document.getElementById('navNext');
     nav.setAttribute( "onClick",'loadXMLTimesheet("'+nextWeek+'",0);');
 }
+//function called to load new timesheet based on a yearweek
 function loadXMLTimesheet(yearWeek, user)
 {
     var Url="timesheet.php?xml=1&yearweek="+yearWeek;
@@ -137,10 +139,37 @@ $.ajax({
     success: loadXMLSuccess
    });
 }
+//fucntion to handle toDate submit
+function toDateHandler(){
+    var toDate=$('#toDate').val();
+    if(toDate==''){
+        alert('Date ?');
+    }else{
+        loadXMLTimesheetFromDate(toDate, 0);
+    }
+    return false;
+}
+
+//function called to load new timesheet based on a date
+function loadXMLTimesheetFromDate(toDate, user)
+{
+    var Url="timesheet.php?action=goToDate&xml=1&toDate="+toDate;
+    if(user!==0) Url+="&user="+user;
+$.ajax({
+    type: "GET",
+    url: Url,
+    dataType: "xml",
+    success: loadXMLSuccess
+   });
+}
+
+//fucntion to store the XML in order to be usable later
  function loadXMLSuccess(XMLdoc){
      xmlTs=XMLdoc;
      refreshTimesheet();
  }
+
+//update both total lines day 0-6, mode hour/day
 
 function updateTotal(days,mode){
 	try{
@@ -203,6 +232,8 @@ function updateTotal(days,mode){
 		//document.getElementById("demo").innerHTML = err.message;
 	}
 }
+
+//function to update all the totals
 function updateAll(timetype){
 	for(i=0;i<7;i++){
 		updateTotal(i,timetype);
