@@ -391,6 +391,12 @@ function GetTimeSheetXML($userids,$yearWeek,$whitelistmode)
 
     $xml.= "<timesheet yearWeek=\"{$yearWeek}\" timestamp=\"{$timestamp}\" timetype=\"".TIMESHEET_TIME_TYPE."\"";
     $xml.=' nextWeek="'.date('Y\WW',strtotime($yearWeek."+3 days +1 week")).'" prevWeek="'.date('Y\WW',strtotime($yearWeek."+3 days -1 week")).'">';
+    //error handling
+    $xml.=getEventMessagesXML();
+    //$xml.=' <eventMessage style="warning"> test ok</eventMessage>';
+    //$xml.=' <eventMessage > test ok 2</eventMessage>';
+    //$xml.=' <eventMessage style="error"> test error</eventMessage>';
+
     $headers=explode('||', TIMESHEET_HEADERS);
     //header
     $i=0;
@@ -492,4 +498,58 @@ if (!is_callable(setEventMessages)){
 
             }
     }
+}
+
+/*
+ * function retrive the dolibarr eventMessages ans send then in a XML format
+ * 
+ *  @return     string                                         XML
+ */
+function getEventMessagesXML(){
+    $xml='';
+       // Show mesgs
+   if (isset($_SESSION['dol_events']['mesgs'])) {
+     $xml.=getEventMessageXML( $_SESSION['dol_events']['mesgs']);
+     unset($_SESSION['dol_events']['mesgs']);
+   }
+
+   // Show errors
+   if (isset($_SESSION['dol_events']['errors'])) {
+     $xml.=getEventMessageXML(  $_SESSION['dol_events']['errors'], 'error');
+     unset($_SESSION['dol_events']['errors']);
+   }
+
+   // Show warnings
+   if (isset($_SESSION['dol_events']['warnings'])) {
+     $xml.=getEventMessageXML(  $_SESSION['dol_events']['warnings'], 'warning');
+     unset($_SESSION['dol_events']['warnings']);
+   }
+   return $xml;
+}
+
+/*
+ * function convert the dolibarr eventMessage in a XML format
+ * 
+ *  @param    string              	$message           message to show
+ *  @param    string              	$style            style of the message error | ok | warning
+ *  @return     string                                         XML
+ */
+function getEventMessageXML($messages,$style='ok'){
+    $msg='';
+    
+    if(is_array($messages)){
+        $count=count($messages);
+        foreach ($messages as $message){
+            $msg.=$message;
+            if($count>1)$msg.="<br/>";
+            $count--;
+        }
+    }else
+        $msg=$messages;
+    $ret='';
+    if($msg!=""){  
+        if($style!='error' && $style!='warning')$style='ok';
+        $ret= "<eventMessage style=\"{$style}\"> {$msg}</eventMessage>";
+    }
+    return $ret;
 }

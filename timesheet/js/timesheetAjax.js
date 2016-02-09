@@ -29,10 +29,26 @@ function refreshTimesheet(Wlmode){
         var nextWeek=timesheet[0].getAttribute('nextWeek');
         var timetype=timesheet[0].getAttribute('timetype');
 	var headers = xmlDoc.getElementsByTagName("headers");
+        var actionMessage = xmlDoc.getElementsByTagName("eventMessage");
         var days = xmlDoc.getElementsByTagName("days");
         var tasks=  xmlDoc.getElementsByTagName("userTs");
         //get the DOM table
 	var MT=document.getElementById("timesheetTable");
+        for(j=0;j<actionMessage.length;j++){
+            //FIXME*
+            var style=actionMessage[j].getAttribute('style');
+            var msg=actionMessage[j].childNodes[0].nodeValue;
+            switch(style){
+                case 'error':
+                     $.jnotify(msg,'error',true);
+                    break;
+                case 'warning':
+                     $.jnotify(msg,'warning',true);
+                    break;
+                default: //inc 'ok'
+                    $.jnotify(msg,'ok');     
+            }
+        }
         //update the header
 	MT.rows[0].innerHTML=generateHeader(headers,days);
         // update the hidden param

@@ -62,12 +62,7 @@ $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
 if(!is_numeric($whitelistmode))$whitelistmode=TIMESHEET_WHITELIST_MODE;
 $userid=  is_object($user)?$user->id:$user;
-if($xml){
-    //renew timestqmp
-   header("Content-type: text/xml; charset=utf-8");
-    echo GetTimeSheetXML($userid,$yearWeek,$whitelistmode);
-    exit;
-}
+
 
 
 // Load traductions files requiredby by page
@@ -123,6 +118,8 @@ if($action== 'submit'){
 	
 
 }
+
+
 if(!empty($timestamp)){
        unset($_SESSION["timestamps"][$timestamp]);
 }
@@ -132,6 +129,12 @@ if(!empty($timestamp)){
 *
 * Put here all code to build page
 ****************************************************/
+if($xml){
+    //renew timestqmp
+   header("Content-type: text/xml; charset=utf-8");
+    echo GetTimeSheetXML($userid,$yearWeek,$whitelistmode);
+    exit;
+}
 $morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
 llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
