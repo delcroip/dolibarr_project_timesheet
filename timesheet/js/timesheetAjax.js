@@ -1,5 +1,5 @@
 /* 
- *Copyright (C) 2015 delcroip <delcroip@gmail.com>
+ *Copyright (C) 2015-2016 delcroip <delcroip@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ var xmlTs;
 function refreshTimesheet(Wlmode){
       var i;
       var xmlDoc=xmlTs;
+      try{
 	// extrat important info from XML
         var timesheet=xmlDoc.getElementsByTagName("timesheet");
         if (!timesheet)throw "Bad XML: no timesheet Node";
@@ -35,7 +36,6 @@ function refreshTimesheet(Wlmode){
         //get the DOM table
 	var MT=document.getElementById("timesheetTable");
         for(j=0;j<actionMessage.length;j++){
-            //FIXME*
             var style=actionMessage[j].getAttribute('style');
             var msg=actionMessage[j].childNodes[0].nodeValue;
             switch(style){
@@ -68,7 +68,7 @@ function refreshTimesheet(Wlmode){
             for (i=0;i<tasks[j].childNodes.length;i++)    
             {
                     var CurRow = MT.insertRow(idxT+1);
-                    //FIXEME mode whitelist
+                    //FIXME mode whitelist
                     CurRow.className =(i%2==0)?'pair':'impair';
                     var rowContent=generateTaskLine(headers[0],tasks[j].childNodes[i],timetype);
                     CurRow.innerHTML=rowContent;
@@ -77,11 +77,15 @@ function refreshTimesheet(Wlmode){
             }
             if(tasks.length>1){
                 var nameRow=MT.insertRow(idxT+1);
-                CurRow.innerHTML='<td colspan="'+headers[0].childNodes.length+'">'+tasks[j].getAttribute('userName')+'</td><td colspan="7"></td>';
+                nameRow.innerHTML='<td colspan="'+headers[0].childNodes.length+'">'+tasks[j].getAttribute('userName')+'</td><td colspan="7"></td>';
             }
         }
+    }catch(err){
+        $.jnotify("refreshTimesheet "+err,'error',true);
+    }
         UpdateNavigation(nextWeek,prevWeek);
         updateAll(timetype);
+        
         
 }
 
@@ -100,7 +104,7 @@ function generateHeader(headers,days){
 }
 
 function generateHiddenParam(timestamp,yearWeek){
-    var hiddenParam='<input type="hidden" name="timestamp" value="'+timestamp+"\"/>\n";
+    var hiddenParam='<input type="hidden" id="timestamp" name="timestamp" value="'+timestamp+"\"/>\n";
     hiddenParam+= '<input type="hidden" name="yearWeek" value="'+yearWeek+'" />';      
     return hiddenParam;
 }
@@ -138,16 +142,23 @@ function generateTaskLine(headers,task,timetype){
 }
 //function to update the next and prev week
 function UpdateNavigation(nextWeek,prevWeek){
-    var nav=document.getElementById('navPrev');
-    nav.setAttribute( "onClick",'loadXMLTimesheet("'+prevWeek+'",0);');
-    nav=document.getElementById('navNext');
-    nav.setAttribute( "onClick",'loadXMLTimesheet("'+nextWeek+'",0);');
+    try{
+        var nav=document.getElementById('navPrev');
+        nav.setAttribute( "onClick",'loadXMLTimesheet("'+prevWeek+'",0);');
+        nav=document.getElementById('navNext');
+        nav.setAttribute( "onClick",'loadXMLTimesheet("'+nextWeek+'",0);');
+    }catch(err){
+        $.jnotify("UpdateNavigation "+err,'error',true);
+    }
 }
 //function called to load new timesheet based on a yearweek
+
 function loadXMLTimesheet(yearWeek, user)
 {
     var Url="timesheet.php?xml=1&yearweek="+yearWeek;
     if(user!==0) Url+="&user="+user;
+    var timestamp=$("#timestamp").serialize();
+    if(timestamp!==undefined)Url+="&timestamp="+timestamp;
 $.ajax({
     type: "GET",
     url: Url,
@@ -171,6 +182,9 @@ function loadXMLTimesheetFromDate(toDate, user)
 {
     var Url="timesheet.php?action=goToDate&xml=1&toDate="+toDate;
     if(user!==0) Url+="&user="+user;
+    var timestamp=$("#timestamp").serialize();
+    if(timestamp!==undefined)Url+="&timestamp="+timestamp;
+
 $.ajax({
     type: "GET",
     url: Url,
@@ -199,21 +213,21 @@ function updateTotal(days,mode){
 
                 for (var i=0;i<nbline;i++)
                 { 
-                        //var id='task['+i+']['+days+']';   
-                        var taskTime= new Date(0);
-                        var element=curDay[i];
-                        if(element)
+                    //var id='task['+i+']['+days+']';   
+                    var taskTime= new Date(0);
+                    var element=curDay[i];
+                    if(element)
+                    {
+                        if (element.value)
+                        {   
+                            parseTime(element.value,taskTime);
+                        }
+                        else
                         {
-                                if (element.value)
-                                {   
-                                        parseTime(element.value,taskTime);
-                                }
-                                else
-                                {
-                                        parseTime(element.innerHTML,taskTime);
-                                }
-                                total.setHours(total.getHours()+taskTime.getHours());
-                                total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+                            parseTime(element.innerHTML,taskTime);
+                        }
+                        total.setHours(total.getHours()+taskTime.getHours());
+                        total.setMinutes(total.getMinutes()+taskTime.getMinutes());
                         }
                }
 		document.getElementById('totalDayb['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
@@ -224,28 +238,27 @@ function updateTotal(days,mode){
 		var total =0;
 		for (var i=0;i<nbline;i++)
 		{ 
-			//var id='task['+i+']['+days+']';   
-			var taskTime= new Date(0);
-			var element=curDay[i];
-			if(element)
-			{
-				if (element.value)
-				{   
-					total+=parseInt(element.value);
-
-				}
-				else
-				{
-					total+=parseInt(element.innerHTML);
-				}
-			}
+                    //var id='task['+i+']['+days+']';   
+                    var taskTime= new Date(0);
+                    var element=curDay[i];
+                    if(element)
+                    {
+                        if (element.value)
+                        {   
+                            total+=parseInt(element.value);
+                        }
+                        else
+                        {
+                            total+=parseInt(element.innerHTML);
+                        }
+                    }
 		}
 		document.getElementById('totalDay['+days+']').innerHTML = total;
 		document.getElementById('totalDayb['+days+']').innerHTML = total;
-	}
+            }
 	}
 	catch(err) {
-		//document.getElementById("demo").innerHTML = err.message;
+            $.jnotify("updateTotal "+err,'error',true);
 	}
 }
 
@@ -254,4 +267,25 @@ function updateAll(timetype){
 	for(i=0;i<7;i++){
 		updateTotal(i,timetype);
 	}
+}
+
+//using Ajax to submit timesheet
+function loadXMLTimesheetFromSubmit(user)
+{
+    
+    var Url="timesheet.php?action=submit&xml=1";
+    //var postData=document.getElementById('timesheetForm');
+    if(user!==0) Url+="&user="+user;
+    $.ajax({
+    type: "POST",
+    url: Url,
+    dataType: "xml",
+    data:  $("#timesheetForm").serialize(),
+    success: loadXMLSuccess
+   });
+}
+function submitTimesheet(user){
+
+    loadXMLTimesheetFromSubmit(user);
+    return false;
 }

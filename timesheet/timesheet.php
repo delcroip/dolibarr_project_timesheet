@@ -99,22 +99,22 @@ if($action== 'submit'){
 				$ret =postActuals($db,$user,$_POST['task'],$timestamp);
                     if($ret>0)
                     {
-                        if($_SESSION['timeSpendCreated'])setEventMessage($langs->trans("NumberOfTimeSpendCreated").$_SESSION['timeSpendCreated']);
-                        if($_SESSION['timeSpendModified'])setEventMessage($langs->trans("NumberOfTimeSpendModified").$_SESSION['timeSpendModified']);
-                        if($_SESSION['timeSpendDeleted'])setEventMessage($langs->trans("NumberOfTimeSpendDeleted").$_SESSION['timeSpendDeleted']);
+                        if($_SESSION['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['timeSpendCreated']);
+                        if($_SESSION['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['timeSpendModified']);
+                        if($_SESSION['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['timeSpendDeleted']);
                     }
                     else
                     {
                         if($ret==0){
-                            setEventMessage($langs->trans("NothingChanged"),'errors');
+                            setEventMessage($langs->transnoentitiesnoconv("NothingChanged"),'errors');
                         }else {
-                            setEventMessage( $langs->trans("InternalError").':'.$ret,'errors');
+                            setEventMessage( $langs->transnoentitiesnoconv("InternalError").':'.$ret,'errors');
                         }
                     }        
             }else
-                    setEventMessage( $langs->trans("NoTaskToUpdate"),'errors');
+                    setEventMessage( $langs->transnoentitiesnoconv("NoTaskToUpdate"),'errors');
         }else
-                setEventMessage( $langs->trans("InternalError"),'errors');
+                setEventMessage( $langs->transnoentitiesnoconv("InternalError"),'errors');
 	
 
 }
@@ -149,7 +149,7 @@ print pintNavigationHeader($yearWeek,$whitelistmode,$optioncss,$form);
 $Form .='</div>';
 
 //timesheet
-$Form .='<form name="timesheet" action="?action=submit&wlm='.$whitelistmode.'" method="POST" >'; 
+$Form .='<form id="timesheetForm" name="timesheet" action="?action=submit&wlm='.$whitelistmode.'" method="POST"  onsubmit=" return submitTimesheet(0);">'; 
 $Form .="\n<table id=\"timesheetTable\" class=\"noborder\" width=\"100%\">\n";
 //headers
 
