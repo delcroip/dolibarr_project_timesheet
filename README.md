@@ -17,4 +17,3 @@ timesheet navigation & submit done with Ajax ( no reload of the entire page need
 # Next developement
 - support the holidays creation/deduction from the timesheets --> fields test will be needed to validate the Ajax before starting the next steps
 - Timesheet approval/rejection by N+1
--
