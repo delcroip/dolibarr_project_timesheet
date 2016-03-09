@@ -28,12 +28,8 @@
 //$_POST['dol_hide_leftmenu']=1;
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'lib/includeMain.lib.php';
-
-//to get the form funciton
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-//to get the timesheet lib
 require_once 'lib/timesheet.lib.php';
-
+require_once 'class/userTimesheet.class.php';
 
 $action             = GETPOST('action');
 $yearWeek           = GETPOST('yearweek');
@@ -60,8 +56,9 @@ if (!empty($toDate) && $action=='goToDate')
 }
 $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
-if(!is_numeric($whitelistmode))$whitelistmode=TIMESHEET_WHITELIST_MODE;
+
 $userid=  is_object($user)?$user->id:$user;
+
 
 
 
@@ -85,6 +82,7 @@ if ($user->societe_id > 0)
 }
 
 */
+$userTimesheet= new userTimesheet($db,$user);
 
 /*******************************************************************
 * ACTIONS
@@ -92,11 +90,15 @@ if ($user->societe_id > 0)
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 if($action== 'submit'){
-        if (isset($_SESSION['timestamps'][$timestamp]))
+        if (isset($_SESSION['userTimesheet'][$timestamp]))
         {
+            $userTimesheet->loadFromSession($timestamp);
+            //$userTimesheet->db=$db;
+           // var_dump(unserialize($userTimesheet->taskTimesheet[0])->tasklist);
             if (!empty($_POST['task']))
-            {
-				$ret =postActuals($db,$user,$_POST['task'],$timestamp);
+            {   
+                                $ret=$userTimesheet->updateActuals($_POST['task']);
+				//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
                     if($ret>0)
                     {
                         if($_SESSION['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['timeSpendCreated']);
@@ -121,98 +123,50 @@ if($action== 'submit'){
 
 
 if(!empty($timestamp)){
-       unset($_SESSION["timestamps"][$timestamp]);
+       unset($_SESSION['userTimesheet'][$timestamp]);
 }
 
+$userTimesheet->fetchAll($yearWeek,$whitelistmode);
 /***************************************************
 * VIEW
 *
 * Put here all code to build page
 ****************************************************/
+
 if($xml){
     //renew timestqmp
+    ob_clean();
    header("Content-type: text/xml; charset=utf-8");
-    echo GetTimeSheetXML($userid,$yearWeek,$whitelistmode);
+    echo $userTimesheet->GetTimeSheetXML();
     exit;
 }
 $morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
 llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 
-$tmstp=time();
-
- $form = new Form($db);
-
-// navigation form 	
- $Form ='<div id="navigation">';
-print pintNavigationHeader($yearWeek,$whitelistmode,$optioncss,$form);
-$Form .='</div>';
-
-//timesheet
-$Form .='<form id="timesheetForm" name="timesheet" action="?action=submit&wlm='.$whitelistmode.'" method="POST"  onsubmit=" return submitTimesheet(0);">'; 
-$Form .="\n<table id=\"timesheetTable\" class=\"noborder\" width=\"100%\">\n";
-//headers
-
-$headers=explode('||', TIMESHEET_HEADERS);
-//$headersWidth=explode('||', TIMESHEET_HEADERS_WIDTH);
-$headersWidth=explode('||', '');
-for ($i=0;$i<7;$i++)
-{
-   $weekDays[$i]=date('d-m-Y',strtotime( $yearWeek.' +'.$i.' day'));
-}
-$_SESSION["timestamps"][$tmstp]["YearWeek"]=$yearWeek;
-$_SESSION["timestamps"][$tmstp]["weekDays"]=$weekDays;
-$Form .=timesheetHeader($headers,$headersWidth, $yearWeek, $tmstp );
-
-//total top
-
-$num=count($headers);
-$Form .="<tr id='totalT'>\n";
-$Form .='<th colspan="'.$num.'" align="right" > TOTAL </th>';
-for ($i=0;$i<7;$i++)
-{
-   $Form .='<th><div id="totalDay['.$i.']">&nbsp;</div></th>';
- }
-$Form .='</tr>';
-
-//line
+//tmstp=time();
 
 
-//$Form .=timesheetList($db,$headers,$userid,$yearWeek,$tmstp,$whitelistmode);
+$ajax=true;
+ $Form =$userTimesheet->getHTMLNavigation($optioncss,$ajax);
 
-//total Bot
-$Form .="<tr id='totalB'>\n";
-$Form .='<th colspan="'.$num.'" align="right" > TOTAL </th>';
-for ($i=0;$i<7;$i++)
-{
-   $Form .='<th><div id="totalDayb['.$i.']">&nbsp;</div></th>';
- }
-$Form .='</tr>';
-$Form .="</table >\n";
 
-//form button
-$Form .= '<input type="submit" value="'.$langs->trans('Save')."\" />\n";
-//$Form .= '<input type="button" value="'.$langs->trans('Submit');
-//$Form .= '" onClick="document.location.href=\'?action=submit&yearweek='.$yearWeek."'\"/>\n"; /*FIXME*/
-$Form .= '<input type="button" value="'.$langs->trans('Cancel');
-$Form .= '" onClick="document.location.href=\'?action=list&yearweek='.$yearWeek."'\"/>\n";
-$Form .= "</form>\n";
+$Form .=$userTimesheet->getHTMLHeader($ajax);
+
+$Form .=$userTimesheet->getHTMLtaskLines($ajax);
+
+$Form .=$userTimesheet->getHTMLFooter($ajax);
+
+
 //Javascript
 $timetype=TIMESHEET_TIME_TYPE;
 //$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
-
 $Form .='updateAll(\''.$timetype.'\');';
-
-$Form .='loadXMLTimesheet("'.$yearWeek.'",'.$userid.');';
 $Form .= "\n\t".'</script>'."\n";
-
+// $Form .='</div>';//TimesheetPage
 print $Form;
-$Params ='<param id="nextWeek" value="'.$langs->trans("NextWeek").'">';
-$Params .='<param id="prevWeek" value="'.$langs->trans("PreviousWeek").'">';
 
-//$Params .='<param id="nextWeek" value="'.$langs->trans("NextWeek").'">';
-print $Params;
 // End of page
 llxFooter();
 $db->close();

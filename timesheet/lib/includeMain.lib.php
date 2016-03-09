@@ -17,7 +17,7 @@
  */
 //global $db;     
 $res=0;
-if(strpos($_SERVER['PHP_SELF'], 'dolibarr_min')>0)
+if(strpos($_SERVER['PHP_SELF'], 'dolibarr-min')>0)
 	$devPath="/var/www/html/dolibarr-min";
 else
 	$devPath="/var/www/html/dolibarr";

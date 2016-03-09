@@ -23,7 +23,7 @@ function refreshTimesheet(Wlmode){
       try{
 	// extrat important info from XML
         var timesheet=xmlDoc.getElementsByTagName("timesheet");
-        if (!timesheet)throw "Bad XML: no timesheet Node";
+        if (timesheet.length==0)throw "Bad XML: no timesheet Node";
         var timestamp=timesheet[0].getAttribute('timestamp');
         var yearWeek=timesheet[0].getAttribute('yearWeek');
         var prevWeek=timesheet[0].getAttribute('prevWeek');
@@ -43,7 +43,7 @@ function refreshTimesheet(Wlmode){
                      $.jnotify(msg,'error',true);
                     break;
                 case 'warning':
-                     $.jnotify(msg,'warning',true);
+                    $.jnotify(msg,'warning',true);
                     break;
                 default: //inc 'ok'
                     $.jnotify(msg,'ok');     
@@ -158,14 +158,64 @@ function loadXMLTimesheet(yearWeek, user)
     var Url="timesheet.php?xml=1&yearweek="+yearWeek;
     if(user!==0) Url+="&user="+user;
     var timestamp=$("#timestamp").serialize();
-    if(timestamp!==undefined)Url+="&timestamp="+timestamp;
+    if(timestamp!==undefined)Url+="&"+timestamp;
 $.ajax({
     type: "GET",
     url: Url,
     dataType: "xml",
-    success: loadXMLSuccess
+    success: loadXMLSuccess,
+    error: loadXMLError
    });
 }
+
+//function called to load new timesheet based on a date
+function loadXMLTimesheetFromDate(toDate, user)
+{
+    var Url="timesheet.php?action=goToDate&xml=1&toDate="+toDate;
+    if(user!==0) Url+="&user="+user;
+    var timestamp=$("#timestamp").serialize();
+    if(timestamp!==undefined)Url+="&"+timestamp;
+
+$.ajax({
+    type: "GET",
+    url: Url,
+    dataType: "xml",
+    success: loadXMLSuccess,
+    error: loadXMLError
+   });
+}
+
+//using Ajax to submit timesheet
+function loadXMLTimesheetFromSubmit(user)
+{
+    
+    var Url="timesheet.php?action=submit&xml=1";
+    //var postData=document.getElementById('timesheetForm');
+    if(user!==0) Url+="&user="+user;
+    $.ajax({
+    type: "POST",
+    url: Url,
+    dataType: "xml",
+    data:  $("#timesheetForm").serialize(),
+    success: loadXMLSuccess,
+    error: loadXMLError
+   });
+}
+function submitTimesheet(user){
+
+    loadXMLTimesheetFromSubmit(user);
+    return false;
+}
+function loadXMLError(Doc){
+	if(this.dataType=="xml"){
+		$.jnotify("XML error",'error',true);
+	}else{
+ 		$.jnotify("you are not logged",'error',true);
+		location = location.href;
+	}
+
+}
+
 //fucntion to handle toDate submit
 function toDateHandler(){
     var toDate=$('#toDate').val();
@@ -177,21 +227,7 @@ function toDateHandler(){
     return false;
 }
 
-//function called to load new timesheet based on a date
-function loadXMLTimesheetFromDate(toDate, user)
-{
-    var Url="timesheet.php?action=goToDate&xml=1&toDate="+toDate;
-    if(user!==0) Url+="&user="+user;
-    var timestamp=$("#timestamp").serialize();
-    if(timestamp!==undefined)Url+="&timestamp="+timestamp;
 
-$.ajax({
-    type: "GET",
-    url: Url,
-    dataType: "xml",
-    success: loadXMLSuccess
-   });
-}
 
 //fucntion to store the XML in order to be usable later
  function loadXMLSuccess(XMLdoc){
@@ -269,23 +305,3 @@ function updateAll(timetype){
 	}
 }
 
-//using Ajax to submit timesheet
-function loadXMLTimesheetFromSubmit(user)
-{
-    
-    var Url="timesheet.php?action=submit&xml=1";
-    //var postData=document.getElementById('timesheetForm');
-    if(user!==0) Url+="&user="+user;
-    $.ajax({
-    type: "POST",
-    url: Url,
-    dataType: "xml",
-    data:  $("#timesheetForm").serialize(),
-    success: loadXMLSuccess
-   });
-}
-function submitTimesheet(user){
-
-    loadXMLTimesheetFromSubmit(user);
-    return false;
-}
