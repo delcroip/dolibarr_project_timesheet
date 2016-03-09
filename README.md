@@ -14,6 +14,5 @@ with Ajax Support
 - Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
 
 # Next developement
-- Ajax support
 - Timesheet approval/rejection by N+1
 - (to be confirmed) support the holidays creation/deduction from the timesheets
