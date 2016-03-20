@@ -59,3 +59,15 @@ modeWhiteList =Seulement les favoris
 modeNone =Toutes les tâches
 dropdownAjaxDesc= Désactiver l'ajax pour les lists déroulantes Dolibarr (en cas de problème pour entrer un nouveau favoris)
 dropdownAjax = Déactiver l'Ajax des dropdown
+#Color
+submitted= Submitted
+submittedColorDesc= Color for the holiday & timesheet submitted for approval
+approved= Approved
+approvedColorDesc= Color for the holiday & timesheet approved
+cancelled= Cancelled
+cancelledColorDesc= Color for the holiday & timesheet canceled
+rejected= Rejected
+rejectedColorDesc= Color for the holiday & timesheet rejected by the approver
+draft= Draft
+draftColorDesc= Color for the draft  holiday & timesheet 
+

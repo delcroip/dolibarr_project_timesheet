@@ -88,8 +88,8 @@ class modTimesheet extends DolibarrModules
 		//							'dir' => array('output' => 'othermodulename'),      // To force the default directories names
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@mymodule')) // Set here all workflow context managed by module
 		//                        );
-		$this->module_parts = array();
-
+		//$this->module_parts = array();
+                $this->module_parts = array('css' => array('/timesheet/css/timesheet.css'));
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array();
@@ -120,7 +120,11 @@ class modTimesheet extends DolibarrModules
                 $this->const[5] = array("TIMESHEET_HIDE_REF","chaine","0","option to hide the ref in the timesheets"); 
                 $this->const[6] = array("TIMESHEET_WHITELIST_MODE","chaine","0","Option to change the behaviour of the whitelist:-whiteliste,1-blackliste,2-no impact "); 
                 $this->const[7] = array("TIMESHEET_WHITELIST","chaine","1","Activate the whitelist:"); 
-                
+                $this->const[8] = array("TIMESHEET_COL_DRAFT","chaine","FF00FF","color of draft"); 
+                $this->const[9] = array("TIMESHEET_COL_SUBMITTED","chaine","00FFFF","color of submitted"); 
+                $this->const[10] = array("TIMESHEET_COL_APPROVED","chaine","00FF00","color of approved"); 
+                $this->const[11] = array("TIMESHEET_COL_CANCELLED","chaine","FFFF00","color of cancelled"); 
+                $this->const[12] = array("TIMESHEET_COL_REJECTED","chaine","FF0000","color of rejected"); 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1

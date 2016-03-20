@@ -59,3 +59,14 @@ modeWhiteList = white list mode
 modeNone = shows all tasks
 dropdownAjaxDesc= disable the ajax for the Dolibarr dropdown list (in case on issue to enter a new whitelist)
 dropdownAjax = Disable dropdown Ajax
+#Color
+submitted= Submitted
+submittedColorDesc= Color for the holiday & timesheet submitted for approval
+approved= Approved
+approvedColorDesc= Color for the holiday & timesheet approved
+cancelled= Cancelled
+cancelledColorDesc= Color for the holiday & timesheet canceled
+rejected= Rejected
+rejectedColorDesc= Color for the holiday & timesheet rejected by the approver
+draft= Draft
+draftColorDesc= Color for the draft  holiday & timesheet 

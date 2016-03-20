@@ -180,9 +180,9 @@ class Timesheetwhitelist extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.fk_user = ".$userid;
         if($datestart)
-                $sql.= ' AND (t.date_end > FROM_UNIXTIME( '.$datestart.') OR t.date_end IS NULL)';
+                $sql.= ' AND (t.date_end >'.$this->db->idate($datestart).' OR t.date_end IS NULL)';
         if($datestop)
-                $sql.= ' AND (t.date_start < FROM_UNIXTIME( '.$datestop.')OR t.date_start IS NULL)';
+                $sql.= ' AND (t.date_start <'.$this->db->idate($datestop).'OR t.date_start IS NULL)';
 
         dol_syslog(get_class($this)."::fetchUserList");
         $resql=$this->db->query($sql);

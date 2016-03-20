@@ -59,3 +59,14 @@ modeWhiteList = Mod lista blanca
 modeNone = Mostrar todas las tareas
 dropdownAjaxDesc= Deshabilitar el ajax de la lista desplegable Dolibarr (en caso de que entramos en un nuevo número a la lista blanca)
 dropdownAjax = Desactivar Desplegable Ajax
+#Color
+submitted= Submitted
+submittedColorDesc= Color for the holiday & timesheet submitted for approval
+approved= Approved
+approvedColorDesc= Color for the holiday & timesheet approved
+cancelled= Cancelled
+cancelledColorDesc= Color for the holiday & timesheet canceled
+rejected= Rejected
+rejectedColorDesc= Color for the holiday & timesheet rejected by the approver
+draft= Draft
+draftColorDesc= Color for the draft  holiday & timesheet 

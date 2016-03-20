@@ -147,13 +147,18 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //tmstp=time();
 
 
-$ajax=true;
+$ajax=false;
  $Form =$userTimesheet->getHTMLNavigation($optioncss,$ajax);
-
 
 $Form .=$userTimesheet->getHTMLHeader($ajax);
 
+$Form .=$userTimesheet->getHTMLHolidayLines($ajax);
+
+$Form .=$userTimesheet->getHTMLTotal('totalT');
+
 $Form .=$userTimesheet->getHTMLtaskLines($ajax);
+
+$Form .=$userTimesheet->getHTMLTotal('totalB');
 
 $Form .=$userTimesheet->getHTMLFooter($ajax);
 

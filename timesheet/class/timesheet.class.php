@@ -30,8 +30,6 @@ class timesheet extends Task
 {
         private $ProjectTitle		=	"Not defined";
         var $tasklist;
-//        private $taskTimeId = array(0=>0,0,0,0,0,0,0);
-//        private $weekWorkLoad  = array(0=>0,0,0,0,0,0,0);
         private $fk_project2;
         private $taskParentDesc;
         private $companyName;
@@ -123,38 +121,7 @@ class timesheet extends Task
     }
     
     
-     /*
- * put the timesheet task in a approuved status
- * 
- *  @param      string            $yearWeek      year week like 2015W09
- *  @param      int               $userid        change the status for this userid 
- *  @return     int      		   	 <0 if KO, Id of created object if OK
- */
-    Public function setAppouved($yearWeek,$userid){
-        
-    }
-    
- /*
- * put the timesheet task in a rejected status
- * 
- *  @param    string              	$yearWeek            year week like 2015W09
- *  @param      int               $userid        change the status for this userid 
- *  @return     int      		   	 <0 if KO, Id of created object if OK
- */
-    Public function setRejected($yearWeek,$userid){
-        
-    }
-    
- /*
- * put the timesheet task in a pending status
- * 
- *  @param    string              	$yearWeek            year week like 2015W09
-  *  @param      int               $userid        change the status for this userid 
- *  @return     int      		   	 <0 if KO, Id of created object if OK
-*/
-    Public function setPending($yearWeek,$userid){
-        
-    }
+
     
     
     public function getActuals( $yearWeek,$userid)
@@ -166,8 +133,8 @@ class timesheet extends Task
         $sql .= " AND (ptt.fk_user='".$userid."') ";
        # $sql .= "AND WEEKOFYEAR(ptt.task_date)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
-        $sql .= " AND (ptt.task_date>=FROM_UNIXTIME('".strtotime($yearWeek)."')) ";
-        $sql .= " AND (ptt.task_date<FROM_UNIXTIME('".strtotime($yearWeek.' + 7 days')."'));";
+        $sql .= " AND (ptt.task_date>=".$this->db->idate(strtotime($yearWeek)).") ";
+        $sql .= " AND (ptt.task_date<".$this->db->idate(strtotime($yearWeek.' + 7 days')).");";
 
         dol_syslog(get_class($this)."::fetchActuals sql=".$sql, LOG_DEBUG);
 		for($i=0;$i<7;$i++){
@@ -187,12 +154,8 @@ class timesheet extends Task
                         $error=0;
                         $obj = $this->db->fetch_object($resql);
                         $day=intval(date('N',strtotime($obj->task_date)))-1;
-                        //$day=(intval(date('w',strtotime($obj->task_date)))+1)%6;
-                        // if several tasktime in one day then only the last is used
-					 //fixme get ride of the db format for the date
+
                         $this->tasklist[$day]=array('id'=>$obj->rowid,'date'=>$this->db->jdate($obj->task_date),'duration'=>$obj->task_duration);
-                        //$this->weekWorkLoad[$day] =  $obj->task_duration;
-                        //$this->taskTimeId[$day]= ($obj->rowid)?($obj->rowid):0;
                         $i++;
                 }
                 $this->db->free($resql);
@@ -229,7 +192,7 @@ class timesheet extends Task
     $hidden=false;
     if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
     
-    //if(!$hidden){
+
         $html= '<tr '.(($hidden)?'style="display:none;"':'').' class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
         //title section
          foreach ($headers as $key => $title){
@@ -271,10 +234,9 @@ class timesheet extends Task
 
              $html.="</th>\n";
          }
-    //}
-    
+
   // day section
-        //foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
+
          for($dayOfWeek=0;$dayOfWeek<7;$dayOfWeek++)
          {
                 $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
@@ -287,12 +249,7 @@ class timesheet extends Task
                 }else {
                     $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
                 }
-                $isOpen=(empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today ));
-               // if($hidden || $isOpen){
-               //     $html .= ' <input type="hidden" id="task['.$lineNumber.']['.$dayOfWeek.']" value="'.$dayWorkLoad.'" ';
-                //    $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" >'."\n";
-               // }else if()
-               // {             
+                $isOpen=(empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today ));          
                     $html .= '<th ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$dayOfWeek.']" ';
                     $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" ';
                     $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
@@ -300,10 +257,6 @@ class timesheet extends Task
                     $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
                     $html .= 'onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$dayOfWeek.',\''.$timetype.'\')" />';
                     $html .= "</th>\n";                    
-               // }else
-               // {
-              //      $html .= '<th> <div id="task['.$this->id.']['.$dayOfWeek.']">'.$dayWorkLoad."</div></th>\n";
-              //  }
         }
         $html .= "</tr>\n";
         return $html;
@@ -429,30 +382,6 @@ function unserialize($str){
  
     public function getTaskTab()
     {
-        /*
-        $taskTab=array();
-        $taskTab[]='id';
-        $taskTab['id']=$this->id;
-        $taskTab[]='weekWorkLoad';
-        $taskTab['weekWorkLoad']=array();
-        $weekWorkload=array();
-        //FIXME : change tasktab handling
-        
-        foreach((array)$this->weekWorkload as $key => $value)
-        {
-            $taskTab['weekWorkLoad'][$key]=$value;
-        }
-        $taskTab[]='taskTimeId';
-        $taskTab['taskTimeId']=array();
-        foreach($this->taskTimeId as $key => $value)
-        {
-           $taskTab['taskTimeId'][$key]=$this->taskTimeId[$key];
-        }
-         * 
-         
-        return $taskTab;
-         * 
-         */
         return $this->tasklist;
     }
 public function updateTimeUsed()

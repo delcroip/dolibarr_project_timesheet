@@ -45,6 +45,12 @@ $headers=TIMESHEET_HEADERS;
 $whiteListMode=TIMESHEET_WHITELIST_MODE;
 $whiteList=TIMESHEET_WHITELIST;
 $dropdownAjax=MAIN_DISABLE_AJAX_COMBOX;
+$draftColor=TIMESHEET_COL_DRAFT;
+$submittedColor=TIMESHEET_COL_SUBMITTED;
+$approvedColor=TIMESHEET_COL_APPROVED;
+$rejectedColor=TIMESHEET_COL_REJECTED;
+$cancelledColor=TIMESHEET_COL_CANCELLED;
+
 switch($action)
 {
     case save:
@@ -94,6 +100,20 @@ switch($action)
         $headers.=$showProgress?(empty($headers)?'':'||').'Progress':'';
         
         $res=dolibarr_set_const($db, "TIMESHEET_HEADERS", $headers, 'chaine', 0, '', $conf->entity);
+        //color handling
+        $draftColor=GETPOST('draftColor','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_COL_DRAFT", $draftColor, 'chaine', 0, '', $conf->entity);
+        $submittedColor=GETPOST('submittedColor','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_COL_SUBMITTED", $submittedColor, 'chaine', 0, '', $conf->entity);
+        $approvedColor=GETPOST('approvedColor','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_COL_APPROVED", $approvedColor, 'chaine', 0, '', $conf->entity);
+        $rejectedColor=GETPOST('rejectedColor','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_COL_REJECTED", $rejectedColor, 'chaine', 0, '', $conf->entity);
+        $cancelledColor=GETPOST('cancelledColor','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_COL_CANCELLED", $cancelledColor, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        
+        
         if (! $res > 0) $error++;       
         // error handling
         
@@ -144,7 +164,7 @@ foreach ($headersT as $header) {
     
 }
 //permet d'afficher la structure dolibarr
-$morejs=array("/timesheet/js/timesheet.js");
+$morejs=array("/timesheet/js/timesheet.js","/timesheet/js/jscolor.js");
 llxHeader("",$langs->trans("timesheetSetup"),'','','','',$morejs,'',0,0);
 
 
@@ -234,6 +254,43 @@ $Form .=(($showCustomCol=='1')?'checked':'')."</th></tr>\n\t\t";
 */
 $Form .='</table>';
 print $Form.'<br>';
+
+//Color
+print_titre($langs->trans("Color"));
+$Form ='<table class="noborder" width="100%">'."\n\t\t";
+$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+// color draft
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("draft");
+$Form .='</th><th align="left">'.$langs->trans("draftColorDesc").'</th>';
+$Form .= '<th align="left"><input name="draftColor" class="jscolor" value="';
+$Form .=$draftColor."\"></th></tr>\n\t\t";
+// color submitted
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("submitted");
+$Form .='</th><th align="left">'.$langs->trans("submittedColorDesc").'</th>';
+$Form .= '<th align="left"><input name="submittedColor" class="jscolor" value="';
+$Form .=$submittedColor."\"></th></tr>\n\t\t";
+// color approved
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("approved");
+$Form .='</th><th align="left">'.$langs->trans("approvedColorDesc").'</th>';
+$Form .= '<th align="left"><input name="approvedColor" class="jscolor" value="';
+$Form .=$approvedColor."\"></th></tr>\n\t\t";
+// color cancelled
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("cancelled");
+$Form .='</th><th align="left">'.$langs->trans("cancelledColorDesc").'</th>';
+$Form .= '<th align="left"><input name="cancelledColor" class="jscolor" value="';
+$Form .=$cancelledColor."\"></th></tr>\n\t\t";
+// color rejected
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("rejected");
+$Form .='</th><th align="left">'.$langs->trans("rejectedColorDesc").'</th>';
+$Form .= '<th align="left"><input name="rejectedColor" class="jscolor" value="';
+$Form .=$rejectedColor."\"></th></tr>\n\t\t";
+
+
+$Form .='</table><br>';
+
+print $Form.'<br>';
+
 
 //whitelist mode
 print_titre($langs->trans("WhiteList"));

@@ -86,8 +86,8 @@ class timesheetReport
         $sql.='WHERE tsk.fk_projet="'.$this->projectid.'" ';
     }
             
-     $sql.='AND task_date>=FROM_UNIXTIME("'.$startDay.'") '
-                    .'AND task_date<=FROM_UNIXTIME("'.$stopDay.'")  '
+     $sql.='AND task_date>='.$this->db->idate($startDay)
+                    .' AND task_date<='.$this->db->idate($stopDay)
                     .'GROUP BY ptt.fk_user,prj.rowid, ptt.task_date,ptt.fk_task ';
     switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing

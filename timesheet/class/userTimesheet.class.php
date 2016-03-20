@@ -20,9 +20,9 @@
 /*Class to handle a line of timesheet*/
 #require_once('mysql.class.php');
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once 'class/holidayTimesheet.class.php';
 require_once 'class/timesheet.class.php';
 require_once 'class/timesheetwhitelist.class.php';
 //require_once 'lib/timesheet.lib.php';
@@ -50,7 +50,7 @@ class userTimesheet extends CommonObject
     function __construct($db,$user)
     {
         $this->db = $db;
-        $this->holidays=array();
+        //$this->holidays=array();
         $this->user=$user;
         $this->userId= is_object($user)?$user->id:$user;
         $this->headers=explode('||', TIMESHEET_HEADERS);
@@ -65,7 +65,8 @@ class userTimesheet extends CommonObject
         $this->yearWeek=$yearWeek;
         $this->timestamp=time();
         $ret=$this->fetchTaskTimesheet();
-        //$ret2=$this->fetchUserHoliday(); 
+        //FIXME module holiday should be activated ?
+        $ret2=$this->fetchUserHoliday(); 
         //if ($ret<0 || $ret2<0) return -1;
         for ($i=0;$i<7;$i++)
         {
@@ -79,11 +80,8 @@ class userTimesheet extends CommonObject
     *  @return     string                                       result
     */
     function fetchUserHoliday(){
-        $staticHoliday=new Holiday($this->db);
-        $SQLfilter=  " AND (cp.date_fin>=FROM_UNIXTIME('".strtotime($this->yearWeek)."')) ";
-        $SQLfilter.= " AND (cp.date_debut<FROM_UNIXTIME('".strtotime($this->yearWeek.' + 7 days')."'))";
-        $ret=$staticHoliday->fetchByUser($this->userId,'',$SQLfilter);
-        $this->holidays=$staticHoliday->holiday;     
+        $this->holidays=new holidayTimesheet($this->db);
+        $ret=$this->holidays->fetchUserWeek($this->userId,$this->yearWeek);
         return $ret;
     }
     /*
@@ -142,10 +140,10 @@ function saveInSession(){
     if(TIMESHEET_HIDE_DRAFT=='1'){
          $sql.=' AND prj.fk_statut="1" ';
     }
-    $sql.=' AND (prj.datee>=FROM_UNIXTIME("'.$datestart.'") OR prj.datee IS NULL)';
-    $sql.=' AND (prj.dateo<=FROM_UNIXTIME("'.$datestop.'") OR prj.dateo IS NULL)';
-    $sql.=' AND (tsk.datee>=FROM_UNIXTIME("'.$datestart.'") OR tsk.datee IS NULL)';
-    $sql.=' AND (tsk.dateo<=FROM_UNIXTIME("'.$datestop.'") OR tsk.dateo IS NULL)';
+    $sql.=' AND (prj.datee>='.$this->db->idate($datestart).' OR prj.datee IS NULL)';
+    $sql.=' AND (prj.dateo<='.$this->db->idate($datestop).' OR prj.dateo IS NULL)';
+    $sql.=' AND (tsk.datee>='.$this->db->idate($datestart).' OR tsk.datee IS NULL)';
+    $sql.=' AND (tsk.dateo<='.$this->db->idate($datestop).' OR tsk.dateo IS NULL)';
     $sql.='  ORDER BY '.($whiteListNumber?'listed,':'').'prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ';
 
     dol_syslog("timesheet::getTasksTimesheet sql=".$sql, LOG_DEBUG);
@@ -161,10 +159,6 @@ function saveInSession(){
                     $obj = $this->db->fetch_object($resql);
                     $tasksList[$i] = NEW timesheet($this->db, $obj->element_id);
                     $tasksList[$i]->listed=$obj->listed;
-
-
-                    //$tasksList[$i]->getTaskInfo();
-                    //$tasksList[$i]->getActuals($yearWeek,$userid); 
                     $i++;
             }
             $this->db->free($resql);
@@ -176,13 +170,9 @@ function saveInSession(){
                     $row->getTaskInfo();
                     $row->getActuals($this->yearWeek,$userid); 
                     //unset($row->db);
-                    $this->taskTimesheet[]=  $row->serialize();
-                    
-                    //$resArray[]=$row;
-                    
+                    $this->taskTimesheet[]=  $row->serialize();                   
             }
 
-                //$this->taskTimesheet=$resArray;
                 
                 return 1;
 
@@ -208,10 +198,7 @@ function saveInSession(){
  */
 function GetTimeSheetXML()
 {
-    //$userids=$this->userId;
     global $langs;
-/*    $xml = '<?xml version="1.0" encoding="UTF-8"?>';*/
-    //$timestamp=time();
     $xml.= "<timesheet yearWeek=\"{$this->yearWeek}\" timestamp=\"{$this->timestamp}\" timetype=\"".TIMESHEET_TIME_TYPE."\"";
     $xml.=' nextWeek="'.date('Y\WW',strtotime($this->yearWeek."+3 days +1 week")).'" prevWeek="'.date('Y\WW',strtotime($this->yearWeek."+3 days -1 week")).'">';
     //error handling
@@ -242,15 +229,7 @@ function GetTimeSheetXML()
        $curDayTrad=$langs->trans(date('l',$curDay)).'  '.date('d/m/y',$curDay);
        $xmldays.="<day col=\"{$i}\">{$curDayTrad}</day>";
     }
-    //$_SESSION["timestamps"][$this->timestamp]['YearWeek']=$this->yearWeek;
-    //$_SESSION["timestamps"][$this->timestamp]["weekDays"]=$weekDays;
     $xml.= "<days>{$xmldays}</days>";
-        //FIXME unset timestamp
-    //if (!is_array($userids))$userids=array('0'=>$userids);
-    //$userNames=get_userName($this->userId);
-    
-    //foreach($userNames as $userid => $userName)
-    //{
         
         $tab=$this->fetchTaskTimesheet();
         $i=0;
@@ -258,11 +237,7 @@ function GetTimeSheetXML()
         foreach ($this->taskTimesheet as $timesheet) {
             $row=new timesheet($this->db);
              $row->unserialize($timesheet);
-            //$row->db=$this->db;
             $xml.= $row->getXML($this->yearWeek);//FIXME
-           // $Lines.=$row->getFormLine( $yearWeek,$i,$headers);
-            //$_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=array();
-            //$_SESSION["timestamps"][$timestamp]['tasks'][$row->id]=$row->getTaskTab(); 
             $i++;
         }  
         $xml.="</userTs>";
@@ -310,17 +285,28 @@ function GetTimeSheetXML()
     $html .= '<input type="hidden" name="timestamp" value="'.$this->timestamp."\"/>\n";
     $html .= '<input type="hidden" name="yearWeek" value="'.$this->yearWeek.'" />';        
     $html .='</td></tr>';
-    //total top
 
-
-$html .="<tr id='totalT'>\n";
-$html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
-for ($i=0;$i<7;$i++)
-{
-   $html .='<th><div id="totalDay['.$i.']">&nbsp;</div></th>';
- }
-$html .='</tr>';
      return $html;
+     
+ }
+  /* function to genegate ttotal line
+ * 
+  *  @param    array(string)           $headers            array of the header to show
+ *  @param    array(int)              	$headersWidth    array defining the header width
+ *  @param     int              	$yearWeek           timesheetweek
+ *  @param     int              	$timestamp         timestamp
+  *  @return     string                                                   html code
+ */
+ function getHTMLTotal($nameId){
+
+    $html .="<tr id='{$nameId}'>\n";
+    $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
+    for ($i=0;$i<7;$i++)
+    {
+       $html .="<th><div id=\"{$nameId}[{$i}]\">&nbsp;</div></th>";
+     }
+    $html .='</tr>';
+    return $html;
      
  }
  
@@ -334,17 +320,8 @@ $html .='</tr>';
  */
  function getHTMLFooter($ajax=false){
      global $langs;
-    //total Bot
-$html ="<tr id='totalB'>\n";
-$html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
-for ($i=0;$i<7;$i++)
-{
-   $html .='<th><div id="totalDayb['.$i.']">&nbsp;</div></th>';
- }
-$html .='</tr>';
-$html .="</table >\n";
-
 //form button
+$html .= '</table>';
 $html .= '<input type="submit" value="'.$langs->trans('Save')."\" />\n";
 //$html .= '<input type="button" value="'.$langs->trans('Submit');
 //$html .= '" onClick="document.location.href=\'?action=submit&yearweek='.$yearWeek."'\"/>\n"; /*FIXME*/
@@ -381,6 +358,21 @@ $html .= "\n\t".'</script>'."\n";
         return $Lines;
  }    
 
+       /*
+ * function to genegate the timesheet list
+ *  @return     string                                                   html code
+ */
+ function getHTMLHolidayLines($ajax=false){
+
+        $i=0;
+        $Lines='';
+        if(!$ajax){
+            $Lines.=$this->holidays->getHTMLFormLine( $this->yearWeek,$this->headers);
+        
+        }
+        
+        return $Lines;
+ }    
  /*
  * function to print the timesheet navigation header
  * 
@@ -431,27 +423,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
  */
  function updateActuals($tabPost)
 {
-    dol_syslog('Entering in Timesheet::userTimesheet.php::updateActuals()');
-//    $storedTab=array();
-    //load from timestamp
-//    $storedTab=$_SESSION["timestamps"][$timestamp];
-//    if(isset($storedTab["YearWeek"])) {
-//        $yearWeek=$storedTab["YearWeek"];
- //   }else {
-  //      return -1;
-  //  }
-//    $storedTasks=array();
-//    if(isset($storedTab['tasks'])) {
-//        $storedTasks=$storedTab['tasks'];
-//    }else {
-//        return -2;
-//    }
- //   if(isset($storedTab['weekDays'])) {
- //       $storedWeekdays=$storedTab['weekDays'];
- //   }else {
- //       return -3;
- //   }
-        
+    dol_syslog('Entering in Timesheet::userTimesheet.php::updateActuals()');     
     $ret=0;
    // $tmpRet=0;
     $_SESSION['timeSpendCreated']=0;
@@ -462,43 +434,9 @@ function getHTMLNavigation($optioncss, $ajax=false){
          */
         foreach ($this->taskTimesheet as $row) {
             $tasktime= new timesheet($this->db);
-            $tasktime->unserialize($row);
-            //$row->db=$this->db;
-            //FIXME
-//      }
-    /*foreach($storedTasks as  $taskId => $taskItem)
-    {
-        $taskId=$taskItem["id"];
-        $tasktimeIds=array();
-        $tasktimeIds=$taskItem["taskTimeId"];
-        $tasktime=new timesheet($this->db,$taskId);
-        $tasktime->timespent_fk_user=$this->userId;
-        $tasktime->fetch($taskId);
-        dol_syslog("Timesheet::Submit.php::postActualsSecured  task=".$tasktime->id, LOG_DEBUG);
-        //use the data stored
-        //$tasktime->initTimeSheet($taskItem['weekWorkLoad'], $taskItem['taskTimeId']);
-        //refetch actuals
-        $tasktime->getActuals($this->yearWeek, $this->userId); */
-        /*
-         * for each day of the task store in matching the session timestamp
-         */
-        //foreach($taskItem['taskTimeId'] as $dayKey => $tasktimeid)
-        
-        //foreach($tabPost[$tasktime->id] as $dayKey => $wkload)
-        //{
-        //    dol_syslog("Timesheet::Submit.php::postActualsSecured  task = ".$tasktime->id." tabPost[".$dayKey."]=".$wkload, LOG_DEBUG);
-
-         //   $tasktimeid=  $tasktime->tasklist[$dayKey][id];
-            
+            $tasktime->unserialize($row);     
             $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user);
-        //}
-        //if($ret!=$tmpRet){ // something changed so need to updae the total duration
-        //    $tasktime->updateTimeUsed();
-       // }
-        //$tmpRet=$ret;
-    } 
-//    unset($_SESSION["timestamps"][$timestamp]);
-    
+    }   
     return $ret;
 }
 
@@ -543,7 +481,38 @@ function get_userName(){
       //$select.="\n";
     return 0;
  }
-
+     /*
+ * put the timesheet task in a approuved status
+ * 
+ *  @param      string            $yearWeek      year week like 2015W09
+ *  @param      int               $userid        change the status for this userid 
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+    Public function setAppouved($yearWeek,$userid){
+        
+    }
+    
+ /*
+ * put the timesheet task in a rejected status
+ * 
+ *  @param    string              	$yearWeek            year week like 2015W09
+ *  @param      int               $userid        change the status for this userid 
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+    Public function setRejected($yearWeek,$userid){
+        
+    }
+    
+ /*
+ * put the timesheet task in a pending status
+ * 
+ *  @param    string              	$yearWeek            year week like 2015W09
+  *  @param      int               $userid        change the status for this userid 
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+*/
+    Public function setPending($yearWeek,$userid){
+        
+    }
 }
 ?>
 

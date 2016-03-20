@@ -413,7 +413,7 @@ switch ($action) {
 		print '<td class="fieldrequired">'.$langs->trans('Project').' </td><td>';
 		if($edit==1){
                     if(!empty($editedProject))$object->project=$editedProject;
-                $formUserWhere=' WHERE (t.datee>=FROM_UNIXTIME("'.time().'") OR t.datee IS NULL)';
+                $formUserWhere=' WHERE (t.datee>='.$this->db->idate(time()).' OR t.datee IS NULL)';
  //               $formUserWhere.=' AND (projet.dateo<=FROM_UNIXTIME("'.time().'") OR prj.dateo IS NULL)';
                 if(!$user->admin)
                 {
