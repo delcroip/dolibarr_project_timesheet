@@ -30,9 +30,30 @@ require_once 'class/timesheetwhitelist.class.php';
 //require_once './projectTimesheet.class.php';
 //define('TIMESHEET_BC_FREEZED','909090');
 //define('TIMESHEET_BC_VALUE','f0fff0');
-class userTimesheet extends CommonObject
+class timesheetUser extends CommonObject
 {
-    var $userId;
+    //common
+    	var $db;							//!< To store db handler
+	var $error;							//!< To return error code (or message)
+	var $errors=array();				//!< To return several error codes (or messages)
+	var $element='timesheetuser';			//!< Id that identify managed objects
+	var $table_element='timesheet_user';		//!< Name of table without prefix where object is stored
+// from db
+        var $id;
+	var $userId;
+	var $year_week_date='';
+	var $status;
+	var $status_team;
+	var $status_project;
+	var $project_tasktime_list;
+	var $user_approval_team;
+	var $user_approval_project;
+	var $date_creation='';
+	var $date_modification='';
+	var $user_creation;
+	var $user_modification;
+
+//working variable
     var $user;
     var $yearWeek;
     var $holidays;
@@ -47,7 +68,7 @@ class userTimesheet extends CommonObject
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function __construct($db,$user)
+    function __construct($db,$user=0)
     {
         $this->db = $db;
         //$this->holidays=array();
@@ -90,20 +111,20 @@ class userTimesheet extends CommonObject
 function loadFromSession($timestamp){
     
     $this->timestamp=$timestamp;
-    $this->userId= $_SESSION['userTimesheet'][$timestamp]['userId'];
-    $this->yearWeek= $_SESSION['userTimesheet'][$timestamp]['yearWeek'];
-    $this->holidays=  unserialize( $_SESSION['userTimesheet'][$timestamp]['holiday']);
-    $this->taskTimesheet=  unserialize( $_SESSION['userTimesheet'][$timestamp]['taskTimesheet']);;
+    $this->userId= $_SESSION['timesheetUser'][$timestamp]['userId'];
+    $this->yearWeek= $_SESSION['timesheetUser'][$timestamp]['yearWeek'];
+    $this->holidays=  unserialize( $_SESSION['timesheetUser'][$timestamp]['holiday']);
+    $this->taskTimesheet=  unserialize( $_SESSION['timesheetUser'][$timestamp]['taskTimesheet']);;
 }
 
     /*
  * function to load the parma from the session
  */
 function saveInSession(){
-    $_SESSION['userTimesheet'][$this->timestamp]['userId']=$this->userId;
-    $_SESSION['userTimesheet'][$this->timestamp]['yearWeek']=$this->yearWeek;
-    $_SESSION['userTimesheet'][$this->timestamp]['holiday']= serialize($this->holidays);
-    $_SESSION['userTimesheet'][$this->timestamp]['taskTimesheet']= serialize($this->taskTimesheet);
+    $_SESSION['timesheetUser'][$this->timestamp]['userId']=$this->userId;
+    $_SESSION['timesheetUser'][$this->timestamp]['yearWeek']=$this->yearWeek;
+    $_SESSION['timesheetUser'][$this->timestamp]['holiday']= serialize($this->holidays);
+    $_SESSION['timesheetUser'][$this->timestamp]['taskTimesheet']= serialize($this->taskTimesheet);
 }
 
 /*
@@ -166,7 +187,7 @@ function saveInSession(){
             if(isset($this->taskTimesheet))unset($this->taskTimesheet);
              foreach($tasksList as $row)
             {
-                    dol_syslog("Timesheet::userTimesheet.class.php task=".$row->id, LOG_DEBUG);
+                    dol_syslog("Timesheet::timesheetUser.class.php task=".$row->id, LOG_DEBUG);
                     $row->getTaskInfo();
                     $row->getActuals($this->yearWeek,$userid); 
                     //unset($row->db);
@@ -423,7 +444,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
  */
  function updateActuals($tabPost)
 {
-    dol_syslog('Entering in Timesheet::userTimesheet.php::updateActuals()');     
+    dol_syslog('Entering in Timesheet::timesheetUser.php::updateActuals()');     
     $ret=0;
    // $tmpRet=0;
     $_SESSION['timeSpendCreated']=0;
@@ -453,7 +474,7 @@ function get_userName(){
     $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as userName FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
 
 	$sql.=' usr.rowid = '.$this->userId;
-      dol_syslog("userTimesheet::get_userName sql=".$sql, LOG_DEBUG);
+      dol_syslog("timesheetUser::get_userName sql=".$sql, LOG_DEBUG);
     $resql=$this->db->query($sql);
     
     if ($resql)
@@ -513,7 +534,448 @@ function get_userName(){
     Public function setPending($yearWeek,$userid){
         
     }
-}
+
+// funciton from db
+    function create($user, $notrigger=0)
+    {
+    	global $conf, $langs;
+		$error=0;
+
+		// Clean parameters
+        
+		if (isset($this->userId)) $this->userId=trim($this->userId);
+		if (isset($this->year_week_date)) $this->year_week_date=trim($this->year_week_date);
+		if (isset($this->status)) $this->status=trim($this->status);
+		if (isset($this->status_team)) $this->status_team=trim($this->status_team);
+		if (isset($this->status_project)) $this->status_project=trim($this->status_project);
+		if (isset($this->project_tasktime_list)) $this->project_tasktime_list=trim($this->project_tasktime_list);
+		if (isset($this->user_approval_team)) $this->user_approval_team=trim($this->user_approval_team);
+		if (isset($this->user_approval_project)) $this->user_approval_project=trim($this->user_approval_project);
+		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
+		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
+		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
+		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
+
+        
+
+		// Check parameters
+		// Put here code to add control on parameters values
+
+        // Insert request
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
+		
+		$sql.= 'fk_userId,';
+		$sql.= 'year_week_date,';
+		$sql.= 'status,';
+		$sql.= 'status_team,';
+		$sql.= 'status_project,';
+		$sql.= 'fk_project_tasktime_list,';
+		$sql.= 'fk_user_approval_team,';
+		$sql.= 'fk_user_approval_project,';
+		$sql.= 'date_creation,';
+		$sql.= 'fk_user_creation';
+
+		
+        $sql.= ") VALUES (";
+        
+		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
+		$sql.=' '.(! isset($this->year_week_date) || dol_strlen($this->year_week_date)==0?'NULL':'"'.$this->db->idate($this->year_week_date).'"').',';
+		$sql.=' '.(! isset($this->status)?'NULL':'"'.$this->status.'"').',';
+		$sql.=' '.(! isset($this->status_team)?'NULL':'"'.$this->status_team.'"').',';
+		$sql.=' '.(! isset($this->status_project)?'NULL':'"'.$this->status_project.'"').',';
+		$sql.=' '.(! isset($this->project_tasktime_list)?'NULL':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
+		$sql.=' '.(! isset($this->user_approval_team)?'NULL':'"'.$this->user_approval_team.'"').',';
+		$sql.=' '.(! isset($this->user_approval_project)?'NULL':'"'.$this->user_approval_project.'"').',';
+		$sql.=' NOW() ,';
+		$sql.=' "'.$user->id.'"';
+
+        
+		$sql.= ")";
+
+		$this->db->begin();
+
+	   	dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+        {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            // want this action calls a trigger.
+
+	            //// Call triggers
+	            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //// End call triggers
+			}
+        }
+
+        // Commit or rollback
+        if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+            return $this->id;
+		}
+    }
+
+
+    /**
+     *  Load object in memory from the database
+     *
+     *  @param	int		$id    	Id object
+     *  @param	string	$ref	Ref
+     *  @return int          	<0 if KO, >0 if OK
+     */
+    function fetch($id,$ref='')
+    {
+    	global $langs;
+        $sql = "SELECT";
+		$sql.= " t.rowid,";
+		
+		$sql.=' t.fk_userId,';
+		$sql.=' t.year_week_date,';
+		$sql.=' t.status,';
+		$sql.=' t.status_team,';
+		$sql.=' t.status_project,';
+		$sql.=' t.fk_project_tasktime_list,';
+		$sql.=' t.fk_user_approval_team,';
+		$sql.=' t.fk_user_approval_project,';
+		$sql.=' t.date_creation,';
+		$sql.=' t.date_modification,';
+		$sql.=' t.fk_user_creation,';
+		$sql.=' t.fk_user_modification';
+
+		
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
+        else $sql.= " WHERE t.rowid = ".$id;
+
+    	dol_syslog(get_class($this)."::fetch");
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                $this->id    = $obj->rowid;
+                
+				$this->userId = $obj->fk_userId;
+				$this->year_week_date = $this->db->jdate($obj->year_week_date);
+				$this->status = $obj->status;
+				$this->status_team = $obj->status_team;
+				$this->status_project = $obj->status_project;
+				$this->project_tasktime_list = $obj->fk_project_tasktime_list;
+				$this->user_approval_team = $obj->fk_user_approval_team;
+				$this->user_approval_project = $obj->fk_user_approval_project;
+				$this->date_creation = $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->user_creation = $obj->fk_user_creation;
+				$this->user_modification = $obj->fk_user_modification;
+
+                
+            }
+            $this->db->free($resql);
+
+            return 1;
+        }
+        else
+        {
+      	    $this->error="Error ".$this->db->lasterror();
+            return -1;
+        }
+    }
+
+
+    /**
+     *  Update object into database
+     *
+     *  @param	User	$user        User that modifies
+     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+     *  @return int     		   	 <0 if KO, >0 if OK
+     */
+    function update($user, $notrigger=0)
+    {
+    	global $conf, $langs;
+		$error=0;
+
+		// Clean parameters
+        
+		if (isset($this->userId)) $this->userId=trim($this->userId);
+		if (isset($this->year_week_date)) $this->year_week_date=trim($this->year_week_date);
+		if (isset($this->status)) $this->status=trim($this->status);
+		if (isset($this->status_team)) $this->status_team=trim($this->status_team);
+		if (isset($this->status_project)) $this->status_project=trim($this->status_project);
+		if (isset($this->project_tasktime_list)) $this->project_tasktime_list=trim($this->project_tasktime_list);
+		if (isset($this->user_approval_team)) $this->user_approval_team=trim($this->user_approval_team);
+		if (isset($this->user_approval_project)) $this->user_approval_project=trim($this->user_approval_project);
+		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
+		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
+		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
+		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
+
+        
+
+		// Check parameters
+		// Put here code to add a control on parameters values
+
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+        
+		$sql.=' fk_userId='.(empty($this->userId)!=0 ? 'null':'"'.$this->userId.'"').',';
+		$sql.=' year_week_date='.(dol_strlen($this->year_week_date)!=0 ? '"'.$this->db->idate($this->year_week_date).'"':'null').',';
+		$sql.=' status='.(empty($this->status)!=0 ? 'null':'"'.$this->status.'"').',';
+		$sql.=' status_team='.(empty($this->status_team)!=0 ? 'null':'"'.$this->status_team.'"').',';
+		$sql.=' status_project='.(empty($this->status_project)!=0 ? 'null':'"'.$this->status_project.'"').',';
+		$sql.=' fk_project_tasktime_list='.(empty($this->project_tasktime_list)!=0 ? 'null':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
+		$sql.=' fk_user_approval_team='.(empty($this->user_approval_team)!=0 ? 'null':'"'.$this->user_approval_team.'"').',';
+		$sql.=' fk_user_approval_project='.(empty($this->user_approval_project)!=0 ? 'null':'"'.$this->user_approval_project.'"').',';
+		$sql.=' date_modification=NOW() ,';
+		$sql.=' fk_user_modification="'.$user->id.'"';
+
+        
+        $sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(__METHOD__);
+        $resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            // want this action calls a trigger.
+
+	            //// Call triggers
+	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //// End call triggers
+			 }
+		}
+
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+    }
+
+     /**
+     *	Return clickable name (with picto eventually)
+     *
+     *	@param		string			$htmlcontent 		text to show
+     *	@param		int			$id                     Object ID
+     *	@param		string			$ref                    Object ref
+     *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+     *	@return		string						String with URL
+     */
+    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
+    {
+    	global $langs;
+
+    	$result='';
+        if(empty($ref) && $id==0){
+            if(isset($this->id))  {
+                $id=$this->id;
+            }else if (isset($this->rowid)){
+                $id=$this->rowid;
+            }if(isset($this->ref)){
+                $ref=$this->ref;
+            }
+        }
+        
+        if($id){
+            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?id='.$id.'&action=view">';
+        }else if (!empty($ref)){
+            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?ref='.$ref.'&action=view">';
+        }else{
+            $lien =  "";
+        }
+        $lienfin=empty($lien)?'':'</a>';
+
+    	$picto='timesheet@timesheet';
+        
+        if($ref){
+            $label=$langs->trans("Show").': '.$ref;
+        }else if($id){
+            $label=$langs->trans("Show").': '.$id;
+        }
+    	if ($withpicto==1){ 
+            $result.=($lien.img_object($label,$picto).$htmlcontent.$lienfin);
+        }else if ($withpicto==2) {
+            $result.=$lien.img_object($label,$picto).$lienfin;
+        }else{  
+            $result.=$lien.$htmlcontent.$lienfin;
+        }
+    	return $result;
+    }    
+ 	/**
+	 *  Delete object in database
+	 *
+     *	@param  User	$user        User that deletes
+     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 <0 if KO, >0 if OK
+	 */
+	function delete($user, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+
+		$this->db->begin();
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Uncomment this and change MYOBJECT to your own tag if you
+		        // want this action calls a trigger.
+
+	            //// Call triggers
+	            //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //// End call triggers
+			}
+		}
+
+		if (! $error)
+		{
+    		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+    		$sql.= " WHERE rowid=".$this->id;
+
+    		dol_syslog(__METHOD__);
+    		$resql = $this->db->query($sql);
+        	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		}
+
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+
+
+	/**
+	 *	Load an object from its id and create a new one in database
+	 *
+	 *	@param	int		$fromid     Id of object to clone
+	 * 	@return	int					New id of clone
+	 */
+	function createFromClone($fromid)
+	{
+		global $user,$langs;
+
+		$error=0;
+
+		$object=new Timesheetuser($this->db);
+
+		$this->db->begin();
+
+		// Load source object
+		$object->fetch($fromid);
+		$object->id=0;
+		$object->statut=0;
+
+		// Clear fields
+		// ...
+
+		// Create clone
+		$result=$object->create($user);
+
+		// Other options
+		if ($result < 0)
+		{
+			$this->error=$object->error;
+			$error++;
+		}
+
+		if (! $error)
+		{
+
+
+		}
+
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $object->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *	Initialise object with example values
+	 *	Id must be 0 if object instance is a specimen
+	 *
+	 *	@return	void
+	 */
+	function initAsSpecimen()
+	{
+		$this->id=0;
+		
+		$this->userId='';
+		$this->year_week_date='';
+		$this->status='';
+		$this->status_team='';
+		$this->status_project='';
+		$this->project_tasktime_list='';
+		$this->user_approval_team='';
+		$this->user_approval_project='';
+		$this->date_creation='';
+		$this->date_modification='';
+		$this->user_creation='';
+		$this->user_modification='';
+
+		
+	}
+ }
+
 ?>
 
 

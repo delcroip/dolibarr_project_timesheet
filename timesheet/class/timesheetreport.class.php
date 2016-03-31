@@ -88,7 +88,7 @@ class timesheetReport
             
      $sql.='AND task_date>='.$this->db->idate($startDay)
                     .' AND task_date<='.$this->db->idate($stopDay)
-                    .'GROUP BY ptt.fk_user,prj.rowid, ptt.task_date,ptt.fk_task ';
+                    .' GROUP BY ptt.fk_user,prj.rowid, ptt.task_date,ptt.fk_task ';
     switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing
                 

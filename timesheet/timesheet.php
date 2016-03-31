@@ -29,7 +29,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'lib/includeMain.lib.php';
 require_once 'lib/timesheet.lib.php';
-require_once 'class/userTimesheet.class.php';
+require_once 'class/timesheetUser.class.php';
 
 $action             = GETPOST('action');
 $yearWeek           = GETPOST('yearweek');
@@ -82,7 +82,7 @@ if ($user->societe_id > 0)
 }
 
 */
-$userTimesheet= new userTimesheet($db,$user);
+$timesheetUser= new timesheetUser($db,$user);
 
 /*******************************************************************
 * ACTIONS
@@ -90,14 +90,14 @@ $userTimesheet= new userTimesheet($db,$user);
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 if($action== 'submit'){
-        if (isset($_SESSION['userTimesheet'][$timestamp]))
+        if (isset($_SESSION['timesheetUser'][$timestamp]))
         {
-            $userTimesheet->loadFromSession($timestamp);
-            //$userTimesheet->db=$db;
-           // var_dump(unserialize($userTimesheet->taskTimesheet[0])->tasklist);
+            $timesheetUser->loadFromSession($timestamp);
+            //$timesheetUser->db=$db;
+           // var_dump(unserialize($timesheetUser->taskTimesheet[0])->tasklist);
             if (!empty($_POST['task']))
             {   
-                                $ret=$userTimesheet->updateActuals($_POST['task']);
+                                $ret=$timesheetUser->updateActuals($_POST['task']);
 				//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
                     if($ret>0)
                     {
@@ -123,10 +123,10 @@ if($action== 'submit'){
 
 
 if(!empty($timestamp)){
-       unset($_SESSION['userTimesheet'][$timestamp]);
+       unset($_SESSION['timesheetUser'][$timestamp]);
 }
 
-$userTimesheet->fetchAll($yearWeek,$whitelistmode);
+$timesheetUser->fetchAll($yearWeek,$whitelistmode);
 /***************************************************
 * VIEW
 *
@@ -137,7 +137,7 @@ if($xml){
     //renew timestqmp
     ob_clean();
    header("Content-type: text/xml; charset=utf-8");
-    echo $userTimesheet->GetTimeSheetXML();
+    echo $timesheetUser->GetTimeSheetXML();
     exit;
 }
 $morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
@@ -148,19 +148,19 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 
 
 $ajax=false;
- $Form =$userTimesheet->getHTMLNavigation($optioncss,$ajax);
+ $Form =$timesheetUser->getHTMLNavigation($optioncss,$ajax);
 
-$Form .=$userTimesheet->getHTMLHeader($ajax);
+$Form .=$timesheetUser->getHTMLHeader($ajax);
 
-$Form .=$userTimesheet->getHTMLHolidayLines($ajax);
+$Form .=$timesheetUser->getHTMLHolidayLines($ajax);
 
-$Form .=$userTimesheet->getHTMLTotal('totalT');
+$Form .=$timesheetUser->getHTMLTotal('totalT');
 
-$Form .=$userTimesheet->getHTMLtaskLines($ajax);
+$Form .=$timesheetUser->getHTMLtaskLines($ajax);
 
-$Form .=$userTimesheet->getHTMLTotal('totalB');
+$Form .=$timesheetUser->getHTMLTotal('totalB');
 
-$Form .=$userTimesheet->getHTMLFooter($ajax);
+$Form .=$timesheetUser->getHTMLFooter($ajax);
 
 
 //Javascript

@@ -19,7 +19,7 @@
 global $langs;
 // to get the whitlist object
 require_once 'class/timesheetwhitelist.class.php';
-require_once 'class/userTimesheet.class.php';
+require_once 'class/timesheetUser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 

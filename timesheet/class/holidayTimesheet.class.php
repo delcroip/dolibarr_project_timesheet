@@ -89,8 +89,8 @@ class holidayTimesheet extends Holiday
                              $pm=true;
                              break;
                           case 1: //Holiday start the morning and end the morning    +++-
-                             $am=$prev;
-                             $pm=true;
+                             $am=true;
+                             $pm=$next;
                              break;                    
                          case 2: //Holiday start the afternoon and end the morning  -++-
                              $am=$prev;

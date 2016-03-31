@@ -33,8 +33,9 @@ global $langs;
  *  @return string                                                   html code
  */
  
-function select_enum($db,$table, $fieldValue,$htmlName,$selected='',$selectparam=''){
+function select_enum($table, $fieldValue,$htmlName,$selected='',$selectparam=''){
 global $langs;
+global $db;
     if($table=='' || $fieldValue=='' || $htmlName=='' )
     {
         return 'error, one of the mandatory field of the function  select_enum is missing';
@@ -107,9 +108,10 @@ global $langs;
 
  *  @return string                                                   html code
  */
-function select_generic($db, $table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTail='', $selectparam=''){
+function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTail='', $selectparam=''){
      //
-    global $conf,$langs;
+    //return 'tada';
+    global $conf,$langs,$db;
     if($table=='' || $fieldValue=='' || $fieldToShow1=='' || $htmlName=='' )
     {
         return 'error, one of the mandatory field of the function  select_generic is missing';
@@ -198,8 +200,9 @@ function select_generic($db, $table, $fieldValue,$htmlName,$fieldToShow1,$fieldT
 
  *  @return string                                                   html code
  */
-function print_generic($db,$table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2="",$separator=' - ',$sqltail="",$sqljoin=""){
+function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2="",$separator=' - ',$sqltail="",$sqljoin=""){
    //return $table.$db.$field;
+    global $db;
     if($table=="" || $fieldValue=="" || $fieldToShow1=='')
     {
         return "error, one of the mandatory field of the function  print_generic is missing";
