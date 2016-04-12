@@ -22,6 +22,8 @@
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
+$statusTsColor=array('DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUBMITTED,'APPROVED'=>TIMESHEET_COL_APPROVED,'CANCELLED'=>TIMESHEET_COL_CANCELLED,'REJECTED'=>TIMESHEET_COL_REJECTED);
+
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
 //require_once './projectTimesheet.class.php';
 define('TIMESHEET_BC_FREEZED','909090');
@@ -121,7 +123,12 @@ class timesheet extends Task
     }
     
     
-
+/*
+ *  FUNCTION TO GET THE ACTUALS FOR A WEEK AND AN USER
+ *  @param    string              	$yearWeek            year week like 2015W09
+ *  @param     int              	$userId         used in the form processing
+ *  @return     int                                       success (1) / failure (-1)
+ */
     
     
     public function getActuals( $yearWeek,$userid)
@@ -169,6 +176,54 @@ class timesheet extends Task
                 return -1;
         }
     }	 
+/*
+ *  FUNCTION TO GET THE from a tasktime list of ID 
+ *  @param    string              	$tasktimeId       list of Id ( separated by comas), some may belong to this task
+ *  @return     int                                       success (1) / failure (-1)
+ */
+    
+    
+    public function getActualsById( $tasktimeIds)
+    {
+
+        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
+        $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
+        $sql .= " WHERE ptt.fk_task='".$this->id."' ";
+        $sql .= ' AND ptt.rowid in ('.$tasktimeIds.')';
+
+        dol_syslog(get_class($this)."::fetchActuals sql=".$sql, LOG_DEBUG);
+		for($i=0;$i<7;$i++){
+			//fixme get ride of the db format for the date
+			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>strtotime( $yearWeek.' +'.$i.' day'));
+		}
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+
+                $num = $this->db->num_rows($resql);
+                $i = 0;
+                // Loop on each record found, so each couple (project id, task id)
+                 while ($i < $num)
+                {
+                        $error=0;
+                        $obj = $this->db->fetch_object($resql);
+                        $day=intval(date('N',strtotime($obj->task_date)))-1;
+
+                        $this->tasklist[$day]=array('id'=>$obj->rowid,'date'=>$this->db->jdate($obj->task_date),'duration'=>$obj->task_duration);
+                        $i++;
+                }
+                $this->db->free($resql);
+                return 1;
+         }
+        else
+        {
+                $this->error="Error ".$this->db->lasterror();
+                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+
+                return -1;
+        }
+    }	 
     
     
 
@@ -181,8 +236,9 @@ class timesheet extends Task
  *  @param     int              	$whitelistemode           0-whiteliste,1-blackliste,2-non impact
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getFormLine( $yearWeek,$lineNumber,$headers,$whitelistemode)
+       public function getFormLine( $yearWeek,$lineNumber,$headers,$whitelistemode,$status="DRAFT")
     {
+           global $statusTsColor;
        if(empty($yearWeek)||empty($headers))
            return '<tr>ERROR: wrong parameters for getFormLine'.empty($yearWeek).'|'.empty($headers).'</tr>';
         
@@ -236,7 +292,8 @@ class timesheet extends Task
          }
 
   // day section
-
+         $isOpenSatus=($status=="DRAFT" || $status=="CANCELLED"|| $status=="REJECTED");
+         
          for($dayOfWeek=0;$dayOfWeek<7;$dayOfWeek++)
          {
                 $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
@@ -249,14 +306,35 @@ class timesheet extends Task
                 }else {
                     $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
                 }
-                $isOpen=(empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today ));          
+                if($isOpenSatus){
+                    $isOpen=$isOpenSatus && (empty($this->date_start) || ($this->date_start <= $today +86399));
+                    $isOpen= $isOpen && (empty($this->date_end) ||($this->date_end >= $today ));
+             
+                    $bkcolor='';
+                    
+                    if($isOpen){
+                        if($dayWorkLoadSec!=0)$bkcolor='background:#'.TIMESHEET_BC_VALUE;
+                    }else{
+                        $bkcolor='background:#'.TIMESHEET_BC_FREEZED;
+                    }                        
                     $html .= '<th ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$dayOfWeek.']" ';
                     $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" ';
                     $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
-                    $html .='" maxlength="5" style="width: 90%;'.(($dayWorkLoadSec==0)?(($isOpen)?'':' background:#'.TIMESHEET_BC_FREEZED.'; '):' background:#'.TIMESHEET_BC_VALUE.'; ').'" ';
+                    $html .='" maxlength="5" style="width: 90%;'.$bkcolor.'" ';
                     $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
                     $html .= 'onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$dayOfWeek.',\''.$timetype.'\')" />';
-                    $html .= "</th>\n";                    
+                    $html .= "</th>\n"; 
+                }else{
+                    $bkcolor='background:#'.$statusTsColor[$status];
+                    $html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$dayOfWeek.']"';
+                    $html .= ' name="task['.$this->id.']['.$dayOfWeek.']" ';
+                    $html .= ' style="width: 90%;"';
+                    $html .=' >'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
+                    $html .='</a> ';
+                    $html .= "</th>\n"; 
+
+                        
+                }
         }
         $html .= "</tr>\n";
         return $html;
@@ -400,7 +478,7 @@ public function updateTimeUsed()
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                    return 1;
+                   // return 1;
             }
             else
             {
@@ -419,8 +497,7 @@ public function updateTimeUsed()
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
+        }else
         {
             $this->db->commit();
             return $this->id;
@@ -438,7 +515,7 @@ public function updateTimeUsed()
 
     
 	
- //FIXME : copy paste in timesheets part/*
+
  /* function to post on task_time
  * 
  *  @param    int              	$user                    user id to fetch the timesheets
@@ -447,9 +524,10 @@ public function updateTimeUsed()
  *  @param     int              	$timestamp          timesheetweek
  *  @return     int                                                       1 => succes , 0 => Failure
  */
-function postTaskTimeActual($timesheetPost,$userId,$Submitter)
+function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp)
 {
     $ret=0;
+    $idList='';
 	dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user=$userId;
     foreach ($timesheetPost as $dayKey => $wkload){		
@@ -482,34 +560,59 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter)
                     if($this->updateTimeSpent($Submitter,0)>=0)
                     {
                         $ret++; 
-                        $_SESSION['timeSpendModified']++;
+                        $_SESSION['timesheetUser'][$timestamp]['timeSpendModified']++;
+                    }else{
+                        $_SESSION['timesheetUser'][$timestamp]['updateError']++;
                     }
                 }else {
                     dol_syslog("Timesheet::Submit.php  taskTimeDelete", LOG_DEBUG);
                     if($this->delTimeSpent($Submitter,0)>=0)
                     {
                         $ret++;
-                        $_SESSION['timeSpendDeleted']++;
+                        $_SESSION['timesheetUser'][$timestamp]['timeSpendDeleted']++;
+                        $this->tasklist[$dayKey]['id']=0;
+                    }else{
+                        $_SESSION['timesheetUser'][$timestamp]['updateError']++;
                     }
                 }
             }
         } elseif ($duration>0)
         { 
             $this->timespent_duration=$duration; 
-            if($this->addTimeSpent($Submitter,0)>=0)
+            $newId=$this->addTimeSpent($Submitter,0);
+            if($newId>=0)
             {
                 $ret++;
-                $_SESSION['timeSpendCreated']++;
-            }
+                $_SESSION['timesheetUser'][$timestamp]['timeSpendCreated']++;
+                $this->tasklist[$dayKey]['id']=$newId;
+            }else{
+                $_SESSION['timesheetUser'][$timestamp]['updateError']++;
+           }
         }
+         //update the task list
         
+
         
     }
     if($ret)$this->updateTimeUsed();
     return $ret;
+    //return $idList;
 }
  
- 
+  /* function get the Id of the task
+ * 
+ *  @return     string      list of the id separated by coma
+ */
+function getIdList()
+{
+    $ret='';
+    foreach ($this->tasklist as $tasktime){
+        if(isset($tasktime['id']) && $tasktime['id']>0){
+            $ret.=(empty($ret)?'':',').$tasktime['id'];
+        }     
+    }
+    return $ret;
+}
 }
 
 ?>

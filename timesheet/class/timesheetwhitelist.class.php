@@ -182,7 +182,7 @@ class Timesheetwhitelist extends CommonObject
         if($datestart)
                 $sql.= ' AND (t.date_end >'.$this->db->idate($datestart).' OR t.date_end IS NULL)';
         if($datestop)
-                $sql.= ' AND (t.date_start <'.$this->db->idate($datestop).'OR t.date_start IS NULL)';
+                $sql.= ' AND (t.date_start <'.$this->db->idate($datestop).' OR t.date_start IS NULL)';
 
         dol_syslog(get_class($this)."::fetchUserList");
         $resql=$this->db->query($sql);

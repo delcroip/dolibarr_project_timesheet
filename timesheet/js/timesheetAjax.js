@@ -294,7 +294,7 @@ function updateTotal(days,mode){
             }
 	}
 	catch(err) {
-            $.jnotify("updateTotal "+err,'error',true);
+            //$.jnotify("updateTotal "+err,'error',true);
 	}
 }
 

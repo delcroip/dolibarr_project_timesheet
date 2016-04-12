@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 delcroip <delcroip@gmail.com>
+ * Copyright (C) 2016 delcroip <delcroip@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,33 +31,19 @@ include 'lib/includeMain.lib.php';
 require_once 'lib/timesheet.lib.php';
 require_once 'class/timesheetUser.class.php';
 
+$userId            = GETPOST('userid');
 $action             = GETPOST('action');
-$yearWeek           = GETPOST('yearweek');
 //should return the XMLDoc
 $ajax               = GETPOST('ajax');
 $xml               = GETPOST('xml');
-$optioncss = GETPOST('optioncss','alpha');
-
+$id               = GETPOST('id');
 
 //$toDate                 = GETPOST('toDate');
-$toDate                 = GETPOST('toDate');
-if (!empty($toDate) && $action=='goToDate')
-{
-    $yearWeek =date('Y\WW',strtotime(str_replace('/', '-',$toDate)));  
-    $_SESSION["yearWeek"]=$yearWeek ;      
-}else if ($yearWeek!=0) {
-        $_SESSION["yearWeek"]=$yearWeek;
-}else if(isset($_SESSION["yearWeek"])){
-        $yearWeek=$_SESSION["yearWeek"];
-}else
-{
-        $yearWeek=date('Y\WW');
-        $_SESSION["yearWeek"]=$yearWeek;
-}
-$timestamp=GETPOST('timestamp');
-$whitelistmode=GETPOST('wlm','int');
 
-$userid=  is_object($user)?$user->id:$user;
+$timestamp=GETPOST('timestamp');
+
+
+//$userid=  is_object($user)?$user->id:$user;
 
 
 
@@ -68,22 +54,26 @@ $langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
 
-/*
-// Get parameters
-
-$id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
-$myparam	= GETPOST('myparam','alpha');
-
-// Protection if external user
-if ($user->societe_id > 0)
-{
-	//accessforbidden();
+$level=1;
+$offset=GETPOST('offset');
+$objectArray=getTStobeApproved($level,$offset);/*fixme: create function*/
+$timesheetUser=reset($objectArray);
+$curUser=$firstTimesheetUser->userId;
+$nextUser=$firstTimesheetUser->userId;
+$i=0;
+if(is_object($firstTimesheetUser)){
+    
+    foreach($objectArray as $key=> $timesheetUser){
+        if($firstTimesheetUser->userId==$timesheetUser->userId){
+            $i++;//use for the offset
+        }else{
+            $nextUser=$timesheetUser->userId;
+            break;
+        }
+    }
 }
-
-*/
-
-$timesheetUser= new timesheetUser($db,$userid);
+$offset+=$i;
+$timesheetUser= new timesheetUser($db,0);
 
 /*******************************************************************
 * ACTIONS
@@ -91,56 +81,43 @@ $timesheetUser= new timesheetUser($db,$userid);
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 if($action== 'submit'){
-        if (isset($_SESSION['timesheetUser'][$timestamp]))
+/*         if (isset($_SESSION['timesheetUser'][$timestamp]))
         {
             $timesheetUser->loadFromSession($timestamp);
             //$timesheetUser->db=$db;
            // var_dump(unserialize($timesheetUser->taskTimesheet[0])->tasklist);
             if (!empty($_POST['task']))
-            {                   
-                if(isset($_POST['submit'])){
-                    $timesheetUser->status="SUBMITTED";
-                    $ret=0;
-                 }          
-                if(isset($_POST['recall'])){ /*FIXME: should happen*/
-                    $timesheetUser->status="DRAFT";
-                    $ret=0;
-                }
-                $ret=$timesheetUser->updateActuals($_POST['task']);
-                //$ret =postActuals($db,$user,$_POST['task'],$timestamp);
-                if(!empty($ret))
-                {
-                    if(isset($_POST['submit']))setEventMessage($langs->transnoentitiesnoconv("timesheetSumitted"));
-                    if($_SESSION['timesheetUser'][$timestamp]['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['timesheetUser'][$timestamp]['timeSpendCreated']);
-                    if($_SESSION['timesheetUser'][$timestamp]['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['timesheetUser'][$timestamp]['timeSpendModified']);
-                    if($_SESSION['timesheetUser'][$timestamp]['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['timesheetUser'][$timestamp]['timeSpendDeleted']);
-                }
-                else
-                {
-                    if($_SESSION['timesheetUser'][$timestamp]['updateError']){
-                        setEventMessage( $langs->transnoentitiesnoconv("InternalError").':'.$ret,'errors');
-                    }else {
-                        setEventMessage($langs->transnoentitiesnoconv("NothingChanged"),'errors');
-                                                }
-                }        
-            }else if(isset($_POST['recall'])){
-                $timesheetUser->status="DRAFT";
-                $ret=$timesheetUser->update($user);
-                if($ret>0)setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
-                else setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"),'errors');
+            {   
+                                $ret=$timesheetUser->updateActuals($_POST['task']);
+				//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
+                    if($ret>0)
+                    {
+                        if($_SESSION['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['timeSpendCreated']);
+                        if($_SESSION['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['timeSpendModified']);
+                        if($_SESSION['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['timeSpendDeleted']);
+                    }
+                    else
+                    {
+                        if($ret==0){
+                            setEventMessage($langs->transnoentitiesnoconv("NothingChanged"),'errors');
+                        }else {
+                            setEventMessage( $langs->transnoentitiesnoconv("InternalError").':'.$ret,'errors');
+                        }
+                    }        
             }else
                     setEventMessage( $langs->transnoentitiesnoconv("NoTaskToUpdate"),'errors');
         }else
                 setEventMessage( $langs->transnoentitiesnoconv("InternalError"),'errors');
-
+	
+*/
 }
 
 
 if(!empty($timestamp)){
        unset($_SESSION['timesheetUser'][$timestamp]);
 }
-
-$timesheetUser->fetchAll($yearWeek,$whitelistmode);
+$timesheetUser->fetch($this->id);
+$timesheetUser->fetchAll($this->yearWeek,2);
 /***************************************************
 * VIEW
 *
@@ -151,7 +128,7 @@ if($xml){
     //renew timestqmp
     ob_clean();
    header("Content-type: text/xml; charset=utf-8");
-    echo $timesheetUser->GetTimeSheetXML();
+    echo $timesheetUser->GetTimeSheetXML($userId,5); //fixme
     exit;
 }
 $morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
@@ -162,20 +139,15 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 
 
 $ajax=false;
-$Form =$timesheetUser->getHTMLNavigation($optioncss,$ajax);
+
+$Form .=$timesheetUser->userName." - ".$timesheetUser->yearWeek;
 $Form .=$timesheetUser->getHTMLFormHeader($ajax);
 $Form .=$timesheetUser->getHTMLHeader($ajax);
-
 $Form .=$timesheetUser->getHTMLHolidayLines($ajax);
-
 $Form .=$timesheetUser->getHTMLTotal('totalT');
-
 $Form .=$timesheetUser->getHTMLtaskLines($ajax);
-
 $Form .=$timesheetUser->getHTMLTotal('totalB');
-
-$Form .=$timesheetUser->getHTMLFooter($ajax);
-
+$Form .=$timesheetUser->getHTMLFooterAp($ajax);
 
 //Javascript
 $timetype=TIMESHEET_TIME_TYPE;

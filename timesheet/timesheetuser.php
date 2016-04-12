@@ -76,11 +76,11 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 	if($ls_userId==-1)$ls_userId='';
 	$ls_year_week_date_month= GETPOST('ls_year_week_date_month','int');
 	$ls_year_week_date_year= GETPOST('ls_year_week_date_year','int');
-	$ls_status= GETPOST('ls_status','int');
+	$ls_status= GETPOST('ls_status','alpha');
 	if($ls_status==-1)$ls_status='';
-	$ls_status_team= GETPOST('ls_status_team','int');
+	$ls_status_team= GETPOST('ls_status_team','alpha');
 	if($ls_status_team==-1)$ls_status_team='';
-	$ls_status_project= GETPOST('ls_status_project','int');
+	$ls_status_project= GETPOST('ls_status_project','alpha');
 	if($ls_status_project==-1)$ls_status_project='';
 	$ls_project_tasktime_list= GETPOST('ls_project_tasktime_list','alpha');
 	$ls_user_approval_team= GETPOST('ls_user_approval_team','int');
@@ -215,6 +215,8 @@ if ($cancel){
                             if ($id > 0 || !empty($ref) )
                             {
                                     $result=$object->fetch($id,$ref);
+                                    if($result > 0)$result=$object->fetchTaskTimesheet();
+                                    if($result > 0)$result=$object->fetchUserHoliday(); 
                                     if ($result < 0){ 
                                         dol_print_error($db);
                                     }else { // fill the id & ref
@@ -286,7 +288,8 @@ if(isset( $_SESSION['Timesheetuser_class'][$tms]))
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','Timesheetuser','');
+$morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
+llxHeader('',$langs->trans('TimesheetUser'),'','','','',$morejs);
 print "<div> <!-- module body-->";
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -425,9 +428,10 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Projecttasktimelist').' </td><td>';
 		if($edit==1){
-                    print '<input class="flat" size="16" type="text" name="ls_project_tasktime_list" value="'.$ls_project_tasktime_list.'"/>';
+                    print '<input class="flat" size="16" type="text" name="Projecttasktimelist" value="'.$object->project_tasktime_list.'"/>';
  		}else{
-		print print_generic('project_tasktime_list','rowid',$object->project_tasktime_list,'rowid','description');
+                    print $object->project_tasktime_list;
+		//print print_generic('project_tasktime_list','rowid',$object->project_tasktime_list,'rowid','description');
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -460,6 +464,23 @@ switch ($action) {
 
 	print '</table>'."\n";
 	print '<br>';
+        if($object->status != "DRAFT" && $edit!=1){
+            print $object->userName." - ".$object->yearWeek;
+            print $object->getHTMLHeader(false);
+
+            print $object->getHTMLHolidayLines(false);
+
+            print $object->getHTMLTotal('totalT');
+
+            print $object->getHTMLtaskLines(false);
+
+            print $object->getHTMLTotal('totalB');
+
+            print "</table>";
+            print  '<script type="text/javascript">'."\n\t";
+            print 'updateAll(\''.TIMESHEET_TIME_TYPE.'\');';
+            print  "\n\t".'</script>'."\n";
+        }
 	print '<div class="center">';
         if($edit==1){
         if($new==1){
@@ -718,7 +739,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print "<td>".$obj->status."</td>";
 		print "<td>".$obj->status_team."</td>";
 		print "<td>".$obj->status_project."</td>";
-		print "<td>".print_generic('project_tasktime_list','rowid',$obj->fk_project_tasktime_list,'rowid','description')."</td>";
+		print "<td>".$obj->fk_project_tasktime_list."</td>";
 		print "<td>".print_generic('user','rowid',$obj->fk_user_approval_team,'lastname','firstname',' ')."</td>";
 		print "<td>".print_generic('user','rowid',$obj->fk_user_approval_project,'lastname','firstname',' ')."</td>";
 		print '<td><a href="'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';

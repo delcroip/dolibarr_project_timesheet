@@ -15,7 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+function submitTs(){
+    form=document.getElementById("timesheetForm");
+    var element = document.createElement("INPUT");
+    element.setAttribute("type", "hidden");
+    element.setAttribute("name", "submitTs");
+    element.setAttribute("value", "1");
+    form.appendChild(element);
+           
+            
+    return true;
+}
   
   function regexEvent(objet,evt,type)
   {

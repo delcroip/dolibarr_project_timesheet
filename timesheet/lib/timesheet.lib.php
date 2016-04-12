@@ -123,7 +123,7 @@ function get_userName($userids){
         return array();
     }
 
-    $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as userName FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
+    $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as userName,usr.lastname FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
 
 	$sql.=' usr.rowid in (';
 	$nbIds=(is_array($userids))?count($userids)-1:0;
