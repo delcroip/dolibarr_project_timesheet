@@ -50,7 +50,7 @@ $submittedColor=TIMESHEET_COL_SUBMITTED;
 $approvedColor=TIMESHEET_COL_APPROVED;
 $rejectedColor=TIMESHEET_COL_REJECTED;
 $cancelledColor=TIMESHEET_COL_CANCELLED;
-
+$addholidaytime=TIMESHEET_ADD_HOLIDAY_TIME;
 switch($action)
 {
     case save:
@@ -100,21 +100,28 @@ switch($action)
         $headers.=$showProgress?(empty($headers)?'':'||').'Progress':'';
         
         $res=dolibarr_set_const($db, "TIMESHEET_HEADERS", $headers, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
         //color handling
         $draftColor=GETPOST('draftColor','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_COL_DRAFT", $draftColor, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
         $submittedColor=GETPOST('submittedColor','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_COL_SUBMITTED", $submittedColor, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
         $approvedColor=GETPOST('approvedColor','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_COL_APPROVED", $approvedColor, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
         $rejectedColor=GETPOST('rejectedColor','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_COL_REJECTED", $rejectedColor, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
         $cancelledColor=GETPOST('cancelledColor','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_COL_CANCELLED", $cancelledColor, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
+        $addholidaytime=GETPOST('addholidaytime','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_ADD_HOLIDAY_TIME", $addholidaytime, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;        
         
-        
-        if (! $res > 0) $error++;       
+    
         // error handling
         
         if (! $error)
@@ -201,9 +208,17 @@ $Form .=(($hideref=='1')?'checked':'')."></th></tr>\n\t\t";
 $Form .= '<tr class="impair"><th align="left">'.$langs->trans("hidezeros");
 $Form .='</th><th align="left">'.$langs->trans("hideZerosDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="hidezeros" value="1" ';
-$Form .=(($hidezeros=='1')?'checked':'')."></th></tr>\n\t</table>\n";
-print $Form.'<br>';
+$Form .=(($hidezeros=='1')?'checked':'')."></th></tr>\n";
 
+
+// add holiday time
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("addholidaytime");
+$Form .='</th><th align="left">'.$langs->trans("addholidaytimeDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="addholidaytime" value="1" ';
+$Form .=(($addholidaytime=='1')?'checked':'')."></th></tr>\n";
+print $Form;
+
+print "\t</table><br>\n";
 
 
 print_titre($langs->trans("ColumnToShow"));
@@ -331,7 +346,7 @@ $Form .=(($dropdownAjax=='1')?'checked':'')."></th></tr>\n\t\t";
 $Form .='</table><br>';
 
 
-$Form .='<input type="submit" value="'.$langs->trans('Save')."\">\n</from>";
+$Form .='<input type="submit" class="butAction" value="'.$langs->trans('Save')."\">\n</from>";
 
 print $Form;
 llxFooter();

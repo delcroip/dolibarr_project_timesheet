@@ -58,7 +58,7 @@ class modTimesheet extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Timesheet view";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.4.3';
+		$this->version = '1.5.dev';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -125,6 +125,8 @@ class modTimesheet extends DolibarrModules
                 $this->const[10] = array("TIMESHEET_COL_APPROVED","chaine","00FF00","color of approved"); 
                 $this->const[11] = array("TIMESHEET_COL_CANCELLED","chaine","FFFF00","color of cancelled"); 
                 $this->const[12] = array("TIMESHEET_COL_REJECTED","chaine","FF0000","color of rejected"); 
+                $this->const[13] = array("TIMESHEET_ADD_HOLIDAY_TIME","chaine","1","count the holiday in total or not"); 
+                
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1

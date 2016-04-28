@@ -37,7 +37,7 @@ $action             = GETPOST('action');
 $ajax               = GETPOST('ajax');
 $xml               = GETPOST('xml');
 $id               = GETPOST('id');
-
+$offset=GETPOST('offset');
 //$toDate                 = GETPOST('toDate');
 
 $timestamp=GETPOST('timestamp');
@@ -54,26 +54,7 @@ $langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
 
-$level=1;
-$offset=GETPOST('offset');
-$objectArray=getTStobeApproved($level,$offset);/*fixme: create function*/
-$timesheetUser=reset($objectArray);
-$curUser=$firstTimesheetUser->userId;
-$nextUser=$firstTimesheetUser->userId;
-$i=0;
-if(is_object($firstTimesheetUser)){
-    
-    foreach($objectArray as $key=> $timesheetUser){
-        if($firstTimesheetUser->userId==$timesheetUser->userId){
-            $i++;//use for the offset
-        }else{
-            $nextUser=$timesheetUser->userId;
-            break;
-        }
-    }
-}
-$offset+=$i;
-$timesheetUser= new timesheetUser($db,0);
+
 
 /*******************************************************************
 * ACTIONS
@@ -111,13 +92,22 @@ if($action== 'submit'){
 	
 */
 }
-
-
 if(!empty($timestamp)){
-       unset($_SESSION['timesheetUser'][$timestamp]);
+       unset($_SESSION['timesheetAp'][$timestamp]);
 }
-$timesheetUser->fetch($this->id);
-$timesheetUser->fetchAll($this->yearWeek,2);
+$timestamp=time();
+$level=5+1;
+$objectArray=getTStobeApproved($level,$offset,'team',$userId);/*fixme: create function*/
+$level-=1; // 
+$timesheetUser=reset($objectArray);
+$curUser=$firstTimesheetUser->userId;
+$nextUser=$firstTimesheetUser->userId;
+$i=0;
+
+
+
+
+
 /***************************************************
 * VIEW
 *
@@ -136,18 +126,35 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 
 //tmstp=time();
-
-
+if(is_object($firstTimesheetUser)){
+    $Form .=$timesheetUser->getHTMLFormHeader($ajax);
+    foreach($objectArray as $key=> $timesheetUser){
+        if($firstTimesheetUser->userId==$timesheetUser->userId){
+            $i++;//use for the offset
+            if($i<$level){
+                $Form .=$timesheetUser->userName." - ".$timesheetUser->yearWeek;
+                $Form .=$timesheetUser->getHTMLHeader(false);
+                $Form .=$timesheetUser->getHTMLHolidayLines(false);
+                //$Form .=$timesheetUser->getHTMLTotal('totalT');
+                $Form .=$timesheetUser->getHTMLtaskLines(false);
+                $Form .=$timesheetUser->getHTMLTotal();/*FIXME*/
+                $_SESSION['timesheetAp'][$timestamp]['tsUser'][$timesheetUser->id]=array('status'=>$timesheetUser->status,'Target'=>$timesheetUser->target);
+                $Form .= '<input type="radio"  name="approval" value="'.$langs->trans('Approved').'" class="butAction">'."\n";/*FIXME*/
+                $Form .= '<input type="radio"  name="approval" value="'.$langs->trans('Rejected').'" class="butAction">'."\n";/*FIXME*/
+                $Form .= '<input type="radio"  name="approval" value="'.$langs->trans('Submitted').'" checked class="butAction">'."\n";/*FIXME*/
+                $Form .= '</br>'."\n";
+            }
+        }else{
+            $nextUser=$timesheetUser->userId;
+            break;
+        }
+    }
+}
+$offset+=$i;
+$Form .=$timesheetUser->getHTMLFooterAp($offset,$timestamp);
 $ajax=false;
 
-$Form .=$timesheetUser->userName." - ".$timesheetUser->yearWeek;
-$Form .=$timesheetUser->getHTMLFormHeader($ajax);
-$Form .=$timesheetUser->getHTMLHeader($ajax);
-$Form .=$timesheetUser->getHTMLHolidayLines($ajax);
-$Form .=$timesheetUser->getHTMLTotal('totalT');
-$Form .=$timesheetUser->getHTMLtaskLines($ajax);
-$Form .=$timesheetUser->getHTMLTotal('totalB');
-$Form .=$timesheetUser->getHTMLFooterAp($ajax);
+
 
 //Javascript
 $timetype=TIMESHEET_TIME_TYPE;
@@ -161,4 +168,58 @@ print $Form;
 // End of page
 llxFooter();
 $db->close();
+
+function getTStobeApproved($level,$offset,$role,$userid){
+global $db;
+        //if($role='team')
+            $subId=get_subordinate($db,$userid, 2,'',$role);
+
+        $sql ="SELECT DISTINCT rowid,fk_userId,year_week_date ";
+        $sql.=" FROM ".MAIN_DB_PREFIX."timesheet_user "; 
+        $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
+        $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
+        $sql.=" WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$userid."' ";
+        dol_syslog("timesheet::getTasksTimesheet reducted sql=".$sql, LOG_DEBUG);
+     
+   
+    $resql=$this->db->query($sql);
+    if ($resql)
+    {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            // Loop on each record found, so each couple (project id, task id)
+            while ($i < $num)
+            {
+                    $error=0;
+                    $obj = $this->db->fetch_object($resql);
+                    $tasksList[$i] = NEW timesheet($this->db, $obj->taskid);
+                    $tasksList[$i]->listed=$obj->listed;
+                    $i++;
+            }
+            $this->db->free($resql);
+             $i = 0;
+            if(isset($this->taskTimesheet))unset($this->taskTimesheet);
+             foreach($tasksList as $row)
+            {
+                    dol_syslog("Timesheet::timesheetUser.class.php task=".$row->id, LOG_DEBUG);
+                    $row->getTaskInfo();
+                    if($this->status=="DRAFT" || $this->status=="REJECTED"){
+                        $row->getActuals($this->yearWeek,$userid); 
+                    }else{
+                        //$row->getActuals($this->yearWeek,$userid); 
+                        $row->getActualsbyID($this->project_tasktime_list); // FIX ME
+                    }
+                    //unset($row->db);
+                    $this->taskTimesheet[]=  $row->serialize();                   
+            }
+
+                
+                return 1;
+
+    }else
+    {
+            dol_print_error($this->db);
+            return -1;
+    }
+}
 ?>

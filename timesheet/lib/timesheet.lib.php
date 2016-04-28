@@ -30,42 +30,47 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  *  @param    array(int)/int        $id    		    array of manager id 
  *  @param     int              	$depth          depth of the recursivity
  *  @param    array(int)/int 		$ecludeduserid  exection that shouldn't be part of the result ( to avoid recursive loop)
+ *  @param     string              	$role           team will look for organigram subordinate, project for project subordinate
  *  @param     int              	$entity         entity where to look for
   *  @return     string                                                   html code
  */
-function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1'){
+function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='team',$entity='1'){
     if($userid=="")
     {
         return array();
     }
-
-    $sql="SELECT usr.rowid FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
+    $sql['project'][0] ='SELECT DISTINCT fk_socpeople as userid FROM '.MAIN_DB_PREFIX.'element_contact';
+    $sql['project'][0] .= ' WHERE element_id in (SELECT element_id';
+    $sql['project'][0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact';
+    $sql['project'][0] .= ' WHERE (fk_c_type_contact="160" OR fk_c_type_contact="180")';
+    $sql['project'][0] .= ' AND fk_socpeople in (';
+    $sql['project'][2] = ')) AND fk_socpeople not in (';
+    $sql['project'][4] = ')';
+    $sql['team'][0]='SELECT usr.rowid as userid FROM '.MAIN_DB_PREFIX.'user AS usr WHERE';
+    $sql['team'][0].=' usr.fk_user in (';
+    $sql['team'][2]=') AND usr.rowid not in (';
+    $sql['team'][4] = ')';
+    $idlist='';
     if(is_array($userid)){
         $ecludeduserid=array_merge($userid,$ecludeduserid);
-        $sql.=' usr.fk_user in (';
-        foreach($userid as $id)
-        {
-            $sql.='"'.$id.'",';
-        }
-        $sql.='-999)';
+        $idlist.=implode(",", $userid);
     }else{
         $ecludeduserid[]=$userid;
-        $sql.=' usr.fk_user ="'.$userid.'"';
+        $idlist=$userid;
     }
+    $sql['team'][1]=$idlist;
+    $sql['project'][1]=$idlist;
+    $idlist='';
     if(is_array($ecludeduserid)){
-        $sql.=' AND usr.rowid not in (';
-        foreach($ecludeduserid as $id)
-        {
-            $sql.='"'.$id.'",';
-        }
-        $sql.='0)';
+        $idlist.=implode(",", $ecludeduserid);
     }else if (!empty($ecludeduserid)){
-        $sql.=' AND usr.rowid <>"'.$ecludeduserid.'"';
+        $idlist=$ecludeduserid;
     } 
-
+    $sql['team'][3]=$idlist;
+    $sql['project'][3]=$idlist;
     dol_syslog("form::get_subordinate sql=".$sql, LOG_DEBUG);
     $list=array();
-    $resql=$db->query($sql);
+    $resql=$db->query(implode($sql[$role]));
     
     if ($resql)
     {
@@ -77,7 +82,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$entity='1
             
             if ($obj)
             {
-                $list[]=$obj->rowid;        
+                $list[]=$obj->userid;        
             }
             $i++;
         }

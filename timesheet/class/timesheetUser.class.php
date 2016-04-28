@@ -43,11 +43,9 @@ class timesheetUser extends CommonObject
 	var $userId;
 	var $year_week_date='';
 	var $status;
-	var $status_team;
-	var $status_project;
+	var $target;
 	var $project_tasktime_list;
-	var $user_approval_team;
-	var $user_approval_project;
+	var $user_approval;
 	var $date_creation='';
 	var $date_modification='';
 	var $user_creation;
@@ -112,25 +110,25 @@ class timesheetUser extends CommonObject
     /*
  * function to load the parma from the session
  */
-function loadFromSession($timestamp){
+function loadFromSession($timestamp,$id){
 
-    $this->fetch($_SESSION['timesheetUser'][$timestamp]['id']);
+    $this->fetch($id);
     $this->timestamp=$timestamp;
-    $this->userId= $_SESSION['timesheetUser'][$timestamp]['userId'];
-    $this->yearWeek= $_SESSION['timesheetUser'][$timestamp]['yearWeek'];
-    $this->holidays=  unserialize( $_SESSION['timesheetUser'][$timestamp]['holiday']);
-    $this->taskTimesheet=  unserialize( $_SESSION['timesheetUser'][$timestamp]['taskTimesheet']);;
+    $this->userId= $_SESSION['timesheetUser'][$timestamp][$id]['userId'];
+    $this->yearWeek= $_SESSION['timesheetUser'][$timestamp][$id]['yearWeek'];
+    $this->holidays=  unserialize( $_SESSION['timesheetUser'][$timestamp][$id]['holiday']);
+    $this->taskTimesheet=  unserialize( $_SESSION['timesheetUser'][$timestamp][$id]['taskTimesheet']);;
 }
 
     /*
  * function to load the parma from the session
  */
 function saveInSession(){
-    $_SESSION['timesheetUser'][$this->timestamp]['userId']=$this->userId;
-    $_SESSION['timesheetUser'][$this->timestamp]['id']=$this->id;
-    $_SESSION['timesheetUser'][$this->timestamp]['yearWeek']=$this->yearWeek;
-    $_SESSION['timesheetUser'][$this->timestamp]['holiday']= serialize($this->holidays);
-    $_SESSION['timesheetUser'][$this->timestamp]['taskTimesheet']= serialize($this->taskTimesheet);
+    $_SESSION['timesheetUser'][$this->timestamp][$this->id]['userId']=$this->userId;
+    //$_SESSION['timesheetUser'][$this->timestamp]['id']=$this->id;
+    $_SESSION['timesheetUser'][$this->timestamp][$this->id]['yearWeek']=$this->yearWeek;
+    $_SESSION['timesheetUser'][$this->timestamp][$this->id]['holiday']= serialize($this->holidays);
+    $_SESSION['timesheetUser'][$this->timestamp][$this->id]['taskTimesheet']= serialize($this->taskTimesheet);
 }
  /*
   * funciton getTaskTimeIds will load the tasktime id from the timesheet in case of draft timsesheet uesr
@@ -157,7 +155,7 @@ function getSQLfetchtask(){
  *  @return     array(string)                                             array of timesheet (serialized)
  */
  function fetchTaskTimesheet($userid=''){     
-    
+
     if($userid==''){$userid=$this->userId;}
     $whiteList=array();
     $staticWhiteList=new Timesheetwhitelist($this->db);
@@ -178,7 +176,7 @@ function getSQLfetchtask(){
         $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
         $sql.=" WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$userid."' ";
         if(TIMESHEET_HIDE_DRAFT=='1'){
-             $sql.=' AND prj.fk_statut="1" ';
+             $sql.=' AND prj.fk_statut<>"0" ';
         }
         $sql.=' AND (prj.datee>='.$this->db->idate($datestart).' OR prj.datee IS NULL)';
         $sql.=' AND (prj.dateo<='.$this->db->idate($datestop).' OR prj.dateo IS NULL)';
@@ -315,7 +313,7 @@ function GetTimeSheetXML()
  */
  function getHTMLHeader($ajax=false){
      global $langs;
-    $html="\n<table id=\"timesheetTable\" class=\"noborder\" width=\"100%\">\n";
+    $html="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
 
      $html.='<tr class="liste_titre" id="">'."\n";
      
@@ -333,10 +331,11 @@ function GetTimeSheetXML()
         $html.="\t".'<th width="60px">'.$langs->trans(date('l',$curDay)).'<br>'.date('d/m/y',$curDay)."</th>\n";
     }
      $html.="</tr>\n";
-     $html.='<tr id="hiddenParam" style="display:none;"><td colspan="'.($this->headers.lenght+7).'"> ';
+     $html.='<tr id="hiddenParam" style="display:none;">';
+     $html.= '<td colspan="'.($this->headers.lenght+7).'"> ';
     $html .= '<input type="hidden" name="timestamp" value="'.$this->timestamp."\"/>\n";
     $html .= '<input type="hidden" name="yearWeek" value="'.$this->yearWeek.'" />';  
-   // $html .= '<input type="hidden" name="submitTs" value="false" />'; 
+     $html .= '<input type="hidden" name="tsUserId" value="'.$this->id.'" />'; 
     $html .='</td></tr>';
 
      return $html;
@@ -358,25 +357,22 @@ function GetTimeSheetXML()
  }
   /* function to genegate ttotal line
  * 
-  *  @param    array(string)           $headers            array of the header to show
- *  @param    array(int)              	$headersWidth    array defining the header width
- *  @param     int              	$yearWeek           timesheetweek
- *  @param     int              	$timestamp         timestamp
+  *  @param     string           $nameId            html name of the line
   *  @return     string                                                   html code
  */
- function getHTMLTotal($nameId){
+ function getHTMLTotal(){
 
-    $html .="<tr id='{$nameId}'>\n";
+    $html .="<tr>\n";
     $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
     for ($i=0;$i<7;$i++)
     {
-       $html .="<th><div id=\"{$nameId}[{$i}]\">&nbsp;</div></th>";
+       $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>";
      }
     $html .='</tr>';
     return $html;
      
  }
- 
+
   /* function to genegate the timesheet table header
  * 
   *  @param    array(string)           $headers            array of the header to show
@@ -390,11 +386,12 @@ function GetTimeSheetXML()
     //form button
     $html .= '</table>';
     $html .= '<div class="tabsAction">';
-    if($this->status=="DRAFT"){
+     $isOpenSatus=($this->status=="DRAFT" || $this->status=="CANCELLED"|| $this->status=="REJECTED");
+    if($isOpenSatus){
         $html .= '<input type="submit" class="butAction" name="save" value="'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
         $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
-        $html .= '<a class="butActionDelete" href="'.$PHP_SELF.'?action=list&yearweek='.$this->yearWeek.'">'.$langs->trans('Cancel').'</a>';
+        $html .= '<a class="butActionDelete" href="?action=list&yearweek='.$this->yearWeek.'">'.$langs->trans('Cancel').'</a>';
 
     }else if($this->status=="SUBMITTED")$html .= '<input type="submit" class="butAction" name="recall" " value="'.$langs->trans('Recall')."\" />\n";
 
@@ -417,18 +414,17 @@ function GetTimeSheetXML()
  *  @param     int              	$timestamp         timestamp
   *  @return     string                                                   html code
  */
- function getHTMLFooterAp($ajax=false){
+ function getHTMLFooterAp($offest,$timestamp){
      global $langs;
     //form button
     $html .= '</table>';
-    $html .= '<div class="tabsAction">';
-    if($this->status=="SUBMITTED"){
-        $html .= '<input type="submit" class="butAction" name="Approve" value="'.$langs->trans('Approve')."\" />\n";
-        //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
-        $html .= '<input type="submit" class="butAction" name="Reject"  value="'.$langs->trans('Reject')."\" />\n";
-        $html .= '<a class="butActionDelete" href="'.$PHP_SELF.'?id='.$this->id.'">'.$langs->trans('Cancel').'</a>';
+    $html .= '<input type="hidden" name="timestamp" value="'.$timestamp."\"/>\n";
+   $html .= '<input type="hidden" name="offset" value="'.$offset."\"/>\n";
 
-    }else if($this->status=="SUBMITTED")$html .= '<input type="submit" class="butAction" name="recall" " value="'.$langs->trans('Recall')."\" />\n";
+    $html .= '<div class="tabsAction">';
+    $html .= '<input type="submit" class="butAction" name="Send" value="'.$langs->trans('Submit')."\" />\n";
+    //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
+    $html .= '<a class="butActionDelete" href="?id='.$this->id.'">'.$langs->trans('Next').'</a>';
 
     $html .= '</div>';
     $html .= "</form>\n";
@@ -454,7 +450,8 @@ function GetTimeSheetXML()
                 $row=new timesheet($this->db);
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
-                $Lines.=$row->getFormLine( $this->yearWeek,$i,$this->headers,$this->whitelistmode,$this->status);
+                $Lines.=$row->getFormLine( $this->yearWeek,$i,$this->headers,$this->whitelistmode,$this->status,$this->id);
+				$i++;
             }
         }
         
@@ -470,7 +467,7 @@ function GetTimeSheetXML()
         $i=0;
         $Lines='';
         if(!$ajax){
-            $Lines.=$this->holidays->getHTMLFormLine( $this->yearWeek,$this->headers);
+            $Lines.=$this->holidays->getHTMLFormLine( $this->yearWeek,$this->headers,$this->id);
         
         }
         
@@ -531,9 +528,9 @@ function getHTMLNavigation($optioncss, $ajax=false){
     dol_syslog('Entering in Timesheet::timesheetUser.php::updateActuals()');     
     $idList='';
    // $tmpRet=0;
-    $_SESSION['timeSpendCreated']=0;
-    $_SESSION['timeSpendDeleted']=0;
-    $_SESSION['timeSpendModified']=0;
+    $_SESSION['timesheetUser'][$this->timestamp]['timeSpendCreated']=0;
+    $_SESSION['timesheetUser'][$this->timestamp]['timeSpendDeleted']=0;
+    $_SESSION['timesheetUser'][$this->timestamp]['timeSpendModified']=0;
         /*
          * For each task store in matching the session timestamp
          */
@@ -602,7 +599,7 @@ function get_userName(){
  *  @param      int               $userid        change the status for this userid 
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
-    Public function setAppouved($yearWeek,$userid){
+    Public function setAppouved(){
         
     }
     
@@ -613,7 +610,7 @@ function get_userName(){
  *  @param      int               $userid        change the status for this userid 
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
-    Public function setRejected($yearWeek,$userid){
+    Public function setRejected(){
         
     }
     
@@ -624,7 +621,7 @@ function get_userName(){
   *  @param      int               $userid        change the status for this userid 
  *  @return     int      		   	 <0 if KO, Id of created object if OK
 */
-    Public function setPending($yearWeek,$userid){
+    Public function setPending(){
         
     }
 
@@ -639,11 +636,9 @@ function get_userName(){
 		if (isset($this->userId)) $this->userId=trim($this->userId);
 		if (isset($this->year_week_date)) $this->year_week_date=trim($this->year_week_date);
 		if (isset($this->status)) $this->status=trim($this->status);
-		if (isset($this->status_team)) $this->status_team=trim($this->status_team);
-		if (isset($this->status_project)) $this->status_project=trim($this->status_project);
+		if (isset($this->target)) $this->target=trim($this->target);
 		if (isset($this->project_tasktime_list)) $this->project_tasktime_list=trim($this->project_tasktime_list);
-		if (isset($this->user_approval_team)) $this->user_approval_team=trim($this->user_approval_team);
-		if (isset($this->user_approval_project)) $this->user_approval_project=trim($this->user_approval_project);
+		if (isset($this->user_approval)) $this->user_approval=trim($this->user_approval);
 		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
@@ -660,11 +655,9 @@ function get_userName(){
 		$sql.= 'fk_userId,';
 		$sql.= 'year_week_date,';
 		$sql.= 'status,';
-		$sql.= 'status_team,';
-		$sql.= 'status_project,';
+		$sql.= 'target,';
 		$sql.= 'fk_project_tasktime_list,';
-		$sql.= 'fk_user_approval_team,';
-		$sql.= 'fk_user_approval_project,';
+		$sql.= 'fk_user_approval,';
 		$sql.= 'date_creation,';
 		$sql.= 'fk_user_creation';
 
@@ -674,11 +667,9 @@ function get_userName(){
 		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
 		$sql.=' '.(! isset($this->year_week_date) || dol_strlen($this->year_week_date)==0?'NULL':'"'.$this->db->idate($this->year_week_date).'"').',';
 		$sql.=' '.(! isset($this->status)?'"DRAFT"':'"'.$this->status.'"').',';
-		$sql.=' '.(! isset($this->status_team)?'"DRAFT"':'"'.$this->status_team.'"').',';
-		$sql.=' '.(! isset($this->status_project)?'"DRAFT"':'"'.$this->status_project.'"').',';
+		$sql.=' '.(! isset($this->target)?'"DRAFT"':'"'.$this->target.'"').',';
 		$sql.=' '.(! isset($this->project_tasktime_list)?'NULL':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
-		$sql.=' '.(! isset($this->user_approval_team)?'NULL':'"'.$this->user_approval_team.'"').',';
-		$sql.=' '.(! isset($this->user_approval_project)?'NULL':'"'.$this->user_approval_project.'"').',';
+		$sql.=' '.(! isset($this->user_approval)?'NULL':'"'.$this->user_approval.'"').',';
 		$sql.=' NOW() ,';
 		$sql.=' "'.$user->id.'"'; //fixme 3.5
 
@@ -742,11 +733,10 @@ function get_userName(){
 		$sql.=' t.fk_userId,';
 		$sql.=' t.year_week_date,';
 		$sql.=' t.status,';
-		$sql.=' t.status_team,';
-		$sql.=' t.status_project,';
+		$sql.=' t.target,';
 		$sql.=' t.fk_project_tasktime_list,';
-		$sql.=' t.fk_user_approval_team,';
-		$sql.=' t.fk_user_approval_project,';
+		$sql.=' t.fk_user_approval,';
+
 		$sql.=' t.date_creation,';
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
@@ -770,11 +760,9 @@ function get_userName(){
 				$this->userId = $obj->fk_userId;
 				$this->year_week_date = $this->db->jdate($obj->year_week_date);
 				$this->status = $obj->status;
-				$this->status_team = $obj->status_team;
-				$this->status_project = $obj->status_project;
+				$this->target = $obj->target;
 				$this->project_tasktime_list = $obj->fk_project_tasktime_list;
-				$this->user_approval_team = $obj->fk_user_approval_team;
-				$this->user_approval_project = $obj->fk_user_approval_project;
+				$this->user_approval = $obj->fk_user_approval;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->user_creation = $obj->fk_user_creation;
@@ -808,11 +796,9 @@ function get_userName(){
 		$sql.=' t.fk_userId,';
 		$sql.=' t.year_week_date,';
 		$sql.=' t.status,';
-		$sql.=' t.status_team,';
-		$sql.=' t.status_project,';
+		$sql.=' t.target,';
 		$sql.=' t.fk_project_tasktime_list,';
-		$sql.=' t.fk_user_approval_team,';
-		$sql.=' t.fk_user_approval_project,';
+		$sql.=' t.fk_user_approval,';
 		$sql.=' t.date_creation,';
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
@@ -822,6 +808,7 @@ function get_userName(){
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
         $sql.= " WHERE t.year_week_date = '".$this->db->idate($this->year_week_date)."'";
+		$sql.= " AND t.fk_userId = '".$this->userId."'";
        # $sql .= "AND WEEKOFYEAR(ptt.year_week_date)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
 
@@ -840,11 +827,9 @@ function get_userName(){
 				$this->userId = $obj->fk_userId;
 				$this->year_week_date = $this->db->jdate($obj->year_week_date);
 				$this->status = $obj->status;
-				$this->status_team = $obj->status_team;
-				$this->status_project = $obj->status_project;
+				$this->target = $obj->target;
 				$this->project_tasktime_list = $obj->fk_project_tasktime_list;
-				$this->user_approval_team = $obj->fk_user_approval_team;
-				$this->user_approval_project = $obj->fk_user_approval_project;
+				$this->user_approval = $obj->fk_user_approval;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->user_creation = $obj->fk_user_creation;
@@ -853,11 +838,9 @@ function get_userName(){
                 
             }else{
 				unset($this->status) ;
-				unset($this->status_team) ;
-				unset($this->status_project );
+				unset($this->target) ;
 				unset($this->project_tasktime_list);
-				unset($this->user_approval_team );
-				unset($this->user_approval_project);
+				unset($this->user_approval );
 				unset($this->date_creation  );
 				unset($this->date_modification );
 				unset($this->user_creation );
@@ -894,11 +877,9 @@ function get_userName(){
 		if (isset($this->userId)) $this->userId=trim($this->userId);
 		if (isset($this->year_week_date)) $this->year_week_date=trim($this->year_week_date);
 		if (isset($this->status)) $this->status=trim($this->status);
-		if (isset($this->status_team)) $this->status_team=trim($this->status_team);
-		if (isset($this->status_project)) $this->status_project=trim($this->status_project);
+		if (isset($this->target)) $this->target=trim($this->target);
 		if (isset($this->project_tasktime_list)) $this->project_tasktime_list=trim($this->project_tasktime_list);
-		if (isset($this->user_approval_team)) $this->user_approval_team=trim($this->user_approval_team);
-		if (isset($this->user_approval_project)) $this->user_approval_project=trim($this->user_approval_project);
+		if (isset($this->user_approval)) $this->user_approval=trim($this->user_approval);
 		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
@@ -912,14 +893,12 @@ function get_userName(){
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         
-		$sql.=' fk_userId='.(empty($this->userId)!=0 ? 'null':'"'.$this->userId.'"').',';
+		$sql.=' fk_userId='.(empty($this->userId) ? 'null':'"'.$this->userId.'"').',';
 		$sql.=' year_week_date='.(dol_strlen($this->year_week_date)!=0 ? '"'.$this->db->idate($this->year_week_date).'"':'null').',';
-		$sql.=' status='.(empty($this->status)!=0 ? 'null':'"'.$this->status.'"').',';
-		$sql.=' status_team='.(empty($this->status_team)!=0 ? 'null':'"'.$this->status_team.'"').',';
-		$sql.=' status_project='.(empty($this->status_project)!=0 ? 'null':'"'.$this->status_project.'"').',';
-		$sql.=' fk_project_tasktime_list='.(empty($this->project_tasktime_list)!=0 ? 'null':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
-		$sql.=' fk_user_approval_team='.(empty($this->user_approval_team)!=0 ? 'null':'"'.$this->user_approval_team.'"').',';
-		$sql.=' fk_user_approval_project='.(empty($this->user_approval_project)!=0 ? 'null':'"'.$this->user_approval_project.'"').',';
+		$sql.=' status='.(empty($this->status)? 'null':'"'.$this->status.'"').',';
+		$sql.=' target='.(empty($this->target) ? 'null':'"'.$this->target.'"').',';
+		$sql.=' fk_project_tasktime_list='.(empty($this->project_tasktime_list) ? 'null':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
+		$sql.=' fk_user_approval='.(empty($this->user_approval) ? 'null':'"'.$this->user_approval.'"').',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification="'.$user->id.'"';
 
@@ -1138,11 +1117,9 @@ function get_userName(){
 		$this->userId='';
 		$this->year_week_date='';
 		$this->status='';
-		$this->status_team='';
-		$this->status_project='';
+		$this->target='';
 		$this->project_tasktime_list='';
-		$this->user_approval_team='';
-		$this->user_approval_project='';
+		$this->user_approval='';
 		$this->date_creation='';
 		$this->date_modification='';
 		$this->user_creation='';

@@ -26,6 +26,7 @@ function refreshTimesheet(Wlmode){
         if (timesheet.length==0)throw "Bad XML: no timesheet Node";
         var timestamp=timesheet[0].getAttribute('timestamp');
         var yearWeek=timesheet[0].getAttribute('yearWeek');
+        var id=timesheet[0].getAttribute('id');/*FIXME not returned yet*/
         var prevWeek=timesheet[0].getAttribute('prevWeek');
         var nextWeek=timesheet[0].getAttribute('nextWeek');
         var timetype=timesheet[0].getAttribute('timetype');
@@ -34,7 +35,7 @@ function refreshTimesheet(Wlmode){
         var days = xmlDoc.getElementsByTagName("days");
         var tasks=  xmlDoc.getElementsByTagName("userTs");
         //get the DOM table
-	var MT=document.getElementById("timesheetTable");
+	var MT=document.getElementById("timesheetTable_"+id);
         for(j=0;j<actionMessage.length;j++){
             var style=actionMessage[j].getAttribute('style');
             var msg=actionMessage[j].childNodes[0].nodeValue;
@@ -54,7 +55,7 @@ function refreshTimesheet(Wlmode){
         // update the hidden param
         MT.rows[1].cells[0].innerHTML=generateHiddenParam(timestamp,yearWeek);
         
-	//delete the old lines
+	//delete the old lines /*FIXME, not woking anymore*/
 	var idxT = document.getElementById("totalT").rowIndex;
 	var idxB = document.getElementById("totalB").rowIndex;
 	for (i=idxT+1; i<idxB;i++)
@@ -237,10 +238,12 @@ function toDateHandler(){
 
 //update both total lines day 0-6, mode hour/day
 
-function updateTotal(days,mode){
+function updateTotal(ts,days,mode){
 	try{
-            var curDay = document.getElementsByClassName('time4day['+days+']')
+            var curDay = document.getElementsByClassName('time4day['+ts+']['+days+']');
             var nbline = curDay.length;
+            var TotalList=document.getElementsByClassName('Total['+ts+']['+days+']');
+            var nblineTotal = TotalList.length;
             if(mode=="hours")
             {
                 var total = new Date(0);
@@ -266,8 +269,11 @@ function updateTotal(days,mode){
                         total.setMinutes(total.getMinutes()+taskTime.getMinutes());
                         }
                }
-		document.getElementById('totalT['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
-		document.getElementById('totalB['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
+                for (var i=0;i<nblineTotal;i++)
+                {
+                    TotalList[i].innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
+                }
+                
 		//addText(,total.getHours()+':'+total.getMinutes());
             }else
             {
@@ -289,8 +295,11 @@ function updateTotal(days,mode){
                         }
                     }
 		}
-		document.getElementById('totalDay['+days+']').innerHTML = total;
-		document.getElementById('totalDayb['+days+']').innerHTML = total;
+                for (var i=0;i<nbline;i++)
+                {
+                    TotalList[i].innerHTML =total;
+                }
+
             }
 	}
 	catch(err) {
@@ -300,8 +309,11 @@ function updateTotal(days,mode){
 
 //function to update all the totals
 function updateAll(timetype){
-	for(i=0;i<7;i++){
-		updateTotal(i,timetype);
+	var tsUser = document.getElementsByName('tsUserId')
+    for(i=0;i<7;i++){
+             for(j=0;j<tsUser.length;j++){
+		updateTotal(tsUser[j].value,i,timetype);
+            }
 	}
 }
 

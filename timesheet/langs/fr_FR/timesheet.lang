@@ -60,14 +60,37 @@ modeNone =Toutes les tâches
 dropdownAjaxDesc= Désactiver l'ajax pour les lists déroulantes Dolibarr (en cas de problème pour entrer un nouveau favoris)
 dropdownAjax = Déactiver l'Ajax des dropdown
 #Color
-submitted= Submitted
-submittedColorDesc= Color for the holiday & timesheet submitted for approval
-approved= Approved
-approvedColorDesc= Color for the holiday & timesheet approved
-cancelled= Cancelled
-cancelledColorDesc= Color for the holiday & timesheet canceled
-rejected= Rejected
-rejectedColorDesc= Color for the holiday & timesheet rejected by the approver
-draft= Draft
-draftColorDesc= Color for the draft  holiday & timesheet 
+submitted= Envoyé
+submittedColorDesc= Couleur des vacances et feuillles de temps envoyé pour validation
+approved= Approuvé
+approvedColorDesc= Couleur des vacances et feuillles de temps approuvé
+cancelled= Annuler
+cancelledColorDesc= Couleur des vacances et feuillles de temps annulé
+rejected= Rejeté
+rejectedColorDesc= CCouleur des vacances et feuillles de temps rejeté
+draft= brouillon
+draftColorDesc= Couleur des brouillon de vacance
+#holiday
+addholidaytime= Ajouté le temps vacance
+addholidaytimeDesc= Ajouté des heures au total des timesheet lorqu'il y a des vacances 
+Holiday= Vacance
+#timesheet approval
+Timesheetapproval= Approbation des feuillles de temps
+Adminapproval = Acces administateur
+Timesheetuser= Feuille de temps d'utilisateur
+Yearweekdate= Date de référence
+Target= Type d'approbation
+Projecttasktimelist=listes des tasktime id 
+Userapproval= Approbation de
+DRAFT = Brouillon
+SUBMITTED = Envoyé
+REJECTED = Rejeté
+APPROVED = Approuvé
+CANCELLED = Annulé
+timesheetRecalled= feuille de temps reouverte
+timesheetNotRecalled= feuille de temps non reouverte
+InternalError= Erreur interne
+timesheetSumitted= feuille de temps envoyé pour approbation
+Recall= Reouvrir
+Submit = Envoyer
 

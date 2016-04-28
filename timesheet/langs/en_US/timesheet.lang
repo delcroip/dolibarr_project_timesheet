@@ -70,3 +70,25 @@ rejected= Rejected
 rejectedColorDesc= Color for the holiday & timesheet rejected by the approver
 draft= Draft
 draftColorDesc= Color for the draft  holiday & timesheet 
+#holiday
+addholidaytime= Add up holiday time
+addholidaytimeDesc= Add up the holiday time to the timesheet time in the total line
+Holiday= Holiday
+#timesheet approval
+Timesheetapproval= Timesheet approval
+Adminapproval = Admin access
+Timesheetuser= User timesheet 
+Yearweekdate= Reference date
+Target= approval type
+Projecttasktimelist=Tasktime id list
+Userapproval= Approved by 
+DRAFT = Draft
+SUBMITTED = Submitted
+REJECTED = Rejected
+APPROVED = Approved
+timesheetRecalled= Timesheet recalled succesfully 
+timesheetNotRecalled= Timesheet not recalled
+InternalError= internal error
+timesheetSumitted= Timesheet submitted
+Recall= Recall
+Submit= Submit

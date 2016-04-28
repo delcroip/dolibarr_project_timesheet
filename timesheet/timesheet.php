@@ -90,48 +90,47 @@ $timesheetUser= new timesheetUser($db,$userid);
 *
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
+
 if($action== 'submit'){
-        if (isset($_SESSION['timesheetUser'][$timestamp]))
+        if(isset($_SESSION['timesheetUser'][$timestamp]))
         {
-            $timesheetUser->loadFromSession($timestamp);
-            //$timesheetUser->db=$db;
-           // var_dump(unserialize($timesheetUser->taskTimesheet[0])->tasklist);
-            if (!empty($_POST['task']))
-            {                   
-                if(isset($_POST['submit'])){
-                    $timesheetUser->status="SUBMITTED";
-                    $ret=0;
-                 }          
-                if(isset($_POST['recall'])){ /*FIXME: should happen*/
-                    $timesheetUser->status="DRAFT";
-                    $ret=0;
-                }
-                $ret=$timesheetUser->updateActuals($_POST['task']);
-                //$ret =postActuals($db,$user,$_POST['task'],$timestamp);
-                if(!empty($ret))
-                {
-                    if(isset($_POST['submit']))setEventMessage($langs->transnoentitiesnoconv("timesheetSumitted"));
-                    if($_SESSION['timesheetUser'][$timestamp]['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['timesheetUser'][$timestamp]['timeSpendCreated']);
-                    if($_SESSION['timesheetUser'][$timestamp]['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['timesheetUser'][$timestamp]['timeSpendModified']);
-                    if($_SESSION['timesheetUser'][$timestamp]['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['timesheetUser'][$timestamp]['timeSpendDeleted']);
-                }
-                else
-                {
-                    if($_SESSION['timesheetUser'][$timestamp]['updateError']){
-                        setEventMessage( $langs->transnoentitiesnoconv("InternalError").':'.$ret,'errors');
-                    }else {
-                        setEventMessage($langs->transnoentitiesnoconv("NothingChanged"),'errors');
-                                                }
-                }        
+            if(isset($_POST['task']))
+			{
+				 foreach($_POST['task'] as $key => $tasktab){
+					 $timesheetUser->loadFromSession($timestamp,$key);                  
+					 if(isset($_POST['submit'])){
+						 $timesheetUser->status="SUBMITTED";
+						 $ret=0;
+					 }          
+					 $ret=$timesheetUser->updateActuals($tasktab);
+
+                		//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
+					 if(!empty($ret))
+					 {
+						 if(isset($_POST['submit']))setEventMessage($langs->transnoentitiesnoconv("timesheetSumitted"));
+						 if($_SESSION['timesheetUser'][$timestamp]['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['timesheetUser'][$timestamp]['timeSpendCreated']);
+						 if($_SESSION['timesheetUser'][$timestamp]['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['timesheetUser'][$timestamp]['timeSpendModified']);
+						 if($_SESSION['timesheetUser'][$timestamp]['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['timesheetUser'][$timestamp]['timeSpendDeleted']);
+					 }else
+					 {
+						 if($_SESSION['timesheetUser'][$timestamp]['updateError']){
+							 setEventMessage( $langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" Update failed").':'.$ret,'errors');
+						 }else {
+							 setEventMessage($langs->transnoentitiesnoconv("NothingChanged"),'warnings');
+						 }
+					 }
+				 }
             }else if(isset($_POST['recall'])){
-                $timesheetUser->status="DRAFT";
+				$timesheetUser->loadFromSession($timestamp,$_POST['tsUserId']); /*FIXME to support multiple TS sent*/
+				$timesheetUser->status="DRAFT";
                 $ret=$timesheetUser->update($user);
                 if($ret>0)setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
                 else setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"),'errors');
-            }else
+            }else{
                     setEventMessage( $langs->transnoentitiesnoconv("NoTaskToUpdate"),'errors');
+            }
         }else
-                setEventMessage( $langs->transnoentitiesnoconv("InternalError"),'errors');
+                setEventMessage( $langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" : timestamp missmatch"),'errors');
 
 }
 
@@ -168,11 +167,11 @@ $Form .=$timesheetUser->getHTMLHeader($ajax);
 
 $Form .=$timesheetUser->getHTMLHolidayLines($ajax);
 
-$Form .=$timesheetUser->getHTMLTotal('totalT');
+$Form .=$timesheetUser->getHTMLTotal();
 
 $Form .=$timesheetUser->getHTMLtaskLines($ajax);
 
-$Form .=$timesheetUser->getHTMLTotal('totalB');
+$Form .=$timesheetUser->getHTMLTotal();
 
 $Form .=$timesheetUser->getHTMLFooter($ajax);
 

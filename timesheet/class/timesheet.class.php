@@ -36,6 +36,9 @@ class timesheet extends Task
         private $taskParentDesc;
         private $companyName;
         private $companyId;
+		private $startDatePjct;
+		private $stopDatePjct;
+		private $pStatus;
         private $hidden; // in the whitelist 
 	
 
@@ -57,7 +60,7 @@ class timesheet extends Task
     {
         $Company=strpos(TIMESHEET_HEADERS, 'Company')===0;
         $taskParent=strpos(TIMESHEET_HEADERS, 'TaskParent')>0;
-        $sql ='SELECT p.rowid,pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective';
+        $sql ='SELECT p.rowid,p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo, pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective';
         if(TIMESHEET_HIDE_REF==1){
             $sql .= ',p.title as title, pt.label as label';
             if($taskParent)$sql .= ',pt.fk_task_parent,ptp.label as taskParentLabel';	        	
@@ -101,7 +104,11 @@ class timesheet extends Task
                         $this->date_end			= $this->db->jdate($obj->datee);
                         $this->duration_effective           = $obj->duration_effective;		// total of time spent on this task
                         $this->planned_workload             = $obj->planned_workload;
-                        if($taskParent){
+                        $this->startDatePjct=$this->db->jdate($obj->pdateo);
+			$this->stopDatePjct=$this->db->jdate($obj->pdatee);
+			$this->pStatus=$obj->pstatus;
+                        
+			if($taskParent){
                             $this->fk_task_parent               = $obj->fk_task_parent;
                             $this->taskParentDesc               =$obj->taskParentLabel;
                         }
@@ -234,9 +241,11 @@ class timesheet extends Task
  *  @param     int              	$line number         used in the form processing
  *  @param    string              	$headers             header to shows
  *  @param     int              	$whitelistemode           0-whiteliste,1-blackliste,2-non impact
+ *  @param    string              	$status                 status of the Timesheet user
+ *  @param    string              	$usUserId             id that will be used for the total
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getFormLine( $yearWeek,$lineNumber,$headers,$whitelistemode,$status="DRAFT")
+       public function getFormLine( $yearWeek,$lineNumber,$headers,$whitelistemode,$status="DRAFT",$tsUserId)
     {
            global $statusTsColor;
        if(empty($yearWeek)||empty($headers))
@@ -247,9 +256,8 @@ class timesheet extends Task
     $hidezeros=TIMESHEET_HIDE_ZEROS;
     $hidden=false;
     if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
-    
-
-        $html= '<tr '.(($hidden)?'style="display:none;"':'').' class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
+        $linestyle=(($hidden)?'display:none;':'').(($this->pStatus == "2")?'background:#'.TIMESHEET_BC_FREEZED.'";':'');
+        $html= '<tr '.((!empty($linestyle))?'style="'.$linestyle.'"':'').' class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
         //title section
          foreach ($headers as $key => $title){
              $html.="\t<th align=\"left\">";
@@ -306,27 +314,34 @@ class timesheet extends Task
                 }else {
                     $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
                 }
+			 	$startDates=($this->date_start>$this->startDatePjct )?$this->date_start:$this->startDatePjct;
+			 	$stopDates=(($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct==0)?$this->date_end:$this->stopDatePjct;
                 if($isOpenSatus){
-                    $isOpen=$isOpenSatus && (empty($this->date_start) || ($this->date_start <= $today +86399));
-                    $isOpen= $isOpen && (empty($this->date_end) ||($this->date_end >= $today ));
-             
+                    $isOpen=$isOpenSatus && (($startDates==0) || ($startDates <= $today +86399));
+                    $isOpen= $isOpen && (($stopDates==0) ||($stopDates >= $today ));
+                    
+                    $isOpen= $isOpen && ($this->pStatus < "2");
                     $bkcolor='';
                     
                     if($isOpen){
                         if($dayWorkLoadSec!=0)$bkcolor='background:#'.TIMESHEET_BC_VALUE;
                     }else{
                         $bkcolor='background:#'.TIMESHEET_BC_FREEZED;
-                    }                        
-                    $html .= '<th ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$dayOfWeek.']" ';
-                    $html .= 'name="task['.$this->id.']['.$dayOfWeek.']" ';
+                    } 
+                    
+                    
+                    $html .= '<th ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$tsUserId.']['.$dayOfWeek.']" ';
+//                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayOfWeek.']" '; if one whant multiple ts per validation
+                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayOfWeek.']" ';
                     $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
                     $html .='" maxlength="5" style="width: 90%;'.$bkcolor.'" ';
                     $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
-                    $html .= 'onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$dayOfWeek.',\''.$timetype.'\')" />';
+                    $html .= 'onblur="regexEvent(this,event,\''.$timetype.'\');updateTotal('.$tsUserId.','.$dayOfWeek.',\''.$timetype.'\')" />';
                     $html .= "</th>\n"; 
                 }else{
                     $bkcolor='background:#'.$statusTsColor[$status];
-                    $html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$dayOfWeek.']"';
+                    $html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$tsUserId.']['.$dayOfWeek.']"';
+                    //$html .= ' name="task['.$tsUserId.']['.$this->id.']['.$dayOfWeek.']" ';if one whant multiple ts per validation
                     $html .= ' name="task['.$this->id.']['.$dayOfWeek.']" ';
                     $html .= ' style="width: 90%;"';
                     $html .=' >'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
@@ -434,6 +449,7 @@ function serialize(){
     $arRet['taskParentDesc']=$this->taskParentDesc ;
     $arRet['companyName']=$this->companyName  ;
     $arRet['companyId']= $this->companyId;
+    $arRet['pSatus']= $this->pStatus;
                       
     return serialize($arRet);
     
@@ -456,6 +472,7 @@ function unserialize($str){
     $this->taskParentDesc=$arRet['taskParentDesc'] ;
     $this->companyName=$arRet['companyName']  ;
     $this->companyId=$arRet['companyId'];
+    $this->pStatus=$arRet['pSatus'];
 }
  
     public function getTaskTab()

@@ -140,12 +140,11 @@ class holidayTimesheet extends Holiday
  * function to form a HTMLform line for this timesheet
  * 
  *  @param    string              	$yearWeek            year week like 2015W09
- *  @param     int              	$line number         used in the form processing
  *  @param    string              	$headers             header to shows
- *  @param     int              	$whitelistemode           0-whiteliste,1-blackliste,2-non impact
+ *  @param     int              	$tsUserId           id of the user timesheet
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getHTMLFormLine($yearWeek,$headers)
+       public function getHTMLFormLine($yearWeek,$headers,$tsUserId)
     {
         
         global $langs;
@@ -169,7 +168,8 @@ class holidayTimesheet extends Holiday
             $pmValue=($this->holidaylist[$i]['pmStatus']==3);
             $value=($timetype=="hours")?date('H:i',mktime(0,0,($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             
-            $html .='<th style="margin: 0;padding: 0;"><input type="hidden" class="time4day['.$i.']"  value="'.$value.'">';
+            $html .='<th style="margin: 0;padding: 0;">';
+            if(TIMESHEET_ADD_HOLIDAY_TIME==1)$html .='<input type="hidden" class="time4day['.$tsUserId.']['.$i.']"  value="'.$value.'">';
             $html .='<ul id="holiday['.$i.']" class="listHoliday" >';
                  
     //FIXME: SUPPORT COLOR & PUT TIME FOR THE  TOTAL
