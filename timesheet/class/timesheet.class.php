@@ -437,7 +437,7 @@ public function updateTimeUsed()
      $tasksList=array();
      $whiteListNumber=count($whiteList);
      
-    $sql ="SELECT DISTINCT element_id";
+    $sql ="SELECT DISTINCT element_id,prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid";
     if($whiteListNumber){
         $sql.=', (CASE WHEN tsk.rowid IN ('.implode(",",  $whiteList).') THEN \'1\' ';
         $sql.=' ELSE \'0\' END ) AS listed';
