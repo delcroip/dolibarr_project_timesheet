@@ -192,8 +192,11 @@ function getSQLfetchtask(){
             $sql.=', (CASE WHEN fk_task IN ('.implode(",",  $whiteList).') THEN \'1\' ';
             $sql.=' ELSE \'0\' END ) AS listed';
         }
-         $sql.=' FROM '.MAIN_DB_PREFIX.'projet_task_time';
-         $sql.=' WHERE rowid in ('.$list.')';
+        $sql.=' FROM '.MAIN_DB_PREFIX.'projet_task_time';
+        $sql.=' WHERE rowid in ('.$list.')';
+ //       $sql.=' AND task_date>='.$this->db->idate($datestart);
+ //       $sql.=' AND task_date<='.$this->db->idate($datestop);
+         
         dol_syslog("timesheet::getTasksTimesheet reducted sql=".$sql, LOG_DEBUG);
      }
    
@@ -222,7 +225,7 @@ function getSQLfetchtask(){
                         $row->getActuals($this->yearWeek,$userid); 
                     }else{
                         //$row->getActuals($this->yearWeek,$userid); 
-                        $row->getActualsbyID($this->project_tasktime_list); // FIX ME
+                        $row->getActuals($this->yearWeek,$userid,$this->project_tasktime_list); 
                     }
                     //unset($row->db);
                     $this->taskTimesheet[]=  $row->serialize();                   
@@ -414,17 +417,17 @@ function GetTimeSheetXML()
  *  @param     int              	$timestamp         timestamp
   *  @return     string                                                   html code
  */
- function getHTMLFooterAp($offest,$timestamp){
+ function getHTMLFooterAp($offset,$timestamp){
      global $langs;
     //form button
-    $html .= '</table>';
+
     $html .= '<input type="hidden" name="timestamp" value="'.$timestamp."\"/>\n";
    $html .= '<input type="hidden" name="offset" value="'.$offset."\"/>\n";
 
     $html .= '<div class="tabsAction">';
     $html .= '<input type="submit" class="butAction" name="Send" value="'.$langs->trans('Submit')."\" />\n";
     //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
-    $html .= '<a class="butActionDelete" href="?id='.$this->id.'">'.$langs->trans('Next').'</a>';
+    $html .= '<a class="butActionDelete" href="?offset='.$offset.'">'.$langs->trans('Next').'</a>';
 
     $html .= '</div>';
     $html .= "</form>\n";
@@ -497,7 +500,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
         }else{
             $Nav.=  '<form name="goToDate" action="?action=goToDate&wlm='.$this->whitelistmode.'" method="POST" >'."\n\t\t\t";
         }
-        $Nav.=   $langs->trans("GoToDate").': '.$form->select_date(-1,'toDate',0,0,0,"",1,0,1)."\n\t\t\t";;
+        $Nav.=   $langs->trans("GoToDate").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)."\n\t\t\t";;
 	$Nav.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	if($ajax){
             $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.date('Y\WW',strtotime($this->yearWeek."+3 days  +1 week")).'\',0);';
@@ -595,33 +598,180 @@ function get_userName(){
      /*
  * put the timesheet task in a approuved status
  * 
- *  @param      string            $yearWeek      year week like 2015W09
- *  @param      int               $userid        change the status for this userid 
+ *  @param      object/int        $user         user object or user id doing the modif
+ *  @param      int               $id           id of the timesheetuser
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
-    Public function setAppouved(){
-        
+    Public function setAppoved($user,$id=0){
+            $error=0;
+            // Check parameters
+            $userid=  is_object($user)?$user->id:$user;
+            if($id==0)$id=$this->id;
+		
+
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+        $sql.=' status="APPROVED",';
+        $sql.=' fk_user_approval="'.$userid.'",';
+        $sql.=' fk_user_modification="'.$userid.'"';
+        $sql.= " WHERE rowid=".$id;
+
+		$this->db->begin();
+
+		dol_syslog(__METHOD__.$sql);
+        $resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            // want this action calls a trigger.
+
+	            //// Call triggers
+	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //// End call triggers
+			 }
+		}
+
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+
     }
     
  /*
  * put the timesheet task in a rejected status
  * 
- *  @param    string              	$yearWeek            year week like 2015W09
- *  @param      int               $userid        change the status for this userid 
+ *  @param      object/int        $user         user object or user id doing the modif
+ *  @param      int               $id           id of the timesheetuser
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
-    Public function setRejected(){
+    Public function setRejected($user,$id=0){
+            $error=0;
+            // Check parameters
+            $userid=  is_object($user)?$user->id:$user;
+            if($id==0)$id=$this->id;
+		
+
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+        $sql.=' status="REJECTED",';
+        $sql.=' fk_user_approval="'.$userid.'",';
+        $sql.=' fk_user_modification="'.$userid.'"';
+        $sql.= " WHERE rowid=".$id;
+
+		$this->db->begin();
+
+		dol_syslog(__METHOD__.$sql);
+        $resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            // want this action calls a trigger.
+
+	            //// Call triggers
+	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //// End call triggers
+			 }
+		}
+
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
         
     }
     
  /*
  * put the timesheet task in a pending status
  * 
- *  @param    string              	$yearWeek            year week like 2015W09
-  *  @param      int               $userid        change the status for this userid 
+ *  @param      object/int        $user         user object or user id doing the modif
+ *  @param      int               $id           id of the timesheetuser
  *  @return     int      		   	 <0 if KO, Id of created object if OK
 */
-    Public function setPending(){
+    Public function setSubmitted($user,$id=0){
+            $error=0;
+            // Check parameters
+            $userid=  is_object($user)?$user->id:$user;
+            if($id==0)$id=$this->id;
+		
+
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+        $sql.=' status="SUBMITTED",';
+        $sql.=' fk_user_approval="'.$userid.'",';
+        $sql.=' fk_user_modification="'.$userid.'"';
+        $sql.= " WHERE rowid=".$id;
+
+		$this->db->begin();
+
+		dol_syslog(__METHOD__.$sql);
+        $resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            // want this action calls a trigger.
+
+	            //// Call triggers
+	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //// End call triggers
+			 }
+		}
+
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
         
     }
 
@@ -652,7 +802,7 @@ function get_userName(){
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		
-		$sql.= 'fk_userId,';
+		$sql.= 'fk_userid,';
 		$sql.= 'year_week_date,';
 		$sql.= 'status,';
 		$sql.= 'target,';
@@ -667,7 +817,7 @@ function get_userName(){
 		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
 		$sql.=' '.(! isset($this->year_week_date) || dol_strlen($this->year_week_date)==0?'NULL':'"'.$this->db->idate($this->year_week_date).'"').',';
 		$sql.=' '.(! isset($this->status)?'"DRAFT"':'"'.$this->status.'"').',';
-		$sql.=' '.(! isset($this->target)?'"DRAFT"':'"'.$this->target.'"').',';
+		$sql.=' '.(! isset($this->target)?'"team"':'"'.$this->target.'"').',';
 		$sql.=' '.(! isset($this->project_tasktime_list)?'NULL':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
 		$sql.=' '.(! isset($this->user_approval)?'NULL':'"'.$this->user_approval.'"').',';
 		$sql.=' NOW() ,';
@@ -730,7 +880,7 @@ function get_userName(){
         $sql = "SELECT";
 		$sql.= " t.rowid,";
 		
-		$sql.=' t.fk_userId,';
+		$sql.=' t.fk_userid,';
 		$sql.=' t.year_week_date,';
 		$sql.=' t.status,';
 		$sql.=' t.target,';
@@ -757,7 +907,7 @@ function get_userName(){
 
                 $this->id    = $obj->rowid;
                 
-				$this->userId = $obj->fk_userId;
+				$this->userId = $obj->fk_userid;
 				$this->year_week_date = $this->db->jdate($obj->year_week_date);
 				$this->status = $obj->status;
 				$this->target = $obj->target;
@@ -793,7 +943,7 @@ function get_userName(){
         $sql = "SELECT";
 		$sql.= " t.rowid,";
 		
-		$sql.=' t.fk_userId,';
+		$sql.=' t.fk_userid,';
 		$sql.=' t.year_week_date,';
 		$sql.=' t.status,';
 		$sql.=' t.target,';
@@ -808,7 +958,7 @@ function get_userName(){
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
         $sql.= " WHERE t.year_week_date = '".$this->db->idate($this->year_week_date)."'";
-		$sql.= " AND t.fk_userId = '".$this->userId."'";
+		$sql.= " AND t.fk_userid = '".$this->userId."'";
        # $sql .= "AND WEEKOFYEAR(ptt.year_week_date)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
 
@@ -824,7 +974,7 @@ function get_userName(){
 
                 $this->id    = $obj->rowid;
                 
-				$this->userId = $obj->fk_userId;
+				$this->userId = $obj->fk_userid;
 				$this->year_week_date = $this->db->jdate($obj->year_week_date);
 				$this->status = $obj->status;
 				$this->target = $obj->target;
@@ -893,7 +1043,7 @@ function get_userName(){
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         
-		$sql.=' fk_userId='.(empty($this->userId) ? 'null':'"'.$this->userId.'"').',';
+		$sql.=' fk_userid='.(empty($this->userId) ? 'null':'"'.$this->userId.'"').',';
 		$sql.=' year_week_date='.(dol_strlen($this->year_week_date)!=0 ? '"'.$this->db->idate($this->year_week_date).'"':'null').',';
 		$sql.=' status='.(empty($this->status)? 'null':'"'.$this->status.'"').',';
 		$sql.=' target='.(empty($this->target) ? 'null':'"'.$this->target.'"').',';

@@ -553,12 +553,12 @@ switch ($action) {
     $sql = 'SELECT';
     $sql.= ' t.rowid,';
     
-		$sql.=' t.fk_userId,';
+		$sql.=' t.fk_userid,';
 		$sql.=' t.year_week_date,';
 		$sql.=' t.status,';
 		$sql.=' t.target,';
 		$sql.=' t.fk_project_tasktime_list,';
-		$sql.=' t.fk_user_approval,';
+		$sql.=' t.fk_user_approval';
 
     
     $sql.= ' FROM '.MAIN_DB_PREFIX.'timesheet_user as t';
@@ -575,7 +575,7 @@ switch ($action) {
             }
     }
     //pass the search criteria
-    	if($ls_userId) $sqlwhere .= natural_search(array('t.fk_userId'), $ls_userId);
+    	if($ls_userId) $sqlwhere .= natural_search(array('t.fk_userid'), $ls_userId);
 	if($ls_year_week_date_month)$sqlwhere .= ' AND MONTH(t.year_week_date)="'.$ls_year_week_date_month.'"';
 	if($ls_year_week_date_year)$sqlwhere .= ' AND YEAR(t.year_week_date)="'.$ls_year_week_date_year.'"';
 	if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
@@ -627,10 +627,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
         print_barre_liste($langs->trans("Timesheetuser"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-        print '<table class="liste" width="100%">'."\n";
+        print '<table class="liste" style="border-collapse:separate;" width="100%">'."\n";
         //TITLE
         print '<tr class="liste_titre">';
-        	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userId','',$param,'',$sortfield,$sortorder);
+        	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userid','',$param,'',$sortfield,$sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans('Yearweekdate'),$PHP_SELF,'t.year_week_date','',$param,'',$sortfield,$sortorder);
 	print "\n";
@@ -693,9 +693,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             if ($obj)
             {
                 // You can use here results
-                		print "<tr class=\"".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
+                		print "<tr class=\"dblist ".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
-		print "<td>".print_generic('user','rowid',$obj->fk_userId,'lastname','firstname',' ')."</td>";
+		print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
 		print "<td>".dol_print_date($obj->year_week_date,'day')."</td>";
 		print "<td>".$langs->trans($obj->status)."</td>";
 		print "<td>".$langs->trans($obj->target)."</td>";

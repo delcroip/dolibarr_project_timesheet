@@ -35,3 +35,7 @@ a.noNextHoliday{
     margin-right: 10%;
     /*border-left: thick double #000000;*/
 }
+
+tr.dblist:hover{
+    	font-weight: bold;
+}

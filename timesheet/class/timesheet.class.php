@@ -134,11 +134,12 @@ class timesheet extends Task
  *  FUNCTION TO GET THE ACTUALS FOR A WEEK AND AN USER
  *  @param    string              	$yearWeek            year week like 2015W09
  *  @param     int              	$userId         used in the form processing
+ *  @param    string              	$tasktimeIds      limit the seach if defined
  *  @return     int                                       success (1) / failure (-1)
  */
     
     
-    public function getActuals( $yearWeek,$userid)
+    public function getActuals( $yearWeek,$userid,$tasktimeIds='')
     {
 
         $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
@@ -148,8 +149,8 @@ class timesheet extends Task
        # $sql .= "AND WEEKOFYEAR(ptt.task_date)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
         $sql .= " AND (ptt.task_date>=".$this->db->idate(strtotime($yearWeek)).") ";
-        $sql .= " AND (ptt.task_date<".$this->db->idate(strtotime($yearWeek.' + 7 days')).");";
-
+        $sql .= " AND (ptt.task_date<".$this->db->idate(strtotime($yearWeek.' + 7 days')).")";
+        if(!empty($tasktimeIds))$sql .= ' AND ptt.rowid in ('.$tasktimeIds.')';
         dol_syslog(get_class($this)."::fetchActuals sql=".$sql, LOG_DEBUG);
 		for($i=0;$i<7;$i++){
 			//fixme get ride of the db format for the date
@@ -183,55 +184,6 @@ class timesheet extends Task
                 return -1;
         }
     }	 
-/*
- *  FUNCTION TO GET THE from a tasktime list of ID 
- *  @param    string              	$tasktimeId       list of Id ( separated by comas), some may belong to this task
- *  @return     int                                       success (1) / failure (-1)
- */
-    
-    
-    public function getActualsById( $tasktimeIds)
-    {
-
-        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
-        $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
-        $sql .= " WHERE ptt.fk_task='".$this->id."' ";
-        $sql .= ' AND ptt.rowid in ('.$tasktimeIds.')';
-
-        dol_syslog(get_class($this)."::fetchActuals sql=".$sql, LOG_DEBUG);
-		for($i=0;$i<7;$i++){
-			//fixme get ride of the db format for the date
-			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>strtotime( $yearWeek.' +'.$i.' day'));
-		}
-
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-
-                $num = $this->db->num_rows($resql);
-                $i = 0;
-                // Loop on each record found, so each couple (project id, task id)
-                 while ($i < $num)
-                {
-                        $error=0;
-                        $obj = $this->db->fetch_object($resql);
-                        $day=intval(date('N',strtotime($obj->task_date)))-1;
-
-                        $this->tasklist[$day]=array('id'=>$obj->rowid,'date'=>$this->db->jdate($obj->task_date),'duration'=>$obj->task_duration);
-                        $i++;
-                }
-                $this->db->free($resql);
-                return 1;
-         }
-        else
-        {
-                $this->error="Error ".$this->db->lasterror();
-                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
-
-                return -1;
-        }
-    }	 
-    
     
 
  /*
@@ -263,7 +215,8 @@ class timesheet extends Task
              $html.="\t<th align=\"left\">";
              switch($title){
                  case 'Project':
-                     if(file_exists("../projet/card.php")||file_exists("../../projet/card.php")){
+                     if(version_compare(DOL_VERSION,"3.7")>=0){
+                     //if(file_exists("../projet/card.php")||file_exists("../../projet/card.php")){
                         $html.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';
                      }else{
                         $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->fk_project2.'">'.$this->ProjectTitle.'</a>';

@@ -53,24 +53,24 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
     $idlist='';
     if(is_array($userid)){
         $ecludeduserid=array_merge($userid,$ecludeduserid);
-        $idlist.=implode(",", $userid);
+        $idlist=implode(",", $userid);
     }else{
         $ecludeduserid[]=$userid;
         $idlist=$userid;
     }
-    $sql['team'][1]=$idlist;
-    $sql['project'][1]=$idlist;
+    $sql[$role][1]=$idlist;
     $idlist='';
     if(is_array($ecludeduserid)){
-        $idlist.=implode(",", $ecludeduserid);
+        $idlist=implode(",", $ecludeduserid);
     }else if (!empty($ecludeduserid)){
         $idlist=$ecludeduserid;
     } 
-    $sql['team'][3]=$idlist;
-    $sql['project'][3]=$idlist;
-    dol_syslog("form::get_subordinate sql=".$sql, LOG_DEBUG);
+   $sql[$role][3]=$idlist;
+    ksort($sql[$role], SORT_NUMERIC);
+    $sqlused=implode($sql[$role]);
+    dol_syslog("form::get_subordinate sql=".$sqlused.' role='.$role, LOG_DEBUG);
     $list=array();
-    $resql=$db->query(implode($sql[$role]));
+    $resql=$db->query($sqlused);
     
     if ($resql)
     {
@@ -88,7 +88,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
         }
         if(count($list)>0 && $depth>1){
             //this will get the same result plus the subordinate of the subordinate
-            $result=get_subordinate($db,$list,$depth-1,$ecludeduserid, $entity);
+            $result=get_subordinate($db,$list,$depth-1,$ecludeduserid, $role, $entity);
             if(is_array($result))
             {
                 $list=array_merge($list,$result);
