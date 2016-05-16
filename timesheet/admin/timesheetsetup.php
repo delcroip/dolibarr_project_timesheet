@@ -38,6 +38,7 @@ if (!$user->admin) {
 $action = GETPOST('action','alpha');
 $timetype=TIMESHEET_TIME_TYPE;
 $hoursperday=TIMESHEET_DAY_DURATION;
+$maxhoursperday=TIMESHEET_DAY_MAX_DURATION;
 $hidedraft=TIMESHEET_HIDE_DRAFT;
 $hideref=TIMESHEET_HIDE_REF;
 $hidezeros=TIMESHEET_HIDE_ZEROS;
@@ -60,6 +61,7 @@ switch($action)
         //general option
         $timetype=GETPOST('timeType','alpha');
         $hoursperday=GETPOST('hoursperday','alpha');
+        $maxhoursperday=GETPOST('maxhoursperday','alpha');
         $hidedraft=GETPOST('hidedraft','alpha');
         $hidezeros=GETPOST('hidezeros','alpha');
         $hideref=GETPOST('hideref','alpha');        
@@ -69,6 +71,8 @@ switch($action)
         $res=dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db, "TIMESHEET_DAY_MAX_DURATION", $maxhoursperday, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", $hidedraft, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
@@ -183,15 +187,20 @@ $Form .='<table class="noborder" width="100%">'."\n\t\t";
 $Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
 $Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
 // type time
-$Form .='<tr class="impair"><th align="left">'.$langs->trans("timeType").'</th><th align="left">'.$langs->trans("timeTypeDesc").'</th>';
+$Form .='<tr class="pair"><th align="left">'.$langs->trans("timeType").'</th><th align="left">'.$langs->trans("timeTypeDesc").'</th>';
 $Form .='<th align="left"><input type="radio" name="timeType" value="hours" ';
 $Form .=($timetype=="hours"?"checked":"").'> '.$langs->trans("hours").'<br>';
 $Form .='<input type="radio" name="timeType" value="days" ';
 $Form .=($timetype=="days"?"checked":"").'> '.$langs->trans("days")."</th></tr>\n\t\t";
 //hours perdays
-$Form .='<tr class="pair"><th align="left">'.$langs->trans("hoursperdays");
+$Form .='<tr class="impair"><th align="left">'.$langs->trans("hoursperdays");
 $Form .='</th><th align="left">'.$langs->trans("hoursPerDaysDesc").'</th>';
 $Form .='<th align="left"><input type="text" name="hoursperday" value="'.$hoursperday;
+$Form .="\" size=\"4\" ></th></tr>\n\t\t";
+//max hours perdays
+$Form .='<tr class="pair"><th align="left">'.$langs->trans("maxhoursperdays"); //FIXTRAD
+$Form .='</th><th align="left">'.$langs->trans("maxhoursPerDaysDesc").'</th>'; // FIXTRAD
+$Form .='<th align="left"><input type="text" name="maxhoursperday" value="'.$maxhoursperday;
 $Form .="\" size=\"4\" ></th></tr>\n\t\t";
 // hide draft
 $Form .= '<tr class="impair"><th align="left">'.$langs->trans("hidedraft");

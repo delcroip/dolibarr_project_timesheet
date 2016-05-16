@@ -125,7 +125,8 @@ class modTimesheet extends DolibarrModules
                 $this->const[10] = array("TIMESHEET_COL_APPROVED","chaine","00FF00","color of approved"); 
                 $this->const[11] = array("TIMESHEET_COL_CANCELLED","chaine","FFFF00","color of cancelled"); 
                 $this->const[12] = array("TIMESHEET_COL_REJECTED","chaine","FF0000","color of rejected"); 
-                $this->const[13] = array("TIMESHEET_ADD_HOLIDAY_TIME","chaine","1","count the holiday in total or not"); 
+                $this->const[13] = array("TIMESHEET_DAY_MAX_DURATION","chaine","12","max working hours per days"); 
+                $this->const[14] = array("TIMESHEET_ADD_HOLIDAY_TIME","chaine","1","count the holiday in total or not"); 
                 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs

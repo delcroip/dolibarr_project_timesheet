@@ -27,57 +27,58 @@ function submitTs(){
     return true;
 }
   
-  function regexEvent(objet,evt,type)
+  function regexEvent(object,evt,type)
   {
       switch(type)
       {
           case 'days':
-            if(objet.value!=objet.defaultValue)
+            if(object.value!=object.defaultValue)
             {
-                objet.style.backgroundColor = "lightgreen";
+                object.style.backgroundColor = "lightgreen";
                 var regex= /^[0-9]{1}([.,]{1}[0-9]{1})?$/;
 
-                if(regex.test(objet.value) )
+                if(regex.test(object.value) )
                 { 
-                  var tmp=objet.value.replace(',','.');
+                  var tmp=object.value.replace(',','.');
                   if(tmp<=1.5){
                       var tmpint=parseInt(tmp);
                       if(tmp-tmpint>=0.5){
-                          objet.value= tmpint+0.5;
+                          object.value= tmpint+0.5;
                       }else{
-                          objet.value= tmpint;
+                          object.value= tmpint;
                       }
                   }else{
-                      objet.value= '1.5';
+                      object.value= '1.5';
                   }
                 }else{
-                   objet.style.backgroundColor = "red";
-                   objet.value= objet.defaultValue;
+                   object.style.backgroundColor = "red";
+                   object.value= object.defaultValue;
                 }
             }else
             {
-                objet.style.backgroundColor = objet.style.getPropertyValue("background");
+                object.style.backgroundColor = object.style.getPropertyValue("background");
             }
-                
+              return true;  
           break; 
           case 'hours':
-              if(objet.value!=objet.defaultValue)
+              if(object.value!=object.defaultValue)
               {
-                  objet.style.backgroundColor = "lightgreen";
+                  object.style.backgroundColor = "lightgreen";
                   var regex= /^[0-9]{1,2}:[0-9]{2}$/;
                   var regex2=/^[0-9]{1,2}$/;
-                  if(!regex.test(objet.value))
+                  if(!regex.test(object.value))
                   { 
-                      if(regex2.test(objet.value))
-                        objet.value=objet.value+':00';
+                      if(regex2.test(object.value))
+                        object.value=object.value+':00';
                       else{
-                        objet.value=objet.defaultValue;
-                        objet.style.backgroundColor = "red";
+                        object.value=object.defaultValue;
+                        object.style.backgroundColor = "red";
                     }
                   }
+                  return true;
               }else
             {
-                objet.style.backgroundColor = objet.style.getPropertyValue("background");
+                object.style.backgroundColor = object.style.getPropertyValue("background");
             }
               break;
           case 'timeChar':
@@ -135,66 +136,163 @@ function parseTime(timeStr, dt) {
     dt.setSeconds(0, 0);
     return dt;
 }
-/*
-function updateTotal(days,mode){
-	try{    
-		if(mode=="hours")
-		{
-			var total = new Date(0);
-			total.setHours(0);
-			total.setMinutes(0);   
-			var nbline = document.getElementById('numberOfLines').value;
-			for (var i=0;i<nbline;i++)
-			{ 
-				var id='task['+i+']['+days+']';   
-				var taskTime= new Date(0);
-				var element=document.getElementById(id);
-				if(element)
-				{
-					if (element.value)
-					{   
-						parseTime(element.value,taskTime);
-					}
-					else
-					{
-						parseTime(element.innerHTML,taskTime);
-					}
-					total.setHours(total.getHours()+taskTime.getHours());
-					total.setMinutes(total.getMinutes()+taskTime.getMinutes());
-				}
-			}
-		document.getElementById('totalDayb['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
-		document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
+
+
+//update both total lines day 0-6, mode hour/day
+
+function updateTotal(ts,days){
+	try{
+            var curDay = document.getElementsByClassName('time4day['+ts+']['+days+']');
+            var nbline = curDay.length;
+            var TotalList=document.getElementsByClassName('Total['+ts+']['+days+']');
+            var nblineTotal = TotalList.length;
+            if(time_type=="hours")
+            {
+                var total = new Date(0);
+                total.setHours(0);
+                total.setMinutes(0);
+
+                for (var i=0;i<nbline;i++)
+                { 
+                    //var id='task['+i+']['+days+']';   
+                    var taskTime= new Date(0);
+                    var element=curDay[i];
+                    if(element)
+                    {
+                        if (element.value)
+                        {   
+                            parseTime(element.value,taskTime);
+                        }
+                        else
+                        {
+                            parseTime(element.innerHTML,taskTime);
+                        }
+                        total.setHours(total.getHours()+taskTime.getHours());
+                        total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+                        }
+               }
+               if(total.getDate()>1 || (total.getHours()+total.getMinutes()/60)>day_max_hours){
+                $.jnotify(err_msg_max_hours_exceded ,'error',true);   //
+                return false;
+               }else{
+                if((total.getHours()+total.getMinutes()/60)>day_hours){
+                    $.jnotify(wng_msg_hours_exceded ,'warning',true); 
+                }
+               
+                for (var i=0;i<nblineTotal;i++)
+                {
+                    TotalList[i].innerHTML = pad((total.getDate()-1)*24+total.getHours())+':'+pad(total.getMinutes());
+                }
+                return true;
+            }
+                
 		//addText(,total.getHours()+':'+total.getMinutes());
-	}else
-	{
+            }else
+            {
 		var total =0;
-		var nbline = document.getElementById('numberOfLines').value;
 		for (var i=0;i<nbline;i++)
 		{ 
-			var id='task['+i+']['+days+']';   
-			var taskTime= new Date(0);
-			var element=document.getElementById(id);
-			if(element)
-			{
-				if (element.value)
-				{   
-					total+=parseInt(element.value);
-
-				}
-				else
-				{
-					total+=parseInt(element.innerHTML);
-				}
-			}
+                    //var id='task['+i+']['+days+']';   
+                    var taskTime= new Date(0);
+                    var element=curDay[i];
+                    if(element)
+                    {
+                        if (element.value)
+                        {   
+                            total+=parseInt(element.value);
+                        }
+                        else
+                        {
+                            total+=parseInt(element.innerHTML);
+                        }
+                    }
 		}
-		document.getElementById('totalDay['+days+']').innerHTML = total;
-		document.getElementById('totalDayb['+days+']').innerHTML = total;
-	}
+                if(total>day_max_hours/day_hours){
+                   return false;
+               }else{
+                for (var i=0;i<nbline;i++)
+                {
+                    TotalList[i].innerHTML =total;
+                }
+                return true;
+            }
+
+            }
 	}
 	catch(err) {
-		//document.getElementById("demo").innerHTML = err.message;
+            $.jnotify("updateTotal "+err,'error',true);
 	}
 }
-*/
 
+//function to update all the totals
+function updateAll(timetype){
+	var tsUser = document.getElementsByName('tsUserId')
+    for(i=0;i<7;i++){
+             for(j=0;j<tsUser.length;j++){
+		updateTotal(tsUser[j].value,i,timetype);
+            }
+	}
+}
+
+function validateTime(object,ts, day){
+    updated=false;
+    switch(time_type)
+      {
+          case 'days':
+            if(object.value!=object.defaultValue)
+            {
+                object.style.backgroundColor = "lightgreen";       
+                var regex= /^[0-2]{1}([.,]{1}[0-9]{1})?$/;
+
+                if(regex.test(object.value) )
+                { 
+                  var tmp=object.value.replace(',','.');
+                  if(tmp<=day_max_hours/day_hours){
+//                      var tmpint=parseInt(tmp);
+//                      if(tmp-tmpint>=0.5){
+//                          object.value= tmpint+0.5;
+//                      }else{
+                          object.value= tmp;
+//                      }
+                  }else{
+                      object.value= day_max_hours/day_hours;
+                  }                  
+                }else{
+                   object.style.backgroundColor = "red";
+                   object.value= object.defaultValue;
+                }
+            }else
+            {
+                object.style.backgroundColor = object.style.getPropertyValue("background");
+            }
+          break; 
+         
+          case 'hours':
+          default: 
+              if(object.value!=object.defaultValue)
+              {
+                  object.style.backgroundColor = "lightgreen";
+                  var regex= /^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1}):[0-9]{2}$/;
+                  var regex2=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1})$/;
+                  if(!regex.test(object.value))
+                  { 
+                      if(regex2.test(object.value))
+                        object.value=object.value+':00';
+      
+                      else{
+                        object.value=object.defaultValue;
+                        object.style.backgroundColor = "red";
+                    }
+                  } 
+              }else
+            {
+                object.style.backgroundColor = object.style.getPropertyValue("background");
+            }
+            break;
+      }
+      if(updateTotal(ts,day)==false){
+          object.value=object.defaultValue;
+          object.style.backgroundColor = "red";
+          
+      }
+}

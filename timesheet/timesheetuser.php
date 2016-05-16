@@ -55,7 +55,7 @@ dol_include_once('/core/class/html.formother.class.php');
 $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
-$langs->load("Timesheetuser_class");
+$langs->load("timesheet@timesheet");
 
 // Get parameter
 $id			= GETPOST('id','int');

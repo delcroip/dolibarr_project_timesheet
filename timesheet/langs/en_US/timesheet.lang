@@ -92,3 +92,5 @@ InternalError= internal error
 timesheetSumitted= Timesheet submitted
 Recall= Recall
 Submit= Submit
+wngMsgHoursExceded = you are entering overtime
+errMsgMaxHoursExceded = you can't enter that much time for a single day

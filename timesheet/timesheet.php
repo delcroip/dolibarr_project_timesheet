@@ -153,7 +153,7 @@ if($xml){
     echo $timesheetUser->GetTimeSheetXML();
     exit;
 }
-$morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
+$morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js","/timesheet/js/jsparameters.php");
 llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 
