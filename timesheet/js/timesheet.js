@@ -118,19 +118,12 @@ function parseTime(timeStr, dt) {
         dt = new Date();
     }
  
-    var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
+    var time = timeStr.match(/(\d+)(?::(\d\d))?\s*((p|a)?)/i);
     if (!time) {
         dt.setHours(0);
         return NaN;
     }
     var hours = parseInt(time[1], 10);
-    if (hours == 12 && !time[3]) {
-        hours = 0;
-    }
-    else {
-        hours += (hours < 12 && time[3]) ? 12 : 0;
-    }
- 
     dt.setHours(hours);
     dt.setMinutes(parseInt(time[2], 10) || 0);
     dt.setSeconds(0, 0);
@@ -142,6 +135,7 @@ function parseTime(timeStr, dt) {
 
 function updateTotal(ts,days){
 	try{
+            var err=false;
             var curDay = document.getElementsByClassName('time4day['+ts+']['+days+']');
             var nbline = curDay.length;
             var TotalList=document.getElementsByClassName('Total['+ts+']['+days+']');
@@ -167,23 +161,30 @@ function updateTotal(ts,days){
                         {
                             parseTime(element.innerHTML,taskTime);
                         }
+                       
                         total.setHours(total.getHours()+taskTime.getHours());
                         total.setMinutes(total.getMinutes()+taskTime.getMinutes());
                         }
                }
                if(total.getDate()>1 || (total.getHours()+total.getMinutes()/60)>day_max_hours){
-                $.jnotify(err_msg_max_hours_exceded ,'error',true);   //
-                return false;
+                $.jnotify(err_msg_max_hours_exceded ,'error',false);   //
+                err=true;
                }else{
                 if((total.getHours()+total.getMinutes()/60)>day_hours){
-                    $.jnotify(wng_msg_hours_exceded ,'warning',true); 
+                    $.jnotify(wng_msg_hours_exceded ,'warning',false); 
                 }
                
                 for (var i=0;i<nblineTotal;i++)
                 {
-                    TotalList[i].innerHTML = pad((total.getDate()-1)*24+total.getHours())+':'+pad(total.getMinutes());
+                    if(!err){
+                        TotalList[i].innerHTML = pad((total.getDate()-1)*24+total.getHours())+':'+pad(total.getMinutes());
+                        TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
+                    }else if(TotalList[i].innerHTML ="&nbsp;"){
+                        TotalList[i].innerHTML = day_max_hours;
+                        TotalList[i].style.backgroundColor = "red";
+                    }
                 }
-                return true;
+                return !err;
             }
                 
 		//addText(,total.getHours()+':'+total.getMinutes());
@@ -199,23 +200,33 @@ function updateTotal(ts,days){
                     {
                         if (element.value)
                         {   
-                            total+=parseInt(element.value);
+                            total+=parseFloat(element.value);
                         }
                         else
                         {
-                            total+=parseInt(element.innerHTML);
+                            total+=parseFloat(element.innerHTML);
                         }
                     }
 		}
                 if(total>day_max_hours/day_hours){
-                   return false;
-               }else{
-                for (var i=0;i<nbline;i++)
-                {
-                    TotalList[i].innerHTML =total;
+                   $.jnotify(err_msg_max_hours_exceded ,'error',false);   //
+                    err=true;
+                }else if(total>1){
+                    $.jnotify(wng_msg_hours_exceded ,'warning',false); 
                 }
-                return true;
-            }
+
+                for (var i=0;i<nblineTotal;i++)
+                {
+                    if(!err){
+                        TotalList[i].innerHTML = total;
+                        TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
+                    }else if(TotalList[i].innerHTML ="&nbsp;"){
+                        TotalList[i].innerHTML = day_max_hours/day_hours;
+                        TotalList[i].style.backgroundColor = "red";
+                    }
+                }
+                return !err;
+            
 
             }
 	}
@@ -242,27 +253,15 @@ function validateTime(object,ts, day){
             if(object.value!=object.defaultValue)
             {
                 object.style.backgroundColor = "lightgreen";       
-                var regex= /^[0-2]{1}([.,]{1}[0-9]{1})?$/;
+                object.value=object.value.replace(',','.');
+                var regex=/^[0-5]{1}([.,]{1}[0-9]{1,3})?$/;
 
-                if(regex.test(object.value) )
-                { 
-                  var tmp=object.value.replace(',','.');
-                  if(tmp<=day_max_hours/day_hours){
-//                      var tmpint=parseInt(tmp);
-//                      if(tmp-tmpint>=0.5){
-//                          object.value= tmpint+0.5;
-//                      }else{
-                          object.value= tmp;
-//                      }
-                  }else{
-                      object.value= day_max_hours/day_hours;
+                if(!regex.test(object.value) ){      
+                      object.style.backgroundColor = "red";
+                      object.value= object.defaultValue;
                   }                  
-                }else{
-                   object.style.backgroundColor = "red";
-                   object.value= object.defaultValue;
-                }
-            }else
-            {
+
+            }else{
                 object.style.backgroundColor = object.style.getPropertyValue("background");
             }
           break; 

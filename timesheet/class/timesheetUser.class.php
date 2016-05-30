@@ -417,17 +417,18 @@ function GetTimeSheetXML()
  *  @param     int              	$timestamp         timestamp
   *  @return     string                                                   html code
  */
- function getHTMLFooterAp($offset,$timestamp){
+ function getHTMLFooterAp($prevOffset,$offset,$timestamp){
      global $langs;
     //form button
 
     $html .= '<input type="hidden" name="timestamp" value="'.$timestamp."\"/>\n";
-   $html .= '<input type="hidden" name="offset" value="'.$offset."\"/>\n";
-
+    $html .= '<input type="hidden" name="offset" value="'.$offset."\"/>\n";
+    $html .= '<input type="hidden" name="prevoffset" value="'.$prevOffset."\"/>\n";
     $html .= '<div class="tabsAction">';
-    $html .= '<input type="submit" class="butAction" name="Send" value="'.$langs->trans('Submit')."\" />\n";
+    if($offset>0)$html .= '<a class="butAction" href="?offset='.$prevOffset.'">'.$langs->trans('Previous').'</a>';
+    if($offset==0 || $prevOffset!=$offset)$html .= '<input type="submit" class="butAction" name="Send" value="'.$langs->trans('Next')."\" />\n";
     //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
-    $html .= '<a class="butActionDelete" href="?offset='.$offset.'">'.$langs->trans('Next').'</a>';
+
 
     $html .= '</div>';
     $html .= "</form>\n";

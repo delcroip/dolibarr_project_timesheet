@@ -39,9 +39,11 @@ $action = GETPOST('action','alpha');
 $timetype=TIMESHEET_TIME_TYPE;
 $hoursperday=TIMESHEET_DAY_DURATION;
 $maxhoursperday=TIMESHEET_DAY_MAX_DURATION;
+$maxApproval=TIMESHEET_MAX_APPROVAL;
 $hidedraft=TIMESHEET_HIDE_DRAFT;
 $hideref=TIMESHEET_HIDE_REF;
 $hidezeros=TIMESHEET_HIDE_ZEROS;
+$approvalbyweek=TIMESHEET_APPROVAL_BY_WEEK;
 $headers=TIMESHEET_HEADERS;
 $whiteListMode=TIMESHEET_WHITELIST_MODE;
 $whiteList=TIMESHEET_WHITELIST;
@@ -52,6 +54,8 @@ $approvedColor=TIMESHEET_COL_APPROVED;
 $rejectedColor=TIMESHEET_COL_REJECTED;
 $cancelledColor=TIMESHEET_COL_CANCELLED;
 $addholidaytime=TIMESHEET_ADD_HOLIDAY_TIME;
+$opendays=str_split(TIMESHEET_OPEN_DAYS);
+if(sizeof($opendays)!=8)$opendays=array('_','0','0','0','0','0','0','0');
 switch($action)
 {
     case save:
@@ -64,6 +68,8 @@ switch($action)
         $maxhoursperday=GETPOST('maxhoursperday','alpha');
         $hidedraft=GETPOST('hidedraft','alpha');
         $hidezeros=GETPOST('hidezeros','alpha');
+        $maxApproval=GETPOST('maxapproval','int');
+        $approvalbyweek=GETPOST('approvalbyweek','int');
         $hideref=GETPOST('hideref','alpha');        
         $whiteListMode=GETPOST('blackWhiteListMode','int');
         $whiteList=GETPOST('blackWhiteList','int');
@@ -77,6 +83,10 @@ switch($action)
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", $hidedraft, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_ZEROS", $hidezeros, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db, "TIMESHEET_APPROVAL_BY_WEEK", $approvalbyweek, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $res=dolibarr_set_const($db, "TIMESHEET_MAX_APPROVAL", $maxApproval, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         $res=dolibarr_set_const($db, "TIMESHEET_HIDE_REF", $hideref, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
@@ -124,7 +134,12 @@ switch($action)
         $addholidaytime=GETPOST('addholidaytime','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_ADD_HOLIDAY_TIME", $addholidaytime, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;        
-        
+        $opendays=array('_','0','0','0','0','0','0','0');
+        foreach($_POST['opendays'] as $key => $day){
+            $opendays[$key]=$day;
+        }
+        $res=dolibarr_set_const($db, "TIMESHEET_OPEN_DAYS", implode('',$opendays), 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;        
     
         // error handling
         
@@ -225,9 +240,43 @@ $Form .= '<tr class="pair"><th align="left">'.$langs->trans("addholidaytime");
 $Form .='</th><th align="left">'.$langs->trans("addholidaytimeDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="addholidaytime" value="1" ';
 $Form .=(($addholidaytime=='1')?'checked':'')."></th></tr>\n";
+
+// approval by week
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("approvalbyweek");
+$Form .='</th><th align="left">'.$langs->trans("approvalbyweekDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="approvalbyweek" value="1" ';
+$Form .=(($approvalbyweek=='1')?'checked':'')."></th></tr>\n";
+// max approval 
+$Form .='<tr class="pair"><th align="left">'.$langs->trans("maxapproval"); //FIXTRAD
+$Form .='</th><th align="left">'.$langs->trans("maxapprovalDesc").'</th>'; // FIXTRAD
+$Form .='<th align="left"><input type="text" name="maxapproval" value="'.$maxApproval;
+$Form .="\" size=\"4\" ></th></tr>\n\t\t";
+
+$Form.="\t</table><br>\n";
+
+
 print $Form;
 
-print "\t</table><br>\n";
+
+print_titre($langs->trans("OpenDays")); //FIXTRAD
+$Form ='<table class="noborder" width="100%">'."\n\t\t";
+$Form .='<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Monday").'</th><th>';
+$Form .=$langs->trans("Tuesday").'</th><th>'.$langs->trans("Wednesday").'</th><th>';
+$Form .=$langs->trans("Thursday").'</th><th>'.$langs->trans("Friday").'</th><th>';
+$Form .=$langs->trans("Saturday").'</th><th>'.$langs->trans("Sunday").'</th>';
+$Form .='<input type="hidden" name="opendays[0]" value="_">';
+$Form .="</tr><tr>\n\t\t";
+
+for ($i=1; $i<8;$i++){
+$Form .= '<th width="14%" style="text-align:left"><input type="checkbox" name="opendays['.$i.']" value="1" ';
+$Form .=(($opendays[$i]=='1')?'checked':'')."></th>\n\t\t";
+        }
+$Form .="</tr>\n\t</table><br>\n";
+print $Form;
+
+
+
+
 
 
 print_titre($langs->trans("ColumnToShow"));

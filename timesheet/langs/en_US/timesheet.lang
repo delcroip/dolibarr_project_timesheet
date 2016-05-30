@@ -94,3 +94,5 @@ Recall= Recall
 Submit= Submit
 wngMsgHoursExceded = you are entering overtime
 errMsgMaxHoursExceded = you can't enter that much time for a single day
+maxhoursPerDaysDesc= Set the maximum hours to be enter per day and user via the timesheet 
+maxhoursperdays = Maximum hour per day

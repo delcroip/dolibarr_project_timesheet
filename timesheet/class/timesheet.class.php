@@ -254,7 +254,8 @@ class timesheet extends Task
 
   // day section
          $isOpenSatus=($status=="DRAFT" || $status=="CANCELLED"|| $status=="REJECTED");
-         
+         $opendays=str_split(TIMESHEET_OPEN_DAYS);
+
          for($dayOfWeek=0;$dayOfWeek<7;$dayOfWeek++)
          {
                 $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
@@ -273,7 +274,8 @@ class timesheet extends Task
                     $isOpen=$isOpenSatus && (($startDates==0) || ($startDates <= $today +86399));
                     $isOpen= $isOpen && (($stopDates==0) ||($stopDates >= $today ));
                     
-                    $isOpen= $isOpen && ($this->pStatus < "2");
+                    $isOpen= $isOpen && ($this->pStatus < "2") && $opendays[$dayOfWeek+1];
+                   // var_dump($opendays[$dayOfWeek+1]);
                     $bkcolor='';
                     
                     if($isOpen){

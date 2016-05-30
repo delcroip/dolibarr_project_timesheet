@@ -127,7 +127,9 @@ class modTimesheet extends DolibarrModules
                 $this->const[12] = array("TIMESHEET_COL_REJECTED","chaine","FF0000","color of rejected"); 
                 $this->const[13] = array("TIMESHEET_DAY_MAX_DURATION","chaine","12","max working hours per days"); 
                 $this->const[14] = array("TIMESHEET_ADD_HOLIDAY_TIME","chaine","1","count the holiday in total or not"); 
-                
+                $this->const[15] = array("TIMESHEET_OPEN_DAYS","chaine","_1111100","normal day for time booking"); 
+                $this->const[16] = array("TIMESHEET_APPROVAL_BY_WEEK","chaine","0","Approval by week instead of by user"); 
+                $this->const[17] = array("TIMESHEET_MAX_APPROVAL","chaine","5","Max TS per Approval page"); 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1
