@@ -38,8 +38,10 @@
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'lib/includeMain.lib.php';
-// Change this following line to use the correct relative path from htdocs
-//include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
+ if(!$user->rights->timesheet->approval->admin){
+        $accessforbidden = accessforbidden("you need to have the approver admin rights");           
+}   
+
 require_once 'lib/generic.lib.php';
 require_once 'class/timesheetUser.class.php';
 dol_include_once('/core/lib/functions2.lib.php');
@@ -56,7 +58,7 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("timesheet@timesheet");
-
+                
 // Get parameter
 $id			= GETPOST('id','int');
 $ref                    = GETPOST('ref','alpha');
@@ -284,7 +286,7 @@ if(isset( $_SESSION['Timesheetuser_class'][$tms]))
 * Put here all code to build page
 ****************************************************/
 
-$morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
+$morejs=array("/timesheet/js/jsparameters.php","/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
 llxHeader('',$langs->trans('TimesheetUser'),'','','','',$morejs);
 print "<div> <!-- module body-->";
 $form=new Form($db);

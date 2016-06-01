@@ -100,7 +100,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
             $list=array_merge($list,$userid);
         }else
         {
-            $list[]=$userid;
+            //$list[]=$userid;
         }
         
     }
