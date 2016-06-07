@@ -456,7 +456,7 @@ switch ($action) {
 
             print "</table>";
             print  '<script type="text/javascript">'."\n\t";
-            print 'updateAll(\''.TIMESHEET_TIME_TYPE.'\');';
+            print 'updateAll(0);';
             print  "\n\t".'</script>'."\n";
         }
 	print '<div class="center">';

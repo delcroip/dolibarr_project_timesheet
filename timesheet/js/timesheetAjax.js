@@ -85,7 +85,7 @@ function refreshTimesheet(Wlmode){
         $.jnotify("refreshTimesheet "+err,'error',true);
     }
         UpdateNavigation(nextWeek,prevWeek);
-        updateAll(timetype);
+        updateAll();
         
         
 }

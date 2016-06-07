@@ -2,7 +2,7 @@
 Timesheet=Timesheet
 NextWeek=Next week
 PreviousWeek=Previous Week
-GoToDate= Go to
+GoTo= Go to
 NumberOfTimeSpendModified =  Number of time spend modified :
 NumberOfTimeSpendCreated = Number of time spend created :
 NumberOfTimeSpendDeleted = Number of  time spend deleted :
@@ -96,3 +96,8 @@ wngMsgHoursExceded = you are entering overtime
 errMsgMaxHoursExceded = you can't enter that much time for a single day
 maxhoursPerDaysDesc= Set the maximum hours to be enter per day and user via the timesheet 
 maxhoursperdays = Maximum hour per day
+approvalbyweek = Approval by week
+approvalbyweekDesc = Approval by week instead of approval by user
+maxapproval= Max approval
+maxapprovalDesc = Maximum number of timesheet per approval page
+OpenDays = Open days

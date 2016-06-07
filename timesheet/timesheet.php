@@ -180,7 +180,7 @@ $Form .=$timesheetUser->getHTMLFooter($ajax);
 $timetype=TIMESHEET_TIME_TYPE;
 //$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
-$Form .='updateAll(\''.$timetype.'\');';
+$Form .='updateAll();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .='</div>';//TimesheetPage
 print $Form;

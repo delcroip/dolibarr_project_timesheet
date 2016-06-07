@@ -314,7 +314,7 @@ function GetTimeSheetXML()
   *  @param    bool           $ajax     ajax of html behaviour
   *  @return     string                                                   html code
  */
- function getHTMLHeader($ajax=false){
+ function getHTMLHeader($ajax=false,$shrinked=false){
      global $langs;
     $html="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
 
@@ -331,7 +331,7 @@ function GetTimeSheetXML()
     for ($i=0;$i<7;$i++)
     {
         $curDay=strtotime( $this->yearWeek.' +'.$i.' day');
-        $html.="\t".'<th width="60px">'.$langs->trans(date('l',$curDay)).'<br>'.date('d/m/y',$curDay)."</th>\n";
+        $html.="\t".'<th width="60px" >'.$langs->trans(date('l',$curDay)).'<br>'.date('d/m/y',$curDay)."</th>\n";
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';
@@ -499,7 +499,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
         }else{
             $Nav.=  '<form name="goToDate" action="?action=goToDate&wlm='.$this->whitelistmode.'" method="POST" >'."\n\t\t\t";
         }
-        $Nav.=   $langs->trans("GoToDate").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)."\n\t\t\t";;
+        $Nav.=   $langs->trans("GoTo").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)."\n\t\t\t";;
 	$Nav.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	if($ajax){
             $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.date('Y\WW',strtotime($this->yearWeek."+3 days  +1 week")).'\',0);';

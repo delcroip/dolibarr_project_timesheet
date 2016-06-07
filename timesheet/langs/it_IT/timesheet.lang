@@ -3,7 +3,7 @@
 Timesheet= Timesheet
 NextWeek=settimana successiva
 PreviousWeek=settimana precedente
-GoToDate= vai a 
+GoTo= vai a 
 NumberOfTimeSpendModified =  Tempo impiegato modificato :
 NumberOfTimeSpendCreated = Tempo impiegato creato :
 NumberOfTimeSpendDeleted = Tempo impiegato eliminato :

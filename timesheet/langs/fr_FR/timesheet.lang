@@ -2,7 +2,7 @@
 Timesheet= Feuille de temps
 NextWeek=semaine suivante
 PreviousWeek=semaine précédente
-GoToDate= allez à
+GoTo= allez à
 NumberOfTimeSpendModified =  Nombre de temps consommé changé :
 NumberOfTimeSpendCreated = Nombre de temps consommé créé :
 NumberOfTimeSpendDeleted = Nombre de temps consommé supprimé :
@@ -93,4 +93,16 @@ InternalError= Erreur interne
 timesheetSumitted= Feuille de temps envoyée pour approbation
 Recall= Réouvrir
 Submit = Envoyer
-
+wngMsgHoursExceded = Vous entrez des heures supplémentaires
+errMsgMaxHoursExceded = Vous ne pouvez pas faire autant d'heures supplémentaires par jour
+maxhoursPerDaysDesc= Défini le maximum  d'heures par jour
+maxhoursperdays = Maximum d'heure par jour
+approvalbyweek = Approbation par semaine
+approvalbyweekDesc = Approbation par semaine au lieux de par utilisateur
+maxapproval= Maximum d'approbation
+maxapprovalDesc = Défini le nombre maximum de feuilles de temps par page d'approbation 
+OpenDays = Jour Ouverts
+NothingToValidate = Rien à valider
+customerSignature = Signature client
+managerSignature = Signature chef d'équipe
+employeeSignature = Signature employé(e)

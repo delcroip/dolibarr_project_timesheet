@@ -105,7 +105,7 @@ if($action== 'submit'){
                     }
                     
                 }
-                if(($tsRejected+$tsApproved)==$count){
+                if(($tsRejected+$tsApproved)>0){
                     $current--;
                 }
                // $offset-=($tsApproved+$tsRejected);       
@@ -184,7 +184,7 @@ llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
 $Form ='';
 //tmstp=time();
 if(is_object($firstTimesheetUser)){
-    echo getHTMLNavigation($optioncss, $selectList,$current);
+    if(!$print) echo getHTMLNavigation($optioncss, $selectList,$current);
     $Form .=$firstTimesheetUser->getHTMLFormHeader($ajax);
     foreach($objectArray as $key=> $timesheetUser){
        // if($firstTimesheetUser->userId==$timesheetUser->userId){
@@ -194,8 +194,8 @@ if(is_object($firstTimesheetUser)){
         //$ret+=$this->getTaskTimeIds(); 
         //FIXME module holiday should be activated ?
                 $timesheetUser->fetchUserHoliday(); 
-                $Form .=$timesheetUser->userName." - ".$timesheetUser->yearWeek;
-                $Form .=$timesheetUser->getHTMLHeader(false);
+                $Form .=$timesheetUser->userName." - ".$langs->trans('Week').date(' W (Y)',$timesheetUser->year_week_date);
+                $Form .=$timesheetUser->getHTMLHeader(false,true);
                 $Form .=$timesheetUser->getHTMLHolidayLines(false);
                 //$Form .=$timesheetUser->getHTMLTotal('totalT');
                 $Form .=$timesheetUser->getHTMLtaskLines(false);
@@ -205,9 +205,9 @@ if(is_object($firstTimesheetUser)){
                 
                 $Form .= '</br>'."\n";
                 if(!$print){
-                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$timesheetUser->id.']" value="Approved" ><span>'.$langs->trans('Approved').'</span></label>'."\n";/*FIXME*/
-                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$timesheetUser->id.']" value="Rejected" ><span>'.$langs->trans('Rejected').'</span></label>'."\n";/*FIXME*/
-                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$timesheetUser->id.']" value="Submitted" checked ><span>'.$langs->trans('Submitted').'</span></label>'."\n";/*FIXME*/
+                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$timesheetUser->id.']" value="Approved" ><span>'.$langs->trans('APPROVED').'</span></label>'."\n";/*FIXME*/
+                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$timesheetUser->id.']" value="Rejected" ><span>'.$langs->trans('REJECTED').'</span></label>'."\n";/*FIXME*/
+                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$timesheetUser->id.']" value="Submitted" checked ><span>'.$langs->trans('SUBMITTED').'</span></label>'."\n";/*FIXME*/
                 $Form .= '</br></br></br>'."\n";
                 }
                 $i++;//use for the offset
@@ -235,7 +235,7 @@ if(is_object($firstTimesheetUser)){
 $timetype=TIMESHEET_TIME_TYPE;
 //$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
-$Form .='updateAll(\''.$timetype.'\');';
+$Form .='updateAll();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .='</div>';//TimesheetPage
 print $Form;
@@ -363,10 +363,10 @@ function getHTMLNavigation($optioncss, $selectList,$current=0){
  */
 function getSelectAps($subId){
     if(!is_array($subId) || !count($subId))return array();
-    global $db;
+    global $db,$langs;
     if(TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.year_week_date) as nb,ts.year_week_date as id,';
-        $sql.=" DATE_FORMAT(ts.year_week_date,'%YW%u') as label";
+        $sql.=" DATE_FORMAT(ts.year_week_date,'".$langs->trans('Week')." %u (%Y)') as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'timesheet_user as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
 
@@ -394,14 +394,14 @@ function getSelectAps($subId){
             
             if ($obj)
             {
-                $j=0;
+                $j=1;
                 $nb=$obj->nb;
                 while($nb>TIMESHEET_MAX_APPROVAL){
                     $list[]=array("id"=>$obj->id,"label"=>$obj->label.' '.$j,"count"=>TIMESHEET_MAX_APPROVAL);
                     $nb-=TIMESHEET_MAX_APPROVAL;
                     $j++;
                 }
-                $list[]=array("id"=>$obj->id,"label"=>$obj->label.' '.$j,"count"=>$nb);
+                $list[]=array("id"=>$obj->id,"label"=>$obj->label.' '.(($obj->nb>TIMESHEET_MAX_APPROVAL)?$j:''),"count"=>$nb);
             }
             $i++;
         }

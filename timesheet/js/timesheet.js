@@ -29,59 +29,7 @@ function submitTs(){
   
   function regexEvent(object,evt,type)
   {
-      switch(type)
-      {
-          case 'days':
-            if(object.value!=object.defaultValue)
-            {
-                object.style.backgroundColor = "lightgreen";
-                var regex= /^[0-9]{1}([.,]{1}[0-9]{1})?$/;
 
-                if(regex.test(object.value) )
-                { 
-                  var tmp=object.value.replace(',','.');
-                  if(tmp<=1.5){
-                      var tmpint=parseInt(tmp);
-                      if(tmp-tmpint>=0.5){
-                          object.value= tmpint+0.5;
-                      }else{
-                          object.value= tmpint;
-                      }
-                  }else{
-                      object.value= '1.5';
-                  }
-                }else{
-                   object.style.backgroundColor = "red";
-                   object.value= object.defaultValue;
-                }
-            }else
-            {
-                object.style.backgroundColor = object.style.getPropertyValue("background");
-            }
-              return true;  
-          break; 
-          case 'hours':
-              if(object.value!=object.defaultValue)
-              {
-                  object.style.backgroundColor = "lightgreen";
-                  var regex= /^[0-9]{1,2}:[0-9]{2}$/;
-                  var regex2=/^[0-9]{1,2}$/;
-                  if(!regex.test(object.value))
-                  { 
-                      if(regex2.test(object.value))
-                        object.value=object.value+':00';
-                      else{
-                        object.value=object.defaultValue;
-                        object.style.backgroundColor = "red";
-                    }
-                  }
-                  return true;
-              }else
-            {
-                object.style.backgroundColor = object.style.getPropertyValue("background");
-            }
-              break;
-          case 'timeChar':
               //var regex= /^[0-9:]{1}$/;
               //alert(event.charCode);
               var charCode = (evt.which) ? evt.which : event.keyCode;
@@ -98,10 +46,7 @@ function submitTs(){
                   return false;
               }
                 
-              break;    
-          default:
-              break;
-      }
+
   
   }    
   
@@ -133,7 +78,7 @@ function parseTime(timeStr, dt) {
 
 //update both total lines day 0-6, mode hour/day
 
-function updateTotal(ts,days){
+function updateTotal(ts,days,silent){
 	try{
             var err=false;
             var curDay = document.getElementsByClassName('time4day['+ts+']['+days+']');
@@ -167,11 +112,11 @@ function updateTotal(ts,days){
                         }
                }
                if(total.getDate()>1 || (total.getHours()+total.getMinutes()/60)>day_max_hours){
-                $.jnotify(err_msg_max_hours_exceded ,'error',false);   //
-                err=true;
+                    if( silent == 0)$.jnotify(err_msg_max_hours_exceded ,'error',false);   //
+                     err=true;
                }else{
                 if((total.getHours()+total.getMinutes()/60)>day_hours){
-                    $.jnotify(wng_msg_hours_exceded ,'warning',false); 
+                    if( silent == 0)(wng_msg_hours_exceded ,'warning',false); 
                 }
                
                 for (var i=0;i<nblineTotal;i++)
@@ -209,10 +154,10 @@ function updateTotal(ts,days){
                     }
 		}
                 if(total>day_max_hours/day_hours){
-                   $.jnotify(err_msg_max_hours_exceded ,'error',false);   //
+                   if( silent == 0)$.jnotify(err_msg_max_hours_exceded ,'error',false);   //
                     err=true;
-                }else if(total>1){
-                    $.jnotify(wng_msg_hours_exceded ,'warning',false); 
+                }else if(total>1 ){
+                   if( silent == 0)$.jnotify(wng_msg_hours_exceded ,'warning',false); 
                 }
 
                 for (var i=0;i<nblineTotal;i++)
@@ -231,21 +176,21 @@ function updateTotal(ts,days){
             }
 	}
 	catch(err) {
-            $.jnotify("updateTotal "+err,'error',true);
+            if(silent == 0)$.jnotify("updateTotal "+err,'error',true);
 	}
 }
 
 //function to update all the totals
-function updateAll(timetype){
+function updateAll(){
 	var tsUser = document.getElementsByName('tsUserId')
     for(i=0;i<7;i++){
              for(j=0;j<tsUser.length;j++){
-		updateTotal(tsUser[j].value,i,timetype);
+		updateTotal(tsUser[j].value,i,1);
             }
 	}
 }
 
-function validateTime(object,ts, day){
+function validateTime(object,ts, day,silent){
     updated=false;
     switch(time_type)
       {
@@ -289,7 +234,7 @@ function validateTime(object,ts, day){
             }
             break;
       }
-      if(updateTotal(ts,day)==false){
+      if(updateTotal(ts,day,silent)==false){
           object.value=object.defaultValue;
           object.style.backgroundColor = "red";
           

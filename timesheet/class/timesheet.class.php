@@ -291,7 +291,7 @@ class timesheet extends Task
                     $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
                     $html .='" maxlength="5" style="width: 90%;'.$bkcolor.'" ';
                     $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
-                    $html .= 'onblur="validateTime(this,'.$tsUserId.','.$dayOfWeek.')" />';
+                    $html .= 'onblur="validateTime(this,'.$tsUserId.','.$dayOfWeek.',0)" />';
                     $html .= "</th>\n"; 
                 }else{
                     $bkcolor='background:#'.$statusTsColor[$status];
