@@ -258,6 +258,7 @@ class timesheet extends Task
 
          for($dayOfWeek=0;$dayOfWeek<7;$dayOfWeek++)
          {
+                //$shrinkedStyle=(!$opendays[$dayOfWeek+1] && $shrinked)?'display:none;':'';
                 $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
                 # to avoid editing if the task is closed 
                 $dayWorkLoadSec=isset($this->tasklist[$dayOfWeek])?$this->tasklist[$dayOfWeek]['duration']:0;
@@ -285,7 +286,7 @@ class timesheet extends Task
                     } 
                     
                     
-                    $html .= '<th ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$tsUserId.']['.$dayOfWeek.']" ';
+                    $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$tsUserId.']['.$dayOfWeek.']" ';
 //                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayOfWeek.']" '; if one whant multiple ts per validation
                     $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayOfWeek.']" ';
                     $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);

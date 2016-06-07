@@ -314,7 +314,7 @@ function GetTimeSheetXML()
   *  @param    bool           $ajax     ajax of html behaviour
   *  @return     string                                                   html code
  */
- function getHTMLHeader($ajax=false,$shrinked=false){
+ function getHTMLHeader($ajax=false){
      global $langs;
     $html="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
 
@@ -327,11 +327,11 @@ function GetTimeSheetXML()
  //        }
          $html.=">".$langs->trans($value)."</th>\n";
      }
-    
+    $opendays=str_split(TIMESHEET_OPEN_DAYS);
     for ($i=0;$i<7;$i++)
     {
         $curDay=strtotime( $this->yearWeek.' +'.$i.' day');
-        $html.="\t".'<th width="60px" >'.$langs->trans(date('l',$curDay)).'<br>'.date('d/m/y',$curDay)."</th>\n";
+        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.date('d/m/y',$curDay)."</th>\n";
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';

@@ -195,7 +195,7 @@ if(is_object($firstTimesheetUser)){
         //FIXME module holiday should be activated ?
                 $timesheetUser->fetchUserHoliday(); 
                 $Form .=$timesheetUser->userName." - ".$langs->trans('Week').date(' W (Y)',$timesheetUser->year_week_date);
-                $Form .=$timesheetUser->getHTMLHeader(false,true);
+                $Form .=$timesheetUser->getHTMLHeader(false);
                 $Form .=$timesheetUser->getHTMLHolidayLines(false);
                 //$Form .=$timesheetUser->getHTMLTotal('totalT');
                 $Form .=$timesheetUser->getHTMLtaskLines(false);
@@ -397,11 +397,11 @@ function getSelectAps($subId){
                 $j=1;
                 $nb=$obj->nb;
                 while($nb>TIMESHEET_MAX_APPROVAL){
-                    $list[]=array("id"=>$obj->id,"label"=>$obj->label.' '.$j,"count"=>TIMESHEET_MAX_APPROVAL);
+                    $list[]=array("id"=>$obj->id,"label"=>$obj->label.' ('.$j."/".ceil($obj->nb/TIMESHEET_MAX_APPROVAL).')',"count"=>TIMESHEET_MAX_APPROVAL);
                     $nb-=TIMESHEET_MAX_APPROVAL;
                     $j++;
                 }
-                $list[]=array("id"=>$obj->id,"label"=>$obj->label.' '.(($obj->nb>TIMESHEET_MAX_APPROVAL)?$j:''),"count"=>$nb);
+                $list[]=array("id"=>$obj->id,"label"=>$obj->label.' '.(($obj->nb>TIMESHEET_MAX_APPROVAL)?'('.$j.'/'.ceil($obj->nb/TIMESHEET_MAX_APPROVAL).')':''),"count"=>$nb);
             }
             $i++;
         }
