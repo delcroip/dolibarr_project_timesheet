@@ -405,7 +405,9 @@ $Form .='</table><br>';
 
 
 $Form .='<input type="submit" class="butAction" value="'.$langs->trans('Save')."\">\n</from>";
+print $Form.'<br><br><br>';
+print_titre($langs->trans("Informations"));
+print '<br><div><a>'.$langs->trans('reminderEmailProcess').'</a></div>';
 
-print $Form;
 llxFooter();
 ?>

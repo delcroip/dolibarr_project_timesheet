@@ -72,7 +72,8 @@ class modTimesheet extends DolibarrModules
 		// for default path (eg: /mymodule/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /mymodule/core/modules/barcode)
 		// for specific css file (eg: /mymodule/css/mymodule.css.php)
-		//$this->module_parts = array('triggers' => 1);
+		$this->module_parts = array('triggers' => 0,
+                                            'css' => array('/timesheet/css/timesheet.css'));
                 ////$this->module_parts = array(
 		//                        	'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
 		//							'login' => 0,                                    	// Set this to 1 if module has its own login method directory (core/login)
@@ -89,7 +90,7 @@ class modTimesheet extends DolibarrModules
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@mymodule')) // Set here all workflow context managed by module
 		//                        );
 		//$this->module_parts = array();
-                $this->module_parts = array('css' => array('/timesheet/css/timesheet.css'));
+                //$this->module_parts = array('css' => array('/timesheet/css/timesheet.css'));
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array();
@@ -181,7 +182,11 @@ class modTimesheet extends DolibarrModules
 
         // Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
-        $this->boxes = array();			// List of boxes
+        $this->boxes = array( 
+            0 => array(
+        'file' => 'box_approval.php@timesheet',
+        'note' => 'timesheetApproval',
+        'enabledbydefaulton' => 'Home'));			// List of boxes
 		// Example:
 		//$this->boxes=array(array(0=>array('file'=>'myboxa.php','note'=>'','enabledbydefaulton'=>'Home'),1=>array('file'=>'myboxb.php','note'=>''),2=>array('file'=>'myboxc.php','note'=>'')););
 
