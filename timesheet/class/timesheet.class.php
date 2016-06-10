@@ -586,6 +586,61 @@ function getIdList()
     }
     return $ret;
 }
+
+        	/**
+	 *	function that will send email to 
+	 *
+	 *	@return	void
+	 */
+              function sendApprovalReminders(){
+                  global $langs;
+            $sql = 'SELECT';
+            $sql.=' COUNT(t.rowid) as nb,';
+            $sql.=' u.email,';
+            $sql.=' u.fk_user as approverid';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'timesheet_user as t';
+            $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
+            $sql.= ' WHERE t.status="SUBMITTED" AND t.target="team"';
+            $sql.= ' GROUP BY u.fk_user';
+             dol_syslog(get_class($this)."::sendApprovalReminders sql=".$sql, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            
+            if ($resql)
+            {
+                $num = $this->db->num_rows($resql);
+                for( $i=0;$i<$num;$i++)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    if ($obj)
+                    {
+
+                        $message=str_replace("__NB_TS__", $obj->nb, str_replace('\n', "\n",$langs->transnoentities('YouHaveApprovalPendingMsg')));
+                        //$message="Bonjour,\n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
+                        $sendto=$obj->email;
+                        $replyto=$obj->email;
+                        $subject=$langs->transnoentities("YouHaveApprovalPending");
+                        if(!empty($sendto) && $sendto!="NULL"){
+                           require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+                           $mailfile = new CMailFile(
+	                        $subject,
+	                        $sendto,
+	                        $replyto,
+	                        $message
+	                    );
+                           $mailfile->sendfile();
+                        }
+                        
+                    }
+                }
+
+            }
+            else
+            {
+                $error++;
+                dol_print_error($db);
+                $list= array();
+            }
+        }
 }
 
 ?>

@@ -1253,6 +1253,7 @@ function get_userName(){
 	}
 
 
+
 	/**
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
@@ -1276,58 +1277,6 @@ function get_userName(){
 
 		
 	}
-        	/**
-	 *	function that will send email to 
-	 *
-	 *	@return	void
-	 */
-              function sendApprovalReminders(){
-            $sql = 'SELECT';
-            $sql.=' COUNT(t.rowid) as nb,';
-            $sql.=' u.email,';
-            $sql.=' u.fk_user as approverid';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'timesheet_user as t';
-            $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
-            $sql.= ' WHERE t.status="SUBMITTED" AND t.target="team"';
-            $sql.= ' GROUP BY u.fk_user';
-            $resql=$db->query($sql);
-
-            if ($resql)
-            {
-                $num = $db->num_rows($resql);
-                for( $i=0;$i<$num;$i++)
-                {
-                    $obj = $db->fetch_object($resql);
-                    if ($obj)
-                    {
-                        
-                        $message=$langs->trans('YouHaveApprovalPendingMsg');
-                        str_replace('__NB_TS__', $obj->nb,  $message);
-                        $sendto=$obj->email;
-                        $replyto=$obj->email;
-                        $subject=$langs->trans('YouHaveApprovalPending');
-                        if(!empty($sendto) && $sendto!="NULL"){
-                           require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
-                           $mailfile = new CMailFile(
-	                        $subject,
-	                        $sendto,
-	                        $replyto,
-	                        $message
-	                    );
-                           $mailfile->sendfile();
-                        }
-                        
-                    }
-                }
-
-            }
-            else
-            {
-                $error++;
-                dol_print_error($db);
-                $list= array();
-            }
-        }
       
  }
 

@@ -87,7 +87,7 @@ class box_approval extends ModeleBoxes
                     );
 
                     $this->info_box_contents[0][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'align="right"',
                         'text' => $nb,
                         'asis' => 1,
                     );
