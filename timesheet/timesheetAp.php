@@ -28,9 +28,9 @@
 // hide left menu
 //$_POST['dol_hide_leftmenu']=1;
 // Change this following line to use the correct relative path (../, ../../, etc)
-include 'lib/includeMain.lib.php';
-require_once 'lib/timesheet.lib.php';
-require_once 'lib/generic.lib.php';
+include 'core/lib/includeMain.lib.php';
+require_once 'core/lib/timesheet.lib.php';
+require_once 'core/lib/generic.lib.php';
 require_once 'class/timesheetUser.class.php';
 if(!$user->rights->timesheet->approval){
         $accessforbidden = accessforbidden("you need to have the approver rights");           
@@ -177,7 +177,7 @@ if($xml){
 }
 
 $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
-$morejs=array("/timesheet/js/jsparameters.php","/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
+$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js");
 llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 

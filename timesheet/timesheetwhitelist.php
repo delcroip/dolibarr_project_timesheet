@@ -37,11 +37,11 @@
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
 
 // Change this following line to use the correct relative path (../, ../../, etc)
-include 'lib/includeMain.lib.php';;
+include 'core/lib/includeMain.lib.php';;
 // Change this following line to use the correct relative path from htdocs
 require_once 'class/timesheetwhitelist.class.php';
-require_once 'lib/timesheet.lib.php';
-require_once 'lib/generic.lib.php'; 
+require_once 'core/lib/timesheet.lib.php';
+require_once 'core/lib/generic.lib.php'; 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 //document handling
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

@@ -25,7 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once 'class/holidayTimesheet.class.php';
 require_once 'class/timesheet.class.php';
 require_once 'class/timesheetwhitelist.class.php';
-//require_once 'lib/timesheet.lib.php';
+//require_once 'core/lib/timesheet.lib.php';
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
 //require_once './projectTimesheet.class.php';
 //define('TIMESHEET_BC_FREEZED','909090');

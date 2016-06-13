@@ -27,8 +27,8 @@
 // hide left menu
 //$_POST['dol_hide_leftmenu']=1;
 // Change this following line to use the correct relative path (../, ../../, etc)
-include 'lib/includeMain.lib.php';
-require_once 'lib/timesheet.lib.php';
+include 'core/lib/includeMain.lib.php';
+require_once 'core/lib/timesheet.lib.php';
 require_once 'class/timesheetUser.class.php';
 
 $action             = GETPOST('action');
@@ -153,7 +153,7 @@ if($xml){
     echo $timesheetUser->GetTimeSheetXML();
     exit;
 }
-$morejs=array("/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js","/timesheet/js/jsparameters.php");
+$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js");
 llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 
@@ -178,7 +178,7 @@ $Form .=$timesheetUser->getHTMLFooter($ajax);
 
 //Javascript
 $timetype=TIMESHEET_TIME_TYPE;
-//$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
+//$Form .= ' <script type="text/javascript" src="core/js/timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
 $Form .='updateAll();';
 $Form .= "\n\t".'</script>'."\n";

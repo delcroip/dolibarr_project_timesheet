@@ -37,13 +37,14 @@
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
 
 // Change this following line to use the correct relative path (../, ../../, etc)
-include 'lib/includeMain.lib.php';
+include 'core/lib/includeMain.lib.php';
  if(!$user->rights->timesheet->approval->admin){
         $accessforbidden = accessforbidden("you need to have the approver admin rights");           
 }   
 
-require_once 'lib/generic.lib.php';
+require_once 'core/lib/generic.lib.php';
 require_once 'class/timesheetUser.class.php';
+require_once 'core/lib/timesheet.lib.php';
 dol_include_once('/core/lib/functions2.lib.php');
 //document handling
 dol_include_once('/core/lib/files.lib.php');
@@ -51,7 +52,7 @@ dol_include_once('/core/lib/files.lib.php');
 dol_include_once('/core/class/html.formfile.class.php');
 // include conditionnally of the dolibarr version
 //if((version_compare(DOL_VERSION, "3.8", "<"))){
-        dol_include_once('/timesheet/lib/timesheet.lib.php');
+
 //}
 dol_include_once('/core/class/html.formother.class.php');
 $PHP_SELF=$_SERVER['PHP_SELF'];
@@ -286,7 +287,7 @@ if(isset( $_SESSION['Timesheetuser_class'][$tms]))
 * Put here all code to build page
 ****************************************************/
 
-$morejs=array("/timesheet/js/jsparameters.php","/timesheet/js/timesheetAjax.js","/timesheet/js/timesheet.js");
+$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js");
 llxHeader('',$langs->trans('TimesheetUser'),'','','','',$morejs);
 print "<div> <!-- module body-->";
 $form=new Form($db);
@@ -380,7 +381,7 @@ switch ($action) {
 			print $form->select_date($object->year_week_date,'Yearweekdate');
 		}
 		}else{
-			print dol_print_date($object->year_week_date,'day');
+			print dol_print_date($object->year_week_date,'day').date(' (Y\WW)',$object->year_week_date);
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -638,10 +639,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print "\n";
 	print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Target'),$PHP_SELF,'t.target','',$param,'',$sortfield,$sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Projecttasktimelist'),$PHP_SELF,'t.fk_project_tasktime_list','',$param,'',$sortfield,$sortorder);
-	print "\n";
+	//print_liste_field_titre($langs->trans('Target'),$PHP_SELF,'t.target','',$param,'',$sortfield,$sortorder);
+	//print "\n";
+	//print_liste_field_titre($langs->trans('Projecttasktimelist'),$PHP_SELF,'t.fk_project_tasktime_list','',$param,'',$sortfield,$sortorder);
+	//print "\n";
 	print_liste_field_titre($langs->trans('Userapproval'),$PHP_SELF,'t.fk_user_approval','',$param,'',$sortfield,$sortorder);
 	print "\n";
 
@@ -665,14 +666,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print select_enum('timesheet_user','status','ls_status',$ls_status);
 	print '</td>';
 //Search field fortarget
-	print '<td class="liste_titre" colspan="1" >';
-		print select_enum('timesheet_user','target','ls_target',$ls_target);
-	print '</td>';
+//	print '<td class="liste_titre" colspan="1" >';
+//		print select_enum('timesheet_user','target','ls_target',$ls_target);
+//	print '</td>';
 
 //Search field forproject_tasktime_list
-	print '<td class="liste_titre" colspan="1" >';
-		print '<input class="flat" size="16" type="text" name="ls_project_tasktime_list" value="'.$ls_project_tasktime_list.'"/>';
-	print '</td>';
+//	print '<td class="liste_titre" colspan="1" >';
+//		print '<input class="flat" size="16" type="text" name="ls_project_tasktime_list" value="'.$ls_project_tasktime_list.'"/>';
+//	print '</td>';
 //Search field foruser_approval
 	print '<td class="liste_titre" colspan="1" >';
 		print select_generic('user','rowid','ls_user_approval','lastname','firstname',$ls_user_approval);
@@ -698,10 +699,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 		print "<tr class=\"dblist ".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
 		print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
-		print "<td>".dol_print_date($obj->year_week_date,'day')."</td>";
+		print "<td>".dol_print_date($obj->year_week_date,'day').date(' (Y\WW)',$db->jdate($obj->year_week_date))."</td>";
 		print "<td>".$langs->trans($obj->status)."</td>";
-		print "<td>".$langs->trans($obj->target)."</td>";
-		print "<td>".$obj->fk_project_tasktime_list."</td>";
+		//print "<td>".$langs->trans($obj->target)."</td>";
+		//print "<td>".$obj->fk_project_tasktime_list."</td>";
 		print "<td>".print_generic('user','rowid',$obj->fk_user_approval,'lastname','firstname',' ')."</td>";
 		print '<td><a href="'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 		print "</tr>";

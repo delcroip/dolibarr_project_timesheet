@@ -20,7 +20,7 @@
  *  \brief      Page to setup project module
  */
 
-include '../lib/includeMain.lib.php';
+include '../core/lib/includeMain.lib.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -190,7 +190,7 @@ foreach ($headersT as $header) {
     
 }
 //permet d'afficher la structure dolibarr
-$morejs=array("/timesheet/js/timesheet.js","/timesheet/js/jscolor.js");
+$morejs=array("/timesheet/core/js/timesheet.js","/timesheet/core/js/jscolor.js");
 llxHeader("",$langs->trans("timesheetSetup"),'','','','',$morejs,'',0,0);
 
 

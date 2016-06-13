@@ -110,3 +110,5 @@ nbTsToApprove= Nombre de feuilles de temps à approuver
 YouHaveApprovalPendingMsg=Bonjour,\n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.
 YouHaveApprovalPending = Feuilles de temps en attente de votre approbation
 reminderEmailProcess = Vous pouvez activer un envoie d'email de rappel aux approbateurs en utilisant la fonciton planificateur de tâche de dolibarr<br>Type de tache = Méhode d'appel d'une classe Dolibarr<br>Module = timesheet<br>Class = timesheet.class.php<br>instance/objet à créer = timesheet<br> Méthode = sendApprovalReminders
+NumberOfTimesheetApproved=Nombre de feuille de temps approvée(s) :
+NumberOfTimesheetRejected= Nombre de feuille de temps rejetée(s) :

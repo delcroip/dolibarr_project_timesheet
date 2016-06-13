@@ -26,7 +26,7 @@ CREATE TABLE llx_timesheet_user
 rowid                 integer NOT NULL AUTO_INCREMENT,
 fk_userid               integer NOT NULL,          
 year_week_date          DATE NOT NULL, 
-status                enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED') DEFAULT 'DRAFT',
+status                enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED') DEFAULT 'DRAFT',
 target            enum('team','project','customer','provider','other') DEFAULT 'team', -- a team ts is always needed 
 fk_project_tasktime_list VARCHAR(2048), 
 fk_user_approval              integer default NULL,
