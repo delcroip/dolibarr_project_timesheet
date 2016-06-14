@@ -1,0 +1,41 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 19-mars-2016, 17:21:01
+    Author     : delcroip
+*/
+
+ul.listHoliday{
+    list-style-type: none; 
+    width: 100%; 
+    margin: 0;
+    padding: 0;
+}
+
+li.listItemHoliday{
+    float: left; 
+    width: 50%;
+    background-color: transparent;
+}
+
+a.holiday{
+    display:block;
+    padding: 0;
+    margin: 0;
+}
+
+a.noPrevHoliday{
+    margin-left: 5%;
+    /*border-left: thick double #000000;*/
+}
+a.noNextHoliday{
+    margin-right: 10%;
+    /*border-left: thick double #000000;*/
+}
+
+tr.dblist:hover{
+    	font-weight: bold;
+}
