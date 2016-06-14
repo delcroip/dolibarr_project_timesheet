@@ -8,6 +8,8 @@ timesheet navigation & submit done with Ajax ( no reload of the entire page need
 - Time report per user and per project.
 - Customisation of the task information to show (show ref or not, show the related project or not ...)
 - layout customisation (show/hide the '00:00', show/hide the draft project task ... )
+- show the holiday in the timesheet page
+- Timesheet approval/rejection by N+1
 
 # known bug/limitation
 - when session is timed out, the login page isn't showed
@@ -15,5 +17,4 @@ timesheet navigation & submit done with Ajax ( no reload of the entire page need
 - Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
 
 # Next developement
-- support the holidays creation/deduction from the timesheets --> fields test will be needed to validate the Ajax before starting the next steps
-- Timesheet approval/rejection by N+1
+- timesheet chanlenge by project, customer ...
