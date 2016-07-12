@@ -230,10 +230,10 @@ class timesheet extends Task
                      $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->id.'&withproject='.$this->fk_project2.'">'.$this->description.'</a>';
                      break;
                  case 'DateStart':
-                     $html.=$this->date_start?date('d/m/y',$this->date_start):'';
+                     $html.=$this->date_start?dol_print_date($this->date_start,'day'):'';
                      break;
                  case 'DateEnd':
-                     $html.=$this->date_end?date('d/m/y',$this->date_end):'';
+                     $html.=$this->date_end?dol_print_date($this->date_end,'day'):'';
                      break;
                  case 'Company':
                      $html.='<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->companyId.'">'.$this->companyName.'</a>';
@@ -341,11 +341,11 @@ class timesheet extends Task
     //$xml.="<task id=\"{$this->id}\" name=\"{$this->description}\">\n";
     $xml.="<DateStart unix=\"$this->date_start\">";
     if($this->date_start)
-        $xml.=date('d/m/y',$this->date_start);
+        $xml.=dol_mktime($this->date_start);
     $xml.=" </DateStart>";
     $xml.="<DateEnd unix=\"$this->date_end\">";
     if($this->date_end)
-        $xml.=date('d/m/y',$this->date_end);
+        $xml.=dol_mktime($this->date_end);
     $xml.=" </DateEnd>";
      $xml.="<Company id=\"{$this->companyId}\">{$this->companyName} </Company>";
     $xml.="<TaskProgress id=\"{$this->companyId}\">";

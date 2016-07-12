@@ -96,15 +96,19 @@ function updateTotal(ts,days,silent){
                     //var id='task['+i+']['+days+']';   
                     var taskTime= new Date(0);
                     var element=curDay[i];
+                    
                     if(element)
                     {
                         if (element.value)
                         {   
                             parseTime(element.value,taskTime);
                         }
-                        else
+                        else if(element.innerHTML)
                         {
                             parseTime(element.innerHTML,taskTime);
+                        }else
+                        {
+                            parseTime("00:00",taskTime);
                         }
                        
                         total.setHours(total.getHours()+taskTime.getHours());
@@ -114,9 +118,8 @@ function updateTotal(ts,days,silent){
                if(total.getDate()>1 || (total.getHours()+total.getMinutes()/60)>day_max_hours){
                     if( silent == 0)$.jnotify(err_msg_max_hours_exceded ,'error',false);   //
                      err=true;
-               }else{
-                if((total.getHours()+total.getMinutes()/60)>day_hours){
-                    if( silent == 0)(wng_msg_hours_exceded ,'warning',false); 
+               }else if((total.getHours()+total.getMinutes()/60)>day_hours){
+                    if( silent == 0)$.jnotify(wng_msg_hours_exceded ,'warning',false); 
                 }
                
                 for (var i=0;i<nblineTotal;i++)
@@ -125,12 +128,12 @@ function updateTotal(ts,days,silent){
                         TotalList[i].innerHTML = pad((total.getDate()-1)*24+total.getHours())+':'+pad(total.getMinutes());
                         TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
                     }else if(TotalList[i].innerHTML ="&nbsp;"){
-                        TotalList[i].innerHTML = day_max_hours;
+                        TotalList[i].innerHTML = day_max_hours+":00";
                         TotalList[i].style.backgroundColor = "red";
                     }
                 }
                 return !err;
-            }
+            
                 
 		//addText(,total.getHours()+':'+total.getMinutes());
             }else
@@ -147,9 +150,12 @@ function updateTotal(ts,days,silent){
                         {   
                             total+=parseFloat(element.value);
                         }
-                        else
+                        else if(element.innerHTML)
                         {
                             total+=parseFloat(element.innerHTML);
+                        }else
+                        {
+                            total+=0;
                         }
                     }
 		}

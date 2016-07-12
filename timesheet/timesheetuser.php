@@ -86,6 +86,12 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 	$ls_project_tasktime_list= GETPOST('ls_project_tasktime_list','alpha');
 	$ls_user_approval= GETPOST('ls_user_approval','int');
 	if($ls_user_approval==-1)$ls_user_approval='';
+        $ls_timsheetuser= GETPOST('ls_timesheetuser','int');
+	if($ls_timsheetuser==-1)$ls_timsheetuser='';
+        $ls_task= GETPOST('ls_task','int');
+	if($ls_task==-1)$ls_task='';
+        $ls_note= GETPOST('ls_note','alpha');
+	if($ls_note==-1)$ls_note='';
 
 
     
@@ -166,6 +172,9 @@ if ($cancel){
 		$object->target=GETPOST('Target');
 		$object->project_tasktime_list=GETPOST('Projecttasktimelist');
 		$object->user_approval=GETPOST('Userapproval');
+		$object->timesheetuser=GETPOST('Timesheetuser');
+		$object->task=GETPOST('Task');
+		$object->note=GETPOST('Note');
 
 
         
@@ -437,6 +446,49 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
+
+// show the field timsesheetuser
+
+		print '<td>'.$langs->trans('Timesheetuser').' </td><td>';
+                $sqltail= "JOIN ".MAIN_DB_PREFIX."user AS u ON u.rowid=t.fk_userid";
+		if($edit==1){
+                    //avoid full table scan print select_generic('timesheet_user', 'rowid','Timesheetuser','CONCAT(u.lastname," ",u.firstname) AS username','CONCAT(t.year_week_date," ",t.target) AS weektarget',$object->timesheetuser,' - ',$sqltail);
+                    print '<input class="flat" size="5" type="text" name="Timesheetuser" value="'.$object->timesheetuser.'"/>';
+
+		}else{
+                    print print_generic('timesheet_user', 'rowid',$object->timesheetuser,'CONCAT(lastname," ",firstname) AS username','CONCAT(year_week_date," ",target) AS weektarget',' - ','',$sqltail);
+                    //print $object->project_tasktime_list;
+
+                }
+		print "</td>";
+		print "\n</tr>\n";
+		print "<tr>\n";
+
+// show the field task
+
+		print '<td>'.$langs->trans('Task').' </td><td>';
+        	if($edit==1){
+		print select_generic('projet_task', 'rowid','Task','ref','label',$object->task);
+
+		}else{
+		print print_generic('projet_task', 'rowid',$object->task,'ref','label');
+		}
+		print "</td>";
+		print "\n</tr>\n";
+		print "<tr>\n";
+
+// show the field note
+
+		print '<td>'.$langs->trans('Note').' </td><td>';
+		if($edit==1){
+                    print '<textarea class="flat"  name="Note" cols="40" rows="5" >'.$object->note.'</textarea>';
+ 		}else{
+                    print $object->note;
+		//print print_generic('project_tasktime_list','rowid',$object->project_tasktime_list,'rowid','description');
+		}
+		print "</td>";
+		print "\n</tr>\n";
+//		print "<tr>\n";
 
 
             

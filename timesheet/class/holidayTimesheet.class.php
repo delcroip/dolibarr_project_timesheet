@@ -223,11 +223,11 @@ class holidayTimesheet extends Holiday
     //$xml.="<task id=\"{$this->id}\" name=\"{$this->description}\">\n";
     $xml.="<DateStart unix=\"$this->date_start\">";
     if($this->date_start)
-        $xml.=date('d/m/y',$this->date_start);
+        $xml.=dol_mktime($this->date_start);
     $xml.=" </DateStart>";
     $xml.="<DateEnd unix=\"$this->date_end\">";
     if($this->date_end)
-        $xml.=date('d/m/y',$this->date_end);
+        $xml.=dol_mktime($this->date_end);
     $xml.=" </DateEnd>";
      $xml.="<Company id=\"{$this->companyId}\">{$this->companyName} </Company>";
     $xml.="<TaskProgress id=\"{$this->companyId}\">";

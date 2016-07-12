@@ -50,6 +50,10 @@ class timesheetUser extends CommonObject
 	var $date_modification='';
 	var $user_creation;
 	var $user_modification;
+        var $note;
+        var $fk_timesheet_user;
+        var $fk_task;
+        
 
 //working variable
     var $user;
@@ -91,10 +95,10 @@ class timesheetUser extends CommonObject
         //FIXME module holiday should be activated ?
         $ret2=$this->fetchUserHoliday(); 
         //if ($ret<0 || $ret2<0) return -1;
-        for ($i=0;$i<7;$i++)
+        /*for ($i=0;$i<7;$i++)
         {
            $this->weekDays[$i]=date('d-m-Y',strtotime( $yearWeek.' +'.$i.' day'));
-        }
+        }*/
         $this->saveInSession();
     }        
     
@@ -284,7 +288,7 @@ function GetTimeSheetXML()
     {
        $curDay=strtotime( $this->yearWeek.' +'.$i.' day');
        //$weekDays[$i]=date('d-m-Y',$curDay);
-       $curDayTrad=$langs->trans(date('l',$curDay)).'  '.date('d/m/y',$curDay);
+       $curDayTrad=$langs->trans(date('l',$curDay)).'  '.dol_mktime($curDay);
        $xmldays.="<day col=\"{$i}\">{$curDayTrad}</day>";
     }
     $xml.= "<days>{$xmldays}</days>";
@@ -331,7 +335,8 @@ function GetTimeSheetXML()
     for ($i=0;$i<7;$i++)
     {
         $curDay=strtotime( $this->yearWeek.' +'.$i.' day');
-        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.date('d/m/y',$curDay)."</th>\n";
+//        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
+        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_print_date($curDay,'day')."</th>\n";
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';
@@ -459,8 +464,29 @@ function GetTimeSheetXML()
         
         return $Lines;
  }    
+   /* function to genegate the timesheet note
+ * 
+  *  @return     string                                                   html code
+ */
+ function getHTMLNote(){
+     global $langs;
+     $isOpenSatus=($this->status=="DRAFT" || $this->status=="CANCELLED"|| $this->status=="REJECTED");
+     $html='<table class="noborder" width="50%"><tr><td>'.$langs->trans('note').'</td></tr><tr><td>';
+   
 
-       /*
+    if($isOpenSatus){
+        $html.='<textarea class="flat"  cols="75" name="Note['.$this->id.']" rows="3" >'.$this->note.'</textarea>';
+        $html.='</td></tr></table>';
+    }else if(!empty($this->note)){
+        $html.=$this->note;
+        $html.='</td></tr></table>';
+    }else{
+        $html="";
+    }
+    
+    return $html;  
+ }
+        /*
  * function to genegate the timesheet list
  *  @return     string                                                   html code
  */
@@ -792,6 +818,9 @@ function get_userName(){
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
 		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
+		if (isset($this->timesheetuser)) $this->timesheetuser=trim($this->timesheetuser);
+		if (isset($this->task)) $this->task=trim($this->task);
+		if (isset($this->note)) $this->note=trim($this->note);
 
         
 
@@ -808,7 +837,10 @@ function get_userName(){
 		$sql.= 'fk_project_tasktime_list,';
 		$sql.= 'fk_user_approval,';
 		$sql.= 'date_creation,';
-		$sql.= 'fk_user_creation';
+		$sql.= 'fk_user_creation,';
+                $sql.= 'fk_timesheet_user,';
+                $sql.= 'fk_task,';
+                $sql.= 'note';
 
 		
         $sql.= ") VALUES (";
@@ -819,9 +851,12 @@ function get_userName(){
 		$sql.=' '.(! isset($this->target)?'"team"':'"'.$this->target.'"').',';
 		$sql.=' '.(! isset($this->project_tasktime_list)?'NULL':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
 		$sql.=' '.(! isset($this->user_approval)?'NULL':'"'.$this->user_approval.'"').',';
-		$sql.=' NOW() ,';
-		$sql.=' "'.$user->id.'"'; //fixme 3.5
 
+		$sql.=' NOW() ,';
+		$sql.=' "'.$user->id.'",'; //fixme 3.5
+		$sql.=' '.(! isset($this->timesheetuser)?'NULL':'"'.$this->timesheetuser.'"').',';
+		$sql.=' '.(! isset($this->task)?'NULL':'"'.$this->task.'"').',';
+		$sql.=' '.(! isset($this->note)?'NULL':'"'.$this->note.'"');
         
 		$sql.= ")";
 
@@ -889,7 +924,10 @@ function get_userName(){
 		$sql.=' t.date_creation,';
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
-		$sql.=' t.fk_user_modification';
+		$sql.=' t.fk_user_modification,';
+		$sql.=' t.fk_timesheet_user,';
+		$sql.=' t.fk_task,';
+		$sql.=' t.note';
 
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
@@ -905,17 +943,19 @@ function get_userName(){
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id    = $obj->rowid;
-                
-				$this->userId = $obj->fk_userid;
-				$this->year_week_date = $this->db->jdate($obj->year_week_date);
-				$this->status = $obj->status;
-				$this->target = $obj->target;
-				$this->project_tasktime_list = $obj->fk_project_tasktime_list;
-				$this->user_approval = $obj->fk_user_approval;
-				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->user_creation = $obj->fk_user_creation;
-				$this->user_modification = $obj->fk_user_modification;
+                $this->userId = $obj->fk_userid;
+                $this->year_week_date = $this->db->jdate($obj->year_week_date);
+                $this->status = $obj->status;
+                $this->target = $obj->target;
+                $this->project_tasktime_list = $obj->fk_project_tasktime_list;
+                $this->user_approval = $obj->fk_user_approval;
+                $this->date_creation = $this->db->jdate($obj->date_creation);
+                $this->date_modification = $this->db->jdate($obj->date_modification);
+                $this->user_creation = $obj->fk_user_creation;
+                $this->user_modification = $obj->fk_user_modification;
+                $this->timesheetuser = $obj->fk_timesheet_user;
+                $this->task = $obj->fk_task;
+                $this->note  = $obj->note;
 
                 
             }
@@ -951,7 +991,10 @@ function get_userName(){
 		$sql.=' t.date_creation,';
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
-		$sql.=' t.fk_user_modification';
+		$sql.=' t.fk_user_modification,';
+		$sql.=' t.fk_timesheet_user,';
+		$sql.=' t.fk_task,';
+		$sql.=' t.note';
 
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
@@ -973,29 +1016,35 @@ function get_userName(){
 
                 $this->id    = $obj->rowid;
                 
-				$this->userId = $obj->fk_userid;
-				$this->year_week_date = $this->db->jdate($obj->year_week_date);
-				$this->status = $obj->status;
-				$this->target = $obj->target;
-				$this->project_tasktime_list = $obj->fk_project_tasktime_list;
-				$this->user_approval = $obj->fk_user_approval;
-				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->user_creation = $obj->fk_user_creation;
-				$this->user_modification = $obj->fk_user_modification;
+                $this->userId = $obj->fk_userid;
+                $this->year_week_date = $this->db->jdate($obj->year_week_date);
+                $this->status = $obj->status;
+                $this->target = $obj->target;
+                $this->project_tasktime_list = $obj->fk_project_tasktime_list;
+                $this->user_approval = $obj->fk_user_approval;
+                $this->date_creation = $this->db->jdate($obj->date_creation);
+                $this->date_modification = $this->db->jdate($obj->date_modification);
+                $this->user_creation = $obj->fk_user_creation;
+                $this->user_modification = $obj->fk_user_modification;
+                $this->timesheetuser = $obj->fk_timesheet_user;
+                $this->task = $obj->fk_task;
+                $this->note  = $obj->note;
 
                 
             }else{
-				unset($this->status) ;
-				unset($this->target) ;
-				unset($this->project_tasktime_list);
-				unset($this->user_approval );
-				unset($this->date_creation  );
-				unset($this->date_modification );
-				unset($this->user_creation );
-				unset($this->user_modification );
-                                $this->create($this->user);
-                                $this->fetch($this->id);
+                unset($this->status) ;
+                unset($this->target) ;
+                unset($this->project_tasktime_list);
+                unset($this->user_approval );
+                unset($this->date_creation  );
+                unset($this->date_modification );
+                unset($this->user_creation );
+                unset($this->user_modification );
+                unset($this->timesheetuser );
+                unset($this->task );
+                unset($this->note );
+                $this->create($this->user);
+                $this->fetch($this->id);
             }
             $this->db->free($resql);
 
@@ -1033,6 +1082,9 @@ function get_userName(){
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
 		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
+		if (isset($this->timesheetuser)) $this->timesheetuser=trim($this->timesheetuser);
+		if (isset($this->task)) $this->task=trim($this->task);
+		if (isset($this->note)) $this->note=trim($this->note);
 
         
 
@@ -1049,7 +1101,10 @@ function get_userName(){
 		$sql.=' fk_project_tasktime_list='.(empty($this->project_tasktime_list) ? 'null':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
 		$sql.=' fk_user_approval='.(empty($this->user_approval) ? 'null':'"'.$this->user_approval.'"').',';
 		$sql.=' date_modification=NOW() ,';
-		$sql.=' fk_user_modification="'.$user->id.'"';
+		$sql.=' fk_user_modification="'.$user->id.'",';
+		$sql.=' fk_timesheet_user="'.$this->timesheetuser.'",';
+		$sql.=' fk_task="'.$this->task.'",';
+		$sql.=' note="'.$this->note.'"';
 
         
         $sql.= " WHERE rowid=".$this->id;
@@ -1274,6 +1329,9 @@ function get_userName(){
 		$this->date_modification='';
 		$this->user_creation='';
 		$this->user_modification='';
+		$this->timesheetuser='';
+		$this->task='';
+		$this->note='';
 
 		
 	}

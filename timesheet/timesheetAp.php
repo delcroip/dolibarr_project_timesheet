@@ -200,6 +200,7 @@ if(is_object($firstTimesheetUser)){
                 //$Form .=$timesheetUser->getHTMLTotal('totalT');
                 $Form .=$timesheetUser->getHTMLtaskLines(false);
                 $Form .=$timesheetUser->getHTMLTotal();/*FIXME*/
+                $Form .=$timesheetUser->getHTMLNote(false);
                 $_SESSION['timesheetAp'][$timestamp]['tsUser'][$timesheetUser->id]=array('status'=>$timesheetUser->status,'Target'=>$timesheetUser->target);
                 $Form .= '</table>';
                 
@@ -243,7 +244,13 @@ print $Form;
 // End of page
 llxFooter();
 $db->close();
-
+    /* Funciton to fect timesheet to be approuved.
+    *  @param    int              	$level            number of ts to fetch
+    *  @param    int              	$offset           number of ts to skip
+    *  @param    int              	$role             team, project, customer ...
+    *  @param    array(int)             $role             if team, array fo subordinate_id, array of task_id for other
+    *  @return   array(timesheetUser)                     result
+    */    
 function getTStobeApproved($level,$offset,$role,$subId){ // FIXME LEVEL ISSUE
 global $db;
 if(!is_array($subId) || !count($subId))return array();
@@ -253,7 +260,9 @@ $byWeek=(TIMESHEET_APPROVAL_BY_WEEK==1)?true:false;
 
         $sql ="SELECT * ";
         $sql.=" FROM ".MAIN_DB_PREFIX."timesheet_user as tu"; 
-        $sql.=' WHERE tu.status="SUBMITTED" AND fk_userid in ('.implode(',',$subId).')';
+        $sql.=' WHERE tu.status="SUBMITTED"';
+        if($role='team'){$sql.=' AND fk_userid in ('.implode(',',$subId).')';
+        }else{$sql.=' AND fk_task in ('.implode(',',$subId).')';}
         $sql.=' AND target="'.$role.'"';
         if($byWeek){
             $sql.=' ORDER BY year_week_date DESC, fk_userid DESC';

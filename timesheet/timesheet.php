@@ -41,9 +41,13 @@ $optioncss = GETPOST('optioncss','alpha');
 
 //$toDate                 = GETPOST('toDate');
 $toDate                 = GETPOST('toDate');
+$toDateday                 = GETPOST('toDateday');
+$toDatemonth                 = GETPOST('toDatemonth');
+$toDateyear                 = GETPOST('toDateyear');
 if (!empty($toDate) && $action=='goToDate')
 {
-    $yearWeek =date('Y\WW',strtotime(str_replace('/', '-',$toDate)));  
+    //$yearWeek =date('Y\WW',strtotime(str_replace('/', '-',$toDate)));  
+    $yearWeek =date('Y\WW',dol_mktime(0,0,0,$toDatemonth,$toDateday,$toDateyear));  
     $_SESSION["yearWeek"]=$yearWeek ;      
 }else if ($yearWeek!=0) {
         $_SESSION["yearWeek"]=$yearWeek;
@@ -94,11 +98,13 @@ $timesheetUser= new timesheetUser($db,$userid);
 if($action== 'submit'){
         if(isset($_SESSION['timesheetUser'][$timestamp]))
         {
+            
             if(isset($_POST['task']))
 			{
 				 foreach($_POST['task'] as $key => $tasktab){
 					 $timesheetUser->loadFromSession($timestamp,$key);                  
-					 if(isset($_POST['submit'])){
+					 $timesheetUser->note=$_POST['Note'][$key];
+                                         if(isset($_POST['submit'])){
 						 $timesheetUser->status="SUBMITTED";
 						 $ret=0;
 					 }          
@@ -170,9 +176,8 @@ $Form .=$timesheetUser->getHTMLHolidayLines($ajax);
 $Form .=$timesheetUser->getHTMLTotal();
 
 $Form .=$timesheetUser->getHTMLtaskLines($ajax);
-
 $Form .=$timesheetUser->getHTMLTotal();
-
+$Form .=$timesheetUser->getHTMLNote($ajax);
 $Form .=$timesheetUser->getHTMLFooter($ajax);
 
 
