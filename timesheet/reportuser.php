@@ -63,18 +63,15 @@ llxHeader('',$langs->trans('userReport'),'');
 $sql='SELECT DISTINCT usr.rowid as userId, usr.lastname , usr.firstname '
      .'FROM '.MAIN_DB_PREFIX.'user as usr ';
         
-if($user->admin){    
+  
 $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
      .'ON ctc.fk_socpeople=usr.rowid '
-     .'WHERE ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="181"';
-}else
+     .'WHERE (ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="181" OR ctc.fk_c_type_contact="160" OR ctc.fk_c_type_contact="161")';
+if(!$user->admin)
 {
     $list=get_subordinate($db,$userid,3);
-    $sql.='WHERE (usr.rowid in (';
-    foreach($list as $id){
-        $sql.= '"'.$id.'",';
-    }
-    $sql.='-999))';
+    $list[]=$userid;
+    $sql.=' AND (usr.rowid in ('.implode(',',$list).'))';  
 }
     
 

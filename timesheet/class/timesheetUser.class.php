@@ -207,6 +207,7 @@ function getSQLfetchtask(){
     $resql=$this->db->query($sql);
     if ($resql)
     {
+        $this->taskTimesheet=array();
             $num = $this->db->num_rows($resql);
             $i = 0;
             // Loop on each record found, so each couple (project id, task id)
@@ -452,7 +453,7 @@ function GetTimeSheetXML()
 
         $i=0;
         $Lines='';
-        if(!$ajax){
+        if(!$ajax & is_array($this->taskTimesheet)){
             foreach ($this->taskTimesheet as $timesheet) {
                 $row=new timesheet($this->db);
                  $row->unserialize($timesheet);

@@ -20,7 +20,7 @@
 
 include 'core/lib/includeMain.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once '.core/lib/timesheet.lib.php';
+require_once './core/lib/timesheet.lib.php';
 require_once './class/timesheetreport.class.php';
 $htmlother = new FormOther($db);
 
