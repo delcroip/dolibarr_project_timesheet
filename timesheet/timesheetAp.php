@@ -209,13 +209,16 @@ if(is_object($firstTimesheetUser)){
             if(!$print){
                 if(TIMESHEET_ADD_DOCS){
                     dol_include_once('/core/class/html.formfile.class.php');
+                    dol_include_once('/core/lib/files.lib.php');
                     $formfile=new FormFile($db);
                     $object=$timesheetUser;
                     $relativepathwithnofile='';
                     $modulepart = 'timesheet';
                     $permission = 1;//$user->rights->timesheet->add;
-                    $param = '&id='.$object->id;
-                    $filearray=array();
+                    $param = '&action=viewdoc&id='.$object->id;
+                    $ref=dol_sanitizeFileName($object->ref);
+                    $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
+                    $filearray=dol_dir_list($upload_dir,'files',0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
                     ob_start();
                     $formfile->list_of_documents($filearray, $object,$modulepart,$param,0,$relativepathwithnofile,$permission);
                     $Form .= ob_get_contents().'</br>'."\n";

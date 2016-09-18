@@ -106,7 +106,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$upload_dir = $conf->timesheet->dir_output.'/Timesheetuser/'.dol_sanitizeFileName($object->ref);
+//$upload_dir = $conf->timesheet->dir_output.'/Timesheetuser/'.dol_sanitizeFileName($object->ref);
 
 
  // uncomment to avoid resubmision
@@ -135,7 +135,11 @@ if ($user->societe_id > 0 ||
 $object=new Timesheetuser($db);
 if($id>0)
 {
-    $object->id=$id; 
+    $object->id=$id;
+    $object->fetch($id);
+    $ref=dol_sanitizeFileName($object->ref);
+    $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
+    if(empty($action))$action='viewdoc';//  the doc handling part send back only the ID without actions
 }
 if(!empty($ref))
 {
@@ -222,7 +226,8 @@ if ($cancel){
                             // fetch the object data if possible
                             if ($id > 0 || !empty($ref) )
                             {
-                                    $result=$object->fetch($id,$ref);
+                                    //$result=$object->fetch($id,$ref);
+                                    
                                     if($result > 0)$result=$object->fetchTaskTimesheet();
                                     if($result > 0)$result=$object->fetchUserHoliday(); 
                                     if ($result < 0){ 
@@ -279,15 +284,22 @@ if ($cancel){
                     case 'list':
                     case 'create':
                     default:
-                        //document handling
-                        if(version_compare(DOL_VERSION,"4.0")>=0){
-                            include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
-                        }else{
-                            include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-                        }
-                        if(isset($_GET['urlfile'])) $action='viewdoc';
+                        if(!empty($_FILES)) $action='viewdoc';
                             break;
-            }             
+            }    
+            
+                 //document handling
+        if(TIMESHEET_ADD_DOCS && $id>0){
+        $object->fetch($id);
+        $ref=dol_sanitizeFileName($object->ref);
+        $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
+       if(version_compare(DOL_VERSION,"4.0")>=0){
+           include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+       }else{
+           include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+       }
+       
+        }
 //Removing the tms array so the order can't be submitted two times
 if(isset( $_SESSION['Timesheetuser_class'][$tms]))
 {

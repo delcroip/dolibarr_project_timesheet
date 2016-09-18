@@ -40,6 +40,7 @@ class timesheetUser extends CommonObject
 	var $table_element='timesheet_user';		//!< Name of table without prefix where object is stored
 // from db
         var $id;
+
 	var $userId;
 	var $year_week_date='';
 	var $status;
@@ -56,6 +57,7 @@ class timesheetUser extends CommonObject
         
 
 //working variable
+    var $ref;
     var $user;
     var $yearWeek;
     var $holidays;
@@ -79,6 +81,7 @@ class timesheetUser extends CommonObject
         $this->userId= ($userId==0)?(is_object($user)?$user->id:$user):$userId;
         $this->headers=explode('||', TIMESHEET_HEADERS);
         $this->get_userName();
+        
     }
     /* Funciton to fect the holiday of a single user for a single week.
     *  @param    string              	$yearWeek            year week like 2015W09
@@ -87,6 +90,7 @@ class timesheetUser extends CommonObject
     function fetchAll($yearWeek,$whitelistmode=false){
         $this->whitelistmode=is_numeric($whitelistmode)?$whitelistmode:TIMESHEET_WHITELIST_MODE;
         $this->yearWeek=$yearWeek;
+        $this->ref=$this->yearWeek.'_'.$this->userId;
         $this->year_week_date=  strtotime($this->yearWeek);
         $this->timestamp=time();
         $ret=$this->fetchByWeek();
@@ -120,6 +124,7 @@ function loadFromSession($timestamp,$id){
     $this->timestamp=$timestamp;
     $this->userId= $_SESSION['timesheetUser'][$timestamp][$id]['userId'];
     $this->yearWeek= $_SESSION['timesheetUser'][$timestamp][$id]['yearWeek'];
+    $this->ref=$this->yearWeek.'_'.$this->userId;
     $this->holidays=  unserialize( $_SESSION['timesheetUser'][$timestamp][$id]['holiday']);
     $this->taskTimesheet=  unserialize( $_SESSION['timesheetUser'][$timestamp][$id]['taskTimesheet']);;
 }
@@ -962,6 +967,7 @@ function get_userName(){
             }
             $this->db->free($resql);
             $this->yearWeek=  date('Y\WW',$this->year_week_date);
+            $this->ref=$this->yearWeek.'_'.$this->userId;
             $this->whitelistmode=2; // no impact
             return 1;
         }

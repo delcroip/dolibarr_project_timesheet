@@ -39,12 +39,17 @@ $ajax               = GETPOST('ajax');
 $xml               = GETPOST('xml');
 $optioncss = GETPOST('optioncss','alpha');
 
-
+$id=GETPOST('id');
 //$toDate                 = GETPOST('toDate');
 $toDate                 = GETPOST('toDate');
 $toDateday                 = GETPOST('toDateday');
 $toDatemonth                 = GETPOST('toDatemonth');
 $toDateyear                 = GETPOST('toDateyear');
+$timestamp=GETPOST('timestamp');
+$whitelistmode=GETPOST('wlm','int');
+$userid=  is_object($user)?$user->id:$user;
+$timesheetUser= new timesheetUser($db,$userid);
+$confirm=GETPOST('confirm');
 if (!empty($toDate) && $action=='goToDate')
 {
     //$yearWeek =date('Y\WW',strtotime(str_replace('/', '-',$toDate)));  
@@ -54,15 +59,15 @@ if (!empty($toDate) && $action=='goToDate')
         $_SESSION["yearWeek"]=$yearWeek;
 }else if(isset($_SESSION["yearWeek"])){
         $yearWeek=$_SESSION["yearWeek"];
+}else if($id>0){
+    $timesheetUser->fetch($id);
+    $yearWeek=$timesheetUser->yearWeek;
 }else
 {
         $yearWeek=date('Y\WW');
         $_SESSION["yearWeek"]=$yearWeek;
 }
-$timestamp=GETPOST('timestamp');
-$whitelistmode=GETPOST('wlm','int');
 
-$userid=  is_object($user)?$user->id:$user;
 
 
 
@@ -87,7 +92,7 @@ if ($user->societe_id > 0)
 }
 
 */
-
+  
 $timesheetUser= new timesheetUser($db,$userid);
 
 /*******************************************************************
@@ -96,7 +101,8 @@ $timesheetUser= new timesheetUser($db,$userid);
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 
-if($action== 'submit'){
+switch($action){
+    case 'submit':
         if(isset($_SESSION['timesheetUser'][$timestamp]))
         {
             
@@ -139,7 +145,16 @@ if($action== 'submit'){
         }else
                 setEventMessage( $langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" : timestamp missmatch"),'errors');
 
+        break;
+    case 'deletefile':
+        $action='delete'; // to trigger the delete action in the linkedfiles.inc.php
+        break;
+    default:
+        break;
+
 }
+
+        
 
 
 if(!empty($timestamp)){
@@ -147,6 +162,23 @@ if(!empty($timestamp)){
 }
 
 $timesheetUser->fetchAll($yearWeek,$whitelistmode);
+
+if(TIMESHEET_ADD_DOCS){
+    dol_include_once('/core/class/html.formfile.class.php');
+    dol_include_once('/core/lib/files.lib.php');
+    $modulepart = 'timesheet';
+    $object=$timesheetUser;
+    $ref=dol_sanitizeFileName($object->ref);
+    $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
+    if(version_compare(DOL_VERSION,"4.0")>=0){
+        include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+    }else{
+        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+        //dol_include_once('/core/class/html.form.class.php');
+        
+    }
+}
+
 /***************************************************
 * VIEW
 *
@@ -192,12 +224,15 @@ $Form .= "\n\t".'</script>'."\n";
 print $Form;
 //add attachement
 if(TIMESHEET_ADD_DOCS){
-        dol_include_once('/core/class/html.formfile.class.php');
+        
         $object=$timesheetUser;
         $modulepart = 'timesheet';
         $permission = 1;//$user->rights->timesheet->add;
-        $param = '&id='.$object->id;
-        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+        $filearray=dol_dir_list($upload_dir,'files',0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+        //$param = 'action=submitfile&id='.$object->id;
+            $form=new Form($db);
+            include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+
 }
 // End of page
 llxFooter();
