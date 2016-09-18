@@ -279,7 +279,12 @@ if ($cancel){
                     case 'create':
                     default:
                         //document handling
-                        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+                        if(version_compare(DOL_VERSION,"4.0")>=0){
+                            include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+                        }else{
+                            include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+                        }
+                        
                         if(isset($_GET['urlfile'])) $action='viewdoc';
                             break;
             }             
@@ -403,7 +408,7 @@ switch ($action) {
                     print $form->select_dolusers($object->user, 'User', 1, '', !$user->admin );
 
             }else{
-            print print_generic($db,'user', 'rowid',$object->user,'lastname','firstname',' ');
+            print print_generic('user', 'rowid',$object->user,'lastname','firstname',' ');
             }
             print "</td>";
             print "</tr>\n";
@@ -746,9 +751,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 // You can use here results
                 		print "<tr class=\"".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
-		if($user->admin)print "<td>".print_generic($db,'user','rowid',$obj->fk_user,'lastname','firstname',' ')."</td>";
-		print "<td>".print_generic($db,'projet','rowid',$obj->fk_project,'ref','title', ' - ')."</td>";
-		print "<td>".print_generic($db,'projet_task','rowid',$obj->fk_project_task,'ref','label', ' - ')."</td>";
+		if($user->admin)print "<td>".print_generic('user','rowid',$obj->fk_user,'lastname','firstname',' ')."</td>";
+		print "<td>".print_generic('projet','rowid',$obj->fk_project,'ref','title', ' - ')."</td>";
+		print "<td>".print_generic('projet_task','rowid',$obj->fk_project_task,'ref','label', ' - ')."</td>";
 		print "<td>".$obj->subtask."</td>";
 		print "<td>".dol_print_date($obj->date_start,'day')."</td>";
 		print "<td>".dol_print_date($obj->date_end,'day')."</td>";

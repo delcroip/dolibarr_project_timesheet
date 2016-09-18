@@ -189,30 +189,45 @@ if(is_object($firstTimesheetUser)){
     foreach($objectArray as $key=> $timesheetUser){
        // if($firstTimesheetUser->userId==$timesheetUser->userId){
             
-            if($i<$level){
-                $timesheetUser->fetchTaskTimesheet();
-        //$ret+=$this->getTaskTimeIds(); 
-        //FIXME module holiday should be activated ?
-                $timesheetUser->fetchUserHoliday(); 
-                $Form .=$timesheetUser->userName." - ".$langs->trans('Week').date(' W (Y)',$timesheetUser->year_week_date);
-                $Form .=$timesheetUser->getHTMLHeader(false);
-                $Form .=$timesheetUser->getHTMLHolidayLines(false);
-                //$Form .=$timesheetUser->getHTMLTotal('totalT');
-                $Form .=$timesheetUser->getHTMLtaskLines(false);
-                $Form .=$timesheetUser->getHTMLTotal();/*FIXME*/
-                $Form .=$timesheetUser->getHTMLNote(false);
-                $_SESSION['timesheetAp'][$timestamp]['tsUser'][$timesheetUser->id]=array('status'=>$timesheetUser->status,'Target'=>$timesheetUser->target);
-                $Form .= '</table>';
-                
-                $Form .= '</br>'."\n";
-                if(!$print){
+        if($i<$level){
+            $timesheetUser->fetchTaskTimesheet();
+    //$ret+=$this->getTaskTimeIds(); 
+    //FIXME module holiday should be activated ?
+            $timesheetUser->fetchUserHoliday(); 
+            $Form .=$timesheetUser->userName." - ".$langs->trans('Week').date(' W (Y)',$timesheetUser->year_week_date);
+            $Form .=$timesheetUser->getHTMLHeader(false);
+            $Form .=$timesheetUser->getHTMLHolidayLines(false);
+            //$Form .=$timesheetUser->getHTMLTotal('totalT');
+            $Form .=$timesheetUser->getHTMLtaskLines(false);
+            $Form .=$timesheetUser->getHTMLTotal();/*FIXME*/
+            $Form .=$timesheetUser->getHTMLNote(false);
+            $_SESSION['timesheetAp'][$timestamp]['tsUser'][$timesheetUser->id]=array('status'=>$timesheetUser->status,'Target'=>$timesheetUser->target);
+            $Form .= '</table>';
+
+            $Form .= '</br>'."\n";
+
+            if(!$print){
+                if(TIMESHEET_ADD_DOCS){
+                    dol_include_once('/core/class/html.formfile.class.php');
+                    $formfile=new FormFile($db);
+                    $object=$timesheetUser;
+                    $relativepathwithnofile='';
+                    $modulepart = 'timesheet';
+                    $permission = 1;//$user->rights->timesheet->add;
+                    $param = '&id='.$object->id;
+                    $filearray=array();
+                    ob_start();
+                    $formfile->list_of_documents($filearray, $object,$modulepart,$param,0,$relativepathwithnofile,$permission);
+                    $Form .= ob_get_contents().'</br>'."\n";
+                    ob_end_clean();
+                }
                 $Form .= '<label class="butAction"><input type="radio"  name="approval['.$timesheetUser->id.']" value="Approved" ><span>'.$langs->trans('APPROVED').'</span></label>'."\n";/*FIXME*/
                 $Form .= '<label class="butAction"><input type="radio"  name="approval['.$timesheetUser->id.']" value="Rejected" ><span>'.$langs->trans('REJECTED').'</span></label>'."\n";/*FIXME*/
                 $Form .= '<label class="butAction"><input type="radio"  name="approval['.$timesheetUser->id.']" value="Submitted" checked ><span>'.$langs->trans('SUBMITTED').'</span></label>'."\n";/*FIXME*/
                 $Form .= '</br></br></br>'."\n";
-                }
-                $i++;//use for the offset
             }
+            $i++;//use for the offset
+        }
        // }else{
        //     $nextUser=$timesheetUser->userId;
        //     break;

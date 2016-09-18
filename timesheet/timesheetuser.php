@@ -280,7 +280,11 @@ if ($cancel){
                     case 'create':
                     default:
                         //document handling
-                        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+                        if(version_compare(DOL_VERSION,"4.0")>=0){
+                            include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+                        }else{
+                            include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+                        }
                         if(isset($_GET['urlfile'])) $action='viewdoc';
                             break;
             }             
@@ -590,7 +594,7 @@ switch ($action) {
         print '</div>';
 
         $modulepart = 'timesheet';
-        $permission = $user->rights->timesheet->add;
+        $permission = 1;//$user->rights->timesheet->add;
         $param = '&id='.$object->id;
         include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 

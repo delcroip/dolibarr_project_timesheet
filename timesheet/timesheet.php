@@ -31,6 +31,7 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/timesheetUser.class.php';
 
+
 $action             = GETPOST('action');
 $yearWeek           = GETPOST('yearweek');
 //should return the XMLDoc
@@ -189,7 +190,15 @@ $Form .='updateAll();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .='</div>';//TimesheetPage
 print $Form;
-
+//add attachement
+if(TIMESHEET_ADD_DOCS){
+        dol_include_once('/core/class/html.formfile.class.php');
+        $object=$timesheetUser;
+        $modulepart = 'timesheet';
+        $permission = 1;//$user->rights->timesheet->add;
+        $param = '&id='.$object->id;
+        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+}
 // End of page
 llxFooter();
 $db->close();
