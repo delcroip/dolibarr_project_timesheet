@@ -22,9 +22,10 @@ if(strpos($_SERVER['PHP_SELF'], 'dolibarr-min')>0)
 else
 	$devPath="/var/www/html/dolibarr";
 $res=0;
-if (! $res && file_exists("../../../main.inc.php")) $res=@include '../../../main.inc.php';
+
 if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';		
 if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';
+if (! $res && file_exists("../../../main.inc.php")) $res=@include '../../../main.inc.php';
 if (! $res && file_exists($devPath."/htdocs/main.inc.php")) $res=@include $devPath."/htdocs/main.inc.php";     // Used on dev env only
 if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails")
