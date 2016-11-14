@@ -26,6 +26,7 @@ $statusTsColor=array('DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUB
 
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
 //require_once './projectTimesheet.class.php';
+define('SECINDAY',86400);
 define('TIMESHEET_BC_FREEZED','909090');
 define('TIMESHEET_BC_VALUE','f0fff0');
 class timesheet extends Task 
@@ -128,33 +129,37 @@ class timesheet extends Task
                 return -1;
         }	
     }
-    
-    
-/*
+  /*
  *  FUNCTION TO GET THE ACTUALS FOR A WEEK AND AN USER
- *  @param    string              	$yearWeek            year week like 2015W09
+ *  @param    Datetime              	$timeStart            start date to look for actuals
+ *  @param    Datetime              	$timeEnd            end date to look for actuals
  *  @param     int              	$userId         used in the form processing
  *  @param    string              	$tasktimeIds      limit the seach if defined
  *  @return     int                                       success (1) / failure (-1)
  */
     
     
-    public function getActuals( $yearWeek,$userid,$tasktimeIds='')
+    public function getActuals( $timeStart,$timeEnd,$userid,$tasktimeIds='')
     {
-
+           // change the time to take all the TS per day
+           //$timeStart=floor($timeStart/SECINDAY)*SECINDAY;
+           //$timeEnd=ceil($timeEnd/SECINDAY)*SECINDAY;
+           $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
+           
+        if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ptt.fk_task='".$this->id."' ";
         $sql .= " AND (ptt.fk_user='".$userid."') ";
        # $sql .= "AND WEEKOFYEAR(ptt.task_date)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
-        $sql .= " AND (ptt.task_date>=".$this->db->idate(strtotime($yearWeek)).") ";
-        $sql .= " AND (ptt.task_date<".$this->db->idate(strtotime($yearWeek.' + 7 days')).")";
+        $sql .= " AND (ptt.task_date>=".$this->db->idate($timeStart).") ";
+        $sql .= " AND (ptt.task_date<".$this->db->idate($timeEnd).")";
         if(!empty($tasktimeIds))$sql .= ' AND ptt.rowid in ('.$tasktimeIds.')';
         dol_syslog(get_class($this)."::fetchActuals sql=".$sql, LOG_DEBUG);
-		for($i=0;$i<7;$i++){
-			//fixme get ride of the db format for the date
-			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>strtotime( $yearWeek.' +'.$i.' day'));
+		for($i=0;$i<$dayelapsed;$i++){
+			
+			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>$timeStart+SECINDAY*$i);
 		}
 
         $resql=$this->db->query($sql);
@@ -168,11 +173,13 @@ class timesheet extends Task
                 {
                         $error=0;
                         $obj = $this->db->fetch_object($resql);
-                        $day=intval(date('N',strtotime($obj->task_date)))-1;
+                        $dateCur=$this->db->jdate($obj->task_date);
+                        $day=(floor($dateCur-$timeStart)/SECINDAY);
 
-                        $this->tasklist[$day]=array('id'=>$obj->rowid,'date'=>$this->db->jdate($obj->task_date),'duration'=>$obj->task_duration);
+                        $this->tasklist[$day]=array('id'=>$obj->rowid,'date'=>$dateCur,'duration'=>$obj->task_duration);
                         $i++;
                 }
+               
                 $this->db->free($resql);
                 return 1;
          }
@@ -183,13 +190,14 @@ class timesheet extends Task
 
                 return -1;
         }
-    }	 
-    
+    }	   
+   
 
  /*
  * function to form a HTMLform line for this timesheet
  * 
- *  @param    string              	$yearWeek            year week like 2015W09
+ *  @param    Datetime              	$timeStart            start date to look for actuals
+ *  @param    Datetime              	$timeEnd            end date to look for actuals
  *  @param     int              	$line number         used in the form processing
  *  @param    string              	$headers             header to shows
  *  @param     int              	$whitelistemode           0-whiteliste,1-blackliste,2-non impact
@@ -197,11 +205,16 @@ class timesheet extends Task
  *  @param    string              	$usUserId             id that will be used for the total
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getFormLine( $yearWeek,$lineNumber,$headers,$whitelistemode,$status="DRAFT",$tsUserId)
+       public function getFormLine( $timeStart,$timeEnd,$lineNumber,$headers,$whitelistemode,$status="DRAFT",$tsUserId)
     {
+           // change the time to take all the TS per day
+          // $timeStart=floor($timeStart/SECINDAY)*SECINDAY;
+          // $timeEnd=ceil($timeEnd/SECINDAY)*SECINDAY;
+           $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
+  
            global $statusTsColor;
-       if(empty($yearWeek)||empty($headers))
-           return '<tr>ERROR: wrong parameters for getFormLine'.empty($yearWeek).'|'.empty($headers).'</tr>';
+       if(($dayelapsed<1)||empty($headers))
+           return '<tr>ERROR: wrong parameters for getFormLine'.$dayelapsed.'|'.empty($headers).'</tr>';
         
     $timetype=TIMESHEET_TIME_TYPE;
     $dayshours=TIMESHEET_DAY_DURATION;
@@ -251,17 +264,18 @@ class timesheet extends Task
 
              $html.="</th>\n";
          }
-
+         
   // day section
          $isOpenSatus=($status=="DRAFT" || $status=="CANCELLED"|| $status=="REJECTED");
          $opendays=str_split(TIMESHEET_OPEN_DAYS);
 
-         for($dayOfWeek=0;$dayOfWeek<7;$dayOfWeek++)
+         for($dayCur=0;$dayCur<$dayelapsed;$dayCur++)
          {
-                //$shrinkedStyle=(!$opendays[$dayOfWeek+1] && $shrinked)?'display:none;':'';
-                $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
+
+                //$shrinkedStyle=(!$opendays[$dayCur+1] && $shrinked)?'display:none;':'';
+                $today= $timeStart+SECINDAY*$dayCur;//strtotime($yearWeek.' +'.($dayCur).' day  '); // FIXME
                 # to avoid editing if the task is closed 
-                $dayWorkLoadSec=isset($this->tasklist[$dayOfWeek])?$this->tasklist[$dayOfWeek]['duration']:0;
+                $dayWorkLoadSec=isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
                 
                 if ($timetype=="days")
                 {
@@ -272,11 +286,12 @@ class timesheet extends Task
 			 	$startDates=($this->date_start>$this->startDatePjct )?$this->date_start:$this->startDatePjct;
 			 	$stopDates=(($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct==0)?$this->date_end:$this->stopDatePjct;
                 if($isOpenSatus){
-                    $isOpen=$isOpenSatus && (($startDates==0) || ($startDates <= $today +86399));
+                    $isOpen=$isOpenSatus && (($startDates==0) || ($startDates < $today +SECINDAY));
                     $isOpen= $isOpen && (($stopDates==0) ||($stopDates >= $today ));
                     
-                    $isOpen= $isOpen && ($this->pStatus < "2") && $opendays[$dayOfWeek+1];
-                   // var_dump($opendays[$dayOfWeek+1]);
+                    $isOpen= $isOpen && ($this->pStatus < "2") ;
+                      $isOpen= $isOpen  && $opendays[date("N",$today)];
+                   // var_dump($opendays[$dayCur+1]);
                     $bkcolor='';
                     
                     if($isOpen){
@@ -286,19 +301,19 @@ class timesheet extends Task
                     } 
                     
                     
-                    $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$tsUserId.']['.$dayOfWeek.']" ';
-//                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayOfWeek.']" '; if one whant multiple ts per validation
-                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayOfWeek.']" ';
+                    $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$tsUserId.']['.$dayCur.']" ';
+//                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" '; if one whant multiple ts per validation
+                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" ';
                     $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
                     $html .='" maxlength="5" style="width: 90%;'.$bkcolor.'" ';
                     $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
-                    $html .= 'onblur="validateTime(this,'.$tsUserId.','.$dayOfWeek.',0)" />';
+                    $html .= 'onblur="validateTime(this,'.$tsUserId.','.$dayCur.',0)" />';
                     $html .= "</th>\n"; 
                 }else{
                     $bkcolor='background:#'.$statusTsColor[$status];
-                    $html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$tsUserId.']['.$dayOfWeek.']"';
-                    //$html .= ' name="task['.$tsUserId.']['.$this->id.']['.$dayOfWeek.']" ';if one whant multiple ts per validation
-                    $html .= ' name="task['.$this->id.']['.$dayOfWeek.']" ';
+                    $html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$tsUserId.']['.$dayCur.']"';
+                    //$html .= ' name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
+                    $html .= ' name="task['.$this->id.']['.$dayCur.']" ';
                     $html .= ' style="width: 90%;"';
                     $html .=' >'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
                     $html .='</a> ';
@@ -327,7 +342,7 @@ class timesheet extends Task
  * 
  *  @param    string              	$yearWeek            year week like 2015W09
   *  @return     string                                         XML result containing the timesheet info
- */
+ *//*
     public function getXML( $yearWeek)
     {
     $timetype=TIMESHEET_TIME_TYPE;
@@ -387,6 +402,8 @@ class timesheet extends Task
         //return utf8_encode($xml);
 
     }	
+  * 
+  */
 /*
  * function to save a time sheet as a string
  */

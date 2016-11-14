@@ -91,7 +91,7 @@ class timesheetUser extends CommonObject
         $this->whitelistmode=is_numeric($whitelistmode)?$whitelistmode:TIMESHEET_WHITELIST_MODE;
         $this->yearWeek=$yearWeek;
         $this->ref=$this->yearWeek.'_'.$this->userId;
-        $this->year_week_date=  strtotime($this->yearWeek);
+        $this->year_week_date=  parseYearWeek($this->yearWeek);
         $this->timestamp=time();
         $ret=$this->fetchByWeek();
         $ret+=$this->fetchTaskTimesheet();
@@ -168,8 +168,9 @@ function getSQLfetchtask(){
     if($userid==''){$userid=$this->userId;}
     $whiteList=array();
     $staticWhiteList=new Timesheetwhitelist($this->db);
-    $datestart=strtotime($this->yearWeek.' +0 day');
-    $datestop=strtotime($this->yearWeek.' +6 day');
+    $datestart=$this->year_week_date;
+    $datestop= $datestart+7*SECINDAY;
+    //$datestop=strtotime(' +7 day',$this->year_week_date);//FIXME should only take the sub week
     $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
      $tasksList=array();
@@ -232,10 +233,10 @@ function getSQLfetchtask(){
                     dol_syslog("Timesheet::timesheetUser.class.php task=".$row->id, LOG_DEBUG);
                     $row->getTaskInfo();
                     if($this->status=="DRAFT" || $this->status=="REJECTED"){
-                        $row->getActuals($this->yearWeek,$userid); 
+                        $row->getActuals($datestart,$datestop,$userid); //FIXME date start / date end iso yearweek?
                     }else{
                         //$row->getActuals($this->yearWeek,$userid); 
-                        $row->getActuals($this->yearWeek,$userid,$this->project_tasktime_list); 
+                        $row->getActuals($datestart,$datestop,$userid,$this->project_tasktime_list); 
                     }
                     //unset($row->db);
                     $this->taskTimesheet[]=  $row->serialize();                   
@@ -338,7 +339,7 @@ function GetTimeSheetXML()
          $html.=">".$langs->trans($value)."</th>\n";
      }
     $opendays=str_split(TIMESHEET_OPEN_DAYS);
-    for ($i=0;$i<7;$i++)
+    for ($i=0;$i<7;$i++)// fixme it won't be always 7 days
     {
         $curDay=strtotime( $this->yearWeek.' +'.$i.' day');
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
@@ -463,7 +464,7 @@ function GetTimeSheetXML()
                 $row=new timesheet($this->db);
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
-                $Lines.=$row->getFormLine( $this->yearWeek,$i,$this->headers,$this->whitelistmode,$this->status,$this->id);
+                $Lines.=$row->getFormLine( $this->year_week_date,$this->year_week_date+SECINDAY*7,$i,$this->headers,$this->whitelistmode,$this->status,$this->id); // fixme
 				$i++;
             }
         }
@@ -966,7 +967,7 @@ function get_userName(){
                 
             }
             $this->db->free($resql);
-            $this->yearWeek=  date('Y\WW',$this->year_week_date);
+            $this->yearWeek=  date('Y\WW',$this->year_week_date); //fixme
             $this->ref=$this->yearWeek.'_'.$this->userId;
             $this->whitelistmode=2; // no impact
             return 1;

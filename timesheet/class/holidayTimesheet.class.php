@@ -54,7 +54,7 @@ class holidayTimesheet extends Holiday
     public function fetchUserWeek($userId,$yearWeek)
     {
        
-        $datestart=strtotime($yearWeek);
+        $datestart=parseYearWeek($yearWeek);
         $datestop=strtotime($yearWeek.' + 7 days');
         $SQLfilter=  " AND (cp.date_fin>=".$this->db->idate($datestart).") ";
         $SQLfilter.= " AND (cp.date_debut<".$this->db->idate($datestop).")";
@@ -74,7 +74,7 @@ class holidayTimesheet extends Holiday
         for($dayOfWeek=0;$dayOfWeek<7;$dayOfWeek++)
         {
             
-                $curDay=strtotime($yearWeek.' + '.$dayOfWeek.' days');
+                $curDay=strtotime(' + '.$dayOfWeek.' days',$datestart);
                 $this->holidaylist[$dayOfWeek]=array('amId'=>'0','pmId'=>'0','prev'=>false,'am'=>false,'pm'=>false,'next'=>false,'amStatus'=>0,'pmStatus'=>0);
                 //FIXME: support 2 holiday in one day , 1 id per dqy ..
                 foreach($this->holiday as $record){
@@ -144,7 +144,7 @@ class holidayTimesheet extends Holiday
  *  @param     int              	$tsUserId           id of the user timesheet
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getHTMLFormLine($yearWeek,$headers,$tsUserId)
+       public function getHTMLFormLine($yearWeek,$headers,$tsUserId) //FIXME why yearweek is needed
     {
         
         global $langs;
