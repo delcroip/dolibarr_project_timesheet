@@ -1347,5 +1347,3 @@ function get_userName(){
  }
 
 ?>
-
-
