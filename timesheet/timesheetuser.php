@@ -406,7 +406,7 @@ switch ($action) {
 			print $form->select_date($object->year_week_date,'Yearweekdate');
 		}
 		}else{
-			print dol_print_date($object->year_week_date,'day').date(' (Y\WW)',$object->year_week_date);
+			print dol_print_date($object->year_week_date,'day').getYearWeek(0,0,0,$object->year_week_date);
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -767,7 +767,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 		print "<tr class=\"dblist ".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
 		print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
-		print "<td>".dol_print_date($obj->year_week_date,'day').date(' (Y\WW)',$db->jdate($obj->year_week_date))."</td>";
+		print "<td>".dol_print_date($obj->year_week_date,'day')." (".getYearWeek(0,0,0,$db->jdate($obj->year_week_date)).")</td>";
 		print "<td>".$langs->trans($obj->status)."</td>";
 		//print "<td>".$langs->trans($obj->target)."</td>";
 		//print "<td>".$obj->fk_project_tasktime_list."</td>";

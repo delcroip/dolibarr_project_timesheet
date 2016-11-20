@@ -57,6 +57,8 @@ class timesheetUser extends CommonObject
         
 
 //working variable
+        var $stop_date;
+        var $duration;
     var $ref;
     var $user;
     var $yearWeek;
@@ -92,6 +94,7 @@ class timesheetUser extends CommonObject
         $this->yearWeek=$yearWeek;
         $this->ref=$this->yearWeek.'_'.$this->userId;
         $this->year_week_date=  parseYearWeek($this->yearWeek);
+        $this->stop_date= getEndWeek($this->year_week_date);
         $this->timestamp=time();
         $ret=$this->fetchByWeek();
         $ret+=$this->fetchTaskTimesheet();
@@ -169,7 +172,7 @@ function getSQLfetchtask(){
     $whiteList=array();
     $staticWhiteList=new Timesheetwhitelist($this->db);
     $datestart=$this->year_week_date;
-    $datestop= $datestart+7*SECINDAY;
+    $datestop= $this->stop_date;
     //$datestop=strtotime(' +7 day',$this->year_week_date);//FIXME should only take the sub week
     $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
@@ -339,15 +342,16 @@ function GetTimeSheetXML()
          $html.=">".$langs->trans($value)."</th>\n";
      }
     $opendays=str_split(TIMESHEET_OPEN_DAYS);
-    for ($i=0;$i<7;$i++)// fixme it won't be always 7 days
+    $weeklength=round(($this->stop_date-$this->year_week_date)/SECINDAY);
+    for ($i=0;$i<$weeklength;$i++)// fixme it won't be always 7 days
     {
-        $curDay=strtotime( $this->yearWeek.' +'.$i.' day');
+        $curDay=$this->year_week_date+ SECINDAY*$i;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
         $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_print_date($curDay,'day')."</th>\n";
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';
-     $html.= '<td colspan="'.($this->headers.lenght+7).'"> ';
+     $html.= '<td colspan="'.($this->headers.lenght+$weeklength).'"> ';
     $html .= '<input type="hidden" name="timestamp" value="'.$this->timestamp."\"/>\n";
     $html .= '<input type="hidden" name="yearWeek" value="'.$this->yearWeek.'" />';  
      $html .= '<input type="hidden" name="tsUserId" value="'.$this->id.'" />'; 
@@ -379,7 +383,8 @@ function GetTimeSheetXML()
 
     $html .="<tr>\n";
     $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
-    for ($i=0;$i<7;$i++)
+    $weeklength=round(($this->stop_date-$this->year_week_date)/SECINDAY);
+    for ($i=0;$i<$weeklength;$i++)
     {
        $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>";
      }
@@ -464,7 +469,7 @@ function GetTimeSheetXML()
                 $row=new timesheet($this->db);
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
-                $Lines.=$row->getFormLine( $this->year_week_date,$this->year_week_date+SECINDAY*7,$i,$this->headers,$this->whitelistmode,$this->status,$this->id); // fixme
+                $Lines.=$row->getFormLine( $this->year_week_date,$this->stop_date,$i,$this->headers,$this->whitelistmode,$this->status,$this->id); // fixme
 				$i++;
             }
         }
@@ -521,9 +526,9 @@ function getHTMLNavigation($optioncss, $ajax=false){
         $form= new Form($this->db);
         $Nav=  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
 	if($ajax){
-            $Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.date('Y\WW',strtotime($this->yearWeek."+3 days  -1 week")).'\',0);';
+            $Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.getPrevYearWeek($this->yearWeek).'\',0);';
         }else{
-            $Nav.=  '<a href="?action=list&wlm='.$this->whitelistmode.'&yearweek='.date('Y\WW',strtotime($this->yearWeek."+3 days  -1 week"));   
+            $Nav.=  '<a href="?action=list&wlm='.$this->whitelistmode.'&yearweek='.getPrevYearWeek($this->yearWeek);   
         }
         if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
 	$Nav.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
@@ -535,9 +540,9 @@ function getHTMLNavigation($optioncss, $ajax=false){
         $Nav.=   $langs->trans("GoTo").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)."\n\t\t\t";;
 	$Nav.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	if($ajax){
-            $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.date('Y\WW',strtotime($this->yearWeek."+3 days  +1 week")).'\',0);';
+            $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.getNextYearWeek($this->yearWeek).'\',0);';
 	}else{
-            $Nav.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',strtotime($this->yearWeek."+3 days +1 week"));
+            $Nav.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.getNextYearWeek($this->yearWeek);
             
         }
         if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
@@ -967,7 +972,7 @@ function get_userName(){
                 
             }
             $this->db->free($resql);
-            $this->yearWeek=  date('Y\WW',$this->year_week_date); //fixme
+            $this->yearWeek= getYearWeek(0,0,0,$this->year_week_date); //fixme
             $this->ref=$this->yearWeek.'_'.$this->userId;
             $this->whitelistmode=2; // no impact
             return 1;

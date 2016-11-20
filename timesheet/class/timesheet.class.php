@@ -210,7 +210,7 @@ class timesheet extends Task
            // change the time to take all the TS per day
           // $timeStart=floor($timeStart/SECINDAY)*SECINDAY;
           // $timeEnd=ceil($timeEnd/SECINDAY)*SECINDAY;
-           $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
+           $dayelapsed=ceil(($timeEnd-$timeStart)/SECINDAY);
   
            global $statusTsColor;
        if(($dayelapsed<1)||empty($headers))

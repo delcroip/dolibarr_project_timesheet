@@ -41,8 +41,8 @@ PRIMARY KEY (rowid)
 ) 
 ENGINE=innodb;
 
---ALTER TABLE llx_timesheet_user
---ADD ( fk_timesheet_user       integer, 
---fk_task       integer, 
---note       VARCHAR(1024)
---)
+
+-- UPDATE from 1.5.1
+--ALTER TABLE llx_timesheet_user ADD stop_date DATE NOT NULL
+--ALTER TABLE llx_timesheet_user CHANGE year_week_date start_date DATE NOT NULL
+--Update tablename SET stop_date = DATE_ADD(start_date,INTERVAL 7 DAY) Where stop_date = 0

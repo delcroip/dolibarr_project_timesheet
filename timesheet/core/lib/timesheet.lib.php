@@ -249,13 +249,15 @@ function getEventMessageXML($messages,$style='ok'){
  *  @param    string            $date           date on a string format
  *  @return     string                                   
  */
-function getYearWeek($day=0,$month=0,$year=0,$date=''){
+function getYearWeek($day=0,$month=0,$year=0,$date='',$prevNext=0){
     $splitWeek=0; // 0 - no splitted week; 1 - fist part of a splitted week, 2 - second part of a splitted week  
     $datetime=0;
-    if(!empty($date)){
+    if(is_int($date) && $date!=0){  // if date is a datetime
+        $datetime=$date;
+    }else if(is_string($date)&& $date!=""){  // if date is a string
         //foolproof: incase the yearweek in passed in date
-        if(!empty($date) && strlen($date)>3 && substr($date,-3,2)=="_H"){
-            return $date;
+        if( strlen($date)>3 && substr($date,-3,2)=="_H"){
+            return $date;          
         }
         $datetime=strtotime($date);
     }else if ($day!=0 && $month!=0 && $year!= 0)
@@ -264,14 +266,17 @@ function getYearWeek($day=0,$month=0,$year=0,$date=''){
     }else{
        $datetime=time(); 
     }
-        if($day==0)$day=date('d',$datetime);
-        $dayOfWeek=date('N',$datetime);
-        $dayInMonth=date('t',$datetime);
-        if ($day<$dayOfWeek){
-            $splitWeek=2;
-        }else if ($dayInMonth<$day+(7-$dayOfWeek)){ // FIXME:where to split ?
-            $splitWeek=1;
-        }
+
+    
+    // split week of the current week
+    if($day==0)$day=date('d',$datetime);
+    $dayOfWeek=date('N',$datetime);
+    $dayInMonth=date('t',$datetime);
+    if ($day<$dayOfWeek){
+        $splitWeek=2;
+    }else if ($dayInMonth<$day+(7-$dayOfWeek)){ // FIXME:where to split ?
+        $splitWeek=1;
+    }    
     // add the tail in case of a split week
     $yearWeekTail='';
     if ($splitWeek!=0){
@@ -293,13 +298,61 @@ function parseYearWeek($yearWeek){
     if(substr($yearWeek,-3,2)=="_H"){
         $splitWeek=substr($yearWeek,-1);
         $yearWeek=substr($yearWeek,0,-3);
-        if($splitWeek==2){
-            $yearWeek.=" next month";
-        }
+
     }
     $yearWeektime=strtotime($yearWeek);
-   
+    if($splitWeek=="2"){
+       $yearWeektime=  getEndWeek($yearWeektime);
+    }
     return $yearWeektime;
+}
+/*
+ * function to find the split of the week
+ * 
+  *  @param    string              	$yearWeek                   yearweek
+ *  @return     string                                          next yearweek            
+ */
+function getNextYearWeek($yearweek){
+    
+    $split=( strlen($yearweek)>3 && substr($yearweek,-3,2)=="_H")?substr($yearweek,-1,1):0;
+    $date=strtotime(substr($yearweek,0,7));
+    if($split==0 || $split==2){
+        $date=$date+7*SECINDAY;
+        return getYearWeek(0,0,0,$date);
+    }else if ($split==1){
+        return date('Y\WW',$date)."_H2";
+       
+    } 
+}
+
+/*
+ * function to find the prev yearweek
+ * 
+  *  @param    string              	$yearWeek                   yearweek
+ *  @return    string                                                 prev yearweek 
+ */
+function getPrevYearWeek($yearweek){
+    
+    $split=( strlen($yearweek)>3 && substr($yearweek,-3,2)=="_H")?substr($yearweek,-1,1):0;
+    $date=strtotime(substr($yearweek,0,7));
+    if($split==0 || $split==1){
+        $date=$date-1*SECINDAY;
+        return getYearWeek(0,0,0,$date);
+    }else if ($split==2){
+        return date('Y\WW',$date)."_H1";
+       
+    } 
+}
+/*
+ * function to find end date of the week
+ * 
+  *  @param    datetime              	$date                   date do the stat of the week
+ *  @return     int                                   
+ */
+function getEndWeek($date){
+$nextWeek=strtotime("next monday",$date);
+$nextMonth=strtotime("first day of next month",$date);
+return min($nextWeek,$nextMonth);   
 }
 
 /*
