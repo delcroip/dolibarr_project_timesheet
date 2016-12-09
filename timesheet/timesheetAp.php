@@ -193,8 +193,8 @@ if(is_object($firstTimesheetUser)){
     //$ret+=$this->getTaskTimeIds(); 
     //FIXME module holiday should be activated ?
             $timesheetUser->fetchUserHoliday(); 
-            $Form .=$timesheetUser->userName." - ".$langs->trans('Week').date(' W (m/Y)',$timesheetUser->year_week_date);
-            //$Form .=$timesheetUser->userName." - ".$langs->trans('Week').' '.getYearWeek(0,0,0,$timesheetUser->year_week_date);
+            $Form .=$timesheetUser->userName." - ".$langs->trans('Week').date(' W (m/Y)',$timesheetUser->start_date);
+            //$Form .=$timesheetUser->userName." - ".$langs->trans('Week').' '.getYearWeek(0,0,0,$timesheetUser->start_date);
             $Form .=$timesheetUser->getHTMLHeader(false);
             $Form .=$timesheetUser->getHTMLHolidayLines(false);
             //$Form .=$timesheetUser->getHTMLTotal('totalT');
@@ -278,18 +278,18 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
        
 
         $sql ="SELECT *";
-        if($byWeek==2)$sql.=",CONCAT(DATE_FORMAT(year_week_date,' %m/%Y'),fk_userid) as usermonth";
+        if($byWeek==2)$sql.=",CONCAT(DATE_FORMAT(start_date,' %m/%Y'),fk_userid) as usermonth";
         $sql.=" FROM ".MAIN_DB_PREFIX."timesheet_user as tu"; 
         $sql.=' WHERE tu.status="SUBMITTED"';
         if($role='team'){$sql.=' AND fk_userid in ('.implode(',',$subId).')';
         }else{$sql.=' AND fk_task in ('.implode(',',$subId).')';}
         $sql.=' AND target="'.$role.'"';
         if($byWeek==1){
-            $sql.=' ORDER BY year_week_date DESC, fk_userid DESC';
+            $sql.=' ORDER BY start_date DESC, fk_userid DESC';
         }else if($byWeek==0){
-            $sql.=' ORDER BY fk_userid DESC,year_week_date DESC';
+            $sql.=' ORDER BY fk_userid DESC,start_date DESC';
         }else if($byWeek==2){
-            $sql.=' ORDER BY usermonth DESC, year_week_date ASC';
+            $sql.=' ORDER BY usermonth DESC, start_date ASC';
         }
         $sql.=' LIMIT '.$level;
         $sql.=' OFFSET '.$offset;
@@ -311,7 +311,7 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
                     $tmpTs = NEW timesheetUser($db,$obj->fk_userid);
                     $tmpTs->id    = $obj->rowid;
                     //$tmpTs->userId = $obj->fk_userid;
-                    $tmpTs->year_week_date = $tmpTs->db->jdate($obj->year_week_date);
+                    $tmpTs->start_date = $tmpTs->db->jdate($obj->start_date);
                     $tmpTs->status = $obj->status;
                     $tmpTs->target = $obj->target;
                     $tmpTs->project_tasktime_list = $obj->fk_project_tasktime_list;
@@ -320,9 +320,9 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
                     $tmpTs->date_modification = $tmpTs->db->jdate($obj->date_modification);
                     $tmpTs->user_creation = $obj->fk_user_creation;
                     $tmpTs->user_modification = $obj->fk_user_modification;            
-                    $tmpTs->yearWeek= getYearWeek(0,0,0,$tmpTs->year_week_date);
+                    $tmpTs->yearWeek= getYearWeek(0,0,0,$tmpTs->start_date);
                     $tmpTs->whitelistmode=2; // no impact
-                    $tmpTs->stop_date=getEndWeek($tmpTs->year_week_date);
+                    $tmpTs->stop_date=getEndWeek($tmpTs->start_date);
                     //if($i>0){
                     //    if(($byWeek && ($tsList[$i-1]->yearWeek==$tmpTs->yearWeek)) ||
                     //           (!$byWeek && $tsList[$i-1]->userId == $tmpTs->userId) ){
@@ -397,8 +397,8 @@ function getSelectAps($subId){
     if(!is_array($subId) || !count($subId))return array();
     global $db,$langs;
     if(TIMESHEET_APPROVAL_BY_WEEK==1){
-        $sql='SELECT COUNT(ts.year_week_date) as nb,ts.year_week_date as id,';
-        $sql.=" DATE_FORMAT(ts.year_week_date,'".$langs->trans('Week')." %u (%m/%Y)') as label";
+        $sql='SELECT COUNT(ts.start_date) as nb,ts.start_date as id,';
+        $sql.=" DATE_FORMAT(ts.start_date,'".$langs->trans('Week')." %u (%m/%Y)') as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'timesheet_user as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
 
@@ -408,8 +408,8 @@ function getSelectAps($subId){
         $sql.=' FROM '.MAIN_DB_PREFIX.'timesheet_user as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
     }else{
-        $sql="SELECT COUNT(ts.fk_userid) as nb,CONCAT(DATE_FORMAT(ts.year_week_date,' %m/%Y'),usr.firstname,' ',usr.lastname) as id,";
-        $sql.=" CONCAT(usr.firstname,' ',usr.lastname,DATE_FORMAT(ts.year_week_date,' %m/%Y')) as label";
+        $sql="SELECT COUNT(ts.fk_userid) as nb,CONCAT(DATE_FORMAT(ts.start_date,' %m/%Y'),usr.firstname,' ',usr.lastname) as id,";
+        $sql.=" CONCAT(usr.firstname,' ',usr.lastname,DATE_FORMAT(ts.start_date,' %m/%Y')) as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'timesheet_user as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
     }

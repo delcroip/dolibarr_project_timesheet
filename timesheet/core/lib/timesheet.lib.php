@@ -252,7 +252,10 @@ function getEventMessageXML($messages,$style='ok'){
 function getYearWeek($day=0,$month=0,$year=0,$date='',$prevNext=0){
     $splitWeek=0; // 0 - no splitted week; 1 - fist part of a splitted week, 2 - second part of a splitted week  
     $datetime=0;
-    if(is_int($date) && $date!=0){  // if date is a datetime
+    if ($day!=0 && $month!=0 && $year!= 0)
+    {
+        $datetime=dol_mktime(0,0,0,$month,$day,$year);
+    }else if(is_int($date) && $date!=0){  // if date is a datetime
         $datetime=$date;
     }else if(is_string($date)&& $date!=""){  // if date is a string
         //foolproof: incase the yearweek in passed in date
@@ -260,10 +263,7 @@ function getYearWeek($day=0,$month=0,$year=0,$date='',$prevNext=0){
             return $date;          
         }
         $datetime=strtotime($date);
-    }else if ($day!=0 && $month!=0 && $year!= 0)
-    {
-        $datetime=dol_mktime(0,0,0,$month,$day,$year);
-    }else{
+    }else {
        $datetime=time(); 
     }
 

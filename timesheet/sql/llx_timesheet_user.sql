@@ -25,7 +25,7 @@ CREATE TABLE llx_timesheet_user
 (
 rowid                 integer NOT NULL AUTO_INCREMENT,
 fk_userid               integer NOT NULL,          
-year_week_date          DATE NOT NULL, 
+start_date          DATE NOT NULL, 
 status                enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED') DEFAULT 'DRAFT',
 target            enum('team','project','customer','provider','other') DEFAULT 'team', -- a team ts is always needed 
 fk_project_tasktime_list VARCHAR(512), 
@@ -43,6 +43,6 @@ ENGINE=innodb;
 
 
 -- UPDATE from 1.5.1
---ALTER TABLE llx_timesheet_user ADD stop_date DATE NOT NULL
---ALTER TABLE llx_timesheet_user CHANGE year_week_date start_date DATE NOT NULL
+ALTER TABLE llx_timesheet_user ADD stop_date DATE NOT NULL
+ALTER TABLE llx_timesheet_user CHANGE year_week_date start_date DATE NOT NULL
 --Update tablename SET stop_date = DATE_ADD(start_date,INTERVAL 7 DAY) Where stop_date = 0

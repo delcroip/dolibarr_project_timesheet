@@ -42,7 +42,8 @@ class timesheetUser extends CommonObject
         var $id;
 
 	var $userId;
-	var $year_week_date='';
+	var $start_date='';
+        var $stop_date;
 	var $status;
 	var $target;
 	var $project_tasktime_list;
@@ -57,7 +58,7 @@ class timesheetUser extends CommonObject
         
 
 //working variable
-        var $stop_date;
+
         var $duration;
     var $ref;
     var $user;
@@ -93,8 +94,8 @@ class timesheetUser extends CommonObject
         $this->whitelistmode=is_numeric($whitelistmode)?$whitelistmode:TIMESHEET_WHITELIST_MODE;
         $this->yearWeek=$yearWeek;
         $this->ref=$this->yearWeek.'_'.$this->userId;
-        $this->year_week_date=  parseYearWeek($this->yearWeek);
-        $this->stop_date= getEndWeek($this->year_week_date);
+        $this->start_date=  parseYearWeek($this->yearWeek);
+        //$this->stop_date= getEndWeek($this->start_date);
         $this->timestamp=time();
         $ret=$this->fetchByWeek();
         $ret+=$this->fetchTaskTimesheet();
@@ -171,9 +172,9 @@ function getSQLfetchtask(){
     if($userid==''){$userid=$this->userId;}
     $whiteList=array();
     $staticWhiteList=new Timesheetwhitelist($this->db);
-    $datestart=$this->year_week_date;
+    $datestart=$this->start_date;
     $datestop= $this->stop_date;
-    //$datestop=strtotime(' +7 day',$this->year_week_date);//FIXME should only take the sub week
+    //$datestop=strtotime(' +7 day',$this->start_date);//FIXME should only take the sub week
     $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
      $tasksList=array();
@@ -342,12 +343,12 @@ function GetTimeSheetXML()
          $html.=">".$langs->trans($value)."</th>\n";
      }
     $opendays=str_split(TIMESHEET_OPEN_DAYS);
-    $weeklength=round(($this->stop_date-$this->year_week_date)/SECINDAY);
+    $weeklength=round(($this->stop_date-$this->start_date)/SECINDAY);
     for ($i=0;$i<$weeklength;$i++)// fixme it won't be always 7 days
     {
-        $curDay=$this->year_week_date+ SECINDAY*$i;
+        $curDay=$this->start_date+ SECINDAY*$i;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
-        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_print_date($curDay,'day')."</th>\n";
+        $html.="\t".'<th width="60px" style="text-align:center;" >'.$langs->trans(date('l',$curDay)).'<br>'.dol_print_date($curDay,'day')."</th>\n";
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';
@@ -383,7 +384,7 @@ function GetTimeSheetXML()
 
     $html .="<tr>\n";
     $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
-    $weeklength=round(($this->stop_date-$this->year_week_date)/SECINDAY);
+    $weeklength=round(($this->stop_date-$this->start_date)/SECINDAY);
     for ($i=0;$i<$weeklength;$i++)
     {
        $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>";
@@ -469,7 +470,7 @@ function GetTimeSheetXML()
                 $row=new timesheet($this->db);
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
-                $Lines.=$row->getFormLine( $this->year_week_date,$this->stop_date,$i,$this->headers,$this->whitelistmode,$this->status,$this->id); // fixme
+                $Lines.=$row->getFormLine( $this->start_date,$this->stop_date,$i,$this->headers,$this->whitelistmode,$this->status,$this->id); // fixme
 				$i++;
             }
         }
@@ -821,7 +822,8 @@ function get_userName(){
 		// Clean parameters
         
 		if (isset($this->userId)) $this->userId=trim($this->userId);
-		if (isset($this->year_week_date)) $this->year_week_date=trim($this->year_week_date);
+		if (isset($this->start_date)) $this->start_date=trim($this->start_date);
+		if (isset($this->stop_date)) $this->stop_date=trim($this->stop_date);
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->target)) $this->target=trim($this->target);
 		if (isset($this->project_tasktime_list)) $this->project_tasktime_list=trim($this->project_tasktime_list);
@@ -843,7 +845,8 @@ function get_userName(){
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		
 		$sql.= 'fk_userid,';
-		$sql.= 'year_week_date,';
+		$sql.= 'start_date,';
+                $sql.= 'stop_date,';
 		$sql.= 'status,';
 		$sql.= 'target,';
 		$sql.= 'fk_project_tasktime_list,';
@@ -858,7 +861,8 @@ function get_userName(){
         $sql.= ") VALUES (";
         
 		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
-		$sql.=' '.(! isset($this->year_week_date) || dol_strlen($this->year_week_date)==0?'NULL':'"'.$this->db->idate($this->year_week_date).'"').',';
+		$sql.=' '.(! isset($this->start_date) || dol_strlen($this->start_date)==0?'NULL':'"'.$this->db->idate($this->start_date).'"').',';
+		$sql.=' '.(! isset($this->stop_date) || dol_strlen($this->stop_date)==0?'NULL':'"'.$this->db->idate($this->stop_date).'"').',';
 		$sql.=' '.(! isset($this->status)?'"DRAFT"':'"'.$this->status.'"').',';
 		$sql.=' '.(! isset($this->target)?'"team"':'"'.$this->target.'"').',';
 		$sql.=' '.(! isset($this->project_tasktime_list)?'NULL':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
@@ -927,7 +931,8 @@ function get_userName(){
 		$sql.= " t.rowid,";
 		
 		$sql.=' t.fk_userid,';
-		$sql.=' t.year_week_date,';
+		$sql.=' t.start_date,';
+		$sql.=' t.stop_date,';
 		$sql.=' t.status,';
 		$sql.=' t.target,';
 		$sql.=' t.fk_project_tasktime_list,';
@@ -956,7 +961,8 @@ function get_userName(){
 
                 $this->id    = $obj->rowid;
                 $this->userId = $obj->fk_userid;
-                $this->year_week_date = $this->db->jdate($obj->year_week_date);
+                $this->start_date = $this->db->jdate($obj->start_date);
+                $this->stop_date = $this->db->jdate($obj->stop_date);
                 $this->status = $obj->status;
                 $this->target = $obj->target;
                 $this->project_tasktime_list = $obj->fk_project_tasktime_list;
@@ -972,7 +978,7 @@ function get_userName(){
                 
             }
             $this->db->free($resql);
-            $this->yearWeek= getYearWeek(0,0,0,$this->year_week_date); //fixme
+            $this->yearWeek= getYearWeek(0,0,0,$this->start_date); //fixme
             $this->ref=$this->yearWeek.'_'.$this->userId;
             $this->whitelistmode=2; // no impact
             return 1;
@@ -996,7 +1002,8 @@ function get_userName(){
 		$sql.= " t.rowid,";
 		
 		$sql.=' t.fk_userid,';
-		$sql.=' t.year_week_date,';
+		$sql.=' t.start_date,';
+		$sql.=' t.stop_date,';
 		$sql.=' t.status,';
 		$sql.=' t.target,';
 		$sql.=' t.fk_project_tasktime_list,';
@@ -1012,9 +1019,9 @@ function get_userName(){
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
-        $sql.= " WHERE t.year_week_date = '".$this->db->idate($this->year_week_date)."'";
+        $sql.= " WHERE t.start_date = '".$this->db->idate($this->start_date)."'";
 		$sql.= " AND t.fk_userid = '".$this->userId."'";
-       # $sql .= "AND WEEKOFYEAR(ptt.year_week_date)='".date('W',strtotime($yearWeek))."';";
+       # $sql .= "AND WEEKOFYEAR(ptt.start_date)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
 
         //$sql.= " AND t.rowid = ".$id;
@@ -1030,7 +1037,8 @@ function get_userName(){
                 $this->id    = $obj->rowid;
                 
                 $this->userId = $obj->fk_userid;
-                $this->year_week_date = $this->db->jdate($obj->year_week_date);
+                $this->start_date = $this->db->jdate($obj->start_date);
+                $this->stop_date = $this->db->jdate($obj->stop_date);
                 $this->status = $obj->status;
                 $this->target = $obj->target;
                 $this->project_tasktime_list = $obj->fk_project_tasktime_list;
@@ -1056,6 +1064,7 @@ function get_userName(){
                 unset($this->timesheetuser );
                 unset($this->task );
                 unset($this->note );
+                $this->stop_date= getEndWeek($this->start_date);
                 $this->create($this->user);
                 $this->fetch($this->id);
             }
@@ -1086,7 +1095,8 @@ function get_userName(){
 		// Clean parameters
         
 		if (isset($this->userId)) $this->userId=trim($this->userId);
-		if (isset($this->year_week_date)) $this->year_week_date=trim($this->year_week_date);
+		if (isset($this->start_date)) $this->start_date=trim($this->start_date);
+		if (isset($this->stop_date)) $this->stop_date=trim($this->stop_date);
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->target)) $this->target=trim($this->target);
 		if (isset($this->project_tasktime_list)) $this->project_tasktime_list=trim($this->project_tasktime_list);
@@ -1108,7 +1118,8 @@ function get_userName(){
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         
 		$sql.=' fk_userid='.(empty($this->userId) ? 'null':'"'.$this->userId.'"').',';
-		$sql.=' year_week_date='.(dol_strlen($this->year_week_date)!=0 ? '"'.$this->db->idate($this->year_week_date).'"':'null').',';
+		$sql.=' start_date='.(dol_strlen($this->start_date)!=0 ? '"'.$this->db->idate($this->start_date).'"':'null').',';
+		$sql.=' stop_date='.(dol_strlen($this->stop_date)!=0 ? '"'.$this->db->idate($this->stop_date).'"':'null').',';
 		$sql.=' status='.(empty($this->status)? 'null':'"'.$this->status.'"').',';
 		$sql.=' target='.(empty($this->target) ? 'null':'"'.$this->target.'"').',';
 		$sql.=' fk_project_tasktime_list='.(empty($this->project_tasktime_list) ? 'null':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
@@ -1333,7 +1344,8 @@ function get_userName(){
 		$this->id=0;
 		
 		$this->userId='';
-		$this->year_week_date='';
+		$this->start_date='';
+		$this->stop_date='';
 		$this->status='';
 		$this->target='';
 		$this->project_tasktime_list='';

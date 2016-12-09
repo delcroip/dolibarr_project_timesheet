@@ -53,6 +53,7 @@ $timesheetUser= new timesheetUser($db,$userid);
 $confirm=GETPOST('confirm');
 
 if($yearWeek==0 && isset($_SESSION["yearWeek"])) $yearWeek=$_SESSION["yearWeek"];
+//if($yearWeek==0 ) $yearWeek=$_SESSION["yearWeek"];
 $yearWeek=getYearWeek($toDateday,$toDatemonth,$toDateyear,$yearWeek);
 $_SESSION["yearWeek"]=$yearWeek ;
 
