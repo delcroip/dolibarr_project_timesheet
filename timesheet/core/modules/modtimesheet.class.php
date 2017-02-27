@@ -132,6 +132,8 @@ class modTimesheet extends DolibarrModules
                 $this->const[16] = array("TIMESHEET_APPROVAL_BY_WEEK","chaine","0","Approval by week instead of by user"); 
                 $this->const[17] = array("TIMESHEET_MAX_APPROVAL","chaine","5","Max TS per Approval page"); 
                 $this->const[18] = array("TIMESHEET_ADD_DOCS","chaine","0","Allow to join files to timesheets"); 
+                $this->const[19] = array("TIMESHEET_APPROVAL_FLOWS","chaine","_00000","Approval flows "); 
+                
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1

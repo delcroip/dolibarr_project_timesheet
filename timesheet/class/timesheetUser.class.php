@@ -411,7 +411,11 @@ function GetTimeSheetXML()
     if($isOpenSatus){
         $html .= '<input type="submit" class="butAction" name="save" value="'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
-        $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
+        
+        $apflows=str_split(TIMESHEET_APPROVAL_FLOWS);
+        if(in_array('1',$apflows)){
+            $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
+        }
         $html .= '<a class="butActionDelete" href="?action=list&yearweek='.$this->yearWeek.'">'.$langs->trans('Cancel').'</a>';
 
     }else if($this->status=="SUBMITTED")$html .= '<input type="submit" class="butAction" name="recall" " value="'.$langs->trans('Recall')."\" />\n";
@@ -484,7 +488,7 @@ function GetTimeSheetXML()
  function getHTMLNote(){
      global $langs;
      $isOpenSatus=($this->status=="DRAFT" || $this->status=="CANCELLED"|| $this->status=="REJECTED");
-     $html='<table class="noborder" width="50%"><tr><td>'.$langs->trans('note').'</td></tr><tr><td>';
+     $html='<table class="noborder" width="50%"><tr><td>'.$langs->trans('Note').'</td></tr><tr><td>';
    
 
     if($isOpenSatus){
@@ -688,11 +692,91 @@ function get_userName(){
 		else
 		{
 			$this->db->commit();
+                        OtherApproval(true);
 			return 1;
 		}
 
     }
-    
+/*
+ * trigger the change in the multiple approval flow 
+ * 
+*  @param      boolean               $approved           true will trigger the next step, false will send the feedback to the previous
+*  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+function  OtherApproval($approved){
+    $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),2);
+     if (in_array('1',$apflows)) // FIXEME new param + hide submit if not approval flow whished
+    {
+        $found=false;
+        switch($this->target){
+            case 'team':
+                  $start=0;
+                break;
+            case 'project':
+                $start=1;
+                break;
+            case 'customer':
+                $start=2;
+                break;
+            case 'provider':
+                $start=3;
+                break;
+            case 'other':
+                $start=4;
+                break;
+        }
+        
+        $cur=($approved)?($start+1):($start-1);
+        while(($found) || ($cur==-1 )|| ($cur==5)){
+            if($apflows[$cur]==1){
+                   $found=true;
+            }
+            $cur=($approved)?($cur+1):($cur-1);
+        }
+        if($found){
+            switch($cur){
+               case 0:
+                   if($approved){
+                      //$this->create_timesheet_team();shouldnt happen
+                   }else{
+                      // $this->reject_timesheet_team(); fixme
+                   }
+                   break;
+               case 1:
+                   if($approved){
+                    //   $this->create_timesheet_project(); fixme
+                   }else{
+                     //  $this->reject_timesheet_project(); fixme
+                   }
+                   break;
+               case 2:
+                    if($approved){
+                       //$this->create_timesheet_customer(); FIXME
+                   }else{
+                       //$this->reject_timesheet_customer(); FIXME
+                   }
+                   break;
+               case 3:
+                   if($approved){
+                       //$this->create_timesheet_provider(); FIXME
+                   }else{
+                      // $this->reject_timesheet_provider(); FIXME
+                   }
+                   break;
+               case 4:
+                    if($approved){
+                      // $this->create_timesheet_other(); FIXME
+                   }else{
+                       //$this->reject_timesheet_other(); FIXME
+                   }
+                   break;
+           }
+        }
+        
+    //FIXME;        
+    }
+    return 1;
+}   
  /*
  * put the timesheet task in a rejected status
  * 
@@ -748,6 +832,7 @@ function get_userName(){
 		else
 		{
 			$this->db->commit();
+                        OtherApproval(false);
 			return 1;
 		}
         

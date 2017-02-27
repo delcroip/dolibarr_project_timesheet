@@ -206,7 +206,7 @@ $Form .=$timesheetUser->getHTMLFooter($ajax);
 
 
 //Javascript
-$timetype=TIMESHEET_TIME_TYPE;
+
 //$Form .= ' <script type="text/javascript" src="core/js/timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
 $Form .='updateAll();';
@@ -214,7 +214,7 @@ $Form .= "\n\t".'</script>'."\n";
 // $Form .='</div>';//TimesheetPage
 print $Form;
 //add attachement
-if(TIMESHEET_ADD_DOCS){
+if(TIMESHEET_ADD_DOCS==1){
         
         $object=$timesheetUser;
         $modulepart = 'timesheet';

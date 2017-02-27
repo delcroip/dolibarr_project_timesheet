@@ -24,17 +24,18 @@
 CREATE TABLE llx_timesheet_user
 (
 rowid                 integer NOT NULL AUTO_INCREMENT,
-fk_userid               integer NOT NULL,          
-start_date          DATE NOT NULL, 
+fk_userid               integer NOT NULL,          -- timesheet user
+start_date          DATE NOT NULL, -- start date of the period
+stop_date          DATE NOT NULL, -- start date of the period
 status                enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED') DEFAULT 'DRAFT',
 target            enum('team','project','customer','provider','other') DEFAULT 'team', -- a team ts is always needed 
-fk_project_tasktime_list VARCHAR(512), 
-fk_user_approval              integer default NULL,
+fk_project_tasktime_list VARCHAR(512), -- list of task time included in the validation
+fk_user_approval              integer default NULL, -- approuved by
 date_creation         DATETIME NOT NULL,
 date_modification     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
 fk_user_creation        integer,
 fk_user_modification         integer,
-fk_timesheet_user       integer, -- in case target is not team 
+fk_timesheet_user       integer, -- in case target is not team , Ref to another llx_timesheet_user entry
 fk_task       integer, -- in case target is not team, querry on task
 note       VARCHAR(1024), -- in case target is not team, querry on task
 PRIMARY KEY (rowid)
@@ -42,7 +43,3 @@ PRIMARY KEY (rowid)
 ENGINE=innodb;
 
 
--- UPDATE from 1.5.1
-ALTER TABLE llx_timesheet_user ADD stop_date DATE NOT NULL
-ALTER TABLE llx_timesheet_user CHANGE year_week_date start_date DATE NOT NULL
---Update tablename SET stop_date = DATE_ADD(start_date,INTERVAL 7 DAY) Where stop_date = 0

@@ -54,8 +54,11 @@ $approvedColor=TIMESHEET_COL_APPROVED;
 $rejectedColor=TIMESHEET_COL_REJECTED;
 $cancelledColor=TIMESHEET_COL_CANCELLED;
 $addholidaytime=TIMESHEET_ADD_HOLIDAY_TIME;
+$adddocs=TIMESHEET_ADD_DOCS;
 $opendays=str_split(TIMESHEET_OPEN_DAYS);
 if(sizeof($opendays)!=8)$opendays=array('_','0','0','0','0','0','0','0');
+$apflows=str_split(TIMESHEET_APPROVAL_FLOWS);
+if(sizeof($apflows)!=6)$apflows=array('_','0','0','0','0','0');
 switch($action)
 {
     case save:
@@ -133,12 +136,22 @@ switch($action)
         if (! $res > 0) $error++;
         $addholidaytime=GETPOST('addholidaytime','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_ADD_HOLIDAY_TIME", $addholidaytime, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $adddocs=GETPOST('adddocs','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;        
         $opendays=array('_','0','0','0','0','0','0','0');
         foreach($_POST['opendays'] as $key => $day){
             $opendays[$key]=$day;
         }
         $res=dolibarr_set_const($db, "TIMESHEET_OPEN_DAYS", implode('',$opendays), 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;        
+
+        $apflows=array('_','0','0','0','0','0');
+        foreach($_POST['apflows'] as $key => $flow){
+            $apflows[$key]=$flow;
+        }
+        $res=dolibarr_set_const($db, "TIMESHEET_APPROVAL_FLOWS", implode('',$apflows), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;        
     
         // error handling
@@ -241,16 +254,28 @@ $Form .='</th><th align="left">'.$langs->trans("addholidaytimeDesc").'</th>';
 $Form .= '<th align="left"><input type="checkbox" name="addholidaytime" value="1" ';
 $Form .=(($addholidaytime=='1')?'checked':'')."></th></tr>\n";
 
+// add docs
+$Form .= '<tr class="impair"><th align="left">'.$langs->trans("adddocs");
+$Form .='</th><th align="left">'.$langs->trans("adddocsDesc").'</th>';
+$Form .= '<th align="left"><input type="checkbox" name="adddocs" value="1" ';
+$Form .=(($adddocs=='1')?'checked':'')."></th></tr>\n";
 // approval by week
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("approvalbyweek");
+$Form .= '<tr class="pair"><th align="left">'.$langs->trans("approvalbyweek");
 $Form .='</th><th align="left">'.$langs->trans("approvalbyweekDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="approvalbyweek" value="1" ';
-$Form .=(($approvalbyweek=='1')?'checked':'')."></th></tr>\n";
+$Form .='<th align="left"><input type="radio" name="approvalbyweek" value="0" ';
+$Form .=($approvalbyweek=='0'?"checked":"").'> '.$langs->trans("User").'<br>';
+$Form .='<input type="radio" name="approvalbyweek" value="1" ';
+$Form .=($approvalbyweek=='1'?"checked":"").'> '.$langs->trans("Week").'<br>';
+$Form .='<input type="radio" name="approvalbyweek" value="2" ';
+$Form .=($approvalbyweek=='2'?"checked":"").'> '.$langs->trans("Month")."</th></tr>\n\t\t";
 // max approval 
-$Form .='<tr class="pair"><th align="left">'.$langs->trans("maxapproval"); //FIXTRAD
+
+
+$Form .='<tr class="impair" ><th align="left">'.$langs->trans("maxapproval"); //FIXTRAD
 $Form .='</th><th align="left">'.$langs->trans("maxapprovalDesc").'</th>'; // FIXTRAD
-$Form .='<th align="left"><input type="text" name="maxapproval" value="'.$maxApproval;
+$Form .='<th  align="left"><input type="text" name="maxapproval" value="'.$maxApproval;
 $Form .="\" size=\"4\" ></th></tr>\n\t\t";
+
 
 $Form.="\t</table><br>\n";
 
@@ -258,7 +283,7 @@ $Form.="\t</table><br>\n";
 print $Form;
 
 
-print_titre($langs->trans("OpenDays")); //FIXTRAD
+print_titre($langs->trans("OpenDays")); 
 $Form ='<table class="noborder" width="100%">'."\n\t\t";
 $Form .='<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Monday").'</th><th>';
 $Form .=$langs->trans("Tuesday").'</th><th>'.$langs->trans("Wednesday").'</th><th>';
@@ -274,6 +299,21 @@ $Form .=(($opendays[$i]=='1')?'checked':'')."></th>\n\t\t";
 $Form .="</tr>\n\t</table><br>\n";
 print $Form;
 
+print_titre($langs->trans("ApFlows")); 
+$Form ='<table class="noborder" width="100%">'."\n\t\t";
+$Form .='<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Team").'</th><th>';
+$Form .=$langs->trans("Project").'</th><th>';
+$Form .=$langs->trans("Customer").'</th><th>';
+$Form .=$langs->trans("Supplier").'</th><th>'.$langs->trans("Other").'</th>';
+$Form .='<input type="hidden" name="apflows[0]" value="_">';
+$Form .="</tr><tr>\n\t\t";
+
+for ($i=1; $i<6;$i++){
+$Form .= '<th width="14%" style="text-align:left"><input type="checkbox" name="apflows['.$i.']" value="1" ';
+$Form .=(($apflows[$i]=='1')?'checked':'')."></th>\n\t\t";
+        }
+$Form .="</tr>\n\t</table><br>\n";
+print $Form;
 
 
 

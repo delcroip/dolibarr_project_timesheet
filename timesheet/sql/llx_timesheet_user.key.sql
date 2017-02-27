@@ -19,11 +19,17 @@
 -- TS Revision 1.5.0
 
 -- this table is used to store the timesheet favorit
-
+--fk
+ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_user_approval) REFERENCES llx_user(rowid);
+ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_user_creation ) REFERENCES llx_user(rowid);
+ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid);
+ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_timesheet_user) REFERENCES llx_timesheet_user(rowid);
+ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid);
+ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_task) REFERENCES llx_projet_task(rowid);
 
 
 -- UPDATE from 1.5.1
-ALTER TABLE llx_timesheet_user ADD stop_date DATE NOT NULL;
+ALTER TABLE llx_timesheet_user ADD stop_date DATE NOT NULL; -- start date of the period
 ALTER TABLE llx_timesheet_user CHANGE COLUMN year_week_date start_date DATE NOT NULL;
 -- add the sto date to the row without
 Update llx_timesheet_user SET stop_date = DATE_ADD(start_date,INTERVAL 7 DAY) Where stop_date = 0

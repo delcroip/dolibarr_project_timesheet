@@ -200,7 +200,7 @@ if(is_object($firstTimesheetUser)){
             //$Form .=$timesheetUser->getHTMLTotal('totalT');
             $Form .=$timesheetUser->getHTMLtaskLines(false);
             $Form .=$timesheetUser->getHTMLTotal();/*FIXME*/
-            $Form .=$timesheetUser->getHTMLNote(false);
+            $Form .=$timesheetUser->getHTMLNote();
             $_SESSION['timesheetAp'][$timestamp]['tsUser'][$timesheetUser->id]=array('status'=>$timesheetUser->status,'Target'=>$timesheetUser->target);
             $Form .= '</table>';
 
@@ -314,6 +314,7 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
                     $tmpTs->start_date = $tmpTs->db->jdate($obj->start_date);
                     $tmpTs->status = $obj->status;
                     $tmpTs->target = $obj->target;
+                    $tmpTs->note = $obj->note;
                     $tmpTs->project_tasktime_list = $obj->fk_project_tasktime_list;
                     $tmpTs->user_approval = $obj->fk_user_approval;
                     $tmpTs->date_creation = $tmpTs->db->jdate($obj->date_creation);
