@@ -692,7 +692,7 @@ function get_userName(){
 		else
 		{
 			$this->db->commit();
-                        OtherApproval(true);
+                        $this->OtherApproval(true);
 			return 1;
 		}
 
@@ -832,7 +832,7 @@ function  OtherApproval($approved){
 		else
 		{
 			$this->db->commit();
-                        OtherApproval(false);
+                        $this->OtherApproval(false);
 			return 1;
 		}
         
@@ -1211,8 +1211,8 @@ function  OtherApproval($approved){
 		$sql.=' fk_user_approval='.(empty($this->user_approval) ? 'null':'"'.$this->user_approval.'"').',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification="'.$user->id.'",';
-		$sql.=' fk_timesheet_user="'.$this->timesheetuser.'",';
-		$sql.=' fk_task="'.$this->task.'",';
+		$sql.=' fk_timesheet_user='.(empty($this->timesheetuser) ? 'null':'"'.$this->timesheetuser.'"').',';
+		$sql.=' fk_task='.(empty($this->task) ? 'null':'"'.$this->task.'"').',';
 		$sql.=' note="'.$this->note.'"';
 
         

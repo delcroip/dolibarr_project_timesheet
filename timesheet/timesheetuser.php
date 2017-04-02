@@ -176,8 +176,11 @@ if ($cancel){
 		$object->target=GETPOST('Target');
 		$object->project_tasktime_list=GETPOST('Projecttasktimelist');
 		$object->user_approval=GETPOST('Userapproval');
+                if($object->user_approval==-1)unset($object->user_approval);
 		$object->timesheetuser=GETPOST('Timesheetuser');
+                if($object->timesheetuser==-1)unset($object->timesheetuser);
 		$object->task=GETPOST('Task');
+                if($object->task==-1)unset($object->task);
 		$object->note=GETPOST('Note');
 
 
@@ -802,8 +805,8 @@ dol_fiche_end();
 function reloadpage($backtopage,$id,$ref){
         if (!empty($backtopage)){
             header("Location: ".$backtopage);            
-        }else if (!empty($ref) ){
-            header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$id);
+        //}else if (!empty($ref) ){
+        //    header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$ref);
         }else if ($id>0)
         {
             header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);

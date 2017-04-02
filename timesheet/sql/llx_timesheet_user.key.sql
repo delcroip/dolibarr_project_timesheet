@@ -29,9 +29,11 @@ ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_task) REFERENCES llx_projet_t
 
 
 -- UPDATE from 1.5.1
+ --ALTER TABLE llx_timesheet_user MODIFY COLUMN fk_timesheet_user integer default NULL; --allow null value
 ALTER TABLE llx_timesheet_user ADD stop_date DATE NOT NULL; -- start date of the period
 ALTER TABLE llx_timesheet_user CHANGE COLUMN year_week_date start_date DATE NOT NULL;
 -- add the sto date to the row without
 Update llx_timesheet_user SET stop_date = DATE_ADD(start_date,INTERVAL 7 DAY) Where stop_date = 0
 -- delete the line draft and without note to start from a good base
 DELETE FROM `llx_timesheet_user` WHERE `status` ='DRAFT' and (`note`='' OR `note`IS NULL)
+RENAME TABLE `llx_timesheet_user` TO `llx_tasktime_approval`

@@ -21,6 +21,7 @@
  */
 
 include '../core/lib/includeMain.lib.php';
+include '../core/lib/generic.lib.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -56,6 +57,14 @@ $cancelledColor=TIMESHEET_COL_CANCELLED;
 $addholidaytime=TIMESHEET_ADD_HOLIDAY_TIME;
 $adddocs=TIMESHEET_ADD_DOCS;
 $opendays=str_split(TIMESHEET_OPEN_DAYS);
+//Invoice part
+
+$invoicemethod=TIMESHEET_INVOICE_METHOD;
+$invoicetasktime=TIMESHEET_INVOICE_TASKTIME;
+$invoiceservice=TIMESHEET_INVOICE_SERVICE;
+$invoiceshowtask=TIMESHEET_INVOICE_SHOW_TASK;
+$invoiceshowuser=TIMESHEET_INVOICE_SHOW_USER;
+
 if(sizeof($opendays)!=8)$opendays=array('_','0','0','0','0','0','0','0');
 $apflows=str_split(TIMESHEET_APPROVAL_FLOWS);
 if(sizeof($apflows)!=6)$apflows=array('_','0','0','0','0','0');
@@ -151,9 +160,25 @@ switch($action)
         foreach($_POST['apflows'] as $key => $flow){
             $apflows[$key]=$flow;
         }
+        
+        //INVOICE
         $res=dolibarr_set_const($db, "TIMESHEET_APPROVAL_FLOWS", implode('',$apflows), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;        
-    
+        $invoicemethod=GETPOST('invoiceMethod','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_INVOICE_METHOD", $invoicemethod, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $invoicetasktime=GETPOST('invoiceTaskTime','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_INVOICE_TASKTIME", $invoicetasktime, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $invoiceservice=GETPOST('invoiceService','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_INVOICE_SERVICE", $invoiceservice, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $invoiceshowtask=GETPOST('invoiceShowTask','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_INVOICE_SHOW_TASK", $invoiceshowtask, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $invoiceshowuser=GETPOST('invoiceShowUser','alpha');
+        $res=dolibarr_set_const($db, "TIMESHEET_INVOICE_SHOW_USER", $invoiceshowuser, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
         // error handling
         
         if (! $error)
@@ -168,11 +193,6 @@ switch($action)
     default:
         break;
 }
-
-
-/* 
- *  VIEW
- *  */
 $headersT=explode('||',$headers);
 foreach ($headersT as $header) {
     switch($header){
@@ -202,252 +222,327 @@ foreach ($headersT as $header) {
     }
     
 }
+
+/* 
+ *  VIEW
+ *  */
+
+
 //permet d'afficher la structure dolibarr
 $morejs=array("/timesheet/core/js/timesheet.js","/timesheet/core/js/jscolor.js");
 llxHeader("",$langs->trans("timesheetSetup"),'','','','',$morejs,'',0,0);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("timesheetSetup"),$linkback,'title_setup');
+print_fiche_titre($langs->trans("timesheetSetup"),$linkback,'title_setup');//FIXME LANGS
+echo '<div class="fiche"><br><br>';
+/*
+ * TABS
+ */
+
+echo '<div class="tabs" data-role="controlgroup" data-type="horizontal"  >';
+echo '  <div id="defaultOpen"  class="inline-block tabsElem" onclick="openTab(event, \'General\')"><a  href="javascript:void(0);"  class="tabunactive tab inline-block" data-role="button">General</a></div>';
+echo '  <div class="inline-block tabsElem" onclick="openTab(event, \'Advanced\')"><a  href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">Advanced</a></div>';
+echo '  <div class="inline-block tabsElem"  onclick="openTab(event, \'Invoice\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">Invoice</a></div>';
+echo '  <div class="inline-block tabsElem"   onclick="openTab(event, \'Other\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">Other</a></div>';
+
+echo '</div>';
+
+
+/*
+ * General
+ */
+echo '<div id="General" class="tabBar">';
 print_titre($langs->trans("GeneralOption"));
-$Form ='<form name="settings" action="?action=save" method="POST" >'."\n\t";
-$Form .='<table class="noborder" width="100%">'."\n\t\t";
-$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
-$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+echo '<form name="settings" action="?action=save" method="POST" >'."\n\t";
+echo '<table class="noborder" width="100%">'."\n\t\t";
+echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
 // type time
-$Form .='<tr class="pair"><th align="left">'.$langs->trans("timeType").'</th><th align="left">'.$langs->trans("timeTypeDesc").'</th>';
-$Form .='<th align="left"><input type="radio" name="timeType" value="hours" ';
-$Form .=($timetype=="hours"?"checked":"").'> '.$langs->trans("hours").'<br>';
-$Form .='<input type="radio" name="timeType" value="days" ';
-$Form .=($timetype=="days"?"checked":"").'> '.$langs->trans("days")."</th></tr>\n\t\t";
+echo '<tr class="pair"><th align="left">'.$langs->trans("timeType").'</th><th align="left">'.$langs->trans("timeTypeDesc").'</th>';
+echo '<th align="left"><input type="radio" name="timeType" value="hours" ';
+echo ($timetype=="hours"?"checked":"").'> '.$langs->trans("hours").'<br>';
+echo '<input type="radio" name="timeType" value="days" ';
+echo ($timetype=="days"?"checked":"").'> '.$langs->trans("days")."</th></tr>\n\t\t";
 //hours perdays
-$Form .='<tr class="impair"><th align="left">'.$langs->trans("hoursperdays");
-$Form .='</th><th align="left">'.$langs->trans("hoursPerDaysDesc").'</th>';
-$Form .='<th align="left"><input type="text" name="hoursperday" value="'.$hoursperday;
-$Form .="\" size=\"4\" ></th></tr>\n\t\t";
+echo '<tr class="impair"><th align="left">'.$langs->trans("hoursperdays");
+echo '</th><th align="left">'.$langs->trans("hoursPerDaysDesc").'</th>';
+echo '<th align="left"><input type="text" name="hoursperday" value="'.$hoursperday;
+echo "\" size=\"4\" ></th></tr>\n\t\t";
 //max hours perdays
-$Form .='<tr class="pair"><th align="left">'.$langs->trans("maxhoursperdays"); //FIXTRAD
-$Form .='</th><th align="left">'.$langs->trans("maxhoursPerDaysDesc").'</th>'; // FIXTRAD
-$Form .='<th align="left"><input type="text" name="maxhoursperday" value="'.$maxhoursperday;
-$Form .="\" size=\"4\" ></th></tr>\n\t\t";
+echo '<tr class="pair"><th align="left">'.$langs->trans("maxhoursperdays"); //FIXTRAD
+echo '</th><th align="left">'.$langs->trans("maxhoursPerDaysDesc").'</th>'; // FIXTRAD
+echo '<th align="left"><input type="text" name="maxhoursperday" value="'.$maxhoursperday;
+echo "\" size=\"4\" ></th></tr>\n\t\t";
 // hide draft
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("hidedraft");
-$Form .='</th><th align="left">'.$langs->trans("hideDraftDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="hidedraft" value="1" ';
-$Form .=(($hidedraft=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("hidedraft");
+echo '</th><th align="left">'.$langs->trans("hideDraftDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="hidedraft" value="1" ';
+echo (($hidedraft=='1')?'checked':'')."></th></tr>\n\t\t";
 // hide ref
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("hideref");
-$Form .='</th><th align="left">'.$langs->trans("hideRefDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="hideref" value="1" ';
-$Form .=(($hideref=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="pair"><th align="left">'.$langs->trans("hideref");
+echo '</th><th align="left">'.$langs->trans("hideRefDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="hideref" value="1" ';
+echo (($hideref=='1')?'checked':'')."></th></tr>\n\t\t";
 
 // hide zeros
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("hidezeros");
-$Form .='</th><th align="left">'.$langs->trans("hideZerosDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="hidezeros" value="1" ';
-$Form .=(($hidezeros=='1')?'checked':'')."></th></tr>\n";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("hidezeros");
+echo '</th><th align="left">'.$langs->trans("hideZerosDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="hidezeros" value="1" ';
+echo (($hidezeros=='1')?'checked':'')."></th></tr>\n";
 
 
 // add holiday time
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("addholidaytime");
-$Form .='</th><th align="left">'.$langs->trans("addholidaytimeDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="addholidaytime" value="1" ';
-$Form .=(($addholidaytime=='1')?'checked':'')."></th></tr>\n";
+echo  '<tr class="pair"><th align="left">'.$langs->trans("addholidaytime");
+echo '</th><th align="left">'.$langs->trans("addholidaytimeDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="addholidaytime" value="1" ';
+echo (($addholidaytime=='1')?'checked':'')."></th></tr>\n";
 
 // add docs
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("adddocs");
-$Form .='</th><th align="left">'.$langs->trans("adddocsDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="adddocs" value="1" ';
-$Form .=(($adddocs=='1')?'checked':'')."></th></tr>\n";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("adddocs");
+echo '</th><th align="left">'.$langs->trans("adddocsDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="adddocs" value="1" ';
+echo (($adddocs=='1')?'checked':'')."></th></tr>\n";
 // approval by week
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("approvalbyweek");
-$Form .='</th><th align="left">'.$langs->trans("approvalbyweekDesc").'</th>';
-$Form .='<th align="left"><input type="radio" name="approvalbyweek" value="0" ';
-$Form .=($approvalbyweek=='0'?"checked":"").'> '.$langs->trans("User").'<br>';
-$Form .='<input type="radio" name="approvalbyweek" value="1" ';
-$Form .=($approvalbyweek=='1'?"checked":"").'> '.$langs->trans("Week").'<br>';
-$Form .='<input type="radio" name="approvalbyweek" value="2" ';
-$Form .=($approvalbyweek=='2'?"checked":"").'> '.$langs->trans("Month")."</th></tr>\n\t\t";
+echo  '<tr class="pair"><th align="left">'.$langs->trans("approvalbyweek");
+echo '</th><th align="left">'.$langs->trans("approvalbyweekDesc").'</th>';
+echo '<th align="left"><input type="radio" name="approvalbyweek" value="0" ';
+echo ($approvalbyweek=='0'?"checked":"").'> '.$langs->trans("User").'<br>';
+echo '<input type="radio" name="approvalbyweek" value="1" ';
+echo ($approvalbyweek=='1'?"checked":"").'> '.$langs->trans("Week").'<br>';
+echo '<input type="radio" name="approvalbyweek" value="2" ';
+echo ($approvalbyweek=='2'?"checked":"").'> '.$langs->trans("Month")."</th></tr>\n\t\t";
 // max approval 
 
 
-$Form .='<tr class="impair" ><th align="left">'.$langs->trans("maxapproval"); //FIXTRAD
-$Form .='</th><th align="left">'.$langs->trans("maxapprovalDesc").'</th>'; // FIXTRAD
-$Form .='<th  align="left"><input type="text" name="maxapproval" value="'.$maxApproval;
-$Form .="\" size=\"4\" ></th></tr>\n\t\t";
+echo '<tr class="impair" ><th align="left">'.$langs->trans("maxapproval"); //FIXTRAD
+echo '</th><th align="left">'.$langs->trans("maxapprovalDesc").'</th>'; // FIXTRAD
+echo '<th  align="left"><input type="text" name="maxapproval" value="'.$maxApproval;
+echo "\" size=\"4\" ></th></tr>\n\t\t";
 
 
-$Form.="\t</table><br>\n";
+echo "\t</table><br>\n";
 
 
-print $Form;
+
 
 
 print_titre($langs->trans("OpenDays")); 
-$Form ='<table class="noborder" width="100%">'."\n\t\t";
-$Form .='<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Monday").'</th><th>';
-$Form .=$langs->trans("Tuesday").'</th><th>'.$langs->trans("Wednesday").'</th><th>';
-$Form .=$langs->trans("Thursday").'</th><th>'.$langs->trans("Friday").'</th><th>';
-$Form .=$langs->trans("Saturday").'</th><th>'.$langs->trans("Sunday").'</th>';
-$Form .='<input type="hidden" name="opendays[0]" value="_">';
-$Form .="</tr><tr>\n\t\t";
+echo '<table class="noborder" width="100%">'."\n\t\t";
+echo '<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Monday").'</th><th>';
+echo $langs->trans("Tuesday").'</th><th>'.$langs->trans("Wednesday").'</th><th>';
+echo $langs->trans("Thursday").'</th><th>'.$langs->trans("Friday").'</th><th>';
+echo $langs->trans("Saturday").'</th><th>'.$langs->trans("Sunday").'</th>';
+echo '<input type="hidden" name="opendays[0]" value="_">';
+echo "</tr><tr>\n\t\t";
 
 for ($i=1; $i<8;$i++){
-$Form .= '<th width="14%" style="text-align:left"><input type="checkbox" name="opendays['.$i.']" value="1" ';
-$Form .=(($opendays[$i]=='1')?'checked':'')."></th>\n\t\t";
+echo  '<th width="14%" style="text-align:left"><input type="checkbox" name="opendays['.$i.']" value="1" ';
+echo (($opendays[$i]=='1')?'checked':'')."></th>\n\t\t";
         }
-$Form .="</tr>\n\t</table><br>\n";
-print $Form;
-
-print_titre($langs->trans("ApFlows")); 
-$Form ='<table class="noborder" width="100%">'."\n\t\t";
-$Form .='<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Team").'</th><th>';
-$Form .=$langs->trans("Project").'</th><th>';
-$Form .=$langs->trans("Customer").'</th><th>';
-$Form .=$langs->trans("Supplier").'</th><th>'.$langs->trans("Other").'</th>';
-$Form .='<input type="hidden" name="apflows[0]" value="_">';
-$Form .="</tr><tr>\n\t\t";
-
-for ($i=1; $i<6;$i++){
-$Form .= '<th width="14%" style="text-align:left"><input type="checkbox" name="apflows['.$i.']" value="1" ';
-$Form .=(($apflows[$i]=='1')?'checked':'')."></th>\n\t\t";
-        }
-$Form .="</tr>\n\t</table><br>\n";
-print $Form;
-
-
-
-
+echo "</tr>\n\t</table><br>\n";
 
 print_titre($langs->trans("ColumnToShow"));
-$Form ='<table class="noborder" width="100%">'."\n\t\t";
-$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
-$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+echo '<table class="noborder" width="100%">'."\n\t\t";
+echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
 // Project
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("Project");
-$Form .='</th><th align="left">'.$langs->trans("ProjectColDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="showProject" value="1" ';
-$Form .=(($showProject=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("Project");
+echo '</th><th align="left">'.$langs->trans("ProjectColDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showProject" value="1" ';
+echo (($showProject=='1')?'checked':'')."></th></tr>\n\t\t";
 // task parent
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("TaskParent");
-$Form .='</th><th align="left">'.$langs->trans("TaskParentColDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="showTaskParent" value="1" ';
-$Form .=(($showTaskParent=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="pair"><th align="left">'.$langs->trans("TaskParent");
+echo '</th><th align="left">'.$langs->trans("TaskParentColDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showTaskParent" value="1" ';
+echo (($showTaskParent=='1')?'checked':'')."></th></tr>\n\t\t";
 // task
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("Tasks");
-$Form .='</th><th align="left">'.$langs->trans("TasksColDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="showTasks" value="1" ';
-$Form .=(($showTasks=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("Tasks");
+echo '</th><th align="left">'.$langs->trans("TasksColDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showTasks" value="1" ';
+echo (($showTasks=='1')?'checked':'')."></th></tr>\n\t\t";
 // date de debut
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("DateStart");
-$Form .='</th><th align="left">'.$langs->trans("DateStartColDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="showDateStart" value="1" ';
-$Form .=(($showDateStart=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="pair"><th align="left">'.$langs->trans("DateStart");
+echo '</th><th align="left">'.$langs->trans("DateStartColDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showDateStart" value="1" ';
+echo (($showDateStart=='1')?'checked':'')."></th></tr>\n\t\t";
 // date de fin
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("DateEnd");
-$Form .='</th><th align="left">'.$langs->trans("DateEndColDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="showDateEnd" value="1" ';
-$Form .=(($showDateEnd=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("DateEnd");
+echo '</th><th align="left">'.$langs->trans("DateEndColDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showDateEnd" value="1" ';
+echo (($showDateEnd=='1')?'checked':'')."></th></tr>\n\t\t";
 // Progres
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("Progress");
-$Form .='</th><th align="left">'.$langs->trans("ProgressColDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="showProgress" value="1" ';
-$Form .=(($showProgress=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="pair"><th align="left">'.$langs->trans("Progress");
+echo '</th><th align="left">'.$langs->trans("ProgressColDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showProgress" value="1" ';
+echo (($showProgress=='1')?'checked':'')."></th></tr>\n\t\t";
 // Company
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("Company");
-$Form .='</th><th align="left">'.$langs->trans("CompanyColDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="showCompany" value="1" ';
-$Form .=(($showCompany=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("Company");
+echo '</th><th align="left">'.$langs->trans("CompanyColDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showCompany" value="1" ';
+echo (($showCompany=='1')?'checked':'')."></th></tr>\n\t\t";
 /*
 // custom FIXME
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("CustomCol");
-$Form .='</th><th align="left">'.$langs->trans("CustomColDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="showCustomCol" value="1" ';
-$Form .=(($showCustomCol=='1')?'checked':'')."</th></tr>\n\t\t";
+echo  '<tr class="pair"><th align="left">'.$langs->trans("CustomCol");
+echo '</th><th align="left">'.$langs->trans("CustomColDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showCustomCol" value="1" ';
+echo (($showCustomCol=='1')?'checked':'')."</th></tr>\n\t\t";
 */
-$Form .='</table>';
-print $Form.'<br>';
+echo '</table>';
+echo "</div>\n";
+
+/*
+ * ADVANCED
+ */
+
+
+
+echo '<div id="Advanced" class="tabBar">';
+
+print_titre($langs->trans("ApFlows")); 
+echo '<table class="noborder" width="100%">'."\n\t\t";
+echo '<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Team").'</th><th>';
+echo $langs->trans("Project").'</th><th>';
+echo $langs->trans("Customer").'</th><th>';
+echo $langs->trans("Supplier").'</th><th>'.$langs->trans("Other").'</th>';
+echo '<input type="hidden" name="apflows[0]" value="_">';
+echo "</tr><tr>\n\t\t";
+
+for ($i=1; $i<6;$i++){
+echo  '<th width="14%" style="text-align:left"><input type="checkbox" name="apflows['.$i.']" value="1" ';
+echo (($apflows[$i]=='1')?'checked':'')."></th>\n\t\t";
+        }
+echo "</tr>\n\t</table><br>\n";
 
 //Color
 print_titre($langs->trans("Color"));
-$Form ='<table class="noborder" width="100%">'."\n\t\t";
-$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
-$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+echo '<table class="noborder" width="100%">'."\n\t\t";
+echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
 // color draft
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("draft");
-$Form .='</th><th align="left">'.$langs->trans("draftColorDesc").'</th>';
-$Form .= '<th align="left"><input name="draftColor" class="jscolor" value="';
-$Form .=$draftColor."\"></th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("draft");
+echo '</th><th align="left">'.$langs->trans("draftColorDesc").'</th>';
+echo  '<th align="left"><input name="draftColor" class="jscolor" value="';
+echo $draftColor."\"></th></tr>\n\t\t";
 // color submitted
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("submitted");
-$Form .='</th><th align="left">'.$langs->trans("submittedColorDesc").'</th>';
-$Form .= '<th align="left"><input name="submittedColor" class="jscolor" value="';
-$Form .=$submittedColor."\"></th></tr>\n\t\t";
+echo  '<tr class="pair"><th align="left">'.$langs->trans("submitted");
+echo '</th><th align="left">'.$langs->trans("submittedColorDesc").'</th>';
+echo  '<th align="left"><input name="submittedColor" class="jscolor" value="';
+echo $submittedColor."\"></th></tr>\n\t\t";
 // color approved
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("approved");
-$Form .='</th><th align="left">'.$langs->trans("approvedColorDesc").'</th>';
-$Form .= '<th align="left"><input name="approvedColor" class="jscolor" value="';
-$Form .=$approvedColor."\"></th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("approved");
+echo '</th><th align="left">'.$langs->trans("approvedColorDesc").'</th>';
+echo  '<th align="left"><input name="approvedColor" class="jscolor" value="';
+echo $approvedColor."\"></th></tr>\n\t\t";
 // color cancelled
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("cancelled");
-$Form .='</th><th align="left">'.$langs->trans("cancelledColorDesc").'</th>';
-$Form .= '<th align="left"><input name="cancelledColor" class="jscolor" value="';
-$Form .=$cancelledColor."\"></th></tr>\n\t\t";
+echo  '<tr class="pair"><th align="left">'.$langs->trans("cancelled");
+echo '</th><th align="left">'.$langs->trans("cancelledColorDesc").'</th>';
+echo  '<th align="left"><input name="cancelledColor" class="jscolor" value="';
+echo $cancelledColor."\"></th></tr>\n\t\t";
 // color rejected
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("rejected");
-$Form .='</th><th align="left">'.$langs->trans("rejectedColorDesc").'</th>';
-$Form .= '<th align="left"><input name="rejectedColor" class="jscolor" value="';
-$Form .=$rejectedColor."\"></th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("rejected");
+echo '</th><th align="left">'.$langs->trans("rejectedColorDesc").'</th>';
+echo  '<th align="left"><input name="rejectedColor" class="jscolor" value="';
+echo $rejectedColor."\"></th></tr>\n\t\t";
 
 
-$Form .='</table><br>';
+echo '</table><br>';
 
-print $Form.'<br>';
+
 
 
 //whitelist mode
 print_titre($langs->trans("WhiteList"));
-$Form ='<table class="noborder" width="100%">'."\n\t\t";
-$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
-$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+echo '<table class="noborder" width="100%">'."\n\t\t";
+echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
 // whitelist on/off
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("blackWhiteList");
-$Form .='</th><th align="left">'.$langs->trans("blackWhiteListDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="blackWhiteList" value="1" ';
-$Form .=(($whiteList=='1')?'checked':'')."></th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("blackWhiteList");
+echo '</th><th align="left">'.$langs->trans("blackWhiteListDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="blackWhiteList" value="1" ';
+echo (($whiteList=='1')?'checked':'')."></th></tr>\n\t\t";
 // Project
-$Form .= '<tr class="pair"><th align="left">'.$langs->trans("blackWhiteListMode").'</th>';
-$Form .='<th align="left">'.$langs->trans("blackWhiteListModeDesc").'</th>';
-$Form .='<th align="left"><input type="radio" name="blackWhiteListMode" value="0" ';
-$Form .=($whiteListMode=="0"?"checked":"").'> '.$langs->trans("modeWhiteList").'<br>';
-$Form .='<input type="radio" name="blackWhiteListMode" value="1" ';
-$Form .=($whiteListMode=="1"?"checked":"").'> '.$langs->trans("modeBlackList")."<br>";
-$Form .='<input type="radio" name="blackWhiteListMode" value="2" ';
-$Form .=($whiteListMode=="2"?"checked":"").'> '.$langs->trans("modeNone")."</th></tr>\n\t\t";
-$Form .='</table><br>';
+echo  '<tr class="pair"><th align="left">'.$langs->trans("blackWhiteListMode").'</th>';
+echo '<th align="left">'.$langs->trans("blackWhiteListModeDesc").'</th>';
+echo '<th align="left"><input type="radio" name="blackWhiteListMode" value="0" ';
+echo ($whiteListMode=="0"?"checked":"").'> '.$langs->trans("modeWhiteList").'<br>';
+echo '<input type="radio" name="blackWhiteListMode" value="1" ';
+echo ($whiteListMode=="1"?"checked":"").'> '.$langs->trans("modeBlackList")."<br>";
+echo '<input type="radio" name="blackWhiteListMode" value="2" ';
+echo ($whiteListMode=="2"?"checked":"").'> '.$langs->trans("modeNone")."</th></tr>\n\t\t";
+echo '</table><br>';
 
 
-print $Form.'<br>';
+echo '<br>';
 
+echo '</div>';
 
-// Ajax on/off
+/*
+ * INVOICE
+ */
+echo '<div id="Invoice" class="tabBar">';
+print_titre($langs->trans("Invoice"));
+echo '<table class="noborder" width="100%">'."\n\t\t";
+echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+//lines invoice method
+echo  '<tr class="pair"><th align="left">'.$langs->trans("invoiceMethod");
+echo '</th><th align="left">'.$langs->trans("invoiceMethodDesc").'</th>';
+echo  '<th align="left"><input type="radio" name="invoiceMethod" value="task" ';
+echo (($invoicemethod=='task')?'checked':'').">".$langs->trans("Task").'<br>';
+echo '<input type="radio" name="invoiceMethod" value="user" ';
+echo (($invoicemethod=='user')?'checked':'').">".$langs->trans("User").'<br>';
+echo '<input type="radio" name="invoiceMethod" value="taskUser" ';
+echo (($invoicemethod=='taskUser')?'checked':'').">".$langs->trans("taskUser").'<br>';
+echo "</th></tr>\n\t\t";
+//line invoice Service
+echo  '<tr class="impair"><th align="left">'.$langs->trans("invoiceService");
+echo '</th><th align="left">'.$langs->trans("invoiceServiceDesc").'</th>';
+echo  '<th align="left">';
+echo select_generic('product','rowid','invoiceService','ref','description',$invoiceservice,$separator=' - ',$sqlTail='', $selectparam='tosell=1 AND fk_product_type=1');
+echo "</th></tr>\n\t\t";
+//line tasktime ==
+echo  '<tr class="pair"><th align="left">'.$langs->trans("invoiceTaskTime");
+echo '</th><th align="left">'.$langs->trans("invoiceTaskTimeDesc").'</th>';
+echo  '<th align="left"><input type="radio" name="invoiceTaskTime" value="all" ';
+echo (($invoicetasktime=='all')?'checked':'').">".$langs->trans("All").'<br>';
+echo '<input type="radio" name="invoiceTaskTime" value="appoved" ';
+echo (($invoicetasktime=='Approved')?'checked':'').">".$langs->trans("Approved").'<br>';
+echo "</th></tr>\n\t\t";
+//line show user
+echo  '<tr class="impair"><th align="left">'.$langs->trans("invoiceShowUser");
+echo '</th><th align="left">'.$langs->trans("invoiceShowUserDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="invoiceShowUser" value="1" ';
+echo (($invoiceshowuser=='1')?'checked':'')."></th></tr>\n\t\t";
+//line show task
+echo  '<tr class="pair"><th align="left">'.$langs->trans("invoiceShowTask");
+echo '</th><th align="left">'.$langs->trans("invoiceShowTaskDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="invoiceShowTask" value="1" ';
+echo (($invoiceshowuser=='1')?'checked':'')."></th></tr>\n\t\t";
+echo '</table><br>';
 
+echo '</div>';//taskbar
+/*
+ * Other
+ */
+echo '<div id="Other" class="tabBar">';
 print_titre($langs->trans("Dolibarr"));
-$Form ='<table class="noborder" width="100%">'."\n\t\t";
-$Form .='<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
-$Form .=$langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
-$Form .= '<tr class="impair"><th align="left">'.$langs->trans("dropdownAjax");
-$Form .='</th><th align="left">'.$langs->trans("dropdownAjaxDesc").'</th>';
-$Form .= '<th align="left"><input type="checkbox" name="dropdownAjax" value="1" ';
-$Form .=(($dropdownAjax=='1')?'checked':'')."></th></tr>\n\t\t";
+echo '<table class="noborder" width="100%">'."\n\t\t";
+echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
+echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+echo  '<tr class="impair"><th align="left">'.$langs->trans("dropdownAjax");
+echo '</th><th align="left">'.$langs->trans("dropdownAjaxDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="dropdownAjax" value="1" ';
+echo (($dropdownAjax=='1')?'checked':'')."></th></tr>\n\t\t";
 
-$Form .='</table><br>';
-
-
-$Form .='<input type="submit" class="butAction" value="'.$langs->trans('Save')."\">\n</from>";
-print $Form.'<br><br><br>';
+echo '</table><br>';
 print_titre($langs->trans("Informations"));
 print '<br><div><a>'.$langs->trans('reminderEmailProcess').'</a></div>';
+echo '</div>';
+echo '</div>'; // end fiche
+echo '<input type="submit" class="butAction" value="'.$langs->trans('Save')."\">\n</from>";
+echo '<br><br><br>';
+echo '<script>document.getElementById("defaultOpen").click()</script>';
 
 llxFooter();
 ?>

@@ -246,3 +246,48 @@ function validateTime(object,ts, day,silent){
           
       }
 }
+function openTab(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabBar");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tabsElem");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" tabsElemActive", "");
+    }
+    tablinks = document.getElementsByClassName("tab");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace("tabactive", "tabunactive");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " tabsElemActive";
+     evt.currentTarget.firstChild.className=evt.currentTarget.firstChild.className.replace("tabunactive", "tabactive");
+}
+
+function checkEmptyFormFields(even,Myform,msg){
+    var curform=document.forms[Myform];
+    var fields=curform.getElementsByTagName("input");
+    var error=0;
+    for(field in fields){
+        if (fields[field].value=='' && fields[field].name!='')error++;
+    }
+    var selects=curform.getElementsByTagName("select");
+    for(select in selects){
+        if (selects[select].value=='-1' && fields[field].name!='')error++;
+    }
+    
+    if (error){
+        $.jnotify(msg,'error',true);
+        return false
+    }
+           
+    
+}

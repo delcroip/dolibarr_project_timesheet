@@ -34,8 +34,8 @@ fk_user_approval              integer default NULL, -- approuved by
 date_creation         DATETIME NOT NULL,
 date_modification     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
 fk_user_creation        integer,
-fk_user_modification         integer,
-fk_timesheet_user       integer, -- in case target is not team , Ref to another llx_timesheet_user entry
+fk_user_modification         integer  default NULL,
+fk_timesheet_user       integer default NULL, -- in case target is not team , Ref to another llx_timesheet_user entry
 fk_task       integer, -- in case target is not team, querry on task
 note       VARCHAR(1024), -- in case target is not team, querry on task
 PRIMARY KEY (rowid)
