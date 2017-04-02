@@ -37,7 +37,7 @@ class timesheetUser extends CommonObject
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='timesheetuser';			//!< Id that identify managed objects
-	var $table_element='timesheet_user';		//!< Name of table without prefix where object is stored
+	var $table_element='project_tasktime_approval';		//!< Name of table without prefix where object is stored
 // from db
         var $id;
 
@@ -53,7 +53,7 @@ class timesheetUser extends CommonObject
 	var $user_creation;
 	var $user_modification;
         var $note;
-        var $fk_timesheet_user;
+        var $fk_project_tasktime_approval;
         var $fk_task;
         
 
@@ -938,7 +938,7 @@ function  OtherApproval($approved){
 		$sql.= 'fk_user_approval,';
 		$sql.= 'date_creation,';
 		$sql.= 'fk_user_creation,';
-                $sql.= 'fk_timesheet_user,';
+                $sql.= 'fk_project_tasktime_approval,';
                 $sql.= 'fk_task,';
                 $sql.= 'note';
 
@@ -1027,7 +1027,7 @@ function  OtherApproval($approved){
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
 		$sql.=' t.fk_user_modification,';
-		$sql.=' t.fk_timesheet_user,';
+		$sql.=' t.fk_project_tasktime_approval,';
 		$sql.=' t.fk_task,';
 		$sql.=' t.note';
 
@@ -1056,7 +1056,7 @@ function  OtherApproval($approved){
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
                 $this->user_modification = $obj->fk_user_modification;
-                $this->timesheetuser = $obj->fk_timesheet_user;
+                $this->timesheetuser = $obj->fk_project_tasktime_approval;
                 $this->task = $obj->fk_task;
                 $this->note  = $obj->note;
 
@@ -1097,7 +1097,7 @@ function  OtherApproval($approved){
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
 		$sql.=' t.fk_user_modification,';
-		$sql.=' t.fk_timesheet_user,';
+		$sql.=' t.fk_project_tasktime_approval,';
 		$sql.=' t.fk_task,';
 		$sql.=' t.note';
 
@@ -1132,7 +1132,7 @@ function  OtherApproval($approved){
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
                 $this->user_modification = $obj->fk_user_modification;
-                $this->timesheetuser = $obj->fk_timesheet_user;
+                $this->timesheetuser = $obj->fk_project_tasktime_approval;
                 $this->task = $obj->fk_task;
                 $this->note  = $obj->note;
 
@@ -1211,7 +1211,7 @@ function  OtherApproval($approved){
 		$sql.=' fk_user_approval='.(empty($this->user_approval) ? 'null':'"'.$this->user_approval.'"').',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification="'.$user->id.'",';
-		$sql.=' fk_timesheet_user='.(empty($this->timesheetuser) ? 'null':'"'.$this->timesheetuser.'"').',';
+		$sql.=' fk_project_tasktime_approval='.(empty($this->timesheetuser) ? 'null':'"'.$this->timesheetuser.'"').',';
 		$sql.=' fk_task='.(empty($this->task) ? 'null':'"'.$this->task.'"').',';
 		$sql.=' note="'.$this->note.'"';
 

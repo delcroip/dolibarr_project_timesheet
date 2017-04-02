@@ -279,7 +279,7 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
 
         $sql ="SELECT *";
         if($byWeek==2)$sql.=",CONCAT(DATE_FORMAT(start_date,' %m/%Y'),fk_userid) as usermonth";
-        $sql.=" FROM ".MAIN_DB_PREFIX."timesheet_user as tu"; 
+        $sql.=" FROM ".MAIN_DB_PREFIX."project_tasktime_approval as tu"; 
         $sql.=' WHERE tu.status="SUBMITTED"';
         if($role='team'){$sql.=' AND fk_userid in ('.implode(',',$subId).')';
         }else{$sql.=' AND fk_task in ('.implode(',',$subId).')';}
@@ -400,18 +400,18 @@ function getSelectAps($subId){
     if(TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.start_date) as nb,ts.start_date as id,';
         $sql.=" DATE_FORMAT(ts.start_date,'".$langs->trans('Week')." %u (%m/%Y)') as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'timesheet_user as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
 
     }else if(TIMESHEET_APPROVAL_BY_WEEK==0){
         $sql='SELECT COUNT(ts.fk_userid) as nb,ts.fk_userid as id,';
         $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'timesheet_user as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
     }else{
         $sql="SELECT COUNT(ts.fk_userid) as nb,CONCAT(DATE_FORMAT(ts.start_date,' %m/%Y'),usr.firstname,' ',usr.lastname) as id,";
         $sql.=" CONCAT(usr.firstname,' ',usr.lastname,DATE_FORMAT(ts.start_date,' %m/%Y')) as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'timesheet_user as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
     }
     $sql.=' WHERE ts.status="SUBMITTED"'; 

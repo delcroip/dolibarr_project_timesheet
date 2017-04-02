@@ -19,21 +19,24 @@
 -- TS Revision 1.5.0
 
 -- this table is used to store the timesheet favorit
---fk
-ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_user_approval) REFERENCES llx_user(rowid);
-ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_user_creation ) REFERENCES llx_user(rowid);
-ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid);
-ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_timesheet_user) REFERENCES llx_timesheet_user(rowid);
-ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid);
-ALTER TABLE llx_timesheet_user ADD FOREIGN KEY (fk_task) REFERENCES llx_projet_task(rowid);
 
 
 -- UPDATE from 1.5.1
  --ALTER TABLE llx_timesheet_user MODIFY COLUMN fk_timesheet_user integer default NULL; --allow null value
-ALTER TABLE llx_timesheet_user ADD stop_date DATE NOT NULL; -- start date of the period
-ALTER TABLE llx_timesheet_user CHANGE COLUMN year_week_date start_date DATE NOT NULL;
+ALTER TABLE `llx_timesheet_user` ADD stop_date DATE NOT NULL; -- start date of the period
+ALTER TABLE `llx_timesheet_user` CHANGE COLUMN year_week_date start_date DATE NOT NULL;
+ALTER TABLE `llx_timesheet_user` CHANGE COLUMN fk_timesheet_user fk_project_tasktime_approval integer DEFAUT NULL;
+
 -- add the sto date to the row without
-Update llx_timesheet_user SET stop_date = DATE_ADD(start_date,INTERVAL 7 DAY) Where stop_date = 0
+Update `llx_timesheet_user` SET stop_date = DATE_ADD(start_date,INTERVAL 7 DAY) Where stop_date = 0
 -- delete the line draft and without note to start from a good base
 DELETE FROM `llx_timesheet_user` WHERE `status` ='DRAFT' and (`note`='' OR `note`IS NULL)
-RENAME TABLE `llx_timesheet_user` TO `llx_tasktime_approval`
+RENAME TABLE `llx_timesheet_user` TO `llx_project_tasktime_approval`
+
+
+ALTER TABLE `llx_project_tasktime_approval` ADD FOREIGN KEY llx_ptta_ptta_id(fk_project_tasktime_approval) REFERENCES llx_project_tasktime_approval(rowid) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE llx_project_tasktime_approval ADD FOREIGN KEY fk_ptta_user_ida(fk_user_approval) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_tasktime_approval ADD FOREIGN KEY fk_ptta_user_idc(fk_user_creation ) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_tasktime_approval ADD FOREIGN KEY fk_ptta_user_idm(fk_user_modification) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_tasktime_approval ADD FOREIGN KEY fk_ptta_user_id(fk_userid) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_tasktime_approval ADD FOREIGN KEY fk_ptta_task_id(fk_task) REFERENCES llx_projet_task(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;

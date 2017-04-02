@@ -38,6 +38,7 @@ $year=GETPOST('year');
 $mode=GETPOST('invoicingMethod');
 $step=GETPOST('step');
 $ts2Invoice=GETPOST('ts2Invoice');
+$tsNotInvoiced=GETPOST('tsNotInvoiced');
 $userid=  is_object($user)?$user->id:$user;
 //init handling object
 $form = new Form($db);
@@ -49,22 +50,29 @@ if ($user->rights->facture->creer & hasProjectRight($userid,$projectid))
     if($projectId>0)$staticProject->fetch($projectId);
     if($socid==0 || !is_numeric($socid))$socid=$staticProject->socid; //FIXME check must be in place to ensure the user hqs the right to see the project details
 $edit=1;
-
+// avoid SQL issue
+if(empty($month) || empty($year) || empty($projectId))$step=1;
+//steps
     switch ($step)
     { 
         case '2':{
-           $fields=($mode=='user')?'fk_user':(($mode=='taskUser')?'fk_user,fk_task':'fk_task');       
-            $sql= 'SELECT  '.$fields.',SUM(tt.task_duration) as duration from '.MAIN_DB_PREFIX.'projet_task_time as tt';
+           $fields=($mode=='user')?'fk_user':(($mode=='taskUser')?'fk_user,fk_task':'fk_task'); 
+            $sql= 'SELECT  '.$fields.', SUM(tt.task_duration) as duration ';
+            $sql.=', GROUP_CONCAT(tt.rowid SEPARATOR ", ") as task_time_list';
+             $sql.=' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
             $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task=t.rowid';
             $sql.=' WHERE t.fk_projet='.$projectId;
             $sql.=' AND MONTH(tt.task_date)='.$month;
             $sql.=' AND YEAR(tt.task_date)='.$year;
             if($ts2Invoice!='all'){
-            $sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_tasktime_list SEPARATOR ", ")';
-            $sql.=' FROM '.MAIN_DB_PREFIX.'timesheet_user';  
-            $sql.=' WHERE status= "APPROVED" AND MONTH(start_date)='.$month;  
-            $sql.=' AND YEAR(start_date)="'.$year.'")'; 
-            
+                $sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_tasktime_list SEPARATOR ", ")';
+                $sql.=' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval';  
+                $sql.=' WHERE status= "APPROVED" AND MONTH(start_date)='.$month;  
+                $sql.=' AND YEAR(start_date)="'.$year.'")'; 
+                $sql.=' AND YEAR(start_date)="'.$year.'")'; 
+            }
+            if($tsNotInvoiced==1){
+                $sql.=' AND invoice_id IS NULL'; 
             }
             $sql.=' GROUP BY '.$fields;
             dol_syslog('timesheet::timesheetProjectInvoice step2', LOG_DEBUG);    
@@ -95,16 +103,16 @@ $edit=1;
                         switch($mode){
                             case 'user':
                                  //step 2.2 get the list of user  (all or approved)
-                                $resArray[]=array("USER" => $obj->fk_user,"TASK" =>'any',"DURATION"=>$duration);
+                                $resArray[]=array("USER" => $obj->fk_user,"TASK" =>'any',"DURATION"=>$duration,'LIST'=>$obj->task_time_list);
                                 break;
                             case 'taskUser':
                                  //step 2.3 get the list of taskUser  (all or approved)
-                                $resArray[]=array("USER" => $obj->fk_user,"TASK" =>$obj->fk_task,"DURATION"=>$duration);
+                                $resArray[]=array("USER" => $obj->fk_user,"TASK" =>$obj->fk_task,"DURATION"=>$duration,'LIST'=>$obj->task_time_list);
                                 break;
                             default:
                             case 'task':                   
                                  //step 2.1 get the list of task  (all or approved)
-                                $resArray[]=array("USER" => "any","TASK" =>$obj->fk_task,"DURATION"=>$duration);
+                                $resArray[]=array("USER" => "any","TASK" =>$obj->fk_task,"DURATION"=>$duration,'LIST'=>$obj->task_time_list);
                               break;
                          }
                            
@@ -126,7 +134,7 @@ $edit=1;
             $Form .='<th >'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("Duration").'</th>';
             $form = new Form($db);
             foreach($resArray as $res){
-                $Form .=htmlPrintServiceChoice($res["USER"],$res["TASK"],'pair',$res["DURATION"],$mysoc,$socid);
+                $Form .=htmlPrintServiceChoice($res["USER"],$res["TASK"],'pair',$res["DURATION"],$res['LIST'],$mysoc,$socid);
             }
             
             $Form .='</table>';
@@ -153,44 +161,54 @@ $edit=1;
                 $object->fetch_thirdparty();
                 $id = $object->create($user);
                 $resArray=$_POST['userTask'];
-                 
-                if(is_array($resArray))foreach($resArray as $uId =>$userTaskService){
-                    //$userTaskService[$user][$task]=array('duration', 'VAT','Desc','PriceHT','Service','unit_duration','unit_duration_unit');
-                    if(is_array($userTaskService ))foreach($userTaskService as  $tId => $service){
-                        $durationTab=explode (':',$service['duration']);
-                        $duration=$durationTab[1]*60+$durationTab[0]*3600;   
-                        $startday = dol_mktime(12, 0, 0, $month, 1, $year);
-                        $endday = dol_mktime(12, 0, 0, $month, date('t',$startday), $year);
-                        var_dump($endday);
-                        $details='';
-                        if(($tId!='any') && TIMESHEET_INVOICE_SHOW_TASK)$details="\n".$service['taskLabel'];
-                        if(($uId!='any')&& TIMESHEET_INVOICE_SHOW_USER)$details.="\n".$service['userName'];
-                        if($service['Service']>0){
-                             $product = new Product($db);
-                             $product->fetch($service['Service']);
+                $task_time_array=array();
+                if(is_array($resArray)){
+                    foreach($resArray as $uId =>$userTaskService){
+                        //$userTaskService[$user][$task]=array('duration', 'VAT','Desc','PriceHT','Service','unit_duration','unit_duration_unit');
+                        if(is_array($userTaskService ))foreach($userTaskService as  $tId => $service){
+                            $durationTab=explode (':',$service['duration']);
+                            $duration=$durationTab[1]*60+$durationTab[0]*3600;   
+                            $startday = dol_mktime(12, 0, 0, $month, 1, $year);
+                            $endday = dol_mktime(12, 0, 0, $month, date('t',$startday), $year);
+                            var_dump($endday);
+                            $details='';
+                            $result ='';
+                            if(($tId!='any') && TIMESHEET_INVOICE_SHOW_TASK)$details="\n".$service['taskLabel'];
+                            if(($uId!='any')&& TIMESHEET_INVOICE_SHOW_USER)$details.="\n".$service['userName'];
 
-                             $unit_duration_unit=substr($product->duration, -1);
-                             $factor=($unit_duration_unit=='h')?3600:8*3600;//FIXME support week and month 
-                             $factor=$factor*intval(substr($product->duration,0, -1));
-                             $quantity= $duration/$factor;
-                             $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $service['Service'], 0, $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
+                            if($service['Service']>0){
+                                 $product = new Product($db);
+                                 $product->fetch($service['Service']);
 
-                         }else{
-                             $factor=($service['unit_duration_unit']=='h')?3600:8*3600;//FIXME support week and month 
-                             $factor=$factor*intval($service['unit_duration']);
+                                 $unit_duration_unit=substr($product->duration, -1);
+                                 $factor=($unit_duration_unit=='h')?3600:8*3600;//FIXME support week and month 
+                                 $factor=$factor*intval(substr($product->duration,0, -1));
+                                 $quantity= $duration/$factor;
+                                 $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $service['Service'], 0, $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
 
-                             $quantity= $duration/$factor;
-                             $result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], '', '', '', 0, $startday, $endday, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
+                             }else{
+                                 $factor=($service['unit_duration_unit']=='h')?3600:8*3600;//FIXME support week and month 
+                                 $factor=$factor*intval($service['unit_duration']);
 
-                         }
+                                 $quantity= $duration/$factor;
+                                 $result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], '', '', '', 0, $startday, $endday, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
 
-                    }else $error++;
+                             }
+                             if($service['taskTimeList']<>'' &&  $result>0)$task_time_array[$result]=$service['taskTimeList'];
+                        }else $error++;
+                    }
                 }else $error++;
                 
      		// End of object creation, we show it
 		if ($id > 0 && ! $error)
 		{
 			$db->commit();
+                        if(version_compare(DOL_VERSION,"4.9.9")>=0){
+                            foreach($task_time_array AS $idLine=> $task_time_list){
+                                    //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
+                                Update_task_time_invoice($id,$idLine,$task_time_list);
+                            }
+                        }
 			header('Location: ' . $object->getNomUrl(0,'',0,1,''));
 			exit();
 		}
@@ -233,6 +251,7 @@ $edit=0;
             $Form .=($invoicingMethod=="user"?"checked":"").'> '.$langs->trans("User")." ";
             $Form .='<input type="radio" name="invoicingMethod" value="taskUser" ';
             $Form .=($invoicingMethod=="taskUser"?"checked":"").'> '.$langs->trans("Task").'&'.$langs->trans("User")."</th></tr>\n\t\t";
+
 //cust list
             $Form .='<tr class="impair"><th  align="left">'.$langs->trans('Customer').'</th><th  align="left">'.$form->select_company($socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1).'</th></tr>';
 //all ts or only approved
@@ -241,7 +260,15 @@ $edit=0;
             $Form .=($ts2Invoice=="approved"?"checked":"").'> '.$langs->trans("approvedOnly").' ';
             $Form .='<input type="radio" name="ts2Invoice" value="all" ';
             $Form .=($ts2Invoice=="all"?"checked":"").'> '.$langs->trans("All")."</th></tr>";
-            
+// not alreqdy invoice
+            if(version_compare(DOL_VERSION,"4.9.9")>=0){
+                $Form .='<tr class="impair"><th align="left" width="80%">'.$langs->trans('TimesheetNotInvoiced');
+                $Form .='</th><th align="left"><input type="checkbox" name="tsNotInvoiced" value="1" ></th></tr>';
+                
+            }else{
+                $Form .='<input type="hidden" name="tsNotInvoiced" value ="0">';
+
+            }
             $Form .='</table>';
  
             $Form .='<input type="submit" onclick="return checkEmptyFormFields(event,\'settings\',\'vide\')" class="butAction" value="'.$langs->trans('Next')."\">\n</from>";
@@ -284,7 +311,7 @@ function getProjectCustomer($projectID){
 /***
  * Function to print the line to chose between a predefined service or an ad-hoc one
  */
-function htmlPrintServiceChoice($user,$task,$class,$duration,$seller,$byer){
+function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$seller,$byer){
     global $form,$langs;
     $userName=($user=='any')?(' - '):print_generic('user','rowid',$user,'lastname','firstname',' ');
     $taskLabel=($task=='any')?(' - '):print_generic('projet_task','rowid',$task,'ref','label',' ');
@@ -292,6 +319,7 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$seller,$byer){
     $html.='</th><th align="left" width="20%">'.$taskLabel;
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][userName]" value="'.$userName.'">';
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskLabel]"  value="'. $taskLabel.'">';
+    $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskTimeList]"  value="'. $tasktimelist.'">';
     $defaultService=TIMESHEET_INVOICE_SERVICE; //FIXME
     $html.='</th><th >'.select_generic('product', 'rowid','userTask['.$user.']['.$task.'][Service]','ref','description',$defaultService,$separator=' - ',$sqlTail='', $selectparam='tosell=1 AND fk_product_type=1').'</th>';
     $html.='<th ><input type="text"  size="30" name="userTask['.$user.']['.$task.'][Desc]" ></th>';
@@ -311,11 +339,23 @@ function hasProjectRight($userid,$projectid){
     global $db,$user;
     $res=true;
     if($projectid && !$user->admin){
-        $sql=' SELECT rowid FROM llx_element_contact ';
+        $sql=' SELECT rowid FROM '.MAIN_DB_PREFIX.'element_contact ';
         $sql.=' WHERE fk_c_type_contact = "160" AND element_id="'.$projectid;
         $sql.='" AND fk_socpeople="'.$userid.'"';
         $resql=$db->query($sql);
         if (!$resql)$res=false;
     }
+    return $res;
+}
+
+function Update_task_time_invoice($idInvoice, $idLine,$task_time_list){
+    global $db;
+    $res=true;
+    $sql='UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+    $sql.=" SET invoice_id={$idInvoice}, invoice_line_id={$idLine}";
+    $sql.=" WHERE rowid in ({$task_time_list})";
+    dol_syslog("ProjectInvoice::setnvoice", LOG_DEBUG);
+    $resql=$db->query($sql);
+        if (!$resql)$res=false;
     return $res;
 }

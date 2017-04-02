@@ -615,7 +615,7 @@ function getIdList()
             $sql.=' COUNT(t.rowid) as nb,';
             $sql.=' u.email,';
             $sql.=' u.fk_user as approverid';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'timesheet_user as t';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as t';
             $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
             $sql.= ' WHERE t.status="SUBMITTED" AND t.target="team"';
             $sql.= ' GROUP BY u.fk_user';
