@@ -65,14 +65,15 @@ if(empty($month) || empty($year) || empty($projectId))$step=1;
             $sql.=' AND MONTH(tt.task_date)='.$month;
             $sql.=' AND YEAR(tt.task_date)='.$year;
             if($ts2Invoice!='all'){
-                $sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_tasktime_list SEPARATOR ", ")';
+                /*$sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_tasktime_list SEPARATOR ", ")';
                 $sql.=' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval';  
                 $sql.=' WHERE status= "APPROVED" AND MONTH(start_date)='.$month;  
                 $sql.=' AND YEAR(start_date)="'.$year.'")'; 
-                $sql.=' AND YEAR(start_date)="'.$year.'")'; 
+                $sql.=' AND YEAR(start_date)="'.$year.'")'; */
+                $sql.=' AND tt.status = "APPROVED"'; 
             }
             if($tsNotInvoiced==1){
-                $sql.=' AND invoice_id IS NULL'; 
+                $sql.=' AND tt.invoice_id IS NULL'; 
             }
             $sql.=' GROUP BY '.$fields;
             dol_syslog('timesheet::timesheetProjectInvoice step2', LOG_DEBUG);    
@@ -186,7 +187,8 @@ if(empty($month) || empty($year) || empty($projectId))$step=1;
                                  $quantity= $duration/$factor;
                                  $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $service['Service'], 0, $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
 
-                             }else{
+
+                            }elseif ($service['Service']<>-999){
                                  $factor=($service['unit_duration_unit']=='h')?3600:8*3600;//FIXME support week and month 
                                  $factor=$factor*intval($service['unit_duration']);
 
@@ -241,7 +243,7 @@ $edit=0;
             $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans("Step").' '.$step.'</th><th>';
             $invoicingMethod=TIMESHEET_INVOICE_METHOD;
             $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Project').'</th><th  >';
-            $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,$separator=' - ',$sqlTail, $selectparam='fk_status=1');
+            $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ','', 'fk_status=1',null);
             $Form .='</th></tr><tr class="impair"><th align="left" width="80%">'.$langs->trans('Month').' - '.$langs->trans('Year').'</th><th align="left">'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3).'</th></tr>';
  //           $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Month').'</th><th ><input type="text" name="month" value ="'.$month.'"></th></tr>';
            // $Form .='<tr class="impair"><th align="left" width="80%">'.$langs->trans('Customer').'</th><th "><input type="text" name="ccust" value ="'.$custId.'"></th></tr>';
@@ -320,8 +322,9 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][userName]" value="'.$userName.'">';
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskLabel]"  value="'. $taskLabel.'">';
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskTimeList]"  value="'. $tasktimelist.'">';
-    $defaultService=TIMESHEET_INVOICE_SERVICE; //FIXME
-    $html.='</th><th >'.select_generic('product', 'rowid','userTask['.$user.']['.$task.'][Service]','ref','description',$defaultService,$separator=' - ',$sqlTail='', $selectparam='tosell=1 AND fk_product_type=1').'</th>';
+    $defaultService=TIMESHEET_INVOICE_SERVICE; 
+    $addchoices=array('-999'=> $langs->trans('not2invoice'));
+    $html.='</th><th >'.select_generic('product', 'rowid','userTask['.$user.']['.$task.'][Service]','ref','description',$defaultService,$separator=' - ',$sqlTail='', $selectparam='tosell=1 AND fk_product_type=1',$addchoices).'</th>';
     $html.='<th ><input type="text"  size="30" name="userTask['.$user.']['.$task.'][Desc]" ></th>';
     $html.='<th><input type="text"  size="6" name="userTask['.$user.']['.$task.'][PriceHT]" ></th>';
     //$html.='<th><input type="text" size="6" name="userTask['.$user.']['.$task.']["VAT"]" ></th>';

@@ -644,7 +644,8 @@ function get_userName(){
  *  @param      int               $id           id of the timesheetuser
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
-    Public function setAppoved($user,$id=0){
+//    Public function setAppoved($user,$id=0){
+    Public function setStatus($user,$status,$id=0){ //FIXME
             $error=0;
             // Check parameters
             $userid=  is_object($user)?$user->id:$user;
@@ -725,50 +726,42 @@ function  OtherApproval($approved){
                 $start=4;
                 break;
         }
-        
-        $cur=($approved)?($start+1):($start-1);
-        while(($found) || ($cur==-1 )|| ($cur==5)){
-            if($apflows[$cur]==1){
-                   $found=true;
-            }
-            $cur=($approved)?($cur+1):($cur-1);
+        if($approved){
+            $cur=$start+1;
+            
+            
+        }else{
+            //$this->reject_timesheet_previsous();
+            $previousApproval= new timesheetUser($this->db);
+            $previousApproval->fetch($this->fk_project_tasktime_approval);
+            $previousApproval->setRejected($user);
         }
-        if($found){
+        $Parent=0;
+        while( ($cur<5)){
+            if($apflows[$cur]==1){
+                   $Parent= $this->GetParentApproval(); //FIXME
+                   break;
+                   
+            }
+            $cur++;
+        }
+        if($Parent){
+            
             switch($cur){
                case 0:
-                   if($approved){
                       //$this->create_timesheet_team();shouldnt happen
-                   }else{
-                      // $this->reject_timesheet_team(); fixme
-                   }
-                   break;
+                     break;
                case 1:
-                   if($approved){
-                    //   $this->create_timesheet_project(); fixme
-                   }else{
-                     //  $this->reject_timesheet_project(); fixme
-                   }
+                    //   $this->create_timesheet_project(); fixme   
                    break;
                case 2:
-                    if($approved){
                        //$this->create_timesheet_customer(); FIXME
-                   }else{
-                       //$this->reject_timesheet_customer(); FIXME
-                   }
                    break;
                case 3:
-                   if($approved){
                        //$this->create_timesheet_provider(); FIXME
-                   }else{
-                      // $this->reject_timesheet_provider(); FIXME
-                   }
-                   break;
+                  break;
                case 4:
-                    if($approved){
-                      // $this->create_timesheet_other(); FIXME
-                   }else{
-                       //$this->reject_timesheet_other(); FIXME
-                   }
+                     // $this->create_timesheet_other(); FIXME
                    break;
            }
         }
@@ -993,7 +986,7 @@ function  OtherApproval($approved){
 			}
 			$this->db->rollback();
 			return -1*$error;
-		}
+		} 
 		else
 		{
 			$this->db->commit();
