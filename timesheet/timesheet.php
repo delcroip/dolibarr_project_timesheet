@@ -42,31 +42,22 @@ $optioncss = GETPOST('optioncss','alpha');
 $id=GETPOST('id');
 //$toDate                 = GETPOST('toDate');
 $toDate                 = GETPOST('toDate');
-$toDateday                 = GETPOST('toDateday');
+$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday'):0; // to not look for the date if action not goTodate
 $toDatemonth                 = GETPOST('toDatemonth');
 $toDateyear                 = GETPOST('toDateyear');
+
 $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
 $userid=  is_object($user)?$user->id:$user;
 $timesheetUser= new timesheetUser($db,$userid);
 $confirm=GETPOST('confirm');
-if (!empty($toDate) && $action=='goToDate')
-{
-    //$yearWeek =date('Y\WW',strtotime(str_replace('/', '-',$toDate)));  
-    $yearWeek =date('Y\WW',dol_mktime(0,0,0,$toDatemonth,$toDateday,$toDateyear));  
-    $_SESSION["yearWeek"]=$yearWeek ;      
-}else if ($yearWeek!=0) {
-        $_SESSION["yearWeek"]=$yearWeek;
-}else if(isset($_SESSION["yearWeek"])){
-        $yearWeek=$_SESSION["yearWeek"];
-}else if($id>0){
-    $timesheetUser->fetch($id);
-    $yearWeek=$timesheetUser->yearWeek;
-}else
-{
-        $yearWeek=date('Y\WW');
-        $_SESSION["yearWeek"]=$yearWeek;
-}
+
+if($yearWeek==0 && isset($_SESSION["yearWeek"])) $yearWeek=$_SESSION["yearWeek"];
+//if($yearWeek==0 ) $yearWeek=$_SESSION["yearWeek"];
+$yearWeek=getYearWeek($toDateday,$toDatemonth,$toDateyear,$yearWeek);
+$_SESSION["yearWeek"]=$yearWeek ;
+
+
 
 
 
@@ -215,7 +206,7 @@ $Form .=$timesheetUser->getHTMLFooter($ajax);
 
 
 //Javascript
-$timetype=TIMESHEET_TIME_TYPE;
+
 //$Form .= ' <script type="text/javascript" src="core/js/timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
 $Form .='updateAll();';
@@ -223,7 +214,7 @@ $Form .= "\n\t".'</script>'."\n";
 // $Form .='</div>';//TimesheetPage
 print $Form;
 //add attachement
-if(TIMESHEET_ADD_DOCS){
+if(TIMESHEET_ADD_DOCS==1){
         
         $object=$timesheetUser;
         $modulepart = 'timesheet';

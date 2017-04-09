@@ -30,10 +30,11 @@ global $langs;
  *  @param    string              	$htmlName           name to the form select
  *  @param    string              	$selected           which value must be selected
  *  @param    string              	$selectparam          to add parameters to the select
+ *  @param    array(string)             $addtionnalChoices    array of additionnal fields Array['VALUE']=string to show
  *  @return string                                                   html code
  */
  
-function select_enum($table, $fieldValue,$htmlName,$selected='',$selectparam=''){
+function select_enum($table, $fieldValue,$htmlName,$selected='',$selectparam='',$addtionnalChoices=null){
 global $langs;
 global $db;
     if($table=='' || $fieldValue=='' || $htmlName=='' )
@@ -71,6 +72,9 @@ global $db;
                     $select.=$langs->trans(substr($enum,1,-1));          
                     $select.="</option>\n";
                 }
+                if($addtionnalChoices)foreach($addtionnalChoices as $value => $choice){
+                     $select.='<option value="'.$value.'" '.(($selected==$value)?'selected':'').">{$choice}</option>\n";
+                }
                 $select.= '<option value="NULL" '.(($selected=='NULL')?'selected':'').">NULL</option>\n";
                 $select.="</select>\n";
             }else{
@@ -105,10 +109,11 @@ global $db;
  *  @param    string              	$separator          separator between the tow contactened fileds
 *  @param    string              	$sqlTail              to limit per entity, to filter ...
 *  @param    string              	$selectparam          to add parameters to the select
+ *  @param    array(string)             $addtionnalChoices    array of additionnal fields Array['VALUE']=string to show
 
  *  @return string                                                   html code
  */
-function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTail='', $selectparam=''){
+function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTail='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL')){
      //
     //return 'tada';
     global $conf,$langs,$db;
@@ -170,7 +175,10 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
             } 
             $i++;
         }
-       $select.= "<option value=\"NULL\" ".(($selected=='NULL')?"selected":"").">NULL</option>\n";
+        if($addtionnalChoices)foreach($addtionnalChoices as $value => $choice){
+            $select.= '<option value="'.$value.'" '.(($selected==$value)?'selected':'').">{$choice}</option>\n";
+        }
+
         
     }
     else

@@ -203,13 +203,15 @@ class timesheetReport
             $HTMLRes.='</th><th>'.$langs->trans($title[$lvl1Title]).'</th><th>';
             $HTMLRes.=$langs->trans($title[$lvl2Title]).'</th>';
             $HTMLRes.=(!$short)?'<th>'.$langs->trans($title[$lvl3Title]).'</th>':'';
-            $HTMLRes.='<th>'.$langs->trans('Duration').'</th></tr>';
+            $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
+            $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
             foreach($resArray as $key => $item)
             {
                $HTMLRes.= '<tr class="pair" align="left"><th width="200px">'.$this->name.'</th>';
                $HTMLRes.= '<th '.(isset($titleWidth[$lvl1Title])?'width="'.$titleWidth[$lvl1Title].'"':'' ).'>'.$item[$lvl1Title].'</th>';
                $HTMLRes.='<th '.(isset($titleWidth[$lvl2Title])?'width="'.$titleWidth[$lvl2Title].'"':'' ).'>'.$item[$lvl2Title].'</th>';
                 if(!$short)$HTMLRes.='<th '.(isset($titleWidth[$lvl3Title])?'width="'.$titleWidth[$lvl3Title].'"':'' ).'>'.$item[$lvl3Title].'</th>';
+               $HTMLRes.='<th width="70px">'.$this->formatTime($item[5],0).'</th>';
                $HTMLRes.='<th width="70px">'.$this->formatTime($item[5],$hoursperdays).'</th></tr>';
             } 
             $HTMLRes.='</table>';
@@ -225,6 +227,7 @@ class timesheetReport
                 $lvl2HTML.='<tr class="pair" align="left"><th></th><th>'
                         .$resArray[$Curlvl2][$lvl2Title].'</th>';
                 if(!$short)$lvl2HTML.='<th></th>';
+                $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,0).'</th>';
                 $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
                 $lvl2HTML.=$lvl3HTML;
                 $lvl3HTML='';
@@ -236,6 +239,7 @@ class timesheetReport
                     $lvl1HTML.='<tr class="pair" align="left"><th >'
                             .$resArray[$Curlvl1][$lvl1Title].'</th><th></th>';
                     if(!$short)$lvl1HTML.='<th></th>';
+                    $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,0).'</th>';
                     $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
                     $lvl1HTML.=$lvl2HTML;
                     $lvl2HTML='';
@@ -248,12 +252,15 @@ class timesheetReport
             {
                 $lvl3HTML.='<tr class="impair" align="left"><th></th><th></th><th>'
                     .$resArray[$key][$lvl3Title].'</th><th>';
+                $lvl3HTML.=$this->formatTime($duration,0).'</th><th>';
+                $lvl3HTML.=$this->formatTime($duration,$hoursperdays).'</th></tr>';                
+               /*
                 if($hoursperdays==0)
                 {
                     $lvl3HTML.=date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
                 }else{
                     $lvl3HTML.=$resArray[$key][5]/3600/$hoursperdays.'</th></tr>';
-                }
+                }*/
             }
             $lvl3Total+=$resArray[$key][5];
             
@@ -263,12 +270,14 @@ class timesheetReport
         $lvl2HTML.='<tr class="pair" align="left"><th></th><th>'
                 .$resArray[$Curlvl2][$lvl2Title].'</th>';
         if(!$short)$lvl2HTML.='<th></th>';
+        $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,0).'</th>';
         $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
         $lvl2HTML.=$lvl3HTML;
         $lvl2Total+=$lvl3Total;
         $lvl1HTML.='<tr class="pair" align="left"><th >'
                 .$resArray[$Curlvl1][$lvl1Title].'</th><th></th>';
         if(!$short)$lvl1HTML.='<th></th>';
+        $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,0).'</th>';
         $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
         $lvl1HTML.=$lvl2HTML;
         $lvl1Total+=$lvl2Total;
@@ -278,6 +287,11 @@ class timesheetReport
          $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans($title[$lvl1Title]).'</th><th>'
                 .$langs->trans($title[$lvl2Title]).'</th>';
          $HTMLRes.=(!$short)?'<th>'.$langs->trans($title[$lvl3Title]).'</th>':'';
+         $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
+         $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
+            
+         $HTMLRes.='<tr class="liste_titre">'.((!$short)?'<th></th>':'').'<th colspan=2> TOTAL</th>';
+         $HTMLRes.='<th>'.$this->formatTime($lvl1Total,0).'</th>';
          $HTMLRes.='<th>'.$this->formatTime($lvl1Total,$hoursperdays).'</th></tr>';
         $HTMLRes.=$lvl1HTML;
         $HTMLRes.='</table>';

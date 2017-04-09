@@ -132,6 +132,15 @@ class modTimesheet extends DolibarrModules
                 $this->const[16] = array("TIMESHEET_APPROVAL_BY_WEEK","chaine","0","Approval by week instead of by user"); 
                 $this->const[17] = array("TIMESHEET_MAX_APPROVAL","chaine","5","Max TS per Approval page"); 
                 $this->const[18] = array("TIMESHEET_ADD_DOCS","chaine","0","Allow to join files to timesheets"); 
+                $this->const[19] = array("TIMESHEET_APPROVAL_FLOWS","chaine","_00000","Approval flows "); 
+                 $this->const[20] = array("TIMESHEET_INVOICE_METHOD","chaine","0","Approval by week instead of by user"); 
+                $this->const[21] = array("TIMESHEET_INVOICE_TASKTIME","chaine","all","set the default task to include in the invoice item"); 
+                $this->const[22] = array("TIMESHEET_INVOICE_SERVICE","chaine","0","set a default service for the invoice item"); 
+                $this->const[23] = array("TIMESHEET_INVOICE_SHOW_TASK","chaine","1","Show task on the invoice item "); 
+                $this->const[24] = array("TIMESHEET_INVOICE_SHOW_USER","chaine","1","Show user on the invoice item "); 
+                
+
+
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1
@@ -353,7 +362,7 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'Adminapproval',
 									'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'Adminapproval',
-									'url'=>'/timesheet/timesheetuser.php?action=list&sortfield=t.year_week_date&sortorder=desc',
+									'url'=>'/timesheet/timesheetuser.php?action=list&sortfield=t.start_date&sortorder=desc',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>131,
 									'enabled'=>'$user->rights->timesheet->approval',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

@@ -126,12 +126,12 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
         foreach($projectList as $project){
         $querryRes.=$project->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0,$exportfriendly);
+            TIMESHEET_DAY_DURATION,$exportfriendly);
         }
     }else{
     $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            (TIMESHEET_TIME_TYPE=='days')?TIMESHEET_DAY_DURATION:0,$exportfriendly);
+            TIMESHEET_DAY_DURATION,$exportfriendly);
     }
     
 }else
@@ -152,14 +152,17 @@ $Form.='</select></td>'
         .'> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>'
         . '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'')
         .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
-        .'<td><input type="submit" value="'.$langs->trans('getReport')
-        .'"></td></tr></table></form>';
+        .'<td><input class="butAction" type="submit" value="'.$langs->trans('getReport').'"><br>';
+if(!empty($querryRes) && $user->rights->facture->creer)$Form.='<br><a class="butAction" href="timesheetProjectInvoice.php?step=0&year='.$_POST['year'].'&month='.$_POST['month'].'&projectid='.$_POST['projectSelected'].'" >'.$langs->trans('Invoice').'</a>';
+        $Form.='</td></tr></table></form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 
 
 
 
 echo $querryRes;
+
+
 llxFooter();
 $db->close();
 ?>

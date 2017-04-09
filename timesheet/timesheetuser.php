@@ -77,8 +77,8 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 {
     	$ls_userId= GETPOST('ls_userId','int');
 	if($ls_userId==-1)$ls_userId='';
-	$ls_year_week_date_month= GETPOST('ls_year_week_date_month','int');
-	$ls_year_week_date_year= GETPOST('ls_year_week_date_year','int');
+	$ls_start_date_month= GETPOST('ls_start_date_month','int');
+	$ls_start_date_year= GETPOST('ls_start_date_year','int');
 	$ls_status= GETPOST('ls_status','alpha');
 	if($ls_status==-1)$ls_status='';
 	$ls_target= GETPOST('ls_target','alpha');
@@ -171,13 +171,16 @@ if ($cancel){
         }
         //retrive the data
         		$object->userId=GETPOST('Userid');
-		$object->year_week_date=dol_mktime(0, 0, 0,GETPOST('Yearweekdatemonth'),GETPOST('Yearweekdateday'),GETPOST('Yearweekdateyear'));
+		$object->start_date=dol_mktime(0, 0, 0,GETPOST('Yearweekdatemonth'),GETPOST('Yearweekdateday'),GETPOST('Yearweekdateyear'));
 		$object->status=GETPOST('Status');
 		$object->target=GETPOST('Target');
 		$object->project_tasktime_list=GETPOST('Projecttasktimelist');
 		$object->user_approval=GETPOST('Userapproval');
+                if($object->user_approval==-1)unset($object->user_approval);
 		$object->timesheetuser=GETPOST('Timesheetuser');
+                if($object->timesheetuser==-1)unset($object->timesheetuser);
 		$object->task=GETPOST('Task');
+                if($object->task==-1)unset($object->task);
 		$object->note=GETPOST('Note');
 
 
@@ -396,17 +399,17 @@ switch ($action) {
 		print "\n</tr>\n";
 		print "<tr>\n";
 
-// show the field year_week_date
+// show the field start_date
 
 		print '<td class="fieldrequired">'.$langs->trans('Yearweekdate').' </td><td>';
 		if($edit==1){
 		if($new==1){
 			print $form->select_date(-1,'Yearweekdate');
 		}else{
-			print $form->select_date($object->year_week_date,'Yearweekdate');
+			print $form->select_date($object->start_date,'Yearweekdate');
 		}
 		}else{
-			print dol_print_date($object->year_week_date,'day').date(' (Y\WW)',$object->year_week_date);
+			print dol_print_date($object->start_date,'day').getYearWeek(0,0,0,$object->start_date);
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -416,7 +419,7 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Status').' </td><td>';
 		if($edit==1){
-		print select_enum('timesheet_user','status','Status',$object->status);
+		print select_enum('project_tasktime_approval','status','Status',$object->status);
 		}else{
 		print $langs->trans($object->status);
 		}
@@ -428,7 +431,7 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Target').' </td><td>';
 		if($edit==1){
-		print select_enum('timesheet_user','target','Target',$object->target);
+		print select_enum('project_tasktime_approval','target','Target',$object->target);
 		}else{
 		print $langs->trans($object->target);
 		}
@@ -468,11 +471,11 @@ switch ($action) {
 		print '<td>'.$langs->trans('Timesheetuser').' </td><td>';
                 $sqltail= "JOIN ".MAIN_DB_PREFIX."user AS u ON u.rowid=t.fk_userid";
 		if($edit==1){
-                    //avoid full table scan print select_generic('timesheet_user', 'rowid','Timesheetuser','CONCAT(u.lastname," ",u.firstname) AS username','CONCAT(t.year_week_date," ",t.target) AS weektarget',$object->timesheetuser,' - ',$sqltail);
+                    //avoid full table scan print select_generic('project_tasktime_approval', 'rowid','Timesheetuser','CONCAT(u.lastname," ",u.firstname) AS username','CONCAT(t.start_date," ",t.target) AS weektarget',$object->timesheetuser,' - ',$sqltail);
                     print '<input class="flat" size="5" type="text" name="Timesheetuser" value="'.$object->timesheetuser.'"/>';
 
 		}else{
-                    print print_generic('timesheet_user', 'rowid',$object->timesheetuser,'CONCAT(lastname," ",firstname) AS username','CONCAT(year_week_date," ",target) AS weektarget',' - ','',$sqltail);
+                    print print_generic('project_tasktime_approval', 'rowid',$object->timesheetuser,'CONCAT(lastname," ",firstname) AS username','CONCAT(start_date," ",target) AS weektarget',' - ','',$sqltail);
                     //print $object->project_tasktime_list;
 
                 }
@@ -625,14 +628,14 @@ switch ($action) {
     $sql.= ' t.rowid,';
     
 		$sql.=' t.fk_userid,';
-		$sql.=' t.year_week_date,';
+		$sql.=' t.start_date,';
 		$sql.=' t.status,';
 		$sql.=' t.target,';
 		$sql.=' t.fk_project_tasktime_list,';
 		$sql.=' t.fk_user_approval';
 
     
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'timesheet_user as t';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as t';
     $sqlwhere='';
     if(isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
@@ -647,8 +650,8 @@ switch ($action) {
     }
     //pass the search criteria
     	if($ls_userId) $sqlwhere .= natural_search(array('t.fk_userid'), $ls_userId);
-	if($ls_year_week_date_month)$sqlwhere .= ' AND MONTH(t.year_week_date)="'.$ls_year_week_date_month.'"';
-	if($ls_year_week_date_year)$sqlwhere .= ' AND YEAR(t.year_week_date)="'.$ls_year_week_date_year.'"';
+	if($ls_start_date_month)$sqlwhere .= ' AND MONTH(t.start_date)="'.$ls_start_date_month.'"';
+	if($ls_start_date_year)$sqlwhere .= ' AND YEAR(t.start_date)="'.$ls_start_date_year.'"';
 	if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
 	if($ls_target) $sqlwhere .= natural_search(array('t.target'), $ls_target);
 	if($ls_project_tasktime_list) $sqlwhere .= natural_search('t.fk_project_tasktime_list', $ls_project_tasktime_list);
@@ -663,7 +666,7 @@ switch ($action) {
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-        $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'timesheet_user as t';
+        $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as t';
         if(!empty($sqlwhere))
             $sqlcount.=' WHERE '.substr ($sqlwhere, 5);
 	$result = $db->query($sqlcount);
@@ -684,8 +687,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     if ($resql)
     {
         	if (!empty($ls_userId))	$param.='&ls_userId='.urlencode($ls_userId);
-	if (!empty($ls_year_week_date_month))	$param.='&ls_year_week_date_month='.urlencode($ls_year_week_date_month);
-	if (!empty($ls_year_week_date_year))	$param.='&ls_year_week_date_year='.urlencode($ls_year_week_date_year);
+	if (!empty($ls_start_date_month))	$param.='&ls_start_date_month='.urlencode($ls_start_date_month);
+	if (!empty($ls_start_date_year))	$param.='&ls_start_date_year='.urlencode($ls_start_date_year);
 	if (!empty($ls_status))	$param.='&ls_status='.urlencode($ls_status);
 	if (!empty($ls_target))	$param.='&ls_target='.urlencode($ls_target);
 	if (!empty($ls_project_tasktime_list))	$param.='&ls_project_tasktime_list='.urlencode($ls_project_tasktime_list);
@@ -703,7 +706,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<tr class="liste_titre">';
         	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userid','',$param,'',$sortfield,$sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Yearweekdate'),$PHP_SELF,'t.year_week_date','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Yearweekdate'),$PHP_SELF,'t.start_date','',$param,'',$sortfield,$sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
 	print "\n";
@@ -723,19 +726,19 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '<td class="liste_titre" colspan="1" >';
 		print select_generic('user','rowid','ls_userId','lastname','firstname',$ls_userId);
 	print '</td>';
-//Search field foryear_week_date
+//Search field forstart_date
 	print '<td class="liste_titre" colspan="1" >';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="year_week_date_month" value="'.$ls_year_week_date_month.'">';
-	$syear = $ls_year_week_date_year;
-	$formother->select_year($syear?$syear:-1,'ls_year_week_date_year',1, 20, 5);
+	print '<input class="flat" type="text" size="1" maxlength="2" name="start_date_month" value="'.$ls_start_date_month.'">';
+	$syear = $ls_start_date_year;
+	$formother->select_year($syear?$syear:-1,'ls_start_date_year',1, 20, 5);
 	print '</td>';
 //Search field forstatus
 	print '<td class="liste_titre" colspan="1" >';
-		print select_enum('timesheet_user','status','ls_status',$ls_status);
+		print select_enum('project_tasktime_approval','status','ls_status',$ls_status);
 	print '</td>';
 //Search field fortarget
 //	print '<td class="liste_titre" colspan="1" >';
-//		print select_enum('timesheet_user','target','ls_target',$ls_target);
+//		print select_enum('project_tasktime_approval','target','ls_target',$ls_target);
 //	print '</td>';
 
 //Search field forproject_tasktime_list
@@ -767,7 +770,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 		print "<tr class=\"dblist ".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
 		print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
-		print "<td>".dol_print_date($obj->year_week_date,'day').date(' (Y\WW)',$db->jdate($obj->year_week_date))."</td>";
+		print "<td>".dol_print_date($obj->start_date,'day')." (".getYearWeek(0,0,0,$db->jdate($obj->start_date)).")</td>";
 		print "<td>".$langs->trans($obj->status)."</td>";
 		//print "<td>".$langs->trans($obj->target)."</td>";
 		//print "<td>".$obj->fk_project_tasktime_list."</td>";
@@ -802,8 +805,8 @@ dol_fiche_end();
 function reloadpage($backtopage,$id,$ref){
         if (!empty($backtopage)){
             header("Location: ".$backtopage);            
-        }else if (!empty($ref) ){
-            header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$id);
+        //}else if (!empty($ref) ){
+        //    header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$ref);
         }else if ($id>0)
         {
             header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);

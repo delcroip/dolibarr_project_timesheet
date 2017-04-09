@@ -37,12 +37,13 @@ class timesheetUser extends CommonObject
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='timesheetuser';			//!< Id that identify managed objects
-	var $table_element='timesheet_user';		//!< Name of table without prefix where object is stored
+	var $table_element='project_tasktime_approval';		//!< Name of table without prefix where object is stored
 // from db
         var $id;
 
 	var $userId;
-	var $year_week_date='';
+	var $start_date='';
+        var $stop_date;
 	var $status;
 	var $target;
 	var $project_tasktime_list;
@@ -52,11 +53,13 @@ class timesheetUser extends CommonObject
 	var $user_creation;
 	var $user_modification;
         var $note;
-        var $fk_timesheet_user;
+        var $fk_project_tasktime_approval;
         var $fk_task;
         
 
 //working variable
+
+        var $duration;
     var $ref;
     var $user;
     var $yearWeek;
@@ -91,7 +94,8 @@ class timesheetUser extends CommonObject
         $this->whitelistmode=is_numeric($whitelistmode)?$whitelistmode:TIMESHEET_WHITELIST_MODE;
         $this->yearWeek=$yearWeek;
         $this->ref=$this->yearWeek.'_'.$this->userId;
-        $this->year_week_date=  strtotime($this->yearWeek);
+        $this->start_date=  parseYearWeek($this->yearWeek);
+        //$this->stop_date= getEndWeek($this->start_date);
         $this->timestamp=time();
         $ret=$this->fetchByWeek();
         $ret+=$this->fetchTaskTimesheet();
@@ -168,8 +172,9 @@ function getSQLfetchtask(){
     if($userid==''){$userid=$this->userId;}
     $whiteList=array();
     $staticWhiteList=new Timesheetwhitelist($this->db);
-    $datestart=strtotime($this->yearWeek.' +0 day');
-    $datestop=strtotime($this->yearWeek.' +6 day');
+    $datestart=$this->start_date;
+    $datestop= $this->stop_date;
+    //$datestop=strtotime(' +7 day',$this->start_date);//FIXME should only take the sub week
     $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
      $tasksList=array();
@@ -232,10 +237,10 @@ function getSQLfetchtask(){
                     dol_syslog("Timesheet::timesheetUser.class.php task=".$row->id, LOG_DEBUG);
                     $row->getTaskInfo();
                     if($this->status=="DRAFT" || $this->status=="REJECTED"){
-                        $row->getActuals($this->yearWeek,$userid); 
+                        $row->getActuals($datestart,$datestop,$userid); //FIXME date start / date end iso yearweek?
                     }else{
                         //$row->getActuals($this->yearWeek,$userid); 
-                        $row->getActuals($this->yearWeek,$userid,$this->project_tasktime_list); 
+                        $row->getActuals($datestart,$datestop,$userid,$this->project_tasktime_list); 
                     }
                     //unset($row->db);
                     $this->taskTimesheet[]=  $row->serialize();                   
@@ -338,15 +343,16 @@ function GetTimeSheetXML()
          $html.=">".$langs->trans($value)."</th>\n";
      }
     $opendays=str_split(TIMESHEET_OPEN_DAYS);
-    for ($i=0;$i<7;$i++)
+    $weeklength=round(($this->stop_date-$this->start_date)/SECINDAY);
+    for ($i=0;$i<$weeklength;$i++)// fixme it won't be always 7 days
     {
-        $curDay=strtotime( $this->yearWeek.' +'.$i.' day');
+        $curDay=$this->start_date+ SECINDAY*$i;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
-        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_print_date($curDay,'day')."</th>\n";
+        $html.="\t".'<th width="60px" style="text-align:center;" >'.$langs->trans(date('l',$curDay)).'<br>'.dol_print_date($curDay,'day')."</th>\n";
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';
-     $html.= '<td colspan="'.($this->headers.lenght+7).'"> ';
+     $html.= '<td colspan="'.($this->headers.lenght+$weeklength).'"> ';
     $html .= '<input type="hidden" name="timestamp" value="'.$this->timestamp."\"/>\n";
     $html .= '<input type="hidden" name="yearWeek" value="'.$this->yearWeek.'" />';  
      $html .= '<input type="hidden" name="tsUserId" value="'.$this->id.'" />'; 
@@ -378,7 +384,8 @@ function GetTimeSheetXML()
 
     $html .="<tr>\n";
     $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
-    for ($i=0;$i<7;$i++)
+    $weeklength=round(($this->stop_date-$this->start_date)/SECINDAY);
+    for ($i=0;$i<$weeklength;$i++)
     {
        $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>";
      }
@@ -404,7 +411,11 @@ function GetTimeSheetXML()
     if($isOpenSatus){
         $html .= '<input type="submit" class="butAction" name="save" value="'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
-        $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
+        
+        $apflows=str_split(TIMESHEET_APPROVAL_FLOWS);
+        if(in_array('1',$apflows)){
+            $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
+        }
         $html .= '<a class="butActionDelete" href="?action=list&yearweek='.$this->yearWeek.'">'.$langs->trans('Cancel').'</a>';
 
     }else if($this->status=="SUBMITTED")$html .= '<input type="submit" class="butAction" name="recall" " value="'.$langs->trans('Recall')."\" />\n";
@@ -463,7 +474,7 @@ function GetTimeSheetXML()
                 $row=new timesheet($this->db);
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
-                $Lines.=$row->getFormLine( $this->yearWeek,$i,$this->headers,$this->whitelistmode,$this->status,$this->id);
+                $Lines.=$row->getFormLine( $this->start_date,$this->stop_date,$i,$this->headers,$this->whitelistmode,$this->status,$this->id); // fixme
 				$i++;
             }
         }
@@ -477,7 +488,7 @@ function GetTimeSheetXML()
  function getHTMLNote(){
      global $langs;
      $isOpenSatus=($this->status=="DRAFT" || $this->status=="CANCELLED"|| $this->status=="REJECTED");
-     $html='<table class="noborder" width="50%"><tr><td>'.$langs->trans('note').'</td></tr><tr><td>';
+     $html='<table class="noborder" width="50%"><tr><td>'.$langs->trans('Note').'</td></tr><tr><td>';
    
 
     if($isOpenSatus){
@@ -520,9 +531,9 @@ function getHTMLNavigation($optioncss, $ajax=false){
         $form= new Form($this->db);
         $Nav=  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
 	if($ajax){
-            $Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.date('Y\WW',strtotime($this->yearWeek."+3 days  -1 week")).'\',0);';
+            $Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.getPrevYearWeek($this->yearWeek).'\',0);';
         }else{
-            $Nav.=  '<a href="?action=list&wlm='.$this->whitelistmode.'&yearweek='.date('Y\WW',strtotime($this->yearWeek."+3 days  -1 week"));   
+            $Nav.=  '<a href="?action=list&wlm='.$this->whitelistmode.'&yearweek='.getPrevYearWeek($this->yearWeek);   
         }
         if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
 	$Nav.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
@@ -534,9 +545,9 @@ function getHTMLNavigation($optioncss, $ajax=false){
         $Nav.=   $langs->trans("GoTo").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)."\n\t\t\t";;
 	$Nav.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	if($ajax){
-            $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.date('Y\WW',strtotime($this->yearWeek."+3 days  +1 week")).'\',0);';
+            $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.getNextYearWeek($this->yearWeek).'\',0);';
 	}else{
-            $Nav.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.date('Y\WW',strtotime($this->yearWeek."+3 days +1 week"));
+            $Nav.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.getNextYearWeek($this->yearWeek);
             
         }
         if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
@@ -633,7 +644,8 @@ function get_userName(){
  *  @param      int               $id           id of the timesheetuser
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
-    Public function setAppoved($user,$id=0){
+//    Public function setAppoved($user,$id=0){
+    Public function setStatus($user,$status,$id=0){ //FIXME
             $error=0;
             // Check parameters
             $userid=  is_object($user)?$user->id:$user;
@@ -681,11 +693,83 @@ function get_userName(){
 		else
 		{
 			$this->db->commit();
+                        $this->OtherApproval(true);
 			return 1;
 		}
 
     }
-    
+/*
+ * trigger the change in the multiple approval flow 
+ * 
+*  @param      boolean               $approved           true will trigger the next step, false will send the feedback to the previous
+*  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+function  OtherApproval($approved){
+    $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),2);
+     if (in_array('1',$apflows)) // FIXEME new param + hide submit if not approval flow whished
+    {
+        $found=false;
+        switch($this->target){
+            case 'team':
+                  $start=0;
+                break;
+            case 'project':
+                $start=1;
+                break;
+            case 'customer':
+                $start=2;
+                break;
+            case 'provider':
+                $start=3;
+                break;
+            case 'other':
+                $start=4;
+                break;
+        }
+        if($approved){
+            $cur=$start+1;
+            
+            
+        }else{
+            //$this->reject_timesheet_previsous();
+            $previousApproval= new timesheetUser($this->db);
+            $previousApproval->fetch($this->fk_project_tasktime_approval);
+            $previousApproval->setRejected($user);
+        }
+        $Parent=0;
+        while( ($cur<5)){
+            if($apflows[$cur]==1){
+                   $Parent= $this->GetParentApproval(); //FIXME
+                   break;
+                   
+            }
+            $cur++;
+        }
+        if($Parent){
+            
+            switch($cur){
+               case 0:
+                      //$this->create_timesheet_team();shouldnt happen
+                     break;
+               case 1:
+                    //   $this->create_timesheet_project(); fixme   
+                   break;
+               case 2:
+                       //$this->create_timesheet_customer(); FIXME
+                   break;
+               case 3:
+                       //$this->create_timesheet_provider(); FIXME
+                  break;
+               case 4:
+                     // $this->create_timesheet_other(); FIXME
+                   break;
+           }
+        }
+        
+    //FIXME;        
+    }
+    return 1;
+}   
  /*
  * put the timesheet task in a rejected status
  * 
@@ -741,6 +825,7 @@ function get_userName(){
 		else
 		{
 			$this->db->commit();
+                        $this->OtherApproval(false);
 			return 1;
 		}
         
@@ -815,7 +900,8 @@ function get_userName(){
 		// Clean parameters
         
 		if (isset($this->userId)) $this->userId=trim($this->userId);
-		if (isset($this->year_week_date)) $this->year_week_date=trim($this->year_week_date);
+		if (isset($this->start_date)) $this->start_date=trim($this->start_date);
+		if (isset($this->stop_date)) $this->stop_date=trim($this->stop_date);
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->target)) $this->target=trim($this->target);
 		if (isset($this->project_tasktime_list)) $this->project_tasktime_list=trim($this->project_tasktime_list);
@@ -837,14 +923,15 @@ function get_userName(){
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		
 		$sql.= 'fk_userid,';
-		$sql.= 'year_week_date,';
+		$sql.= 'start_date,';
+                $sql.= 'stop_date,';
 		$sql.= 'status,';
 		$sql.= 'target,';
 		$sql.= 'fk_project_tasktime_list,';
 		$sql.= 'fk_user_approval,';
 		$sql.= 'date_creation,';
 		$sql.= 'fk_user_creation,';
-                $sql.= 'fk_timesheet_user,';
+                $sql.= 'fk_project_tasktime_approval,';
                 $sql.= 'fk_task,';
                 $sql.= 'note';
 
@@ -852,7 +939,8 @@ function get_userName(){
         $sql.= ") VALUES (";
         
 		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
-		$sql.=' '.(! isset($this->year_week_date) || dol_strlen($this->year_week_date)==0?'NULL':'"'.$this->db->idate($this->year_week_date).'"').',';
+		$sql.=' '.(! isset($this->start_date) || dol_strlen($this->start_date)==0?'NULL':'"'.$this->db->idate($this->start_date).'"').',';
+		$sql.=' '.(! isset($this->stop_date) || dol_strlen($this->stop_date)==0?'NULL':'"'.$this->db->idate($this->stop_date).'"').',';
 		$sql.=' '.(! isset($this->status)?'"DRAFT"':'"'.$this->status.'"').',';
 		$sql.=' '.(! isset($this->target)?'"team"':'"'.$this->target.'"').',';
 		$sql.=' '.(! isset($this->project_tasktime_list)?'NULL':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
@@ -898,7 +986,7 @@ function get_userName(){
 			}
 			$this->db->rollback();
 			return -1*$error;
-		}
+		} 
 		else
 		{
 			$this->db->commit();
@@ -921,7 +1009,8 @@ function get_userName(){
 		$sql.= " t.rowid,";
 		
 		$sql.=' t.fk_userid,';
-		$sql.=' t.year_week_date,';
+		$sql.=' t.start_date,';
+		$sql.=' t.stop_date,';
 		$sql.=' t.status,';
 		$sql.=' t.target,';
 		$sql.=' t.fk_project_tasktime_list,';
@@ -931,7 +1020,7 @@ function get_userName(){
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
 		$sql.=' t.fk_user_modification,';
-		$sql.=' t.fk_timesheet_user,';
+		$sql.=' t.fk_project_tasktime_approval,';
 		$sql.=' t.fk_task,';
 		$sql.=' t.note';
 
@@ -950,7 +1039,8 @@ function get_userName(){
 
                 $this->id    = $obj->rowid;
                 $this->userId = $obj->fk_userid;
-                $this->year_week_date = $this->db->jdate($obj->year_week_date);
+                $this->start_date = $this->db->jdate($obj->start_date);
+                $this->stop_date = $this->db->jdate($obj->stop_date);
                 $this->status = $obj->status;
                 $this->target = $obj->target;
                 $this->project_tasktime_list = $obj->fk_project_tasktime_list;
@@ -959,14 +1049,14 @@ function get_userName(){
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
                 $this->user_modification = $obj->fk_user_modification;
-                $this->timesheetuser = $obj->fk_timesheet_user;
+                $this->timesheetuser = $obj->fk_project_tasktime_approval;
                 $this->task = $obj->fk_task;
                 $this->note  = $obj->note;
 
                 
             }
             $this->db->free($resql);
-            $this->yearWeek=  date('Y\WW',$this->year_week_date);
+            $this->yearWeek= getYearWeek(0,0,0,$this->start_date); //fixme
             $this->ref=$this->yearWeek.'_'.$this->userId;
             $this->whitelistmode=2; // no impact
             return 1;
@@ -990,7 +1080,8 @@ function get_userName(){
 		$sql.= " t.rowid,";
 		
 		$sql.=' t.fk_userid,';
-		$sql.=' t.year_week_date,';
+		$sql.=' t.start_date,';
+		$sql.=' t.stop_date,';
 		$sql.=' t.status,';
 		$sql.=' t.target,';
 		$sql.=' t.fk_project_tasktime_list,';
@@ -999,16 +1090,16 @@ function get_userName(){
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
 		$sql.=' t.fk_user_modification,';
-		$sql.=' t.fk_timesheet_user,';
+		$sql.=' t.fk_project_tasktime_approval,';
 		$sql.=' t.fk_task,';
 		$sql.=' t.note';
 
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
-        $sql.= " WHERE t.year_week_date = '".$this->db->idate($this->year_week_date)."'";
+        $sql.= " WHERE t.start_date = '".$this->db->idate($this->start_date)."'";
 		$sql.= " AND t.fk_userid = '".$this->userId."'";
-       # $sql .= "AND WEEKOFYEAR(ptt.year_week_date)='".date('W',strtotime($yearWeek))."';";
+       # $sql .= "AND WEEKOFYEAR(ptt.start_date)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
 
         //$sql.= " AND t.rowid = ".$id;
@@ -1024,7 +1115,8 @@ function get_userName(){
                 $this->id    = $obj->rowid;
                 
                 $this->userId = $obj->fk_userid;
-                $this->year_week_date = $this->db->jdate($obj->year_week_date);
+                $this->start_date = $this->db->jdate($obj->start_date);
+                $this->stop_date = $this->db->jdate($obj->stop_date);
                 $this->status = $obj->status;
                 $this->target = $obj->target;
                 $this->project_tasktime_list = $obj->fk_project_tasktime_list;
@@ -1033,7 +1125,7 @@ function get_userName(){
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
                 $this->user_modification = $obj->fk_user_modification;
-                $this->timesheetuser = $obj->fk_timesheet_user;
+                $this->timesheetuser = $obj->fk_project_tasktime_approval;
                 $this->task = $obj->fk_task;
                 $this->note  = $obj->note;
 
@@ -1050,6 +1142,7 @@ function get_userName(){
                 unset($this->timesheetuser );
                 unset($this->task );
                 unset($this->note );
+                $this->stop_date= getEndWeek($this->start_date);
                 $this->create($this->user);
                 $this->fetch($this->id);
             }
@@ -1080,7 +1173,8 @@ function get_userName(){
 		// Clean parameters
         
 		if (isset($this->userId)) $this->userId=trim($this->userId);
-		if (isset($this->year_week_date)) $this->year_week_date=trim($this->year_week_date);
+		if (isset($this->start_date)) $this->start_date=trim($this->start_date);
+		if (isset($this->stop_date)) $this->stop_date=trim($this->stop_date);
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->target)) $this->target=trim($this->target);
 		if (isset($this->project_tasktime_list)) $this->project_tasktime_list=trim($this->project_tasktime_list);
@@ -1102,15 +1196,16 @@ function get_userName(){
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         
 		$sql.=' fk_userid='.(empty($this->userId) ? 'null':'"'.$this->userId.'"').',';
-		$sql.=' year_week_date='.(dol_strlen($this->year_week_date)!=0 ? '"'.$this->db->idate($this->year_week_date).'"':'null').',';
+		$sql.=' start_date='.(dol_strlen($this->start_date)!=0 ? '"'.$this->db->idate($this->start_date).'"':'null').',';
+		$sql.=' stop_date='.(dol_strlen($this->stop_date)!=0 ? '"'.$this->db->idate($this->stop_date).'"':'null').',';
 		$sql.=' status='.(empty($this->status)? 'null':'"'.$this->status.'"').',';
 		$sql.=' target='.(empty($this->target) ? 'null':'"'.$this->target.'"').',';
 		$sql.=' fk_project_tasktime_list='.(empty($this->project_tasktime_list) ? 'null':'"'.$this->db->escape($this->project_tasktime_list).'"').',';
 		$sql.=' fk_user_approval='.(empty($this->user_approval) ? 'null':'"'.$this->user_approval.'"').',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification="'.$user->id.'",';
-		$sql.=' fk_timesheet_user="'.$this->timesheetuser.'",';
-		$sql.=' fk_task="'.$this->task.'",';
+		$sql.=' fk_project_tasktime_approval='.(empty($this->timesheetuser) ? 'null':'"'.$this->timesheetuser.'"').',';
+		$sql.=' fk_task='.(empty($this->task) ? 'null':'"'.$this->task.'"').',';
 		$sql.=' note="'.$this->note.'"';
 
         
@@ -1327,7 +1422,8 @@ function get_userName(){
 		$this->id=0;
 		
 		$this->userId='';
-		$this->year_week_date='';
+		$this->start_date='';
+		$this->stop_date='';
 		$this->status='';
 		$this->target='';
 		$this->project_tasktime_list='';
