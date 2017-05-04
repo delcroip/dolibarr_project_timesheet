@@ -65,7 +65,7 @@ class box_approval extends ModeleBoxes
                         $sql = 'SELECT';
             $sql.=' COUNT(t.rowid) as nb,';
             $sql.=' u.fk_user as approverid';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as t';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
             $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
             $sql.= ' WHERE t.status="SUBMITTED" AND t.target="team"';
             $sql.= ' AND u.fk_user="'.$userid.'"';

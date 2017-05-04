@@ -55,7 +55,7 @@ if(empty($month) || empty($year) || empty($projectId))$step=1;
 //steps
     switch ($step)
     { 
-        case '2':{
+        case 2:{
            $fields=($mode=='user')?'fk_user':(($mode=='taskUser')?'fk_user,fk_task':'fk_task'); 
             $sql= 'SELECT  '.$fields.', SUM(tt.task_duration) as duration ';
             $sql.=', GROUP_CONCAT(tt.rowid SEPARATOR ", ") as task_time_list';
@@ -66,7 +66,7 @@ if(empty($month) || empty($year) || empty($projectId))$step=1;
             $sql.=' AND YEAR(tt.task_date)='.$year;
             if($ts2Invoice!='all'){
                 /*$sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_tasktime_list SEPARATOR ", ")';
-                $sql.=' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval';  
+                $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval';  
                 $sql.=' WHERE status= "APPROVED" AND MONTH(start_date)='.$month;  
                 $sql.=' AND YEAR(start_date)="'.$year.'")'; 
                 $sql.=' AND YEAR(start_date)="'.$year.'")'; */

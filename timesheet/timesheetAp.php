@@ -88,7 +88,7 @@ if($action== 'submit'){
                     $count++;
                     switch($approvals[$key]){
                         case 'Approved':
-                           $ret=$timesheetUser->setAppoved($user,$key); 
+                           $ret=$timesheetUser->setApproved($user,$key); 
                             if(ret<0)$errors++;
                             else $tsApproved++;
                             break;
@@ -147,8 +147,8 @@ if( is_array($selectList)&& count($selectList)){
         }
         $level=$selectList[$i]['count'];
 }
-
-$objectArray=getTStobeApproved($level,$offset,'team',$subId);
+$role=($user->admin)?'admin_team':'team';
+$objectArray=getTStobeApproved($level,$offset,$role,$subId);
 
 if(is_array($objectArray)){
 $firstTimesheetUser=reset($objectArray);
@@ -279,11 +279,29 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
 
         $sql ="SELECT *";
         if($byWeek==2)$sql.=",CONCAT(DATE_FORMAT(start_date,' %m/%Y'),fk_userid) as usermonth";
-        $sql.=" FROM ".MAIN_DB_PREFIX."project_tasktime_approval as tu"; 
+        $sql.=" FROM ".MAIN_DB_PREFIX."project_task_time_approval as tu"; 
         $sql.=' WHERE tu.status="SUBMITTED"';
-        if($role='team'){$sql.=' AND fk_userid in ('.implode(',',$subId).')';
-        }else{$sql.=' AND fk_task in ('.implode(',',$subId).')';}
-        $sql.=' AND target="'.$role.'"';
+        
+        switch($role){
+            case 'team':
+                $sql.=' AND fk_userid in ('.implode(',',$subId).')';
+                $sql.=' AND target="'.$role.'"';
+                break;
+            case 'admin_team':
+                $sql.=' AND target="team"';
+                break;
+            case 'project':
+            case 'customer':
+            case 'provider':
+            case 'other':
+            default:
+                $sql.=' AND fk_task in ('.implode(',',$subId).')';
+                $sql.=' AND target="'.$role.'"';
+                break;
+            
+        }
+       
+       
         if($byWeek==1){
             $sql.=' ORDER BY start_date DESC, fk_userid DESC';
         }else if($byWeek==0){
@@ -400,18 +418,18 @@ function getSelectAps($subId){
     if(TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.start_date) as nb,ts.start_date as id,';
         $sql.=" DATE_FORMAT(ts.start_date,'".$langs->trans('Week')." %u (%m/%Y)') as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
 
     }else if(TIMESHEET_APPROVAL_BY_WEEK==0){
         $sql='SELECT COUNT(ts.fk_userid) as nb,ts.fk_userid as id,';
         $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
     }else{
         $sql="SELECT COUNT(ts.fk_userid) as nb,CONCAT(DATE_FORMAT(ts.start_date,' %m/%Y'),usr.firstname,' ',usr.lastname) as id,";
         $sql.=" CONCAT(usr.firstname,' ',usr.lastname,DATE_FORMAT(ts.start_date,' %m/%Y')) as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
     }
     $sql.=' WHERE ts.status="SUBMITTED"'; 

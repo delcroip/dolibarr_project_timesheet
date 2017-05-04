@@ -419,7 +419,7 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Status').' </td><td>';
 		if($edit==1){
-		print select_enum('project_tasktime_approval','status','Status',$object->status);
+		print select_enum('project_task_time_approval','status','Status',$object->status);
 		}else{
 		print $langs->trans($object->status);
 		}
@@ -431,7 +431,7 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Target').' </td><td>';
 		if($edit==1){
-		print select_enum('project_tasktime_approval','target','Target',$object->target);
+		print select_enum('project_task_time_approval','target','Target',$object->target);
 		}else{
 		print $langs->trans($object->target);
 		}
@@ -471,11 +471,11 @@ switch ($action) {
 		print '<td>'.$langs->trans('Timesheetuser').' </td><td>';
                 $sqltail= "JOIN ".MAIN_DB_PREFIX."user AS u ON u.rowid=t.fk_userid";
 		if($edit==1){
-                    //avoid full table scan print select_generic('project_tasktime_approval', 'rowid','Timesheetuser','CONCAT(u.lastname," ",u.firstname) AS username','CONCAT(t.start_date," ",t.target) AS weektarget',$object->timesheetuser,' - ',$sqltail);
+                    //avoid full table scan print select_generic('project_task_time_approval', 'rowid','Timesheetuser','CONCAT(u.lastname," ",u.firstname) AS username','CONCAT(t.start_date," ",t.target) AS weektarget',$object->timesheetuser,' - ',$sqltail);
                     print '<input class="flat" size="5" type="text" name="Timesheetuser" value="'.$object->timesheetuser.'"/>';
 
 		}else{
-                    print print_generic('project_tasktime_approval', 'rowid',$object->timesheetuser,'CONCAT(lastname," ",firstname) AS username','CONCAT(start_date," ",target) AS weektarget',' - ','',$sqltail);
+                    print print_generic('project_task_time_approval', 'rowid',$object->timesheetuser,'CONCAT(lastname," ",firstname) AS username','CONCAT(start_date," ",target) AS weektarget',' - ','',$sqltail);
                     //print $object->project_tasktime_list;
 
                 }
@@ -635,7 +635,7 @@ switch ($action) {
 		$sql.=' t.fk_user_approval';
 
     
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as t';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
     $sqlwhere='';
     if(isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
@@ -666,7 +666,7 @@ switch ($action) {
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-        $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'project_tasktime_approval as t';
+        $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
         if(!empty($sqlwhere))
             $sqlcount.=' WHERE '.substr ($sqlwhere, 5);
 	$result = $db->query($sqlcount);
@@ -734,11 +734,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '</td>';
 //Search field forstatus
 	print '<td class="liste_titre" colspan="1" >';
-		print select_enum('project_tasktime_approval','status','ls_status',$ls_status);
+		print select_enum('project_task_time_approval','status','ls_status',$ls_status);
 	print '</td>';
 //Search field fortarget
 //	print '<td class="liste_titre" colspan="1" >';
-//		print select_enum('project_tasktime_approval','target','ls_target',$ls_target);
+//		print select_enum('project_task_time_approval','target','ls_target',$ls_target);
 //	print '</td>';
 
 //Search field forproject_tasktime_list

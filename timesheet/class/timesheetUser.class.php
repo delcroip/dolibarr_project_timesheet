@@ -37,7 +37,7 @@ class timesheetUser extends CommonObject
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='timesheetuser';			//!< Id that identify managed objects
-	var $table_element='project_tasktime_approval';		//!< Name of table without prefix where object is stored
+	var $table_element='project_task_time_approval';		//!< Name of table without prefix where object is stored
 // from db
         var $id;
 
@@ -53,7 +53,8 @@ class timesheetUser extends CommonObject
 	var $user_creation;
 	var $user_modification;
         var $note;
-        var $fk_project_tasktime_approval;
+        var $project_task_time_approval_prev;
+        var $project_task_time_approval_next;
         var $fk_task;
         
 
@@ -638,15 +639,20 @@ function get_userName(){
     return 0;
  }
      /*
- * put the timesheet task in a approuved status
+ * change the status of an approval 
  * 
  *  @param      object/int        $user         user object or user id doing the modif
  *  @param      int               $id           id of the timesheetuser
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
 //    Public function setAppoved($user,$id=0){
-    Public function setStatus($user,$status,$id=0){ //FIXME
+Public function setStatus($user,$status,$id=0){ //FIXME
             $error=0;
+            //if the satus is not an ENUM status
+            if(!in_array($status, array('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL'))){
+                dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERROR);
+                return false;
+            }
             // Check parameters
             $userid=  is_object($user)?$user->id:$user;
             if($id==0)$id=$this->id;
@@ -654,7 +660,7 @@ function get_userName(){
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.=' status="APPROVED",';
+        $sql.=' status="'.$status.'",';
         $sql.=' fk_user_approval="'.$userid.'",';
         $sql.=' fk_user_modification="'.$userid.'"';
         $sql.= " WHERE rowid=".$id;
@@ -706,7 +712,7 @@ function get_userName(){
  */
 function  OtherApproval($approved){
     $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),2);
-     if (in_array('1',$apflows)) // FIXEME new param + hide submit if not approval flow whished
+     if (in_array('1',$apflows)) 
     {
         $found=false;
         switch($this->target){
@@ -733,7 +739,7 @@ function  OtherApproval($approved){
         }else{
             //$this->reject_timesheet_previsous();
             $previousApproval= new timesheetUser($this->db);
-            $previousApproval->fetch($this->fk_project_tasktime_approval);
+            $previousApproval->fetch($this->project_task_time_approval_prev);
             $previousApproval->setRejected($user);
         }
         $Parent=0;
@@ -770,7 +776,84 @@ function  OtherApproval($approved){
     }
     return 1;
 }   
+
  /*
+ * put the timesheet task in a aproved status
+ * 
+ *  @param      object/int        $user         user object or user id doing the modif
+ *  @param      int               $id           id of the timesheetuser
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+    Public function setApproved($user,$id=0){
+        
+        $otherApproval=$this->nextApproval($user);
+        if($otherApproval > 0){
+            $ret=$this->setStatus($user,'UNDERAPPROVAL',$id);
+            
+        }else{ // last approval
+            $ret=$this->setStatus($user,'APPROVED',$id);
+        }
+          
+    }
+    
+    
+     /*
+ * pget the next approval in the chaine
+ * 
+ *  @param      object/int        $user         user object or user id doing the modif
+ *  @param      int               $id           id of the timesheetuser
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+    Public function nextApproval($user,$id=0){/*FIXME*/
+        $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),2);
+        // start will save the 
+        $start=-1;
+        $targets=array(0=> 'team', 1=> 'project',2=>'customer',3=>'provider',4=>'other');
+        $start=array_search($this->target,$targets);
+        switch($this->target){
+            case 'team':
+                 $cur=0;
+  
+                if($apflows[$cur]==1)break;
+            case 'project':
+                if($start<0)$start=1;
+                $cur=1;
+                if($apflows[$cur]==1)break;
+            case 'customer':
+                if($start<0)$start=2;
+                $cur=2;
+                if($apflows[$cur]==1)break;
+            case 'provider':
+                if($start<0)$start=3;
+                $cur=3;
+                if($apflows[$cur]==1)break;
+                            
+            case 'other':
+                if($start<0)$start=4;
+                $cur=4;
+                if($apflows[$cur]==1)break;
+            default:            
+                $cur=0;
+                break;               
+        }
+        //FIXME//
+        $ret=0;
+        if($start<$cur){
+            if($this->project_task_time_approval_next>0){
+                $ret=$this->project_task_time_approval_next;
+            }else
+                $ret=new timesheetUser($db);
+                $ret->target=$targets[$cur];
+        }else if($this->project_task_time_approval_prev>0){
+            
+        }
+        //fecth if any
+        $staticTaskTimeApproval=new timesheetUser($this->db);
+        
+        //create if none fech
+        return 0;
+    }
+/*
  * put the timesheet task in a rejected status
  * 
  *  @param      object/int        $user         user object or user id doing the modif
@@ -778,57 +861,7 @@ function  OtherApproval($approved){
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
     Public function setRejected($user,$id=0){
-            $error=0;
-            // Check parameters
-            $userid=  is_object($user)?$user->id:$user;
-            if($id==0)$id=$this->id;
-		
-
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.=' status="REJECTED",';
-        $sql.=' fk_user_approval="'.$userid.'",';
-        $sql.=' fk_user_modification="'.$userid.'"';
-        $sql.= " WHERE rowid=".$id;
-
-		$this->db->begin();
-
-		dol_syslog(__METHOD__.$sql);
-        $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			 }
-		}
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-                        $this->OtherApproval(false);
-			return 1;
-		}
-        
+          $ret=$this->setStatus($user,'REJECTED',$id=0);
     }
     
  /*
@@ -839,56 +872,7 @@ function  OtherApproval($approved){
  *  @return     int      		   	 <0 if KO, Id of created object if OK
 */
     Public function setSubmitted($user,$id=0){
-            $error=0;
-            // Check parameters
-            $userid=  is_object($user)?$user->id:$user;
-            if($id==0)$id=$this->id;
-		
-
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.=' status="SUBMITTED",';
-        $sql.=' fk_user_approval="'.$userid.'",';
-        $sql.=' fk_user_modification="'.$userid.'"';
-        $sql.= " WHERE rowid=".$id;
-
-		$this->db->begin();
-
-		dol_syslog(__METHOD__.$sql);
-        $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			 }
-		}
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-        
+        $ret=$this->setStatus($user,'SUBMITTED',$id=0);
     }
 
 // funciton from db
@@ -909,8 +893,9 @@ function  OtherApproval($approved){
 		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
+		if (isset($this->project_task_time_approval_prev)) $this->project_task_time_approval_prev=trim($this->project_task_time_approval_prev);
+		if (isset($this->project_task_time_approval_next)) $this->project_task_time_approval_next=trim($this->project_task_time_approval_next);
 		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
-		if (isset($this->timesheetuser)) $this->timesheetuser=trim($this->timesheetuser);
 		if (isset($this->task)) $this->task=trim($this->task);
 		if (isset($this->note)) $this->note=trim($this->note);
 
@@ -931,7 +916,8 @@ function  OtherApproval($approved){
 		$sql.= 'fk_user_approval,';
 		$sql.= 'date_creation,';
 		$sql.= 'fk_user_creation,';
-                $sql.= 'fk_project_tasktime_approval,';
+                $sql.= 'fk_project_task_time_approval_prev,';
+                $sql.= 'fk_project_task_time_approval_next,';
                 $sql.= 'fk_task,';
                 $sql.= 'note';
 
@@ -948,7 +934,8 @@ function  OtherApproval($approved){
 
 		$sql.=' NOW() ,';
 		$sql.=' "'.$user->id.'",'; //fixme 3.5
-		$sql.=' '.(! isset($this->timesheetuser)?'NULL':'"'.$this->timesheetuser.'"').',';
+		$sql.=' '.(! isset($this->project_task_time_approval_prev)?'NULL':'"'.$this->project_task_time_approval_prev.'"').',';
+		$sql.=' '.(! isset($this->project_task_time_approval_next)?'NULL':'"'.$this->project_task_time_approval_next.'"').',';
 		$sql.=' '.(! isset($this->task)?'NULL':'"'.$this->task.'"').',';
 		$sql.=' '.(! isset($this->note)?'NULL':'"'.$this->note.'"');
         
@@ -1020,7 +1007,8 @@ function  OtherApproval($approved){
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
 		$sql.=' t.fk_user_modification,';
-		$sql.=' t.fk_project_tasktime_approval,';
+		$sql.=' t.fk_project_task_time_approval_prev,';
+		$sql.=' t.fk_project_task_time_approval_next,';
 		$sql.=' t.fk_task,';
 		$sql.=' t.note';
 
@@ -1049,7 +1037,8 @@ function  OtherApproval($approved){
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
                 $this->user_modification = $obj->fk_user_modification;
-                $this->timesheetuser = $obj->fk_project_tasktime_approval;
+                $this->project_task_time_approval_prev = $obj->fk_project_task_time_approval_prev;
+                $this->project_task_time_approval_next = $obj->fk_project_task_time_approval_next;
                 $this->task = $obj->fk_task;
                 $this->note  = $obj->note;
 
@@ -1090,7 +1079,8 @@ function  OtherApproval($approved){
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
 		$sql.=' t.fk_user_modification,';
-		$sql.=' t.fk_project_tasktime_approval,';
+		$sql.=' t.fk_project_task_time_approval_next,';
+		$sql.=' t.fk_project_task_time_approval_prev,';
 		$sql.=' t.fk_task,';
 		$sql.=' t.note';
 
@@ -1125,7 +1115,8 @@ function  OtherApproval($approved){
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
                 $this->user_modification = $obj->fk_user_modification;
-                $this->timesheetuser = $obj->fk_project_tasktime_approval;
+                $this->project_task_time_approval_prev = $obj->fk_project_task_time_approval_prev;
+                $this->project_task_time_approval_next = $obj->fk_project_task_time_approval_next;
                 $this->task = $obj->fk_task;
                 $this->note  = $obj->note;
 
@@ -1139,7 +1130,8 @@ function  OtherApproval($approved){
                 unset($this->date_modification );
                 unset($this->user_creation );
                 unset($this->user_modification );
-                unset($this->timesheetuser );
+                unset($this->project_task_time_approval_prev );
+                unset($this->project_task_time_approval_next );
                 unset($this->task );
                 unset($this->note );
                 $this->stop_date= getEndWeek($this->start_date);
@@ -1183,7 +1175,8 @@ function  OtherApproval($approved){
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
 		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
-		if (isset($this->timesheetuser)) $this->timesheetuser=trim($this->timesheetuser);
+		if (isset($this->project_task_time_approval_prev)) $this->project_task_time_approval_prev=trim($this->project_task_time_approval_prev);
+		if (isset($this->project_task_time_approval_next)) $this->project_task_time_approval_next=trim($this->project_task_time_approval_next);
 		if (isset($this->task)) $this->task=trim($this->task);
 		if (isset($this->note)) $this->note=trim($this->note);
 
@@ -1204,7 +1197,8 @@ function  OtherApproval($approved){
 		$sql.=' fk_user_approval='.(empty($this->user_approval) ? 'null':'"'.$this->user_approval.'"').',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification="'.$user->id.'",';
-		$sql.=' fk_project_tasktime_approval='.(empty($this->timesheetuser) ? 'null':'"'.$this->timesheetuser.'"').',';
+		$sql.=' fk_project_task_time_approval_prev='.(empty($this->project_task_time_approval_prev) ? 'null':'"'.$this->project_task_time_approval_prev.'"').',';
+		$sql.=' fk_project_task_time_approval_next='.(empty($this->project_task_time_approval_next) ? 'null':'"'.$this->project_task_time_approval_next.'"').',';
 		$sql.=' fk_task='.(empty($this->task) ? 'null':'"'.$this->task.'"').',';
 		$sql.=' note="'.$this->note.'"';
 
@@ -1432,7 +1426,8 @@ function  OtherApproval($approved){
 		$this->date_modification='';
 		$this->user_creation='';
 		$this->user_modification='';
-		$this->timesheetuser='';
+		$this->project_task_time_approval_prev='';
+		$this->project_task_time_approval_next='';
 		$this->task='';
 		$this->note='';
 

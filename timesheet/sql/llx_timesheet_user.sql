@@ -20,14 +20,14 @@
 
 -- this table is used to store the timesheet favorit
 
-
-CREATE TABLE llx_timesheet_user
+RENAME TABLE `llx_timesheet_user` TO `llx_project_task_time_approval`;
+CREATE TABLE llx_project_task_time_approval
 (
 rowid                 integer NOT NULL AUTO_INCREMENT,
 fk_userid               integer NOT NULL,          -- timesheet user
 start_date          DATE NOT NULL, -- start date of the period
 stop_date          DATE NOT NULL, -- start date of the period
-status                enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED') DEFAULT 'DRAFT',
+status               enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL') DEFAULT 'DRAFT';
 target            enum('team','project','customer','provider','other') DEFAULT 'team', -- a team ts is always needed 
 fk_project_tasktime_list VARCHAR(512), -- list of task time included in the validation
 fk_user_approval              integer default NULL, -- approuved by
@@ -35,7 +35,8 @@ date_creation         DATETIME NOT NULL,
 date_modification     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
 fk_user_creation        integer,
 fk_user_modification         integer  default NULL,
-fk_timesheet_user       integer default NULL, -- in case target is not team , Ref to another llx_timesheet_user entry
+fk_project_task_time_approval_prev      integer default NULL, -- in case target is not team , Ref to another llx_timesheet_user entry
+fk_project_task_time_approval_next      integer default NULL, -- in case target is not team , Ref to another llx_timesheet_user entry
 fk_task       integer, -- in case target is not team, querry on task
 note       VARCHAR(1024), -- in case target is not team, querry on task
 PRIMARY KEY (rowid)
