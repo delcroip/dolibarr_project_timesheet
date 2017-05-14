@@ -50,7 +50,7 @@ class box_approval extends ModeleBoxes
 
 		$this->max=$max;
 
-        //require_once 'class/timesheetUser.class.php';
+        //require_once 'class/task_timesheet.class.php';
 
 
 
@@ -63,11 +63,12 @@ class box_approval extends ModeleBoxes
 
         if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
-            $sql.=' COUNT(t.rowid) as nb,';
+           // $sql.=' COUNT(t.rowid) as nb,';
+            $sql.=' count(CONCATE(t.fk_userid,"-",t.date_start)) as nb,';
             $sql.=' u.fk_user as approverid';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
             $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
-            $sql.= ' WHERE t.status="SUBMITTED" AND t.target="team"';
+            $sql.= ' WHERE t.status="SUBMITTED" AND t.recipient="team"'; // FIXME wrong number of TS 
             $sql.= ' AND u.fk_user="'.$userid.'"';
             $sql.= ' GROUP BY u.fk_user';
             $result = $db->query($sql);

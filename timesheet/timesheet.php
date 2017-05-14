@@ -29,7 +29,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
-require_once 'class/timesheetUser.class.php';
+require_once 'class/task_timesheet.class.php';
 
 
 $action             = GETPOST('action');
@@ -49,7 +49,7 @@ $toDateyear                 = GETPOST('toDateyear');
 $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
 $userid=  is_object($user)?$user->id:$user;
-$timesheetUser= new timesheetUser($db,$userid);
+$task_timesheet= new task_timesheet($db,$userid);
 $confirm=GETPOST('confirm');
 
 if($yearWeek==0 && isset($_SESSION["yearWeek"])) $yearWeek=$_SESSION["yearWeek"];
@@ -84,40 +84,41 @@ if ($user->societe_id > 0)
 
 */
   
-$timesheetUser= new timesheetUser($db,$userid);
+$task_timesheet= new task_timesheet($db,$userid);
 
 /*******************************************************************
 * ACTIONS
 *
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
-
+$status='';
 switch($action){
     case 'submit':
-        if(isset($_SESSION['timesheetUser'][$timestamp]))
+        if(isset($_SESSION['task_timesheet'][$timestamp]))
         {
             
             if(isset($_POST['task']))
 			{
 				 foreach($_POST['task'] as $key => $tasktab){
-					 $timesheetUser->loadFromSession($timestamp,$key);                  
-					 $timesheetUser->note=$_POST['Note'][$key];
+					 $task_timesheet->loadFromSession($timestamp,$key);                  
+					 $task_timesheet->note=$_POST['Note'][$key];
                                          if(isset($_POST['submit'])){
-						 $timesheetUser->status="SUBMITTED";
+                                                $ret=$task_timesheet->setStatus($user,"SUBMITTED");
+                                             //$task_timesheet->status="SUBMITTED";
 						 $ret=0;
 					 }          
-					 $ret=$timesheetUser->updateActuals($tasktab);
+					 $ret=$task_timesheet->updateActuals($tasktab);
 
                 		//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
 					 if(!empty($ret))
 					 {
 						 if(isset($_POST['submit']))setEventMessage($langs->transnoentitiesnoconv("timesheetSumitted"));
-						 if($_SESSION['timesheetUser'][$timestamp]['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['timesheetUser'][$timestamp]['timeSpendCreated']);
-						 if($_SESSION['timesheetUser'][$timestamp]['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['timesheetUser'][$timestamp]['timeSpendModified']);
-						 if($_SESSION['timesheetUser'][$timestamp]['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['timesheetUser'][$timestamp]['timeSpendDeleted']);
+						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']);
+						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['task_timesheet'][$timestamp]['timeSpendModified']);
+						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']);
 					 }else
 					 {
-						 if($_SESSION['timesheetUser'][$timestamp]['updateError']){
+						 if($_SESSION['task_timesheet'][$timestamp]['updateError']){
 							 setEventMessage( $langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" Update failed").':'.$ret,'errors');
 						 }else {
 							 setEventMessage($langs->transnoentitiesnoconv("NothingChanged"),'warnings');
@@ -125,9 +126,9 @@ switch($action){
 					 }
 				 }
             }else if(isset($_POST['recall'])){
-				$timesheetUser->loadFromSession($timestamp,$_POST['tsUserId']); /*FIXME to support multiple TS sent*/
-				$timesheetUser->status="DRAFT";
-                $ret=$timesheetUser->update($user);
+				$task_timesheet->loadFromSession($timestamp,$_POST['tsUserId']); /*FIXME to support multiple TS sent*/
+                                //$task_timesheet->status="DRAFT";
+                                $ret=$task_timesheet->setStatus($user,"DRAFT");
                 if($ret>0)setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
                 else setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"),'errors');
             }else{
@@ -149,16 +150,16 @@ switch($action){
 
 
 if(!empty($timestamp)){
-       unset($_SESSION['timesheetUser'][$timestamp]);
+       unset($_SESSION['task_timesheet'][$timestamp]);
 }
 
-$timesheetUser->fetchAll($yearWeek,$whitelistmode);
+$task_timesheet->fetchAll($yearWeek,$whitelistmode);
 
 if(TIMESHEET_ADD_DOCS){
     dol_include_once('/core/class/html.formfile.class.php');
     dol_include_once('/core/lib/files.lib.php');
     $modulepart = 'timesheet';
-    $object=$timesheetUser;
+    $object=$task_timesheet;
     $ref=dol_sanitizeFileName($object->ref);
     $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
     if(version_compare(DOL_VERSION,"4.0")>=0){
@@ -180,7 +181,7 @@ if($xml){
     //renew timestqmp
     ob_clean();
    header("Content-type: text/xml; charset=utf-8");
-    echo $timesheetUser->GetTimeSheetXML();
+    echo $task_timesheet->GetTimeSheetXML();
     exit;
 }
 $morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js");
@@ -191,18 +192,18 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 
 
 $ajax=false;
-$Form =$timesheetUser->getHTMLNavigation($optioncss,$ajax);
-$Form .=$timesheetUser->getHTMLFormHeader($ajax);
-$Form .=$timesheetUser->getHTMLHeader($ajax);
+$Form =$task_timesheet->getHTMLNavigation($optioncss,$ajax);
+$Form .=$task_timesheet->getHTMLFormHeader($ajax);
+$Form .=$task_timesheet->getHTMLHeader($ajax);
 
-$Form .=$timesheetUser->getHTMLHolidayLines($ajax);
+$Form .=$task_timesheet->getHTMLHolidayLines($ajax);
 
-$Form .=$timesheetUser->getHTMLTotal();
+$Form .=$task_timesheet->getHTMLTotal();
 
-$Form .=$timesheetUser->getHTMLtaskLines($ajax);
-$Form .=$timesheetUser->getHTMLTotal();
-$Form .=$timesheetUser->getHTMLNote($ajax);
-$Form .=$timesheetUser->getHTMLFooter($ajax);
+$Form .=$task_timesheet->getHTMLtaskLines($ajax);
+$Form .=$task_timesheet->getHTMLTotal();
+$Form .=$task_timesheet->getHTMLNote($ajax);
+$Form .=$task_timesheet->getHTMLFooter($ajax);
 
 
 //Javascript
@@ -216,7 +217,7 @@ print $Form;
 //add attachement
 if(TIMESHEET_ADD_DOCS==1){
         
-        $object=$timesheetUser;
+        $object=$task_timesheet;
         $modulepart = 'timesheet';
         $permission = 1;//$user->rights->timesheet->add;
         $filearray=dol_dir_list($upload_dir,'files',0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);

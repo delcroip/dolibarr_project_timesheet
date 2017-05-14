@@ -16,27 +16,9 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 -- ===================================================================
--- TS Revision 1.5.0
+-- TS Revision 2.0
 
 -- this table is used to store the timesheet favorite
--- UPDATE from 1.5.1
- --ALTER TABLE llx_timesheet_user MODIFY COLUMN fk_timesheet_user integer default NULL; --allow null value
-
-
---DROP ALL OLD FK
-
-ALTER TABLE `llx_project_task_time_approval` ADD stop_date DATE NOT NULL; -- start date of the period
-ALTER TABLE `llx_project_task_time_approval` CHANGE COLUMN year_week_date start_date DATE NOT NULL;
-ALTER TABLE `llx_project_task_time_approval` CHANGE COLUMN fk_timesheet_user fk_project_task_time_approval_prev integer DEFAULT NULL;
-ALTER TABLE `llx_project_task_time_approval` ADD fk_project_task_time_approval_next integer DEFAULT NULL; -- 
---ALTER TABLE llx_project_task_time_approval CHANGE COLUMN fk_project_task_time_approval fk_project_task_time_approval_prev integer DEFAULT NULL;
-ALTER TABLE llx_project_task_time_approval MODIFY COLUMN `status` enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL') DEFAULT 'DRAFT';
--- add the sto date to the row without
-
---Migration from <2
-Update `llx_project_task_time_approval` SET stop_date = DATE_ADD(start_date,INTERVAL 7 DAY) Where stop_date = 0;
--- delete the line draft and without note to start from a good base
-DELETE FROM `llx_project_task_time_approval` WHERE `status` ='DRAFT' and (`note`='' OR `note`IS NULL);
 
 ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT llx_ptta_pttan_id FOREIGN KEY (fk_project_task_time_approval_next) REFERENCES llx_project_task_time_approval(rowid) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT llx_ptta_pttap_id FOREIGN KEY (fk_project_task_time_approval_prev) REFERENCES llx_project_task_time_approval(rowid) ON DELETE CASCADE ON UPDATE CASCADE;

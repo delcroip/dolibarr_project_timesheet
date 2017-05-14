@@ -65,11 +65,11 @@ if(empty($month) || empty($year) || empty($projectId))$step=1;
             $sql.=' AND MONTH(tt.task_date)='.$month;
             $sql.=' AND YEAR(tt.task_date)='.$year;
             if($ts2Invoice!='all'){
-                /*$sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_tasktime_list SEPARATOR ", ")';
+                /*$sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_s SEPARATOR ", ")';
                 $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval';  
-                $sql.=' WHERE status= "APPROVED" AND MONTH(start_date)='.$month;  
-                $sql.=' AND YEAR(start_date)="'.$year.'")'; 
-                $sql.=' AND YEAR(start_date)="'.$year.'")'; */
+                $sql.=' WHERE status= "APPROVED" AND MONTH(date_start)='.$month;  
+                $sql.=' AND YEAR(date_start)="'.$year.'")'; 
+                $sql.=' AND YEAR(date_start)="'.$year.'")'; */
                 $sql.=' AND tt.status = "APPROVED"'; 
             }
             if($tsNotInvoiced==1){
