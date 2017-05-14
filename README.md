@@ -3,7 +3,7 @@ Timesheet view for project in Dolibarr
 
 
 # Functionnalities
- - Timespend entry by week for all the eligible task of an user per week in the timesheet page 
+ - Timespend entry by week for all the eligible task of an user per week in the timesheet page (splited week possible)
  - Holiday are showed in the timesheet page
  - Layout customisation (show/hide the '00:00', show/hide the draft project task,show ref or not, show the related project or not ... )
  - Dolibarr Print mode supported 
@@ -12,7 +12,7 @@ Timesheet view for project in Dolibarr
  - User report by month
  - Project report by month
  - create invoice from the project report
- 
+
  
 # Functionnalities eligible for removal
 - favoris 
@@ -41,7 +41,8 @@ Change log from 1.5.1:
 - create invoice from the project report
 - more translation (ES, DE, IT, FR, US)
 - tab in the setup for better browsing experience (in JS so config is kept when changing tab)
-- 
+- Week over two month can be splited in 2 so an approval per month is possible.
+- reports shows time in hours and days
 
 Change log from 1.4.3:
 
