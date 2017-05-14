@@ -1,6 +1,6 @@
 # dolibarr_project_timesheet
 Timesheet view for project in Dolibarr
-timesheet navigation & submit done with Ajax ( no reload of the entire page needed)
+
 
 # Functionnalities
  - Timespend entry by week for all the eligible task of an user per week in the timesheet page 
@@ -11,16 +11,38 @@ timesheet navigation & submit done with Ajax ( no reload of the entire page need
  - Tasks can be masked/showed via favoris
  - User report by month
  - Project report by month
+ - create invoice from the project report
+ 
+ 
+# Functionnalities eligible for removal
+- favoris 
+
+# Functionnalities not maintained
+ - timesheet navigation & submit done with Ajax ( no reload of the entire page needed)
 
 # known bug/limitation
-- when session is timed out, the login page isn't showed
 - If the combo box ajax bug, it's not possible to enter new whitelist, new config parameters enable to deactivate for all dolibarr.
 - Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
 
 # Next developement
-- timesheet chanlenge by project, customer ...
+
+- chained approval
+- favoris in a tab (not a new page)
+- add automatic reminder for the approval
+- add feature in Project to foresee workload per user, task and "week"
+- send email over TS rejection
+- reminder when TS is not filled in ( email and home page)
+- better handling of search boxes
 
 # Change log
+
+Change log from 1.5.1:
+
+- create invoice from the project report
+- more translation (ES, DE, IT, FR, US)
+- tab in the setup for better browsing experience (in JS so config is kept when changing tab)
+- 
+
 Change log from 1.4.3:
 
  - Timesheet approval by N+1, 
