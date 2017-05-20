@@ -62,7 +62,7 @@ $langs->load("timesheet@timesheet");
                 
 // Get parameter
 $id			= GETPOST('id','int');
-$ref                    = GETPOST('ref','alpha');
+$ref        = GETPOST('ref','alpha');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
 $cancel=GETPOST('cancel');
@@ -75,7 +75,7 @@ $removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )		// Both test must be present to be compatible with all browsers
 {
-    	$ls_userId= GETPOST('ls_userId','int');
+    $ls_userId= GETPOST('ls_userId','int');
 	if($ls_userId==-1)$ls_userId='';
 	$ls_date_start_month= GETPOST('ls_date_start_month','int');
 	$ls_date_start_year= GETPOST('ls_date_start_year','int');
@@ -91,10 +91,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
         $ls_task= GETPOST('ls_task','int');
 	if($ls_task==-1)$ls_task='';
         $ls_note= GETPOST('ls_note','alpha');
-	if($ls_note==-1)$ls_note='';
-
-
-    
+	if($ls_note==-1)$ls_note='';  
 }
 
 
@@ -156,7 +153,7 @@ if(!empty($ref))
 // Action to add record
 $error=0;
 if ($cancel){
-        reloadpage($backtopage,$id,$ref);
+    reloadpage($backtopage,$id,$ref);
 }else if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
     $tms=time();
     $_SESSION['Timesheetuser_'.$tms]=array();
@@ -166,21 +163,21 @@ if ($cancel){
 {
         //block resubmit
         if(empty($tms) || (!isset($_SESSION['Timesheetuser_'.$tms]))){
-                setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
-                $action=($action=='add')?'create':'edit';
+            setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
+            $action=($action=='add')?'create':'edit';
         }
         //retrive the data
-        		$object->userId=GETPOST('Userid');
+        $object->userId=GETPOST('Userid');
 		$object->date_start=dol_mktime(0, 0, 0,GETPOST('Yearweekdatemonth'),GETPOST('Yearweekdateday'),GETPOST('Yearweekdateyear'));
 		$object->status=GETPOST('Status');
 		$object->target=GETPOST('Target');
 		$object->project_tasktime_list=GETPOST('Projecttasktimelist');
 		$object->user_approval=GETPOST('Userapproval');
-                if($object->user_approval==-1)unset($object->user_approval);
+            if($object->user_approval==-1)unset($object->user_approval);
 		$object->timesheetuser=GETPOST('Timesheetuser');
-                if($object->timesheetuser==-1)unset($object->timesheetuser);
+            if($object->timesheetuser==-1)unset($object->timesheetuser);
 		$object->task=GETPOST('Task');
-                if($object->task==-1)unset($object->task);
+            if($object->task==-1)unset($object->task);
 		$object->note=GETPOST('Note');
 
 
@@ -291,18 +288,17 @@ if ($cancel){
                             break;
             }    
             
-                 //document handling
+        //document handling
         if(TIMESHEET_ADD_DOCS && $id>0){
         $object->fetch($id);
         $ref=dol_sanitizeFileName($object->ref);
         $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
-       if(version_compare(DOL_VERSION,"4.0")>=0){
+        if(version_compare(DOL_VERSION,"4.0")>=0){
            include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
-       }else{
+        }else{
            include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-       }
-       
-        }
+        }      
+    }
 //Removing the tms array so the order can't be submitted two times
 if(isset( $_SESSION['Timesheetuser_class'][$tms]))
 {
@@ -344,10 +340,10 @@ switch ($action) {
         $new=1;
     case 'edit':
         $edit=1;
-   case 'delete';
+    case 'delete';
         if( $action=='delete' && ($id>0 || $ref!="")){
          $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetuser'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
-         if ($ret == 'html') print '<br />';
+        if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
     case 'view':
@@ -486,7 +482,7 @@ switch ($action) {
 // show the field task
 
 		print '<td>'.$langs->trans('Task').' </td><td>';
-        	if($edit==1){
+        if($edit==1){
 		print select_generic('projet_task', 'rowid','Task','ref','label',$object->task);
 
 		}else{
@@ -500,17 +496,15 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Note').' </td><td>';
 		if($edit==1){
-                    print '<textarea class="flat"  name="Note" cols="40" rows="5" >'.$object->note.'</textarea>';
+            print '<textarea class="flat"  name="Note" cols="40" rows="5" >'.$object->note.'</textarea>';
  		}else{
-                    print $object->note;
+			print $object->note;
 		//print print_generic('project_tasktime_list','rowid',$object->project_tasktime_list,'rowid','description');
 		}
 		print "</td>";
 		print "\n</tr>\n";
 //		print "<tr>\n";
 
-
-            
 
 	print '</table>'."\n";
 	print '<br>';
@@ -686,103 +680,94 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $resql=$db->query($sql);
     if ($resql)
     {
-        	if (!empty($ls_userId))	$param.='&ls_userId='.urlencode($ls_userId);
-	if (!empty($ls_date_start_month))	$param.='&ls_date_start_month='.urlencode($ls_date_start_month);
-	if (!empty($ls_date_start_year))	$param.='&ls_date_start_year='.urlencode($ls_date_start_year);
-	if (!empty($ls_status))	$param.='&ls_status='.urlencode($ls_status);
-	if (!empty($ls_target))	$param.='&ls_target='.urlencode($ls_target);
-	if (!empty($ls_project_tasktime_list))	$param.='&ls_project_tasktime_list='.urlencode($ls_project_tasktime_list);
-	if (!empty($ls_user_approval))	$param.='&ls_user_approval='.urlencode($ls_user_approval);
-
-        
-        if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
-        
-        $num = $db->num_rows($resql);
-        //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
-        print_barre_liste($langs->trans("Timesheetuser"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-        print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-        print '<table class="liste" style="border-collapse:separate;" width="100%">'."\n";
-        //TITLE
-        print '<tr class="liste_titre">';
-        	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userid','',$param,'',$sortfield,$sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Yearweekdate'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
-	print "\n";
-	//print_liste_field_titre($langs->trans('Target'),$PHP_SELF,'t.target','',$param,'',$sortfield,$sortorder);
-	//print "\n";
-	//print_liste_field_titre($langs->trans('Projecttasktimelist'),$PHP_SELF,'t.fk_project_tasktime_list','',$param,'',$sortfield,$sortorder);
-	//print "\n";
-	print_liste_field_titre($langs->trans('Userapproval'),$PHP_SELF,'t.fk_user_approval','',$param,'',$sortfield,$sortorder);
-	print "\n";
-
-
-        
-        print '</tr>';
-        //SEARCH FIELDS
-        print '<tr class="liste_titre">'; 
-        //Search field foruserId
-	print '<td class="liste_titre" colspan="1" >';
+        if (!empty($ls_userId))	$param.='&ls_userId='.urlencode($ls_userId);
+		if (!empty($ls_date_start_month))	$param.='&ls_date_start_month='.urlencode($ls_date_start_month);
+		if (!empty($ls_date_start_year))	$param.='&ls_date_start_year='.urlencode($ls_date_start_year);
+		if (!empty($ls_status))	$param.='&ls_status='.urlencode($ls_status);
+		if (!empty($ls_target))	$param.='&ls_target='.urlencode($ls_target);
+		if (!empty($ls_project_tasktime_list))	$param.='&ls_project_tasktime_list='.urlencode($ls_project_tasktime_list);
+		if (!empty($ls_user_approval))	$param.='&ls_user_approval='.urlencode($ls_user_approval);
+	   
+		if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
+		
+		$num = $db->num_rows($resql);
+		//print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
+		print_barre_liste($langs->trans("Timesheetuser"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<table class="liste" style="border-collapse:separate;" width="100%">'."\n";
+		//TITLE
+		print '<tr class="liste_titre">';
+		print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userid','',$param,'',$sortfield,$sortorder);
+		print "\n";
+		print_liste_field_titre($langs->trans('Yearweekdate'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
+		print "\n";
+		print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
+		print "\n";
+		//print_liste_field_titre($langs->trans('Target'),$PHP_SELF,'t.target','',$param,'',$sortfield,$sortorder);
+		//print "\n";
+		//print_liste_field_titre($langs->trans('Projecttasktimelist'),$PHP_SELF,'t.fk_project_tasktime_list','',$param,'',$sortfield,$sortorder);
+		//print "\n";
+		print_liste_field_titre($langs->trans('Userapproval'),$PHP_SELF,'t.fk_user_approval','',$param,'',$sortfield,$sortorder);
+		print "\n";
+		print '<td class="liste_titre" colspan="1" >';
+		print '</tr>';
+		//SEARCH FIELDS
+		print '<tr class="liste_titre">'; 
+		//Search field foruserId
+		print '<td class="liste_titre" colspan="1" >';
 		print select_generic('user','rowid','ls_userId','lastname','firstname',$ls_userId);
-	print '</td>';
-//Search field fordate_start
-	print '<td class="liste_titre" colspan="1" >';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="date_start_month" value="'.$ls_date_start_month.'">';
-	$syear = $ls_date_start_year;
-	$formother->select_year($syear?$syear:-1,'ls_date_start_year',1, 20, 5);
-	print '</td>';
-//Search field forstatus
-	print '<td class="liste_titre" colspan="1" >';
+		print '</td>';
+		//Search field fordate_start
+		print '<td class="liste_titre" colspan="1" >';
+		print '<input class="flat" type="text" size="1" maxlength="2" name="date_start_month" value="'.$ls_date_start_month.'">';
+		$syear = $ls_date_start_year;
+		$formother->select_year($syear?$syear:-1,'ls_date_start_year',1, 20, 5);
+		print '</td>';
+		//Search field forstatus
+		print '<td class="liste_titre" colspan="1" >';
 		print select_enum('project_task_time_approval','status','ls_status',$ls_status);
-	print '</td>';
-//Search field fortarget
-//	print '<td class="liste_titre" colspan="1" >';
-//		print select_enum('project_task_time_approval','target','ls_target',$ls_target);
-//	print '</td>';
+		print '</td>';
+		//Search field fortarget
+		//	print '<td class="liste_titre" colspan="1" >';
+		//		print select_enum('project_task_time_approval','target','ls_target',$ls_target);
+		//	print '</td>';
 
-//Search field forproject_tasktime_list
-//	print '<td class="liste_titre" colspan="1" >';
-//		print '<input class="flat" size="16" type="text" name="ls_project_tasktime_list" value="'.$ls_project_tasktime_list.'"/>';
-//	print '</td>';
-//Search field foruser_approval
-	print '<td class="liste_titre" colspan="1" >';
+		//Search field forproject_tasktime_list
+		//	print '<td class="liste_titre" colspan="1" >';
+		//		print '<input class="flat" size="16" type="text" name="ls_project_tasktime_list" value="'.$ls_project_tasktime_list.'"/>';
+		//	print '</td>';
+		//Search field foruser_approval
+		print '<td class="liste_titre" colspan="1" >';
 		print select_generic('user','rowid','ls_user_approval','lastname','firstname',$ls_user_approval);
-	print '</td>';
-
-
-        
-        
-        print '<td width="15px">';
-        print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-        print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-        print '</td>';
-        print '</tr>'."\n"; 
-        $i=0;
-        $basedurltab=explode("?", $PHP_SELF);
-        $basedurl=$basedurltab[0].'?action=view&id=';
-        while ($i < $num && $i<$limit)
-        {
-            $obj = $db->fetch_object($resql);
-            if ($obj)
-            {
-                // You can use here results
-                		print "<tr class=\"dblist ".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
-	print $basedurl.$obj->rowid."'\" >";
-		print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
-		print "<td>".dol_print_date($obj->date_start,'day')." (".getYearWeek(0,0,0,$db->jdate($obj->date_start)).")</td>";
-		print "<td>".$langs->trans($obj->status)."</td>";
-		//print "<td>".$langs->trans($obj->target)."</td>";
-		//print "<td>".$obj->fk_project_tasktime_list."</td>";
-		print "<td>".print_generic('user','rowid',$obj->fk_user_approval,'lastname','firstname',' ')."</td>";
-		print '<td><a href="'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
-		print "</tr>";
-
-                
-
-            }
-            $i++;
-        }
+		print '</td>';
+ 
+		print '<td width="15px">';
+		print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+		print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		print '</td>';
+		print '</tr>'."\n"; 
+		$i=0;
+		$basedurltab=explode("?", $PHP_SELF);
+		$basedurl=$basedurltab[0].'?action=view&id=';
+		while ($i < $num && $i<$limit)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				// You can use here results
+				print "<tr class=\"dblist ".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
+				print $basedurl.$obj->rowid."'\" >";
+				print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
+				print "<td>".dol_print_date($obj->date_start,'day')." (".getYearWeek(0,0,0,$db->jdate($obj->date_start)).")</td>";
+				print "<td>".$langs->trans($obj->status)."</td>";
+				//print "<td>".$langs->trans($obj->target)."</td>";
+				//print "<td>".$obj->fk_project_tasktime_list."</td>";
+				print "<td>".print_generic('user','rowid',$obj->fk_user_approval,'lastname','firstname',' ')."</td>";
+				print '<td><a href="'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+				print "</tr>";
+			}
+			$i++;
+		}
     }
     else
     {
@@ -798,7 +783,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
     
 }
-        break;
+    break;
 }
 dol_fiche_end();
 
