@@ -61,7 +61,7 @@ $langs->load("projects");
 $langs->load('timesheet@timesheet');
 
 
-$task_timesheet= new task_timesheet($db);
+$task_timesheet= new Task_timesheet($db);
 
 
 
@@ -245,7 +245,7 @@ if(is_object($firstTimesheetUser)){
     }
 }else{
     $Form .='<h1>'.$langs->trans('NothingToValidate').'</h1>';
-    $staticTs=new task_timesheet($db);
+    $staticTs=new Task_timesheet($db);
     $Form .=$staticTs->getHTMLFooterAp($current,$timestamp);
 }
 
@@ -326,7 +326,7 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
                     $error=0;
                     $obj = $db->fetch_object($resql);
                    
-                    $tmpTs = NEW task_timesheet($db,$obj->fk_userid);
+                    $tmpTs = NEW Task_timesheet($db,$obj->fk_userid);
                     $tmpTs->id    = $obj->rowid;
                     //$tmpTs->userId = $obj->fk_userid;
                     $tmpTs->date_start = $tmpTs->db->jdate($obj->date_start);
