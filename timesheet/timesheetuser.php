@@ -629,10 +629,10 @@ switch ($action) {
     
 		$sql.=' t.fk_userid,';
 		$sql.=' t.date_start,';
-		$sql.=' t.status,';
-		$sql.=' t.target,';
-		$sql.=' t.fk_project_tasktime_list,';
-		$sql.=' t.fk_user_approval';
+		$sql.=' t.status';
+		//$sql.=' t.target,';
+		//$sql.=' t.fk_project_tasktime_list,';
+		//$sql.=' t.fk_user_approval';
 
     
     $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
