@@ -132,7 +132,7 @@ if ($user->societe_id > 0 ||
 */
 
 // create object and set id or ref if provided as parameter
-$object=new Timesheetuser($db);
+$object=new task_timesheet($db);
 if($id>0)
 {
     $object->id=$id;
@@ -628,14 +628,14 @@ switch ($action) {
     $sql.= ' t.rowid,';
     
 		$sql.=' t.fk_userid,';
-		$sql.=' t.date_start,';
-		$sql.=' t.status,';
-		$sql.=' t.target,';
-		$sql.=' t.fk_project_tasktime_list,';
-		$sql.=' t.fk_user_approval';
+		//$sql.=' t.date_start,';
+		$sql.=' t.status';
+		//$sql.=' t.target,';
+		//$sql.=' t.fk_project_tasktime_list,';
+		//$sql.=' t.fk_user_approval';
 
     
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
     $sqlwhere='';
     if(isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
@@ -666,14 +666,14 @@ switch ($action) {
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-        $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
+        $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'project_task_timeshet as t';
         if(!empty($sqlwhere))
             $sqlcount.=' WHERE '.substr ($sqlwhere, 5);
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if(!empty($sortfield)){$sql.= $db->order($sortfield,$sortorder);
-    }else{ $sortorder = 'ASC';}
+//    if(!empty($sortfield)){$sql.= $db->order($sortfield,$sortorder);
+//    }else{ $sortorder = 'ASC';}
     
     if (!empty($limit))
     {

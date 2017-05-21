@@ -139,7 +139,7 @@ if(empty($month) || empty($year) || empty($projectId))$step=1;
             }
             
             $Form .='</table>';
-            $Form .='<input type="submit"  class="butAction" value="'.$langs->trans('Next')."\">\n</from>";
+            $Form .='<input type="submit"  class="butAction" value="'.$langs->trans('Next')."\">\n</form>";
 
                         
                         
@@ -243,7 +243,7 @@ $edit=0;
             $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans("Step").' '.$step.'</th><th>';
             $invoicingMethod=TIMESHEET_INVOICE_METHOD;
             $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Project').'</th><th  >';
-            $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ','', 'fk_status=1',null);
+            $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ', 'fk_statut=1');
             $Form .='</th></tr><tr class="impair"><th align="left" width="80%">'.$langs->trans('Month').' - '.$langs->trans('Year').'</th><th align="left">'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3).'</th></tr>';
  //           $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Month').'</th><th ><input type="text" name="month" value ="'.$month.'"></th></tr>';
            // $Form .='<tr class="impair"><th align="left" width="80%">'.$langs->trans('Customer').'</th><th "><input type="text" name="ccust" value ="'.$custId.'"></th></tr>';
@@ -324,7 +324,9 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskTimeList]"  value="'. $tasktimelist.'">';
     $defaultService=TIMESHEET_INVOICE_SERVICE; 
     $addchoices=array('-999'=> $langs->trans('not2invoice'));
-    $html.='</th><th >'.select_generic('product', 'rowid','userTask['.$user.']['.$task.'][Service]','ref','description',$defaultService,$separator=' - ',$sqlTail='', $selectparam='tosell=1 AND fk_product_type=1',$addchoices).'</th>';
+    $ajaxhandler='core/ajaxGenericSelectHandler.php';
+    //$ajaxhandler=''; //FIXME jQuery doesn't support [] in id
+    $html.='</th><th >'.select_generic('product', 'rowid','userTask['.$user.']['.$task.'][Service]','ref','description',$defaultService,$separator=' - ',$sqlTail=' tosell=1 AND fk_product_type=1', $selectparam='',$addchoices,'',$ajaxhandler).'</th>';
     $html.='<th ><input type="text"  size="30" name="userTask['.$user.']['.$task.'][Desc]" ></th>';
     $html.='<th><input type="text"  size="6" name="userTask['.$user.']['.$task.'][PriceHT]" ></th>';
     //$html.='<th><input type="text" size="6" name="userTask['.$user.']['.$task.']["VAT"]" ></th>';
@@ -334,7 +336,7 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
     $html.='</br><input name="userTask['.$user.']['.$task.'][unit_duration_unit]" type="radio" value="d">'.$langs->trans('Days').'</th>';
     $html.='<th><input type="text" size="2" maxlength="2" name="userTask['.$user.']['.$task.'][duration]" value="'.$duration.'" >';
     
-    $html.='</tr>';
+    $html.='</th</tr>';
     return $html;
 }
 

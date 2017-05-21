@@ -440,9 +440,9 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Task').' </td><td>';
 		if($edit==1){
-                    if($object->project) $formProject=' WHERE fk_projet="'.$object->project.'"';
+                    if($object->project) $formProject=' fk_projet="'.$object->project.'"';
                   //if (isset($formProject)){  
-                        print select_generic('projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',(isset($formProject)?$formProject:' WHERE 1=2'));
+                        print select_generic('projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',(isset($formProject)?$formProject:'  1=2'));
                   //}else{
                   //      print '<select class="flat minwidth200" id="Projecttask" name="Projecttask"></select>';
                   //}

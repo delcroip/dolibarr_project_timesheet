@@ -99,46 +99,77 @@ global $db;
  * function to genegate a select list from a table, the showed text will be a concatenation of some 
  * column defined in column bit, the Least sinificative bit will represent the first colum 
  * 
- *  @param    object             	$db                 db Object to do the querry
  *  @param    string              	$table                 table which the fk refers to (without prefix)
  *  @param    string              	$fieldValue         field of the table which the fk refers to, the one to put in the Valuepart
  *  @param    string              	$htmlName        name to the form select
  *  @param    string              	$fieldToShow1    first part of the concatenation
- *  @param    string              	$fieldToShow1    second part of the concatenation
+ *  @param    string              	$fieldToShow2    second part of the concatenation
  *  @param    string              	$selected            which value must be selected
  *  @param    string              	$separator          separator between the tow contactened fileds
-*  @param    string              	$sqlTail              to limit per entity, to filter ...
+*  @param    string              	$sqlTailWhere              to limit per entity, to filter ...
 *  @param    string              	$selectparam          to add parameters to the select
  *  @param    array(string)             $addtionnalChoices    array of additionnal fields Array['VALUE']=string to show
+*  @param    string              	$sqlTailTAble              to add join ... 
+*  @param    string              	$ajaxUrl             path to the ajax handler ajaxSelectGenericHandler.php
 
  *  @return string                                                   html code
  */
-function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTail='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL')){
-     //
-    //return 'tada';
+function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl=''){
+
+   
+    
     global $conf,$langs,$db;
+     $ajax=$conf->use_javascript_ajax ;
     if($table=='' || $fieldValue=='' || $fieldToShow1=='' || $htmlName=='' )
     {
         return 'error, one of the mandatory field of the function  select_generic is missing';
     }
     $select="\n";
-    if ($conf->use_javascript_ajax)
+    if ($ajax)
     {
+        
         include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-        $comboenhancement = ajax_combobox($htmlName);
+       $token=getToken();
+
+        $urloption='token='.$token;
+        $comboenhancement = '';
+        //$ajaxUrl='';
+        $searchfields='';
+        if(! empty($ajaxUrl)){
+            $_SESSION['ajaxQuerry'][$token]=array('table'=>$table, 'fieldValue'=>$fieldValue,'htmlName'=> $htmlName,'fieldToShow1'=>$fieldToShow1,'fieldToShow2'=>$fieldToShow2,'separator'=> $separator,'sqlTailTable'=>$sqlTailTable,'sqlTailWhere'=>$sqlTailWhere,'addtionnalChoices'=>$addtionnalChoices);
+            $comboenhancement = ajax_autocompleter($selected, $htmlName, $ajaxUrl, $urloption);
+            $sqlTail.=" LIMIT 5";
+            // put \\ before barket so the js will work for Htmlname before it is change to seatch HTMLname
+            $htmlid=str_replace('[','\\\\[',str_replace(']','\\\\]',$htmlName));
+            $comboenhancement=str_replace('#'.$htmlName, '#'.$htmlid,$comboenhancement);
+            $comboenhancement=str_replace($htmlName.':', '"'.$htmlName.'":',$comboenhancement); // #htmlname doesn't cover everything
+            $htmlName='search_'.$htmlName;
+        }else{
+            $comboenhancement = ajax_combobox($htmlName);
+        }
+        // put \\ before barket so the js will work
+        $htmlid='#'.str_replace('[','\\\\[',str_replace(']','\\\\]',$htmlName));
+        $comboenhancement=str_replace('#'.$htmlName, $htmlid,$comboenhancement);
+        //incluse js code in the html response
         $select.=$comboenhancement;
         $nodatarole=($comboenhancement?' data-role="none"':'');
+        
     }
-    $select.='<select class="flat minwidth200" id="'.$htmlName.'" name="'.$htmlName.'"'.$nodatarole.' '.$selectparam.'>';
+    
+    //dBQuerry
+
+    $SelectOptions='';
+    $selectedValue='';
     $sql='SELECT DISTINCT';
     $sql.=' t.'.$fieldValue;
     $sql.=' ,'.$fieldToShow1;
     if(!empty($fieldToShow2))
         $sql.=' ,'.$fieldToShow2;
+    if(!empty($sqlTailTable))
+            $sql.=' '.$sqlTailTable;
     $sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as t';
-    if(!empty($sqlTail))
-            $sql.=' '.$sqlTail;
-    //$sql.= " ORDER BY t.".$field;
+    if(!empty($sqlTailWhere))
+            $sql.=' WHERE '.$sqlTailWhere;
        
     dol_syslog('form::select_generic sql='.$sql, LOG_DEBUG);
     
@@ -155,7 +186,7 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
         if($starfields2>0)
             $fieldToShow2=  substr($fieldToShow2, $starfields2+4);
 
-        $select.= "<option value=\"-1\" ".(empty($selected)?"selected":"").">&nbsp;</option>\n";
+        $selectOptions.= "<option value=\"-1\" ".(empty($selected)?"selected":"").">&nbsp;</option>\n";
         $i=0;
          //return $table."this->db".$field;
         $num = $db->num_rows($resql);
@@ -166,17 +197,21 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
             
             if ($obj)
             {
-                    $select.= "<option value=\"".$obj->{$fieldValue}."\" ";
-                    $select.=(($obj->{$fieldValue}==$selected)?"selected=\"selected\" >":">");                    
-                    $select.=$obj->{$fieldToShow1};
-                    if(!empty($fieldToShow2))
-                         $select.=$separator.$obj->{$fieldToShow2};            
-                    $select.="</option>\n";
+                $fieldtoshow=$obj->{$fieldToShow1}.(!empty($fieldToShow2))?$separator.$obj->{$fieldToShow2}:''; 
+                $selectOptions.= "<option value=\"".$obj->{$fieldValue}."\" ";
+                if($obj->{$fieldValue}==$selected){
+                     $selectOptions.='selected=\"selected\"';
+                     $selectedValue=$fieldtoshow;
+                 }
+                 $selectOptions.=">";                    
+                 $selectOptions.=$fieldtoshow;
+
+                 $selectOptions.="</option>\n";
             } 
             $i++;
         }
         if($addtionnalChoices)foreach($addtionnalChoices as $value => $choice){
-            $select.= '<option value="'.$value.'" '.(($selected==$value)?'selected':'').">{$choice}</option>\n";
+            $selectOptions.= '<option value="'.$value.'" '.(($selected==$value)?'selected':'').">{$choice}</option>\n";
         }
 
         
@@ -187,7 +222,19 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
         dol_print_error($db);
        $select.= "<option value=\"-1\" selected=\"selected\">ERROR</option>\n";
     }
-      $select.="</select>\n";
+     
+   
+    if(!empty($ajaxUrl) && $ajax){
+        if ($selectedValue=='' && is_array($addtionnalChoices)){
+            $selectedValue=$addtionnalChoices[$selected];
+        }
+        $select.='<input type="text" class="minwidth200" name="'.$htmlName.'" id="'.$htmlName.'" value="'.$selectedValue.'"'.$selectparam.' />';
+    }else{
+        $select.='<select class="flat minwidth200" id="'.$htmlName.'" name="'.$htmlName.'"'.$nodatarole.' '.$selectparam.'>';
+        $select.=$SelectOptions;
+        $select.="</select>\n";
+    }
+   // }
       return $select;
     
  }
@@ -283,3 +330,29 @@ function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2
  *  @param    int                       $entity             entity 
  *  @return   array                                         List of the subordinate ids  and level [[id][lvl]]                                          
  */
+ 
+ 
+ function crypto_rand_secure($min, $max) {
+        $range = $max - $min;
+        if ($range < 0) return $min; // not so random...
+        $log = log($range, 2);
+        $bytes = (int) ($log / 8) + 1; // length in bytes
+        $bits = (int) $log + 1; // length in bits
+        $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
+        do {
+            $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+            $rnd = $rnd & $filter; // discard irrelevant bits
+        } while ($rnd >= $range);
+        return $min + $rnd;
+}
+
+function getToken($length=32){
+    $token = "";
+    $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+    $codeAlphabet.= "0123456789";
+    for($i=0;$i<$length;$i++){
+        $token .= $codeAlphabet[crypto_rand_secure(0,strlen($codeAlphabet))];
+    }
+    return $token;
+}
