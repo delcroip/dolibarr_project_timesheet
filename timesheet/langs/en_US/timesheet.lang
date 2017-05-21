@@ -70,6 +70,7 @@ modeNone=shows all tasks
 modeWhiteList=only favoris
 nbTsToApprove=Number of timesheet to approve
 NextWeek=Next week
+NewTimesheetuser=New user timesheet 
 noIdPresent=No reference (id) present
 not2invoice=Don't invoice it.
 NoTaskToUpdate=No task for this week

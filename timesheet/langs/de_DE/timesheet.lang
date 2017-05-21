@@ -70,6 +70,7 @@ modeNone=Zeigt alle Aufgaben
 modeWhiteList=Nur favoris
 nbTsToApprove=Anzahl der Stundenzettel zu genehmigen
 NextWeek=Nächste Woche
+NewTimesheetuser=Nouvelle feuille de temps de l'utilisateur
 noIdPresent=Keine Referenz (id) vorhanden
 not2invoice=Rechn es nicht.
 NoTaskToUpdate=Keine Aufgabe für diese Woche

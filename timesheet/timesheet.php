@@ -49,7 +49,7 @@ $toDateyear                 = GETPOST('toDateyear');
 $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
 $userid=  is_object($user)?$user->id:$user;
-$task_timesheet= new task_timesheet($db,$userid);
+$task_timesheet= new Task_timesheet($db,$userid);
 $confirm=GETPOST('confirm');
 
 if($yearWeek==0 && isset($_SESSION["yearWeek"])) $yearWeek=$_SESSION["yearWeek"];
@@ -84,7 +84,7 @@ if ($user->societe_id > 0)
 
 */
   
-$task_timesheet= new task_timesheet($db,$userid);
+$task_timesheet= new Task_timesheet($db,$userid);
 
 /*******************************************************************
 * ACTIONS
