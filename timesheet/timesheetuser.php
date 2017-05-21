@@ -424,7 +424,7 @@ switch ($action) {
 		print "<tr>\n";
 
 // show the field target
-
+/*
 		print '<td>'.$langs->trans('Target').' </td><td>';
 		if($edit==1){
 		print select_enum('project_task_time_approval','target','Target',$object->target);
@@ -434,11 +434,11 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
-
+*/
 
 
 // show the field project_tasktime_list
-
+/*
 		print '<td>'.$langs->trans('Projecttasktimelist').' </td><td>';
 		if($edit==1){
                     print '<input class="flat" size="16" type="text" name="Projecttasktimelist" value="'.$object->project_tasktime_list.'"/>';
@@ -449,9 +449,9 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
-
+*/
 // show the field user_approval
-
+/*
 		print '<td>'.$langs->trans('Userapproval').' </td><td>';
 		if($edit==1){
 		print $form->select_dolusers($object->user_approval, 'Userapproval', 1, '', 0 );
@@ -461,9 +461,9 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
-
+*/
 // show the field timsesheetuser
-
+/*
 		print '<td>'.$langs->trans('Timesheetuser').' </td><td>';
                 $sqltail= "JOIN ".MAIN_DB_PREFIX."user AS u ON u.rowid=t.fk_userid";
 		if($edit==1){
@@ -478,9 +478,9 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
-
+*/
 // show the field task
-
+/*
 		print '<td>'.$langs->trans('Task').' </td><td>';
         if($edit==1){
 		print select_generic('projet_task', 'rowid','Task','ref','label',$object->task);
@@ -491,7 +491,7 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
-
+*/
 // show the field note
 
 		print '<td>'.$langs->trans('Note').' </td><td>';
@@ -707,8 +707,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		//print "\n";
 		//print_liste_field_titre($langs->trans('Projecttasktimelist'),$PHP_SELF,'t.fk_project_tasktime_list','',$param,'',$sortfield,$sortorder);
 		//print "\n";
-		print_liste_field_titre($langs->trans('Userapproval'),$PHP_SELF,'t.fk_user_approval','',$param,'',$sortfield,$sortorder);
-		print "\n";
+		//print_liste_field_titre($langs->trans('Userapproval'),$PHP_SELF,'t.fk_user_approval','',$param,'',$sortfield,$sortorder);
+		//print "\n";
 		print '<td class="liste_titre" colspan="1" >';
 		print '</tr>';
 		//SEARCH FIELDS
@@ -737,9 +737,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		//		print '<input class="flat" size="16" type="text" name="ls_project_tasktime_list" value="'.$ls_project_tasktime_list.'"/>';
 		//	print '</td>';
 		//Search field foruser_approval
-		print '<td class="liste_titre" colspan="1" >';
-		print select_generic('user','rowid','ls_user_approval','lastname','firstname',$ls_user_approval);
-		print '</td>';
+		//print '<td class="liste_titre" colspan="1" >';
+		//print select_generic('user','rowid','ls_user_approval','lastname','firstname',$ls_user_approval);
+		//print '</td>';
  
 		print '<td width="15px">';
 		print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -762,7 +762,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 				print "<td>".$langs->trans($obj->status)."</td>";
 				//print "<td>".$langs->trans($obj->target)."</td>";
 				//print "<td>".$obj->fk_project_tasktime_list."</td>";
-				print "<td>".print_generic('user','rowid',$obj->fk_user_approval,'lastname','firstname',' ')."</td>";
+				//print "<td>".print_generic('user','rowid',$obj->fk_user_approval,'lastname','firstname',' ')."</td>";
 				print '<td><a href="'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 				print "</tr>";
 			}
