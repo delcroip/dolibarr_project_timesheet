@@ -30,40 +30,38 @@ require_once 'class/timesheetwhitelist.class.php';
 //require_once './projectTimesheet.class.php';
 //define('TIMESHEET_BC_FREEZED','909090');
 //define('TIMESHEET_BC_VALUE','f0fff0');
-class task_timesheet extends CommonObject
+class Task_timesheet extends CommonObject
 {
     //common
-    	var $db;							//!< To store db handler
+    var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
 	var $element='timesheetuser';			//!< Id that identify managed objects
 	var $table_element='project_task_timesheet';		//!< Name of table without prefix where object is stored
 // from db
-        var $id;
+    var $id;
 	var $userId;
 	var $date_start='';
-        var $date_end;
+    var $date_end;
 	var $status;
 //	var $sender;
 //	var $recipient;
-//        var $estimates;
-        var $note;
-//        var $tracking;
-//        var $tracking_ids;
-//        var $fk_task;
-        //basic DB logging
+//  var $estimates;
+    var $note;
+//  var $tracking;
+//  var $tracking_ids;
+//  var $fk_task;
+    //basic DB logging
 	var $date_creation='';
 	var $date_modification='';
 	var $user_creation;
-	var $user_modification;
-
-        
+	var $user_modification;  
 
 //working variable
 
     var $duration;
-    var $ref;
-    var $user;
+    var $ref; 
+   var $user;
     var $yearWeek;
     var $holidays;
     var $taskTimesheet;
@@ -662,7 +660,7 @@ function saveInSession(){
             if(isset($this->taskTimesheet))unset($this->taskTimesheet);
              foreach($tasksList as $row)
             {
-                    dol_syslog("Timesheet::task_timesheet.class.php task=".$row->id, LOG_DEBUG);
+                    dol_syslog("Timesheet::Task_timesheet.class.php task=".$row->id, LOG_DEBUG);
                     $row->getTaskInfo();
                     //if($this->status=="DRAFT" || $this->status=="REJECTED"){
                         $row->getActuals($datestart,$datestop,$userid); 
@@ -904,13 +902,13 @@ Public function setStatus($user,$status,$id=0){
             if($this->project_task_time_approval_next>0){
                 $ret=$this->project_task_time_approval_next;
             }else
-                $ret=new task_timesheet($db);
+                $ret=new Task_timesheet($db);
                 $ret->recipient=$recipients[$cur];
         }else if($this->project_task_time_approval_prev>0){
             
         }
         //fecth if any
-        $staticTaskTimeApproval=new task_timesheet($this->db);
+        $staticTaskTimeApproval=new Task_timesheet($this->db);
         
         //create if none fech
         return 0;
