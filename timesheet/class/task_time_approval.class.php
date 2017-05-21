@@ -716,107 +716,109 @@ class task_time_approval extends Task
     $dayshours=TIMESHEET_DAY_DURATION;
     $hidezeros=TIMESHEET_HIDE_ZEROS;
     $hidden=false;
-    if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
-        $linestyle=(($hidden)?'display:none;':'').(($this->pStatus == "2")?'background:#'.TIMESHEET_BC_FREEZED.'";':'');
-        $html= '<tr '.((!empty($linestyle))?'style="'.$linestyle.'"':'').' class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
-        //title section
-         foreach ($headers as $key => $title){
-             $html.="\t<th align=\"left\">";
-             switch($title){
-                 case 'Project':
-                     if(version_compare(DOL_VERSION,"3.7")>=0){
-                     //if(file_exists("../projet/card.php")||file_exists("../../projet/card.php")){
-                        $html.='<a href="'.DOL_URL_ROOT.'/projet/card.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
-                     }else{
-                        $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
+    //if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
+    //$linestyle=(($hidden)?'display:none;':'');
+    $favClass=(($this->listed)?'timesheet_whitelist':'timesheet_blacklist');
+    $linestyle.=(($this->pStatus == "2")?'background:#'.TIMESHEET_BC_FREEZED.'";':'');
+    $html= '<tr class="timesheet_line '.$favClass.'" '.((!empty($linestyle))?'style="'.$linestyle.'"':'').' class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
+    //title section
+     foreach ($headers as $key => $title){
+         $html.="\t<th align=\"left\">";
+         switch($title){
+             case 'Project':
+                 if(version_compare(DOL_VERSION,"3.7")>=0){
+                 //if(file_exists("../projet/card.php")||file_exists("../../projet/card.php")){
+                    $html.='<a href="'.DOL_URL_ROOT.'/projet/card.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
+                 }else{
+                    $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
 
-                     }
-                     break;
-                 case 'TaskParent':
-                     $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
-                     break;
-                 case 'Tasks':
-                     $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'">'.$this->description.'</a>';
-                     break;
-                 case 'DateStart':
-                     $html.=$this->date_start?dol_print_date($this->date_start,'day'):'';
-                     break;
-                 case 'DateEnd':
-                     $html.=$this->date_end?dol_print_date($this->date_end,'day'):'';
-                     break;
-                 case 'Company':
-                     $html.='<a href="'.DOL_URL_ROOT.'/societe/soc.php?mainmenu=companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
-                     break;
-                 case 'Progress':
-                     $html .=$this->parseTaskTime($this->duration_effective).'/';
-                    if($this->planned_workload)
-                    {
-                         $html .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
-                    }else{
-                        $html .= "-:--(-%)";
-                    }
-                     break;
-             }
-
-             $html.="</th>\n";
-         }
-         
-  // day section
-         $isOpenSatus=($status=="DRAFT" || $status=="CANCELLED"|| $status=="REJECTED");
-         $opendays=str_split(TIMESHEET_OPEN_DAYS);
-
-         for($dayCur=0;$dayCur<$dayelapsed;$dayCur++)
-         {
-
-                //$shrinkedStyle=(!$opendays[$dayCur+1] && $shrinked)?'display:none;':'';
-                $today= $timeStart+SECINDAY*$dayCur;//strtotime($yearWeek.' +'.($dayCur).' day  '); // FIXME
-                # to avoid editing if the task is closed 
-                $dayWorkLoadSec=isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
-                
-                if ($timetype=="days")
+                 }
+                 break;
+             case 'TaskParent':
+                 $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
+                 break;
+             case 'Tasks':
+                 $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'">'.$this->description.'</a>';
+                 break;
+             case 'DateStart':
+                 $html.=$this->date_start?dol_print_date($this->date_start,'day'):'';
+                 break;
+             case 'DateEnd':
+                 $html.=$this->date_end?dol_print_date($this->date_end,'day'):'';
+                 break;
+             case 'Company':
+                 $html.='<a href="'.DOL_URL_ROOT.'/societe/soc.php?mainmenu=companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
+                 break;
+             case 'Progress':
+                 $html .=$this->parseTaskTime($this->duration_effective).'/';
+                if($this->planned_workload)
                 {
-                    $dayWorkLoad=$dayWorkLoadSec/3600/$dayshours;
-                }else {
-                    $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
-                }
-			 	$startDates=($this->date_start>$this->startDatePjct )?$this->date_start:$this->startDatePjct;
-			 	$stopDates=(($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct==0)?$this->date_end:$this->stopDatePjct;
-                if($isOpenSatus){
-                    $isOpen=$isOpenSatus && (($startDates==0) || ($startDates < $today +SECINDAY));
-                    $isOpen= $isOpen && (($stopDates==0) ||($stopDates >= $today ));
-                    
-                    $isOpen= $isOpen && ($this->pStatus < "2") ;
-                      $isOpen= $isOpen  && $opendays[date("N",$today)];
-                   // var_dump($opendays[$dayCur+1]);
-                    $bkcolor='';
-                    
-                    if($isOpen){
-                        if($dayWorkLoadSec!=0)$bkcolor='background:#'.TIMESHEET_BC_VALUE;
-                    }else{
-                        $bkcolor='background:#'.TIMESHEET_BC_FREEZED;
-                    } 
-                    
-                    
-                    $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$tsUserId.']['.$dayCur.']" ';
-//                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" '; if one whant multiple ts per validation
-                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" ';
-                    $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
-                    $html .='" maxlength="5" style="width: 90%;'.$bkcolor.'" ';
-                    $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
-                    $html .= 'onblur="validateTime(this,'.$tsUserId.','.$dayCur.',0)" />';
-                    $html .= "</th>\n"; 
+                     $html .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
                 }else{
-                    $bkcolor='background:#'.$statusTsColor[$status];
-                    $html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$tsUserId.']['.$dayCur.']"';
-                    //$html .= ' name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
-                    $html .= ' name="task['.$this->id.']['.$dayCur.']" ';
-                    $html .= ' style="width: 90%;"';
-                    $html .=' >'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
-                    $html .='</a> ';
-                    $html .= "</th>\n"; 
-
-                        
+                    $html .= "-:--(-%)";
                 }
+                 break;
+         }
+
+         $html.="</th>\n";
+     }
+
+  // day section
+        $isOpenSatus=($status=="DRAFT" || $status=="CANCELLED"|| $status=="REJECTED");
+        $opendays=str_split(TIMESHEET_OPEN_DAYS);
+
+        for($dayCur=0;$dayCur<$dayelapsed;$dayCur++)
+        {
+
+            //$shrinkedStyle=(!$opendays[$dayCur+1] && $shrinked)?'display:none;':'';
+            $today= $timeStart+SECINDAY*$dayCur;//strtotime($yearWeek.' +'.($dayCur).' day  '); // FIXME
+            # to avoid editing if the task is closed 
+            $dayWorkLoadSec=isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
+
+            if ($timetype=="days")
+            {
+                $dayWorkLoad=$dayWorkLoadSec/3600/$dayshours;
+            }else {
+                $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
+            }
+                            $startDates=($this->date_start>$this->startDatePjct )?$this->date_start:$this->startDatePjct;
+                            $stopDates=(($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct==0)?$this->date_end:$this->stopDatePjct;
+            if($isOpenSatus){
+                $isOpen=$isOpenSatus && (($startDates==0) || ($startDates < $today +SECINDAY));
+                $isOpen= $isOpen && (($stopDates==0) ||($stopDates >= $today ));
+
+                $isOpen= $isOpen && ($this->pStatus < "2") ;
+                  $isOpen= $isOpen  && $opendays[date("N",$today)];
+               // var_dump($opendays[$dayCur+1]);
+                $bkcolor='';
+
+                if($isOpen){
+                    if($dayWorkLoadSec!=0)$bkcolor='background:#'.TIMESHEET_BC_VALUE;
+                }else{
+                    $bkcolor='background:#'.TIMESHEET_BC_FREEZED;
+                } 
+
+
+                $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$tsUserId.']['.$dayCur.']" ';
+//                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" '; if one whant multiple ts per validation
+                $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" ';
+                $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
+                $html .='" maxlength="5" style="width: 90%;'.$bkcolor.'" ';
+                $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
+                $html .= 'onblur="validateTime(this,'.$tsUserId.','.$dayCur.',0)" />';
+                $html .= "</th>\n"; 
+            }else{
+                $bkcolor='background:#'.$statusTsColor[$status];
+                $html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$tsUserId.']['.$dayCur.']"';
+                //$html .= ' name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
+                $html .= ' name="task['.$this->id.']['.$dayCur.']" ';
+                $html .= ' style="width: 90%;"';
+                $html .=' >'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
+                $html .='</a> ';
+                $html .= "</th>\n"; 
+
+
+            }
         }
         $html .= "</tr>\n";
         return $html;
@@ -905,7 +907,10 @@ class task_time_approval extends Task
  */
 function serialize(){
     $arRet=array();
+    
     $arRet['id']=$this->id; //task id
+    $arRet['listed']=$this->listed; //task id
+    $arRet['description']=$this->description; //task id
     $arRet['appId']=$this->appId; // task_time_approval id
     $arRet['tasklist']=$this->tasklist;
     $arRet['userId']=$this->userId; // user id booking the time
@@ -938,6 +943,8 @@ function serialize(){
 function unserialize($str){
     $arRet=unserialize($str);
     $this->id=$arRet['id'];
+    $this->listed=$arRet['listed'];
+    $this->description=$arRet['description'];
     $this->appId=$arRet['appId'];
     $this->userId=$arRet['userId'];
     $this->tasklist=$arRet['tasklist'];

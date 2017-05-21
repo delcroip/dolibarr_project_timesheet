@@ -231,7 +231,7 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
         $select.='<input type="text" class="minwidth200" name="'.$htmlName.'" id="'.$htmlName.'" value="'.$selectedValue.'"'.$selectparam.' />';
     }else{
         $select.='<select class="flat minwidth200" id="'.$htmlName.'" name="'.$htmlName.'"'.$nodatarole.' '.$selectparam.'>';
-        $select.=$SelectOptions;
+        $select.=$selectOptions;
         $select.="</select>\n";
     }
    // }

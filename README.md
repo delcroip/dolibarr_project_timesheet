@@ -13,6 +13,7 @@ Timesheet view for project in Dolibarr
  - Project report by month
  - create invoice from the project report
  - better handling of search boxes
+ - favoris in a tab (not a new page)
  
 # Functionnalities eligible for removal
 - favoris 
@@ -27,11 +28,11 @@ Timesheet view for project in Dolibarr
 # Next developement
 
 - chained approval
-- favoris in a tab (not a new page)
 - add automatic reminder for the approval
 - add feature in Project to foresee workload per user, task and "week"
 - send email over TS rejection
 - reminder when TS is not filled in ( email and home page)
+- add a quick 'add to favoris' in the timesheet screen
 
 
 # Change log

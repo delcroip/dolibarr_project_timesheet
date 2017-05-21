@@ -202,9 +202,10 @@ $Form .=$task_timesheet->getHTMLTotal();
 
 $Form .=$task_timesheet->getHTMLtaskLines($ajax);
 $Form .=$task_timesheet->getHTMLTotal();
-$Form .=$task_timesheet->getHTMLNote($ajax);
-$Form .=$task_timesheet->getHTMLFooter($ajax);
 
+$Form .=$task_timesheet->getHTMLFooter($ajax);
+$Form .=$task_timesheet->getHTMLNote($ajax);
+$Form .='<script>document.getElementById("defaultOpen").click()</script>';
 
 //Javascript
 

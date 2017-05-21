@@ -418,7 +418,7 @@ switch ($action) {
 		print '<td class="fieldrequired">'.$langs->trans('Project').' </td><td>';
 		if($edit==1){
                     if(!empty($editedProject))$object->project=$editedProject;
-                $formUserWhere=' WHERE (t.datee>='.$object->db->idate(time()).' OR t.datee IS NULL)';
+                $formUserWhere=' (t.datee>='.$object->db->idate(time()).' OR t.datee IS NULL)';
  //               $formUserWhere.=' AND (projet.dateo<=FROM_UNIXTIME("'.time().'") OR prj.dateo IS NULL)';
                 if(!$user->admin)
                 {
@@ -428,7 +428,7 @@ switch ($action) {
 
                 }
                 $formUser.=$formUserJoin.$formUserWhere;
-		print select_generic('projet','rowid','Project','ref','title',$object->project,' - ',$formUser,'onchange="reload(this.form)"');
+		print select_generic('projet','rowid','Project','ref','title',$object->project,' - ',$formUserWhere,'onchange="reload(this.form)"',NULL,$formUserJoin);
 		}else{
 		print print_generic('projet','rowid',$object->project,'ref','title');
 		}

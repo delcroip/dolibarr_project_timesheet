@@ -952,7 +952,19 @@ Public function setStatus($user,$status,$id=0){
  */
  function getHTMLHeader($ajax=false){
      global $langs;
-    $html="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
+     
+     If(TIMESHEET_WHITELIST==1){
+        $html= '<div class="tabs" data-role="controlgroup" data-type="horizontal"  >';
+        $html.= '  <div '.(($this->whitelistmode==2)?'id="defaultOpen"':'').' class="inline-block tabsElem" onclick="showFavoris(event, \'All\')"><a  href="javascript:void(0);"  class="tabunactive tab inline-block" data-role="button">'.$langs->trans('All').'</a></div>';
+        $html.='  <div '.(($this->whitelistmode==1)?'id="defaultOpen"':'').' class="inline-block tabsElem" onclick="showFavoris(event, \'whitelist\')"><a  href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Favoris').'</a></div>';
+        $html.= '  <div '.(($this->whitelistmode==0)?'id="defaultOpen"':'').' class="inline-block tabsElem"  onclick="showFavoris(event, \'blacklist\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Others').'</a></div>';
+        $html.= '</div>';
+     }
+    $html.="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
+     ///Whitelist tab
+    
+
+
 
      $html.='<tr class="liste_titre" id="">'."\n";
      
@@ -1008,9 +1020,9 @@ Public function setStatus($user,$status,$id=0){
     $weeklength=round(($this->date_end-$this->date_start)/SECINDAY);
     for ($i=0;$i<$weeklength;$i++)
     {
-       $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>";
+       $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>\n";
      }
-    $html .='</tr>';
+    $html .="</tr>\n";
     return $html;
      
  }
@@ -1091,8 +1103,8 @@ Public function setStatus($user,$status,$id=0){
         $i=0;
         $Lines='';
         if(!$ajax & is_array($this->taskTimesheet)){
-            foreach ($this->taskTimesheet as $timesheet) {
-                $row=new task_time_approval($this->db);
+            foreach ($this->taskTimesheet as $timesheet) {          
+                $row=new task_time_approval($this->db);            
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
                 $Lines.=$row->getFormLine( $this->date_start,$this->date_end,$i,$this->headers,$this->whitelistmode,$this->status,$this->id); // fixme

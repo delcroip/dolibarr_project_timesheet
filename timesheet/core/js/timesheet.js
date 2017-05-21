@@ -252,8 +252,14 @@ function openTab(evt, tabName) {
 
     // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabBar");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
+  if(tabName=="All"){
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "block";
+        }
+    }else{
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
     }
 
     // Get all elements with class="tablinks" and remove the class "active"
@@ -268,8 +274,56 @@ function openTab(evt, tabName) {
 
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " tabsElemActive";
+     evt.currentTarget.className += " tabsElemActive";
      evt.currentTarget.firstChild.className=evt.currentTarget.firstChild.className.replace("tabunactive", "tabactive");
+}
+
+function showFavoris(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+    switch(tabName){
+        case 'whitelist':
+        case 'blacklist':
+        case 'All':
+        default:
+            break;
+    }
+    tslist = document.getElementsByClassName("timesheet_line");
+
+    if(tabName=='All'){
+        for (i = 0; i < tslist.length; i++) {
+            tslist[i].style.display = "";
+        }
+    }else{
+        for (i = 0; i < tslist.length; i++) {
+               tslist[i].style.display = "none";
+        }        
+        if(tabName=='whitelist'){
+            wlist = document.getElementsByClassName("timesheet_whitelist");
+            for (i = 0; i < wlist.length; i++) {
+               wlist[i].style.display = "";
+            }
+        }else{
+            wlist = document.getElementsByClassName("timesheet_blacklist");
+            for (i = 0; i < wlist.length; i++) {
+               wlist[i].style.display = "";
+            }
+        }
+    }
+
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tabsElem");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" tabsElemActive", "");
+    }
+    tablinks = document.getElementsByClassName("tab");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace("tabactive", "tabunactive");
+    }
+     evt.currentTarget.className += " tabsElemActive";
+     evt.currentTarget.firstChild.className=evt.currentTarget.firstChild.className.replace("tabunactive", "tabactive");
+
 }
 
 function checkEmptyFormFields(even,Myform,msg){
