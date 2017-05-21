@@ -698,6 +698,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print "\n";
 	print_liste_field_titre($langs->trans('DateEnd'),$PHP_SELF,'t.date_end','',$param,'',$sortfield,$sortorder);
 	print "\n";
+	print '<th class="liste_titre"></th>';
+	print "\n";
 
         
         print '</tr>';
