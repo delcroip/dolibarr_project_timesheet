@@ -12,7 +12,7 @@ Timesheet view for project in Dolibarr
  - User report by month
  - Project report by month
  - create invoice from the project report
-
+ - better handling of search boxes
  
 # Functionnalities eligible for removal
 - favoris 
@@ -32,7 +32,7 @@ Timesheet view for project in Dolibarr
 - add feature in Project to foresee workload per user, task and "week"
 - send email over TS rejection
 - reminder when TS is not filled in ( email and home page)
-- better handling of search boxes
+
 
 # Change log
 
