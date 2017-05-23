@@ -194,6 +194,13 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 $ajax=false;
 $Form =$task_timesheet->getHTMLNavigation($optioncss,$ajax);
 $Form .=$task_timesheet->getHTMLFormHeader($ajax);
+     If(TIMESHEET_WHITELIST==1){
+        $Form.= '<div class="tabs" data-role="controlgroup" data-type="horizontal"  >';
+        $Form.= '  <div '.(($task_timesheet->whitelistmode==2)?'id="defaultOpen"':'').' class="inline-block tabsElem" onclick="showFavoris(event, \'All\')"><a  href="javascript:void(0);"  class="tabunactive tab inline-block" data-role="button">'.$langs->trans('All').'</a></div>';
+        $Form.='  <div '.(($task_timesheet->whitelistmode==1)?'id="defaultOpen"':'').' class="inline-block tabsElem" onclick="showFavoris(event, \'whitelist\')"><a  href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Favoris').'</a></div>';
+        $Form.= '  <div '.(($task_timesheet->whitelistmode==0)?'id="defaultOpen"':'').' class="inline-block tabsElem"  onclick="showFavoris(event, \'blacklist\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Others').'</a></div>';
+        $Form.= '</div>';
+     }
 $Form .=$task_timesheet->getHTMLHeader($ajax);
 
 $Form .=$task_timesheet->getHTMLHolidayLines($ajax);

@@ -279,24 +279,18 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
 
         $sql ="SELECT *";
         if($byWeek==2)$sql.=",CONCAT(DATE_FORMAT(date_start,' %m/%Y'),fk_userid) as usermonth";
-        $sql.=" FROM ".MAIN_DB_PREFIX."project_task_time_approval as tu"; 
-        $sql.=' WHERE tu.status="SUBMITTED"';
+        $sql.=" FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts"; 
+        $sql.=' WHERE ts.status="SUBMITTED"';
         
         switch($role){
             case 'team':
                 $sql.=' AND fk_userid in ('.implode(',',$subId).')';
-                $sql.=' AND recipient="'.$role.'"';
+ //               $sql.=' AND recipient="'.$role.'"';
                 break;
             case 'admin_team':
-                $sql.=' AND recipient="team"';
+ //               $sql.=' AND recipient="team"';
                 break;
-            case 'project':
-            case 'customer':
-            case 'provider':
-            case 'other':
-            default:
-                $sql.=' AND fk_task in ('.implode(',',$subId).')';
-                $sql.=' AND recipient="'.$role.'"';
+
                 break;
             
         }

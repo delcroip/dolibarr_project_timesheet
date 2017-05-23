@@ -953,13 +953,7 @@ Public function setStatus($user,$status,$id=0){
  function getHTMLHeader($ajax=false){
      global $langs;
      
-     If(TIMESHEET_WHITELIST==1){
-        $html= '<div class="tabs" data-role="controlgroup" data-type="horizontal"  >';
-        $html.= '  <div '.(($this->whitelistmode==2)?'id="defaultOpen"':'').' class="inline-block tabsElem" onclick="showFavoris(event, \'All\')"><a  href="javascript:void(0);"  class="tabunactive tab inline-block" data-role="button">'.$langs->trans('All').'</a></div>';
-        $html.='  <div '.(($this->whitelistmode==1)?'id="defaultOpen"':'').' class="inline-block tabsElem" onclick="showFavoris(event, \'whitelist\')"><a  href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Favoris').'</a></div>';
-        $html.= '  <div '.(($this->whitelistmode==0)?'id="defaultOpen"':'').' class="inline-block tabsElem"  onclick="showFavoris(event, \'blacklist\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Others').'</a></div>';
-        $html.= '</div>';
-     }
+
     $html.="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
      ///Whitelist tab
     

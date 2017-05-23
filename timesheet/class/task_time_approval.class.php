@@ -58,8 +58,11 @@ class task_time_approval extends Task
 	var $recipient;
        // var $planned_workloads; hetited from task
         var $note; //FIXME, not saved
-        var $tracking;
-        var $tracking_ids;
+        var $user_ap_team;
+        var $user_ap_project;
+        var $user_ap_customer;
+        var $user_ap_supplier;
+        var $user_ap_other;
         //basic DB logging
 	var $date_creation='';
 	var $date_modification='';
@@ -112,8 +115,11 @@ class task_time_approval extends Task
 		if (isset($this->sender)) $this->sender=trim($this->sender);
 		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
 		if (isset($this->planned_workload)) $this->planned_workload=trim($this->planned_workload);
-		if (isset($this->tracking)) $this->tracking=trim($this->tracking);
-		if (isset($this->tracking_ids)) $this->tracking_ids=trim($this->tracking_ids);
+		if (isset($this->user_ap_team)) $this->user_ap_team=trim($this->user_ap_team);
+		if (isset($this->user_ap_project)) $this->user_ap_project=trim($this->user_ap_project);
+		if (isset($this->user_ap_customer)) $this->user_ap_customer=trim($this->user_ap_customer);
+		if (isset($this->user_ap_supplier)) $this->user_ap_supplier=trim($this->user_ap_supplier);
+		if (isset($this->user_ap_other)) $this->user_ap_other=trim($this->user_ap_other);
 		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
@@ -137,8 +143,11 @@ class task_time_approval extends Task
 		$sql.= 'sender,';
 		$sql.= 'recipient,';
 		$sql.= 'planned_workload,';
-		$sql.= 'tracking,';
-                $sql.= 'fk_user_tracking,';
+                $sql.= 'fk_user_app_team,';
+                $sql.= 'fk_user_app_project,';
+                $sql.= 'fk_user_app_customer,';
+                $sql.= 'fk_user_app_supplier,';
+                $sql.= 'fk_user_app_other,';               
 		$sql.= 'date_creation,';
 		$sql.= 'fk_user_creation,';
                 $sql.= 'fk_projet_task,';
@@ -155,9 +164,11 @@ class task_time_approval extends Task
 		$sql.=' '.(! isset($this->sender)?'"user"':'"'.$this->sender.'"').',';
 		$sql.=' '.(! isset($this->recipient)?'"team"':'"'.$this->recipient.'"').',';
 		$sql.=' '.(! isset($this->planned_workload)?'NULL':'"'.$this->planned_workload.'"').',';
-		$sql.=' '.(! isset($this->tracking)?'"x00000000"':'"'.$this->tracking.'"').',';
-		$sql.=' '.(! isset($this->tracking_ids)?'NULL':'"'.$this->tracking_ids.'"').',';
-
+		$sql.=' '.(! isset($this->user_app_team)?'NULL':'"'.$this->user_app_team.'"').',';
+		$sql.=' '.(! isset($this->user_app_project)?'NULL':'"'.$this->user_app_project.'"').',';
+		$sql.=' '.(! isset($this->user_app_customer)?'NULL':'"'.$this->user_app_customer.'"').',';
+		$sql.=' '.(! isset($this->user_app_supplier)?'NULL':'"'.$this->user_app_supplier.'"').',';
+		$sql.=' '.(! isset($this->user_app_other)?'NULL':'"'.$this->user_app_other.'"').',';
 		$sql.=' NOW() ,';
 		$sql.=' "'.$user->id.'",'; //fixme 3.5
 		$sql.=' '.(! isset($this->id)?'NULL':'"'.$this->id.'"').',';
@@ -225,8 +236,11 @@ class task_time_approval extends Task
 		$sql.=' t.sender,';
 		$sql.=' t.recipient,';
 		$sql.=' t.planned_workload,';
-		$sql.=' t.tracking,';
-		$sql.=' t.fk_user_tracking,';
+                $sql.= 't.fk_user_app_team,';
+                $sql.= 't.fk_user_app_project,';
+                $sql.= 't.fk_user_app_customer,';
+                $sql.= 't.fk_user_app_supplier,';
+                $sql.= 't.fk_user_app_other,';
 		$sql.=' t.date_creation,';
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
@@ -255,8 +269,11 @@ class task_time_approval extends Task
                 $this->sender = $obj->sender;
                 $this->recipient = $obj->recipient;
                 $this->planned_workload = $obj->planned_workload;
-                $this->tracking = $obj->tracking;
-                $this->tracking_ids = $obj->fk_user_tracking;
+                $this->user_app_team = $obj->fk_user_app_team;
+                $this->user_app_other = $obj->fk_user_app_other;
+                $this->user_app_supplier = $obj->fk_user_app_supplier;
+                $this->user_app_customer = $obj->fk_user_app_customer;
+                $this->user_app_project = $obj->fk_user_app_project;               
                 $this->date_creation = $this->db->jdate($obj->date_creation);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
@@ -299,8 +316,11 @@ class task_time_approval extends Task
 		$sql.=' t.sender,';
 		$sql.=' t.recipient,';
 		$sql.=' t.planned_workload,';
-		$sql.=' t.tracking,';
-		$sql.=' t.fk_user_tracking,';
+                $sql.= 't.fk_user_app_team,';
+                $sql.= 't.fk_user_app_project,';
+                $sql.= 't.fk_user_app_customer,';
+                $sql.= 't.fk_user_app_supplier,';
+                $sql.= 't.fk_user_app_other,';
 		$sql.=' t.date_creation,';
 		$sql.=' t.date_modification,';
 		$sql.=' t.fk_user_creation,';
@@ -335,9 +355,11 @@ class task_time_approval extends Task
                 $this->status = $obj->status;
                 $this->sender = $obj->sender;
                 $this->recipient = $obj->recipient;
-                $this->planned_workloads = $obj->planned_workloads;
-                $this->tracking = $obj->tracking;
-                $this->tracking_ids = $obj->fk_user_tracking;
+                $this->user_app_team = $obj->fk_user_app_team;
+                $this->user_app_other = $obj->fk_user_app_other;
+                $this->user_app_supplier = $obj->fk_user_app_supplier;
+                $this->user_app_customer = $obj->fk_user_app_customer;
+                $this->user_app_project = $obj->fk_user_app_project;  
                 $this->date_creation = $this->db->jdate($obj->date_creation);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
@@ -355,6 +377,11 @@ class task_time_approval extends Task
                 unset($this->tracking) ;
                 unset($this->tracking_ids) ;
                 unset($this->date_modification );
+                unset($this->user_app_team );
+                unset($this->user_app_project );
+                unset($this->user_app_customer );
+                unset($this->user_app_supplier );
+                unset($this->user_app_other );
                // unset($this->date_start ); 
                // unset($this->date_end );
                 //unset($this->date_start_timesheet );
@@ -404,8 +431,11 @@ class task_time_approval extends Task
 		if (isset($this->sender)) $this->sender=trim($this->sender);
 		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
 		if (isset($this->planned_workload)) $this->planned_workload=trim($this->planned_workload);
-		if (isset($this->tracking)) $this->tracking=trim($this->tracking);
-		if (isset($this->tracking_ids)) $this->tracking_ids=trim($this->tracking_ids);
+		if (isset($this->user_ap_team)) $this->user_ap_team=trim($this->user_ap_team);
+		if (isset($this->user_ap_project)) $this->user_ap_project=trim($this->user_ap_project);
+		if (isset($this->user_ap_customer)) $this->user_ap_customer=trim($this->user_ap_customer);
+		if (isset($this->user_ap_supplier)) $this->user_ap_supplier=trim($this->user_ap_supplier);
+		if (isset($this->user_ap_other)) $this->user_ap_other=trim($this->user_ap_other);
 		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
@@ -429,8 +459,11 @@ class task_time_approval extends Task
 		$sql.=' sender='.(empty($this->sender) ? 'null':'"'.$this->sender.'"').',';
 		$sql.=' recipient='.(empty($this->recipient) ? 'null':'"'.$this->recipient.'"').',';
 		$sql.=' planned_workload='.(empty($this->planned_workload) ? 'null':'"'.$this->planned_workload.'"').',';
-		$sql.=' tracking='.(empty($this->tracking) ? 'null':'"'.$this->tracking.'"').',';
-		$sql.=' fk_user_tracking='.(empty($this->tracking_ids) ? 'null':'"'.$this->tracking_ids.'"').',';
+		$sql.=' fk_user_app_team='.(empty($this->user_app_team) ? 'NULL':'"'.$this->user_app_team.'"').',';
+		$sql.=' fk_user_app_project='.(empty($this->user_app_project) ? 'NULL':'"'.$this->user_app_project.'"').',';
+		$sql.=' fk_user_app_customer='.(empty($this->user_app_customer) ? 'NULL':'"'.$this->user_app_customer.'"').',';
+		$sql.=' fk_user_app_supplier='.(empty($this->user_app_supplier) ? 'NULL':'"'.$this->user_app_supplier.'"').',';
+		$sql.=' fk_user_app_other='.(empty($this->user_app_other) ? 'NULL':'"'.$this->user_app_other.'"').',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification="'.$user->id.'",';
 		$sql.=' fk_projet_task='.(empty($this->task) ? 'null':'"'.$this->task.'"').',';
