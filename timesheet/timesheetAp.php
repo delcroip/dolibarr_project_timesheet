@@ -207,7 +207,7 @@ if(is_object($firstTimesheetUser)){
             $Form .= '</br>'."\n";
 
             if(!$print){
-                if(TIMESHEET_ADD_DOCS){
+                if(TIMESHEET_ADD_DOCS==1){
                     dol_include_once('/core/class/html.formfile.class.php');
                     dol_include_once('/core/lib/files.lib.php');
                     $formfile=new FormFile($db);
