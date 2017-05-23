@@ -28,11 +28,14 @@ date_start              DATE        NOT NULL, -- start date of the period
 date_end             DATE        NOT NULL, -- start date of the period
 status                  enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
 sender                  enum('team','project','customer','provider','other','user') DEFAULT 'user', -- a team ts is always needed 
-recipient               enum('team','project','customer','provider','other','user') DEFAULT 'user', -- a team ts is always needed 
+recipient               enum('team','project','customer','provider','other','user') DEFAULT 'team', -- a team ts is always needed 
 note                  VARCHAR(1024), -- in case target is not team, querry on task
 planned_workload                integer DEFAULT NULL,
-tracking              CHAR(9) DEFAULT 'x00000000' NOT NULL, -- show which role approved the TS
-fk_user_tracking       VARCHAR(128) DEFAULT NULL, -- list of the IDs who approved the TS
+fk_user_ap_team         integer DEFAULT NULL, -- id of the team approver once approved 
+fk_user_ap_project         integer DEFAULT NULL, -- id of the team approver once approved 
+fk_user_ap_customer         integer DEFAULT NULL, -- id of the team approver once approved 
+fk_user_ap_supplier         integer DEFAULT NULL, -- id of the team approver once approved 
+fk_user_ap_other         integer DEFAULT NULL, -- id of the team approver once approved 
 date_creation         DATETIME      NOT NULL,
 date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
 fk_userid             integer  NOT NULL,          -- timesheet user (redondant)
