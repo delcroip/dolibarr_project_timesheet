@@ -12,8 +12,7 @@ Timesheet view for project in Dolibarr
  - User report by month
  - Project report by month
  - create invoice from the project report
- - better handling of search boxes
- - favoris in a tab (not a new page)
+
  
 # Functionnalities eligible for removal
 - favoris 
@@ -28,12 +27,19 @@ Timesheet view for project in Dolibarr
 # Next developement
 
 - chained approval
+        - DONE : remove favoris tab in ap
+        - ON-GOING: create the flow/correct error upon ap submission
+        - create the page to validate non-team AP
+        - assign the TS id in ttapproval
+
 - add automatic reminder for the approval
 - add feature in Project to foresee workload per user, task and "week"
 - send email over TS rejection
 - reminder when TS is not filled in ( email and home page)
 - add a quick 'add to favoris' in the timesheet screen
-
+- show the Quantity in the step 2 of invoicing
+- improve the layout of the invoicing steps
+- maintain the ajax behavior
 
 # Change log
 
@@ -44,6 +50,8 @@ Change log from 1.5.1:
 - tab in the setup for better browsing experience (in JS so config is kept when changing tab)
 - Week over two month can be splited in 2 so an approval per month is possible.
 - reports shows time in hours and days
+- better handling of search boxes
+- favoris in a tab (not a new page)
 
 Change log from 1.4.3:
 

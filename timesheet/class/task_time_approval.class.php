@@ -21,7 +21,7 @@
 #require_once('mysql.class.php');
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-
+require_once 'class/task_timesheet.class.php';
 $statusTsColor=array('DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUBMITTED,'APPROVED'=>TIMESHEET_COL_APPROVED,'CANCELLED'=>TIMESHEET_COL_CANCELLED,'REJECTED'=>TIMESHEET_COL_REJECTED);
 
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
@@ -1064,87 +1064,27 @@ public function updateTimeUsed()
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
 //    Public function setAppoved($user,$id=0){
-Public function setStatus($user,$status,$id=0){ //FIXME
+Public function setStatus($user,$status){ //FIXME
             $error=0;
+            $ret=0;
             //if the satus is not an ENUM status
-            if(!in_array($status, array('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL'))){
+            if(!in_array($status, array('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED'))){
                 dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERROR);
                 return false;
             }
             // Check parameters
-            $userid=  is_object($user)?$user->id:$user;
-            if($id==0)$id=$this->id;
-		
-
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.=' status="'.$status.'",';
-        $sql.=' fk_user_approval="'.$userid.'",';
-        $sql.=' fk_user_modification="'.$userid.'"';
-        $sql.= " WHERE rowid=".$id;
-
-		$this->db->begin();
-
-		dol_syslog(__METHOD__.$sql);
-        $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-		if (! $error)
-		{
-
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			 }
-		}
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-                            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-                        $this->OtherApproval(true);
-			return 1;
-		}
-
+            $this->status=$status;
+            if($this->appId==0){
+                 $ret=$this->create($user);
+            } else{
+                 $ret=$this->update($user);
+            }
+          if($ret>0){// success of the update, then update the timesheet user if possible
+              $staticTS= new Task_timesheet($this->db,$this->task_timesheet );
+              $staticTS->updateStatus();
+          }
     }   
-
- /* change the status to call the next approval
- * 
- *  @param      string        $sender         role who sent the Approval to the next approver
- *  @param      object/int        $user         user object or user id doing the modif
- *  @param      int               $id           id of the timesheetuser
- *  @return     int      		   	 <0 if KO, Id of created object if OK
- */    
-function nextApproval($sender,$user,$status){
-    if($this->id<>0){
-        // find the next status
-        $nextStatus=$status;
-        // save the change in the db
-        if($this->appId==0){
-            $this->status=$nextStatus;
-            $this->create($user);
-        }else{
-            setStatus($user,$nextStatus);
-        }
-        //$this->linkTaskTime();FIXME
-    }
-}    
+  
 
  /* function to post on task_time
  * 
@@ -1251,7 +1191,7 @@ function getIdList()
 	 *
 	 *	@return	void
 	 */
-              function sendApprovalReminders(){
+     function sendApprovalReminders(){
                   global $langs;
             $sql = 'SELECT';
             $sql.=' COUNT(t.rowid) as nb,';
@@ -1300,6 +1240,69 @@ function getIdList()
                 $list= array();
             }
         }
+
+
+/*
+ * pget the next approval in the chaine
+ * 
+ *  @param      object/int        $user         user object or user id doing the modif
+ *  @param      int               $id           id of the timesheetuser
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+  
+    Public function Approved($sender,$user){
+        $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
+        $recipients=array(0=> 'team', 1=> 'project',2=>'customer',3=>'provider',4=>'other');
+        $nextStatus='';
+        $ret=-1;
+        foreach($apflows as $key=> $recipient){
+            if ($recipient==1 && $this->user_app_{$recipients[$key]}==0){  
+                $this->user_app_{$recipients[$key]}=$sender;
+                $ret=$key;
+                break;
+            }
+        }
+        if($ret>0){//other approval found
+            $nextStatus='UNDERAPPROVAL';
+        }else{
+            $nextStatus='APPROVED'; // FIXME update the timesheet user if every task time approval is OK
+        }
+        // save the change in the db
+         $this->setStatus($user,$nextStatus);
+         //$this->linkTaskTime();FIXME
+    
+        
+        
+        return $ret;
+    }
+        
+/*
+ * pget the previous approval in the chaine
+ * 
+ *  @param      object/int        $user         user object or user id doing the modif
+ *  @param      int               $id           id of the timesheetuser
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+  
+    Public function challenged($user,$id=0){
+       $nextStatus='';
+        $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
+        $recipients=array(0=> 'team', 1=> 'project',2=>'customer',3=>'provider',4=>'other');
+        $ret=-1;
+        foreach($apflows as $key=> $recipient){
+            if ($recipient==1 && $user_app_{$recipients[$key]}>0){            
+                $ret=$key;
+            }
+        }    
+        if($ret>0){//other approval found
+            $nextStatus='REJECTED';
+        }else{
+            $nextStatus='CHALLENGED'; // FIXME update the timesheet user if every task time approval is OK
+        }
+       $this->setStatus($user,$nextStatus);
+        return $ret;
+    }        
+        
 }
 
 ?>

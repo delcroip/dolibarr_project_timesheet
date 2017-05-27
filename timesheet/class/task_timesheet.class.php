@@ -856,63 +856,7 @@ Public function setStatus($user,$status,$id=0){
     }
     
     
-     /*
- * pget the next approval in the chaine
- * 
- *  @param      object/int        $user         user object or user id doing the modif
- *  @param      int               $id           id of the timesheetuser
- *  @return     int      		   	 <0 if KO, Id of created object if OK
- */
-    /*DELETEME
-    Public function nextApproval($user,$id=0){
-        $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),2);
-        // start will save the 
-        $start=-1;
-        $recipients=array(0=> 'team', 1=> 'project',2=>'customer',3=>'provider',4=>'other');
-        $start=array_search($this->recipient,$recipients);
-        switch($this->recipient){
-            case 'team':
-                 $cur=0;
-  
-                if($apflows[$cur]==1)break;
-            case 'project':
-                if($start<0)$start=1;
-                $cur=1;
-                if($apflows[$cur]==1)break;
-            case 'customer':
-                if($start<0)$start=2;
-                $cur=2;
-                if($apflows[$cur]==1)break;
-            case 'provider':
-                if($start<0)$start=3;
-                $cur=3;
-                if($apflows[$cur]==1)break;
-                            
-            case 'other':
-                if($start<0)$start=4;
-                $cur=4;
-                if($apflows[$cur]==1)break;
-            default:            
-                $cur=0;
-                break;               
-        }
-        //FIXME//
-        $ret=0;
-        if($start<$cur){
-            if($this->project_task_time_approval_next>0){
-                $ret=$this->project_task_time_approval_next;
-            }else
-                $ret=new Task_timesheet($db);
-                $ret->recipient=$recipients[$cur];
-        }else if($this->project_task_time_approval_prev>0){
-            
-        }
-        //fecth if any
-        $staticTaskTimeApproval=new Task_timesheet($this->db);
-        
-        //create if none fech
-        return 0;
-    }*/
+
     
     
 /*
@@ -1331,6 +1275,24 @@ function GetTimeSheetXML()
     $xml.="</timesheet>";
     return $xml;
 }	
+
+ /*
+ * update the status based on the underlying task_time_approval
+ * 
+  *  @return     int                                         OK or KO
+ */
+function updateSatus($status=''){
+    $nextStatus='';
+    if ($status!=''){
+        if(!in_array($status, array('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED'))){
+            return -1; // status not valid
+        }
+        $nextStatus=$status;
+    }else{
+        // FIXME get actuals should use the tta
+    }
+    
+}
 
 }
 ?>
