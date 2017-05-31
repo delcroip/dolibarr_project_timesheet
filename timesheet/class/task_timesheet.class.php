@@ -758,7 +758,42 @@ function get_userName(){
       //$select.="\n";
     return 0;
  }
-     /*
+  /*
+ * update the status based on the underlying task_time_approval
+ *  
+ *  @param    int                       $userid              timesheet object, (task)
+ *  @param    string              	$status              to overrule the logic if the status enter has an higher priority
+ *  @return     string                         status updated of KO(-1)
+ */
+function updateStatus($user,$status=''){
+    if($this->id<=0)return -1;
+    $updatedStatus=2;
+    $statusPriorityArray= array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=> 'INVOICED',4=>'APPROVED',5=>'UNDERAPPROVAL',6=>'SUBMITTED',7=>'CHALLENGED',8=>'REJECTED');
+    if ($status!=''){
+        if(!in_array($status,$statusPriorityArray ))return -1; // status not valid
+         $updatedStatus=  array_search($status, $statusPriorityArray);;
+    }
+    
+    
+    $this->fetchTaskTimesheet();
+    if($status==$this->status){ // to avoid eternal loop
+        return 1;
+    }
+    foreach($this->taskTimesheet as $row){
+        $tta= new task_time_approval($db);
+        $tta->unserialize($row);
+        if($tta->appId<0){ // tta already created
+            $tta->fetch();
+            $statusPriorityCur=  array_search($tta->status, $statusPriorityArray); //FIXME
+            $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
+        }// no else as the tta should be created upon submission of the TS not status update
+        
+    }
+    $this->setStatus($user, $statusPriorityArray[$updatedStatus]);
+    return $this->status;
+}
+ 
+ /*
  * change the status of an approval 
  * 
  *  @param      object/int        $user         user object or user id doing the modif
@@ -773,6 +808,9 @@ Public function setStatus($user,$status,$id=0){
                 dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERROR);
                 return false;
             }
+            $Approved=(in_array($status, array('APPROVED','UNDERAPPROVAL')));
+            $Rejected=(in_array($status, array('REJECTED','CHALLENGED')));
+            $Submitted= ($status=='SUBMITTED');
             // Check parameters
             $userid=  is_object($user)?$user->id:$user;
             if($id==0)$id=$this->id;
@@ -818,67 +856,25 @@ Public function setStatus($user,$status,$id=0){
 		}
 		else
 		{
-
-			$this->db->commit();
+                    $this->db->commit();
+                    $ret=0;
                     foreach($this->taskTimesheet as $ts)
                     {
                         $tasktime= new task_time_approval($this->db);
                         $tasktime->unserialize($ts);
-                        $tasktime->nextApproval('team',$user,$status); 
+                        if($Approved)$ret=$tasktime->Approved($userid,'team');
+                        if($Rejected)$ret=$tasktime->challenged($userid,'team');
+                        if($Submitted)$ret=$tasktime->setStatus($userid,'SUBMITTED',false);
                     }
-                        
+                      //if($ret>0)$this->db->commit();
 			return 1;
 		}
 
     }
 
 
- /*
- * put the timesheet task in a aproved status
- * 
- *  @param      object/int        $user         user object or user id doing the modif
- *  @param      int               $id           id of the timesheetuser
- *  @return     int      		   	 <0 if KO, Id of created object if OK
- */
-    Public function setApproved($user,$id=0){
-        
-        $otherApproval=$this->nextApproval($user);
-        if($otherApproval > 0){
-            $ret=$this->setStatus($user,'UNDERAPPROVAL',$id);
-            
-        }else{ // last approval
-            $ret=$this->setStatus($user,'APPROVED',$id);
-        }
-          
-    }
-    
-    
 
-    
-    
-/*
- * put the timesheet task in a rejected status
- * 
- *  @param      object/int        $user         user object or user id doing the modif
- *  @param      int               $id           id of the timesheetuser
- *  @return     int      		   	 <0 if KO, Id of created object if OK
- */
-    Public function setRejected($user,$id=0){
-          $ret=$this->setStatus($user,'REJECTED',$id=0);
-    }
-    
- /*
- * put the timesheet task in a pending status
- * 
- *  @param      object/int        $user         user object or user id doing the modif
- *  @param      int               $id           id of the timesheetuser
- *  @return     int      		   	 <0 if KO, Id of created object if OK
-*/
-    Public function setSubmitted($user,$id=0){
-        $ret=$this->setStatus($user,'SUBMITTED');
-    }
- 
- 
+  
 
     
 /******************************************************************************
@@ -1273,37 +1269,7 @@ function GetTimeSheetXML()
     return $xml;
 }	
 
- /*
- * update the status based on the underlying task_time_approval
- *  
- *  @param    int                       $userid              timesheet object, (task)
- *  @param    string              	$status              to overrule the logic if the status enter has an higher priority
- *  @return     string                         status updated of KO(-1)
- */
-function updateStatus($user,$status=''){
-    if($this->id<=0)return -1;
-    $updatedStatus=2;
-    $statusPriorityArray= array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=> 'INVOICED',4=>'APPROVED',5=>'UNDERAPPROVAL',6=>'SUBMITTED',7=>'CHALLENGED',8=>'REJECTED');
-    if ($status!=''){
-        if(!in_array($status,$statusPriorityArray ))return -1; // status not valid
-         $updatedStatus=  array_search($status, $statusPriorityArray);;
-    }
-    
-    
-    $this->fetchTaskTimesheet();
-    foreach($this->taskTimesheet as $row){
-        $tta= new task_time_approval($db);
-        $tta->unserialize($row);
-        if($tta->appId<0){ // tta already created
-            $tta->fetch();
-            $statusPriorityCur=  array_search($tta->status, $statusPriorityArray); //FIXME
-            $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
-        }// no else as the tta should be created upon submission of the TS not status update
-        
-    }
-    $this->setStatus($user, $statusPriorityArray[$updatedStatus]);
-    return $this->status;
-}
+
 
 }
 ?>

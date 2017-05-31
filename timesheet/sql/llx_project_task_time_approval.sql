@@ -31,11 +31,11 @@ sender                  enum('team','project','customer','provider','other','use
 recipient               enum('team','project','customer','provider','other','user') DEFAULT 'team', -- a team ts is always needed 
 note                  VARCHAR(1024), -- in case target is not team, querry on task
 planned_workload                integer DEFAULT NULL,
-fk_user_ap_team         integer DEFAULT NULL, -- id of the team approver once approved 
-fk_user_ap_project         integer DEFAULT NULL, -- id of the team approver once approved 
-fk_user_ap_customer         integer DEFAULT NULL, -- id of the team approver once approved 
-fk_user_ap_supplier         integer DEFAULT NULL, -- id of the team approver once approved 
-fk_user_ap_other         integer DEFAULT NULL, -- id of the team approver once approved 
+fk_user_app_team         integer DEFAULT NULL, -- id of the team approver once approved 
+fk_user_app_project         integer DEFAULT NULL, -- id of the team approver once approved 
+fk_user_app_customer         integer DEFAULT NULL, -- id of the team approver once approved 
+fk_user_app_supplier         integer DEFAULT NULL, -- id of the team approver once approved 
+fk_user_app_other         integer DEFAULT NULL, -- id of the team approver once approved 
 date_creation         DATETIME      NOT NULL,
 date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
 fk_userid             integer  NOT NULL,          -- timesheet user (redondant)

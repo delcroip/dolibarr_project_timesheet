@@ -1066,10 +1066,11 @@ public function updateTimeUsed()
  * 
  *  @param      object/int        $user         user object or user id doing the modif
  *  @param      int               $id           id of the timesheetuser
+ *  @param      bool              $updateTS      update the timesheet if true
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
 //    Public function setAppoved($user,$id=0){
-Public function setStatus($user,$status){ //FIXME
+Public function setStatus($user,$status,$updateTS=true){ //FIXME
             $error=0;
             $ret=0;
             //if the satus is not an ENUM status
@@ -1079,12 +1080,14 @@ Public function setStatus($user,$status){ //FIXME
             }
             // Check parameters
             $this->status=$status;
-            if($this->appId==0){
-                 $ret=$this->create($user);
+            
+            if($this->appId >0){
+                $ret=$this->update($user);
             } else{
-                 $ret=$this->update($user);
+                $ret=$this->create($user);
+                var_dump($status.$this->appId);
             }
-          if($ret>0){// success of the update, then update the timesheet user if possible
+          if($ret>0 && $updateTS==true){// success of the update, then update the timesheet user if possible
               $staticTS= new Task_timesheet($this->db,$this->task_timesheet );
               $staticTS->updateStatus();
           }
@@ -1252,28 +1255,39 @@ function getIdList()
  * 
  *  @param      object/int        $user         user object or user id doing the modif
  *  @param      int               $id           id of the timesheetuser
+ *  @param      bool              $updteTS      update the timesheet if true
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
   
-    Public function Approved($sender,$user){
+    Public function Approved($sender,$role, $updteTS =true){
         $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-        $recipients=array(0=> 'team', 1=> 'project',2=>'customer',3=>'provider',4=>'other');
+        $recipients=array(1=> 'team', 2=> 'project',3=>'customer',4=>'provider',5=>'other');
+        if(!in_array($role, recipients)) return -1; // role not valide
         $nextStatus='';
-        $ret=-1;
+        $ret=0;
+        //set the approver
+        $this->user_app_{$role}=$sender;
+        //update the roles
         foreach($apflows as $key=> $recipient){
-            if ($recipient==1 && $this->user_app_{$recipients[$key]}==0){  
-                $this->user_app_{$recipients[$key]}=$sender;
-                $ret=$key;
-                break;
+            if ($recipient==1 && $this->user_app_{$recipients[$key]}==0 ){  
+                if ( $recipients[$key]==$role){
+                    $this->sender= $recipients[$key];
+                }else{
+                    $this->recipient= $recipients[$key];
+                    $ret=$key;      
+                    break;
+                }                
+                          
             }
         }
+        
         if($ret>0){//other approval found
             $nextStatus='UNDERAPPROVAL';
         }else{
             $nextStatus='APPROVED'; // FIXME update the timesheet user if every task time approval is OK
         }
         // save the change in the db
-         $this->setStatus($user,$nextStatus);
+         $ret=$this->setStatus($user,$nextStatus,$updteTS);
          //$this->linkTaskTime();FIXME
     
         
@@ -1286,25 +1300,38 @@ function getIdList()
  * 
  *  @param      object/int        $user         user object or user id doing the modif
  *  @param      int               $id           id of the timesheetuser
+ *  @param      bool              $updteTS      update the timesheet if true
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
   
-    Public function challenged($user,$id=0){
+    Public function challenged($sender,$role,$updteTS=true){
        $nextStatus='';
         $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-        $recipients=array(0=> 'team', 1=> 'project',2=>'customer',3=>'provider',4=>'other');
+        $recipients=array(1=> 'team', 2=> 'project',3=>'customer',4=>'provider',5=>'other');
+        if(!in_array($role, recipients)) return -1; // role not valide
         $ret=-1;
+       //unset the approver ( could be set previsouly)
+        $this->user_app_{$role}='';
+        //update the roles
         foreach($apflows as $key=> $recipient){
-            if ($recipient==1 && $user_app_{$recipients[$key]}>0){            
-                $ret=$key;
+            if ($recipient==1){  
+                if ( $recipients[$key]==$role){
+                    $this->sender= $recipients[$key];
+                    break;
+                }else{
+                    $this->recipient= $recipients[$key];
+                    $ret=$key;      
+                    
+                }                
+                          
             }
-        }    
+        }   
         if($ret>0){//other approval found
             $nextStatus='REJECTED';
         }else{
             $nextStatus='CHALLENGED'; // FIXME update the timesheet user if every task time approval is OK
         }
-       $this->setStatus($user,$nextStatus);
+       $ret=$this->setStatus($user,$nextStatus,$updteTS);
         return $ret;
     }        
         
