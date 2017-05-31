@@ -58,11 +58,8 @@ class task_time_approval extends Task
 	var $recipient;
        // var $planned_workloads; hetited from task
         var $note; 
-        var $user_ap_team;
-        var $user_ap_project;
-        var $user_ap_customer;
-        var $user_ap_supplier;
-        var $user_ap_other;
+        var $user_app;
+
         //basic DB logging
 	var $date_creation='';
 	var $date_modification='';
@@ -88,6 +85,7 @@ class task_time_approval extends Task
                // var_dump('creattta'.$this->id);
 		//$this->date_end=strtotime('now -1 year');
 		//$this->date_start=strtotime('now -1 year');
+                $this->user_app= array('team'=>0 ,'project'=>0 ,'customer'=>0 ,'suplier'=>0 ,'other'=>0  );
 	}
 
 /******************************************************************************
@@ -119,11 +117,11 @@ class task_time_approval extends Task
 		if (isset($this->sender)) $this->sender=trim($this->sender);
 		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
 		if (isset($this->planned_workload)) $this->planned_workload=trim($this->planned_workload);
-		if (isset($this->user_ap_team)) $this->user_ap_team=trim($this->user_ap_team);
-		if (isset($this->user_ap_project)) $this->user_ap_project=trim($this->user_ap_project);
-		if (isset($this->user_ap_customer)) $this->user_ap_customer=trim($this->user_ap_customer);
-		if (isset($this->user_ap_supplier)) $this->user_ap_supplier=trim($this->user_ap_supplier);
-		if (isset($this->user_ap_other)) $this->user_ap_other=trim($this->user_ap_other);
+		if (isset($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
+		if (isset($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
+		if (isset($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
+		if (isset($this->user_app['supplier'])) $this->user_app['supplier']=trim($this->user_app['supplier']);
+		if (isset($this->user_app['other'])) $this->user_app['other']=trim($this->user_app['other']);
 		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
@@ -168,11 +166,11 @@ class task_time_approval extends Task
 		$sql.=' '.(! isset($this->sender)?'"user"':'"'.$this->sender.'"').',';
 		$sql.=' '.(! isset($this->recipient)?'"team"':'"'.$this->recipient.'"').',';
 		$sql.=' '.(! isset($this->planned_workload)?'NULL':'"'.$this->planned_workload.'"').',';
-		$sql.=' '.(! isset($this->user_app_team)?'NULL':'"'.$this->user_app_team.'"').',';
-		$sql.=' '.(! isset($this->user_app_project)?'NULL':'"'.$this->user_app_project.'"').',';
-		$sql.=' '.(! isset($this->user_app_customer)?'NULL':'"'.$this->user_app_customer.'"').',';
-		$sql.=' '.(! isset($this->user_app_supplier)?'NULL':'"'.$this->user_app_supplier.'"').',';
-		$sql.=' '.(! isset($this->user_app_other)?'NULL':'"'.$this->user_app_other.'"').',';
+		$sql.=' '.(! isset($this->user_app['team'])?'NULL':'"'.$this->user_app['team'].'"').',';
+		$sql.=' '.(! isset($this->user_app['project'])?'NULL':'"'.$this->user_app['project'].'"').',';
+		$sql.=' '.(! isset($this->user_app['customer'])?'NULL':'"'.$this->user_app['customer'].'"').',';
+		$sql.=' '.(! isset($this->user_app['supplier'])?'NULL':'"'.$this->user_app['supplier'].'"').',';
+		$sql.=' '.(! isset($this->user_app['other'])?'NULL':'"'.$this->user_app['other'].'"').',';
 		$sql.=' NOW() ,';
 		$sql.=' "'.$user->id.'",'; //fixme 3.5
 		$sql.=' '.(! isset($this->id)?'NULL':'"'.$this->id.'"').',';
@@ -273,11 +271,11 @@ class task_time_approval extends Task
                 $this->sender = $obj->sender;
                 $this->recipient = $obj->recipient;
                 $this->planned_workload = $obj->planned_workload;
-                $this->user_app_team = $obj->fk_user_app_team;
-                $this->user_app_other = $obj->fk_user_app_other;
-                $this->user_app_supplier = $obj->fk_user_app_supplier;
-                $this->user_app_customer = $obj->fk_user_app_customer;
-                $this->user_app_project = $obj->fk_user_app_project;               
+                $this->user_app['team'] = $obj->fk_user_app_team;
+                $this->user_app['other'] = $obj->fk_user_app_other;
+                $this->user_app['supplier'] = $obj->fk_user_app_supplier;
+                $this->user_app['customer'] = $obj->fk_user_app_customer;
+                $this->user_app['project'] = $obj->fk_user_app_project;               
                 $this->date_creation = $this->db->jdate($obj->date_creation);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
@@ -359,11 +357,11 @@ class task_time_approval extends Task
                 $this->status = $obj->status;
                 $this->sender = $obj->sender;
                 $this->recipient = $obj->recipient;
-                $this->user_app_team = $obj->fk_user_app_team;
-                $this->user_app_other = $obj->fk_user_app_other;
-                $this->user_app_supplier = $obj->fk_user_app_supplier;
-                $this->user_app_customer = $obj->fk_user_app_customer;
-                $this->user_app_project = $obj->fk_user_app_project;  
+                $this->user_app['team'] = $obj->fk_user_app_team;
+                $this->user_app['other'] = $obj->fk_user_app_other;
+                $this->user_app['supplier'] = $obj->fk_user_app_supplier;
+                $this->user_app['customer'] = $obj->fk_user_app_customer;
+                $this->user_app['project'] = $obj->fk_user_app_project;  
                 $this->date_creation = $this->db->jdate($obj->date_creation);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
@@ -381,11 +379,11 @@ class task_time_approval extends Task
                 unset($this->tracking) ;
                 unset($this->tracking_ids) ;
                 unset($this->date_modification );
-                unset($this->user_app_team );
-                unset($this->user_app_project );
-                unset($this->user_app_customer );
-                unset($this->user_app_supplier );
-                unset($this->user_app_other );
+                unset($this->user_app['team ']);
+                unset($this->user_app['project'] );
+                unset($this->user_app['customer'] );
+                unset($this->user_app['supplier'] );
+                unset($this->user_app['other'] );
                // unset($this->date_start ); 
                // unset($this->date_end );
                 //unset($this->date_start_timesheet );
@@ -435,11 +433,11 @@ class task_time_approval extends Task
 		if (isset($this->sender)) $this->sender=trim($this->sender);
 		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
 		if (isset($this->planned_workload)) $this->planned_workload=trim($this->planned_workload);
-		if (isset($this->user_ap_team)) $this->user_ap_team=trim($this->user_ap_team);
-		if (isset($this->user_ap_project)) $this->user_ap_project=trim($this->user_ap_project);
-		if (isset($this->user_ap_customer)) $this->user_ap_customer=trim($this->user_ap_customer);
-		if (isset($this->user_ap_supplier)) $this->user_ap_supplier=trim($this->user_ap_supplier);
-		if (isset($this->user_ap_other)) $this->user_ap_other=trim($this->user_ap_other);
+		if (isset($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
+		if (isset($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
+		if (isset($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
+		if (isset($this->user_app['supplier'])) $this->user_app['supplier']=trim($this->user_app['supplier']);
+		if (isset($this->user_app['other'])) $this->user_app['other']=trim($this->user_app['other']);
 		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
@@ -463,11 +461,11 @@ class task_time_approval extends Task
 		$sql.=' sender='.(empty($this->sender) ? 'null':'"'.$this->sender.'"').',';
 		$sql.=' recipient='.(empty($this->recipient) ? 'null':'"'.$this->recipient.'"').',';
 		$sql.=' planned_workload='.(empty($this->planned_workload) ? 'null':'"'.$this->planned_workload.'"').',';
-		$sql.=' fk_user_app_team='.(empty($this->user_app_team) ? 'NULL':'"'.$this->user_app_team.'"').',';
-		$sql.=' fk_user_app_project='.(empty($this->user_app_project) ? 'NULL':'"'.$this->user_app_project.'"').',';
-		$sql.=' fk_user_app_customer='.(empty($this->user_app_customer) ? 'NULL':'"'.$this->user_app_customer.'"').',';
-		$sql.=' fk_user_app_supplier='.(empty($this->user_app_supplier) ? 'NULL':'"'.$this->user_app_supplier.'"').',';
-		$sql.=' fk_user_app_other='.(empty($this->user_app_other) ? 'NULL':'"'.$this->user_app_other.'"').',';
+		$sql.=' fk_user_app_team='.(empty($this->user_app['team']) ? 'NULL':'"'.$this->user_app['team'].'"').',';
+		$sql.=' fk_user_app_project='.(empty($this->user_app['project']) ? 'NULL':'"'.$this->user_app['project'].'"').',';
+		$sql.=' fk_user_app_customer='.(empty($this->user_app['customer']) ? 'NULL':'"'.$this->user_app['customer'].'"').',';
+		$sql.=' fk_user_app_supplier='.(empty($this->user_app['supplier']) ? 'NULL':'"'.$this->user_app['supplier'].'"').',';
+		$sql.=' fk_user_app_other='.(empty($this->user_app['other']) ? 'NULL':'"'.$this->user_app['other'].'"').',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification="'.$user->id.'",';
 		$sql.=' fk_projet_task='.(empty($this->id) ? 'null':'"'.$this->id.'"').',';
@@ -1011,14 +1009,15 @@ function unserialize($str){
     {
         return $this->tasklist;
     }
-public function updateTimeUsed()
+    /*
+public function updateTimeUsed() REMOVEME
     {
     $this->db->begin();
     $error=0;
           $sql ="UPDATE ".MAIN_DB_PREFIX."projet_task AS pt "
                ."SET pt.duration_effective=(SELECT SUM(ptt.task_duration) "
                ."FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt "
-               ."WHERE ptt.fk_projet_task ='".$this->id."') "
+               ."WHERE ptt.fk_task ='".$this->id."') "
                ."WHERE pt.rowid='".$this->id."' ";
    
             dol_syslog(get_class($this)."::UpdateTimeUsed sql=".$sql, LOG_DEBUG);
@@ -1060,8 +1059,8 @@ public function updateTimeUsed()
         return $ret;
         //return '00:00';
           
-    }
-
+    }*/
+    
       /*
  * change the status of an approval 
  * 
@@ -1081,18 +1080,39 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
             }
             // Check parameters
             $this->status=$status;
-            if($this->appId >0){
-                $ret=$this->update($user);
-            } else{
-                $ret=$this->create($user);
+            if($this->getDuration()>0){
+                if($this->appId >0){
+                    $ret=$this->update($user);
+                } else{
+                    $ret=$this->create($user);
+                }
+            }else if($this->appId >0){
+                    $ret=$this->delete($user);
             }
+            
           if($ret>0 && $updateTS==true){// success of the update, then update the timesheet user if possible
               $staticTS= new Task_timesheet($this->db,$this->task_timesheet );
               $staticTS->updateStatus($user,$status);
           }
     }   
   
-
+      /*
+ * change the status of an approval 
+ * 
+ *  @param      object/int        $user         user object or user id doing the modif
+ *  @param      int               $id           id of the timesheetuser
+ *  @param      bool              $updateTS      update the timesheet if true
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+//    Public function setAppoved($user,$id=0){
+Public function getDuration(){ //FIXME
+    $ttaDuration=0;
+    if(count($this->tasklist)<=1) $this->getActuals ($this->date_start_timesheet, $this->date_end_timesheet, $this->userId);
+    foreach($this->tasklist as $item){
+         $ttaDuration+=$item['duration'];
+    }
+    return $ttaDuration;
+}
  /* function to post on task_time
  * 
  *  @param    int              	$user                    user id to fetch the timesheets
@@ -1171,9 +1191,9 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
          //update the task list
         
 
-        
+        $this->tasklist[$dayKey]['duration']=$duration;
     }
-    if($ret)$this->updateTimeUsed();
+   //if($ret)$this->updateTimeUsed(); REMOVEME
     return $ret;
     //return $idList;
 }
@@ -1260,24 +1280,27 @@ function getIdList()
   
     Public function Approved($sender,$role, $updteTS =true){
         $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-        $recipients=array(1=> 'team', 2=> 'project',3=>'customer',4=>'provider',5=>'other');
+        $recipients=array(0=> 'team', 1=> 'project',2=>'customer',3=>'provider',4=>'other');
         if(!in_array($role, $recipients)) return -1; // role not valide
         $nextStatus='';
         $ret=0;
         //set the approver
-        $this->user_app_{$role}=$sender;
+        $this->user_app[$role]=$sender;
         //update the roles
-        foreach($apflows as $key=> $recipient){
-            if ($recipient==1 && $this->user_app_{$recipients[$key]}==0 ){  
+        $rolepassed=false;
+        foreach($apflows as $key=> $recipient){         
+            if ($recipient==1 ){  
                 if ( $recipients[$key]==$role){
                     $this->sender= $recipients[$key];
-                }else{
+                    //$this->user_app['{$role}=$sender;
+                     $rolepassed=true;
+                }else if ($rolepassed){
                     $this->recipient= $recipients[$key];
-                    $ret=$key;      
+                    $ret=$key+1;      
                     break;
-                }                
-                          
+                }                         
             }
+
         }
         
         if($ret>0){//other approval found
@@ -1310,7 +1333,7 @@ function getIdList()
         if(!in_array($role, $recipients)) return -1; // role not valide
         $ret=-1;
        //unset the approver ( could be set previsouly)
-        $this->user_app_{$role}='';
+        $this->user_app[$role]=$sender;
         //update the roles
         foreach($apflows as $key=> $recipient){
             if ($recipient==1){  

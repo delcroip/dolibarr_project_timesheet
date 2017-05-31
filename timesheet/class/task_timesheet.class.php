@@ -703,7 +703,7 @@ function saveInSession(){
         /*
          * For each task store in matching the session timestamp
          */
-        foreach ($this->taskTimesheet as $row) {
+        foreach ($this->taskTimesheet as $key  => $row) {
             $tasktime= new task_time_approval($this->db);
             $tasktime->unserialize($row);     
             $ret=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status);
@@ -711,6 +711,7 @@ function saveInSession(){
             if(!empty($taskList)){
                 $idList.=(empty($idList)?'':',').$taskList;
             }
+            $this->taskTimesheet[$key]=$tasktime->serialize();
             
         } 
         /*
@@ -819,8 +820,11 @@ Public function setStatus($user,$status,$id=0){
             // Check parameters
             $userid=  is_object($user)?$user->id:$user;
             if($id==0)$id=$this->id;
-
+            $this->status=$status;
         // Update request
+            $error=($this->id<=0)?$this->create($user):$this->update($user);
+            
+    /*        
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.=' status="'.$status.'",';
         $sql.=' fk_user_modification="'.$userid.'"';
@@ -860,8 +864,10 @@ Public function setStatus($user,$status,$id=0){
 		}
 		else
 		{
+     
                     $this->db->commit();
-                    $ret=0;
+                    $ret=0;*/
+            if($error>0){
                     if(count($this->taskTimesheet)<1 || $this->id<=0){
                         $this->fetch($id);
                         $this->fetchTaskTimesheet();

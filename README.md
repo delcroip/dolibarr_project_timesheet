@@ -31,6 +31,7 @@ Timesheet view for project in Dolibarr
     - DONE: create the flow/correct error upon ap submission
     - create the page to validate non-team AP
     - assign the TS id in ttapproval
+    - ISSUE: del tasktime doesn't generate correct message on timesheet.php
 
 - add automatic reminder for the approval
 - add feature in Project to foresee workload per user, task and "week"

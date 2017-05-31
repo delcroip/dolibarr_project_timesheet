@@ -98,16 +98,18 @@ switch($action){
         {
             
             if(isset($_POST['task']))
-			{
+            {
+                                 $ret=0;
 				 foreach($_POST['task'] as $key => $tasktab){
 					 $task_timesheet->loadFromSession($timestamp,$key);                  
 					 $task_timesheet->note=$_POST['Note'][$key];
-                                         if(isset($_POST['submit'])){
-                                                $ret=$task_timesheet->setStatus($user,"SUBMITTED");
+                                         $ret=$task_timesheet->updateActuals($tasktab);
+                                         if(isset($_POST['submit']) ){
+                                                $task_timesheet->setStatus($user,"SUBMITTED");
                                              //$task_timesheet->status="SUBMITTED";
-						 $ret=0;
+						
 					 }          
-					 $ret=$task_timesheet->updateActuals($tasktab);
+					 
 
                 		//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
 					 if(!empty($ret))
