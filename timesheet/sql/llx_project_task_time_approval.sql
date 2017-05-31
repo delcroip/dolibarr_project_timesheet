@@ -41,7 +41,7 @@ date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_
 fk_userid             integer  NOT NULL,          -- timesheet user (redondant)
 fk_user_creation      integer,
 fk_user_modification  integer  default NULL,
-fk_projet_task               integer NOT NULL, -- task linked
+fk_projet_task               integer DEFAULT NULL, -- task linked
 fk_project_task_timesheet     integer NOT NULL,
 PRIMARY KEY (rowid)
 ) 

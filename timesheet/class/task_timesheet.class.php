@@ -597,44 +597,38 @@ function saveInSession(){
             $sqlwhiteList=', (CASE WHEN tsk.rowid IN ('.implode(",",  $whiteList).') THEN \'1\' ';
             $sqlwhiteList.=' ELSE \'0\' END ) AS listed';
     }
-    //if( $this->status=="DRAFT" || $this->status=="REJECTED"){
-        $sql ='SELECT DISTINCT element_id as taskid,prj.fk_soc,tsk.fk_projet,';
-        $sql.='tsk.fk_task_parent,tsk.rowid,app.rowid as appid';
-        $sql.=$sqlwhiteList;
-        $sql.=" FROM ".MAIN_DB_PREFIX."element_contact "; 
-        $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
-        $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
-        //approval
+  
+    
+    $sql ='SELECT DISTINCT element_id as taskid,prj.fk_soc,tsk.fk_projet,';
+    $sql.='tsk.fk_task_parent,tsk.rowid,app.rowid as appid';
+    $sql.=$sqlwhiteList;
+    $sql.=" FROM ".MAIN_DB_PREFIX."element_contact "; 
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
+    //approval
+    if( $this->status=="DRAFT" || $this->status=="REJECTED"){
         $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
-        $sql.=' ON tsk.rowid= app.fk_projet_task AND app.fk_userid=fk_socpeople'; 
+    }else{
+        $sql.=' JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
+    }
+    $sql.=' ON tsk.rowid= app.fk_projet_task AND app.fk_userid=fk_socpeople'; 
 
-        $sql.=' AND app.date_start="'.$this->db->idate($datestart).'"';    
-        $sql.=' AND app.date_end="'.$this->db->idate($datestop).'"';    
+    $sql.=' AND app.date_start="'.$this->db->idate($datestart).'"';    
+    $sql.=' AND app.date_end="'.$this->db->idate($datestop).'"';    
 
-        //end approval
-        $sql.=" WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$userid."' ";
-        if(TIMESHEET_HIDE_DRAFT=='1'){
-             $sql.=' AND prj.fk_statut<>"0" ';
-        }
-        $sql.=' AND (prj.datee>="'.$this->db->idate($datestart).'" OR prj.datee IS NULL)';
-        $sql.=' AND (prj.dateo<="'.$this->db->idate($datestop).'" OR prj.dateo IS NULL)';
-        $sql.=' AND (tsk.datee>="'.$this->db->idate($datestart).'" OR tsk.datee IS NULL)';
-        $sql.=' AND (tsk.dateo<="'.$this->db->idate($datestop).'" OR tsk.dateo IS NULL)';
-        $sql.='  ORDER BY '.($whiteListNumber?'listed,':'').'prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ';
+    //end approval
+    $sql.=" WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$userid."' ";
+    if(TIMESHEET_HIDE_DRAFT=='1'){
+         $sql.=' AND prj.fk_statut<>"0" ';
+    }
+    $sql.=' AND (prj.datee>="'.$this->db->idate($datestart).'" OR prj.datee IS NULL)';
+    $sql.=' AND (prj.dateo<="'.$this->db->idate($datestop).'" OR prj.dateo IS NULL)';
+    $sql.=' AND (tsk.datee>="'.$this->db->idate($datestart).'" OR tsk.datee IS NULL)';
+    $sql.=' AND (tsk.dateo<="'.$this->db->idate($datestop).'" OR tsk.dateo IS NULL)';
+    $sql.='  ORDER BY '.($whiteListNumber?'listed,':'').'prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ';
 
-         dol_syslog("timesheet::getTasksTimesheet full sql=".$sql, LOG_DEBUG);
-     /*}else{ FIXME, only approved TS should be showed
-         $list=getApprovalIds();
-         $sql ='SELECT DISTINCT fk_task as taskid';
-         $sql.=$sqlwhiteList;
-        $sql.=' FROM '.MAIN_DB_PREFIX.'projet_task_time';
-        $sql.=' WHERE rowid in ('.$list.')';
- //       $sql.=' AND task_date>='.$this->db->idate($datestart);
- //       $sql.=' AND task_date<='.$this->db->idate($datestop);
-         
-        dol_syslog("timesheet::getTasksTimesheet reducted sql=".$sql, LOG_DEBUG);
-     }*/
-   
+     dol_syslog("timesheet::getTasksTimesheet full sql=".$sql, LOG_DEBUG);
+
     $resql=$this->db->query($sql);
     if ($resql)
     {
@@ -663,7 +657,9 @@ function saveInSession(){
                     dol_syslog("Timesheet::Task_timesheet.class.php task=".$row->id, LOG_DEBUG);
                     $row->getTaskInfo();
                     //if($this->status=="DRAFT" || $this->status=="REJECTED"){
-                        $row->getActuals($datestart,$datestop,$userid); 
+                        
+                    $row->getActuals($datestart,$datestop,$userid); 
+                    $row->task_timesheet=$this->id;
                    // }else{
                         //$row->getActuals($this->yearWeek,$userid); 
                    //     $row->getActuals($datestart,$datestop,$userid,$this->project_tasktime_list); 
@@ -690,6 +686,7 @@ function saveInSession(){
  */
  function updateActuals($tabPost)
 {
+     //FIXME, tta should be creted
     if($this->status=='APPROVED')
         return -1;
     dol_syslog('Entering in Timesheet::task_timesheet.php::updateActuals()');     
@@ -1278,20 +1275,34 @@ function GetTimeSheetXML()
 
  /*
  * update the status based on the underlying task_time_approval
- * 
-  *  @return     int                                         OK or KO
+ *  
+ *  @param    int                       $userid              timesheet object, (task)
+ *  @param    string              	$status              to overrule the logic if the status enter has an higher priority
+ *  @return     string                         status updated of KO(-1)
  */
-function updateSatus($status=''){
-    $nextStatus='';
+function updateStatus($user,$status=''){
+    if($this->id<=0)return -1;
+    $updatedStatus=2;
+    $statusPriorityArray= array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=> 'INVOICED',4=>'APPROVED',5=>'UNDERAPPROVAL',6=>'SUBMITTED',7=>'CHALLENGED',8=>'REJECTED');
     if ($status!=''){
-        if(!in_array($status, array('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED'))){
-            return -1; // status not valid
-        }
-        $nextStatus=$status;
-    }else{
-        // FIXME get actuals should use the tta
+        if(!in_array($status,$statusPriorityArray ))return -1; // status not valid
+         $updatedStatus=  array_search($status, $statusPriorityArray);;
     }
     
+    
+    $this->fetchTaskTimesheet();
+    foreach($this->taskTimesheet as $row){
+        $tta= new task_time_approval($db);
+        $tta->unserialize($row);
+        if($tta->appId<0){ // tta already created
+            $tta->fetch();
+            $statusPriorityCur=  array_search($tta->status, $statusPriorityArray); //FIXME
+            $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
+        }// no else as the tta should be created upon submission of the TS not status update
+        
+    }
+    $this->setStatus($user, $statusPriorityArray[$updatedStatus]);
+    return $this->status;
 }
 
 }

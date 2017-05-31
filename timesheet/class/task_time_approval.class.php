@@ -49,7 +49,7 @@ class task_time_approval extends Task
         private $hidden; // in the whitelist 
 	//time
         // from db
-        var $appId;//FIXME
+        var $appId;
 	var $userId;
 	var $date_start_timesheet=''; 
         var $date_end_timesheet;
@@ -57,7 +57,7 @@ class task_time_approval extends Task
 	var $sender;
 	var $recipient;
        // var $planned_workloads; hetited from task
-        var $note; //FIXME, not saved
+        var $note; 
         var $user_ap_team;
         var $user_ap_project;
         var $user_ap_customer;
@@ -82,6 +82,9 @@ class task_time_approval extends Task
 		$this->db=$db;
 		$this->id=$taskId;
                 $this->appId=$id;
+                $this->status='DRAFT';
+                $this->sender='user';
+                $this->recipient='team';
 		//$this->date_end=strtotime('now -1 year');
 		//$this->date_start=strtotime('now -1 year');
 	}
@@ -172,7 +175,7 @@ class task_time_approval extends Task
 		$sql.=' NOW() ,';
 		$sql.=' "'.$user->id.'",'; //fixme 3.5
 		$sql.=' '.(! isset($this->id)?'NULL':'"'.$this->id.'"').',';
-		$sql.=' '.(! isset($this->task_timesheet)?'NULL':'"'.$this->task_timesheet.'"').',';// FIXME NULL not autorized by db
+		$sql.=' '.(! isset($this->task_timesheet)?'NULL':'"'.$this->task_timesheet.'"').',';
 		$sql.=' '.(! isset($this->note)?'NULL':'"'.$this->note.'"');
         
 		$sql.= ")";
@@ -674,7 +677,9 @@ class task_time_approval extends Task
            //$timeStart=floor($timeStart/SECINDAY)*SECINDAY;
            //$timeEnd=ceil($timeEnd/SECINDAY)*SECINDAY;
            $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
-           
+        $this->date_start_timesheet= $timeStart;
+        $this->date_end_timesheet= $timeEnd;
+        $this->userId=$userid;
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
@@ -804,7 +809,7 @@ class task_time_approval extends Task
         {
 
             //$shrinkedStyle=(!$opendays[$dayCur+1] && $shrinked)?'display:none;':'';
-            $today= $timeStart+SECINDAY*$dayCur;//strtotime($yearWeek.' +'.($dayCur).' day  '); // FIXME
+            $today= $timeStart+SECINDAY*$dayCur;
             # to avoid editing if the task is closed 
             $dayWorkLoadSec=isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
 

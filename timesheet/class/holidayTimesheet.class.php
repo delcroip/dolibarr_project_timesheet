@@ -76,7 +76,7 @@ class holidayTimesheet extends Holiday
             
                 $curDay=strtotime(' + '.$dayOfWeek.' days',$datestart);
                 $this->holidaylist[$dayOfWeek]=array('amId'=>'0','pmId'=>'0','prev'=>false,'am'=>false,'pm'=>false,'next'=>false,'amStatus'=>0,'pmStatus'=>0);
-                //FIXME: support 2 holiday in one day , 1 id per dqy ..
+
                 foreach($this->holiday as $record){
                     if($record['date_debut']<=$curDay && $record['date_fin']>=$curDay){
                      $prev=($record['date_debut']<$curDay)?true:false;
@@ -172,7 +172,6 @@ class holidayTimesheet extends Holiday
             if(TIMESHEET_ADD_HOLIDAY_TIME==1)$html .='<input type="hidden" class="time4day['.$tsUserId.']['.$i.']"  value="'.$value.'">';
             $html .='<ul id="holiday['.$i.']" class="listHoliday" >';
                  
-    //FIXME: SUPPORT COLOR & PUT TIME FOR THE  TOTAL
                 $html .='<li id="holiday['.$i.'][0]" class="listItemHoliday" ><a ';
                 if($am){
                     $html .='href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->holidaylist[$i]['amId'].'"';

@@ -234,17 +234,17 @@ llxHeader("",$langs->trans("timesheetSetup"),'','','','',$morejs,'',0,0);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("timesheetSetup"),$linkback,'title_setup');//FIXME LANGS
+print_fiche_titre($langs->trans("timesheetSetup"),$linkback,'title_setup');
 echo '<div class="fiche"><br><br>';
 /*
  * TABS
  */
 
 echo '<div class="tabs" data-role="controlgroup" data-type="horizontal"  >';
-echo '  <div id="defaultOpen"  class="inline-block tabsElem" onclick="openTab(event, \'General\')"><a  href="javascript:void(0);"  class="tabunactive tab inline-block" data-role="button">General</a></div>';
-echo '  <div class="inline-block tabsElem" onclick="openTab(event, \'Advanced\')"><a  href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">Advanced</a></div>';
-echo '  <div class="inline-block tabsElem"  onclick="openTab(event, \'Invoice\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">Invoice</a></div>';
-echo '  <div class="inline-block tabsElem"   onclick="openTab(event, \'Other\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">Other</a></div>';
+echo '  <div id="defaultOpen"  class="inline-block tabsElem" onclick="openTab(event, \'General\')"><a  href="javascript:void(0);"  class="tabunactive tab inline-block" data-role="button">'.$langs->trans('General').'</a></div>';
+echo '  <div class="inline-block tabsElem" onclick="openTab(event, \'Advanced\')"><a  href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Advanced').'</a></div>';
+echo '  <div class="inline-block tabsElem"  onclick="openTab(event, \'Invoice\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Invoice').'</a></div>';
+echo '  <div class="inline-block tabsElem"   onclick="openTab(event, \'Other\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Other').'</a></div>';
 
 echo '</div>';
 
