@@ -86,14 +86,14 @@ if($action== 'submit'){
                 $approvals=$_POST['approval'];
                 foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser){
                     $count++;
-                    switch($approvals[$key]){
+                    if($approvals[$key]!=$tsUser)switch($approvals[$key]){
                         case 'Approved':
-                           $ret=$task_timesheet->setApproved($user,$key); 
+                           $ret=$task_timesheet->setStatus($user,'APPROVED',$key); 
                             if(ret<0)$errors++;
                             else $tsApproved++;
                             break;
                         case 'Rejected':
-                            $ret=$task_timesheet->setRejected($user,$key);
+                            $ret=$task_timesheet->setStatus($user,'REJECTED',$key);
                             if(ret<0)$errors++;
                             else $tsRejected++;
                             break;
@@ -110,7 +110,7 @@ if($action== 'submit'){
                // $offset-=($tsApproved+$tsRejected);       
 
 				//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
-                    if($ret>0)
+                    if($ret>=0)
                     {
                         if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").$tsApproved);
                         if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").$tsRejected);
@@ -201,7 +201,7 @@ if(is_object($firstTimesheetUser)){
             $Form .=$task_timesheet->getHTMLtaskLines(false);
             $Form .=$task_timesheet->getHTMLTotal();/*FIXME*/
             $Form .=$task_timesheet->getHTMLNote();
-            $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id]=array('status'=>$task_timesheet->status,'Target'=>$task_timesheet->target);
+            $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id]=$task_timesheet->status;
             $Form .= '</table>';
 
             $Form .= '</br>'."\n";

@@ -85,6 +85,7 @@ class task_time_approval extends Task
                 $this->status='DRAFT';
                 $this->sender='user';
                 $this->recipient='team';
+               // var_dump('creattta'.$this->id);
 		//$this->date_end=strtotime('now -1 year');
 		//$this->date_start=strtotime('now -1 year');
 	}
@@ -469,7 +470,7 @@ class task_time_approval extends Task
 		$sql.=' fk_user_app_other='.(empty($this->user_app_other) ? 'NULL':'"'.$this->user_app_other.'"').',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification="'.$user->id.'",';
-		$sql.=' fk_projet_task='.(empty($this->task) ? 'null':'"'.$this->task.'"').',';
+		$sql.=' fk_projet_task='.(empty($this->id) ? 'null':'"'.$this->id.'"').',';
 		$sql.=' fk_project_task_timesheet='.(empty($this->task_timesheet) ? 'null':'"'.$this->task_timesheet.'"').',';
 		$sql.=' note="'.$this->note.'"';
 
@@ -1080,16 +1081,14 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
             }
             // Check parameters
             $this->status=$status;
-            
             if($this->appId >0){
                 $ret=$this->update($user);
             } else{
                 $ret=$this->create($user);
-                var_dump($status.$this->appId);
             }
           if($ret>0 && $updateTS==true){// success of the update, then update the timesheet user if possible
               $staticTS= new Task_timesheet($this->db,$this->task_timesheet );
-              $staticTS->updateStatus();
+              $staticTS->updateStatus($user,$status);
           }
     }   
   
@@ -1262,7 +1261,7 @@ function getIdList()
     Public function Approved($sender,$role, $updteTS =true){
         $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
         $recipients=array(1=> 'team', 2=> 'project',3=>'customer',4=>'provider',5=>'other');
-        if(!in_array($role, recipients)) return -1; // role not valide
+        if(!in_array($role, $recipients)) return -1; // role not valide
         $nextStatus='';
         $ret=0;
         //set the approver
@@ -1308,7 +1307,7 @@ function getIdList()
        $nextStatus='';
         $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
         $recipients=array(1=> 'team', 2=> 'project',3=>'customer',4=>'provider',5=>'other');
-        if(!in_array($role, recipients)) return -1; // role not valide
+        if(!in_array($role, $recipients)) return -1; // role not valide
         $ret=-1;
        //unset the approver ( could be set previsouly)
         $this->user_app_{$role}='';

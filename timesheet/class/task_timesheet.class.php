@@ -640,14 +640,19 @@ function saveInSession(){
             {
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
-                    $tasksList[$i] = NEW task_time_approval($this->db, $obj->taskid);
-                    $tasksList[$i]->appId=$obj->appid;
+                    $tasksList[$i] = NEW task_time_approval($this->db,$obj->taskid);
+                    //$tasksList[$i]->id= $obj->taskid;                     
+                    if($obj->appid){
+                        $tasksList[$i]->fetch($obj->appid);
+                    }              
                     $tasksList[$i]->userId=$this->userId;
                     $tasksList[$i]->date_start_timesheet=$this->date_start;
                     $tasksList[$i]->date_end_timesheet=$this->date_end;
                     $tasksList[$i]->task_timesheet=$this->id;
                     $tasksList[$i]->listed=$obj->listed;
                     $i++;
+                    
+                    
             }
             $this->db->free($resql);
              $i = 0;
@@ -659,7 +664,7 @@ function saveInSession(){
                     //if($this->status=="DRAFT" || $this->status=="REJECTED"){
                         
                     $row->getActuals($datestart,$datestop,$userid); 
-                    $row->task_timesheet=$this->id;
+                    //$row->task_timesheet=$this->id;
                    // }else{
                         //$row->getActuals($this->yearWeek,$userid); 
                    //     $row->getActuals($datestart,$datestop,$userid,$this->project_tasktime_list); 
@@ -814,7 +819,6 @@ Public function setStatus($user,$status,$id=0){
             // Check parameters
             $userid=  is_object($user)?$user->id:$user;
             if($id==0)$id=$this->id;
-		
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
@@ -858,6 +862,11 @@ Public function setStatus($user,$status,$id=0){
 		{
                     $this->db->commit();
                     $ret=0;
+                    if(count($this->taskTimesheet)<1 || $this->id<=0){
+                        $this->fetch($id);
+                        $this->fetchTaskTimesheet();
+                  
+                    }
                     foreach($this->taskTimesheet as $ts)
                     {
                         $tasktime= new task_time_approval($this->db);
@@ -873,8 +882,6 @@ Public function setStatus($user,$status,$id=0){
     }
 
 
-
-  
 
     
 /******************************************************************************
