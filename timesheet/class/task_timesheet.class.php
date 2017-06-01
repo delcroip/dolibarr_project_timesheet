@@ -819,54 +819,11 @@ Public function setStatus($user,$status,$id=0){
             $Submitted= ($status=='SUBMITTED');
             // Check parameters
             $userid=  is_object($user)?$user->id:$user;
-            if($id==0)$id=$this->id;
+            if($id!=0)$this->fetch($id);
             $this->status=$status;
         // Update request
             $error=($this->id<=0)?$this->create($user):$this->update($user);
             
-    /*        
-        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.=' status="'.$status.'",';
-        $sql.=' fk_user_modification="'.$userid.'"';
-        $sql.= " WHERE rowid=".$id;
-
-		$this->db->begin();
-
-		dol_syslog(__METHOD__.$sql);
-        $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-		if (! $error)
-		{
- 
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			 }
-		}
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-                            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-     
-                    $this->db->commit();
-                    $ret=0;*/
             if($error>0){
                     if(count($this->taskTimesheet)<1 || $this->id<=0){
                         $this->fetch($id);
@@ -906,10 +863,6 @@ Public function setStatus($user,$status,$id=0){
 
     $html.="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
      ///Whitelist tab
-    
-
-
-
      $html.='<tr class="liste_titre" id="">'."\n";
      
      foreach ($this->headers as $key => $value){

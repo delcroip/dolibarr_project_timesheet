@@ -22,7 +22,7 @@
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once 'class/task_timesheet.class.php';
-$statusTsColor=array('DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUBMITTED,'APPROVED'=>TIMESHEET_COL_APPROVED,'CANCELLED'=>TIMESHEET_COL_CANCELLED,'REJECTED'=>TIMESHEET_COL_REJECTED);
+$statusTsColor=array('DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>TIMESHEET_COL_SUBMITTED,'APPROVED'=>TIMESHEET_COL_APPROVED,'INVOICED'=>TIMESHEET_COL_APPROVED,'CANCELLED'=>TIMESHEET_COL_CANCELLED,'REJECTED'=>TIMESHEET_COL_REJECTED);
 
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
 //require_once './projectTimesheet.class.php';
@@ -50,13 +50,13 @@ class task_time_approval extends Task
 	//time
         // from db
         var $appId;
+        var $planned_workload_approval;
 	var $userId;
 	var $date_start_timesheet=''; 
         var $date_end_timesheet;
 	var $status;
 	var $sender;
 	var $recipient;
-       // var $planned_workloads; hetited from task
         var $note; 
         var $user_app;
 
@@ -85,7 +85,7 @@ class task_time_approval extends Task
                // var_dump('creattta'.$this->id);
 		//$this->date_end=strtotime('now -1 year');
 		//$this->date_start=strtotime('now -1 year');
-                $this->user_app= array('team'=>0 ,'project'=>0 ,'customer'=>0 ,'suplier'=>0 ,'other'=>0  );
+                $this->user_app= array('team'=>0 ,'project'=>0 ,'customer'=>0 ,'supplier'=>0 ,'other'=>0  );
 	}
 
 /******************************************************************************
@@ -116,7 +116,7 @@ class task_time_approval extends Task
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->sender)) $this->sender=trim($this->sender);
 		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
-		if (isset($this->planned_workload)) $this->planned_workload=trim($this->planned_workload);
+		if (isset($this->planned_workload_approval)) $this->planned_workload_approval=trim($this->planned_workload_approval);
 		if (isset($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
 		if (isset($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
 		if (isset($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
@@ -165,7 +165,7 @@ class task_time_approval extends Task
 		$sql.=' '.(! isset($this->status)?'"DRAFT"':'"'.$this->status.'"').',';
 		$sql.=' '.(! isset($this->sender)?'"user"':'"'.$this->sender.'"').',';
 		$sql.=' '.(! isset($this->recipient)?'"team"':'"'.$this->recipient.'"').',';
-		$sql.=' '.(! isset($this->planned_workload)?'NULL':'"'.$this->planned_workload.'"').',';
+		$sql.=' '.(! isset($this->planned_workload_approval)?'NULL':'"'.$this->planned_workload_approval.'"').',';
 		$sql.=' '.(! isset($this->user_app['team'])?'NULL':'"'.$this->user_app['team'].'"').',';
 		$sql.=' '.(! isset($this->user_app['project'])?'NULL':'"'.$this->user_app['project'].'"').',';
 		$sql.=' '.(! isset($this->user_app['customer'])?'NULL':'"'.$this->user_app['customer'].'"').',';
@@ -270,7 +270,7 @@ class task_time_approval extends Task
                 $this->status = $obj->status;
                 $this->sender = $obj->sender;
                 $this->recipient = $obj->recipient;
-                $this->planned_workload = $obj->planned_workload;
+                $this->planned_workload_approval = $obj->planned_workload;
                 $this->user_app['team'] = $obj->fk_user_app_team;
                 $this->user_app['other'] = $obj->fk_user_app_other;
                 $this->user_app['supplier'] = $obj->fk_user_app_supplier;
@@ -375,7 +375,7 @@ class task_time_approval extends Task
                 unset($this->status) ;
                 unset($this->sender) ;
                 unset($this->recipient) ;
-                unset($this->planned_workloads) ;
+                unset($this->planned_workload_approvals) ;
                 unset($this->tracking) ;
                 unset($this->tracking_ids) ;
                 unset($this->date_modification );
@@ -432,7 +432,7 @@ class task_time_approval extends Task
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->sender)) $this->sender=trim($this->sender);
 		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
-		if (isset($this->planned_workload)) $this->planned_workload=trim($this->planned_workload);
+		if (isset($this->planned_workload_approval)) $this->planned_workload_approval=trim($this->planned_workload_approval);
 		if (isset($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
 		if (isset($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
 		if (isset($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
@@ -460,7 +460,7 @@ class task_time_approval extends Task
 		$sql.=' status='.(empty($this->status)? 'null':'"'.$this->status.'"').',';
 		$sql.=' sender='.(empty($this->sender) ? 'null':'"'.$this->sender.'"').',';
 		$sql.=' recipient='.(empty($this->recipient) ? 'null':'"'.$this->recipient.'"').',';
-		$sql.=' planned_workload='.(empty($this->planned_workload) ? 'null':'"'.$this->planned_workload.'"').',';
+		$sql.=' planned_workload='.(empty($this->planned_workload_approval) ? 'null':'"'.$this->planned_workload_approval.'"').',';
 		$sql.=' fk_user_app_team='.(empty($this->user_app['team']) ? 'NULL':'"'.$this->user_app['team'].'"').',';
 		$sql.=' fk_user_app_project='.(empty($this->user_app['project']) ? 'NULL':'"'.$this->user_app['project'].'"').',';
 		$sql.=' fk_user_app_customer='.(empty($this->user_app['customer']) ? 'NULL':'"'.$this->user_app['customer'].'"').',';
@@ -635,7 +635,7 @@ class task_time_approval extends Task
                         $this->date_start			= $this->db->jdate($obj->dateo);
                         $this->date_end			= $this->db->jdate($obj->datee);
                         $this->duration_effective           = $obj->duration_effective;		// total of time spent on this task
-                        $this->planned_workload             = $obj->planned_workload;
+                        $this->planned_workload_approval             = $obj->planned_workload;
                         $this->startDatePjct=$this->db->jdate($obj->pdateo);
 			$this->stopDatePjct=$this->db->jdate($obj->pdatee);
 			$this->pStatus=$obj->pstatus;
@@ -756,7 +756,13 @@ class task_time_approval extends Task
     //if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
     //$linestyle=(($hidden)?'display:none;':'');
     $favClass=(($this->listed)?'timesheet_whitelist':'timesheet_blacklist');
-    $linestyle.=(($this->pStatus == "2")?'background:#'.TIMESHEET_BC_FREEZED.'";':'');
+  $linestyle='';
+  if(($this->pStatus == "2")){
+      $linestyle.='background:#'.TIMESHEET_BC_FREEZED.'";';
+  }
+    
+    
+    
     $html= '<tr class="timesheet_line '.$favClass.'" '.((!empty($linestyle))?'style="'.$linestyle.'"':'').' class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
     //title section
      foreach ($headers as $key => $title){
@@ -794,14 +800,19 @@ class task_time_approval extends Task
                 }else{
                     $html .= "-:--(-%)";
                 }
+                if($this->planned_workload_approval) // show the time planned for the week
+                {
+                     $html .= '('.$this->parseTaskTime($this->planned_workload_approval).')';
+                }
                  break;
+
          }
 
          $html.="</th>\n";
      }
 
   // day section
-        $isOpenSatus=($status=="DRAFT" || $status=="CANCELLED"|| $status=="REJECTED");
+        $isOpenSatus=($status=='DRAFT' || $status=='CANCELLED'|| $status=='REJECTED' || $status=='PLANNED');
         $opendays=str_split(TIMESHEET_OPEN_DAYS);
 
         for($dayCur=0;$dayCur<$dayelapsed;$dayCur++)
@@ -830,7 +841,10 @@ class task_time_approval extends Task
                 $bkcolor='';
 
                 if($isOpen){
-                    if($dayWorkLoadSec!=0)$bkcolor='background:#'.TIMESHEET_BC_VALUE;
+                    $bkcolor='background:#'.$statusTsColor[$this->status];
+                    if($dayWorkLoadSec!=0 && $this->status=='DRAFT' )$bkcolor='background:#'.TIMESHEET_BC_VALUE;
+                    
+                    
                 }else{
                     $bkcolor='background:#'.TIMESHEET_BC_FREEZED;
                 } 
@@ -845,7 +859,7 @@ class task_time_approval extends Task
                 $html .= 'onblur="validateTime(this,'.$tsUserId.','.$dayCur.',0)" />';
                 $html .= "</th>\n"; 
             }else{
-                $bkcolor='background:#'.$statusTsColor[$status];
+                $bkcolor='background:#'.$statusTsColor[$this->status];
                 $html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$tsUserId.']['.$dayCur.']"';
                 //$html .= ' name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
                 $html .= ' name="task['.$this->id.']['.$dayCur.']" ';
@@ -996,7 +1010,7 @@ function unserialize($str){
     $this->taskParentDesc=$arRet['taskParentDesc'] ;
     $this->companyName=$arRet['companyName']  ;
     $this->companyId=$arRet['companyId'];
-    $this->status=$arRet['satus'];
+    $this->status=$arRet['status'];
     $this->sender=$arRet['sender'];
     $this->recipient=$arRet['recipient'];
     $this->tracking=$arRet['tracking'];
@@ -1009,8 +1023,8 @@ function unserialize($str){
     {
         return $this->tasklist;
     }
-    /*
-public function updateTimeUsed() REMOVEME
+    
+public function updateTimeUsed() 
     {
     $this->db->begin();
     $error=0;
@@ -1020,7 +1034,7 @@ public function updateTimeUsed() REMOVEME
                ."WHERE ptt.fk_task ='".$this->id."') "
                ."WHERE pt.rowid='".$this->id."' ";
    
-            dol_syslog(get_class($this)."::UpdateTimeUsed sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::UpdateTimeUsed ", LOG_DEBUG);
 
 
             $resql=$this->db->query($sql);
@@ -1059,7 +1073,7 @@ public function updateTimeUsed() REMOVEME
         return $ret;
         //return '00:00';
           
-    }*/
+    }
     
       /*
  * change the status of an approval 
@@ -1193,7 +1207,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
 
         $this->tasklist[$dayKey]['duration']=$duration;
     }
-   //if($ret)$this->updateTimeUsed(); REMOVEME
+   if($ret)$this->updateTimeUsed(); // needed upon delete
     return $ret;
     //return $idList;
 }
