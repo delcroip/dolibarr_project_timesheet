@@ -32,6 +32,7 @@ Timesheet view for project in Dolibarr
     - create the page to validate non-team AP
     - assign the TS id in ttapproval
     - ISSUE: del tasktime doesn't generate correct message on timesheet.php
+    - ISSUE: rejected TS is not showd as it
 
 - add automatic reminder for the approval
 - add feature in Project to foresee workload per user, task and "week"

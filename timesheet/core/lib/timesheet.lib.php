@@ -68,7 +68,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
    $sql[$role][3]=$idlist;
     ksort($sql[$role], SORT_NUMERIC);
     $sqlused=implode($sql[$role]);
-    dol_syslog("form::get_subordinate sql=".$sqlused.' role='.$role, LOG_DEBUG);
+    dol_syslog('form::get_subordinate role='.$role, LOG_DEBUG);
     $list=array();
     $resql=$db->query($sqlused);
     
@@ -139,7 +139,7 @@ function get_userName($userids){
 	$sql.=((is_array($userids))?('"'.$userids[$i].'"'):('"'.$userids.'"')).')';
         $sql.='ORDER BY usr.lastname ASC';
 
-    dol_syslog("form::get_userName sql=".$sql, LOG_DEBUG);
+    dol_syslog('form::get_userName '.$sql, LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
     

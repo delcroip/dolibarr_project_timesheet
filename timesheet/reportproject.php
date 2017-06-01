@@ -68,7 +68,7 @@ if(!$user->admin){
     $sql.=' AND fk_socpeople="'.$userid.'"';
 }
 
-dol_syslog("timesheet::report::projectList sql=".$sql, LOG_DEBUG);
+dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
 //launch the sql querry
 
 $resql=$db->query($sql);

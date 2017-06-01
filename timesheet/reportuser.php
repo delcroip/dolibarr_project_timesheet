@@ -75,7 +75,7 @@ if(!$user->admin)
 }
     
 
-dol_syslog("timesheet::reportuser::userList sql=".$sql, LOG_DEBUG);
+dol_syslog("timesheet::reportuser::userList", LOG_DEBUG);
 //launch the sql querry
 
 $resql=$db->query($sql);

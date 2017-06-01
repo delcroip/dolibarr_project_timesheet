@@ -616,7 +616,7 @@ class task_time_approval extends Task
         }
         $sql .=" WHERE pt.rowid ='".$this->id."'";
         #$sql .= "WHERE pt.rowid ='1'";
-        dol_syslog(get_class($this)."::fetchtasks sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetchtasks ", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -689,7 +689,7 @@ class task_time_approval extends Task
         $sql .= " AND (ptt.task_date>=".$this->db->idate($timeStart).") ";
         $sql .= " AND (ptt.task_date<".$this->db->idate($timeEnd).")";
         if(!empty($tasktimeIds))$sql .= ' AND ptt.rowid in ('.$tasktimeIds.')';
-        dol_syslog(get_class($this)."::fetchActuals sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetchActuals ", LOG_DEBUG);
 		for($i=0;$i<$dayelapsed;$i++){
 			
 			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>$timeStart+SECINDAY*$i);
@@ -1242,7 +1242,7 @@ function getIdList()
             $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
             $sql.= ' WHERE t.status="SUBMITTED" AND t.recipient="team"';
             $sql.= ' GROUP BY u.fk_user';
-             dol_syslog(get_class($this)."::sendApprovalReminders sql=".$sql, LOG_DEBUG);
+             dol_syslog(get_class($this)."::sendApprovalReminders ", LOG_DEBUG);
             $resql=$this->db->query($sql);
             
             if ($resql)

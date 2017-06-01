@@ -46,7 +46,7 @@ global $db;
     $sql.=$fieldValue.'"';
     //$sql.= " ORDER BY t.".$field;
        
-    dol_syslog('form::select_enum sql='.$sql, LOG_DEBUG);
+    dol_syslog('form::select_enum ', LOG_DEBUG);
     
     $resql=$db->query($sql);
     
@@ -171,7 +171,7 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
     if(!empty($sqlTailWhere))
             $sql.=' WHERE '.$sqlTailWhere;
        
-    dol_syslog('form::select_generic sql='.$sql, LOG_DEBUG);
+    dol_syslog('form::select_generic ', LOG_DEBUG);
     
     $resql=$db->query($sql);
    
@@ -277,7 +277,7 @@ function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2
     if(!empty($sqlTail))
             $sql.=' '.$sqlTail;
        
-    dol_syslog("form::print_generic sql=".$sql, LOG_DEBUG);
+    dol_syslog("form::print_generic ", LOG_DEBUG);
     
     $resql=$db->query($sql);
     

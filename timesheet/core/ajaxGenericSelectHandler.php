@@ -49,7 +49,7 @@ if($posBs>0){
     if(!empty($sqlTailWhere))
         $sql.=' AND '.$sqlTailWhere;
        
-    dol_syslog('form::ajax_select_generic sql='.$sql, LOG_DEBUG);
+    dol_syslog('form::ajax_select_generic ', LOG_DEBUG);
     $return_arr = array();
     $resql=$db->query($sql);
    

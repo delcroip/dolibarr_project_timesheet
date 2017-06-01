@@ -627,7 +627,7 @@ function saveInSession(){
     $sql.=' AND (tsk.dateo<="'.$this->db->idate($datestop).'" OR tsk.dateo IS NULL)';
     $sql.='  ORDER BY '.($whiteListNumber?'listed,':'').'prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ';
 
-     dol_syslog("timesheet::getTasksTimesheet full sql=".$sql, LOG_DEBUG);
+     dol_syslog("timesheet::getTasksTimesheet full ", LOG_DEBUG);
 
     $resql=$this->db->query($sql);
     if ($resql)
@@ -736,7 +736,7 @@ function get_userName(){
     $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as userName FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
 
 	$sql.=' usr.rowid = '.$this->userId;
-      dol_syslog("task_timesheet::get_userName sql=".$sql, LOG_DEBUG);
+      dol_syslog("task_timesheet::get_userName ", LOG_DEBUG);
     $resql=$this->db->query($sql);
     
     if ($resql)

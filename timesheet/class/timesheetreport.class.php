@@ -159,7 +159,7 @@ class timesheetReport
             break;
     }
             
-            dol_syslog("timesheet::userreport::tasktimeList sql=".$sql, LOG_DEBUG);
+            dol_syslog("timesheet::userreport::tasktimeList", LOG_DEBUG);
             $resql=$this->db->query($sql);
             $numTaskTime=0;
             $resArray=array();

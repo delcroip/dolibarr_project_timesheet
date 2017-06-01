@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016 delcroip <delcroip@gmail.com>
+/* Copyright (C) 2016 delcroip <delcroip@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- *   	\file       dev/skeletons/skeleton_page.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Put here some comments
- */
+
 
 
 
@@ -29,12 +23,18 @@
 //$_POST['dol_hide_leftmenu']=1;
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
+$apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
+if($apflows[0]==0 && in_array('1',$apflows)){ // redirect to the correct page
+    header("location:otherAp.php"); //TOBETESTED
+}
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'class/task_timesheet.class.php';
 if(!$user->rights->timesheet->approval){
         $accessforbidden = accessforbidden("you need to have the approver rights");           
 }
+
+
 //$userId            = GETPOST('userid');
 $userId=  is_object($user)?$user->id:$user;
 $action             = GETPOST('action');
@@ -80,7 +80,6 @@ if($action== 'submit'){
             $errors=0;
             $count=0;
             //$task_timesheet->db=$db;
-           // var_dump(unserialize($task_timesheet->taskTimesheet[0])->tasklist);
             if (!empty($_POST['approval']))
             {
                 $approvals=$_POST['approval'];
@@ -130,12 +129,14 @@ if($action== 'submit'){
                 setEventMessage( $langs->transnoentitiesnoconv("InternalError"),'errors');
 	
 
+}else if($action== 'goTo'){
+    
 }
 if(!empty($timestamp)){
        unset($_SESSION['timesheetAp'][$timestamp]);
 }
 $timestamp=time();
-$subId=get_subordinate($db,$userId, 2,array($userId),'team');
+$subId=($user->admin)?'all':get_subordinate($db,$userId, 2,array($userId),'team');
 $selectList=getSelectAps($subId);
 $level=intval(TIMESHEET_MAX_APPROVAL);
 $offset=0;
@@ -147,7 +148,7 @@ if( is_array($selectList)&& count($selectList)){
         }
         $level=$selectList[$i]['count'];
 }
-$role=($user->admin)?'admin_team':'team';
+$role='team';
 $objectArray=getTStobeApproved($level,$offset,$role,$subId);
 
 if(is_array($objectArray)){
@@ -166,21 +167,25 @@ $i=0;
 *
 * Put here all code to build page
 ****************************************************/
-
+/*
 if($xml){
     //renew timestqmp
     ob_clean();
    header("Content-type: text/xml; charset=utf-8");
   //  echo $task_timesheet->GetTimeSheetXML($userId,5); //fixme
     exit;
-}
+}*/
+
 
 $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
 $morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js");
 llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 
-$Form ='';
+
+echo '  <div class="inline-block tabsElem"><a  href="" class="tabactive tab inline-block" data-role="button">'.$langs->trans('Team').'</a></div>';
+echo '  <div class="inline-block tabsElem"><a  href="" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Project').'</a></div>';
+echo '<div id="Team" class="tabBar">';
 //tmstp=time();
 if(is_object($firstTimesheetUser)){
     if(!$print) echo getHTMLNavigation($optioncss, $selectList,$current);
@@ -258,7 +263,7 @@ $Form .='updateAll();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .='</div>';//TimesheetPage
 print $Form;
-
+echo '</div>';
 // End of page
 llxFooter();
 $db->close();
@@ -271,7 +276,7 @@ $db->close();
     */    
 function getTStobeApproved($level,$offset,$role,$subId){ // FIXME LEVEL ISSUE
 global $db;
-if(!is_array($subId) || !count($subId))return array();
+if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
 //$byWeek=(TIMESHEET_APPROVAL_BY_WEEK==1)?true:false;
 $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
         //if($role='team')
@@ -284,14 +289,10 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
         
         switch($role){
             case 'team':
-                $sql.=' AND fk_userid in ('.implode(',',$subId).')';
+                if($subId!='all') $sql.=' AND fk_userid in ('.implode(',',$subId).')';
  //               $sql.=' AND recipient="'.$role.'"';
                 break;
-            case 'admin_team':
- //               $sql.=' AND recipient="team"';
-                break;
 
-                break;
             
         }
        
@@ -409,29 +410,29 @@ function getHTMLNavigation($optioncss, $selectList,$current=0){
   *  @return  array (int => String)  				array( ID => userName)
  */
 function getSelectAps($subId){
-    if(!is_array($subId) || !count($subId))return array();
+    if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
     global $db,$langs;
     if(TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.date_start) as nb,ts.date_start as id,';
         $sql.=" DATE_FORMAT(ts.date_start,'".$langs->trans('Week')." %u (%m/%Y)') as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
 
     }else if(TIMESHEET_APPROVAL_BY_WEEK==0){
         $sql='SELECT COUNT(ts.fk_userid) as nb,ts.fk_userid as id,';
         $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
     }else{
         $sql="SELECT COUNT(ts.fk_userid) as nb,CONCAT(DATE_FORMAT(ts.date_start,' %m/%Y'),usr.firstname,' ',usr.lastname) as id,";
         $sql.=" CONCAT(usr.firstname,' ',usr.lastname,DATE_FORMAT(ts.date_start,' %m/%Y')) as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
     }
     $sql.=' WHERE ts.status="SUBMITTED"'; 
-    $sql.=' AND ts.fk_userid in ('.implode(',',$subId).')';
+    if($subId!='all')$sql.=' AND ts.fk_userid in ('.implode(',',$subId).')';
     $sql.=' group by id ORDER BY id DESC, label '; 
-    dol_syslog("timesheetAp::getSelectAps sql=".$sql, LOG_DEBUG);
+    dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
     
@@ -448,11 +449,13 @@ function getSelectAps($subId){
             {
                 $j=1;
                 $nb=$obj->nb;
+                // split the nb in x line to avoid going over the max approval
                 while($nb>TIMESHEET_MAX_APPROVAL){
                     $list[]=array("id"=>$obj->id,"label"=>$obj->label.' ('.$j."/".ceil($obj->nb/TIMESHEET_MAX_APPROVAL).')',"count"=>TIMESHEET_MAX_APPROVAL);
                     $nb-=TIMESHEET_MAX_APPROVAL;
                     $j++;
                 }
+                // at minimum a row shoud gnerate one option
                 $list[]=array("id"=>$obj->id,"label"=>$obj->label.' '.(($obj->nb>TIMESHEET_MAX_APPROVAL)?'('.$j.'/'.ceil($obj->nb/TIMESHEET_MAX_APPROVAL).')':''),"count"=>$nb);
             }
             $i++;
