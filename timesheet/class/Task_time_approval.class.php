@@ -21,7 +21,7 @@
 #require_once('mysql.class.php');
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once 'class/task_timesheet.class.php';
+require_once 'class/Task_timesheet.class.php';
 $statusTsColor=array('DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>TIMESHEET_COL_SUBMITTED,'APPROVED'=>TIMESHEET_COL_APPROVED,'INVOICED'=>TIMESHEET_COL_APPROVED,'CANCELLED'=>TIMESHEET_COL_CANCELLED,'REJECTED'=>TIMESHEET_COL_REJECTED);
 
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
@@ -29,9 +29,9 @@ $statusTsColor=array('DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUB
 define('SECINDAY',86400);
 define('TIMESHEET_BC_FREEZED','909090');
 define('TIMESHEET_BC_VALUE','f0fff0');
-class task_time_approval extends Task 
+class Task_time_approval extends Task 
 {
-    	var $element='task_time_approval';			//!< Id that identify managed objects
+    	var $element='Task_time_approval';			//!< Id that identify managed objects
 	var $table_element='project_task_time_approval';		//!< Name of table without prefix where object is stored
 
         private $ProjectTitle		=	"Not defined";
@@ -52,8 +52,8 @@ class task_time_approval extends Task
         var $appId;
         var $planned_workload_approval;
 	var $userId;
-	var $date_start_timesheet=''; 
-        var $date_end_timesheet;
+	var $date_start_approval=''; 
+        var $date_end_approval;
 	var $status;
 	var $sender;
 	var $recipient;
@@ -111,8 +111,8 @@ class task_time_approval extends Task
 		if (isset($this->userId)) $this->userId=trim($this->userId);
 		if (isset($this->date_start)) $this->date_start=trim($this->date_start);
 		if (isset($this->date_end)) $this->date_end=trim($this->date_end);
-		if (isset($this->date_start_timesheet)) $this->date_start_timesheet=trim($this->date_start_timesheet);
-		if (isset($this->date_end_timesheet)) $this->date_end_timesheet=trim($this->date_end_timesheet);
+		if (isset($this->date_start_approval)) $this->date_start_approval=trim($this->date_start_approval);
+		if (isset($this->date_end_approval)) $this->date_end_approval=trim($this->date_end_approval);
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->sender)) $this->sender=trim($this->sender);
 		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
@@ -160,8 +160,8 @@ class task_time_approval extends Task
         $sql.= ") VALUES (";
         
 		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
-		$sql.=' '.(! isset($this->date_start_timesheet) || dol_strlen($this->date_start_timesheet)==0?'NULL':'"'.$this->db->idate($this->date_start_timesheet).'"').',';
-		$sql.=' '.(! isset($this->date_end_timesheet) || dol_strlen($this->date_end_timesheet)==0?'NULL':'"'.$this->db->idate($this->date_end_timesheet).'"').',';
+		$sql.=' '.(! isset($this->date_start_approval) || dol_strlen($this->date_start_approval)==0?'NULL':'"'.$this->db->idate($this->date_start_approval).'"').',';
+		$sql.=' '.(! isset($this->date_end_approval) || dol_strlen($this->date_end_approval)==0?'NULL':'"'.$this->db->idate($this->date_end_approval).'"').',';
 		$sql.=' '.(! isset($this->status)?'"DRAFT"':'"'.$this->status.'"').',';
 		$sql.=' '.(! isset($this->sender)?'"user"':'"'.$this->sender.'"').',';
 		$sql.=' '.(! isset($this->recipient)?'"team"':'"'.$this->recipient.'"').',';
@@ -265,8 +265,8 @@ class task_time_approval extends Task
 
                 $this->appId    = $obj->rowid;
                 $this->userId = $obj->fk_userid;
-                $this->date_start_timesheet = $this->db->jdate($obj->date_start);
-                $this->date_end_timesheet = $this->db->jdate($obj->date_end);
+                $this->date_start_approval = $this->db->jdate($obj->date_start);
+                $this->date_end_approval = $this->db->jdate($obj->date_end);
                 $this->status = $obj->status;
                 $this->sender = $obj->sender;
                 $this->recipient = $obj->recipient;
@@ -287,7 +287,7 @@ class task_time_approval extends Task
                 
             }
             $this->db->free($resql);
-            $this->yearWeek= getYearWeek(0,0,0,$this->date_start_timesheet); //fixme
+            $this->yearWeek= getYearWeek(0,0,0,$this->date_start_approval); //fixme
             $this->ref=$this->yearWeek.'_'.$this->userId;
             $this->whitelistmode=2; // no impact
             $this->getTaskInfo();
@@ -334,7 +334,7 @@ class task_time_approval extends Task
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
-        $sql.= " WHERE t.date_start = '".$this->db->idate($this->date_start_timesheet)."'";
+        $sql.= " WHERE t.date_start = '".$this->db->idate($this->date_start_approval)."'";
 		$sql.= " AND t.fk_userid = '".$this->userId."'";
        # $sql .= "AND WEEKOFYEAR(ptt.date_start)='".date('W',strtotime($yearWeek))."';";
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
@@ -352,8 +352,8 @@ class task_time_approval extends Task
                 $this->appId    = $obj->rowid;
                 
                 $this->userId = $obj->fk_userid;
-                $this->date_start_timesheet = $this->db->jdate($obj->date_start);
-                $this->date_end_timesheet = $this->db->jdate($obj->date_end);
+                $this->date_start_approval = $this->db->jdate($obj->date_start);
+                $this->date_end_approval = $this->db->jdate($obj->date_end);
                 $this->status = $obj->status;
                 $this->sender = $obj->sender;
                 $this->recipient = $obj->recipient;
@@ -386,8 +386,8 @@ class task_time_approval extends Task
                 unset($this->user_app['other'] );
                // unset($this->date_start ); 
                // unset($this->date_end );
-                //unset($this->date_start_timesheet );
-                //unset($this->date_end_timesheet );
+                //unset($this->date_start_approval );
+                //unset($this->date_end_approval );
                 unset($this->user_creation );
                 unset($this->user_modification );
                 unset($this->id );
@@ -395,7 +395,7 @@ class task_time_approval extends Task
                 unset($this->task_timesheet );
                 unset($this->date_creation  );
                 
-                //$this->date_end= getEndWeek($this->date_start_timesheet);
+                //$this->date_end= getEndWeek($this->date_start_approval);
                 $this->create($this->user);
                 $this->fetch($this->appId);
             }
@@ -427,8 +427,8 @@ class task_time_approval extends Task
 		// Clean parameters
         
 		if (isset($this->userId)) $this->userId=trim($this->userId);
-		if (isset($this->date_start_timesheet)) $this->date_start_timesheet=trim($this->date_start_timesheet);
-		if (isset($this->date_end_timesheet)) $this->date_end_timesheet=trim($this->date_end_timesheet);
+		if (isset($this->date_start_approval)) $this->date_start_approval=trim($this->date_start_approval);
+		if (isset($this->date_end_approval)) $this->date_end_approval=trim($this->date_end_approval);
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->sender)) $this->sender=trim($this->sender);
 		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
@@ -455,8 +455,8 @@ class task_time_approval extends Task
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         
 		$sql.=' fk_userid='.(empty($this->userId) ? 'null':'"'.$this->userId.'"').',';
-		$sql.=' date_start='.(dol_strlen($this->date_start_timesheet)!=0 ? '"'.$this->db->idate($this->date_start_timesheet).'"':'null').',';
-		$sql.=' date_end='.(dol_strlen($this->date_end_timesheet)!=0 ? '"'.$this->db->idate($this->date_end_timesheet).'"':'null').',';
+		$sql.=' date_start='.(dol_strlen($this->date_start_approval)!=0 ? '"'.$this->db->idate($this->date_start_approval).'"':'null').',';
+		$sql.=' date_end='.(dol_strlen($this->date_end_approval)!=0 ? '"'.$this->db->idate($this->date_end_approval).'"':'null').',';
 		$sql.=' status='.(empty($this->status)? 'null':'"'.$this->status.'"').',';
 		$sql.=' sender='.(empty($this->sender) ? 'null':'"'.$this->sender.'"').',';
 		$sql.=' recipient='.(empty($this->recipient) ? 'null':'"'.$this->recipient.'"').',';
@@ -676,8 +676,8 @@ class task_time_approval extends Task
            //$timeStart=floor($timeStart/SECINDAY)*SECINDAY;
            //$timeEnd=ceil($timeEnd/SECINDAY)*SECINDAY;
            $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
-        $this->date_start_timesheet= $timeStart;
-        $this->date_end_timesheet= $timeEnd;
+        $this->date_start_approval= $timeStart;
+        $this->date_end_approval= $timeEnd;
         $this->userId=$userid;
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
@@ -962,14 +962,14 @@ function serialize(){
     $arRet['id']=$this->id; //task id
     $arRet['listed']=$this->listed; //task id
     $arRet['description']=$this->description; //task id
-    $arRet['appId']=$this->appId; // task_time_approval id
+    $arRet['appId']=$this->appId; // Task_time_approval id
     $arRet['tasklist']=$this->tasklist;
     $arRet['userId']=$this->userId; // user id booking the time
     $arRet['note']=$this->note;			
     $arRet['fk_project']=$this->fk_project ;
     $arRet['ProjectTitle']=$this->ProjectTitle;
-    $arRet['date_start']=$this->date_start_timesheet;			
-    $arRet['date_end']=$this->date_end_timesheet	;		
+    $arRet['date_start']=$this->date_start_approval;			
+    $arRet['date_end']=$this->date_end_approval	;		
     $arRet['duration_effective']=$this->duration_effective ;   
     $arRet['planned_workload']=$this->planned_workload ;
     $arRet['fk_projet_task_parent']=$this->fk_projet_task_parent ;
@@ -1002,8 +1002,8 @@ function unserialize($str){
     $this->noten=$arRet['note'];			
     $this->fk_project=$arRet['fk_project'] ;
     $this->ProjectTitle=$arRet['ProjectTitle'];
-    $this->date_start_timesheet=$arRet['date_start'];			
-    $this->date_end_timesheet=$arRet['date_end']	;		
+    $this->date_start_approval=$arRet['date_start'];			
+    $this->date_end_approval=$arRet['date_end']	;		
     $this->duration_effective=$arRet['duration_effective'] ;   
     $this->planned_workload=$arRet['planned_workload'] ;
     $this->fk_projet_task_parent=$arRet['fk_projet_task_parent'] ;
@@ -1121,7 +1121,7 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
 //    Public function setAppoved($user,$id=0){
 Public function getDuration(){ //FIXME
     $ttaDuration=0;
-    if(count($this->tasklist)<=1) $this->getActuals ($this->date_start_timesheet, $this->date_end_timesheet, $this->userId);
+    if(count($this->tasklist)<=1) $this->getActuals ($this->date_start_approval, $this->date_end_approval, $this->userId);
     foreach($this->tasklist as $item){
          $ttaDuration+=$item['duration'];
     }
@@ -1294,7 +1294,7 @@ function getIdList()
   
     Public function Approved($sender,$role, $updteTS =true){
         $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-        $recipients=array(0=> 'team', 1=> 'project',2=>'customer',3=>'provider',4=>'other');
+        $recipients=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
         if(!in_array($role, $recipients)) return -1; // role not valide
         $nextStatus='';
         $ret=0;
@@ -1343,7 +1343,7 @@ function getIdList()
     Public function challenged($sender,$role,$updteTS=true){
        $nextStatus='';
         $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-        $recipients=array(1=> 'team', 2=> 'project',3=>'customer',4=>'provider',5=>'other');
+        $recipients=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
         if(!in_array($role, $recipients)) return -1; // role not valide
         $ret=-1;
        //unset the approver ( could be set previsouly)
@@ -1368,7 +1368,7 @@ function getIdList()
             $nextStatus='CHALLENGED'; // FIXME update the timesheet user if every task time approval is OK
         }
        $ret=$this->setStatus($user,$nextStatus,$updteTS);
-        return $ret;
+        return $ret+1;// team key is 0 
     }        
         
 }

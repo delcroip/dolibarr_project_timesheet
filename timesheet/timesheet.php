@@ -29,7 +29,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
-require_once 'class/task_timesheet.class.php';
+require_once 'class/Task_timesheet.class.php';
 
 
 $action             = GETPOST('action');

@@ -23,7 +23,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once 'class/holidayTimesheet.class.php';
-require_once 'class/task_time_approval.class.php';
+require_once 'class/Task_time_approval.class.php';
 require_once 'class/timesheetwhitelist.class.php';
 //require_once 'core/lib/timesheet.lib.php';
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
@@ -640,14 +640,14 @@ function saveInSession(){
             {
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
-                    $tasksList[$i] = NEW task_time_approval($this->db,$obj->taskid);
+                    $tasksList[$i] = NEW Task_time_approval($this->db,$obj->taskid);
                     //$tasksList[$i]->id= $obj->taskid;                     
                     if($obj->appid){
                         $tasksList[$i]->fetch($obj->appid);
                     }              
                     $tasksList[$i]->userId=$this->userId;
-                    $tasksList[$i]->date_start_timesheet=$this->date_start;
-                    $tasksList[$i]->date_end_timesheet=$this->date_end;
+                    $tasksList[$i]->date_start_approval=$this->date_start;
+                    $tasksList[$i]->date_end_approval=$this->date_end;
                     $tasksList[$i]->task_timesheet=$this->id;
                     $tasksList[$i]->listed=$obj->listed;
                     $i++;
@@ -704,7 +704,7 @@ function saveInSession(){
          * For each task store in matching the session timestamp
          */
         foreach ($this->taskTimesheet as $key  => $row) {
-            $tasktime= new task_time_approval($this->db);
+            $tasktime= new Task_time_approval($this->db);
             $tasktime->unserialize($row);     
             $ret=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status);
             $taskList=$tasktime->getIdList();
@@ -765,7 +765,7 @@ function get_userName(){
     return 0;
  }
   /*
- * update the status based on the underlying task_time_approval
+ * update the status based on the underlying Task_time_approval
  *  
  *  @param    int                       $userid              timesheet object, (task)
  *  @param    string              	$status              to overrule the logic if the status enter has an higher priority
@@ -786,7 +786,7 @@ function updateStatus($user,$status=''){
         return 1;
     }
     foreach($this->taskTimesheet as $row){
-        $tta= new task_time_approval($db);
+        $tta= new Task_time_approval($db);
         $tta->unserialize($row);
         if($tta->appId<0){ // tta already created
             $tta->fetch();
@@ -832,7 +832,7 @@ Public function setStatus($user,$status,$id=0){
                     }
                     foreach($this->taskTimesheet as $ts)
                     {
-                        $tasktime= new task_time_approval($this->db);
+                        $tasktime= new Task_time_approval($this->db);
                         $tasktime->unserialize($ts);
                         if($Approved)$ret=$tasktime->Approved($userid,'team');
                         if($Rejected)$ret=$tasktime->challenged($userid,'team');
@@ -1001,7 +1001,7 @@ Public function setStatus($user,$status,$id=0){
         $Lines='';
         if(!$ajax & is_array($this->taskTimesheet)){
             foreach ($this->taskTimesheet as $timesheet) {          
-                $row=new task_time_approval($this->db);            
+                $row=new Task_time_approval($this->db);            
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
                 $Lines.=$row->getFormLine( $this->date_start,$this->date_end,$i,$this->headers,$this->whitelistmode,$this->status,$this->id); // fixme
@@ -1224,7 +1224,7 @@ function GetTimeSheetXML()
         $i=0;
         $xml.="<userTs userid=\"{$this->userId}\"  count=\"".count($this->taskTimesheet)."\" userName=\"{$this->userName}\" >";
         foreach ($this->taskTimesheet as $timesheet) {
-            $row=new task_time_approval($this->db);
+            $row=new Task_time_approval($this->db);
              $row->unserialize($timesheet);
             $xml.= $row->getXML($this->yearWeek);//FIXME
             $i++;

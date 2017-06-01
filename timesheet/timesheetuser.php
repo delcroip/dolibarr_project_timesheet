@@ -43,7 +43,7 @@ include 'core/lib/includeMain.lib.php';
 }   
 
 require_once 'core/lib/generic.lib.php';
-require_once 'class/task_timesheet.class.php';
+require_once 'class/Task_timesheet.class.php';
 require_once 'core/lib/timesheet.lib.php';
 dol_include_once('/core/lib/functions2.lib.php');
 //document handling

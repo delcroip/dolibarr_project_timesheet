@@ -29,7 +29,7 @@ if($apflows[0]==0 && in_array('1',$apflows)){ // redirect to the correct page
 }
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
-require_once 'class/task_timesheet.class.php';
+require_once 'class/Task_timesheet.class.php';
 if(!$user->rights->timesheet->approval){
         $accessforbidden = accessforbidden("you need to have the approver rights");           
 }
@@ -153,8 +153,8 @@ $objectArray=getTStobeApproved($level,$offset,$role,$subId);
 
 if(is_array($objectArray)){
 $firstTimesheetUser=reset($objectArray);
-$curUser=$firstTimesheetUser->userId;
-$nextUser=$firstTimesheetUser->userId;
+//$curUser=$firstTimesheetUser->userId;
+//$nextUser=$firstTimesheetUser->userId;
 }
 $i=0;
 
@@ -181,10 +181,7 @@ $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;ma
 $morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js");
 llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
-
-
-echo '  <div class="inline-block tabsElem"><a  href="" class="tabactive tab inline-block" data-role="button">'.$langs->trans('Team').'</a></div>';
-echo '  <div class="inline-block tabsElem"><a  href="" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Project').'</a></div>';
+showTimesheetApTabs('team');
 echo '<div id="Team" class="tabBar">';
 //tmstp=time();
 if(is_object($firstTimesheetUser)){
@@ -204,7 +201,7 @@ if(is_object($firstTimesheetUser)){
             $Form .=$task_timesheet->getHTMLHolidayLines(false);
             //$Form .=$task_timesheet->getHTMLTotal('totalT');
             $Form .=$task_timesheet->getHTMLtaskLines(false);
-            $Form .=$task_timesheet->getHTMLTotal();/*FIXME*/
+            $Form .=$task_timesheet->getHTMLTotal();
             $Form .=$task_timesheet->getHTMLNote();
             $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id]=$task_timesheet->status;
             $Form .= '</table>';
@@ -325,12 +322,9 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
                     $tmpTs->id    = $obj->rowid;
                     //$tmpTs->userId = $obj->fk_userid;
                     $tmpTs->date_start = $tmpTs->db->jdate($obj->date_start);
+                    $tmpTs->date_start_end = $tmpTs->db->jdate($obj->date_start);
                     $tmpTs->status = $obj->status;
-                    $tmpTs->sender = $obj->sender;
-                    $tmpTs->recipient = $obj->recipient;
                     $tmpTs->planned_workload = $obj->planned_workload;
-                    $tmpTs->tracking = $obj->tracking;
-                    $tmpTs->tracking_ids = $obj->fk_user_tracking;
                     $tmpTs->note = $obj->note;
                     $tmpTs->date_creation = $tmpTs->db->jdate($obj->date_creation);
                     $tmpTs->date_modification = $tmpTs->db->jdate($obj->date_modification);
@@ -339,14 +333,6 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
                     $tmpTs->yearWeek= getYearWeek(0,0,0,$tmpTs->date_start);
                     $tmpTs->whitelistmode=2; // no impact
                     $tmpTs->date_end=getEndWeek($tmpTs->date_start);
-                    //if($i>0){
-                    //    if(($byWeek && ($tsList[$i-1]->yearWeek==$tmpTs->yearWeek)) ||
-                    //           (!$byWeek && $tsList[$i-1]->userId == $tmpTs->userId) ){
-                    //            $tsList[$i]=$tmpTs;
-                    //    }else{
-                    //       break;
-                    //    }
-                    //}else{
                         $tsList[$i]=$tmpTs;
                     //}
                     $i++;
@@ -403,7 +389,7 @@ function getHTMLNavigation($optioncss, $selectList,$current=0){
 }
 
  /*
- * function to get the name from a list of ID
+ * function to get the Approval elible for this user
  * 
   *  @param    object           	$db             database objet
  *  @param    array(int)/int        $userids    	array of manager id 
