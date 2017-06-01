@@ -197,7 +197,7 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
             
             if ($obj)
             {
-                $fieldtoshow=$obj->{$fieldToShow1}.(!empty($fieldToShow2))?$separator.$obj->{$fieldToShow2}:''; 
+                $fieldtoshow=$obj->{$fieldToShow1}.((!empty($fieldToShow2))?$separator.$obj->{$fieldToShow2}:''); 
                 $selectOptions.= "<option value=\"".$obj->{$fieldValue}."\" ";
                 if($obj->{$fieldValue}==$selected){
                      $selectOptions.='selected=\"selected\"';
