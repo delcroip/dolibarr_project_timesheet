@@ -132,11 +132,11 @@ function get_userName($userids){
 
 	$sql.=' usr.rowid in (';
 	$nbIds=(is_array($userids))?count($userids)-1:0;
-	for($i=0; $i<$nbIds ; $i++)
+	for($i=0; $i<$nbIds-1 ; $i++)
 	{
 		$sql.='"'.$userids[$i].'",';
 	}
-	$sql.=((is_array($userids))?('"'.$userids[$i].'"'):('"'.$userids.'"')).')';
+	$sql.=((is_array($userids))?('"'.$userids[$nbIds-1].'"'):('"'.$userids.'"')).')';
         $sql.='ORDER BY usr.lastname ASC';
 
     dol_syslog('form::get_userName '.$sql, LOG_DEBUG);
@@ -379,7 +379,13 @@ function getWeekSplit($date){
     
         
 }
+/*
+ * function to show the AP tab
+ * 
 
+ *  @param    string        $role    	active role
+  *  @return  void  				array( ID => userName)
+ */
 function showTimesheetApTabs($role){
 global $langs;
 $roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
@@ -387,10 +393,11 @@ $rolesUrl=array(0=> 'timesheetAp.php?role=team', 1=> 'otherAp.php?role=project',
 $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
     foreach($roles as $key => $cur_role){
         if($apflows[$key]==1){
-            echo '  <div class="inline-block tabsElem"><a  href="'.$rolesUrl[$key].'&leftmenu=tmesheet" class="';
+            echo '  <div class="inline-block tabsElem"><a  href="'.$rolesUrl[$key].'&leftmenu=timesheet" class="';
             echo    ($role==$cur_role)?'tabactive':'tabunactive';
             echo   ' tab inline-block" data-role="button">'.$langs->trans($cur_role)."</a></div>\n";
         }
     }
 
 }
+

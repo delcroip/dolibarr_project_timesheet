@@ -11,7 +11,7 @@ include 'lib/includeMain.lib.php';
  top_httphead();
 //get the token,exit if 
 $token=GETPOST('token');
-//var_dump($_SESSION['ajaxQuerry'][$token]);
+
 if(!isset($_SESSION['ajaxQuerry'][$token]))exit();
 
 $table=$_SESSION['ajaxQuerry'][$token]['table'];

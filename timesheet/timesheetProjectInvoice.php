@@ -125,7 +125,7 @@ if(empty($month) || empty($year) || empty($projectId))$step=1;
                     dol_print_error($db);
                     return '';
             }
-//var_dump($resArray);
+
              //FIXME asign a service + price to each array elements (or price +auto generate name 
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
             $Form .='<tr class="liste_titre" width="100%" ><th colspan="8">'.$langs->trans("Step").' 2</th><tr>';
@@ -171,7 +171,7 @@ if(empty($month) || empty($year) || empty($projectId))$step=1;
                             $duration=$durationTab[1]*60+$durationTab[0]*3600;   
                             $startday = dol_mktime(12, 0, 0, $month, 1, $year);
                             $endday = dol_mktime(12, 0, 0, $month, date('t',$startday), $year);
-                            var_dump($endday);
+
                             $details='';
                             $result ='';
                             if(($tId!='any') && TIMESHEET_INVOICE_SHOW_TASK)$details="\n".$service['taskLabel'];

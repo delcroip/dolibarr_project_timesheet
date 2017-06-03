@@ -822,8 +822,7 @@ Public function setStatus($user,$status,$id=0){
             if($id!=0)$this->fetch($id);
             $this->status=$status;
         // Update request
-            $error=($this->id<=0)?$this->create($user):$this->update($user);
-            
+            $error=($this->id<=0)?$this->create($userId):$this->update($userId);
             if($error>0){
                     if(count($this->taskTimesheet)<1 || $this->id<=0){
                         $this->fetch($id);
@@ -1004,7 +1003,7 @@ Public function setStatus($user,$status,$id=0){
                 $row=new Task_time_approval($this->db);            
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
-                $Lines.=$row->getFormLine( $this->date_start,$this->date_end,$i,$this->headers,$this->whitelistmode,$this->status,$this->id); // fixme
+                $Lines.=$row->getFormLine( $i,$this->headers,$this->id,$this->whitelistmode); 
 				$i++;
             }
         }
