@@ -27,12 +27,14 @@ Timesheet view for project in Dolibarr
 # Next developement
 
 - chained approval
-    - DONE : remove favoris tab in ap
     - DONE: create the flow/correct error upon ap submission
-    - create the page to validate non-team AP
+    - ON-GOING: create the page to validate non-team AP
+        - ISSUE: Rejected TTA became challenged ( update from TS)
+        - ISSUE: Rejected TS doesn't show on team AP
+    - DONE: handle the right for approval project
     - assign the TS id in ttapproval
-    - ISSUE: del tasktime doesn't generate correct message on timesheet.php
-    - ISSUE: rejected TS is not showd as it
+    - handle the right for approval ( cust /  supplier / other )  
+
 
 - add automatic reminder for the approval
 - add feature in Project to foresee workload per user, task and "week"
