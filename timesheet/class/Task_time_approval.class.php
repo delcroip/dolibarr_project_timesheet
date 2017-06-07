@@ -727,16 +727,13 @@ class Task_time_approval extends Task
  /*
  * function to form a HTMLform line for this timesheet
  * 
- *  @param    Datetime              	$timeStart            start date to look for actuals
- *  @param    Datetime              	$timeEnd            end date to look for actuals
  *  @param     int              	$line number         used in the form processing
- *  @param    string              	$headers             header to shows
- *  @param     int              	$whitelistemode           0-whiteliste,1-blackliste,2-non impact
- *  @param    string              	$status                 status of the Timesheet user
  *  @param    string              	$usUserId             id that will be used for the total
+ *  @param    int                       $openOveride           0- no effect; 1 - force edition; (-1) - block edition
+
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getFormLine( $lineNumber,$headers,$tsUserId=0,$whitelistemode=2)
+       public function getFormLine( $lineNumber,$headers,$tsUserId=0,$openOveride=0)
     {
            // change the time to take all the TS per day
 
@@ -745,7 +742,7 @@ class Task_time_approval extends Task
            global $statusTsColor;
        if(($dayelapsed<1)||empty($headers))
            return '<tr>ERROR: wrong parameters for getFormLine'.$dayelapsed.'|'.empty($headers).'</tr>';
-        
+      if($tsUserId!=0)$this->userId=$tsUserId;
     $timetype=TIMESHEET_TIME_TYPE;
     $dayshours=TIMESHEET_DAY_DURATION;
     $hidezeros=TIMESHEET_HIDE_ZEROS;
@@ -754,20 +751,22 @@ class Task_time_approval extends Task
 
     //if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
     //$linestyle=(($hidden)?'display:none;':'');
-    $favClass=(($this->listed)?'timesheet_whitelist':'timesheet_blacklist');
+    $Class=(($this->listed)?'timesheet_whitelist':'timesheet_blacklist').' timesheet_line '.(($lineNumber%2=='0')?'pair':'impair');
+    
   $linestyle='';
   if(($this->pStatus == "2")){
-      $linestyle.='background:#'.TIMESHEET_BC_FREEZED.'";';
+      $linestyle.='background:#'.TIMESHEET_BC_FREEZED.';';
   }else{
-      $linestyle.='background:#'.$statusTsColor[$this->status].'";';
+      $linestyle.='background:#'.$statusTsColor[$this->status].';';
   }
     
     
     
-    $html= '<tr class="timesheet_line '.$favClass.'" '.((!empty($linestyle))?'style="'.$linestyle.'"':'').' class="'.(($lineNumber%2=='0')?'pair':'impair').'">'."\n"; 
+    $html= '<tr class="'.$Class.'" '.((!empty($linestyle))?'style="'.$linestyle.'"':'');
+    $html.=' title="'.htmlentities($this->note).'">'."\n"; 
     //title section
      foreach ($headers as $key => $title){
-         $html.="\t<th align=\"left\">";
+         $html.='<th align="left" >';
          switch($title){
              case 'Project':
                  if(version_compare(DOL_VERSION,"3.7")>=0){
@@ -813,7 +812,7 @@ class Task_time_approval extends Task
              case 'Approval':
                  $html .= "<input type='text' style='border: none;' class = 'approval_switch'";
                  $html .=' name="approval['.$this->appId.']" ';
-                 $html .=' id="task_'.$tsUserId.'_'.$this->appId.'_approval" ';
+                 $html .=' id="task_'.$this->userId.'_'.$this->appId.'_approval" ';
                  $html .= " onfocus='this.blur()' readonly='true' size='1' value='&#x2753;' onclick='tristate_Marks(this)' />\n";
 
          }
@@ -822,7 +821,9 @@ class Task_time_approval extends Task
      }
 
   // day section
-        $isOpenSatus=($status=='DRAFT' || $status=='CANCELLED'|| $status=='REJECTED' || $status=='PLANNED');
+        if($status=='INVOICED')$openOveride=-1; // once invoice it should not change
+        $isOpenSatus=($openOveride==1) || ($status=='DRAFT' || $status=='CANCELLED'|| $status=='REJECTED' || $status=='PLANNED');
+        if($openOveride==-1)$isOpenSatus=false;
         $opendays=str_split(TIMESHEET_OPEN_DAYS);
 
         for($dayCur=0;$dayCur<$dayelapsed;$dayCur++)
@@ -860,19 +861,19 @@ class Task_time_approval extends Task
                 } 
 
 
-                $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$tsUserId.']['.$dayCur.']" ';
-//                    $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" '; if one whant multiple ts per validation
-                $html .= 'name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" ';
+                $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$this->userId.']['.$dayCur.']" ';
+//                    $html .= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" '; if one whant multiple ts per validation
+                $html .= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" ';
                 $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
                 $html .='" maxlength="5" style="width: 90%;'.$bkcolor.'" ';
                 $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
-                $html .= 'onblur="validateTime(this,'.$tsUserId.','.$dayCur.',0)" />';
+                $html .= 'onblur="validateTime(this,'.$this->userId.','.$dayCur.',0)" />';
                 $html .= "</th>\n"; 
             }else{
                 //$bkcolor='background:#'.(($dayWorkLoadSec!=0)?($statusTsColor[$this->status]):'#FFFFFF');
-                //$html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$tsUserId.']['.$dayCur.']"';
-                $html .= ' <th ><a class="time4day['.$tsUserId.']['.$dayCur.']"';
-                //$html .= ' name="task['.$tsUserId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
+                //$html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$this->userId.']['.$dayCur.']"';
+                $html .= ' <th ><a class="time4day['.$this->userId.']['.$dayCur.']"';
+                //$html .= ' name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
                 $html .= ' name="task['.$this->id.']['.$dayCur.']" ';
                 $html .= ' style="width: 90%;"';
                 $html .=' >'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
@@ -1010,7 +1011,7 @@ function unserialize($str){
     $this->appId=$arRet['appId'];
     $this->userId=$arRet['userId'];
     $this->tasklist=$arRet['tasklist'];
-    $this->noten=$arRet['note'];			
+    $this->note=$arRet['note'];			
     $this->fk_project=$arRet['fk_project'] ;
     $this->ProjectTitle=$arRet['ProjectTitle'];
     $this->date_start_approval=$arRet['date_start'];			
@@ -1114,7 +1115,6 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
             }else if($this->appId >0){
                     $ret=$this->delete($user);
             }
-            
           if($ret>0 && $updateTS==true){// success of the update, then update the timesheet user if possible
               $staticTS= new Task_timesheet($this->db );
               $staticTS->fetch($this->task_timesheet);
@@ -1155,7 +1155,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
     $idList='';
 	dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user=$userId;
-    foreach ($timesheetPost as $dayKey => $wkload){		
+    if(is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $wkload){		
         $item=$this->tasklist[$dayKey];
         
         if(TIMESHEET_TIME_TYPE=="days")
@@ -1310,8 +1310,9 @@ function getIdList()
         if(!in_array($role, $recipients)) return -1; // role not valide
         $nextStatus='';
         $ret=0;
+
         //set the approver
-        $this->user_app[$role]=$sender;
+        $this->user_app_[$role]=$sender;
         //update the roles
         $rolepassed=false;
         foreach($apflows as $key=> $recipient){         

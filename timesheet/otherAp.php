@@ -337,7 +337,7 @@ function getSelectAps($subId, $role){
          $object->getTaskInfo();
          $object->getActuals( $object->date_start_approval,$object->date_end_approval,$object->userId);
          echo '<tr>';
-           echo $object->getFormLine( $key,$headers); 
+           echo $object->getFormLine( $key,$headers,-1); 
          echo "<tr>\n";
      }
  }

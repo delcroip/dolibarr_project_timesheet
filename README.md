@@ -26,16 +26,11 @@ Timesheet view for project in Dolibarr
 
 # Next developement
 
-- chained approval
-    - DONE: create the flow/correct error upon ap submission
-    - ON-GOING: create the page to validate non-team AP
-        - ISSUE: Rejected TTA became challenged ( update from TS)
-        - ISSUE: Rejected TS doesn't show on team AP
-    - DONE: handle the right for approval project
+- ON-GOING chained approval for project
+        - ISSUE: Rejected TS doesn't show on team AP - not an issue, one rejected tey will go dirrectly to user who can resubmit
     - assign the TS id in ttapproval
-    - handle the right for approval ( cust /  supplier / other )  
-
-
+- handle the right for cust /  supplier / other approval  
+- Show note fields upon reject in otherAP
 - add automatic reminder for the approval
 - add feature in Project to foresee workload per user, task and "week"
 - send email over TS rejection
@@ -44,6 +39,7 @@ Timesheet view for project in Dolibarr
 - show the Quantity in the step 2 of invoicing
 - improve the layout of the invoicing steps
 - maintain the ajax behavior
+- my timesheet page to see the status of the TS
 
 # Change log
 

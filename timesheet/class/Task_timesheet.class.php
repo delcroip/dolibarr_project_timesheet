@@ -777,7 +777,9 @@ function updateStatus($user,$status=''){
     $statusPriorityArray= array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=> 'INVOICED',4=>'APPROVED',5=>'UNDERAPPROVAL',6=>'SUBMITTED',7=>'CHALLENGED',8=>'REJECTED');
     if ($status!=''){
         if(!in_array($status,$statusPriorityArray ))return -1; // status not valid
-         $updatedStatus=  array_search($status, $statusPriorityArray);;
+         $updatedStatus=  array_search($status, $statusPriorityArray);
+    }else if(!empty($this->status)){
+         $updatedStatus=  array_search($this->status, $statusPriorityArray);
     }
     
     
@@ -795,7 +797,8 @@ function updateStatus($user,$status=''){
         }// no else as the tta should be created upon submission of the TS not status update
         
     }
-    $this->setStatus($user, $statusPriorityArray[$updatedStatus]);
+    $this->status= $statusPriorityArray[$updatedStatus];
+    $this->update($user);
     return $this->status;
 }
  
@@ -824,17 +827,17 @@ Public function setStatus($user,$status,$id=0){
         // Update request
             $error=($this->id<=0)?$this->create($userId):$this->update($userId);
             if($error>0){
-                    if(count($this->taskTimesheet)<1 || $this->id<=0){
+                    if(count($this->taskTimesheet)<1 ){
                         $this->fetch($id);
                         $this->fetchTaskTimesheet();
                   
                     }
-                    foreach($this->taskTimesheet as $ts)
+                    if(count($this->taskTimesheet)>0 )foreach($this->taskTimesheet as $ts)
                     {
                         $tasktime= new Task_time_approval($this->db);
                         $tasktime->unserialize($ts);
-                        if($Approved)$ret=$tasktime->Approved($userid,'team');
-                        if($Rejected)$ret=$tasktime->challenged($userid,'team');
+                        if($Approved)$ret=$tasktime->Approved($userid,'team',false);
+                        if($Rejected)$ret=$tasktime->challenged($userid,'team',false);
                         if($Submitted)$ret=$tasktime->setStatus($userid,'SUBMITTED',false);
                     }
                       //if($ret>0)$this->db->commit();
@@ -1003,7 +1006,16 @@ Public function setStatus($user,$status,$id=0){
                 $row=new Task_time_approval($this->db);            
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
-                $Lines.=$row->getFormLine( $i,$this->headers,$this->id,$this->whitelistmode); 
+                if(in_array($this->status, array("REJECTED", "DRAFT","PLANNED" ))){
+                    $openOveride= 1;
+                }else if(in_array($this->status, array("UNDERAPPROVAL", "INVOICE", "APPROVED" ))) {
+                    $openOveride= -1;
+                }else{
+                    $openOveride= 0;
+                }
+                        
+            
+                $Lines.=$row->getFormLine( $i,$this->headers,$this->id,$openOveride); 
 				$i++;
             }
         }

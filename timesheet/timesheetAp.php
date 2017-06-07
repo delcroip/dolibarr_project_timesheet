@@ -282,8 +282,8 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
         $sql ="SELECT *";
         if($byWeek==2)$sql.=",CONCAT(DATE_FORMAT(date_start,' %m/%Y'),fk_userid) as usermonth";
         $sql.=" FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts"; 
-        $sql.=' WHERE ts.status="SUBMITTED"';
-        
+        $sql.=' WHERE (ts.status="SUBMITTED" OR ts.status="CHALLENGED") ';
+
         switch($role){
             case 'team':
                 if($subId!='all') $sql.=' AND fk_userid in ('.implode(',',$subId).')';
@@ -415,7 +415,7 @@ function getSelectAps($subId){
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
     }
-    $sql.=' WHERE ts.status="SUBMITTED"'; 
+    $sql.=' WHERE(ts.status="SUBMITTED" OR ts.status="CHALLENGED")'; 
     if($subId!='all')$sql.=' AND ts.fk_userid in ('.implode(',',$subId).')';
     $sql.=' group by id ORDER BY id DESC, label '; 
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
