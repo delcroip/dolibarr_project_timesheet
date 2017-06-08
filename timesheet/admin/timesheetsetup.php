@@ -402,15 +402,20 @@ echo '<div id="Advanced" class="tabBar">';
 print_titre($langs->trans("ApFlows")); 
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Team").'</th><th>';
-echo $langs->trans("Project").'</th><th>';
-echo $langs->trans("Customer").'</th><th>';
-echo $langs->trans("Supplier").'</th><th>'.$langs->trans("Other").'</th>';
+echo $langs->trans("Project").'</th><th hidden>';
+echo $langs->trans("Customer").'</th><th hidden>';
+echo $langs->trans("Supplier").'</th><th hidden >'.$langs->trans("Other").'</th>';
 echo '<input type="hidden" name="apflows[0]" value="_">';
 echo "</tr><tr>\n\t\t";
 
 for ($i=1; $i<6;$i++){
+    
 echo  '<th width="14%" style="text-align:left"><input type="checkbox" name="apflows['.$i.']" value="1" ';
-echo (($apflows[$i]=='1')?'checked':'')."></th>\n\t\t";
+if($i>2){ //FIXME  cust / supp other not yet supported
+    echo ' hidden '."></th>\n\t\t";
+}else{
+    echo (($apflows[$i]=='1')?'checked':'')."></th>\n\t\t";
+}
         }
 echo "</tr>\n\t</table><br>\n";
 

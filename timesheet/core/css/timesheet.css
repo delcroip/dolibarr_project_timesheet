@@ -39,3 +39,7 @@ a.noNextHoliday{
 tr.dblist:hover{
     	font-weight: bold;
 }
+
+input[type="checkbox"][readonly] {
+  pointer-events: none;
+}

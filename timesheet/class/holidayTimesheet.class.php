@@ -51,11 +51,11 @@ class holidayTimesheet extends Holiday
             $this->taskTimeId=$taskTimeId;
 
     }*/
-    public function fetchUserWeek($userId,$yearWeek)
+    public function fetchUserWeek($userId,$datestart,$datestop)
     {
        
-        $datestart=parseYearWeek($yearWeek);
-        $datestop=strtotime($yearWeek.' + 7 days');
+        //$datestart=parseYearWeek($yearWeek);
+        //$datestop=strtotime($yearWeek.' + 7 days');
         $SQLfilter=  " AND (cp.date_fin>=".$this->db->idate($datestart).") ";
         $SQLfilter.= " AND (cp.date_debut<".$this->db->idate($datestop).")";
         $ret=$this->fetchByUser($userId,'',$SQLfilter);

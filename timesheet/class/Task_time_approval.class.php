@@ -33,7 +33,7 @@ class Task_time_approval extends Task
 {
     	var $element='Task_time_approval';			//!< Id that identify managed objects
 	var $table_element='project_task_time_approval';		//!< Name of table without prefix where object is stored
-
+        static $statusList,$apflows,$roleList;
         private $ProjectTitle		=	"Not defined";
         var $tasklist;
        // private $fk_project;
@@ -73,7 +73,28 @@ class Task_time_approval extends Task
     var $duration;
     var $weekDays;
     var $userName;
-
+    
+    /**
+     *  init the static variable
+     *
+     *  @return void          	no return
+     */    
+    public function init() 
+    {
+        /* key used upon update of the TS via the TTA
+         * canceled or planned shouldn't affect the TS status update
+         * draft will be stange at this stage but could be retrieved automatically // FIXME
+         * invoiced should appear when there is no Submitted, underapproval, Approved, challenged, rejected
+         * Approved should apear when there is no Submitted, underapproval,  challenged, rejected left
+         * Submitted should appear when no approval action is started: underapproval, Approved, challenged, rejected
+         * 
+         */
+        
+        self::$statusList=array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=>'INVOICED',4=>'APPROVED',5=>'SUBMITTED',6=>'UNDERAPPROVAL',7=>'CHALLENGED',8=>'REJECTED');
+        self::$roleList=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
+        self::$apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
+    
+    }
     public function __construct($db,$taskId=0,$id=0) 
 	{
 		$this->db=$db;
@@ -213,7 +234,7 @@ class Task_time_approval extends Task
 		else
 		{
 			$this->db->commit();
-            return $this->appId;
+                        return $this->appId;
 		}
     }        
     /**
@@ -578,7 +599,60 @@ class Task_time_approval extends Task
  * object methods
  * 
  ******************************************************************************/        
-        
+ 
+    /*
+ * update the project task time Item
+ * 
+ *  @param      int               $status  status
+ *  @return     int               <0 if KO, Id of created object if OK
+ */
+  
+    Public function updateTaskTime($status){
+        if(!in_array($status, self::$statusList) ) return -1; // role not valide      
+//Update the the fk_tta in the project task time 
+        $idList=array(); 
+        if(count($this->tasklist)<=1) $this->getActuals ($this->date_start_approval, $this->date_end_approval, $this->userId);
+        foreach($this->tasklist as $item){
+             $idList[]=$item['id'];
+        }
+        $ids=implode(',',$idList);
+        $sql='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET fk_task_time_approval="';
+        $sql.=$this->appId.'", status="'.$status.'" WHERE rowid in ('.$ids.')';
+        // SQL start
+        dol_syslog(__METHOD__);
+        $this->db->begin();
+	$resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            // want this action calls a trigger.
+	            //// Call triggers
+	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //// End call triggers
+			 }
+		}
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}  
+        return $ret;// team key is 0 
+    }            
         
         
         
@@ -763,7 +837,8 @@ class Task_time_approval extends Task
     
     
     $html= '<tr class="'.$Class.'" '.((!empty($linestyle))?'style="'.$linestyle.'"':'');
-    $html.=' title="'.htmlentities($this->note).'">'."\n"; 
+    if(!empty($this->note))$html.=' title="'.htmlentities($this->note).'"';
+      $html.=  '>'."\n"; 
     //title section
      foreach ($headers as $key => $title){
          $html.='<th align="left" >';
@@ -1100,7 +1175,7 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
             $error=0;
             $ret=0;
             //if the satus is not an ENUM status
-            if(!in_array($status, array('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED'))){
+            if(!in_array($status, self::$statusList)){
                 dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERROR);
                 return false;
             }
@@ -1118,8 +1193,9 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
           if($ret>0 && $updateTS==true){// success of the update, then update the timesheet user if possible
               $staticTS= new Task_timesheet($this->db );
               $staticTS->fetch($this->task_timesheet);
-              $staticTS->updateStatus($user,$status);
+              $ret=$staticTS->updateStatus($user,$status);
           }
+          return $ret;
     }   
   
       /*
@@ -1299,15 +1375,14 @@ function getIdList()
  * pget the next approval in the chaine
  * 
  *  @param      object/int        $user         user object or user id doing the modif
- *  @param      int               $id           id of the timesheetuser
+ *  @param      string            $role         role who challenge
  *  @param      bool              $updteTS      update the timesheet if true
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
   
     Public function Approved($sender,$role, $updteTS =true){
-        $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-        $recipients=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
-        if(!in_array($role, $recipients)) return -1; // role not valide
+        
+        if(!in_array($role, $this->roleList)) return -1; // role not valide
         $nextStatus='';
         $ret=0;
 
@@ -1317,12 +1392,12 @@ function getIdList()
         $rolepassed=false;
         foreach($apflows as $key=> $recipient){         
             if ($recipient==1 ){  
-                if ( $recipients[$key]==$role){
-                    $this->sender= $recipients[$key];
+                if ( $this->roleList[$key]==$role){
+                    $this->sender= $this->roleList[$key];
                     //$this->user_app['{$role}=$sender;
                      $rolepassed=true;
                 }else if ($rolepassed){
-                    $this->recipient= $recipients[$key];
+                    $this->recipient= $this->roleList[$key];
                     $ret=$key+1;      
                     break;
                 }                         
@@ -1345,10 +1420,10 @@ function getIdList()
     }
         
 /*
- * pget the previous approval in the chaine
+ * challenge the tsak time approval
  * 
  *  @param      object/int        $user         user object or user id doing the modif
- *  @param      int               $id           id of the timesheetuser
+ *  @param      string            $role         role who challenge
  *  @param      bool              $updteTS      update the timesheet if true
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
@@ -1356,19 +1431,18 @@ function getIdList()
     Public function challenged($sender,$role,$updteTS=true){
        $nextStatus='';
         $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-        $recipients=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
-        if(!in_array($role, $recipients)) return -1; // role not valide
+        if(!in_array($role, $this->roleList)) return -1; // role not valide      
         $ret=-1;
        //unset the approver ( could be set previsouly)
         $this->user_app[$role]=$sender;
         //update the roles
         foreach($apflows as $key=> $recipient){
             if ($recipient==1){  
-                if ( $recipients[$key]==$role){
-                    $this->sender= $recipients[$key];
+                if ( $this->roleList[$key]==$role){
+                    $this->sender= $this->roleList[$key];
                     break;
                 }else{
-                    $this->recipient= $recipients[$key];
+                    $this->recipient= $this->roleList[$key];
                     $ret=$key;      
                     
                 }                
@@ -1384,6 +1458,27 @@ function getIdList()
         return $ret+1;// team key is 0 
     }        
         
-}
 
+/*
+ * submit the TS 
+ * 
+ *  @param      bool              $updteTS      update the timesheet if true
+ *  @return     int      		   	 <0 if KO, Id of created object if OK
+ */
+  
+    Public function submitted($updteTS=false){
+      //Update the the fk_tta in the project task time 
+        $ret=$this->setStatus($user,'SUBMITTED',$updteTS); // must be executed first to get the appid
+        if($ret>0)$ret=$this->updateTaskTime('SUBMITTED');
+       
+        return $ret+1;// team key is 0 
+    }        
+        
+    
+
+    
+    
+    
+}
+Task_time_approval::init()
 ?>

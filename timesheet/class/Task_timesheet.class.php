@@ -544,7 +544,7 @@ class Task_timesheet extends CommonObject
     */
     function fetchUserHoliday(){
         $this->holidays=new holidayTimesheet($this->db);
-        $ret=$this->holidays->fetchUserWeek($this->userId,$this->yearWeek);
+        $ret=$this->holidays->fetchUserWeek($this->userId,$this->date_start,$this->date_end);
         return $ret;
     }
     /*
@@ -774,12 +774,11 @@ function get_userName(){
 function updateStatus($user,$status=''){
     if($this->id<=0)return -1;
     $updatedStatus=2;
-    $statusPriorityArray= array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=> 'INVOICED',4=>'APPROVED',5=>'UNDERAPPROVAL',6=>'SUBMITTED',7=>'CHALLENGED',8=>'REJECTED');
     if ($status!=''){
-        if(!in_array($status,$statusPriorityArray ))return -1; // status not valid
-         $updatedStatus=  array_search($status, $statusPriorityArray);
+        if(!in_array($status,Task_time_approval::$statusList ))return -1; // status not valid
+         $updatedStatus=  array_search($status, Task_time_approval::$statusList);
     }else if(!empty($this->status)){
-         $updatedStatus=  array_search($this->status, $statusPriorityArray);
+         $updatedStatus=  array_search($this->status, Task_time_approval::$statusList);
     }
     
     
@@ -787,17 +786,18 @@ function updateStatus($user,$status=''){
     if($status==$this->status){ // to avoid eternal loop
         return 1;
     }
+    //look for the status to apply to the TS  from the TTA
     foreach($this->taskTimesheet as $row){
         $tta= new Task_time_approval($db);
         $tta->unserialize($row);
         if($tta->appId<0){ // tta already created
             $tta->fetch();
-            $statusPriorityCur=  array_search($tta->status, $statusPriorityArray); //FIXME
+            $statusPriorityCur=  array_search($tta->status, Task_time_approval::$statusList); //FIXME
             $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
         }// no else as the tta should be created upon submission of the TS not status update
         
     }
-    $this->status= $statusPriorityArray[$updatedStatus];
+    $this->status= Task_time_approval::$statusList[$updatedStatus];
     $this->update($user);
     return $this->status;
 }
@@ -813,19 +813,19 @@ function updateStatus($user,$status=''){
 Public function setStatus($user,$status,$id=0){ 
             $error=0;
             //if the satus is not an ENUM status
-            if(!in_array($status, array('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL'))){
+            if(!in_array($status, Task_time_approval::$statusList)){
                 dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERROR);
                 return false;
             }
             $Approved=(in_array($status, array('APPROVED','UNDERAPPROVAL')));
             $Rejected=(in_array($status, array('REJECTED','CHALLENGED')));
-            $Submitted= ($status=='SUBMITTED');
+            $Submitted= ($status=='SUBMITTED')?true:false;
             // Check parameters
             $userid=  is_object($user)?$user->id:$user;
             if($id!=0)$this->fetch($id);
             $this->status=$status;
         // Update request
-            $error=($this->id<=0)?$this->create($userId):$this->update($userId);
+            $error=($this->id<=0)?$this->create($user):$this->update($user);
             if($error>0){
                     if(count($this->taskTimesheet)<1 ){
                         $this->fetch($id);
@@ -837,8 +837,8 @@ Public function setStatus($user,$status,$id=0){
                         $tasktime= new Task_time_approval($this->db);
                         $tasktime->unserialize($ts);
                         if($Approved)$ret=$tasktime->Approved($userid,'team',false);
-                        if($Rejected)$ret=$tasktime->challenged($userid,'team',false);
-                        if($Submitted)$ret=$tasktime->setStatus($userid,'SUBMITTED',false);
+                        else if($Rejected)$ret=$tasktime->challenged($userid,'team',false);
+                        else if($Submitted)$ret=$tasktime->submitted();
                     }
                       //if($ret>0)$this->db->commit();
 			return 1;
@@ -943,9 +943,8 @@ Public function setStatus($user,$status,$id=0){
     if($isOpenSatus){
         $html .= '<input type="submit" class="butAction" name="save" value="'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
-        
-        $apflows=str_split(TIMESHEET_APPROVAL_FLOWS);
-        if(in_array('1',$apflows)){
+
+        if(in_array('1',Task_time_approval::$apflows)){
             $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
         }
         $html .= '<a class="butActionDelete" href="?action=list&yearweek='.$this->yearWeek.'">'.$langs->trans('Cancel').'</a>';

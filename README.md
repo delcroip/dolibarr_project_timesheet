@@ -24,11 +24,13 @@ Timesheet view for project in Dolibarr
 - If the combo box ajax bug, it's not possible to enter new whitelist, new config parameters enable to deactivate for all dolibarr.
 - Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
 
-# Next developement
-
+# Next developement for next release
 - ON-GOING chained approval for project
-        - ISSUE: Rejected TS doesn't show on team AP - not an issue, one rejected tey will go dirrectly to user who can resubmit
-    - assign the TS id in ttapproval
+    - ISSUE: Rejected TS doesn't show on team AP - not an issue, one rejected tey will go dirrectly to user who can resubmit
+    -DONE assign the TS id in ttapproval
+    - fetch only the PTT based on the fk_task_time_approval
+
+# Next developement for other release
 - handle the right for cust /  supplier / other approval  
 - Show note fields upon reject in otherAP
 - add automatic reminder for the approval
@@ -40,6 +42,7 @@ Timesheet view for project in Dolibarr
 - improve the layout of the invoicing steps
 - maintain the ajax behavior
 - my timesheet page to see the status of the TS
+- make a feedback form in the setup page
 
 # Change log
 
