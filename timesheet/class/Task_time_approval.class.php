@@ -22,7 +22,6 @@
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once 'class/Task_timesheet.class.php';
-$statusTsColor=array('DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>TIMESHEET_COL_SUBMITTED,'APPROVED'=>TIMESHEET_COL_APPROVED,'INVOICED'=>TIMESHEET_COL_APPROVED,'CANCELLED'=>TIMESHEET_COL_CANCELLED,'REJECTED'=>TIMESHEET_COL_REJECTED);
 
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
 //require_once './projectTimesheet.class.php';
@@ -33,7 +32,7 @@ class Task_time_approval extends Task
 {
     	var $element='Task_time_approval';			//!< Id that identify managed objects
 	var $table_element='project_task_time_approval';		//!< Name of table without prefix where object is stored
-        static $statusList,$apflows,$roleList;
+        static $statusList,$apflows,$roleList,$statusColor;
         private $ProjectTitle		=	"Not defined";
         var $tasklist;
        // private $fk_project;
@@ -89,7 +88,7 @@ class Task_time_approval extends Task
          * Submitted should appear when no approval action is started: underapproval, Approved, challenged, rejected
          * 
          */
-        
+        self::$statusColor=array('PLANNED'=>TIMESHEET_COL_DRAFT,'DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>TIMESHEET_COL_REJECTED,'APPROVED'=>TIMESHEET_COL_APPROVED,'INVOICED'=>TIMESHEET_COL_APPROVED,'CANCELLED'=>TIMESHEET_COL_CANCELLED,'REJECTED'=>TIMESHEET_COL_REJECTED);
         self::$statusList=array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=>'INVOICED',4=>'APPROVED',5=>'SUBMITTED',6=>'UNDERAPPROVAL',7=>'CHALLENGED',8=>'REJECTED');
         self::$roleList=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
         self::$apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
@@ -742,15 +741,15 @@ class Task_time_approval extends Task
  */
     
     
-    public function getActuals( $timeStart,$timeEnd,$userid,$tasktimeIds='')
+    public function getActuals($timeStart=0,$timeEnd=0,$userid=0)
     {
            // change the time to take all the TS per day
            //$timeStart=floor($timeStart/SECINDAY)*SECINDAY;
            //$timeEnd=ceil($timeEnd/SECINDAY)*SECINDAY;
-           $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
-        $this->date_start_approval= $timeStart;
-        $this->date_end_approval= $timeEnd;
-        $this->userId=$userid;
+        $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
+        if($timeStart==0) $timeStart=$this->date_start_approval;
+        if($timeEnd==0) $timeEnd=$this->date_end_approval;
+        if($userid==0) $userid=$this->userId;
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
@@ -760,7 +759,11 @@ class Task_time_approval extends Task
         #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
         $sql .= " AND (ptt.task_date>=".$this->db->idate($timeStart).") ";
         $sql .= " AND (ptt.task_date<".$this->db->idate($timeEnd).")";
-        if(!empty($tasktimeIds))$sql .= ' AND ptt.rowid in ('.$tasktimeIds.')';
+        // FIXME If status above
+
+        if(in_array($this->status,array_slice(self::$statusList, 3,4))){
+            $sql.=' AND ptt.fk_task_time_approval="'.$this->appId.'"';
+        }   
         dol_syslog(get_class($this)."::fetchActuals ", LOG_DEBUG);
 		for($i=0;$i<$dayelapsed;$i++){
 			
@@ -813,7 +816,7 @@ class Task_time_approval extends Task
 
            $dayelapsed=ceil(($this->date_end_approval-$this->date_start_approval)/SECINDAY);
   
-           global $statusTsColor;
+   
        if(($dayelapsed<1)||empty($headers))
            return '<tr>ERROR: wrong parameters for getFormLine'.$dayelapsed.'|'.empty($headers).'</tr>';
       if($tsUserId!=0)$this->userId=$tsUserId;
@@ -831,7 +834,7 @@ class Task_time_approval extends Task
   if(($this->pStatus == "2")){
       $linestyle.='background:#'.TIMESHEET_BC_FREEZED.';';
   }else{
-      $linestyle.='background:#'.$statusTsColor[$this->status].';';
+      $linestyle.='background:#'.self::$statusColor[$this->status].';';
   }
     
     
@@ -927,7 +930,7 @@ class Task_time_approval extends Task
                 $bkcolor='';
 
                 if($isOpen){
-                    $bkcolor='background:#'.$statusTsColor[$this->status];
+                    $bkcolor='background:#'.self::$statusColor[$this->status];
                     if($dayWorkLoadSec!=0 && $this->status=='DRAFT' )$bkcolor='background:#'.TIMESHEET_BC_VALUE;
                     
                     
@@ -945,7 +948,7 @@ class Task_time_approval extends Task
                 $html .= 'onblur="validateTime(this,'.$this->userId.','.$dayCur.',0)" />';
                 $html .= "</th>\n"; 
             }else{
-                //$bkcolor='background:#'.(($dayWorkLoadSec!=0)?($statusTsColor[$this->status]):'#FFFFFF');
+                //$bkcolor='background:#'.(($dayWorkLoadSec!=0)?(self::$statusColor[$this->status]):'#FFFFFF');
                 //$html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$this->userId.']['.$dayCur.']"';
                 $html .= ' <th ><a class="time4day['.$this->userId.']['.$dayCur.']"';
                 //$html .= ' name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
@@ -1209,7 +1212,7 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
 //    Public function setAppoved($user,$id=0){
 Public function getDuration(){ //FIXME
     $ttaDuration=0;
-    if(count($this->tasklist)<=1) $this->getActuals ($this->date_start_approval, $this->date_end_approval, $this->userId);
+    if(count($this->tasklist)<=1) $this->getActuals ();
     foreach($this->tasklist as $item){
          $ttaDuration+=$item['duration'];
     }
@@ -1226,7 +1229,6 @@ Public function getDuration(){ //FIXME
  */
 function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status)
 {
-    //FIXME,  update status if needed, update also the fk_projet_task_time_appoval
     $ret=0;
     $idList='';
 	dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
@@ -1382,7 +1384,7 @@ function getIdList()
   
     Public function Approved($sender,$role, $updteTS =true){
         
-        if(!in_array($role, $this->roleList)) return -1; // role not valide
+        if(!in_array($role, self::$roleList)) return -1; // role not valide
         $nextStatus='';
         $ret=0;
 
@@ -1390,14 +1392,14 @@ function getIdList()
         $this->user_app_[$role]=$sender;
         //update the roles
         $rolepassed=false;
-        foreach($apflows as $key=> $recipient){         
+        foreach(self::$apflows as $key=> $recipient){         
             if ($recipient==1 ){  
-                if ( $this->roleList[$key]==$role){
-                    $this->sender= $this->roleList[$key];
+                if ( self::$roleList[$key]==$role){
+                    $this->sender= self::$roleList[$key];
                     //$this->user_app['{$role}=$sender;
                      $rolepassed=true;
                 }else if ($rolepassed){
-                    $this->recipient= $this->roleList[$key];
+                    $this->recipient= self::$roleList[$key];
                     $ret=$key+1;      
                     break;
                 }                         
@@ -1408,11 +1410,11 @@ function getIdList()
         if($ret>0){//other approval found
             $nextStatus='UNDERAPPROVAL';
         }else{
-            $nextStatus='APPROVED'; // FIXME update the timesheet user if every task time approval is OK
+            $nextStatus='APPROVED'; 
         }
         // save the change in the db
          $ret=$this->setStatus($user,$nextStatus,$updteTS);
-         //$this->linkTaskTime();FIXME
+
     
         
         
@@ -1430,19 +1432,18 @@ function getIdList()
   
     Public function challenged($sender,$role,$updteTS=true){
        $nextStatus='';
-        $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-        if(!in_array($role, $this->roleList)) return -1; // role not valide      
+        if(!in_array($role, self::$roleList)) return -1; // role not valide      
         $ret=-1;
        //unset the approver ( could be set previsouly)
         $this->user_app[$role]=$sender;
         //update the roles
-        foreach($apflows as $key=> $recipient){
+        foreach(self::$apflows as $key=> $recipient){
             if ($recipient==1){  
-                if ( $this->roleList[$key]==$role){
-                    $this->sender= $this->roleList[$key];
+                if ( self::$roleList[$key]==$role){
+                    $this->sender= self::$roleList[$key];
                     break;
                 }else{
-                    $this->recipient= $this->roleList[$key];
+                    $this->recipient= self::$roleList[$key];
                     $ret=$key;      
                     
                 }                
@@ -1452,7 +1453,7 @@ function getIdList()
         if($ret>0){//other approval found
             $nextStatus='REJECTED';
         }else{
-            $nextStatus='CHALLENGED'; // FIXME update the timesheet user if every task time approval is OK
+            $nextStatus='CHALLENGED'; 
         }
        $ret=$this->setStatus($user,$nextStatus,$updteTS);
         return $ret+1;// team key is 0 

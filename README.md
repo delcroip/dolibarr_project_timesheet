@@ -27,7 +27,7 @@ Timesheet view for project in Dolibarr
 # Next developement for next release
 - ON-GOING chained approval for project
     - ISSUE: Rejected TS doesn't show on team AP - not an issue, one rejected tey will go dirrectly to user who can resubmit
-    -DONE assign the TS id in ttapproval
+    - DONE assign the TS id in ttapproval
     - fetch only the PTT based on the fk_task_time_approval
 
 # Next developement for other release

@@ -362,7 +362,7 @@ class Task_timesheet extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(__METHOD__.$sql);
+		dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -820,13 +820,14 @@ Public function setStatus($user,$status,$id=0){
             $Approved=(in_array($status, array('APPROVED','UNDERAPPROVAL')));
             $Rejected=(in_array($status, array('REJECTED','CHALLENGED')));
             $Submitted= ($status=='SUBMITTED')?true:false;
+            $draft= ($status=='DRAFT')?true:false;
             // Check parameters
             $userid=  is_object($user)?$user->id:$user;
             if($id!=0)$this->fetch($id);
             $this->status=$status;
         // Update request
             $error=($this->id<=0)?$this->create($user):$this->update($user);
-            if($error>0){
+            if($error>0){                
                     if(count($this->taskTimesheet)<1 ){
                         $this->fetch($id);
                         $this->fetchTaskTimesheet();
@@ -839,6 +840,7 @@ Public function setStatus($user,$status,$id=0){
                         if($Approved)$ret=$tasktime->Approved($userid,'team',false);
                         else if($Rejected)$ret=$tasktime->challenged($userid,'team',false);
                         else if($Submitted)$ret=$tasktime->submitted();
+                        else if($draft)$ret=$tasktime->setStatus($user,'DRAFT');
                     }
                       //if($ret>0)$this->db->commit();
 			return 1;
