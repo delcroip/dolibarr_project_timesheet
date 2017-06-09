@@ -135,7 +135,6 @@ $token=  getToken();
 if(is_array($objectArray)){
     // SAVE THE ARRAY IN THE SESSION FOR CHECK UPON SUBMIT
     foreach($objectArray as $object){
-        $object->getTaskInfo();
         $_SESSION['task_timesheet'][$token][$object->appId]=$role;
     }
 }
@@ -167,8 +166,10 @@ echo '<div id="'.$role.'" class="tabBar">';
     getHTMLRows($objectArray);
     // table footer
     echo "\n</table>";
+    echo '<div class="tabsAction">';
     echo '<input type="submit" class="butAction" name="Send" value="'.$langs->trans('Submit').'/'.$langs->trans('Next')."\" />\n";
     //form footer
+    echo '</div>';
     echo "\n</form>";
 
 echo '</div>';
@@ -334,8 +335,8 @@ function getSelectAps($subId, $role){
     }
     echo "<tr>\n";    
      foreach($objectArray as $key=> $object){
-         $object->getTaskInfo();
-         $object->getActuals( $object->date_start_approval,$object->date_end_approval,$object->userId);
+ //        $object->getTaskInfo();
+         $object->getActuals();
          echo '<tr>';
            echo $object->getFormLine( $key,$headers,-1); 
          echo "<tr>\n";

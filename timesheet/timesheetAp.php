@@ -79,6 +79,7 @@ if($action== 'submit'){
             $ret=0;
             $errors=0;
             $count=0;
+            $appflowOn=in_array('1',array_slice(Task_time_approval::$apflows,2));
             //$task_timesheet->db=$db;
             if (!empty($_POST['approval']))
             {
@@ -87,7 +88,7 @@ if($action== 'submit'){
                     $count++;
                     if($approvals[$key]!=$tsUser)switch($approvals[$key]){
                         case 'Approved':
-                           $ret=$task_timesheet->setStatus($user,'APPROVED',$key); 
+                           $ret=$task_timesheet->setStatus($user,(($appflowOn>0)?'UNDERAPPROVAL':'APPROVED'),$key); 
                             if(ret<0)$errors++;
                             else $tsApproved++;
                             break;

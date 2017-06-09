@@ -660,7 +660,7 @@ function saveInSession(){
              foreach($tasksList as $row)
             {
                     dol_syslog("Timesheet::Task_timesheet.class.php task=".$row->id, LOG_DEBUG);
-                    $row->getTaskInfo();
+                    if($this->appId==0)$row->getTaskInfo(); // get task info include in fetch
                     //if($this->status=="DRAFT" || $this->status=="REJECTED"){
                         
                     $row->getActuals($datestart,$datestop,$userid); 
@@ -782,7 +782,7 @@ function updateStatus($user,$status=''){
     }
     
     
-    $this->fetchTaskTimesheet();
+    if(count($this->taskTimesheet)<1 )$this->fetchTaskTimesheet();
     if($status==$this->status){ // to avoid eternal loop
         return 1;
     }
@@ -791,7 +791,7 @@ function updateStatus($user,$status=''){
         $tta= new Task_time_approval($db);
         $tta->unserialize($row);
         if($tta->appId<0){ // tta already created
-            $tta->fetch();
+            $tta->fetch($tta->appId);
             $statusPriorityCur=  array_search($tta->status, Task_time_approval::$statusList); //FIXME
             $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
         }// no else as the tta should be created upon submission of the TS not status update
@@ -810,7 +810,7 @@ function updateStatus($user,$status=''){
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
 //    Public function setAppoved($user,$id=0){
-Public function setStatus($user,$status,$id=0){ 
+Public function setStatus($user,$status,$id=0){ //role ?
             $error=0;
             //if the satus is not an ENUM status
             if(!in_array($status, Task_time_approval::$statusList)){
@@ -1007,9 +1007,9 @@ Public function setStatus($user,$status,$id=0){
                 $row=new Task_time_approval($this->db);            
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
-                if(in_array($this->status, array("REJECTED", "DRAFT","PLANNED" ))){
+                if(in_array($this->status, array("REJECTED", "DRAFT","PLANNED",'CANCELLED' ))){
                     $openOveride= 1;
-                }else if(in_array($this->status, array("UNDERAPPROVAL", "INVOICE", "APPROVED" ))) {
+                }else if(in_array($this->status, array("UNDERAPPROVAL", "INVOICED", "APPROVED",'CHALLENGED' ))) {
                     $openOveride= -1;
                 }else{
                     $openOveride= 0;

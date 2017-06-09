@@ -91,7 +91,7 @@ class Task_time_approval extends Task
         self::$statusColor=array('PLANNED'=>TIMESHEET_COL_DRAFT,'DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>TIMESHEET_COL_REJECTED,'APPROVED'=>TIMESHEET_COL_APPROVED,'INVOICED'=>TIMESHEET_COL_APPROVED,'CANCELLED'=>TIMESHEET_COL_CANCELLED,'REJECTED'=>TIMESHEET_COL_REJECTED);
         self::$statusList=array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=>'INVOICED',4=>'APPROVED',5=>'SUBMITTED',6=>'UNDERAPPROVAL',7=>'CHALLENGED',8=>'REJECTED');
         self::$roleList=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
-        self::$apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
+        self::$apflows=str_split(TIMESHEET_APPROVAL_FLOWS); //remove the leading _
     
     }
     public function __construct($db,$taskId=0,$id=0) 
@@ -273,7 +273,7 @@ class Task_time_approval extends Task
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::fetch");
+    	dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -610,8 +610,8 @@ class Task_time_approval extends Task
         if(!in_array($status, self::$statusList) ) return -1; // role not valide      
 //Update the the fk_tta in the project task time 
         $idList=array(); 
-        if(count($this->tasklist)<=1) $this->getActuals ($this->date_start_approval, $this->date_end_approval, $this->userId);
-        foreach($this->tasklist as $item){
+        if(!is_array($this->tasklist)) $this->getActuals ($this->date_start_approval, $this->date_end_approval, $this->userId);
+        if(is_array($this->tasklist))foreach($this->tasklist as $item){
              $idList[]=$item['id'];
         }
         $ids=implode(',',$idList);
@@ -687,7 +687,7 @@ class Task_time_approval extends Task
         }
         $sql .=" WHERE pt.rowid ='".$this->id."'";
         #$sql .= "WHERE pt.rowid ='1'";
-        dol_syslog(get_class($this)."::fetchtasks ", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -726,7 +726,7 @@ class Task_time_approval extends Task
         else
         {
                 $this->error="Error ".$this->db->lasterror();
-                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+                dol_syslog(__METHOD__.$this->error, LOG_ERR);
 
                 return -1;
         }	
@@ -746,25 +746,26 @@ class Task_time_approval extends Task
            // change the time to take all the TS per day
            //$timeStart=floor($timeStart/SECINDAY)*SECINDAY;
            //$timeEnd=ceil($timeEnd/SECINDAY)*SECINDAY;
-        $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
+        
         if($timeStart==0) $timeStart=$this->date_start_approval;
         if($timeEnd==0) $timeEnd=$this->date_end_approval;
         if($userid==0) $userid=$this->userId;
+        $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
-        $sql .= " WHERE ptt.fk_task='".$this->id."' ";
-        $sql .= " AND (ptt.fk_user='".$userid."') ";
-       # $sql .= "AND WEEKOFYEAR(ptt.task_date)='".date('W',strtotime($yearWeek))."';";
-        #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
-        $sql .= " AND (ptt.task_date>=".$this->db->idate($timeStart).") ";
-        $sql .= " AND (ptt.task_date<".$this->db->idate($timeEnd).")";
+        $sql .= " WHERE ";
         // FIXME If status above
 
         if(in_array($this->status,array_slice(self::$statusList, 3,4))){
-            $sql.=' AND ptt.fk_task_time_approval="'.$this->appId.'"';
-        }   
-        dol_syslog(get_class($this)."::fetchActuals ", LOG_DEBUG);
+            $sql.=' ptt.fk_task_time_approval="'.$this->appId.'"';
+        }else{
+            $sql.=" ptt.fk_task='".$this->id."' ";
+            $sql .= " AND (ptt.fk_user='".$userid."') ";
+            $sql .= " AND (ptt.task_date>=".$this->db->idate($timeStart).") ";
+            $sql .= " AND (ptt.task_date<".$this->db->idate($timeEnd).")";
+        }  
+        dol_syslog(__METHOD__, LOG_DEBUG);
 		for($i=0;$i<$dayelapsed;$i++){
 			
 			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>$timeStart+SECINDAY*$i);
@@ -794,7 +795,7 @@ class Task_time_approval extends Task
         else
         {
                 $this->error="Error ".$this->db->lasterror();
-                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+                dol_syslog(__METHOD__.$this->error, LOG_ERR);
 
                 return -1;
         }
@@ -1070,8 +1071,6 @@ function serialize(){
     $arRet['status']= $this->status; 
     $arRet['recipient']= $this->recipient; 
     $arRet['sender']= $this->sender; 
-    $arRet['tracking']= $this->tracking; 
-    $arRet['tracking_ids']= $this->tracking_ids; 
     $arRet['task_timesheet']= $this->task_timesheet; 
 
                       
@@ -1103,8 +1102,6 @@ function unserialize($str){
     $this->status=$arRet['status'];
     $this->sender=$arRet['sender'];
     $this->recipient=$arRet['recipient'];
-    $this->tracking=$arRet['tracking'];
-    $this->tracking_ids=$arRet['tracking_ids'];
     $this->pStatus=$arRet['pSatus'];
     $this->task_timesheet=$arRet['task_timesheet'];
 }
@@ -1124,7 +1121,7 @@ public function updateTimeUsed()
                ."WHERE ptt.fk_task ='".$this->id."') "
                ."WHERE pt.rowid='".$this->id."' ";
    
-            dol_syslog(get_class($this)."::UpdateTimeUsed ", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
 
 
             $resql=$this->db->query($sql);
@@ -1135,7 +1132,7 @@ public function updateTimeUsed()
             else
             {
                     $this->error="Error ".$this->db->lasterror();
-                    dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+                    dol_syslog(__METHOD__.$this->error, LOG_ERR);
 
                     $error++;
             }	
@@ -1144,7 +1141,7 @@ public function updateTimeUsed()
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__.$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -1179,11 +1176,13 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
             $ret=0;
             //if the satus is not an ENUM status
             if(!in_array($status, self::$statusList)){
-                dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERROR);
+                dol_syslog(__METHOD__." this status '{$status}' is not part or the enum list", LOG_ERROR);
                 return false;
             }
             // Check parameters
             $this->status=$status;
+           //if($this->appId && $this->date_start_approval==0)$this->fetch($this->appId);
+
             if($this->getDuration()>0){
                 if($this->appId >0){
                     $ret=$this->update($user);
@@ -1212,7 +1211,8 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
 //    Public function setAppoved($user,$id=0){
 Public function getDuration(){ //FIXME
     $ttaDuration=0;
-    if(count($this->tasklist)<=1) $this->getActuals ();
+    
+    if(!is_array($this->tasklist))$this->getActuals();
     foreach($this->tasklist as $item){
          $ttaDuration+=$item['duration'];
     }
@@ -1244,7 +1244,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
          $durationTab=date_parse($wkload);
          $duration=$durationTab['minute']*60+$durationTab['hour']*3600;
         }
-         dol_syslog("Timesheet.class::postTaskTimeActual    duration Old=".$item['duration']." New=".$duration." Id=".$item['id'].", date=".$item['date'], LOG_DEBUG);
+         dol_syslog(__METHOD__."   duration Old=".$item['duration']." New=".$duration." Id=".$item['id'].", date=".$item['date'], LOG_DEBUG);
         $this->timespent_date=$item['date'];
         if(isset( $this->timespent_datehour))
         {
@@ -1259,7 +1259,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
             if($item['duration']!=$duration)
             {
                 if($this->timespent_duration>0){ 
-                    dol_syslog("Timesheet::Submit.php  taskTimeUpdate", LOG_DEBUG);
+                    dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
                     if($this->updateTimeSpent($Submitter,0)>=0)
                     {
                         $ret++; 
@@ -1268,7 +1268,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
                         $_SESSION['task_timesheet'][$timestamp]['updateError']++;
                     }
                 }else {
-                    dol_syslog("Timesheet::Submit.php  taskTimeDelete", LOG_DEBUG);
+                    dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
                     if($this->delTimeSpent($Submitter,0)>=0)
                     {
                         $ret++;
@@ -1309,7 +1309,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
 function getIdList()
 {
     $ret='';
-    foreach ($this->tasklist as $tasktime){
+    if(is_array($this->tasklist))foreach ($this->tasklist as $tasktime){
         if(isset($tasktime['id']) && $tasktime['id']>0){
             $ret.=(empty($ret)?'':',').$tasktime['id'];
         }     
@@ -1332,7 +1332,7 @@ function getIdList()
             $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
             $sql.= ' WHERE t.status="SUBMITTED" AND t.recipient="team"';
             $sql.= ' GROUP BY u.fk_user';
-             dol_syslog(get_class($this)."::sendApprovalReminders ", LOG_DEBUG);
+             dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
             
             if ($resql)
@@ -1389,18 +1389,18 @@ function getIdList()
         $ret=0;
 
         //set the approver
-        $this->user_app_[$role]=$sender;
+        $this->user_app[$role]=$sender;
         //update the roles
         $rolepassed=false;
-        foreach(self::$apflows as $key=> $recipient){         
-            if ($recipient==1 ){  
+        foreach(self::$apflows as $key=> $value){         
+            if ($value==1 ){  
                 if ( self::$roleList[$key]==$role){
                     $this->sender= self::$roleList[$key];
                     //$this->user_app['{$role}=$sender;
                      $rolepassed=true;
                 }else if ($rolepassed){
                     $this->recipient= self::$roleList[$key];
-                    $ret=$key+1;      
+                    $ret=$key;      
                     break;
                 }                         
             }
@@ -1411,9 +1411,13 @@ function getIdList()
             $nextStatus='UNDERAPPROVAL';
         }else{
             $nextStatus='APPROVED'; 
+            // if approved,recipient 
+            $this->recipient='user';
+            //$this->recipient= self::$roleList[array_search('1', self::$apflows)];
         }
         // save the change in the db
-         $ret=$this->setStatus($user,$nextStatus,$updteTS);
+         $ret=$this->setStatus($sender,$nextStatus,$updteTS);
+         if($ret>0)$ret=$this->updateTaskTime($nextStatus);
 
     
         
@@ -1449,13 +1453,16 @@ function getIdList()
                 }                
                           
             }
-        }   
+        } 
+        
         if($ret>0){//other approval found
-            $nextStatus='REJECTED';
+            $nextStatus='CHALLENGED';
         }else{
-            $nextStatus='CHALLENGED'; 
+            $nextStatus='REJECTED';
+             $this->recipient='user';
         }
        $ret=$this->setStatus($user,$nextStatus,$updteTS);
+        if($ret>0)$ret=$this->updateTaskTime($nextStatus);
         return $ret+1;// team key is 0 
     }        
         
@@ -1475,7 +1482,9 @@ function getIdList()
         return $ret+1;// team key is 0 
     }        
         
-    
+    function dump(){
+       var_dump($this->serialize());
+    }
 
     
     
