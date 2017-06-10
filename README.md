@@ -28,7 +28,7 @@ Timesheet view for project in Dolibarr
 MAYBE: - Show note fields upon reject in otherAP
 
 # Next developement for other release
-- chained approval for project
+
 - handle the right for cust /  supplier / other approval  
 
 - add automatic reminder for the approval
@@ -45,7 +45,7 @@ MAYBE: - Show note fields upon reject in otherAP
 # Change log
 
 Change log from 1.5.1:
-
+- chained approval for project
 - create invoice from the project report
 - more translation (ES, DE, IT, FR, US)
 - tab in the setup for better browsing experience (in JS so config is kept when changing tab)
