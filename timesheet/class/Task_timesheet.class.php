@@ -113,7 +113,7 @@ class Task_timesheet extends CommonObject
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
 		if (isset($this->note)) $this->note=trim($this->note);
-
+                $userId= (is_object($user)?$user->id:$user);
         
 
 		// Check parameters
@@ -138,7 +138,7 @@ class Task_timesheet extends CommonObject
 		$sql.=' '.(! isset($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'"'.$this->db->idate($this->date_end).'"').',';
 		$sql.=' '.(! isset($this->status)?'"DRAFT"':'"'.$this->status.'"').',';
 		$sql.=' NOW() ,';
-		$sql.=' "'.$user->id.'",'; //fixme 3.5
+		$sql.=' "'.$userId.'",'; //fixme 3.5
 		$sql.=' '.(! isset($this->note)?'NULL':'"'.$this->note.'"');
         
 		$sql.= ")";
@@ -340,7 +340,7 @@ class Task_timesheet extends CommonObject
 		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
 		if (isset($this->note)) $this->note=trim($this->note);
-
+                $userId= (is_object($user)?$user->id:$user);
         
 
 		// Check parameters
@@ -354,7 +354,7 @@ class Task_timesheet extends CommonObject
 		$sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '"'.$this->db->idate($this->date_end).'"':'null').',';
 		$sql.=' status='.(empty($this->status)? 'null':'"'.$this->status.'"').',';
 		$sql.=' date_modification=NOW() ,';
-		$sql.=' fk_user_modification="'.$user->id.'",';
+		$sql.=' fk_user_modification="'.$userId.'",';
 		$sql.=' note="'.$this->note.'"';
 
         

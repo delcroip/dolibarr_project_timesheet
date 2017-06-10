@@ -25,14 +25,12 @@ Timesheet view for project in Dolibarr
 - Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
 
 # Next developement for next release
-- ON-GOING chained approval for project
-    - ISSUE: Rejected TS doesn't show on team AP - not an issue, one rejected tey will go dirrectly to user who can resubmit
-    - DONE assign the TS id in ttapproval
-    - fetch only the PTT based on the fk_task_time_approval
+MAYBE: - Show note fields upon reject in otherAP
 
 # Next developement for other release
+- chained approval for project
 - handle the right for cust /  supplier / other approval  
-- Show note fields upon reject in otherAP
+
 - add automatic reminder for the approval
 - add feature in Project to foresee workload per user, task and "week"
 - send email over TS rejection

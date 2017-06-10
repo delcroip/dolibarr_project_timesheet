@@ -518,8 +518,8 @@ switch ($action) {
             $parameters=array();
             $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-            if (empty($reshook) && ($user->admin || $user->id == $object->user))
+            $userId= (is_object($user)?$user->id:$user);
+            if (empty($reshook) && ($user->admin || $userId == $object->user))
             {
                 print '<div class="tabsAction">';
 
@@ -612,6 +612,7 @@ switch ($action) {
     
     $sql.= ' FROM '.MAIN_DB_PREFIX.'timesheet_whitelist as t';
     $sqlwhere='';
+    $userId= (is_object($user)?$user->id:$user);
     if(isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
@@ -627,7 +628,7 @@ switch ($action) {
     	if($ls_user){
             $sqlwhere .= natural_search(array('t.fk_user'), $ls_user);
         }else if (!$user->admin){
-            $sqlwhere .= ' AND t.fk_user="'.$user->id.'"';
+            $sqlwhere .= ' AND t.fk_user="'.$userId.'"';
         }
 	if($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
 	if($ls_project_task) $sqlwhere .= natural_search(array('t.fk_project_task'), $ls_project_task);

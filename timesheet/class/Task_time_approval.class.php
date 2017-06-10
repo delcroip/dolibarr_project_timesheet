@@ -148,7 +148,7 @@ class Task_time_approval extends Task
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->task_timesheet)) $this->task_timesheet=trim($this->task_timesheet);
 
-        
+                $userId= (is_object($user)?$user->id:$user);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -190,7 +190,7 @@ class Task_time_approval extends Task
 		$sql.=' '.(! isset($this->user_app['supplier'])?'NULL':'"'.$this->user_app['supplier'].'"').',';
 		$sql.=' '.(! isset($this->user_app['other'])?'NULL':'"'.$this->user_app['other'].'"').',';
 		$sql.=' NOW() ,';
-		$sql.=' "'.$user->id.'",'; //fixme 3.5
+		$sql.=' "'.$userId.'",'; 
 		$sql.=' '.(! isset($this->id)?'NULL':'"'.$this->id.'"').',';
 		$sql.=' '.(! isset($this->task_timesheet)?'NULL':'"'.$this->task_timesheet.'"').',';
 		$sql.=' '.(! isset($this->note)?'NULL':'"'.$this->note.'"');
@@ -463,7 +463,7 @@ class Task_time_approval extends Task
 		if (isset($this->id)) $this->id=trim($this->id);
 		if (isset($this->task_timesheet)) $this->task_timesheet=trim($this->task_timesheet);
 		if (isset($this->note)) $this->note=trim($this->note);
-
+                $userId= (is_object($user)?$user->id:$user);
         
 
 		// Check parameters
@@ -485,7 +485,7 @@ class Task_time_approval extends Task
 		$sql.=' fk_user_app_supplier='.(empty($this->user_app['supplier']) ? 'NULL':'"'.$this->user_app['supplier'].'"').',';
 		$sql.=' fk_user_app_other='.(empty($this->user_app['other']) ? 'NULL':'"'.$this->user_app['other'].'"').',';
 		$sql.=' date_modification=NOW() ,';
-		$sql.=' fk_user_modification="'.$user->id.'",';
+		$sql.=' fk_user_modification="'.$userId.'",';
 		$sql.=' fk_projet_task='.(empty($this->id) ? 'null':'"'.$this->id.'"').',';
 		$sql.=' fk_project_task_timesheet='.(empty($this->task_timesheet) ? 'null':'"'.$this->task_timesheet.'"').',';
 		$sql.=' note="'.$this->note.'"';
