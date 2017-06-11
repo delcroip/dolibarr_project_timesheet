@@ -303,22 +303,7 @@ echo  '<tr class="impair"><th align="left">'.$langs->trans("adddocs");
 echo '</th><th align="left">'.$langs->trans("adddocsDesc").'</th>';
 echo  '<th align="left"><input type="checkbox" name="adddocs" value="1" ';
 echo (($adddocs=='1')?'checked':'')."></th></tr>\n";
-// approval by week
-echo  '<tr class="pair"><th align="left">'.$langs->trans("approvalbyweek");
-echo '</th><th align="left">'.$langs->trans("approvalbyweekDesc").'</th>';
-echo '<th align="left"><input type="radio" name="approvalbyweek" value="0" ';
-echo ($approvalbyweek=='0'?"checked":"").'> '.$langs->trans("User").'<br>';
-echo '<input type="radio" name="approvalbyweek" value="1" ';
-echo ($approvalbyweek=='1'?"checked":"").'> '.$langs->trans("Week").'<br>';
-echo '<input type="radio" name="approvalbyweek" value="2" ';
-echo ($approvalbyweek=='2'?"checked":"").'> '.$langs->trans("Month")."</th></tr>\n\t\t";
-// max approval 
 
-
-echo '<tr class="impair" ><th align="left">'.$langs->trans("maxapproval"); //FIXTRAD
-echo '</th><th align="left">'.$langs->trans("maxapprovalDesc").'</th>'; // FIXTRAD
-echo '<th  align="left"><input type="text" name="maxapproval" value="'.$maxApproval;
-echo "\" size=\"4\" ></th></tr>\n\t\t";
 
 
 echo "\t</table><br>\n";
@@ -399,7 +384,25 @@ echo "</div>\n";
 
 echo '<div id="Advanced" class="tabBar">';
 
-print_titre($langs->trans("ApFlows")); 
+print_titre($langs->trans("Approval")); 
+echo '<table class="noborder" width="100%">'."\n\t\t";
+// approval by week
+echo  '<tr class="pair"><th align="left">'.$langs->trans("approvalbyweek");
+echo '</th><th align="left">'.$langs->trans("approvalbyweekDesc").'</th>';
+echo '<th align="left"><input type="radio" name="approvalbyweek" value="0" ';
+echo ($approvalbyweek=='0'?"checked":"").'> '.$langs->trans("User").'<br>';
+echo '<input type="radio" name="approvalbyweek" value="1" ';
+echo ($approvalbyweek=='1'?"checked":"").'> '.$langs->trans("Week").'<br>';
+echo '<input type="radio" name="approvalbyweek" value="2" ';
+echo ($approvalbyweek=='2'?"checked":"").'> '.$langs->trans("Month")."</th></tr>\n\t\t";
+// max approval 
+
+echo '<tr class="impair" ><th align="left">'.$langs->trans("maxapproval"); //FIXTRAD
+echo '</th><th align="left">'.$langs->trans("maxapprovalDesc").'</th>'; // FIXTRAD
+echo '<th  align="left"><input type="text" name="maxapproval" value="'.$maxApproval;
+echo "\" size=\"4\" ></th></tr>\n\t\t";
+// approval flows
+echo '</table>'."\n\t\t";
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Team").'</th><th>';
 echo $langs->trans("Project").'</th><th hidden>';
@@ -416,7 +419,8 @@ if($i>2){ //FIXME  cust / supp other not yet supported
 }else{
     echo (($apflows[$i]=='1')?'checked':'')."></th>\n\t\t";
 }
-        }
+}
+        
 echo "</tr>\n\t</table><br>\n";
 
 //Color
@@ -457,7 +461,7 @@ echo '</table><br>';
 
 
 //whitelist mode
-print_titre($langs->trans("WhiteList"));
+print_titre($langs->trans("blackWhiteList"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
@@ -543,6 +547,7 @@ echo (($dropdownAjax=='1')?'checked':'')."></th></tr>\n\t\t";
 
 echo '</table><br>';
 print_titre($langs->trans("Informations"));
+echo $langs->trans('feebackDesc').' : <a href="mailto:pmpdelroix@gmail.com?subject=TimesheetFeedback"> Patrick Delcroix</a></br>';
 print '<br><div><a>'.$langs->trans('reminderEmailProcess').'</a></div>';
 echo '</div>';
 echo '</div>'; // end fiche
