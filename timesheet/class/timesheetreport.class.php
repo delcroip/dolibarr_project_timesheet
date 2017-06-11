@@ -252,8 +252,8 @@ class timesheetReport
             {
                 $lvl3HTML.='<tr class="impair" align="left"><th></th><th></th><th>'
                     .$resArray[$key][$lvl3Title].'</th><th>';
-                $lvl3HTML.=$this->formatTime($duration,0).'</th><th>';
-                $lvl3HTML.=$this->formatTime($duration,$hoursperdays).'</th></tr>';                
+                $lvl3HTML.=$this->formatTime($item[5],0).'</th><th>';
+                $lvl3HTML.=$this->formatTime($item[5],$hoursperdays).'</th></tr>';                
                /*
                 if($hoursperdays==0)
                 {
