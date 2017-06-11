@@ -265,7 +265,7 @@ function getSelectAps($subId, $role){
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
     }*/
-    $sql='SELECT COUNT(ts.date_start) as nb, CONCAT(ts.date_start, "-",pjt.`ref`) as id,';
+    $sql="SELECT COUNT(DATE_FORMAT(ts.date_start,'%m/%Y')) as nb, CONCAT(ts.date_start, '-',pjt.`ref`) as id,";
     $sql.=" CONCAT(pjt.title,' (', DATE_FORMAT(ts.date_start,'%m/%Y'),')') as label,";
     $sql.=" GROUP_CONCAT(ts.rowid SEPARATOR ',') as idList";
     $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
@@ -338,7 +338,7 @@ function getSelectAps($subId, $role){
  //        $object->getTaskInfo();
          $object->getActuals();
          echo '<tr>';
-           echo $object->getFormLine( $key,$headers,-1); 
+           echo $object->getFormLine( $key,$headers,0,'-1'); 
          echo "<tr>\n";
      }
  }
