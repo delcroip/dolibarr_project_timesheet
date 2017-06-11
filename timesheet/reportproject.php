@@ -153,7 +153,7 @@ $Form.='</select></td>'
         . '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'')
         .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
         .'<td><input class="butAction" type="submit" value="'.$langs->trans('getReport').'"><br>';
-if(!empty($querryRes) && $user->rights->facture->creer)$Form.='<br><a class="butAction" href="timesheetProjectInvoice.php?step=0&year='.$_POST['year'].'&month='.$_POST['month'].'&projectid='.$_POST['projectSelected'].'" >'.$langs->trans('Invoice').'</a>';
+if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<br><a class="butAction" href="timesheetProjectInvoice.php?step=0&year='.$_POST['year'].'&month='.$_POST['month'].'&projectid='.$_POST['projectSelected'].'" >'.$langs->trans('Invoice').'</a>';
         $Form.='</td></tr></table></form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 
