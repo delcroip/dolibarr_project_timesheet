@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-# admin (171)
+# admin (182)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addholidaytime=Integrare il congedo
@@ -36,6 +36,8 @@ dropdownAjaxDesc=Disattivare il ajax per gli elenchi a discesa Dolibarr (nel cas
 employeeSignature=Firma del lavoratore
 errMsgMaxHoursExceded=Non è possibile inserire più di tanto tempo per un solo giorno
 exportfriendly=esportazione Compatibile
+feebackDesc=Se sei di fronte a un problema (comportamento o traduzione), se hai idea di miglioramento o richiede nuove funzionalità, contattaci.
+generalInvoiceProjectParam=Parametri generali della fattura del progetto
 GeneralOption=Opzioni generali
 getReport=Get relazione
 GoTo=vai a
@@ -51,6 +53,7 @@ hoursperdays=Numeri di ore al giorno
 hoursPerDaysDesc=Numero di ore che contiene un giorno (Utilizzato per visualizzare l'ora in giorni)
 InternalError=errore interno
 Invoice=Fattura
+invoicedServiceSelectoin=Selezione dei servizi di fatturazione
 invoiceMethod=Metodo fattura
 invoiceMethodDesc=Il metodo utilizzato per il tempo dedicato alle attività di raggruppamento della fattura
 InvoiceMode=Modalità di Fatturazione
@@ -86,11 +89,13 @@ NumberOfTimeSpendDeleted=Tempo impiegato eliminato :
 NumberOfTimeSpendModified=Tempo impiegato modificato :
 OpenDays=giorni di lavoro
 other=Altri
+pleaseFillAll=Si prega di compilare i campi del modulo tutti i
 PreviousWeek=settimana precedente
 Progress=Avanzamento
 ProgressColDesc=Contiene il progresso del compito rispetto al vostro orario
 project=Progetto
 ProjectColDesc=Contiene il riferimento e il titolo del progetto che il compito appartiene
+projectInvoice=Progetto di fatturazione
 projectReport=Relazione di progetto
 Projecttasktimelist=Lista id TaskTime
 Recall=Richiamo
@@ -102,6 +107,7 @@ RecordUpdated=Oltre giorni con successo
 rejected=Respinta
 rejectedColorDesc=Colore per la festa e scheda attività respinta dal responsabile approvazioni
 reminderEmailProcess=È possibile attivare promemoria via e-mail attraverso il pianificatore compito di Dolibarr <br> Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
+savedDuration=Durata salvato
 short=Versione corta
 Submit=Invia
 submitted=Inviato
@@ -126,6 +132,7 @@ Timesheetuser=scheda attività per l'utente
 Timesheetwhitelist=Preferiti
 timeType=Visualizzazione del tempo
 timeTypeDesc=Mostra il tempo in giorni o ore formato 00:00
+unitDuration=Quantità per unità
 Userapproval=Approvato da
 userReport=Rapporto utente
 wngMsgHoursExceded=si stanno inserendo gli straordinari

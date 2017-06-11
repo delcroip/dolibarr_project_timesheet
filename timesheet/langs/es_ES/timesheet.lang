@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-# admin (142)
+# admin (153)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addholidaytime=Sume el tiempo de vacaciones
@@ -36,6 +36,8 @@ dropdownAjaxDesc=desactivar el ajax para la lista desplegable de Dolibarr (en el
 employeeSignature=Firma del empleado
 errMsgMaxHoursExceded=No puedes entrar tanto tiempo por un solo día.
 exportfriendly=Ambiente de exportación
+feebackDesc=Si se enfrenta a un problema (comportamiento o traducción), si tiene ideas de mejora o solicitud de nuevas características, póngase en contacto conmigo.
+generalInvoiceProjectParam=Parámetros generales para la factura del proyecto
 GeneralOption=Opciones generales
 getReport=Obtener informe
 GoTo=Lr
@@ -51,6 +53,7 @@ hoursperdays=Número de horas al día
 hoursPerDaysDesc=Número de horas de trabajo por día (utilizado cuando la duración se muestra por día)
 InternalError=Error interno
 Invoice=Factura
+invoicedServiceSelectoin=Selección de los servicios a facturar
 invoiceMethod=methode de factura
 invoiceMethodDesc=Método utilizado para el tiempo dedicado a tareas de agrupación de facturas
 InvoiceMode=método de facturación
@@ -86,11 +89,13 @@ NumberOfTimeSpendDeleted=Cantidad de tiempo gastado eliminado:
 NumberOfTimeSpendModified=Cantidad de tiempo invertido modificado:
 OpenDays=Días de apertura
 other=Otro
+pleaseFillAll=Por favor llena todos los campos
 PreviousWeek=Semana anterior
 Progress=Progreso
 ProgressColDesc=Muestra el progreso de la tarea en función del tiempo estimado
 project=Proyecto
 ProjectColDesc=Muestra la referencia y el título del proyecto vinculados a la tarea
+projectInvoice=Factura de proyecto
 projectReport=Informe del proyecto
 Projecttasktimelist=Lista de id de tareas
 Recall=Recuperación
@@ -102,6 +107,7 @@ RecordUpdated=Registro actualizado
 rejected=Rechazado
 rejectedColorDesc=Color de la hoja de vacaciones y horas rechazada por el aprobador
 reminderEmailProcess=Puede activar el recordatorio a través de correos electrónicos a través del planificador de tareas de Dolibarr <br> Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
+savedDuration=Duración guardado
 short=Version corta
 Submit=Enviar
 submitted=Enviado
@@ -126,6 +132,7 @@ Timesheetuser=Hoja de tiempos del usuario
 Timesheetwhitelist=Favoritos
 timeType=Unidad de tiempo dedicada
 timeTypeDesc=Mostrar / ingresar la duración de la tarea por día o por hora
+unitDuration=Cantidad por unidad
 Userapproval=Aprobado por:
 userReport=Informe de usuario
 wngMsgHoursExceded=Estás entrando en horas extras
