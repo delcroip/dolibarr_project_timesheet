@@ -519,7 +519,7 @@ class Task_timesheet extends CommonObject
     *  @return     string                                       result
     */    
     function fetchAll($yearWeek,$whitelistmode=false){
-        $this->whitelistmode=is_numeric($whitelistmode)?$whitelistmode:TIMESHEET_WHITELIST_MODE;
+        $this->whitelistmode=(is_numeric($whitelistmode)&& !empty($whitelistmode) )?$whitelistmode:TIMESHEET_WHITELIST_MODE;
         $this->yearWeek=$yearWeek;
         $this->ref=$this->yearWeek.'_'.$this->userId;
         $this->date_start=  parseYearWeek($this->yearWeek);
@@ -1089,7 +1089,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
 	if($ajax){
             $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.getNextYearWeek($this->yearWeek).'\',0);';
 	}else{
-            $Nav.=  '<a href="?action=list&wlm='.$whitelistmode.'&yearweek='.getNextYearWeek($this->yearWeek);
+            $Nav.=  '<a href="?action=list&wlm='.$this->whitelistmode.'&yearweek='.getNextYearWeek($this->yearWeek);
             
         }
         if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
