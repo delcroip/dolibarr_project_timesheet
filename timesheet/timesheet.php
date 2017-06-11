@@ -101,8 +101,11 @@ switch($action){
             {
                                  $ret=0;
 				 foreach($_POST['task'] as $key => $tasktab){
-					 $task_timesheet->loadFromSession($timestamp,$key);                  
-					 $task_timesheet->note=$_POST['Note'][$key];
+					 $task_timesheet->loadFromSession($timestamp,$key);  
+                                         if($task_timesheet->note!=$_POST['Note'][$key]){
+                                            $task_timesheet->note=$_POST['Note'][$key];
+                                            $task_timesheet->update($user);
+                                         }
                                          $ret=$task_timesheet->updateActuals($tasktab);
                                          if(isset($_POST['submit']) ){
                                                 $task_timesheet->setStatus($user,"SUBMITTED");
@@ -143,6 +146,7 @@ switch($action){
     case 'deletefile':
         $action='delete'; // to trigger the delete action in the linkedfiles.inc.php
         break;
+
     default:
         break;
 
@@ -211,9 +215,9 @@ $Form .=$task_timesheet->getHTMLTotal();
 
 $Form .=$task_timesheet->getHTMLtaskLines($ajax);
 $Form .=$task_timesheet->getHTMLTotal();
-
-$Form .=$task_timesheet->getHTMLFooter($ajax);
 $Form .=$task_timesheet->getHTMLNote($ajax);
+$Form .=$task_timesheet->getHTMLFooter($ajax);
+
 $Form .='<script>document.getElementById("defaultOpen").click()</script>';
 
 //Javascript
