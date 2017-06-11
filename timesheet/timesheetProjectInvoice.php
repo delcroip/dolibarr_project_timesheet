@@ -51,7 +51,18 @@ if ($user->rights->facture->creer & hasProjectRight($userid,$projectid))
     if($socid==0 || !is_numeric($socid))$socid=$staticProject->socid; //FIXME check must be in place to ensure the user hqs the right to see the project details
 $edit=1;
 // avoid SQL issue
-if(empty($month) || empty($year) || empty($projectId))$step=1;
+if(empty($month) || empty($year) || empty($projectId)){
+    $step=1;
+    
+    $month=(date('m')-1);
+    if ($month==0){
+        $month=12;
+        $year=date('Y')-1;
+    }else {
+        $year=date('Y');
+    }
+            
+}
 //steps
     switch ($step)
     { 
@@ -128,10 +139,10 @@ if(empty($month) || empty($year) || empty($projectId))$step=1;
 
              //FIXME asign a service + price to each array elements (or price +auto generate name 
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
-            $Form .='<tr class="liste_titre" width="100%" ><th colspan="8">'.$langs->trans("Step").' 2</th><tr>';
+            $Form .='<tr class="liste_titre" width="100%" ><th colspan="8">'.$langs->trans('invoicedServiceSelectoin').'</th><th>';
             $Form .='<tr class="liste_titre" width="100%" ><th >'.$langs->trans("User").'</th>';
-            $Form .='<th >'.$langs->trans("Task").'</th><th >'.$langs->trans("Service").'</th>';
-            $Form .='<th >'.$langs->trans("Description").'</th><th >'.$langs->trans("PriceHT").'</th>';
+            $Form .='<th >'.$langs->trans("Task").'</th><th >'.$langs->trans("Existing").':'.$langs->trans("Service").'</th>';
+            $Form .='<th >'.$langs->trans("New").':'.$langs->trans("Description").'</th><th >'.$langs->trans("New").':'.$langs->trans("PriceHT").'</th>';
             $Form .='<th >'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("Duration").'</th>';
             $form = new Form($db);
             foreach($resArray as $res){
@@ -240,7 +251,7 @@ $edit=0;
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
-            $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans("Step").' '.$step.'</th><th>';
+            $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans('generalInvoiceProjectParam').'</th><th>';    
             $invoicingMethod=TIMESHEET_INVOICE_METHOD;
             $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Project').'</th><th  >';
             $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ', 'fk_statut=1');
@@ -273,7 +284,8 @@ $edit=0;
             }
             $Form .='</table>';
  
-            $Form .='<input type="submit" onclick="return checkEmptyFormFields(event,\'settings\',\'vide\')" class="butAction" value="'.$langs->trans('Next')."\">\n</from>";
+            $Form .='<input type="submit" onclick="return checkEmptyFormFields(event,\'settings\',\'';
+            $Form .=$langs->trans("pleaseFillAll").'\')" class="butAction" value="'.$langs->trans('Next')."\">\n</from>";
  
             break;
     }
