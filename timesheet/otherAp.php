@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 define('TIMESHEET_MAX_TTA_APPROVAL',100);
+define('TIMESHEET_GROUP_OTHER_AP',"week");
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
@@ -265,8 +266,15 @@ function getSelectAps($subId, $role){
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
     }*/
-    $sql="SELECT COUNT(DATE_FORMAT(ts.date_start,'%m/%Y')) as nb, CONCAT(ts.date_start, '-',pjt.`ref`) as id,";
-    $sql.=" CONCAT(pjt.title,' (', DATE_FORMAT(ts.date_start,'%m/%Y'),')') as label,";
+    $sql="SELECT COUNT(ts.rowid) as nb, ";
+  //  if(TIMESHEET_GROUP_OTHER_AP=="week"){
+        $sql.=" CONCAT(ts.date_start, '-',pjt.`ref`) as id,";
+        $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,'- ".$langs->trans('Week')." %v (%m/%Y)')) as label,";
+        
+/*    }else{
+        $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.`ref`) as id,";
+        $sql.=" CONCAT(pjt.title,' (', DATE_FORMAT(ts.date_start,'%m/%Y'),')') as label,";
+    }*/
     $sql.=" GROUP_CONCAT(ts.rowid SEPARATOR ',') as idList";
     $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk on ts.fk_projet_task= tsk.rowid ';
