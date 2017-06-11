@@ -269,7 +269,7 @@ function getSelectAps($subId, $role){
     $sql="SELECT COUNT(ts.rowid) as nb, ";
   //  if(TIMESHEET_GROUP_OTHER_AP=="week"){
         $sql.=" CONCAT(ts.date_start, '-',pjt.`ref`) as id,";
-        $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,'- ".$langs->trans('Week')." %v (%m/%Y)')) as label,";
+        $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,'- ".$langs->trans('Week')." %v (%m/%Y) #'),COUNT(ts.rowid)) as label,";
         
 /*    }else{
         $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.`ref`) as id,";
