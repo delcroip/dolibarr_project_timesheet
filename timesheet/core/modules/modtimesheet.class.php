@@ -121,7 +121,7 @@ class modTimesheet extends DolibarrModules
                 $this->const[5] = array("TIMESHEET_HIDE_REF","chaine","0","option to hide the ref in the timesheets"); 
                 $this->const[6] = array("TIMESHEET_WHITELIST_MODE","chaine","0","Option to change the behaviour of the whitelist:-whiteliste,1-blackliste,2-no impact "); 
                 $this->const[7] = array("TIMESHEET_WHITELIST","chaine","1","Activate the whitelist:"); 
-                $this->const[8] = array("TIMESHEET_COL_DRAFT","chaine","FF00FF","color of draft"); 
+                $this->const[8] = array("TIMESHEET_COL_DRAFT","chaine","FFFFFF","color of draft"); 
                 $this->const[9] = array("TIMESHEET_COL_SUBMITTED","chaine","00FFFF","color of submitted"); 
                 $this->const[10] = array("TIMESHEET_COL_APPROVED","chaine","00FF00","color of approved"); 
                 $this->const[11] = array("TIMESHEET_COL_CANCELLED","chaine","FFFF00","color of cancelled"); 
@@ -300,7 +300,19 @@ class modTimesheet extends DolibarrModules
 									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
-               
+                   $r++; 
+                  $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+									'type'=>'left',			                // This is a Left menu entry
+									'titre'=>'projectInvoice',
+									'mainmenu'=>'project',
+                                                                        'leftmenu'=>'projectInvoice',
+									'url'=>'/timesheet/timesheetProjectInvoice.php',
+									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+									'position'=>121,
+									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'perms'=>'$user->rights->facture->creer',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+									'target'=>'',
+									'user'=>2);               
                   $r++;
                     $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
