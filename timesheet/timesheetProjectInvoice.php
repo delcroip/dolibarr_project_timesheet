@@ -143,7 +143,7 @@ if(empty($month) || empty($year) || empty($projectId)){
             $Form .='<tr class="liste_titre" width="100%" ><th >'.$langs->trans("User").'</th>';
             $Form .='<th >'.$langs->trans("Task").'</th><th >'.$langs->trans("Existing").':'.$langs->trans("Service").'</th>';
             $Form .='<th >'.$langs->trans("New").':'.$langs->trans("Description").'</th><th >'.$langs->trans("New").':'.$langs->trans("PriceHT").'</th>';
-            $Form .='<th >'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("Duration").'</th>';
+            $Form .='<th >'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("savedDuration").'</th>';
             $form = new Form($db);
             foreach($resArray as $res){
                 $Form .=htmlPrintServiceChoice($res["USER"],$res["TASK"],'pair',$res["DURATION"],$res['LIST'],$mysoc,$socid);
@@ -343,9 +343,9 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
     $html.='<th><input type="text"  size="6" name="userTask['.$user.']['.$task.'][PriceHT]" ></th>';
     //$html.='<th><input type="text" size="6" name="userTask['.$user.']['.$task.']["VAT"]" ></th>';
     $html.='<th>'.$form->load_tva('userTask['.$user.']['.$task.'][VAT]', -1, $seller, $buyer, 0, 0, '', false, 1).'</th>';
-    $html.='<th><input type="text" size="2" maxlength="2" name="userTask['.$user.']['.$task.'][unit_duration]" >';
-    $html.='</br><input name="userTask['.$user.']['.$task.'][unit_duration_unit]" type="radio" value="h" checked>'.$langs->trans('Hour');
-    $html.='</br><input name="userTask['.$user.']['.$task.'][unit_duration_unit]" type="radio" value="d">'.$langs->trans('Days').'</th>';
+    $html.='<th><input type="text" size="2" maxlength="2" name="userTask['.$user.']['.$task.'][unit_duration]" value="1" >';
+    $html.='</br><input name="userTask['.$user.']['.$task.'][unit_duration_unit]" type="radio" value="h" >'.$langs->trans('Hour');
+    $html.='</br><input name="userTask['.$user.']['.$task.'][unit_duration_unit]" type="radio" value="d" checked>'.$langs->trans('Days').'</th>';
     $html.='<th><input type="text" size="2" maxlength="2" name="userTask['.$user.']['.$task.'][duration]" value="'.$duration.'" >';
     
     $html.='</th</tr>';
