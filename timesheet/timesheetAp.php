@@ -61,7 +61,7 @@ $langs->load("projects");
 $langs->load('timesheet@timesheet');
 
 
-$task_timesheet= new Task_timesheet($db);
+
 
 
 
@@ -85,15 +85,16 @@ if($action== 'submit'){
             {
                 $approvals=$_POST['approval'];
                 foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser){
+                    $curTaskTimesheet= new Task_timesheet($db);
                     $count++;
                     if($approvals[$key]!=$tsUser)switch($approvals[$key]){
                         case 'Approved':
-                           $ret=$task_timesheet->setStatus($user,(($appflowOn>0)?'UNDERAPPROVAL':'APPROVED'),$key); 
+                           $ret=$curTaskTimesheet->setStatus($user,(($appflowOn>0)?'UNDERAPPROVAL':'APPROVED'),$key); 
                             if(ret<0)$errors++;
                             else $tsApproved++;
                             break;
                         case 'Rejected':
-                            $ret=$task_timesheet->setStatus($user,'REJECTED',$key);
+                            $ret=$curTaskTimesheet->setStatus($user,'REJECTED',$key);
                             if(ret<0)$errors++;
                             else $tsRejected++;
                             break;
@@ -177,7 +178,7 @@ if($xml){
     exit;
 }*/
 
-
+$task_timesheet= new Task_timesheet($db);
 $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
 $morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js");
 llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
