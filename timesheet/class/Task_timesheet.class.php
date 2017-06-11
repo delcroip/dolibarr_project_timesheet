@@ -1029,7 +1029,7 @@ Public function setStatus($user,$status,$id=0){ //role ?
  */
  function getHTMLNote(){
      global $langs;
-     $isOpenSatus=($this->status=="DRAFT" || $this->status=="CANCELLED"|| $this->status=="REJECTED");
+     $isOpenSatus=(in_array($this->status, array("REJECTED", "DRAFT","PLANNED",'CANCELLED' )));
      $html='<table class="noborder" width="50%"><tr><td>'.$langs->trans('Note').'</td></tr><tr><td>';
    
 
