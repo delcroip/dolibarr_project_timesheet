@@ -495,7 +495,7 @@ class Task_time_approval extends Task
 
 		$this->db->begin();
 
-		dol_syslog(__METHOD__.$sql);
+		dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -1382,14 +1382,14 @@ function getIdList()
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
   
-    Public function Approved($sender,$role, $updteTS =true){
-        
+    Public function Approved($user,$role, $updteTS =true){
+        $userId=  is_object($user)?$user->id:$user;
         if(!in_array($role, self::$roleList)) return -1; // role not valide
         $nextStatus='';
         $ret=0;
 
         //set the approver
-        $this->user_app[$role]=$sender;
+        $this->user_app[$role]=$userId;
         //update the roles
         $rolepassed=false;
         foreach(self::$apflows as $key=> $value){         
@@ -1416,7 +1416,7 @@ function getIdList()
             //$this->recipient= self::$roleList[array_search('1', self::$apflows)];
         }
         // save the change in the db
-         $ret=$this->setStatus($sender,$nextStatus,$updteTS);
+         $ret=$this->setStatus($user,$nextStatus,$updteTS);
          if($ret>0)$ret=$this->updateTaskTime($nextStatus);
 
     
@@ -1434,12 +1434,13 @@ function getIdList()
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
   
-    Public function challenged($sender,$role,$updteTS=true){
-       $nextStatus='';
+    Public function challenged($user,$role,$updteTS=true){
+        $userId=  is_object($user)?$user->id:$user;
+        $nextStatus='';
         if(!in_array($role, self::$roleList)) return -1; // role not valide      
         $ret=-1;
        //unset the approver ( could be set previsouly)
-        $this->user_app[$role]=$sender;
+        $this->user_app[$role]=$userId;
         //update the roles
         foreach(self::$apflows as $key=> $recipient){
             if ($recipient==1){  
@@ -1474,7 +1475,7 @@ function getIdList()
  *  @return     int      		   	 <0 if KO, Id of created object if OK
  */
   
-    Public function submitted($updteTS=false){
+    Public function submitted($user,$updteTS=false){
       //Update the the fk_tta in the project task time 
         $ret=$this->setStatus($user,'SUBMITTED',$updteTS); // must be executed first to get the appid
         if($ret>0)$ret=$this->updateTaskTime('SUBMITTED');

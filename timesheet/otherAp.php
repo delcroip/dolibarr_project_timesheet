@@ -68,12 +68,12 @@ if($action=='submit'){
                 $task_timesheet->fetch($id);
                 switch(uniordHex($approvals[$id])){
                     case '2705'://Approved':
-                       $ret=$task_timesheet->Approved($userId,$role); 
+                       $ret=$task_timesheet->Approved($user,$role); 
                         if($ret<0)$errors++;
                         else $tsApproved++;
                         break;
                     case '274C'://'Rejected':
-                        $ret=$task_timesheet->challenged($userId,$role);
+                        $ret=$task_timesheet->challenged($user,$role);
                         if($ret<0)$errors++;
                         else $tsRejected++;
                         break;

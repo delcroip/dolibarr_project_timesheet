@@ -767,7 +767,7 @@ function get_userName(){
   /*
  * update the status based on the underlying Task_time_approval
  *  
- *  @param    int                       $userid              timesheet object, (task)
+ *  @param    object/int                $user           timesheet object, (task)
  *  @param    string              	$status              to overrule the logic if the status enter has an higher priority
  *  @return     string                         status updated of KO(-1)
  */
@@ -822,7 +822,7 @@ Public function setStatus($user,$status,$id=0){ //role ?
             $Submitted= ($status=='SUBMITTED')?true:false;
             $draft= ($status=='DRAFT')?true:false;
             // Check parameters
-            $userid=  is_object($user)?$user->id:$user;
+            
             if($id!=0)$this->fetch($id);
             $this->status=$status;
         // Update request
@@ -837,9 +837,9 @@ Public function setStatus($user,$status,$id=0){ //role ?
                     {
                         $tasktime= new Task_time_approval($this->db);
                         $tasktime->unserialize($ts);
-                        if($Approved)$ret=$tasktime->Approved($userid,'team',false);
-                        else if($Rejected)$ret=$tasktime->challenged($userid,'team',false);
-                        else if($Submitted)$ret=$tasktime->submitted();
+                        if($Approved)$ret=$tasktime->Approved($user,'team',false);
+                        else if($Rejected)$ret=$tasktime->challenged($user,'team',false);
+                        else if($Submitted)$ret=$tasktime->submitted($user);
                         else if($draft)$ret=$tasktime->setStatus($user,'DRAFT');
                     }
                       //if($ret>0)$this->db->commit();
