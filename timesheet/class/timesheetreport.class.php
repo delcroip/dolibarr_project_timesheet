@@ -202,7 +202,7 @@ class timesheetReport
             $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans('Name');
             $HTMLRes.='</th><th>'.$langs->trans($title[$lvl1Title]).'</th><th>';
             $HTMLRes.=$langs->trans($title[$lvl2Title]).'</th>';
-            $HTMLRes.=(!$short)?'<th>'.$langs->trans($title[$lvl3Title]).'</th>':'';
+            $HTMLRes.='<th>'.$langs->trans($title[$lvl3Title]).'</th>';
             $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
             $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
             foreach($resArray as $key => $item)
@@ -210,7 +210,7 @@ class timesheetReport
                $HTMLRes.= '<tr class="pair" align="left"><th width="200px">'.$this->name.'</th>';
                $HTMLRes.= '<th '.(isset($titleWidth[$lvl1Title])?'width="'.$titleWidth[$lvl1Title].'"':'' ).'>'.$item[$lvl1Title].'</th>';
                $HTMLRes.='<th '.(isset($titleWidth[$lvl2Title])?'width="'.$titleWidth[$lvl2Title].'"':'' ).'>'.$item[$lvl2Title].'</th>';
-                if(!$short)$HTMLRes.='<th '.(isset($titleWidth[$lvl3Title])?'width="'.$titleWidth[$lvl3Title].'"':'' ).'>'.$item[$lvl3Title].'</th>';
+               $HTMLRes.='<th '.(isset($titleWidth[$lvl3Title])?'width="'.$titleWidth[$lvl3Title].'"':'' ).'>'.$item[$lvl3Title].'</th>';
                $HTMLRes.='<th width="70px">'.$this->formatTime($item[5],0).'</th>';
                $HTMLRes.='<th width="70px">'.$this->formatTime($item[5],$hoursperdays).'</th></tr>';
             } 
