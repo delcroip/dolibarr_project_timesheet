@@ -776,7 +776,7 @@ function updateStatus($user,$status=''){
     $updatedStatus=2;
     if ($status!=''){
         if(!in_array($status,Task_time_approval::$statusList ))return -1; // status not valid
-         $updatedStatus=  array_search($status, Task_time_approval::$statusList);
+        $updatedStatus=  array_search($status, Task_time_approval::$statusList);
     }else if(!empty($this->status)){
          $updatedStatus=  array_search($this->status, Task_time_approval::$statusList);
     }
@@ -788,9 +788,9 @@ function updateStatus($user,$status=''){
     }
     //look for the status to apply to the TS  from the TTA
     foreach($this->taskTimesheet as $row){
-        $tta= new Task_time_approval($db);
+        $tta= new Task_time_approval($this->db);
         $tta->unserialize($row);
-        if($tta->appId<0){ // tta already created
+        if($tta->appId>0){ // tta already created
             $tta->fetch($tta->appId);
             $statusPriorityCur=  array_search($tta->status, Task_time_approval::$statusList); //FIXME
             $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
