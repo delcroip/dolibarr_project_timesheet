@@ -904,14 +904,19 @@ class Task_time_approval extends Task
                    break;
              case 'Note':
                  $htmlTitle .=img_object('Note', 'generic', ' onClick="ShowHide(\'note_'.$this->userId.'_'.$this->id.'\')"');
-                 $htmltail='<tr hidden class="timesheet_note" id="note_'.$this->userId.'_'.$this->id.'"><th colspan="100%"><a>'.$langs->trans('Note').'</a>';
-                if($isOpenSatus){
-                     $htmltail.= '<textarea class="flat"  rows="2" ';
-                     $htmltail .= 'name="task['.$this->userId.']['.$this->id.'][Note]" ';
+                 $htmltail='<tr hidden class="timesheet_note" id="note_'.$this->userId.'_'.$this->id.'"><th colspan="1">';
+                 $htmltail.='<a>'.$langs->trans('Note').'</a></th><th colspan="100%">';
+                //if($isOpenSatus){
+                     $htmltail.= '<textarea class="flat"  rows="2" cols="100"';
+                     if($this->appId!=0){
+                         $htmltail .= 'name="note['.$this->appId.']" ';
+                     }else{
+                         $htmltail .= 'name="task['.$this->userId.']['.$this->id.'][Note]" ';
+                     }
                       $htmltail .= '>'.$this->note.'</textarea>';
-                }else if(!empty($this->note)){
-                    $htmltail.=$this->note;                
-                }
+                //}else if(!empty($this->note)){
+                //    $htmltail.=$this->note;                
+                //}
                 $htmltail.="</th></tr>\n";
          }
 
@@ -1200,7 +1205,7 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
             $this->status=$status;
            //if($this->appId && $this->date_start_approval==0)$this->fetch($this->appId);
 
-            if($this->getDuration()>0){
+            if($this->getDuration()>0 || $this->note!=''){
                 if($this->appId >0){
                     $ret=$this->update($user);
                 } else{
@@ -1244,19 +1249,21 @@ Public function getDuration(){ //FIXME
  *  @param     sting             	$status          status to be update
  *  @return     int                                                       1 => succes , 0 => Failure
  */
-function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status)
+function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status,$note='')
 {
     $ret=0;
-    $idList='';
+    $noteUpdate=0;
 	dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user=$userId;
-        if(isset($timesheetPost['Note'])){
-            if($timesheetPost['Note']!=$this->note){
-                $this->note=($timesheetPost['Note']);
-                $this->update($userId);
-                unset($timesheetPost['Note']);
-            }
+        
+        if(isset($timesheetPost['Note'])&& $timesheetPost['Note']!=$this->note){
+            $this->note=$timesheetPost['Note'];
+            $noteUpdate++;
+        }else if($note!=NULL && $note!=$this->note){
+            $this->note=($note);
+            $noteUpdate++;
         }
+        
     if(is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $wkload){		
         $item=$this->tasklist[$dayKey];
         
@@ -1322,7 +1329,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
         $this->tasklist[$dayKey]['duration']=$duration;
     }
    if($ret)$this->updateTimeUsed(); // needed upon delete
-    return $ret;
+    return $ret+$noteUpdate;
     //return $idList;
 }
  
@@ -1330,7 +1337,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
  * 
  *  @return     string      list of the id separated by coma
  */
-function getIdList()
+/*function getIdList()
 {
     $ret='';
     if(is_array($this->tasklist))foreach ($this->tasklist as $tasktime){
@@ -1339,7 +1346,7 @@ function getIdList()
         }     
     }
     return $ret;
-}
+}*/
 
         	/**
 	 *	function that will send email to 

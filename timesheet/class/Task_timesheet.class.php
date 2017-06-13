@@ -689,13 +689,13 @@ function saveInSession(){
  *  @param    array(int)              	$tabPost               array sent by POST with all info about the task
  *  @return     int                                                        number of tasktime creatd/changed
  */
- function updateActuals($tabPost)
+ function updateActuals($tabPost,$notes=array())
 {
      //FIXME, tta should be creted
     if($this->status=='APPROVED')
         return -1;
     dol_syslog('Entering in Timesheet::task_timesheet.php::updateActuals()');     
-    $idList='';
+    $ret=0;
    // $tmpRet=0;
     $_SESSION['task_timesheet'][$this->timestamp]['timeSpendCreated']=0;
     $_SESSION['task_timesheet'][$this->timestamp]['timeSpendDeleted']=0;
@@ -706,11 +706,8 @@ function saveInSession(){
         foreach ($this->taskTimesheet as $key  => $row) {
             $tasktime= new Task_time_approval($this->db);
             $tasktime->unserialize($row);     
-            $ret=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status);
-            $taskList=$tasktime->getIdList();
-            if(!empty($taskList)){
-                $idList.=(empty($idList)?'':',').$taskList;
-            }
+            $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status,$notes[$tasktime->appId]);
+
             $this->taskTimesheet[$key]=$tasktime->serialize();
             
         } 
@@ -720,8 +717,9 @@ function saveInSession(){
         $this->update($this->user);
     }
     */
-    return $idList;
+    return $ret;
 }
+
 
 /*
  * function to get the name from a list of ID

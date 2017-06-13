@@ -83,8 +83,10 @@ if($action== 'submit'){
             //$task_timesheet->db=$db;
             if (!empty($_POST['approval']))
             {
+                $notes=$_POST['note'];
                 $approvals=$_POST['approval'];
                 foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser){
+                    
                     $curTaskTimesheet= new Task_timesheet($db);
                     $count++;
                     if($approvals[$key]!=$tsUser)switch($approvals[$key]){
@@ -102,6 +104,10 @@ if($action== 'submit'){
                         default:
                             break;
                                 
+                    }
+                    if($curTaskTimesheet->note!=$notes[$curTaskTimesheet->appId]){
+                        $curTaskTimesheet->note=$notes[$curTaskTimesheet->appId];
+                        $curTaskTimesheet->update(user);                               
                     }
                     
                 }

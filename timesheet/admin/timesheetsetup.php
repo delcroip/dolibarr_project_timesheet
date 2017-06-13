@@ -116,15 +116,17 @@ switch($action)
         $showDateEnd=GETPOST('showDateEnd','int');
         $showProgress=GETPOST('showProgress','int');
         $showCompany=GETPOST('showCompany','int');
-
-        $headers=$showCompany?'Company':'';
+        $showNote=GETPOST('showNote','int');
+        
+        $headers=$showNote?'Note':'';
+        $headers.=$showCompany?(empty($headers)?'':'||').'Company':'';
         $headers.=$showProject?(empty($headers)?'':'||').'Project':'';
         $headers.=$showTaskParent?(empty($headers)?'':'||').'TaskParent':'';
         $headers.=$showTasks?(empty($headers)?'':'||').'Tasks':'';
         $headers.=$showDateStart?(empty($headers)?'':'||').'DateStart':'';
         $headers.=$showDateEnd?(empty($headers)?'':'||').'DateEnd':'';
         $headers.=$showProgress?(empty($headers)?'':'||').'Progress':'';
-        
+
         $res=dolibarr_set_const($db, "TIMESHEET_HEADERS", $headers, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         //color handling
@@ -216,6 +218,9 @@ foreach ($headersT as $header) {
             Break;
         case 'Company':
             $showCompany=1;
+            Break;
+        case 'Note':
+            $showNote=1;
             Break;
         default:
             break;
@@ -366,6 +371,13 @@ echo  '<tr class="impair"><th align="left">'.$langs->trans("Company");
 echo '</th><th align="left">'.$langs->trans("CompanyColDesc").'</th>';
 echo  '<th align="left"><input type="checkbox" name="showCompany" value="1" ';
 echo (($showCompany=='1')?'checked':'')."></th></tr>\n\t\t";
+//note
+echo  '<tr class="pair"><th align="left">'.$langs->trans("Note");
+echo '</th><th align="left">'.$langs->trans("NoteDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showNote" value="1" ';
+echo (($showNote=='1')?'checked':'')."></th></tr>\n\t\t";
+
+
 /*
 // custom FIXME
 echo  '<tr class="pair"><th align="left">'.$langs->trans("CustomCol");
