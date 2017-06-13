@@ -63,9 +63,16 @@ if($action=='submit'){
         {
             $task_timesheet= new Task_time_approval($db);
             $approvals=$_POST['approval'];
+            $notes=$_POST['note'];
+            
+            $update=false;
             foreach($_SESSION['task_timesheet'][$token] as $id => $role){
                 $count++;
                 $task_timesheet->fetch($id);
+                if($notes[$id]!=$task_timesheet->note){                   
+                    $task_timesheet->note=$notes[$id];
+                    $update=true;
+                }
                 switch(uniordHex($approvals[$id])){
                     case '2705'://Approved':
                        $ret=$task_timesheet->Approved($user,$role); 
@@ -78,6 +85,7 @@ if($action=='submit'){
                         else $tsRejected++;
                         break;
                     case '2753': // ? submitted
+                        if($update)$task_timesheet->update($user);
                     default:
                         break;
 
@@ -329,10 +337,11 @@ function getSelectAps($subId, $role){
  
  function  getHTMLRows($objectArray){
      global $langs;
-     $headers=array('Approval','Tasks','User');
+     $headers=array('Approval','Note','Tasks','User');
      if(!is_array($objectArray) || !is_object($objectArray[0])) return -1;
     echo '<tr class="liste_titre">';
     echo '<th>'.$langs->trans('Approval').'</th>';
+    echo '<th>'.$langs->trans('Note').'</th>';
     echo '<th>'.$langs->trans('Task').'</th>';
     echo '<th>'.$langs->trans('User').'</th>';
     $weeklength=round(($objectArray[0]->date_end_approval-$objectArray[0]->date_start_approval)/SECINDAY);

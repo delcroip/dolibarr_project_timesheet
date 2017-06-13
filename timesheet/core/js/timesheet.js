@@ -377,3 +377,12 @@ function checkEmptyFormFields(even,Myform,msg){
   function tristate_Check(control) {
     tristate(control,'\u25A1', '\u2754', '\u2714');
   }
+
+function ShowHide(id){
+    elmt=document.getElementById(id);
+    if(elmt.hidden==true){
+        elmt.hidden=false;
+    }else{
+        elmt.hidden=true;
+    }
+} 
