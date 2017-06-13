@@ -387,8 +387,7 @@ class Task_time_approval extends Task
                 $this->id = $obj->fk_projet_task;
                 $this->task_timesheet = $obj->fk_project_task_timesheet;
                 $this->note  = $obj->note;
-
-                
+               
             }else{
                 unset($this->status) ;
                 unset($this->sender) ;
@@ -670,16 +669,16 @@ class Task_time_approval extends Task
         }else{
             $sql .= ",CONCAT(p.`ref`,' - ',p.title) as title";
             $sql .= ",CONCAT(pt.`ref`,' - ',pt.label) as label";
-            if($taskParent)$sql .= ",pt.fk_projet_task_parent,CONCAT(ptp.`ref`,' - ',ptp.label) as taskParentLabel";	
+            if($taskParent)$sql .= ",pt.fk_task_parent,CONCAT(ptp.`ref`,' - ',ptp.label) as taskParentLabel";	
         }
         if($Company)$sql .= ',p.fk_soc as companyId,s.nom as companyName';
 
         $sql .=" FROM ".MAIN_DB_PREFIX."projet_task AS pt";
-        $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
+        $sql .=" JOIN ".MAIN_DB_PREFIX."projet as p";
         $sql .=" ON pt.fk_projet=p.rowid";
         if($taskParent){
             $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."projet_task as ptp";
-            $sql .=" ON pt.fk_projet_task_parent=ptp.rowid";
+            $sql .=" ON pt.fk_task_parent=ptp.rowid";
         }
         if($Company){
             $sql .=" LEFT JOIN ".MAIN_DB_PREFIX."societe as s";
