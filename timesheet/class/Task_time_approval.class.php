@@ -813,6 +813,7 @@ class Task_time_approval extends Task
  */
        public function getFormLine( $lineNumber,$headers,$tsUserId=0,$openOveride=0)
     {
+           global $langs;
            // change the time to take all the TS per day
 
            $dayelapsed=ceil(($this->date_end_approval-$this->date_start_approval)/SECINDAY);
@@ -830,80 +831,97 @@ class Task_time_approval extends Task
     //if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
     //$linestyle=(($hidden)?'display:none;':'');
     $Class=(($this->listed)?'timesheet_whitelist':'timesheet_blacklist').' timesheet_line '.(($lineNumber%2=='0')?'pair':'impair');
-    
+    $htmltail='';
   $linestyle='';
   if(($this->pStatus == "2")){
       $linestyle.='background:#'.TIMESHEET_BC_FREEZED.';';
   }else{
       $linestyle.='background:#'.self::$statusColor[$this->status].';';
   }
+    /*
+     * Open task ?
+     */
+        if($status=='INVOICED')$openOveride=-1; // once invoice it should not change
+        $isOpenSatus=($openOveride==1) || ($status=='DRAFT' || $status=='CANCELLED'|| $status=='REJECTED' || $status=='PLANNED');
+        if($openOveride==-1)$isOpenSatus=false;
+        $opendays=str_split(TIMESHEET_OPEN_DAYS);
     
-    
-    
+     /*
+      * info section
+      */   
     $html= '<tr class="'.$Class.'" '.((!empty($linestyle))?'style="'.$linestyle.'"':'');
     if(!empty($this->note))$html.=' title="'.htmlentities($this->note).'"';
       $html.=  '>'."\n"; 
     //title section
      foreach ($headers as $key => $title){
-         $html.='<th align="left" >';
+         $htmlTitle='';
          switch($title){
              case 'Project':
                  if(version_compare(DOL_VERSION,"3.7")>=0){
                  //if(file_exists("../projet/card.php")||file_exists("../../projet/card.php")){
-                    $html.='<a href="'.DOL_URL_ROOT.'/projet/card.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
+                    $htmlTitle.='<a href="'.DOL_URL_ROOT.'/projet/card.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
                  }else{
-                    $html.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
+                    $htmlTitle.='<a href="'.DOL_URL_ROOT.'/projet/fiche.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
 
                  }
                  break;
              case 'TaskParent':
-                 $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
+                 $htmlTitle.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
                  break;
              case 'Tasks':
-                 $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'">'.$this->description.'</a>';
+                 $htmlTitle.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'">'.$this->description.'</a>';
                  break;
              case 'DateStart':
-                 $html.=$this->date_start?dol_print_date($this->date_start,'day'):'';
+                 $htmlTitle.=$this->date_start?dol_print_date($this->date_start,'day'):'';
                  break;
              case 'DateEnd':
-                 $html.=$this->date_end?dol_print_date($this->date_end,'day'):'';
+                 $htmlTitle.=$this->date_end?dol_print_date($this->date_end,'day'):'';
                  break;
              case 'Company':
-                 $html.='<a href="'.DOL_URL_ROOT.'/societe/soc.php?mainmenu=companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
+                 $htmlTitle.='<a href="'.DOL_URL_ROOT.'/societe/soc.php?mainmenu=companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
                  break;
              case 'Progress':
-                 $html .=$this->parseTaskTime($this->duration_effective).'/';
+                 $htmlTitle .=$this->parseTaskTime($this->duration_effective).'/';
                 if($this->planned_workload)
                 {
-                     $html .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
+                     $htmlTitle .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
                 }else{
-                    $html .= "-:--(-%)";
+                    $htmlTitle .= "-:--(-%)";
                 }
                 if($this->planned_workload_approval) // show the time planned for the week
                 {
-                     $html .= '('.$this->parseTaskTime($this->planned_workload_approval).')';
+                     $htmlTitle .= '('.$this->parseTaskTime($this->planned_workload_approval).')';
                 }
                  break;
             case 'User':
                 $userName=get_userName($this->userId);
-                $html .=  $userName[$this->userId];
+                $htmlTitle .=  $userName[$this->userId];
                 break;
              case 'Approval':
-                 $html .= "<input type='text' style='border: none;' class = 'approval_switch'";
-                 $html .=' name="approval['.$this->appId.']" ';
-                 $html .=' id="task_'.$this->userId.'_'.$this->appId.'_approval" ';
-                 $html .= " onfocus='this.blur()' readonly='true' size='1' value='&#x2753;' onclick='tristate_Marks(this)' />\n";
-
+                 $htmlTitle .= "<input type='text' style='border: none;' class = 'approval_switch'";
+                 $htmlTitle .=' name="approval['.$this->appId.']" ';
+                 $htmlTitle .=' id="task_'.$this->userId.'_'.$this->appId.'_approval" ';
+                 $htmlTitle .= " onfocus='this.blur()' readonly='true' size='1' value='&#x2753;' onclick='tristate_Marks(this)' />\n";
+                   break;
+             case 'Note':
+                 $htmlTitle .=img_object('Note', 'generic', ' onClick="ShowHide(\'note_'.$this->userId.'_'.$this->id.'\')"');
+                 $htmltail='<tr hidden class="timesheet_note" id="note_'.$this->userId.'_'.$this->id.'"><th colspan="100%"><a>'.$langs->trans('Note').'</a>';
+                if($isOpenSatus){
+                     $htmltail.= '<textarea class="flat"  rows="2" ';
+                     $htmltail .= 'name="task['.$this->userId.']['.$this->id.'][Note]" ';
+                      $htmltail .= '>'.$this->note.'</textarea>';
+                }else if(!empty($this->note)){
+                    $htmltail.=$this->note;                
+                }
+                $htmltail.="</th></tr>\n";
          }
 
-         $html.="</th>\n";
+          $html.='<th align="left" >'.$htmlTitle."</th>\n";
+             
      }
 
   // day section
-        if($status=='INVOICED')$openOveride=-1; // once invoice it should not change
-        $isOpenSatus=($openOveride==1) || ($status=='DRAFT' || $status=='CANCELLED'|| $status=='REJECTED' || $status=='PLANNED');
-        if($openOveride==-1)$isOpenSatus=false;
-        $opendays=str_split(TIMESHEET_OPEN_DAYS);
+
 
         for($dayCur=0;$dayCur<$dayelapsed;$dayCur++)
         {
@@ -963,7 +981,7 @@ class Task_time_approval extends Task
             }
         }
         $html .= "</tr>\n";
-        return $html;
+        return $html.$htmltail;
 
     }	
 
@@ -1233,6 +1251,13 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
     $idList='';
 	dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user=$userId;
+        if(isset($timesheetPost['Note'])){
+            if($timesheetPost['Note']!=$this->note){
+                $this->note=($timesheetPost['Note']);
+                $this->update($userId);
+                unset($timesheetPost['Note']);
+            }
+        }
     if(is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $wkload){		
         $item=$this->tasklist[$dayKey];
         
