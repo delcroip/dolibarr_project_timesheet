@@ -209,7 +209,11 @@ class Timesheetwhitelist extends CommonObject
             $this->db->free($resql);
             
             foreach($List as $row){
-                $Listtask=array_merge($Listtask,$row->getTaskList());
+                //$Listtask=array_merge($Listtask,$row->getTaskList());
+                $subListtask=$row->getTaskList();
+                foreach($subListtask as $key => $value){
+                    $Listtask[$key]=$value;
+                }
             }
         }
         else
@@ -252,12 +256,13 @@ class Timesheetwhitelist extends CommonObject
             while($i<$num)
             {
                 $obj = $this->db->fetch_object($resql);
-                $Listtask[$i]    = $obj->rowid;
+                $Listtask[$obj->rowid]    = $this->id;
                 $i++;
             }
             $this->db->free($resql);
 
             return $Listtask;
+            
         }
         else
         {

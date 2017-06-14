@@ -588,13 +588,14 @@ function saveInSession(){
     $datestart=$this->date_start;
     $datestop= $this->date_end;
     $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
+    //var_dump($whiteList);
      // Save the param in the SeSSION
      $tasksList=array();
      $whiteListNumber=count($whiteList);
      $sqlwhiteList='';
      if($whiteListNumber){
          
-            $sqlwhiteList=', (CASE WHEN tsk.rowid IN ('.implode(",",  $whiteList).') THEN \'1\' ';
+            $sqlwhiteList=', (CASE WHEN tsk.rowid IN ('.implode(",",  array_keys($whiteList)).') THEN \'1\' ';
             $sqlwhiteList.=' ELSE \'0\' END ) AS listed';
     }
   
@@ -649,7 +650,8 @@ function saveInSession(){
                     $tasksList[$i]->date_start_approval=$this->date_start;
                     $tasksList[$i]->date_end_approval=$this->date_end;
                     $tasksList[$i]->task_timesheet=$this->id;
-                    $tasksList[$i]->listed=$obj->listed;
+                    //$tasksList[$i]->listed=$obj->listed;
+                    $tasksList[$i]->listed=$whiteList[$obj->taskid];
                     $i++;
                     
                     

@@ -377,7 +377,10 @@ function checkEmptyFormFields(even,Myform,msg){
   function tristate_Check(control) {
     tristate(control,'\u25A1', '\u2754', '\u2714');
   }
-
+/*
+ * Funciton that changed the hidden status off the element with id="id"
+ * @param   string      id      id of the target element 
+ */
 function ShowHide(id){
     elmt=document.getElementById(id);
     if(elmt.hidden==true){
@@ -386,3 +389,35 @@ function ShowHide(id){
         elmt.hidden=true;
     }
 } 
+/*
+ * function to add/remove this task as favoris
+ */
+function favOnOff(evt, prjtId, tskId){
+    var favId=evt.target.id;
+    var url='timesheetwhitelist.php?ajax=1&Project='+prjtId+'&Projecttask='+tskId;
+    url+='&action='+((favId>0)?('confirm_delete&confirm=yes&id='+favId):'add');
+    httpGetAsync(url,setId, evt);
+}
+
+function httpGetAsync(theUrl, callback, callbackParam)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(callbackParam,xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+}
+    
+function setId(evt, JsonStr){
+    var obj = JSON.parse(JsonStr);
+     evt.target.id=obj.id;
+     if(obj.id>0){
+          evt.target.src="img/fav_on.png";
+          evt.target.parentElement.parentElement.className=evt.target.parentElement.parentElement.className.replace('timesheet_blacklist','timesheet_whitelist');
+     }else{
+         evt.target.src="img/fav_off.png";
+         evt.target.parentElement.parentElement.className=evt.target.parentElement.parentElement.className.replace('timesheet_whitelist','timesheet_blacklist');
+     }
+}

@@ -65,6 +65,7 @@ $backtopage = GETPOST('backtopage');
 $cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm');
 $tms= GETPOST('tms','alpha');
+$ajax	= GETPOST('ajax','int');
 //// Get parameters
 $sortfield = GETPOST('sortfield','alpha'); 
 $sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
@@ -95,7 +96,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
+$userId=is_object($user)?$user->id:$user; // 3.5 compatibility
 //$upload_dir = $conf->timesheet->dir_output.'/Timesheetwhitelist/'.dol_sanitizeFileName($object->ref);
 
 
@@ -157,12 +158,12 @@ if ($cancel){
 }else if (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
         //block resubmit
-        if(empty($tms) || (!isset($_SESSION['Timesheetwhitelist_'.$tms]))){
+        if($ajax!=1 && (empty($tms) || (!isset($_SESSION['Timesheetwhitelist_'.$tms])))){
                 setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
                 $action=($action=='add')?'create':'edit';
         }
         //retrive the data
-             $object->user=($user->admin)?GETPOST('User'):$user->id;
+             $object->user=($user->admin && $ajax!=1)?GETPOST('User'):$userId;
             $object->project=GETPOST('Project');
             if($object->project==-1)$object->project='';
             $object->project_task=GETPOST('Projecttask');
@@ -190,7 +191,7 @@ if ($cancel){
      $action='list';
  }
  
- 
+ $result='';
   switch($action){		
                     case 'update':
                             
@@ -239,14 +240,19 @@ if ($cancel){
                             }
                             break;
                     case 'add':
-                            $result=$object->create($user);
+                            $result=$object->create($user);                        
                             if ($result > 0)
                             {
                                     // Creation OK
                                 // remove the tms
-                                   unset($_SESSION['Timesheetwhitelist_'.$tms]);
-                                   setEventMessage('RecordSucessfullyCreated', 'mesgs');
-                                   reloadpage($backtopage,$result,$ref);
+                                   unset($_SESSION['Timesheetwhitelist_'.$tms]);                                   
+                                   if ($ajax==1){
+                                           echo json_encode(array('id'=> $result));
+                                           exit;
+                                   }else{
+                                       setEventMessage('RecordSucessfullyCreated', 'mesgs');
+                                       reloadpage($backtopage,$result,$ref);
+                                   }
                                     
                             }else
                             {
@@ -263,8 +269,13 @@ if ($cancel){
                             if ($result > 0)
                             {
                                     // Delete OK
+                                if ($ajax==1){
+                                           echo json_encode(array('id'=> '0'));
+                                           exit;
+                                }else{
                                     setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
                                     reloadpage();
+                                }
                                     
                             }
                             else
@@ -293,7 +304,10 @@ if(isset( $_SESSION['Timesheetwhitelist_class'][$tms]))
 {
     unset($_SESSION['Timesheetwhitelist_class'][$tms]);
 }
-
+/*if ($ajax==1){
+    echo json_encode(array('id'=> $result));
+    exit;
+}*/
 /***************************************************
 * VIEW
 *

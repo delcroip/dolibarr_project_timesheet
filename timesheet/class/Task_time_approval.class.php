@@ -868,7 +868,8 @@ class Task_time_approval extends Task
                  $htmlTitle.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
                  break;
              case 'Tasks':
-                 $htmlTitle.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'">'.$this->description.'</a>';
+                 if($isOpenSatus)$htmlTitle.='<img id = "'.$this->listed.'" src="img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick=favOnOff(event,'.$this->fk_project.','.$this->id.')>  ';
+                 $htmlTitle.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'"> '.$this->description.'</a>';
                  break;
              case 'DateStart':
                  $htmlTitle.=$this->date_start?dol_print_date($this->date_start,'day'):'';
