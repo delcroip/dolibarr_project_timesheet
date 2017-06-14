@@ -117,7 +117,7 @@ class modTimesheet extends DolibarrModules
                 $this->const[1] = array("TIMESHEET_DAY_DURATION","chaine","8","number of hour per day (used for the layout per day)"); 
                 $this->const[2] = array("TIMESHEET_HIDE_DRAFT","chaine","0","option to mask to task belonging to draft project"); 
                 $this->const[3] = array("TIMESHEET_HIDE_ZEROS","chaine","0","option to hide the 00:00"); 
-                $this->const[4] = array("TIMESHEET_HEADERS","chaine","0","list of headers to show inthe timesheets"); 
+                $this->const[4] = array("TIMESHEET_HEADERS","chaine","Tasks","list of headers to show inthe timesheets"); 
                 $this->const[5] = array("TIMESHEET_HIDE_REF","chaine","0","option to hide the ref in the timesheets"); 
                 $this->const[6] = array("TIMESHEET_WHITELIST_MODE","chaine","0","Option to change the behaviour of the whitelist:-whiteliste,1-blackliste,2-no impact "); 
                 $this->const[7] = array("TIMESHEET_WHITELIST","chaine","1","Activate the whitelist:"); 
