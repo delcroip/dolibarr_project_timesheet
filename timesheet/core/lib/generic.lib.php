@@ -165,9 +165,9 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
     $sql.=' ,'.$fieldToShow1;
     if(!empty($fieldToShow2))
         $sql.=' ,'.$fieldToShow2;
+    $sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as t';
     if(!empty($sqlTailTable))
             $sql.=' '.$sqlTailTable;
-    $sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as t';
     if(!empty($sqlTailWhere))
             $sql.=' WHERE '.$sqlTailWhere;
        
