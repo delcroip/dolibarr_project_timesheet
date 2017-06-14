@@ -167,7 +167,7 @@ if(empty($month) || empty($year) || empty($projectId)){
 			//$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
 				// Si facture standard
                 $object->socid				= $socid;
-                $object->type				= Facture::TYPE_STANDARD;
+                $object->type				= 0;//Facture::TYPE_STANDARD;
                 $object->date				= $dateinvoice;
                 $object->fk_project			= $projectid;
                 $object->fetch_thirdparty();
