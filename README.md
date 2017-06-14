@@ -24,35 +24,34 @@ Timesheet view for project in Dolibarr
 - If the combo box ajax bug, it's not possible to enter new whitelist, new config parameters enable to deactivate for all dolibarr.
 - Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
 
-# Next developement for next release
-MAYBE: - Show note fields upon reject in otherAP
+
 
 # Next developement for other release
 
 - handle the right for cust /  supplier / other approval  
-
 - add automatic reminder for the approval
 - add feature in Project to foresee workload per user, task and "week"
 - send email over TS rejection
 - reminder when TS is not filled in ( email and home page)
-- add a quick 'add to favoris' in the timesheet screen
-- show the Quantity in the step 2 of invoicing
-- improve the layout of the invoicing steps
+- show the Quantity in the step 2 of invoicing (js)
 - maintain the ajax behavior
 - my timesheet page to see the status of the TS
-- make a feedback form in the setup page
+
 
 # Change log
 
-Change log from 1.5.1:
-- chained approval for project
-- create invoice from the project report
-- more translation (ES, DE, IT, FR, US)
-- tab in the setup for better browsing experience (in JS so config is kept when changing tab)
-- Week over two month can be splited in 2 so an approval per month is possible.
-- reports shows time in hours and days
-- better handling of search boxes
-- favoris in a tab (not a new page)
+2.0 Change log from 1.5.1:   
+    - Week over two month can be splited in 2 so an approval per month is possible.
+    - note availale for each task (also in the approval flow)    
+    - chained approval for project
+    - create invoice from the project report
+    - reports shows time in hours and days
+    - tab in the setup for better browsing experience (in JS so config is kept when changing tab)
+    - favoris in a tab (not a new page)
+    - favoris can be set simply by pushing on a star next to the task name in timesheet screen
+    - better handling of search boxes
+    - more translation (ES, DE, IT, FR, US)
+
 
 Change log from 1.4.3:
 
