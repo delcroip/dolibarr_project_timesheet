@@ -245,16 +245,17 @@ $edit=0;
         $sqlTail='';
         
         if(!$user->admin){    
-            $sqlTail=' JOIN llx_element_contact ON t.rowid= element_id ';
-            $sqlTail.=' WHERE fk_c_type_contact = "160" ';
-            $sqlTail.=' AND fk_socpeople="'.$userid.'"';
+            $sqlTailJoin=' JOIN llx_element_contact ON t.rowid= element_id ';
+            $sqlTailWhere.='  (fk_c_type_contact = "160" OR fk_c_type_contact = "161")'; // should be part of the project with the invoice right
+            $sqlTailWhere.=' AND fk_socpeople="'.$userid.'" AND fk_statut=1';
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
             $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans('generalInvoiceProjectParam').'</th><th>';    
             $invoicingMethod=TIMESHEET_INVOICE_METHOD;
             $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Project').'</th><th  >';
-            $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ', 'fk_statut=1');
+            //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
+            $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ',$sqlTailWhere,'',NULL,$sqlTailJoin);
             $Form .='</th></tr><tr class="impair"><th align="left" width="80%">'.$langs->trans('Month').' - '.$langs->trans('Year').'</th><th align="left">'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3).'</th></tr>';
  //           $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Month').'</th><th ><input type="text" name="month" value ="'.$month.'"></th></tr>';
            // $Form .='<tr class="impair"><th align="left" width="80%">'.$langs->trans('Customer').'</th><th "><input type="text" name="ccust" value ="'.$custId.'"></th></tr>';
