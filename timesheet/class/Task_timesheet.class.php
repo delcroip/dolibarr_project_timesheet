@@ -827,7 +827,8 @@ Public function setStatus($user,$status,$id=0){ //role ?
             $this->status=$status;
         // Update request
             $error=($this->id<=0)?$this->create($user):$this->update($user);
-            if($error>0){                
+            if($error>0){  
+                    if($status=='REJECTED')$this->sendRejectedReminders($user);
                     if(count($this->taskTimesheet)<1 ){
                         $this->fetch($id);
                         $this->fetchTaskTimesheet();
@@ -1246,8 +1247,105 @@ function GetTimeSheetXML()
     $xml.="</timesheet>";
     return $xml;
 }	
+        /**
+	 *	function that will send email to 
+	 *
+	 *	@return	void
+	 */
+     function sendApprovalReminders(){
+                  global $langs;
+            $sql = 'SELECT';
+            $sql.=' COUNT(t.rowid) as nb,';
+            $sql.=' u.email,';
+            $sql.=' u.fk_user as approverid';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
+            $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
+            $sql.= ' WHERE (t.status="SUBMITTED" OR t.status="UNDERAPPROVAL" OR t.status="CHALLENGED") ';
+            $sql.= '  AND t.recipient="team" GROUP BY u.fk_user';
+             dol_syslog(__METHOD__, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            
+            if ($resql)
+            {
+                $num = $this->db->num_rows($resql);
+                for( $i=0;$i<$num;$i++)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    if ($obj)
+                    {
 
+                        $message=str_replace("__NB_TS__", $obj->nb, str_replace('\n', "\n",$langs->trans('YouHaveApprovalPendingMsg')));
+                        //$message="Bonjour,\n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
+                        $sendto=$obj->email;
+                        $replyto=$obj->email;
+                        $subject=$langs->transnoentities("YouHaveApprovalPending");
+                        if(!empty($sendto) && $sendto!="NULL"){
+                           require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+                           $mailfile = new CMailFile(
+	                        $subject,
+	                        $sendto,
+	                        $replyto,
+	                        $message,
+                                $filename_list=array(), 
+                                $mimetype_list=array(), 
+                                $mimefilename_list=array(), 
+                                $addr_cc, $addr_bcc=0,
+                                $deliveryreceipt=0, 
+                                $msgishtml=1 
+                                  
+	                    );
+                           $mailfile->sendfile();
+                        }
+                        
+                    }
+                }
 
+            }
+            else
+            {
+                $error++;
+                dol_print_error($db);
+                $list= array();
+            }
+        }
+        /**
+	 *	function that will send email upon timesheet rejection
+	 * @param       $user       objet   
+	 *	@return	void
+	 */
+    function sendRejectedReminders($user){
+        global $langs,$db,$dolibarr_main_url_root,$dolibarr_main_url_root_alt;
+        $tsUser= new User($db);
+        $tsUser->fetch($this->userId);
 
+          $url=$dolibarr_main_url_root;
+          if(strpos($dolibarr_main_url_root_alt,$_SERVER['PHP_SELF'])>0)
+          {
+               $url.=$dolibarr_main_url_root_alt;
+          }
+          $url.='/timesheet/timesheet.php?yearweek='.$this->yearWeek;
+          $message=$langs->trans('YouHaveTimesheetRejectedMsg',$this->yearWeek,$url);
+          //$message="Bonjour,\n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
+          $sendto=$tsUser->email;
+          $replyto=$user->email;
+          $subject=$langs->transnoentities("YouHaveTimesheetRejected");
+          if(!empty($sendto) && $sendto!="NULL"){
+             require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+             $mailfile = new CMailFile(
+                  $subject,
+                  $sendto,
+                  $replyto,
+                  $message,
+                  $filename_list=array(), 
+                  $mimetype_list=array(), 
+                  $mimefilename_list=array(), 
+                  $addr_cc, $addr_bcc=0,
+                  $deliveryreceipt=0, 
+                  $msgishtml=1 
+              );
+             $mailfile->sendfile();
+          }        
+
+    }
 }
 ?>

@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-# admin (182)
+# admin (189)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addholidaytime=Integrare il congedo
@@ -79,6 +79,7 @@ NextWeek=settimana successiva
 noIdPresent=Riferimento (id) non presente
 not2invoice=Non fattura esso.
 NoTaskToUpdate=Nessuna attività  per questa settimana
+NoteDesc=Visualizza un'icona che aprirà una linea nota sotto la linea dell'attività quando si fa clic su di esso.
 NothingChanged=Nulla è cambiata
 NothingToValidate=Niente da convalidare
 notYourWhitelist=Questo non ti riguarda
@@ -138,5 +139,7 @@ userReport=Rapporto utente
 wngMsgHoursExceded=si stanno inserendo gli straordinari
 Yearweekdate=Data di riferimento
 YouHaveApprovalPending=Timesheet di approvare
-YouHaveApprovalPendingMsg=Cari, \n\n Devi __NB_TS__ scheda attività per l'approvazione, si prega di collegarsi al dolibar approvarle. \n\n  migliori saluti. \n\n  tuo Dolibarr amministratore.
+YouHaveApprovalPendingMsg=Cari,<br><br>Devi __NB_TS__ scheda attività per l'approvazione, si prega di collegarsi al dolibar approvarle.<br><br> migliori saluti.<br><br>tuo Dolibarr amministratore.
+YouHaveTimesheetRejected=Una delle tue schede presentate è stata rifiutata.
+YouHaveTimesheetRejectedMsg=Ciao,<br><br>Il timeheet della settimana %s è stato rifiutato.<br><br>Controlla le voci qui:<br>%s<br><br>Cordiali saluti
 

@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-# admin (225)
+# admin (237)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addholidaytime=Add up holiday time
@@ -79,6 +79,7 @@ NextWeek=Next week
 noIdPresent=No reference (id) present
 not2invoice=Don't invoice it.
 NoTaskToUpdate=No task for this week
+NoteDesc=Show an icon that will open a note line below the task's line when clicked on it.
 NothingChanged=Nothing has change
 NothingToValidate=Nothing to validate
 notYourWhitelist=this favoris entry doesn't belong to you
@@ -138,5 +139,7 @@ userReport=User report
 wngMsgHoursExceded=you are entering overtime
 Yearweekdate=Reference date
 YouHaveApprovalPending=Timesheet to approve
-YouHaveApprovalPendingMsg=Dears,\n\n You have __NB_TS__ timesheet to approve, please connect to dolibar to approve them.\n\n Best regards.\n\n Your Dolibarr admin.
+YouHaveApprovalPendingMsg=Dears,<br><br>You have __NB_TS__ timesheet to approve, please connect to dolibar to approve them.<br><br>Best regards.<br><br>Your Dolibarr admin.
+YouHaveTimesheetRejected=One of your submitted timesheet got rejected.
+YouHaveTimesheetRejectedMsg=Hello,<br><br>The timesheet of the week %s was rejected.<br><br>Please check your entries here:<br>%s<br><br>Best regards
 

@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-# admin (153)
+# admin (160)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addholidaytime=Sume el tiempo de vacaciones
@@ -79,6 +79,7 @@ NextWeek=Semana próxima
 noIdPresent=Ninguna referencia (id) presente
 not2invoice=No lo facture.
 NoTaskToUpdate=Ninguna tarea para esta semana
+NoteDesc=Mostrar un icono que abrirá una línea de la nota por debajo de línea de la tarea al hacer clic en él.
 NothingChanged=Nada ha cambiado
 NothingToValidate=Nada que validar
 notYourWhitelist=Esta entrada favorita no te pertenece
@@ -138,5 +139,7 @@ userReport=Informe de usuario
 wngMsgHoursExceded=Estás entrando en horas extras
 Yearweekdate=Fecha de referencia
 YouHaveApprovalPending=Hoja de tiempo para aprobar
-YouHaveApprovalPendingMsg=Dears, \ n \ n Tienes una hoja de tiempo __NB_TS__ para aprobarla, por favor conecta con dolibar para aprobarla. \ N \ n Saludos cordiales. \ N \ n Tu administrador de Dolibarr.
+YouHaveApprovalPendingMsg=Dears,<br><br>Tienes una hoja de tiempo __NB_TS__ para aprobarla, por favor conecta con dolibar para aprobarla.<br><br>Saludos cordiales.<br><br>Tu administrador de Dolibarr.
+YouHaveTimesheetRejected=Se rechazó uno de los tiempos enviados.
+YouHaveTimesheetRejectedMsg=Hola,<br><br>La hoja de horas de la semana %s fue rechazada.<br><br>Por favor revise sus entradas aquí:<br>%s<br><br>Saludos cordiales
 

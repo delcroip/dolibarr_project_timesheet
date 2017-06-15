@@ -1,6 +1,6 @@
 # Dolibarr language file - Francais - timesheet
 # Translators
-# admin (236)
+# admin (248)
 adddocs=Documents joints
 adddocsDesc=Permet d’ajouter des documents annexés à la feuille de temps
 addholidaytime=Intégrer les congés
@@ -79,6 +79,7 @@ NextWeek=semaine suivante
 noIdPresent=Pas de référence (id) présente
 not2invoice=Ne pas facturer.
 NoTaskToUpdate=Pas de tâche pour cette semaine
+NoteDesc=Afficher une icône qui va ouvrir une ligne de remarque au-dessous de ligne de la tâche lorsque cliqué dessus.
 NothingChanged=Rien n’a changé
 NothingToValidate=Rien à  valider
 notYourWhitelist=Ce favori ne vous concerne pas
@@ -138,5 +139,7 @@ userReport=Rapport d'utilisateur
 wngMsgHoursExceded=Vous entrez des heures supplémentaires
 Yearweekdate=Date de référence
 YouHaveApprovalPending=Feuilles de temps en attente de votre approbation
-YouHaveApprovalPendingMsg=Bonjour,\n\n Vous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\n Cordialement.\n\n Votre administrateur Dolibarr.
+YouHaveApprovalPendingMsg=Bonjour,<br><br>Vous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.<br><br>Cordialement.<br><br>Votre administrateur Dolibarr.
+YouHaveTimesheetRejected=L'une de vos feuilles de temps soumises a été rejetée.
+YouHaveTimesheetRejectedMsg=Bonjour,<br><br>la feuille de temps de la semaine %s a été rejetée.<br><br>Veuillez vérifier vos entrées ici: <br>%s<br><br>Cordialement
 

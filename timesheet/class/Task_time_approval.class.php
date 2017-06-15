@@ -1334,27 +1334,13 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
     //return $idList;
 }
  
-  /* function get the Id of the task
- * 
- *  @return     string      list of the id separated by coma
- */
-/*function getIdList()
-{
-    $ret='';
-    if(is_array($this->tasklist))foreach ($this->tasklist as $tasktime){
-        if(isset($tasktime['id']) && $tasktime['id']>0){
-            $ret.=(empty($ret)?'':',').$tasktime['id'];
-        }     
-    }
-    return $ret;
-}*/
 
         	/**
 	 *	function that will send email to 
 	 *
 	 *	@return	void
 	 */
-     function sendApprovalReminders(){
+/*     function sendApprovalReminders(){
                   global $langs;
             $sql = 'SELECT';
             $sql.=' COUNT(t.rowid) as nb,';
@@ -1362,7 +1348,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
             $sql.=' u.fk_user as approverid';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
             $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
-            $sql.= ' WHERE t.status="SUBMITTED" AND t.recipient="team"';
+            $sql.= ' WHERE (t.status="SUBMITTED" OR t.status="UNDERAPPROVAL" OR t.status="CHALLENGED")  AND t.recipient="team"';
             $sql.= ' GROUP BY u.fk_user';
              dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
@@ -1403,7 +1389,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
                 $list= array();
             }
         }
-
+*/
 
 /*
  * pget the next approval in the chaine
