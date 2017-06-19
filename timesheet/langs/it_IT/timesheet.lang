@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-# admin (189)
+# admin (195)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addholidaytime=Integrare il congedo
@@ -37,6 +37,7 @@ employeeSignature=Firma del lavoratore
 errMsgMaxHoursExceded=Non è possibile inserire più di tanto tempo per un solo giorno
 exportfriendly=esportazione Compatibile
 feebackDesc=Se sei di fronte a un problema (comportamento o traduzione), se hai idea di miglioramento o richiede nuove funzionalità, contattaci.
+Feedback=Feedback
 generalInvoiceProjectParam=Parametri generali della fattura del progetto
 GeneralOption=Opzioni generali
 getReport=Get relazione
@@ -66,6 +67,7 @@ invoiceShowUserDesc=Mostra il nome utente sulla fattura quando la modalità di f
 invoiceTaskTime=Schede orarie
 invoiceTaskTimeDesc=fatturare tutte le schede o solo l'approvazione.
 managerSignature=Firma del responsabile del team
+Manual=Manuale del modulo
 maxapproval=Approvazioni per pagina
 maxapprovalDesc=Imposta il numero massimo di schede attività di pagina di approvazione
 maxhoursperdays=numero massimo di ore al giorno
@@ -107,8 +109,11 @@ RecordSucessfullyCreated=Creato con successo
 RecordUpdated=Oltre giorni con successo
 rejected=Respinta
 rejectedColorDesc=Colore per la festa e scheda attività respinta dal responsabile approvazioni
-reminderEmailProcess=È possibile attivare promemoria via e-mail attraverso il pianificatore compito di Dolibarr <br> Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
+Reminder=Promemoria
+reminderEmailProcess=È possibile attivare promemoria via e-mail attraverso il pianificatore compito di Dolibarr <br> Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = Task_timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
 savedDuration=Durata salvato
+searchbox=Attivare le caselle di ricerca
+searchboxDesc=Sostituire a discesa elenchi di caselle di ricerca. Necessari per migliorare le prestazioni quando centinaia di utenti, progetti o servizi definiti.
 short=Versione corta
 Submit=Invia
 submitted=Inviato

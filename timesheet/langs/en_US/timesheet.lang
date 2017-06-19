@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-# admin (237)
+# admin (249)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addholidaytime=Add up holiday time
@@ -37,6 +37,7 @@ employeeSignature=employee's signature
 errMsgMaxHoursExceded=you can't enter that much time for a single day.
 exportfriendly=Export friendly
 feebackDesc=If you are facing issue ( behaviour or translation), if  you have improvement idea or new features request, please contact me.
+Feedback=Feedback
 generalInvoiceProjectParam=General parameters for the project's invoice
 GeneralOption=General options
 getReport=Get report
@@ -66,6 +67,7 @@ invoiceShowUserDesc=Show the user name on the invoice when the mode of invoicing
 invoiceTaskTime=timesheets
 invoiceTaskTimeDesc=invoice all timesheets or only the approved.
 managerSignature=Signature of the Team Leader.
+Manual=Module's manual
 maxapproval=Approvals per page
 maxapprovalDesc=Maximum number of timesheet per approval page
 maxhoursperdays=Maximum hours per day
@@ -107,8 +109,11 @@ RecordSucessfullyCreated=Record created
 RecordUpdated=Record updated
 rejected=Rejected
 rejectedColorDesc=Color for the holiday & timesheet rejected by the approver
-reminderEmailProcess=You can activate reminder via emails through the task planner of Dolibarr<br>Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
+Reminder=Reminder
+reminderEmailProcess=You can activate reminder via emails through the task planner of Dolibarr<br>Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = Task_timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
 savedDuration=Saved duration
+searchbox=Activate search boxes
+searchboxDesc=Replace the drop down lists by search boxes. Needed to improve performance when hundred of users, projects or services are defined.
 short=Short version
 Submit=Submit
 submitted=Submitted

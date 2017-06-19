@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-# admin (160)
+# admin (166)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addholidaytime=Sume el tiempo de vacaciones
@@ -37,6 +37,7 @@ employeeSignature=Firma del empleado
 errMsgMaxHoursExceded=No puedes entrar tanto tiempo por un solo día.
 exportfriendly=Ambiente de exportación
 feebackDesc=Si se enfrenta a un problema (comportamiento o traducción), si tiene ideas de mejora o solicitud de nuevas características, póngase en contacto conmigo.
+Feedback=Sugerencias
 generalInvoiceProjectParam=Parámetros generales para la factura del proyecto
 GeneralOption=Opciones generales
 getReport=Obtener informe
@@ -66,6 +67,7 @@ invoiceShowUserDesc=Mostrar el nombre de usuario en la factura cuando el modo de
 invoiceTaskTime=Hojas de asistencia
 invoiceTaskTimeDesc=Facturar todas las hojas de tiempos o sólo las aprobadas.
 managerSignature=Firma del Jefe de Equipo.
+Manual=Manual del módulo
 maxapproval=Aprobaciones por página
 maxapprovalDesc=Número máximo de hojas de horas por página de aprobación
 maxhoursperdays=Máximo de horas por día
@@ -107,8 +109,11 @@ RecordSucessfullyCreated=Registro creado
 RecordUpdated=Registro actualizado
 rejected=Rechazado
 rejectedColorDesc=Color de la hoja de vacaciones y horas rechazada por el aprobador
-reminderEmailProcess=Puede activar el recordatorio a través de correos electrónicos a través del planificador de tareas de Dolibarr <br> Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
+Reminder=Recordatorio
+reminderEmailProcess=Puede activar el recordatorio a través de correos electrónicos a través del planificador de tareas de Dolibarr <br> Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = Task_timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
 savedDuration=Duración guardado
+searchbox=Activar búsqueda cajas
+searchboxDesc=Vuelva a colocar el desplegable de las listas por las cajas de búsqueda. Necesarios para mejorar el rendimiento cuando se definen cientos de usuarios, proyectos o servicios.
 short=Version corta
 Submit=Enviar
 submitted=Enviado
