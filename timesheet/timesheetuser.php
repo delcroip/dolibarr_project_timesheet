@@ -715,7 +715,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print '<tr class="liste_titre">'; 
 		//Search field foruserId
 		print '<td class="liste_titre" colspan="1" >';
-		print select_generic('user','rowid','ls_userId','lastname','firstname',$ls_userId);
+                if(TIMESHEET_SEARCHBOX==1)$ajaxhandler='core/ajaxGenericSelectHandler.php';
+		print select_generic('user','rowid','ls_userId','lastname','firstname',$ls_userId, ' - ','', '', NULL,'', $ajaxhandler);
 		print '</td>';
 		//Search field fordate_start
 		print '<td class="liste_titre" colspan="1" >';

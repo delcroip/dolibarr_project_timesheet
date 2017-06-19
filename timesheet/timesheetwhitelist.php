@@ -313,7 +313,7 @@ if(isset( $_SESSION['Timesheetwhitelist_class'][$tms]))
 *
 * Put here all code to build page
 ****************************************************/
-
+if(TIMESHEET_SEARCHBOX==1)$ajaxhandler='core/ajaxGenericSelectHandler.php';
 llxHeader('','Timesheetwhitelist','');
 print "<div> <!-- module body-->";
 $form=new Form($db);
@@ -442,7 +442,8 @@ switch ($action) {
 
                 }
                     //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
-		print select_generic('projet','rowid','Project','ref','title',$object->project,' - ',$formUserWhere,'onchange="reload(this.form)"',NULL,$formUserJoin);
+		
+                print select_generic('projet','rowid','Project','ref','title',$object->project,' - ',$formUserWhere,'onchange="reload(this.form)"',NULL,$formUserJoin,$ajaxhandler);
 		}else{
 		print print_generic('projet','rowid',$object->project,'ref','title');
 		}
@@ -465,7 +466,7 @@ switch ($action) {
                 }
 
                   //if (isset($formProject)){  
-                        print select_generic('projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',$formTaskWhere,'',NULL,$formTaskJoin);
+                        print select_generic('projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',$formTaskWhere,'',NULL,$formTaskJoin,$ajaxhandler);
                   //}else{
                   //      print '<select class="flat minwidth200" id="Projecttask" name="Projecttask"></select>';
                   //}
@@ -729,16 +730,16 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         //Search field foruser
 	if($user->admin){
             print '<td class="liste_titre" colspan="1" >';
-            print select_generic('user','rowid','ls_user','lastname','firstname',$ls_user);
+            print select_generic('user','rowid','ls_user','lastname','firstname',$ls_user ,' ','', '', NULL,'', $ajaxhandler);
             print '</td>';
         }
 //Search field forproject
 	print '<td class="liste_titre" colspan="1" >';
-		print select_generic('projet','rowid','ls_project','ref','title',$ls_project);
+		print select_generic('projet','rowid','ls_project','ref','title',$ls_project ,' - ','', '', NULL,'', $ajaxhandler);
 	print '</td>';
 //Search field forproject_task
 	print '<td class="liste_titre" colspan="1" >';
-		print select_generic('projet_task','rowid','ls_project_task','ref','label',$ls_project_task);
+		print select_generic('projet_task','rowid','ls_project_task','ref','label',$ls_project_task ,' - ','', '', NULL,'', $ajaxhandler);
 	print '</td>';
 //Search field forsubtask
 	print '<td class="liste_titre" colspan="1" >';

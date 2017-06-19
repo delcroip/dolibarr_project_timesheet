@@ -64,7 +64,7 @@ $invoicetasktime=TIMESHEET_INVOICE_TASKTIME;
 $invoiceservice=TIMESHEET_INVOICE_SERVICE;
 $invoiceshowtask=TIMESHEET_INVOICE_SHOW_TASK;
 $invoiceshowuser=TIMESHEET_INVOICE_SHOW_USER;
-
+$searchbox=TIMESHEET_SEARCHBOX;
 if(sizeof($opendays)!=8)$opendays=array('_','0','0','0','0','0','0','0');
 $apflows=str_split(TIMESHEET_APPROVAL_FLOWS);
 if(sizeof($apflows)!=6)$apflows=array('_','0','0','0','0','0');
@@ -181,6 +181,12 @@ switch($action)
         $invoiceshowuser=GETPOST('invoiceShowUser','alpha');
         $res=dolibarr_set_const($db, "TIMESHEET_INVOICE_SHOW_USER", $invoiceshowuser, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
+        
+        // serach box
+        $searchbox=GETPOST('searchBox','int');
+        $res=dolibarr_set_const($db, "TIMESHEET_SEARCHBOX", $searchbox, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+
         // error handling
         
         if (! $error)
@@ -521,7 +527,8 @@ echo  '<tr class="impair"><th align="left">'.$langs->trans("invoiceService");
 echo '</th><th align="left">'.$langs->trans("invoiceServiceDesc").'</th>';
 echo  '<th align="left">';
 $addchoices=array('-999'=> $langs->transnoentitiesnoconv('not2invoice'));
-echo select_generic('product','rowid','invoiceService','ref','label',$invoiceservice,$separator=' - ',$sqlTailWhere='tosell=1 AND fk_product_type=1', $selectparam='',$addchoices);
+if(TIMESHEET_SEARCHBOX==1)$ajaxhandler='../core/ajaxGenericSelectHandler.php';
+echo select_generic('product','rowid','invoiceService','ref','label',$invoiceservice,$separator=' - ',$sqlTailWhere='tosell=1 AND fk_product_type=1', $selectparam='',$addchoices,$ajaxhandler);
 echo "</th></tr>\n\t\t";
 //line tasktime ==
 echo  '<tr class="pair"><th align="left">'.$langs->trans("invoiceTaskTime");
@@ -552,10 +559,15 @@ print_titre($langs->trans("Dolibarr"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
-echo  '<tr class="impair"><th align="left">'.$langs->trans("dropdownAjax");
+echo  '<tr class="pair"><th align="left">'.$langs->trans("dropdownAjax");
 echo '</th><th align="left">'.$langs->trans("dropdownAjaxDesc").'</th>';
 echo  '<th align="left"><input type="checkbox" name="dropdownAjax" value="1" ';
 echo (($dropdownAjax=='1')?'checked':'')."></th></tr>\n\t\t";
+// searchbox
+echo  '<tr class="impair"><th align="left">'.$langs->trans("searchbox");
+echo '</th><th align="left">'.$langs->trans("searchboxDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="searchBox" value="1" ';
+echo (($searchbox=='1')?'checked':'')."></th></tr>\n";
 
 echo '</table><br>';
 // doc
@@ -567,7 +579,7 @@ print_titre($langs->trans("Feedback"));
 echo $langs->trans('feebackDesc').' : <a href="mailto:pmpdelroix@gmail.com?subject=TimesheetFeedback"> Patrick Delcroix</a></br></br>';
 
 print_titre($langs->trans("Reminder"));
-print '<br><div><a>'.$langs->trans('reminderEmailProcess').'</a></div>';
+print '<br><div>'.$langs->trans('reminderEmailProcess').'</div>';
 echo '</div>';
 echo '</div>'; // end fiche
 echo '<input type="submit" class="butAction" value="'.$langs->trans('Save')."\">\n</from>";
