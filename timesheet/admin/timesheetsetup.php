@@ -558,8 +558,15 @@ echo  '<th align="left"><input type="checkbox" name="dropdownAjax" value="1" ';
 echo (($dropdownAjax=='1')?'checked':'')."></th></tr>\n\t\t";
 
 echo '</table><br>';
-print_titre($langs->trans("Informations"));
-echo $langs->trans('feebackDesc').' : <a href="mailto:pmpdelroix@gmail.com?subject=TimesheetFeedback"> Patrick Delcroix</a></br>';
+// doc
+print_titre($langs->trans("Manual"));
+echo '<a href="../doc/Module_timesheet.pdf">  PDF </a></br>'."\n\t\t";
+echo '<a href="../doc/Module_timesheet.docx">  DOCX </a></br></br>'."\n\t\t";
+
+print_titre($langs->trans("Feedback"));
+echo $langs->trans('feebackDesc').' : <a href="mailto:pmpdelroix@gmail.com?subject=TimesheetFeedback"> Patrick Delcroix</a></br></br>';
+
+print_titre($langs->trans("Reminder"));
 print '<br><div><a>'.$langs->trans('reminderEmailProcess').'</a></div>';
 echo '</div>';
 echo '</div>'; // end fiche
