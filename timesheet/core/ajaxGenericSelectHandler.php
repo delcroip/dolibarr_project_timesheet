@@ -87,8 +87,8 @@ if($posBs>0){
             $i++;
         }
         if($addtionnalChoices)foreach($addtionnalChoices as $value => $label){
-                $row_array['label'] =  $label;
-		$row_array['value'] = $value;
+                $row_array['label'] = dol_htmlentities($label);
+		$row_array['value'] = dol_htmlentities($label);
 	        $row_array['key'] =$value;
             array_push($return_arr,$row_array);
         }
