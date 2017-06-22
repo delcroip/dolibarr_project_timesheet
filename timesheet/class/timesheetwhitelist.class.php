@@ -107,7 +107,7 @@ class Timesheetwhitelist extends CommonObject
 		$sql.=' '.(! isset($this->user)?'NULL':'"'.$this->user.'"').',';
 		$sql.=' '.(! isset($this->project)?'NULL':'"'.$this->project.'"').',';
 		$sql.=' '.(! isset($this->project_task)?'NULL':'"'.$this->project_task.'"').',';
-		$sql.=' '.(! isset($this->subtask)?'NULL':'"'.$this->subtask.'"').',';
+		$sql.=' '.(! isset($this->subtask)?'0':'"'.$this->subtask.'"').',';
 		$sql.=' '.(! isset($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'"'.$this->db->idate($this->date_start).'"').',';
 		$sql.=' '.(! isset($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'"'.$this->db->idate($this->date_end).'"').'';
 

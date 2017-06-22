@@ -146,6 +146,9 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
         $searchfields='';
         if($ajaxNbChar ){
             $ajaxUrl=$dolibarr_main_url_root;
+            if($dolibarr_main_force_https || strpos('ttps://',$_SERVER['PHP_SELF'])>0){
+                $ajaxUrl=str_replace('http://','https://',$ajaxUrl);
+            }
             if(strpos($dolibarr_main_url_root_alt,$_SERVER['PHP_SELF'])>0)
             {
                  $ajaxUrl.='/'.$dolibarr_main_url_root_alt;

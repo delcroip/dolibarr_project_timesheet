@@ -196,7 +196,7 @@ if($xml){
     echo $task_timesheet->GetTimeSheetXML();
     exit;
 }
-$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js");
+$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js?v2.0");
 llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 

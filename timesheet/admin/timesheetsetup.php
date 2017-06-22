@@ -64,7 +64,7 @@ $invoicetasktime=TIMESHEET_INVOICE_TASKTIME;
 $invoiceservice=TIMESHEET_INVOICE_SERVICE;
 $invoiceshowtask=TIMESHEET_INVOICE_SHOW_TASK;
 $invoiceshowuser=TIMESHEET_INVOICE_SHOW_USER;
-$searchbox=TIMESHEET_SEARCHBOX;
+$searchbox=intval(TIMESHEET_SEARCHBOX);
 if(sizeof($opendays)!=8)$opendays=array('_','0','0','0','0','0','0','0');
 $apflows=str_split(TIMESHEET_APPROVAL_FLOWS);
 if(sizeof($apflows)!=6)$apflows=array('_','0','0','0','0','0');
@@ -240,7 +240,7 @@ foreach ($headersT as $header) {
 
 
 //permet d'afficher la structure dolibarr
-$morejs=array("/timesheet/core/js/timesheet.js","/timesheet/core/js/jscolor.js");
+$morejs=array("/timesheet/core/js/timesheet.js?v2.0","/timesheet/core/js/jscolor.js");
 llxHeader("",$langs->trans("timesheetSetup"),'','','','',$morejs,'',0,0);
 
 

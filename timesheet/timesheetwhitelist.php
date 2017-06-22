@@ -444,7 +444,7 @@ switch ($action) {
                     //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
 		$ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
                 print select_generic('projet','rowid','Project','ref','title',$object->project,' - ',$formUserWhere,' onchange="reload(this.form)"',NULL,$formUserJoin,$ajaxNbChar);
-		if($ajaxNbChar>=0) print "\n<script type='text/javascript'>\n$('input#Project').change(function(){\nif($('input#search_Project').val().length>2)reload($(this).form)\n};)\n</script>\n";
+		if($ajaxNbChar>=0) print "\n<script type='text/javascript'>\n$('input#Project').change(function(){\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
   //FIXME best to feed additionnal param to the search generic       
                 }else{
 		print print_generic('projet','rowid',$object->project,'ref','title');
@@ -468,7 +468,7 @@ switch ($action) {
                 }
 
                   //if (isset($formProject)){  
-                        $ajaxNbChar=TIMESHEET_SEARCHBOX;
+                        $ajaxNbChar=intval(TIMESHEET_SEARCHBOX);
                         print select_generic('projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',$formTaskWhere,'',NULL,$formTaskJoin,$ajaxNbChar);
                   //}else{
                   //      print '<select class="flat minwidth200" id="Projecttask" name="Projecttask"></select>';
@@ -744,7 +744,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '</td>';
 //Search field forproject_task
 	print '<td class="liste_titre" colspan="1" >';
-        $ajaxNbChar=TIMESHEET_SEARCHBOX;
+        $ajaxNbChar=intval(TIMESHEET_SEARCHBOX);
         print select_generic('projet_task','rowid','ls_project_task','ref','label',$ls_project_task ,' - ','', '', NULL,'', $ajaxNbChar);
 	print '</td>';
 //Search field forsubtask

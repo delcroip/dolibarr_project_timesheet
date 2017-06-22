@@ -155,7 +155,7 @@ if(is_array($objectArray)){
 ****************************************************/
 $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
 $morejs=array();
-$morejs=array("/timesheet/core/js/timesheet.js");
+$morejs=array("/timesheet/core/js/timesheet.js?v2.0");
 llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 showTimesheetApTabs($role);
