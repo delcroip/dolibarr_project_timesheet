@@ -168,7 +168,9 @@ if ($cancel){
             if($object->project==-1)$object->project='';
             $object->project_task=GETPOST('Projecttask');
             if($object->project_task==-1)$object->project_task='';
-            $object->subtask=GETPOST('Subtask');
+            $object->subtask=GETPOST('Subtask','int');
+            if( $object->subtask=="") $object->subtask=0;
+            
             $object->date_start=dol_mktime(0, 0, 0,GETPOST('Datestartmonth'),GETPOST('Datestartday'),GETPOST('Datestartyear'));
             $object->date_end=dol_mktime(0, 0, 0,GETPOST('Dateendmonth'),GETPOST('Dateendday'),GETPOST('Dateendyear'));
 
@@ -304,10 +306,10 @@ if(isset( $_SESSION['Timesheetwhitelist_class'][$tms]))
 {
     unset($_SESSION['Timesheetwhitelist_class'][$tms]);
 }
-/*if ($ajax==1){
-    echo json_encode(array('id'=> $result));
+if ($ajax==1){
+    echo json_encode(array('errors'=> $object->errors));
     exit;
-}*/
+}
 /***************************************************
 * VIEW
 *
