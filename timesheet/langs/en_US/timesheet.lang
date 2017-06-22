@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-# admin (249)
+# admin (253)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addholidaytime=Add up holiday time
@@ -113,7 +113,7 @@ Reminder=Reminder
 reminderEmailProcess=You can activate reminder via emails through the task planner of Dolibarr<br>Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = Task_timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
 savedDuration=Saved duration
 searchbox=Activate search boxes
-searchboxDesc=Replace the drop down lists by search boxes. Needed to improve performance when hundred of users, projects or services are defined.
+searchboxDesc=Replace the drop down lists by search boxes for the Tasks. Needed when hundreds of tasks are defined in order to improve performance. (Project, contact, third partie use the search box configuration defined in other module)
 short=Short version
 Submit=Submit
 submitted=Submitted

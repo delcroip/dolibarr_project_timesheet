@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-# admin (195)
+# admin (196)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addholidaytime=Integrare il congedo
@@ -113,7 +113,7 @@ Reminder=Promemoria
 reminderEmailProcess=È possibile attivare promemoria via e-mail attraverso il pianificatore compito di Dolibarr <br> Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = Task_timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
 savedDuration=Durata salvato
 searchbox=Attivare le caselle di ricerca
-searchboxDesc=Sostituire a discesa elenchi di caselle di ricerca. Necessari per migliorare le prestazioni quando centinaia di utenti, progetti o servizi definiti.
+searchboxDesc=Sostituire le liste a discesa per le caselle di ricerca per le attività. Necessita quando vengono definite centinaia di attività per migliorare le prestazioni. (Progetto, contatto, terza parte utilizza la configurazione della casella di ricerca definita in altri moduli)
 short=Versione corta
 Submit=Invia
 submitted=Inviato

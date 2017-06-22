@@ -1,6 +1,6 @@
 # Dolibarr language file - Francais - timesheet
 # Translators
-# admin (259)
+# admin (263)
 adddocs=Documents joints
 adddocsDesc=Permet d’ajouter des documents annexés à la feuille de temps
 addholidaytime=Intégrer les congés
@@ -113,7 +113,7 @@ Reminder=Rappel
 reminderEmailProcess=Vous pouvez activer un envoie d'email de rappel aux approbateurs en utilisant la fonction planificateur de tâche de dolibarr<br>Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = Task_timesheet.class.php<br>Instance/Object to create = timesheet<br> Method = sendApprovalReminders
 savedDuration=Durée enregistrée
 searchbox=Activer les boîtes de recherche
-searchboxDesc=Remplacez la liste déroulante listes par des zones de recherche. Nécessaires pour améliorer les performances lorsque des centaines d’utilisateurs, de projets ou de services sont définis.
+searchboxDesc=Remplacez les listes déroulantes par des champs de recherche pour les Tâches. Nécessaire lorsque des centaines de tâches sont définies afin d'améliorer les performances. (Projet, contact, tiers, utilise la configuration définie dans un autre module)
 short=Version courte
 Submit=Soumettre
 submitted=Envoyé
