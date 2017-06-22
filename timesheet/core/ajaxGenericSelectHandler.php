@@ -36,14 +36,14 @@ if($posBs>0){
 
 
     $sql='SELECT DISTINCT';
-    $sql.=' '.$fieldValue;
+    $sql.=' t.'.$fieldValue;
     $sql.=' ,'.$fieldToShow1;
     if(!empty($fieldToShow2))
         $sql.=' ,'.$fieldToShow2;
     $sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as t';
     if(!empty($sqlTailTable))
-        $sql.=' AND '.$sqlTailTable;   
-    $sql.= ' WHERE ( '.$fieldValue.' LIKE "%'.$search.'%"';
+        $sql.='  '.$sqlTailTable;   
+    $sql.= ' WHERE ( t.'.$fieldValue.' LIKE "%'.$search.'%"';
     $sql.= ' OR '.$fieldToShow1.' LIKE "%'.$search.'%"';
     $sql.= ' OR '.$fieldToShow2.' LIKE "%'.$search.'%")';
     if(!empty($sqlTailWhere))

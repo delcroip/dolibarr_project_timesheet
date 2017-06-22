@@ -406,26 +406,37 @@ function getHTMLNavigation($optioncss, $selectList,$current=0){
 function getSelectAps($subId){
     if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
     global $db,$langs;
+    $sql='';
+    $sqlWhere.=' WHERE(ts.status="SUBMITTED" OR ts.status="CHALLENGED")';
+    if($subId!='all')$sqlWhere.=' AND ts.fk_userid in ('.implode(',',$subId).')';
     if(TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.date_start) as nb,ts.date_start as id,';
         $sql.=" DATE_FORMAT(ts.date_start,'".$langs->trans('Week')." %u (%m/%Y)') as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
+        $sql.=$sqlWhere;
+        $sql.=' group by ts.date_start ORDER BY ts.date_start DESC'; 
 
     }else if(TIMESHEET_APPROVAL_BY_WEEK==0){
         $sql='SELECT COUNT(ts.fk_userid) as nb,ts.fk_userid as id,';
         $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
+        $sql.=$sqlWhere;
+        $sql.=' group by ts.fk_userid ORDER BY ts.fk_userid DESC'; 
+
     }else{
-        $sql="SELECT COUNT(ts.fk_userid) as nb,CONCAT(DATE_FORMAT(ts.date_start,' %m/%Y') COLLATE utf8_unicode_ci,usr.firstname,' ',usr.lastname) as id,";
-        $sql.=" CONCAT(usr.firstname,' ',usr.lastname,DATE_FORMAT(ts.date_start,' %m/%Y') COLLATE utf8_unicode_ci) as label";
+
+        $sql='SELECT month,COUNT(rowid) as nb, CONCAT(month, fk_userid) as id,';
+        $sql.=' CONCAT(month,". ",fullname) as label,fk_userid';
+        $sql.=' FROM (SELECT DATE_FORMAT(ts.date_start," %m/%Y") as month, fk_userid,';
+        $sql.=' ts.rowid as rowid,CONCAT(usr.firstname, " - ",usr.lastname) as fullname ';
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
-        $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
+        $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';   
+        $sql.=$sqlWhere.') AS T';
+        $sql.=' group by fk_userid, month ORDER BY  fk_userid DESC, month DESC';        
     }
-    $sql.=' WHERE(ts.status="SUBMITTED" OR ts.status="CHALLENGED")'; 
-    if($subId!='all')$sql.=' AND ts.fk_userid in ('.implode(',',$subId).')';
-    $sql.=' group by id ORDER BY id DESC, label '; 
+    
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);

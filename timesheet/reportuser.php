@@ -154,7 +154,7 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
 }
 
 $Form.='</select></td>'
-        .'<td>'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3).' </td>' 
+        .'<td>'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',0,10,3).' </td>' 
         .'<td><input type="checkbox" name="short" value="1" '
         .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
         .'<td><input type="checkbox" name="exportfriendly" value="1" '
