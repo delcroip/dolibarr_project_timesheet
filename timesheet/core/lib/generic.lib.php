@@ -36,11 +36,11 @@ global $langs;
  
 function select_enum($table, $fieldValue,$htmlName,$selected='',$selectparam='',$addtionnalChoices=null){
 global $langs;
-global $db;
-    if($table=='' || $fieldValue=='' || $htmlName=='' )
+global $db;   
+if($table=='' || $fieldValue=='' || $htmlName=='' )
     {
         return 'error, one of the mandatory field of the function  select_enum is missing';
-    }    
+    } 
     $sql='SHOW COLUMNS FROM ';//llx_hr_event_time LIKE 'audience'";
     $sql.=MAIN_DB_PREFIX.$table.' WHERE Field="';
     $sql.=$fieldValue.'"';
@@ -114,20 +114,29 @@ global $db;
 
  *  @return string                                                   html code
  */
-function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl=''){
+// to be taken into account when passing a Ajax handler
+//$conf->global->COMPANY_USE_SEARCH_TO_SELECT
+ //$conf->global->PRODUIT_USE_SEARCH_TO_SELECT
+ //$conf->global->PROJECT_USE_SEARCH_TO_SELECT
+ //$conf->global->RESOURCE_USE_SEARCH_TO_SELECT
+//$conf->global->BARCODE_USE_SEARCH_TO_SELECT
+//$conf->global->CONTACT_USE_SEARCH_TO_SELECT
+ 
+function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxNbChar=''){
 
    
     
-    global $conf,$langs,$db;
+    global $conf,$langs,$db,$dolibarr_main_url_root,$dolibarr_main_url_root_alt;
      $ajax=$conf->use_javascript_ajax ;
     if($table=='' || $fieldValue=='' || $fieldToShow1=='' || $htmlName=='' )
     {
         return 'error, one of the mandatory field of the function  select_generic is missing';
     }
+    
     $select="\n";
     if ($ajax)
     {
-        
+
         include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
        $token=getToken();
 
@@ -135,9 +144,15 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
         $comboenhancement = '';
         //$ajaxUrl='';
         $searchfields='';
-        if(! empty($ajaxUrl)){
+        if($ajaxNbChar ){
+            $ajaxUrl=$dolibarr_main_url_root;
+            if(strpos($dolibarr_main_url_root_alt,$_SERVER['PHP_SELF'])>0)
+            {
+                 $ajaxUrl.=$dolibarr_main_url_root_alt;
+            }
+            $ajaxUrl.='/timesheet/core/ajaxGenericSelectHandler.php';
             $_SESSION['ajaxQuerry'][$token]=array('table'=>$table, 'fieldValue'=>$fieldValue,'htmlName'=> $htmlName,'fieldToShow1'=>$fieldToShow1,'fieldToShow2'=>$fieldToShow2,'separator'=> $separator,'sqlTailTable'=>$sqlTailTable,'sqlTailWhere'=>$sqlTailWhere,'addtionnalChoices'=>$addtionnalChoices);
-            $comboenhancement = ajax_autocompleter($selected, $htmlName, $ajaxUrl, $urloption);
+            $comboenhancement = ajax_autocompleter($selected, $htmlName, $ajaxUrl, $urloption,$ajaxNbChar);
             $sqlTail.=" LIMIT 5";
             // put \\ before barket so the js will work for Htmlname before it is change to seatch HTMLname
             $htmlid=str_replace('[','\\\\[',str_replace(']','\\\\]',$htmlName));
@@ -224,7 +239,7 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
     }
      
    
-    if(!empty($ajaxUrl) && $ajax){
+    if($ajaxNbChar && $ajax){
         if ($selectedValue=='' && is_array($addtionnalChoices)){
             $selectedValue=$addtionnalChoices[$selected];
         }
