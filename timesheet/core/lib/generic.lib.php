@@ -148,7 +148,7 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
             $ajaxUrl=$dolibarr_main_url_root;
             if(strpos($dolibarr_main_url_root_alt,$_SERVER['PHP_SELF'])>0)
             {
-                 $ajaxUrl.=$dolibarr_main_url_root_alt;
+                 $ajaxUrl.='/'.$dolibarr_main_url_root_alt;
             }
             $ajaxUrl.='/timesheet/core/ajaxGenericSelectHandler.php';
             $_SESSION['ajaxQuerry'][$token]=array('table'=>$table, 'fieldValue'=>$fieldValue,'htmlName'=> $htmlName,'fieldToShow1'=>$fieldToShow1,'fieldToShow2'=>$fieldToShow2,'separator'=> $separator,'sqlTailTable'=>$sqlTailTable,'sqlTailWhere'=>$sqlTailWhere,'addtionnalChoices'=>$addtionnalChoices);
