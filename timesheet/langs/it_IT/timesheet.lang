@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-# admin (196)
+# admin (205)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addholidaytime=Integrare il congedo
@@ -13,9 +13,9 @@ approvalbyweekDesc=Approvazione da settimane invece di approvazione da parte deg
 approved=Approvato
 approvedColorDesc=Colore per la festa & scheda attività approvato
 approvedOnly=Solo approvati
-blackWhiteList=Favoris
-blackWhiteListDesc=attivare il filtraggio favoris
-blackWhiteListMode=favoris filtraggio
+blackWhiteList=Preferiti
+blackWhiteListDesc=Attivare il filtraggio dei preferiti
+blackWhiteListMode=Filtri preferiti
 blackWhiteListModeDesc=Abbiamo scelto il comportamento predefinito per il filtraggio favoris
 cancelled=Annullato
 cancelledColorDesc=Colore per la festa & scheda attività annullata
@@ -23,12 +23,12 @@ CHALLENGED=Conflict
 ColumnToShow=Colonne da mostrare
 Company=Azienda
 CompanyColDesc=Contiene il nome della società  relativo al progetto
-ConfirmDeleteTimesheetwhitelist=Conferma la cancellazione dei tuoi preferiti?
+ConfirmDeleteTimesheetwhitelist=Sei sicuro di voler eliminare questa voce?
 customer=Cliente
 customerSignature=Firma del Cliente
 DateEndColDesc=Indica la data di fine del compito
 DateStartColDesc=Contiene la data di inizio per l'attività
-DeleteTimesheetwhitelist=ingresso favoris cancellato
+DeleteTimesheetwhitelist=L'iscrizione è stata cancellata
 draft=Bozza
 draftColorDesc=Colore per il progetto di vacanze & scheda attività
 dropdownAjax=Disabilita discesa Ajax
@@ -72,9 +72,9 @@ maxapproval=Approvazioni per pagina
 maxapprovalDesc=Imposta il numero massimo di schede attività di pagina di approvazione
 maxhoursperdays=numero massimo di ore al giorno
 maxhoursPerDaysDesc=Impostare le ore al massimo per essere inseriti al giorno e per utente tramite la scheda attività
-modeBlackList=tutti, ma i favoris
+modeBlackList=Tutti i preferiti
 modeNone=tutte le attività
-modeWhiteList=solo preferiti
+modeWhiteList=Preferiti
 nbTsToApprove=Numero di scheda attività per l'approvazione
 NewTimesheetuser=Scheda attività del nuovo utente
 NextWeek=settimana successiva
@@ -84,7 +84,7 @@ NoTaskToUpdate=Nessuna attività  per questa settimana
 NoteDesc=Visualizza un'icona che aprirà una linea nota sotto la linea dell'attività quando si fa clic su di esso.
 NothingChanged=Nulla è cambiata
 NothingToValidate=Niente da convalidare
-notYourWhitelist=Questo non ti riguarda
+notYourWhitelist=Questa voce non appartiene a te
 NumberOfTimesheetApproved=Numero di scheda attività ha approvato:
 NumberOfTimesheetRejected=Numero di scheda attività respinto:
 NumberOfTimeSpendCreated=Tempo impiegato creato :

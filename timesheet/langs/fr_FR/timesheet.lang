@@ -1,6 +1,6 @@
 # Dolibarr language file - Francais - timesheet
 # Translators
-# admin (263)
+# admin (270)
 adddocs=Documents joints
 adddocsDesc=Permet d’ajouter des documents annexés à la feuille de temps
 addholidaytime=Intégrer les congés
@@ -23,12 +23,12 @@ CHALLENGED=Contesté
 ColumnToShow=Colonnes à afficher
 Company=Société
 CompanyColDesc=Indique le nom de l'entreprise associée au projet
-ConfirmDeleteTimesheetwhitelist=Êtes-vous sûr de supprimer cette entrée de favoris?
+ConfirmDeleteTimesheetwhitelist=Êtes-vous certain de vouloir supprimer ce favoris ?
 customer=Client
 customerSignature=Signature client
 DateEndColDesc=Indique la date de fin de la tâche
 DateStartColDesc=Contient la date de départ de la tâche
-DeleteTimesheetwhitelist=Entrée des favoris supprimée
+DeleteTimesheetwhitelist=favoris supprimé.
 draft=Brouillon
 draftColorDesc=Couleur des brouillons de congés
 dropdownAjax=Désactiver l'Ajax des dropdown
@@ -74,7 +74,7 @@ maxhoursperdays=Heures maximum par jour
 maxhoursPerDaysDesc=Définissez le nombre maximum d'heures à saisir par jour et par utilisateur via la feuille de temps
 modeBlackList=Tous sauf les favoris
 modeNone=Toutes les tâches
-modeWhiteList=Seulement les favoris
+modeWhiteList=Favoris
 nbTsToApprove=Nombre de feuilles de temps à  approuver
 NewTimesheetuser=Feuille de temps du nouvel utilisateur
 NextWeek=semaine suivante

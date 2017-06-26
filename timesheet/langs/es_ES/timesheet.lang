@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-# admin (167)
+# admin (173)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addholidaytime=Sume el tiempo de vacaciones
@@ -14,7 +14,7 @@ approved=Aprobado
 approvedColorDesc=Color para el día festivo y hoja de tiempo aprobada
 approvedOnly=Sólo aprobadas
 blackWhiteList=Favoritos
-blackWhiteListDesc=Activar el filtrado de favoritos
+blackWhiteListDesc=Activar el filtro de favoritos
 blackWhiteListMode=Filtrado de favoritos
 blackWhiteListModeDesc=Elegir el comportamiento predeterminado para el filtrado de favoritos
 cancelled=Cancelado
@@ -23,12 +23,12 @@ CHALLENGED=Retado
 ColumnToShow=Columnas para mostrar
 Company=Compañía
 CompanyColDesc=Muestra el nombre de la empresa asociada al proyecto
-ConfirmDeleteTimesheetwhitelist=¿Está seguro de eliminar esta entrada de favoritos?
+ConfirmDeleteTimesheetwhitelist=Está seguro de eliminar esto?
 customer=Cliente
 customerSignature=Firma del cliente
 DateEndColDesc=Muestra la fecha de finalización de la tarea
 DateStartColDesc=Muestra la fecha de inicio de la tarea
-DeleteTimesheetwhitelist=Entrada de favoritos suprimida
+DeleteTimesheetwhitelist=Entrada eliminada.
 draft=Borrador
 draftColorDesc=Color para las vacaciones de proyecto y parte de horas
 dropdownAjax=Desactivar dropdown Ajax
@@ -74,7 +74,7 @@ maxhoursperdays=Máximo de horas por día
 maxhoursPerDaysDesc=Establezca las horas máximas que se ingresarán por día y por usuario a través de la hoja de horas
 modeBlackList=Todos menos los favoritos
 modeNone=Muestra todas las tareas
-modeWhiteList=Solo favoritos
+modeWhiteList=Favoritos
 nbTsToApprove=Número de hoja de tiempos para aprobar
 NewTimesheetuser=Hoja de tiempo del usuario nuevo
 NextWeek=Semana próxima
@@ -84,7 +84,7 @@ NoTaskToUpdate=Ninguna tarea para esta semana
 NoteDesc=Mostrar un icono que abrirá una línea de la nota por debajo de línea de la tarea al hacer clic en él.
 NothingChanged=Nada ha cambiado
 NothingToValidate=Nada que validar
-notYourWhitelist=Esta entrada favorita no te pertenece
+notYourWhitelist=Esta entrada no te pertenece
 NumberOfTimesheetApproved=Número de hojas aprobadas:
 NumberOfTimesheetRejected=Número de hoja de horarios rechazada:
 NumberOfTimeSpendCreated=Cantidad de tiempo invertido:

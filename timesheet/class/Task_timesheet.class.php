@@ -234,7 +234,7 @@ class Task_timesheet extends CommonObject
             $this->db->free($resql);
             $this->yearWeek= getYearWeek(0,0,0,$this->date_start); //fixme
             $this->ref=$this->yearWeek.'_'.$this->userId;
-            $this->whitelistmode=2; // no impact
+            
             return 1;
         }
         else
@@ -1076,7 +1076,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
 	if($ajax){
             $Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.getPrevYearWeek($this->yearWeek).'\',0);';
         }else{
-            $Nav.=  '<a href="?action=list&wlm='.$this->whitelistmode.'&yearweek='.getPrevYearWeek($this->yearWeek);   
+            $Nav.=  '<a href="?wlm='.$this->whitelistmode.'&yearweek='.getPrevYearWeek($this->yearWeek);   
         }
         if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
 	$Nav.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
@@ -1090,7 +1090,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
 	if($ajax){
             $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.getNextYearWeek($this->yearWeek).'\',0);';
 	}else{
-            $Nav.=  '<a href="?action=list&wlm='.$this->whitelistmode.'&yearweek='.getNextYearWeek($this->yearWeek);
+            $Nav.=  '<a href="?&wlm='.$this->whitelistmode.'&yearweek='.getNextYearWeek($this->yearWeek);
             
         }
         if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;

@@ -48,6 +48,7 @@ $toDateyear                 = GETPOST('toDateyear');
 
 $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
+if($whitelistmode=='')$whitelistmode=TIMESHEET_WHITELIST_MODE;
 
 $userid=  is_object($user)?$user->id:$user;
 $task_timesheet= new Task_timesheet($db,$userid);
