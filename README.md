@@ -36,21 +36,24 @@ Timesheet view for project in Dolibarr
 - show the Quantity in the step 2 of invoicing (js)
 - maintain the ajax behavior
 - my timesheet page to see the status of the TS
+- better ajax error when adding fav
+
 
 
 # Change log
 
 2.0 Change log from 1.5.1:   
-    - Week over two month can be splited in 2 so an approval per month is possible.
-    - note availale for each task (also in the approval flow)    
-    - chained approval for project
-    - create invoice from the project report
-    - reports shows time in hours and days
-    - tab in the setup for better browsing experience (in JS so config is kept when changing tab)
-    - favoris in a tab (not a new page)
-    - favoris can be set simply by pushing on a star next to the task name in timesheet screen
-    - better handling of search boxes
-    - more translation (ES, DE, IT, FR, US)
+ - Week over two month can be splited in 2 so an approval per month is possible.
+ - note availale for each task (also in the approval flow)    
+ - chained approval for project
+ - create invoice from the project report
+ - reports shows time in hours and days
+ - tab in the setup for better browsing experience (in JS so config is kept when changing tab)
+ - favoris in a tab (not a new page)
+ - favoris can be set simply by pushing on a star next to the task name in timesheet screen
+ - better handling of search boxes
+ - more translation (ES, DE, IT, FR, US)
+
 
 
 Change log from 1.4.3:
