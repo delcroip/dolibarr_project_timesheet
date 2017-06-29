@@ -400,4 +400,3 @@ $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leadin
     }
 
 }
-
