@@ -127,14 +127,14 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
  */
 function get_task($db,$userid,$role='project'){
     $sql='SELECT tk.fk_projet as project ,tk.rowid as task';
-    $sql.= 'FROM '.MAIN_DB_PREFIX.'projet_task as tk';
-    $sql.=' JOIN '.MAIN_DB_PREFIX.'_element_contact ON  tk.fk_projet= element_id ';
-    $sql.=' WHERE fk_c_type_contact = "180" ';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact ON  tk.fk_projet= element_id ';
+    $sql.=' WHERE fk_c_type_contact = "160" ';
     $sql.=' AND fk_socpeople="'.$userid.'"';
     $sql.=' UNION ';
-    $sql='SELECT tk.fk_projet as project ,tk.rowid as task';
-    $sql.= 'FROM '.MAIN_DB_PREFIX.'projet_task as tk';
-    $sql.=' JOIN '.MAIN_DB_PREFIX.'_element_contact on (tk.rowid= element_id )';
+    $sql.=' SELECT tk.fk_projet as project ,tk.rowid as task';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact on (tk.rowid= element_id )';
     $sql.=' WHERE fk_c_type_contact = "180" ';
     $sql.=' AND fk_socpeople="'.$userid.'"';
 

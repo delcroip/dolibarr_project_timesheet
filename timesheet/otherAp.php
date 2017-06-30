@@ -119,8 +119,10 @@ if($action=='submit'){
 *
 * Put here all code to build page
 ****************************************************/
-$subId=($user->admin)?'all':get_subordinate($db,$userId, 2,array($userId),$role);
-$selectList=getSelectAps($subId,$role);
+$subId=($user->admin)?'all':get_subordinate($db,$userId, 1,array($userId),$role); //FIx ME for other role
+$tasks=implode(',', array_keys(get_task($db, $userId)));
+if($tasks=="")$tasks=0;
+$selectList=getSelectAps($subId,$tasks,$role);
 if($current>=count($selectList))$current=0;
 // number of TS to show
 $level=intval(TIMESHEET_MAX_TTA_APPROVAL);
@@ -254,7 +256,7 @@ function getTStobeApproved($current,$selectList){ // FIXME use the list tab as i
  *  @param    array(int)/int        $userids    	array of manager id 
   *  @return  array (int => String)  				array( ID => userName)
  */
-function getSelectAps($subId, $role){
+function getSelectAps($subId, $tasks, $role){
     if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
     global $db,$langs;
    /* if(TIMESHEET_APPROVAL_BY_WEEK==1){
@@ -289,7 +291,12 @@ function getSelectAps($subId, $role){
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as pjt on tsk.fk_projet=pjt.rowid ';
     $sql.=' WHERE (ts.status="SUBMITTED" OR ts.status="UNDERAPPROVAL" OR ts.status="CHALLENGED" )'; 
     $sql.=' AND recipient="'.$role.'"';
-    if($subId!='all')$sql.=' AND ts.fk_userid in ('.implode(',',$subId).')';
+    if($subId!='all'){
+        $sql.=' AND ts.fk_userid in ('.implode(',',$subId).')';
+        if($role=='project'){
+            $sql.=' AND tsk.rowid in ('.$tasks.') ';
+        }
+    }
     $sql.=' group by id ORDER BY id DESC, label '; 
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
