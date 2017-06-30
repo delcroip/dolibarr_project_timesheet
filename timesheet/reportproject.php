@@ -61,9 +61,9 @@ $userid=  is_object($user)?$user->id:$user;
 
 //querry to get the project where the user have priviledge; either project responsible or admin
 
-$sql='SELECT pjt.rowid,pjt.ref,pjt.title,pjt.dateo,pjt.datee FROM llx_projet as pjt';
+$sql='SELECT pjt.rowid,pjt.ref,pjt.title,pjt.dateo,pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
 if(!$user->admin){    
-    $sql.=' JOIN llx_element_contact ON pjt.rowid= element_id ';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact ON pjt.rowid= element_id ';
     $sql.=' WHERE fk_c_type_contact = "160" ';
     $sql.=' AND fk_socpeople="'.$userid.'"';
 }

@@ -114,6 +114,56 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
       return $list;
  }
 
+  /*
+ * function to genegate list of the subordinate ID
+ * 
+  *  @param    object           	$db             database objet
+ *  @param    array(int)/int        $id    		    array of manager id 
+ *  @param     int              	$depth          depth of the recursivity
+ *  @param    array(int)/int 		$ecludeduserid  exection that shouldn't be part of the result ( to avoid recursive loop)
+ *  @param     string              	$role           team will look for organigram subordinate, project for project subordinate
+ *  @param     int              	$entity         entity where to look for
+  *  @return     string                                                   html code
+ */
+function get_task($db,$userid,$role='project'){
+    $sql='SELECT tk.fk_projet as project ,tk.rowid as task';
+    $sql.= 'FROM '.MAIN_DB_PREFIX.'projet_task as tk';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'_element_contact ON  tk.fk_projet= element_id ';
+    $sql.=' WHERE fk_c_type_contact = "180" ';
+    $sql.=' AND fk_socpeople="'.$userid.'"';
+    $sql.=' UNION ';
+    $sql='SELECT tk.fk_projet as project ,tk.rowid as task';
+    $sql.= 'FROM '.MAIN_DB_PREFIX.'projet_task as tk';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'_element_contact on (tk.rowid= element_id )';
+    $sql.=' WHERE fk_c_type_contact = "180" ';
+    $sql.=' AND fk_socpeople="'.$userid.'"';
+
+
+   dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
+   //launch the sql querry
+
+   $resql=$db->query($sql);
+   $numTask=0;
+   $taskList=array();
+   if ($resql)
+   {
+           $numTask = $db->num_rows($resql);
+           $i = 0;
+           // Loop on each record found, so each couple (project id, task id)
+           while ($i < $numTask)
+           {
+                   $error=0;
+                   $obj = $db->fetch_object($resql);
+                   $taskList[$obj->task]=$obj->project;
+                   $i++;
+           }
+           $db->free($resql);
+   }else
+   {
+           dol_print_error($db);
+   }
+   return $taskList;
+}
  /*
  * function to get the name from a list of ID
  * 
