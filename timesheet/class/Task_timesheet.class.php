@@ -1055,7 +1055,7 @@ Public function setStatus($user,$status,$id=0){ //role ?
         $i=0;
         $Lines='';
         if(!$ajax){
-            $Lines.=$this->holidays->getHTMLFormLine( $this->yearWeek,$this->headers,$this->id);
+            $Lines.=$this->holidays->getHTMLFormLine($this->headers,$this->id);
         
         }
         

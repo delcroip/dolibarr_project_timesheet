@@ -41,6 +41,10 @@ Timesheet view for project in Dolibarr
 
 
 # Change log
+2.0.1 Change log from 2.0
+ - Project approval corrected (for non admin no approval was shown)
+ - PHP warning removed
+ - Home timesheet box correted (was not showing the # of timesheet to approve)
 
 2.0 Change log from 1.5.1:   
  - Week over two month can be splited in 2 so an approval per month is possible.
