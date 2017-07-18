@@ -143,7 +143,7 @@ class holidayTimesheet extends Holiday
  *  @param     int              	$tsUserId           id of the user timesheet
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getHTMLFormLine($headers,$tsUserId) //FIXME why yearweek is needed
+       public function getHTMLFormLine($headers,$tsUserId) 
     {
         
         global $langs;
@@ -202,111 +202,18 @@ class holidayTimesheet extends Holiday
     }	
 
 
-/*
- * function to form a XML for this timesheet
- * 
- *  @param    string              	$yearWeek            year week like 2015W09
-  *  @return     string                                         XML result containing the timesheet info
- */
-    public function getXML( $yearWeek)
-    {/*
-    $timetype=TIMESHEET_TIME_TYPE;
-    $dayshours=TIMESHEET_DAY_DURATION;
-    $hidezeros=TIMESHEET_HIDE_ZEROS;
-    $xml= "<task id=\"{$this->id}\" >";
-    //title section
-    $xml.="<Tasks id=\"{$this->id}\">{$this->description} </Tasks>";
-    $xml.="<Project id=\"{$this->fk_project2}\">{$this->ProjectTitle} </Project>";
-    $xml.="<TaskParent id=\"{$this->fk_task_parent}\">{$this->taskParentDesc} </TaskParent>";
-    //$xml.="<task id=\"{$this->id}\" name=\"{$this->description}\">\n";
-    $xml.="<DateStart unix=\"$this->date_start\">";
-    if($this->date_start)
-        $xml.=dol_mktime($this->date_start);
-    $xml.=" </DateStart>";
-    $xml.="<DateEnd unix=\"$this->date_end\">";
-    if($this->date_end)
-        $xml.=dol_mktime($this->date_end);
-    $xml.=" </DateEnd>";
-     $xml.="<Company id=\"{$this->companyId}\">{$this->companyName} </Company>";
-    $xml.="<TaskProgress id=\"{$this->companyId}\">";
-    if($this->planned_workload)
-    {
-        $xml .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
-    }else{
-        $xml .= "-:--(-%)";
-    }
-    $xml.="</TaskProgress>";
 
-
-  // day section
-//        foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
-         for($dayOfWeek=0;$dayOfWeek<7;$dayOfWeek++)
-         {
-                $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
-                # to avoid editing if the task is closed 
-                $dayWorkLoadSec=isset($this->tasklist[$dayOfWeek])?$this->tasklist[$dayOfWeek]['duration']:0;
-                # to avoid editing if the task is closed 
-				if($hidezeros==1 && $dayWorkLoadSec==0){
-					$dayWorkLoad=' ';
-				}else if ($timetype=="days")
-                {
-                    $dayWorkLoad=$dayWorkLoadSec/3600/$dayshours;
-                }else {
-                    $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
-                }
-                $open='0';
-                if((empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today )))
-                {             
-                    $open='1';                   
-                }
-                $xml .= "<day col=\"{$dayOfWeek}\" open=\"{$open}\">{$dayWorkLoad}</day>";
-
-        } 
-        $xml.="</task>"; 
-        return $xml;
-        //return utf8_encode($xml);*/
-
-    }	
 /*
  * function to save a time sheet as a string
  */
 function serialize(){
-    /*$arRet=array();
-    $arRet['id']=$this->id;
-    $arRet['tasklist']=$this->tasklist;
-    $arRet['description']=$this->description;			
-    $arRet['fk_project2']=$this->fk_project2 ;
-    $arRet['ProjectTitle']=$this->ProjectTitle;
-    $arRet['date_start']=$this->date_start;			
-    $arRet['date_end']=$this->date_end	;		
-    $arRet['duration_effective']=$this->duration_effective ;   
-    $arRet['planned_workload']=$this->planned_workload ;
-    $arRet['fk_task_parent']=$this->fk_task_parent ;
-    $arRet['taskParentDesc']=$this->taskParentDesc ;
-    $arRet['companyName']=$this->companyName  ;
-    $arRet['companyId']= $this->companyId;
-                      
-    return serialize($arRet);*/
-    
+   return '';
 }
 /*
  * function to load a time sheet as a string
  */
 function unserialize($str){
-    /*$arRet=unserialize($str);
-    $this->id=$arRet['id'];
-    $this->tasklist=$arRet['tasklist'];
-    $this->description=$arRet['description'];			
-    $this->fk_project2=$arRet['fk_project2'] ;
-    $this->ProjectTitle=$arRet['ProjectTitle'];
-    $this->date_start=$arRet['date_start'];			
-    $this->date_end=$arRet['date_end']	;		
-    $this->duration_effective=$arRet['duration_effective'] ;   
-    $this->planned_workload=$arRet['planned_workload'] ;
-    $this->fk_task_parent=$arRet['fk_task_parent'] ;
-    $this->taskParentDesc=$arRet['taskParentDesc'] ;
-    $this->companyName=$arRet['companyName']  ;
-    $this->companyId=$arRet['companyId'];*/
+
 }
  
 
