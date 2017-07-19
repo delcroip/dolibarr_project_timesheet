@@ -33,7 +33,8 @@ require_once 'class/Task_timesheet.class.php';
 
 
 $action             = GETPOST('action');
-$yearWeek           = GETPOST('yearweek');
+$datestart          = GETPOST('dateStart');
+$dateStart = time();
 //should return the XMLDoc
 $ajax               = GETPOST('ajax');
 $xml               = GETPOST('xml');
@@ -54,10 +55,12 @@ $userid=  is_object($user)?$user->id:$user;
 $task_timesheet= new Task_timesheet($db,$userid);
 $confirm=GETPOST('confirm');
 
-if($yearWeek==0 && isset($_SESSION["yearWeek"])) $yearWeek=$_SESSION["yearWeek"];
-//if($yearWeek==0 ) $yearWeek=$_SESSION["yearWeek"];
-$yearWeek=getYearWeek($toDateday,$toDatemonth,$toDateyear,$yearWeek);
-$_SESSION["yearWeek"]=$yearWeek ;
+if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
+    $dateStart=$_SESSION["dateStart"];
+}else{
+    $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$dateStart);
+}
+$_SESSION["dateStart"]=$dateStart ;
 
 
 
@@ -165,8 +168,7 @@ switch($action){
 if(!empty($timestamp)){
        unset($_SESSION['task_timesheet'][$timestamp]);
 }
-
-$task_timesheet->fetchAll($yearWeek,$whitelistmode);
+$task_timesheet->fetchAll($dateStart,$whitelistmode);
 
 if(TIMESHEET_ADD_DOCS){
     dol_include_once('/core/class/html.formfile.class.php');

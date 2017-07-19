@@ -25,10 +25,10 @@ function refreshTimesheet(Wlmode){
         var timesheet=xmlDoc.getElementsByTagName("timesheet");
         if (timesheet.length==0)throw "Bad XML: no timesheet Node";
         var timestamp=timesheet[0].getAttribute('timestamp');
-        var yearWeek=timesheet[0].getAttribute('yearWeek');
+        var dateStart=timesheet[0].getAttribute('dateStart');
         var id=timesheet[0].getAttribute('id');/*FIXME not returned yet*/
-        var prevWeek=timesheet[0].getAttribute('prevWeek');
-        var nextWeek=timesheet[0].getAttribute('nextWeek');
+        var prevDate=timesheet[0].getAttribute('prevDate');
+        var nextDate=timesheet[0].getAttribute('nextDate');
         var timetype=timesheet[0].getAttribute('timetype');
 	var headers = xmlDoc.getElementsByTagName("headers");
         var actionMessage = xmlDoc.getElementsByTagName("eventMessage");
@@ -53,7 +53,7 @@ function refreshTimesheet(Wlmode){
         //update the header
 	MT.rows[0].innerHTML=generateHeader(headers,days);
         // update the hidden param
-        MT.rows[1].cells[0].innerHTML=generateHiddenParam(timestamp,yearWeek);
+        MT.rows[1].cells[0].innerHTML=generateHiddenParam(timestamp,dateStart);
         
 	//delete the old lines /*FIXME, not woking anymore*/
 	var idxT = document.getElementById("totalT").rowIndex;
@@ -84,7 +84,7 @@ function refreshTimesheet(Wlmode){
     }catch(err){
         $.jnotify("refreshTimesheet "+err,'error',true);
     }
-        UpdateNavigation(nextWeek,prevWeek);
+        UpdateNavigation(nextDate,prevDate);
         updateAll();
         
         
@@ -104,9 +104,9 @@ function generateHeader(headers,days){
         return hearderRow;
 }
 
-function generateHiddenParam(timestamp,yearWeek){
+function generateHiddenParam(timestamp,dateStart){
     var hiddenParam='<input type="hidden" id="timestamp" name="timestamp" value="'+timestamp+"\"/>\n";
-    hiddenParam+= '<input type="hidden" name="yearWeek" value="'+yearWeek+'" />';      
+    hiddenParam+= '<input type="hidden" name="dateStart" value="'+dateStart+'" />';      
     return hiddenParam;
 }
 
@@ -142,21 +142,21 @@ function generateTaskLine(headers,task,timetype){
 	return html;
 }
 //function to update the next and prev week
-function UpdateNavigation(nextWeek,prevWeek){
+function UpdateNavigation(nextDate,prevDate){
     try{
         var nav=document.getElementById('navPrev');
-        nav.setAttribute( "onClick",'loadXMLTimesheet("'+prevWeek+'",0);');
+        nav.setAttribute( "onClick",'loadXMLTimesheet("'+prevDate+'",0);');
         nav=document.getElementById('navNext');
-        nav.setAttribute( "onClick",'loadXMLTimesheet("'+nextWeek+'",0);');
+        nav.setAttribute( "onClick",'loadXMLTimesheet("'+nextDate+'",0);');
     }catch(err){
         $.jnotify("UpdateNavigation "+err,'error',true);
     }
 }
-//function called to load new timesheet based on a yearweek
+//function called to load new timesheet based on a dateStart
 
-function loadXMLTimesheet(yearWeek, user)
+function loadXMLTimesheet(dateStart, user)
 {
-    var Url="timesheet.php?xml=1&yearweek="+yearWeek;
+    var Url="timesheet.php?xml=1&dateStart="+dateStart;
     if(user!==0) Url+="&user="+user;
     var timestamp=$("#timestamp").serialize();
     if(timestamp!==undefined)Url+="&"+timestamp;

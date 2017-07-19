@@ -305,8 +305,7 @@ class Task_time_approval extends Task
                 
             }
             $this->db->free($resql);
-            $this->yearWeek= getYearWeek(0,0,0,$this->date_start_approval); //fixme
-            $this->ref=$this->yearWeek.'_'.$this->userId;
+            $this->ref=$this->date_start_approval.'_'.$this->userId.'_'.$this->id;
             $this->whitelistmode=2; // no impact
             $this->getTaskInfo();
             return 1;
@@ -353,9 +352,7 @@ class Task_time_approval extends Task
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
         $sql.= " WHERE t.date_start = '".$this->db->idate($this->date_start_approval)."'";
-		$sql.= " AND t.fk_userid = '".$this->userId."'";
-       # $sql .= "AND WEEKOFYEAR(ptt.date_start)='".date('W',strtotime($yearWeek))."';";
-        #$sql .= "AND YEAR(ptt.task_date)='".date('Y',strtotime($yearWeek))."';";
+        $sql.= " AND t.fk_userid = '".$this->userId."'";
 
         //$sql.= " AND t.rowid = ".$id;
 
@@ -1003,10 +1000,10 @@ class Task_time_approval extends Task
 /*
  * function to form a XML for this timesheet
  * 
- *  @param    string              	$yearWeek            year week like 2015W09
+ *  @param    string              	$startDate            year week like 2015W09
   *  @return     string                                         XML result containing the timesheet info
  *//*
-    public function getXML( $yearWeek)
+    public function getXML( $startDate)
     {
     $timetype=TIMESHEET_TIME_TYPE;
     $dayshours=TIMESHEET_DAY_DURATION;
@@ -1040,7 +1037,7 @@ class Task_time_approval extends Task
 //        foreach ($this->weekWorkLoad as $dayOfWeek => $dayWorkLoadSec)
          for($dayOfWeek=0;$dayOfWeek<7;$dayOfWeek++)
          {
-                $today= strtotime($yearWeek.' +'.($dayOfWeek).' day  ');
+                $today= strtotime($startDate.' +'.($dayOfWeek).' day  ');
                 # to avoid editing if the task is closed 
                 $dayWorkLoadSec=isset($this->tasklist[$dayOfWeek])?$this->tasklist[$dayOfWeek]['duration']:0;
                 # to avoid editing if the task is closed 

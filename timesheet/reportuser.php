@@ -28,12 +28,14 @@ $htmlother = new FormOther($db);
 $userid=  is_object($user)?$user->id:$user;
 $id		= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$yearWeek	= GETPOST('yearweek');
+$dateStart	= GETPOST('dateStart');
 $userIdSelected   = GETPOST('userSelected');
 $exportFriendly = GETPOST('exportFriendly');
 if(empty($userIdSelected))$userIdSelected=$userid;
 $exportfriendly=GETPOST('exportfriendly');
 $optioncss = GETPOST('optioncss','alpha');
+
+
 
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -43,19 +45,15 @@ $langs->load('timesheet@timesheet');
 
 
 //find the right week
-if(isset($_POST['Date'])){
-    $yearWeek=date('Y\WW',strtotime(str_replace('/', '-',$_POST['Date']).' first monday of this month'));
-    $_SESSION["yearWeek"]=$yearWeek;
-}else if (isset($_GET['yearweek'])) {
-    $yearWeek=$_GET['yearweek'];
-    $_SESSION["yearWeek"]=$yearWeek;
-}else if(isset($_SESSION["yearWeek"]))
-{
-    $yearWeek=$_SESSION["yearWeek"];
-}else
-{
-    $yearWeek=date('Y\WW');
-}
+$toDate                 = GETPOST('toDate');
+$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday'):0; // to not look for the date if action not goTodate
+$toDatemonth                 = GETPOST('toDatemonth');
+$toDateyear                 = GETPOST('toDateyear');
+if($dateStart==0 && isset($_SESSION["dateStart"])) $dateStart=$_SESSION["dateStart"];
+if($dateStart==0 ) $dateStart=$_SESSION["dateStart"];
+$dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$dateStart);
+$_SESSION["dateStart"]=$dateStart ;
+$dateStart=  strtotime('fist day of month', $dateStart);
 
 llxHeader('',$langs->trans('userReport'),'');
 
@@ -149,8 +147,8 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
     
 }else
 {
-    $year=date('Y',strtotime( $yearWeek.' +0 day'));
-    $month=date('m',strtotime( $yearWeek.' +0 day'));
+    $year=date('Y',$dateStart);
+    $month=date('m',$dateStart);
 }
 
 $Form.='</select></td>'

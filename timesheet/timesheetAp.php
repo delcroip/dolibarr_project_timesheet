@@ -143,7 +143,7 @@ if($action== 'submit'){
 if(!empty($timestamp)){
        unset($_SESSION['timesheetAp'][$timestamp]);
 }
-$timestamp=time();
+$timestamp=getToken();
 $subId=($user->admin)?'all':get_subordinate($db,$userId, 2,array($userId),'team');
 $selectList=getSelectAps($subId);
 $level=intval(TIMESHEET_MAX_APPROVAL);
@@ -203,8 +203,7 @@ if(is_object($firstTimesheetUser)){
     //$ret+=$this->getTaskTimeIds(); 
     //FIXME module holiday should be activated ?
             $task_timesheet->fetchUserHoliday(); 
-            $Form .=$task_timesheet->userName." - ".$langs->trans('Week').date(' W (m/Y)',$task_timesheet->date_start);
-            //$Form .=$task_timesheet->userName." - ".$langs->trans('Week').' '.getYearWeek(0,0,0,$task_timesheet->date_start);
+            $Form .=$task_timesheet->userName." - ".date('d',$task_timesheet->date_start);
             $Form .=$task_timesheet->getHTMLHeader(false);
             $Form .=$task_timesheet->getHTMLHolidayLines(false);
             //$Form .=$task_timesheet->getHTMLTotal('totalT');
@@ -338,12 +337,11 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
                     $tmpTs->date_modification = $tmpTs->db->jdate($obj->date_modification);
                     $tmpTs->user_creation = $obj->fk_user_creation;
                     $tmpTs->user_modification = $obj->fk_user_modification;            
-                    $tmpTs->yearWeek= getYearWeek(0,0,0,$tmpTs->date_start);
                     $tmpTs->whitelistmode=2; // no impact
-                    $tmpTs->date_end=getEndWeek($tmpTs->date_start);
-                        $tsList[$i]=$tmpTs;
+                    $tmpTs->date_end= $tmpTs->db->jdate($obj->date_end);
                     //}
                     $i++;
+                    $tsList[]=$tmpTs;
                     
             }
             $db->free($resql);
@@ -361,9 +359,9 @@ $byWeek=TIMESHEET_APPROVAL_BY_WEEK;
 /*
  * function to print the timesheet navigation header
  * 
- *  @param    string              	$yearWeek            year week like 2015W09
- *  @param     int              	$whitelistmode        whitelist mode, shows favoite o not 0-whiteliste,1-blackliste,2-non impact
- *  @param     object             	$form        		form object
+ *  @param    string              	$optioncss            get print mode
+ *  @param     int              	$selectList           List of pages
+ *  @param     object             	$current                current page
  *  @return     string                                         HTML
  */
 function getHTMLNavigation($optioncss, $selectList,$current=0){

@@ -31,12 +31,13 @@ Timesheet view for project in Dolibarr
 - handle the right for cust /  supplier / other approval  
 - add automatic reminder for the approval
 - add feature in Project to foresee workload per user, task and "week"
-- send email over TS rejection
 - reminder when TS is not filled in ( email and home page)
 - show the Quantity in the step 2 of invoicing (js)
 - maintain the ajax behavior
 - my timesheet page to see the status of the TS
 - better ajax error when adding fav
+- add total to the otherAP
+- TS submission per month
 
 
 
@@ -45,6 +46,7 @@ Timesheet view for project in Dolibarr
  - Project approval corrected (for non admin no approval was shown)
  - PHP warning removed
  - Home timesheet box correted (was not showing the # of timesheet to approve)
+ - send email over TS rejection
 
 2.0 Change log from 1.5.1:   
  - Week over two month can be splited in 2 so an approval per month is possible.

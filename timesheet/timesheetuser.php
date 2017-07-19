@@ -168,7 +168,7 @@ if ($cancel){
         }
         //retrive the data
         $object->userId=GETPOST('Userid');
-		$object->date_start=dol_mktime(0, 0, 0,GETPOST('Yearweekdatemonth'),GETPOST('Yearweekdateday'),GETPOST('Yearweekdateyear'));
+		$object->date_start=dol_mktime(0, 0, 0,GETPOST('startDatedatemonth'),GETPOST('startDatedateday'),GETPOST('startDatedateyear'));
 		$object->status=GETPOST('Status');
 		$object->target=GETPOST('Target');
 		$object->project_tasktime_list=GETPOST('Projecttasktimelist');
@@ -397,15 +397,15 @@ switch ($action) {
 
 // show the field date_start
 
-		print '<td class="fieldrequired">'.$langs->trans('Yearweekdate').' </td><td>';
+		print '<td class="fieldrequired">'.$langs->trans('startDatedate').' </td><td>';
 		if($edit==1){
 		if($new==1){
-			print $form->select_date(-1,'Yearweekdate');
+			print $form->select_date(-1,'startDatedate');
 		}else{
-			print $form->select_date($object->date_start,'Yearweekdate');
+			print $form->select_date($object->date_start,'startDatedate');
 		}
 		}else{
-			print dol_print_date($object->date_start,'day').getYearWeek(0,0,0,$object->date_start);
+			print dol_print_date($object->date_start,'day');
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -509,7 +509,7 @@ switch ($action) {
 	print '</table>'."\n";
 	print '<br>';
         if($object->status != "DRAFT" && $edit!=1){
-            print $object->userName." - ".$object->yearWeek;
+            print $object->userName." - ".$object->date_start;
             print $object->getHTMLHeader(false);
 
             print $object->getHTMLHolidayLines(false);
@@ -699,7 +699,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userid','',$param,'',$sortfield,$sortorder);
 		print "\n";
-		print_liste_field_titre($langs->trans('Yearweekdate'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('startDate'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
 		print "\n";
 		print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
 		print "\n";
@@ -760,7 +760,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 				print "<tr class=\"dblist ".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
 				print $basedurl.$obj->rowid."'\" >";
 				print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
-				print "<td>".dol_print_date($obj->date_start,'day')." (".getYearWeek(0,0,0,$db->jdate($obj->date_start)).")</td>";
+				print "<td>".dol_print_date($obj->date_start,'day')."</td>";
 				print "<td>".$langs->trans($obj->status)."</td>";
 				//print "<td>".$langs->trans($obj->target)."</td>";
 				//print "<td>".$obj->fk_project_tasktime_list."</td>";

@@ -195,9 +195,11 @@ llxFooter();
 /*
  * function to print the timesheet navigation header
  * 
- *  @param    string              	$yearWeek            year week like 2015W09
- *  @param     int              	$whitelistmode        whitelist mode, shows favoite o not 0-whiteliste,1-blackliste,2-non impact
- *  @param     object             	$form        		form object
+ *  @param    string              	$role                  the role of the user
+ *  @param     string            	$optioncss             optioncss for the print mode
+ *  @param     array             	$selectList       	list of pages
+ *  @param     int                      $current                current page
+ * 
  *  @return     string                                         HTML
  */
 function getHTMLNavigation($role,$optioncss, $selectList,$current=0){
@@ -279,8 +281,11 @@ function getSelectAps($subId, $tasks, $role){
     $sql="SELECT COUNT(ts.rowid) as nb, ";
   //  if(TIMESHEET_GROUP_OTHER_AP=="week"){
         $sql.=" CONCAT(ts.date_start, '-',pjt.`ref`) as id,";
+    if(TIMESHEET_APPROVAL_BY_WEEK==2){   
+        $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,' (%m/%Y) #')COLLATE utf8_unicode_ci) as label,";
+    }else{
         $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,'- ".$langs->trans('Week')." %v (%m/%Y) #')COLLATE utf8_unicode_ci) as label,";
-        
+    }
 /*    }else{
         $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.`ref`) as id,";
         $sql.=" CONCAT(pjt.title,' (', DATE_FORMAT(ts.date_start,'%m/%Y'),')') as label,";
