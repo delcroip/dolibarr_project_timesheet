@@ -816,7 +816,7 @@ class Task_time_approval extends Task
   
    
        if(($dayelapsed<1)||empty($headers))
-           return '<tr>ERROR: wrong parameters for getFormLine'.$dayelapsed.'|'.empty($headers).'</tr>';
+           return '<tr>ERROR: wrong parameters for getFormLine'.$dayelapsed.'|'.$headers.'</tr>';
       if($tsUserId!=0)$this->userId=$tsUserId;
     $timetype=TIMESHEET_TIME_TYPE;
     $dayshours=TIMESHEET_DAY_DURATION;

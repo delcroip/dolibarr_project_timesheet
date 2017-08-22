@@ -204,16 +204,9 @@ if(is_object($firstTimesheetUser)){
     //FIXME module holiday should be activated ?
             $task_timesheet->fetchUserHoliday(); 
             $Form .=$task_timesheet->userName." - ".date('d',$task_timesheet->date_start);
-            $Form .=$task_timesheet->getHTMLHeader(false);
-            $Form .=$task_timesheet->getHTMLHolidayLines(false);
-            //$Form .=$task_timesheet->getHTMLTotal('totalT');
-            $Form .=$task_timesheet->getHTMLtaskLines(false);
-            $Form .=$task_timesheet->getHTMLTotal();
-            $Form .=$task_timesheet->getHTMLNote();
+             $Form .=$task_timesheet->getHTML(false,TRUE);
             $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id]=$task_timesheet->status;
-            $Form .= '</table>';
 
-            $Form .= '</br>'."\n";
 
             if(!$print){
                 if(TIMESHEET_ADD_DOCS==1){

@@ -34,7 +34,7 @@ require_once 'class/Task_timesheet.class.php';
 
 $action             = GETPOST('action');
 $datestart          = GETPOST('dateStart');
-$dateStart = time();
+
 //should return the XMLDoc
 $ajax               = GETPOST('ajax');
 $xml               = GETPOST('xml');
@@ -43,9 +43,11 @@ $optioncss = GETPOST('optioncss','alpha');
 $id=GETPOST('id');
 //$toDate                 = GETPOST('toDate');
 $toDate                 = GETPOST('toDate');
-$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday'):0; // to not look for the date if action not goTodate
+if(!empty($toDate) && $action=='goToDate'){
+$toDateday                  =GETPOST('toDateday'); // to not look for the date if action not goTodate
 $toDatemonth                 = GETPOST('toDatemonth');
 $toDateyear                 = GETPOST('toDateyear');
+}
 
 $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
@@ -57,9 +59,10 @@ $confirm=GETPOST('confirm');
 
 if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=$_SESSION["dateStart"];
-}else{
-    $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$dateStart);
+}else {
+    $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
 }
+
 $_SESSION["dateStart"]=$dateStart ;
 
 
@@ -216,16 +219,8 @@ $Form .=$task_timesheet->getHTMLFormHeader($ajax);
         $Form.= '  <div '.(($task_timesheet->whitelistmode==1)?'id="defaultOpen"':'').' class="inline-block tabsElem"  onclick="showFavoris(event, \'blacklist\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Others').'</a></div>';
         $Form.= '</div>';
      }
-$Form .=$task_timesheet->getHTMLHeader($ajax);
+$Form .=$task_timesheet->getHTML($ajax);
 
-$Form .=$task_timesheet->getHTMLHolidayLines($ajax);
-
-$Form .=$task_timesheet->getHTMLTotal();
-
-$Form .=$task_timesheet->getHTMLtaskLines($ajax);
-$Form .=$task_timesheet->getHTMLTotal();
-$Form .=$task_timesheet->getHTMLNote($ajax);
-$Form .=$task_timesheet->getHTMLFooter($ajax);
 
 $Form .='<script>document.getElementById("defaultOpen").click()</script>';
 

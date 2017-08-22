@@ -303,11 +303,9 @@ function getEventMessageXML($messages,$style='ok'){
  *  @return     string                                   
  */
 function getStartDate($datetime,$prevNext=0){
-    
-
+   
     // use the day, month, year value
      $startDate=null;
-
         // split week of the current week
    $prefix='this';
    if($prevNext==1){
@@ -315,13 +313,14 @@ function getStartDate($datetime,$prevNext=0){
    }else if ($prevNext==-1){
        $prefix='previous';
    }
+ 
     /**************************
      * calculate the start date form php date
      ***************************/
     switch(TIMESHEET_APPROVAL_BY_WEEK){
 
         case 2: //by Month      
-             $startDate=  strtotime('first day of '.$prefix.' month',$datetime  ); 
+             $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
              break;
         case 0: //by user   
         case 1: //by week
@@ -330,13 +329,12 @@ function getStartDate($datetime,$prevNext=0){
             $dayOfWeek=date('N',$datetime);
             //$dayInMonth=date('t',$datetime);
             if ($day<$dayOfWeek){
-                $startDate=strtotime('first day of '.$prefix.' month',$datetime); 
+                $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
             }else{
-                $startDate=strtotime('first day of '.$prefix.' week',$datetime); 
+                $startDate=  strtotime('monday '.$prefix.' week midnight',$datetime  ); 
             } 
             break;
     }
-
     return $startDate;
 }
 /*
@@ -355,7 +353,7 @@ function getEndDate($datetime){
     switch(TIMESHEET_APPROVAL_BY_WEEK){
 
         case 2: //by Month
-             $endDate=strtotime('first day of next month',$datetime); 
+             $endDate=strtotime('first day of next month midnight',$datetime); 
             break;
         case 0: //by user   
         case 1: //by week
@@ -364,9 +362,9 @@ function getEndDate($datetime){
             $dayOfWeek=date('N',$datetime);
             $dayInMonth=date('t',$datetime);
             if ($dayInMonth<$day+(7-$dayOfWeek) ){
-                $endDate=strtotime('first day of next month',$datetime); 
+                $endDate=strtotime('first day of next month midnight',$datetime); 
             }else{
-                $endDate=strtotime('first day of next week',$datetime); 
+                $endDate=strtotime('monday next week midnight',$datetime); 
             }
         
             break;
@@ -385,14 +383,15 @@ function getEndDate($datetime){
  *  @param    string            $date           date on a string format
  *  @return     string                                   
  */
-function parseDate($day=0,$month=0,$year=0,$date=0){
+function parseDate($day=0,$month=0,$year=0,$date=0){  
     $datetime=time(); 
     $splitWeek=0;
     if ($day!=0 && $month!=0 && $year!= 0)
     {
         $datetime=dol_mktime(0,0,0,$month,$day,$year);
     // the date is already in linux format
-    }else if(is_int($date) && $date!=0){  // if date is a datetime
+    }else if(is_numeric($date) && $date!=0){  // if date is a datetime
+        
         $datetime=$date;
     }else if(is_string($date)&& $date!=""){  // if date is a string
         //foolproof: incase the yearweek in passed in date

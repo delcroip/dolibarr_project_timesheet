@@ -290,7 +290,7 @@ class Task_timesheet extends CommonObject
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_modification = $obj->fk_user_modification;
                 $this->note  = $obj->note;
-                $this->date_end= getEndDate($this->date_start);
+                $this->date_end= $this->db->jdate($obj->date_end);
                 
             }else{
                 unset($this->status) ;
@@ -520,7 +520,6 @@ class Task_timesheet extends CommonObject
         $this->date_start=  getStartDate($startdate);     
         $this->ref=$this->date_start.'_'.$this->userId;
         $this->date_end= getEndDate($this->date_start);
-        var_dump($this->date_end);
         $this->timestamp=  getToken();
         $ret=$this->fetchByWeek();
         $ret+=$this->fetchTaskTimesheet();
@@ -581,7 +580,7 @@ function saveInSession(){
     $datestart=$this->date_start;
     $datestop= $this->date_end;
     $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
-    //var_dump($whiteList);
+
      // Save the param in the SeSSION
      $tasksList=array();
      $whiteListNumber=count($whiteList);
@@ -842,12 +841,41 @@ Public function setStatus($user,$status,$id=0){ //role ?
  * HTML  methods
  * 
  ******************************************************************************/
- /* function to genegate the timesheet table header
+/* function to genegate the tHTML view of the TS
  * 
   *  @param    bool           $ajax     ajax of html behaviour
   *  @return     string                                                   html code
  */
- function getHTMLHeader($ajax=false){
+    
+    
+function getHTML($ajax=false,$Approval=false){ // fixme shows the month by week
+    $Form =$this->getHTMLHeader($ajax);
+
+    $Form .=$this->getHTMLHolidayLines($ajax);
+
+    if(!$Approval)$Form .=$this->getHTMLTotal();
+
+    $Form .=$this->getHTMLtaskLines($ajax);
+    $Form .=$this->getHTMLTotal();
+    $Form .=$this->getHTMLNote($ajax);
+    if($Approval){
+        $Form .= '</table>';
+    }else{
+        $Form .=$this->getHTMLFooter($ajax);
+    }
+    $Form .= '</br>'."\n";
+    return $Form;
+}
+    
+    
+    
+/* function to genegate the timesheet table header
+ * 
+  *  @param    bool           $ajax     ajax of html behaviour
+  *  @param     int            $week    week to show (0 means show all)  // FIXME
+  *  @return     string                                                   html code
+ */
+function getHTMLHeader($ajax=false,$week=0){
      global $langs;
      
 
@@ -897,17 +925,17 @@ Public function setStatus($user,$status,$id=0){ //role ?
  }
   /* function to genegate ttotal line
  * 
-  *  @param     string           $nameId            html name of the line
+  *  @param     int            $week    week to show (0 means show all)  // FIXME
   *  @return     string                                                   html code
  */
- function getHTMLTotal(){
+ function getHTMLTotal($week=0){
 
     $html .="<tr>\n";
     $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
     $weeklength=round(($this->date_end-$this->date_start)/SECINDAY);
     for ($i=0;$i<$weeklength;$i++)
     {
-       $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>\n";
+       $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>\n"; // fixme the week shouldbe in it
      }
     $html .="</tr>\n";
     return $html;
@@ -1053,26 +1081,26 @@ function getHTMLNavigation($optioncss, $ajax=false){
 	global $langs;
         $form= new Form($this->db);
         $Nav=  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
-	if($ajax){
-            $Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.getStartDate($this->date_start,-1).'\',0);';
-        }else{
+	//if($ajax){
+       //     $Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.getStartDate($this->date_start,-1).'\',0);';
+        //}else{
             $Nav.=  '<a href="?wlm='.$this->whitelistmode.'&dateStart='.getStartDate($this->date_start,-1);   
-        }
+        //}
         if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
 	$Nav.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-	if($ajax){
-            $Nav.=  '<form name="goToDate" onsubmit="return toDateHandler();" action="?action=goToDate&wlm='.$this->whitelistmode.'" method="POST">'."\n\t\t\t";
-        }else{
+	//if($ajax){
+        //    $Nav.=  '<form name="goToDate" onsubmit="return toDateHandler();" action="?action=goToDate&wlm='.$this->whitelistmode.'" method="POST">'."\n\t\t\t";
+        //}else{
             $Nav.=  '<form name="goToDate" action="?action=goToDate&wlm='.$this->whitelistmode.'" method="POST" >'."\n\t\t\t";
-        }
+        //}
         $Nav.=   $langs->trans("GoTo").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)."\n\t\t\t";;
 	$Nav.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-	if($ajax){
-            $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.getStartDate($this->date_start,1).'\',0);';
-	}else{
-            $Nav.=  '<a href="?&wlm='.$this->whitelistmode.'&dateStart='.getStartDate($this->date_start,1);
+	//if($ajax){
+        //    $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.getStartDate($this->date_start,1).'\',0);';
+	//}else{
+            $Nav.=  '<a href="?wlm='.$this->whitelistmode.'&dateStart='.getStartDate($this->date_start,1);
             
-        }
+        //}
         if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
         $Nav.=  '">'.$langs->trans("NextWeek").' &gt;&gt; </a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
         return $Nav;
