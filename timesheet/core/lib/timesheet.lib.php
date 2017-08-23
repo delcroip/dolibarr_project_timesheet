@@ -319,9 +319,9 @@ function getStartDate($datetime,$prevNext=0){
      ***************************/
     switch(TIMESHEET_APPROVAL_BY_WEEK){
 
-        case 2: //by Month      
-             $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
-             break;
+        case 2: //by Month   (FIXME/will be reactiated later when a layout solution would be found)   
+        //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
+        //     break;
         case 0: //by user   
         case 1: //by week
         default:
@@ -352,9 +352,9 @@ function getEndDate($datetime){
      ***************************/
     switch(TIMESHEET_APPROVAL_BY_WEEK){
 
-        case 2: //by Month
-             $endDate=strtotime('first day of next month midnight',$datetime); 
-            break;
+        case 2: //by Month (FIXME/will be reactiated later when a layout solution would be found)   
+           //  $endDate=strtotime('first day of next month midnight',$datetime); 
+           // break;
         case 0: //by user   
         case 1: //by week
         default:
