@@ -38,6 +38,9 @@ Timesheet view for project in Dolibarr
 - better ajax error when adding fav
 - add total to the otherAP
 - TS submission per month
+- non-project related TS 
+- simple attendance logging
+- Ressource planning  (planning for TL and PM + weekly summary by email to user)
 
 
 
