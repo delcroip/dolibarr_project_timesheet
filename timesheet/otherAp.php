@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define('TIMESHEET_MAX_TTA_APPROVAL',100);
-define('TIMESHEET_GROUP_OTHER_AP',"week");
+define('$conf->global->TIMESHEET_MAX_TTA_APPROVAL',100);
+define('$conf->global->TIMESHEET_GROUP_OTHER_AP',"week");
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
@@ -125,7 +125,7 @@ if($tasks=="")$tasks=0;
 $selectList=getSelectAps($subId,$tasks,$role);
 if($current>=count($selectList))$current=0;
 // number of TS to show
-$level=intval(TIMESHEET_MAX_TTA_APPROVAL);
+$level=intval($conf->global->TIMESHEET_MAX_TTA_APPROVAL);
 //define the offset
 $offset=0;
 /*
@@ -261,13 +261,13 @@ function getTStobeApproved($current,$selectList){ // FIXME use the list tab as i
 function getSelectAps($subId, $tasks, $role){
     if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
     global $db,$langs;
-   /* if(TIMESHEET_APPROVAL_BY_WEEK==1){
+   /* if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.date_start) as nb,ts.date_start as id,';
         $sql.=" DATE_FORMAT(ts.date_start,'".$langs->trans('Week')." %u (%m/%Y)') as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
 
-    }else if(TIMESHEET_APPROVAL_BY_WEEK==0){
+    }else if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==0){
         $sql='SELECT COUNT(ts.fk_userid) as nb,ts.fk_userid as id,';
         $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
@@ -281,7 +281,7 @@ function getSelectAps($subId, $tasks, $role){
     $sql="SELECT COUNT(ts.rowid) as nb, ";
   //  if(TIMESHEET_GROUP_OTHER_AP=="week"){
         $sql.=" CONCAT(ts.date_start, '-',pjt.`ref`) as id,";
-    if(TIMESHEET_APPROVAL_BY_WEEK==2){   
+    if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==2){   
         $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,' (%m/%Y) #')COLLATE utf8_unicode_ci) as label,";
     }else{
         $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,'- ".$langs->trans('Week')." %v (%m/%Y) #')COLLATE utf8_unicode_ci) as label,";

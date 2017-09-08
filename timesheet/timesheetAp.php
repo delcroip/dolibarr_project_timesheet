@@ -23,7 +23,7 @@
 //$_POST['dol_hide_leftmenu']=1;
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
-$apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
+$apflows=array_slice(str_split($conf->global->TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
 if($apflows[0]==0 && in_array('1',$apflows)){ // redirect to the correct page
     header("location:otherAp.php"); //TOBETESTED
 }
@@ -146,7 +146,7 @@ if(!empty($timestamp)){
 $timestamp=getToken();
 $subId=($user->admin)?'all':get_subordinate($db,$userId, 2,array($userId),'team');
 $selectList=getSelectAps($subId);
-$level=intval(TIMESHEET_MAX_APPROVAL);
+$level=intval($conf->global->TIMESHEET_MAX_APPROVAL);
 $offset=0;
 if( is_array($selectList)&& count($selectList)){
         if($current>=count($selectList))$current=0;
@@ -209,7 +209,7 @@ if(is_object($firstTimesheetUser)){
 
 
             if(!$print){
-                if(TIMESHEET_ADD_DOCS==1){
+                if($conf->global->TIMESHEET_ADD_DOCS==1){
                     dol_include_once('/core/class/html.formfile.class.php');
                     dol_include_once('/core/lib/files.lib.php');
                     $formfile=new FormFile($db);
@@ -253,7 +253,7 @@ if(is_object($firstTimesheetUser)){
 
 
 //Javascript
-$timetype=TIMESHEET_TIME_TYPE;
+$timetype=$conf->global->TIMESHEET_TIME_TYPE;
 //$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
 $Form .='updateAll();';
@@ -274,8 +274,8 @@ $db->close();
 function getTStobeApproved($level,$offset,$role,$subId){ // FIXME LEVEL ISSUE
 global $db;
 if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
-//$byWeek=(TIMESHEET_APPROVAL_BY_WEEK==1)?true:false;
-$byWeek=TIMESHEET_APPROVAL_BY_WEEK;
+//$byWeek=($conf->global->TIMESHEET_APPROVAL_BY_WEEK==1)?true:false;
+$byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
         //if($role='team')
        
 
@@ -400,7 +400,7 @@ function getSelectAps($subId){
     $sql='';
     $sqlWhere.=' WHERE(ts.status="SUBMITTED" OR ts.status="CHALLENGED")';
     if($subId!='all')$sqlWhere.=' AND ts.fk_userid in ('.implode(',',$subId).')';
-    if(TIMESHEET_APPROVAL_BY_WEEK==1){
+    if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.date_start) as nb,ts.date_start as id,';
         $sql.=" DATE_FORMAT(ts.date_start,'".$langs->trans('Week')." %u (%m/%Y)') as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
@@ -408,7 +408,7 @@ function getSelectAps($subId){
         $sql.=$sqlWhere;
         $sql.=' group by ts.date_start ORDER BY ts.date_start DESC'; 
 
-    }else if(TIMESHEET_APPROVAL_BY_WEEK==0){
+    }else if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==0){
         $sql='SELECT COUNT(ts.fk_userid) as nb,ts.fk_userid as id,';
         $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
@@ -446,13 +446,13 @@ function getSelectAps($subId){
                 $j=1;
                 $nb=$obj->nb;
                 // split the nb in x line to avoid going over the max approval
-                while($nb>TIMESHEET_MAX_APPROVAL){
-                    $list[]=array("id"=>$obj->id,"label"=>$obj->label.' ('.$j."/".ceil($obj->nb/TIMESHEET_MAX_APPROVAL).')',"count"=>TIMESHEET_MAX_APPROVAL);
-                    $nb-=TIMESHEET_MAX_APPROVAL;
+                while($nb>$conf->global->TIMESHEET_MAX_APPROVAL){
+                    $list[]=array("id"=>$obj->id,"label"=>$obj->label.' ('.$j."/".ceil($obj->nb/$conf->global->TIMESHEET_MAX_APPROVAL).')',"count"=>$conf->global->TIMESHEET_MAX_APPROVAL);
+                    $nb-=$conf->global->TIMESHEET_MAX_APPROVAL;
                     $j++;
                 }
                 // at minimum a row shoud gnerate one option
-                $list[]=array("id"=>$obj->id,"label"=>$obj->label.' '.(($obj->nb>TIMESHEET_MAX_APPROVAL)?'('.$j.'/'.ceil($obj->nb/TIMESHEET_MAX_APPROVAL).')':''),"count"=>$nb);
+                $list[]=array("id"=>$obj->id,"label"=>$obj->label.' '.(($obj->nb>$conf->global->TIMESHEET_MAX_APPROVAL)?'('.$j.'/'.ceil($obj->nb/$conf->global->TIMESHEET_MAX_APPROVAL).')':''),"count"=>$nb);
             }
             $i++;
         }

@@ -88,10 +88,10 @@ class Task_time_approval extends Task
          * Submitted should appear when no approval action is started: underapproval, Approved, challenged, rejected
          * 
          */
-        self::$statusColor=array('PLANNED'=>TIMESHEET_COL_DRAFT,'DRAFT'=>TIMESHEET_COL_DRAFT,'SUBMITTED'=>TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>TIMESHEET_COL_REJECTED,'APPROVED'=>TIMESHEET_COL_APPROVED,'INVOICED'=>TIMESHEET_COL_APPROVED,'CANCELLED'=>TIMESHEET_COL_CANCELLED,'REJECTED'=>TIMESHEET_COL_REJECTED);
+        self::$statusColor=array('PLANNED'=>$conf->global->TIMESHEET_COL_DRAFT,'DRAFT'=>$conf->global->TIMESHEET_COL_DRAFT,'SUBMITTED'=>$conf->global->TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>$conf->global->TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>$conf->global->TIMESHEET_COL_REJECTED,'APPROVED'=>$conf->global->TIMESHEET_COL_APPROVED,'INVOICED'=>$conf->global->TIMESHEET_COL_APPROVED,'CANCELLED'=>$conf->global->TIMESHEET_COL_CANCELLED,'REJECTED'=>$conf->global->TIMESHEET_COL_REJECTED);
         self::$statusList=array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=>'INVOICED',4=>'APPROVED',5=>'SUBMITTED',6=>'UNDERAPPROVAL',7=>'CHALLENGED',8=>'REJECTED');
         self::$roleList=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
-        self::$apflows=str_split(TIMESHEET_APPROVAL_FLOWS); //remove the leading _
+        self::$apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS); //remove the leading _
     
     }
     public function __construct($db,$taskId=0,$id=0) 
@@ -657,10 +657,10 @@ class Task_time_approval extends Task
         
     public function getTaskInfo()
     {
-        $Company=strpos(TIMESHEET_HEADERS, 'Company')===0;
-        $taskParent=strpos(TIMESHEET_HEADERS, 'TaskParent')>0;
+        $Company=strpos($conf->global->TIMESHEET_HEADERS, 'Company')===0;
+        $taskParent=strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')>0;
         $sql ='SELECT p.rowid,p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo, pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective';
-        if(TIMESHEET_HIDE_REF==1){
+        if($conf->global->TIMESHEET_HIDE_REF==1){
             $sql .= ',p.title as title, pt.label as label';
             if($taskParent)$sql .= ',pt.fk_projet_task_parent,ptp.label as taskParentLabel';	        	
         }else{
@@ -818,9 +818,9 @@ class Task_time_approval extends Task
        if(($dayelapsed<1)||empty($headers))
            return '<tr>ERROR: wrong parameters for getFormLine'.$dayelapsed.'|'.$headers.'</tr>';
       if($tsUserId!=0)$this->userId=$tsUserId;
-    $timetype=TIMESHEET_TIME_TYPE;
-    $dayshours=TIMESHEET_DAY_DURATION;
-    $hidezeros=TIMESHEET_HIDE_ZEROS;
+    $timetype=$conf->global->TIMESHEET_TIME_TYPE;
+    $dayshours=$conf->global->TIMESHEET_DAY_DURATION;
+    $hidezeros=$conf->global->TIMESHEET_HIDE_ZEROS;
     $hidden=false;
     $status=$this->status;
 
@@ -840,7 +840,7 @@ class Task_time_approval extends Task
         if($status=='INVOICED')$openOveride=-1; // once invoice it should not change
         $isOpenSatus=($openOveride==1) || ($status=='DRAFT' || $status=='CANCELLED'|| $status=='REJECTED' || $status=='PLANNED');
         if($openOveride==-1)$isOpenSatus=false;
-        $opendays=str_split(TIMESHEET_OPEN_DAYS);
+        $opendays=str_split($conf->global->TIMESHEET_OPEN_DAYS);
     
      /*
       * info section
@@ -865,7 +865,7 @@ class Task_time_approval extends Task
                  $htmlTitle.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
                  break;
              case 'Tasks':
-                 if($isOpenSatus && TIMESHEET_WHITELIST==1)$htmlTitle.='<img id = "'.$this->listed.'" src="img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick=favOnOff(event,'.$this->fk_project.','.$this->id.')>  ';
+                 if($isOpenSatus && $conf->global->TIMESHEET_WHITELIST==1)$htmlTitle.='<img id = "'.$this->listed.'" src="img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick=favOnOff(event,'.$this->fk_project.','.$this->id.')>  ';
                  $htmlTitle.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'"> '.$this->description.'</a>';
                  break;
              case 'DateStart':
@@ -1005,9 +1005,9 @@ class Task_time_approval extends Task
  *//*
     public function getXML( $startDate)
     {
-    $timetype=TIMESHEET_TIME_TYPE;
-    $dayshours=TIMESHEET_DAY_DURATION;
-    $hidezeros=TIMESHEET_HIDE_ZEROS;
+    $timetype=$conf->global->TIMESHEET_TIME_TYPE;
+    $dayshours=$conf->global->TIMESHEET_DAY_DURATION;
+    $hidezeros=$conf->global->TIMESHEET_HIDE_ZEROS;
     $xml= "<task id=\"{$this->id}\" >";
     //title section
     $xml.="<Tasks id=\"{$this->id}\">{$this->description} </Tasks>";
@@ -1265,9 +1265,9 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
     if(is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $wkload){		
         $item=$this->tasklist[$dayKey];
         
-        if(TIMESHEET_TIME_TYPE=="days")
+        if($conf->global->TIMESHEET_TIME_TYPE=="days")
         {
-           $duration=$wkload*TIMESHEET_DAY_DURATION*3600;
+           $duration=$wkload*$conf->global->TIMESHEET_DAY_DURATION*3600;
         }else
         {
          $durationTab=date_parse($wkload);

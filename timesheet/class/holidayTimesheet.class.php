@@ -24,7 +24,7 @@
          *   4) CancelCP
          *   5) RefuseCP
          */
-$statusColor=array('1'=>TIMESHEET_COL_DRAFT,'2'=>TIMESHEET_COL_SUBMITTED,'3'=>TIMESHEET_COL_APPROVED,'4'=>TIMESHEET_COL_CANCELLED,'5'=>TIMESHEET_COL_REJECTED);
+$statusColor=array('1'=>$conf->global->TIMESHEET_COL_DRAFT,'2'=>$conf->global->TIMESHEET_COL_SUBMITTED,'3'=>$conf->global->TIMESHEET_COL_APPROVED,'4'=>$conf->global->TIMESHEET_COL_CANCELLED,'5'=>$conf->global->TIMESHEET_COL_REJECTED);
 
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
@@ -146,8 +146,8 @@ class holidayTimesheet extends Holiday
         
         global $langs;
         global $statusColor;
-        $timetype=TIMESHEET_TIME_TYPE;
-        $dayshours=TIMESHEET_DAY_DURATION;
+        $timetype=$conf->global->TIMESHEET_TIME_TYPE;
+        $dayshours=$conf->global->TIMESHEET_DAY_DURATION;
         if(!is_array($this->holidaylist))
            return '<tr>ERROR: wrong parameters for getFormLine'.empty($startDate).'|'.empty($stopDate).'|'.empty($headers).'</tr>';       
         if(!$this->holidayPresent) // don't show the holiday line if nothing present
@@ -166,7 +166,7 @@ class holidayTimesheet extends Holiday
             $value=($timetype=="hours")?date('H:i',mktime(0,0,($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             
             $html .='<th style="margin: 0;padding: 0;">';
-            if(TIMESHEET_ADD_HOLIDAY_TIME==1)$html .='<input type="hidden" class="time4day['.$tsUserId.']['.$i.']"  value="'.$value.'">';
+            if($conf->global->TIMESHEET_ADD_HOLIDAY_TIME==1)$html .='<input type="hidden" class="time4day['.$tsUserId.']['.$i.']"  value="'.$value.'">';
             $html .='<ul id="holiday['.$i.']" class="listHoliday" >';
                  
                 $html .='<li id="holiday['.$i.'][0]" class="listItemHoliday" ><a ';

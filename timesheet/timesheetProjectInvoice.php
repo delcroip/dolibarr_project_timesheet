@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /*
-define('TIMESHEET_INVOICE_METHOD','user');
-define('TIMESHEET_INVOICE_TASKTIME','user');
-define('TIMESHEET_INVOICE_SERVICE','1');
-define('TIMESHEET_INVOICE_SHOW_TASK','1');
-define('TIMESHEET_INVOICE_SHOW_USER','1');
+define('$conf->global->TIMESHEET_INVOICE_METHOD','user');
+define('$conf->global->TIMESHEET_INVOICE_TASKTIME','user');
+define('$conf->global->TIMESHEET_INVOICE_SERVICE','1');
+define('$conf->global->TIMESHEET_INVOICE_SHOW_TASK','1');
+define('$conf->global->TIMESHEET_INVOICE_SHOW_USER','1');
 */
 //load class
 include 'core/lib/includeMain.lib.php';
@@ -185,8 +185,8 @@ if(empty($month) || empty($year) || empty($projectId)){
 
                             $details='';
                             $result ='';
-                            if(($tId!='any') && TIMESHEET_INVOICE_SHOW_TASK)$details="\n".$service['taskLabel'];
-                            if(($uId!='any')&& TIMESHEET_INVOICE_SHOW_USER)$details.="\n".$service['userName'];
+                            if(($tId!='any') && $conf->global->TIMESHEET_INVOICE_SHOW_TASK)$details="\n".$service['taskLabel'];
+                            if(($uId!='any')&& $conf->global->TIMESHEET_INVOICE_SHOW_USER)$details.="\n".$service['userName'];
 
                             if($service['Service']>0){
                                  $product = new Product($db);
@@ -252,7 +252,7 @@ $edit=0;
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
             $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans('generalInvoiceProjectParam').'</th><th>';    
-            $invoicingMethod=TIMESHEET_INVOICE_METHOD;
+            $invoicingMethod=$conf->global->TIMESHEET_INVOICE_METHOD;
             $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Project').'</th><th  >';
             //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
             $ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
@@ -270,7 +270,7 @@ $edit=0;
 //cust list
             $Form .='<tr class="impair"><th  align="left">'.$langs->trans('Customer').'</th><th  align="left">'.$form->select_company($socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1).'</th></tr>';
 //all ts or only approved
-           $ts2Invoice=TIMESHEET_INVOICE_TASKTIME;
+           $ts2Invoice=$conf->global->TIMESHEET_INVOICE_TASKTIME;
             $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('TimesheetToInvoice').'</th><th align="left"><input type="radio" name="ts2Invoice" value="approved" ';
             $Form .=($ts2Invoice=="approved"?"checked":"").'> '.$langs->trans("approvedOnly").' ';
             $Form .='<input type="radio" name="ts2Invoice" value="all" ';
@@ -336,7 +336,7 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][userName]" value="'.$userName.'">';
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskLabel]"  value="'. $taskLabel.'">';
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskTimeList]"  value="'. $tasktimelist.'">';
-    $defaultService=TIMESHEET_INVOICE_SERVICE; 
+    $defaultService=$conf->global->TIMESHEET_INVOICE_SERVICE; 
     $addchoices=array('-999'=> $langs->transnoentitiesnoconv('not2invoice'));
     $ajaxNbChar=$conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
     $html.='</th><th >'.select_generic('product', 'rowid','userTask['.$user.']['.$task.'][Service]','ref','label',$defaultService,$separator=' - ',$sqlTail=' tosell=1 AND fk_product_type=1', $selectparam='',$addchoices,'',$ajaxNbChar).'</th>';

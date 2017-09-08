@@ -51,7 +51,7 @@ $toDateyear                 = GETPOST('toDateyear');
 
 $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
-if($whitelistmode=='')$whitelistmode=TIMESHEET_WHITELIST_MODE;
+if($whitelistmode=='')$whitelistmode=$conf->global->TIMESHEET_WHITELIST_MODE;
 
 $userid=  is_object($user)?$user->id:$user;
 $task_timesheet= new Task_timesheet($db,$userid);
@@ -173,7 +173,7 @@ if(!empty($timestamp)){
 }
 $task_timesheet->fetchAll($dateStart,$whitelistmode);
 
-if(TIMESHEET_ADD_DOCS){
+if($conf->global->TIMESHEET_ADD_DOCS){
     dol_include_once('/core/class/html.formfile.class.php');
     dol_include_once('/core/lib/files.lib.php');
     $modulepart = 'timesheet';
@@ -212,7 +212,7 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 $ajax=false;
 $Form =$task_timesheet->getHTMLNavigation($optioncss,$ajax);
 $Form .=$task_timesheet->getHTMLFormHeader($ajax);
-     If(TIMESHEET_WHITELIST==1){
+     If($conf->global->TIMESHEET_WHITELIST==1){
         $Form.= '<div class="tabs" data-role="controlgroup" data-type="horizontal"  >';
         $Form.= '  <div '.(($task_timesheet->whitelistmode==2)?'id="defaultOpen"':'').' class="inline-block tabsElem" onclick="showFavoris(event, \'All\')"><a  href="javascript:void(0);"  class="tabunactive tab inline-block" data-role="button">'.$langs->trans('All').'</a></div>';
         $Form.='  <div '.(($task_timesheet->whitelistmode==0)?'id="defaultOpen"':'').' class="inline-block tabsElem" onclick="showFavoris(event, \'whitelist\')"><a  href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Favoris').'</a></div>';
@@ -233,7 +233,7 @@ $Form .= "\n\t".'</script>'."\n";
 // $Form .='</div>';//TimesheetPage
 print $Form;
 //add attachement
-if(TIMESHEET_ADD_DOCS==1){
+if($conf->global->TIMESHEET_ADD_DOCS==1){
         
         $object=$task_timesheet;
         $modulepart = 'timesheet';

@@ -123,12 +123,12 @@ if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected'])
         foreach($projectList as $project){
         $querryRes.=$project->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            TIMESHEET_DAY_DURATION,$exportfriendly);
+            $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
         }
     }else{
     $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            TIMESHEET_DAY_DURATION,$exportfriendly);
+            $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
     }
     
 }else

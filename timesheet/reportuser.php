@@ -137,12 +137,12 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         foreach($userList as $userSt){
         $querryRes.=$userSt->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            TIMESHEET_DAY_DURATION,$exportfriendly);
+            $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
         }
     }else{
         $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            TIMESHEET_DAY_DURATION,$exportfriendly);
+            $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
     }
     
 }else

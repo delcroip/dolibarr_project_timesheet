@@ -470,7 +470,7 @@ switch ($action) {
                 }
 
                   //if (isset($formProject)){  
-                        $ajaxNbChar=intval(TIMESHEET_SEARCHBOX);
+                        $ajaxNbChar=intval($conf->global->TIMESHEET_SEARCHBOX);
                         print select_generic('projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',$formTaskWhere,'',NULL,$formTaskJoin,$ajaxNbChar);
                   //}else{
                   //      print '<select class="flat minwidth200" id="Projecttask" name="Projecttask"></select>';
@@ -746,7 +746,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '</td>';
 //Search field forproject_task
 	print '<td class="liste_titre" colspan="1" >';
-        $ajaxNbChar=intval(TIMESHEET_SEARCHBOX);
+        $ajaxNbChar=intval($conf->global->TIMESHEET_SEARCHBOX);
         print select_generic('projet_task','rowid','ls_project_task','ref','label',$ls_project_task ,' - ','', '', NULL,'', $ajaxNbChar);
 	print '</td>';
 //Search field forsubtask

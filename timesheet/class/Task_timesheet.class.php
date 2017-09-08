@@ -29,8 +29,8 @@ require_once 'class/timesheetwhitelist.class.php';
 //require_once 'core/lib/timesheet.lib.php';
 //dol_include_once('/timesheet/class/projectTimesheet.class.php');
 //require_once './projectTimesheet.class.php';
-//define('TIMESHEET_BC_FREEZED','909090');
-//define('TIMESHEET_BC_VALUE','f0fff0');
+//define('$conf->global->TIMESHEET_BC_FREEZED','909090');
+//define('$conf->global->TIMESHEET_BC_VALUE','f0fff0');
 class Task_timesheet extends CommonObject
 {
     //common
@@ -82,7 +82,7 @@ class Task_timesheet extends CommonObject
         //$this->holidays=array();
         $this->user=$user;
         $this->userId= ($userId==0)?(is_object($user)?$user->id:$user):$userId;
-        $this->headers=explode('||', TIMESHEET_HEADERS);
+        $this->headers=explode('||', $conf->global->TIMESHEET_HEADERS);
         $this->get_userName();
         
     }
@@ -516,7 +516,7 @@ class Task_timesheet extends CommonObject
     *  @return     string                                       result
     */    
     function fetchAll($startdate,$whitelistmode=false){
-        $this->whitelistmode=(is_numeric($whitelistmode)&& !empty($whitelistmode) )?$whitelistmode:TIMESHEET_WHITELIST_MODE;
+        $this->whitelistmode=(is_numeric($whitelistmode)&& !empty($whitelistmode) )?$whitelistmode:$conf->global->TIMESHEET_WHITELIST_MODE;
         $this->date_start=  getStartDate($startdate);     
         $this->ref=$this->date_start.'_'.$this->userId;
         $this->date_end= getEndDate($this->date_start);
@@ -611,7 +611,7 @@ function saveInSession(){
 
     //end approval
     $sql.=" WHERE (fk_c_type_contact='181' OR fk_c_type_contact='180') AND fk_socpeople='".$userid."' ";
-    if(TIMESHEET_HIDE_DRAFT=='1'){
+    if($conf->global->TIMESHEET_HIDE_DRAFT=='1'){
          $sql.=' AND prj.fk_statut<>"0" ';
     }
     $sql.=' AND (prj.datee>="'.$this->db->idate($datestart).'" OR prj.datee IS NULL)';
@@ -890,7 +890,7 @@ function getHTMLHeader($ajax=false,$week=0){
  //        }
          $html.=">".$langs->trans($value)."</th>\n";
      }
-    $opendays=str_split(TIMESHEET_OPEN_DAYS);
+    $opendays=str_split($conf->global->TIMESHEET_OPEN_DAYS);
     $weeklength=round(($this->date_end-$this->date_start)/SECINDAY);
     for ($i=0;$i<$weeklength;$i++)
     {
@@ -1205,7 +1205,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
 function GetTimeSheetXML()
 {
     global $langs;
-    $xml.= "<timesheet dateStart=\"{$this->date_start}\" timestamp=\"{$this->timestamp}\" timetype=\"".TIMESHEET_TIME_TYPE."\"";
+    $xml.= "<timesheet dateStart=\"{$this->date_start}\" timestamp=\"{$this->timestamp}\" timetype=\"".$conf->global->TIMESHEET_TIME_TYPE."\"";
     $xml.=' nextWeek="'.date('Y\WW',strtotime($this->date_start."+3 days +1 week")).'" prevWeek="'.date('Y\WW',strtotime($this->date_start."+3 days -1 week")).'">';
     //error handling
     $xml.=getEventMessagesXML();

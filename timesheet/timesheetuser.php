@@ -289,7 +289,7 @@ if ($cancel){
             }    
             
         //document handling
-        if(TIMESHEET_ADD_DOCS && $id>0){
+        if($conf->global->TIMESHEET_ADD_DOCS && $id>0){
         $object->fetch($id);
         $ref=dol_sanitizeFileName($object->ref);
         $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;

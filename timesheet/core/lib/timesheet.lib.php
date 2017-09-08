@@ -317,7 +317,7 @@ function getStartDate($datetime,$prevNext=0){
     /**************************
      * calculate the start date form php date
      ***************************/
-    switch(TIMESHEET_APPROVAL_BY_WEEK){
+    switch($conf->global->TIMESHEET_APPROVAL_BY_WEEK){
 
         case 2: //by Month   (FIXME/will be reactiated later when a layout solution would be found)   
         //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
@@ -350,7 +350,7 @@ function getEndDate($datetime){
     /**************************
      * calculate the end date form php date
      ***************************/
-    switch(TIMESHEET_APPROVAL_BY_WEEK){
+    switch($conf->global->TIMESHEET_APPROVAL_BY_WEEK){
 
         case 2: //by Month (FIXME/will be reactiated later when a layout solution would be found)   
            //  $endDate=strtotime('first day of next month midnight',$datetime); 
@@ -424,7 +424,7 @@ function showTimesheetApTabs($role){
 global $langs;
 $roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
 $rolesUrl=array(0=> 'timesheetAp.php?role=team', 1=> 'otherAp.php?role=project',2=>'otherAp.php?role=customer',3=>'otherAp.php?role=supplier',4=>'otherAp.php?role=other');
-$apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
+$apflows=array_slice(str_split($conf->global->TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
     foreach($roles as $key => $cur_role){
         if($apflows[$key]==1){
             echo '  <div class="inline-block tabsElem"><a  href="'.$rolesUrl[$key].'&leftmenu=timesheet" class="';

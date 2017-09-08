@@ -19,13 +19,13 @@
 include '../lib/includeMain.lib.php';
 //global $langs;
 $langs->load('timesheet@timesheet');
-//define('TIMESHEET_DAY_MAX_DURATION','12');
+//define('$conf->global->TIMESHEET_DAY_MAX_DURATION','12');
 header('Content-Type: text/javascript');
 
-echo 'var day_max_hours ='.TIMESHEET_DAY_MAX_DURATION.";\n"; 
-echo 'var day_hours ='.TIMESHEET_DAY_DURATION.";\n";
-echo 'var time_type ="'.TIMESHEET_TIME_TYPE."\";\n";
-//echo 'var hide_zero ='.TIMESHEET_HIDE_ZEROS.";\n";
+echo 'var day_max_hours ='.$conf->global->TIMESHEET_DAY_MAX_DURATION.";\n"; 
+echo 'var day_hours ='.$conf->global->TIMESHEET_DAY_DURATION.";\n";
+echo 'var time_type ="'.$conf->global->TIMESHEET_TIME_TYPE."\";\n";
+//echo 'var hide_zero ='.$conf->global->TIMESHEET_HIDE_ZEROS.";\n";
 echo 'var err_msg_max_hours_exceded ="'.$langs->transnoentitiesnoconv('errMsgMaxHoursExceded')."\";\n"; //FIXTRAD 
 echo 'var wng_msg_hours_exceded ="'.$langs->transnoentitiesnoconv('wngMsgHoursExceded')."\";\n"; //FIXTRAD 
 ?>
