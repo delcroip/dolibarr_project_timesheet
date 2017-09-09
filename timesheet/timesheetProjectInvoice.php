@@ -328,7 +328,7 @@ function getProjectCustomer($projectID){
  * Function to print the line to chose between a predefined service or an ad-hoc one
  */
 function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$seller,$byer){
-    global $form,$langs;
+    global $form,$langs,$conf;
     $userName=($user=='any')?(' - '):print_generic('user','rowid',$user,'lastname','firstname',' ');
     $taskLabel=($task=='any')?(' - '):print_generic('projet_task','rowid',$task,'ref','label',' ');
     $html='<tr class="'.$class.'"><th align="left" width="20%">'.$userName;

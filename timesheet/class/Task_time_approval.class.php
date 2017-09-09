@@ -88,6 +88,7 @@ class Task_time_approval extends Task
          * Submitted should appear when no approval action is started: underapproval, Approved, challenged, rejected
          * 
          */
+        global $conf;
         self::$statusColor=array('PLANNED'=>$conf->global->TIMESHEET_COL_DRAFT,'DRAFT'=>$conf->global->TIMESHEET_COL_DRAFT,'SUBMITTED'=>$conf->global->TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>$conf->global->TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>$conf->global->TIMESHEET_COL_REJECTED,'APPROVED'=>$conf->global->TIMESHEET_COL_APPROVED,'INVOICED'=>$conf->global->TIMESHEET_COL_APPROVED,'CANCELLED'=>$conf->global->TIMESHEET_COL_CANCELLED,'REJECTED'=>$conf->global->TIMESHEET_COL_REJECTED);
         self::$statusList=array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=>'INVOICED',4=>'APPROVED',5=>'SUBMITTED',6=>'UNDERAPPROVAL',7=>'CHALLENGED',8=>'REJECTED');
         self::$roleList=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
@@ -656,7 +657,7 @@ class Task_time_approval extends Task
         
         
     public function getTaskInfo()
-    {
+    {global $conf;
         $Company=strpos($conf->global->TIMESHEET_HEADERS, 'Company')===0;
         $taskParent=strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')>0;
         $sql ='SELECT p.rowid,p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo, pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective';
@@ -809,7 +810,7 @@ class Task_time_approval extends Task
  */
        public function getFormLine( $lineNumber,$headers,$tsUserId=0,$openOveride=0)
     {
-           global $langs;
+           global $langs,$conf;
            // change the time to take all the TS per day
 
            $dayelapsed=ceil(($this->date_end_approval-$this->date_start_approval)/SECINDAY);
@@ -1248,7 +1249,7 @@ Public function getDuration(){ //FIXME
  *  @return     int                                                       1 => succes , 0 => Failure
  */
 function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status,$note='')
-{
+{global $conf;
     $ret=0;
     $noteUpdate=0;
 	dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);

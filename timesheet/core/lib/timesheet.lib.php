@@ -303,7 +303,7 @@ function getEventMessageXML($messages,$style='ok'){
  *  @return     string                                   
  */
 function getStartDate($datetime,$prevNext=0){
-   
+   global $conf;
     // use the day, month, year value
      $startDate=null;
         // split week of the current week
@@ -344,8 +344,9 @@ function getStartDate($datetime,$prevNext=0){
  *  @return     string                                   
  */
 function getEndDate($datetime){
-    // use the day, month, year value
-     $endDate=null;
+    global $conf;
+// use the day, month, year value
+    $endDate=null;
 
     /**************************
      * calculate the end date form php date
@@ -422,6 +423,7 @@ function parseDate($day=0,$month=0,$year=0,$date=0){
  */
 function showTimesheetApTabs($role){
 global $langs;
+global $conf;
 $roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
 $rolesUrl=array(0=> 'timesheetAp.php?role=team', 1=> 'otherAp.php?role=project',2=>'otherAp.php?role=customer',3=>'otherAp.php?role=supplier',4=>'otherAp.php?role=other');
 $apflows=array_slice(str_split($conf->global->TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _

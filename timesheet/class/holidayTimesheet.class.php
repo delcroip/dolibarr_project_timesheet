@@ -146,6 +146,7 @@ class holidayTimesheet extends Holiday
         
         global $langs;
         global $statusColor;
+        global $conf;
         $timetype=$conf->global->TIMESHEET_TIME_TYPE;
         $dayshours=$conf->global->TIMESHEET_DAY_DURATION;
         if(!is_array($this->holidaylist))

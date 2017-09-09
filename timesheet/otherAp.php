@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define('$conf->global->TIMESHEET_MAX_TTA_APPROVAL',100);
-define('$conf->global->TIMESHEET_GROUP_OTHER_AP',"week");
+define('TIMESHEET_MAX_TTA_APPROVAL',100);
+define('TIMESHEET_GROUP_OTHER_AP',"week");
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
@@ -125,7 +125,7 @@ if($tasks=="")$tasks=0;
 $selectList=getSelectAps($subId,$tasks,$role);
 if($current>=count($selectList))$current=0;
 // number of TS to show
-$level=intval($conf->global->TIMESHEET_MAX_TTA_APPROVAL);
+$level=intval(TIMESHEET_MAX_TTA_APPROVAL);
 //define the offset
 $offset=0;
 /*
@@ -260,7 +260,7 @@ function getTStobeApproved($current,$selectList){ // FIXME use the list tab as i
  */
 function getSelectAps($subId, $tasks, $role){
     if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
-    global $db,$langs;
+    global $db,$langs,$conf;
    /* if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.date_start) as nb,ts.date_start as id,';
         $sql.=" DATE_FORMAT(ts.date_start,'".$langs->trans('Week')." %u (%m/%Y)') as label";

@@ -272,7 +272,7 @@ $db->close();
     *  @return   array(task_timesheet)                     result
     */    
 function getTStobeApproved($level,$offset,$role,$subId){ // FIXME LEVEL ISSUE
-global $db;
+global $db,$conf;
 if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
 //$byWeek=($conf->global->TIMESHEET_APPROVAL_BY_WEEK==1)?true:false;
 $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
@@ -396,7 +396,7 @@ function getHTMLNavigation($optioncss, $selectList,$current=0){
  */
 function getSelectAps($subId){
     if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
-    global $db,$langs;
+    global $db,$langs,$conf;
     $sql='';
     $sqlWhere.=' WHERE(ts.status="SUBMITTED" OR ts.status="CHALLENGED")';
     if($subId!='all')$sqlWhere.=' AND ts.fk_userid in ('.implode(',',$subId).')';

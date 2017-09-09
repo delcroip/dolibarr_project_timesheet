@@ -20,10 +20,8 @@
 
 -- this table is used to store the timesheet favorite
 
-ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT llx_ptta_pttan_id FOREIGN KEY (fk_project_task_time_approval_next) REFERENCES llx_project_task_time_approval(rowid) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT llx_ptta_pttap_id FOREIGN KEY (fk_project_task_time_approval_prev) REFERENCES llx_project_task_time_approval(rowid) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT fk_ptta_user_ida  FOREIGN KEY (fk_user_approval) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT fk_ptta_user_idc  FOREIGN KEY (fk_user_creation ) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT fk_ptta_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT fk_ptta_user_id  FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT fk_ptta_task_id  FOREIGN KEY (fk_task) REFERENCES llx_projet_task(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE `llx_project_task_time_approval` ADD CONSTRAINT fk_ptta_task_id  FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;

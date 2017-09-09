@@ -77,7 +77,7 @@ class Task_timesheet extends CommonObject
      */
     function __construct($db,$userId=0)
     {
-        global $user;
+        global $user,$conf;
         $this->db = $db;
         //$this->holidays=array();
         $this->user=$user;
@@ -516,6 +516,7 @@ class Task_timesheet extends CommonObject
     *  @return     string                                       result
     */    
     function fetchAll($startdate,$whitelistmode=false){
+        global $conf;
         $this->whitelistmode=(is_numeric($whitelistmode)&& !empty($whitelistmode) )?$whitelistmode:$conf->global->TIMESHEET_WHITELIST_MODE;
         $this->date_start=  getStartDate($startdate);     
         $this->ref=$this->date_start.'_'.$this->userId;
@@ -876,7 +877,7 @@ function getHTML($ajax=false,$Approval=false){ // fixme shows the month by week
   *  @return     string                                                   html code
  */
 function getHTMLHeader($ajax=false,$week=0){
-     global $langs;
+     global $langs,$conf;
      
 
     $html.="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
@@ -1204,7 +1205,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
  */
 function GetTimeSheetXML()
 {
-    global $langs;
+    global $langs,$conf;
     $xml.= "<timesheet dateStart=\"{$this->date_start}\" timestamp=\"{$this->timestamp}\" timetype=\"".$conf->global->TIMESHEET_TIME_TYPE."\"";
     $xml.=' nextWeek="'.date('Y\WW',strtotime($this->date_start."+3 days +1 week")).'" prevWeek="'.date('Y\WW',strtotime($this->date_start."+3 days -1 week")).'">';
     //error handling
