@@ -307,13 +307,13 @@ function getStartDate($datetime,$prevNext=0){
     // use the day, month, year value
      $startDate=null;
         // split week of the current week
-   $prefix='this';
+  /* $prefix='this';
    if($prevNext==1){
         $prefix='next';
    }else if ($prevNext==-1){
        $prefix='previous';
    }
- 
+ */
     /**************************
      * calculate the start date form php date
      ***************************/
@@ -325,14 +325,21 @@ function getStartDate($datetime,$prevNext=0){
         case 0: //by user   
         case 1: //by week
         default:
-            $day=date('d',$datetime);
-            $dayOfWeek=date('N',$datetime);
-            //$dayInMonth=date('t',$datetime);
-            if ($day<$dayOfWeek){
-                $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
-            }else{
-                $startDate=  strtotime('monday '.$prefix.' week midnight',$datetime  ); 
-            } 
+
+                if($prevNext==1){
+                    $startDateMonth=  strtotime('first day of next month midnight',$datetime  ); 
+                    $startDateWeek=  strtotime('monday next week midnight',$datetime  ); 
+                    $startDate=MIN( $startDateMonth, $startDateWeek);
+                }else if($prevNext==0){
+                    $startDateMonth=  strtotime('first day of this month midnight',$datetime  ); 
+                    $startDateWeek=  strtotime('monday this week midnight',$datetime  ); 
+                    $startDate=MAX( $startDateMonth, $startDateWeek);
+                }else if($prevNext==-1){
+                    $startDateMonth=  strtotime('first day of this month midnight',$datetime  ); 
+                    $startDateWeek=  strtotime('monday this week midnight',$datetime  ); 
+                    $startDatePrevWeek=  strtotime('monday previous week midnight',$datetime  ); 
+                    $startDate=( $startDateMonth>$startDateWeek)?$startDateWeek:$startDatePrevWeek;
+                }
             break;
     }
     return $startDate;

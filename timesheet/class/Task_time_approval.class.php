@@ -813,7 +813,7 @@ class Task_time_approval extends Task
            global $langs,$conf;
            // change the time to take all the TS per day
 
-           $dayelapsed=ceil(($this->date_end_approval-$this->date_start_approval)/SECINDAY);
+           $dayelapsed=round(($this->date_end_approval-$this->date_start_approval)/SECINDAY);
   
    
        if(($dayelapsed<1)||empty($headers))
@@ -880,7 +880,7 @@ class Task_time_approval extends Task
                  break;
              case 'Progress':
                  $htmlTitle .=$this->parseTaskTime($this->duration_effective).'/';
-                if($this->planned_workload)
+                if($this->planned_workload>0)
                 {
                      $htmlTitle .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
                 }else{
