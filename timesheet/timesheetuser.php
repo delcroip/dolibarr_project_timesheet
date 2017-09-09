@@ -169,7 +169,8 @@ if ($cancel){
         //retrive the data
         $object->userId=GETPOST('Userid');
 		$object->date_start=dol_mktime(0, 0, 0,GETPOST('startDatedatemonth'),GETPOST('startDatedateday'),GETPOST('startDatedateyear'));
-		$object->status=GETPOST('Status');
+		$object->date_end=dol_mktime(0, 0, 0,GETPOST('dateendmonth'),GETPOST('dateendday'),GETPOST('dateendyear'));
+                $object->status=GETPOST('Status');
 		$object->target=GETPOST('Target');
 		$object->project_tasktime_list=GETPOST('Projecttasktimelist');
 		$object->user_approval=GETPOST('Userapproval');
@@ -410,6 +411,21 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
+// show the field date_end
+
+		print '<td class="fieldrequired">'.$langs->trans('dateend').' </td><td>';
+		if($edit==1){
+		if($new==1){
+			print $form->select_date(-1,'dateend');
+		}else{
+			print $form->select_date($object->date_end,'dateend');
+		}
+		}else{
+			print dol_print_date($object->date_end,'day');
+		}
+		print "</td>";
+		print "\n</tr>\n";
+		print "<tr>\n";
 
 // show the field status
 
@@ -623,6 +639,7 @@ switch ($action) {
     
 		$sql.=' t.fk_userid,';
 		$sql.=' t.date_start,';
+                $sql.=' t.date_end,';
 		$sql.=' t.status';
 		//$sql.=' t.target,';
 		//$sql.=' t.fk_project_tasktime_list,';
@@ -701,6 +718,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print "\n";
 		print_liste_field_titre($langs->trans('startDate'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
 		print "\n";
+		//print_liste_field_titre($langs->trans('dateend'),$PHP_SELF,'t.date_end','',$param,'',$sortfield,$sortorder);
+		//print "\n";
 		print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
 		print "\n";
 		//print_liste_field_titre($langs->trans('Target'),$PHP_SELF,'t.target','',$param,'',$sortfield,$sortorder);
@@ -761,7 +780,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 				print $basedurl.$obj->rowid."'\" >";
 				print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
 				print "<td>".dol_print_date($obj->date_start,'day')."</td>";
-				print "<td>".$langs->trans($obj->status)."</td>";
+				//print "<td>".dol_print_date($obj->date_end,'day')." (".getYearWeek(0,0,0,$db->jdate($obj->date_end)).")</td>";//FIXME
+                                print "<td>".$langs->trans($obj->status)."</td>";
 				//print "<td>".$langs->trans($obj->target)."</td>";
 				//print "<td>".$obj->fk_project_tasktime_list."</td>";
 				//print "<td>".print_generic('user','rowid',$obj->fk_user_approval,'lastname','firstname',' ')."</td>";
@@ -780,8 +800,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '</table>'."\n";
     print '</from>'."\n";
     // new button
-    print '<a href="?action=create" class="button" role="button">'.$langs->trans('New');
-    print ' '.$langs->trans('Timesheetuser')."</a>\n";
+    //print '<a href="?action=create" class="button" role="button">'.$langs->trans('New');
+    //print ' '.$langs->trans('Timesheetuser')."</a>\n";
 
     
 }
