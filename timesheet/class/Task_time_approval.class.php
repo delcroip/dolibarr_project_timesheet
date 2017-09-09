@@ -719,7 +719,7 @@ class Task_time_approval extends Task
                         }
                 }
                 $this->db->free($resql);
-                var_dump($obj->planned_workload);
+
                 return 1;
         }
         else
