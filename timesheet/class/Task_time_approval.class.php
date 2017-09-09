@@ -662,7 +662,7 @@ class Task_time_approval extends Task
         $taskParent=strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')>0;
         $sql ='SELECT p.rowid,p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo, pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective';
         if($conf->global->TIMESHEET_HIDE_REF==1){
-            $sql .= ',p.title as title, pt.label as label';
+            $sql .= ',p.title as title, pt.label as label,pt.planned_workload';
             if($taskParent)$sql .= ',pt.fk_projet_task_parent,ptp.label as taskParentLabel';	        	
         }else{
             $sql .= ",CONCAT(p.`ref`,' - ',p.title) as title";
@@ -703,7 +703,8 @@ class Task_time_approval extends Task
                         $this->date_start			= $this->db->jdate($obj->dateo);
                         $this->date_end			= $this->db->jdate($obj->datee);
                         $this->duration_effective           = $obj->duration_effective;		// total of time spent on this task
-                        $this->planned_workload_approval             = $obj->planned_workload;
+                        
+                        $this->planned_workload             = $obj->planned_workload;
                         $this->startDatePjct=$this->db->jdate($obj->pdateo);
 			$this->stopDatePjct=$this->db->jdate($obj->pdatee);
 			$this->pStatus=$obj->pstatus;
@@ -718,6 +719,7 @@ class Task_time_approval extends Task
                         }
                 }
                 $this->db->free($resql);
+                var_dump($obj->planned_workload);
                 return 1;
         }
         else
@@ -882,7 +884,7 @@ class Task_time_approval extends Task
                  $htmlTitle .=$this->parseTaskTime($this->duration_effective).'/';
                 if($this->planned_workload>0)
                 {
-                     $htmlTitle .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
+                     $htmlTitle .= $this->parseTaskTime($this->planned_workload ).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
                 }else{
                     $htmlTitle .= "-:--(-%)";
                 }
