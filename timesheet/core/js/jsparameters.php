@@ -26,6 +26,5 @@ echo 'var day_max_hours ='.$conf->global->TIMESHEET_DAY_MAX_DURATION.";\n";
 echo 'var day_hours ='.$conf->global->TIMESHEET_DAY_DURATION.";\n";
 echo 'var time_type ="'.$conf->global->TIMESHEET_TIME_TYPE."\";\n";
 //echo 'var hide_zero ='.$conf->global->TIMESHEET_HIDE_ZEROS.";\n";
-echo 'var err_msg_max_hours_exceded ="'.$langs->transnoentitiesnoconv('errMsgMaxHoursExceded')."\";\n"; //FIXTRAD 
-echo 'var wng_msg_hours_exceded ="'.$langs->transnoentitiesnoconv('wngMsgHoursExceded')."\";\n"; //FIXTRAD 
-?>
+echo 'var err_msg_max_hours_exceded ="'.rtrim($langs->transnoentitiesnoconv('errMsgMaxHoursExceded'))."\";\n"; //FIXTRAD 
+echo 'var wng_msg_hours_exceded ="'.rtrim($langs->transnoentitiesnoconv('wngMsgHoursExceded'))."\";\n"; //FIXTRAD 
