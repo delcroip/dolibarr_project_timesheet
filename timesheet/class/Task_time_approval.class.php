@@ -207,7 +207,6 @@ class Task_time_approval extends Task
 		if (! $error)
         {
             $this->appId = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
@@ -609,7 +608,7 @@ class Task_time_approval extends Task
         $idList=array(); 
         if(!is_array($this->tasklist)) $this->getActuals ($this->date_start_approval, $this->date_end_approval, $this->userId);
         if(is_array($this->tasklist))foreach($this->tasklist as $item){
-             $idList[]=$item['id'];
+            if($item['id']!='')$idList[]=$item['id'];
         }
         $ids=implode(',',$idList);
         $sql='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET fk_task_time_approval="';

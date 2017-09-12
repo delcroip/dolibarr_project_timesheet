@@ -203,7 +203,7 @@ if(is_object($firstTimesheetUser)){
     //$ret+=$this->getTaskTimeIds(); 
     //FIXME module holiday should be activated ?
             $task_timesheet->fetchUserHoliday(); 
-            $Form .=$task_timesheet->userName." - ".date('d',$task_timesheet->date_start);
+            $Form .=$task_timesheet->userName." - ".dol_print_date($task_timesheet->date_start,'day');
              $Form .=$task_timesheet->getHTML(false,TRUE);
             $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id]=$task_timesheet->status;
 

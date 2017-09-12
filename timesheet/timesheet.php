@@ -123,7 +123,7 @@ switch($action){
                                              //$task_timesheet->status="SUBMITTED";
 						
 					 }else{
-                                             $task_timesheet->setStatus($user,"DRAFT",false);
+                                             $task_timesheet->setStatus($user,"DRAFT");
                                          }       
 					 
 

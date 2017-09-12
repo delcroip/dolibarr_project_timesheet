@@ -600,9 +600,11 @@ function saveInSession(){
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
     //approval
-
+    if( $this->status=="DRAFT" || $this->status=="REJECTED"){
      $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
-   
+    }else{ // take only the ones with a task_time linked
+        $sql.='JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
+    }
     $sql.=' ON tsk.rowid= app.fk_projet_task AND app.fk_userid=fk_socpeople'; 
 
     $sql.=' AND app.date_start="'.$this->db->idate($datestart).'"';    
@@ -821,7 +823,7 @@ Public function setStatus($user,$status,$id=0){ //role ?
                     {
                         $tasktime= new Task_time_approval($this->db);
                         $tasktime->unserialize($ts);
-                        $tasktime->appId=$this->id;
+                        //$tasktime->appId=$this->id;
                         if($Approved)$ret=$tasktime->Approved($user,'team',false);
                         else if($Rejected)$ret=$tasktime->challenged($user,'team',false);
                         else if($Submitted)$ret=$tasktime->submitted($user);
@@ -896,7 +898,7 @@ function getHTMLHeader($ajax=false,$week=0){
     {
         $curDay=$this->date_start+ SECINDAY*$i;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
-        $html.="\t".'<th width="60px" style="text-align:center;" >'.$langs->trans(date('l',$curDay)).'<br>'.dol_print_date($curDay,'day')."</th>\n";
+        $html.="\t".'<th width="60px" style="text-align:center;" >'.substr($langs->trans(date('l',$curDay)),0,3).'<br>'.substr(dol_print_date($curDay,'day'),0,5)."</th>\n";
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';
@@ -1018,7 +1020,7 @@ function getHTMLHeader($ajax=false,$week=0){
                 //$row->db=$this->db;
                 if(in_array($this->status, array("REJECTED", "DRAFT","PLANNED",'CANCELLED' ))){
                     $openOveride= 1;
-                }else if(in_array($this->status, array("UNDERAPPROVAL", "INVOICED", "APPROVED",'CHALLENGED' ))) {
+                }else if(in_array($this->status, array("UNDERAPPROVAL", "INVOICED", "APPROVED",'CHALLENGED','SUBMITTED' ))) {
                     $openOveride= -1;
                 }else{
                     $openOveride= 0;
