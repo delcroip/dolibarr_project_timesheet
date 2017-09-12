@@ -600,11 +600,9 @@ function saveInSession(){
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
     //approval
-    if( $this->status=="DRAFT" || $this->status=="REJECTED"){
-        $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
-    }else{
-        $sql.=' JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
-    }
+
+     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
+   
     $sql.=' ON tsk.rowid= app.fk_projet_task AND app.fk_userid=fk_socpeople'; 
 
     $sql.=' AND app.date_start="'.$this->db->idate($datestart).'"';    
@@ -823,6 +821,7 @@ Public function setStatus($user,$status,$id=0){ //role ?
                     {
                         $tasktime= new Task_time_approval($this->db);
                         $tasktime->unserialize($ts);
+                        $tasktime->appId=$this->id;
                         if($Approved)$ret=$tasktime->Approved($user,'team',false);
                         else if($Rejected)$ret=$tasktime->challenged($user,'team',false);
                         else if($Submitted)$ret=$tasktime->submitted($user);

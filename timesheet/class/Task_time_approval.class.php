@@ -942,14 +942,14 @@ class Task_time_approval extends Task
             }else {
                 $dayWorkLoad=date('H:i',mktime(0,0,$dayWorkLoadSec));
             }
-                            $startDates=($this->date_start>$this->startDatePjct )?$this->date_start:$this->startDatePjct;
-                            $stopDates=(($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct==0)?$this->date_end:$this->stopDatePjct;
+            $startDates=($this->date_start>$this->startDatePjct )?$this->date_start:$this->startDatePjct;
+            $stopDates=(($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct==0)?$this->date_end:$this->stopDatePjct;
             if($isOpenSatus){
                 $isOpen=$isOpenSatus && (($startDates==0) || ($startDates < $today +SECINDAY));
                 $isOpen= $isOpen && (($stopDates==0) ||($stopDates >= $today ));
 
                 $isOpen= $isOpen && ($this->pStatus < "2") ;
-                  $isOpen= $isOpen  && $opendays[date("N",$today)];
+                $isOpen= $isOpen  && $opendays[date("N",$today)];
 
                 $bkcolor='';
 
