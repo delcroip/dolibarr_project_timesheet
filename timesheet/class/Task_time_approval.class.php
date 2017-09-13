@@ -657,12 +657,12 @@ class Task_time_approval extends Task
         
     public function getTaskInfo()
     {global $conf;
-        $Company=strpos($conf->global->TIMESHEET_HEADERS, 'Company')===0;
+        $Company=strpos($conf->global->TIMESHEET_HEADERS, 'Company')>0;
         $taskParent=strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')>0;
         $sql ='SELECT p.rowid,p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo, pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective';
         if($conf->global->TIMESHEET_HIDE_REF==1){
             $sql .= ',p.title as title, pt.label as label,pt.planned_workload';
-            if($taskParent)$sql .= ',pt.fk_projet_task_parent,ptp.label as taskParentLabel';	        	
+            if($taskParent)$sql .= ',pt.fk_task_parent,ptp.label as taskParentLabel';	        	
         }else{
             $sql .= ",CONCAT(p.`ref`,' - ',p.title) as title";
             $sql .= ",CONCAT(pt.`ref`,' - ',pt.label) as label";

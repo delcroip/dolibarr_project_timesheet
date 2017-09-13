@@ -898,7 +898,7 @@ function getHTMLHeader($ajax=false,$week=0){
     {
         $curDay=$this->date_start+ SECINDAY*$i;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
-        $html.="\t".'<th width="60px" style="text-align:center;" >'.substr($langs->trans(date('l',$curDay)),0,3).'<br>'.substr(dol_print_date($curDay,'day'),0,5)."</th>\n";
+        $html.="\t".'<th width="35px" style="text-align:center;" >'.substr($langs->trans(date('l',$curDay)),0,3).'<br>'.substr(dol_print_date($curDay,'day'),0,5)."</th>\n";
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';
