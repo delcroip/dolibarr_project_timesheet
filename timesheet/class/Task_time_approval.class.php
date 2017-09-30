@@ -103,7 +103,6 @@ class Task_time_approval extends Task
                 $this->status='DRAFT';
                 $this->sender='user';
                 $this->recipient='team';
-
                 $this->user_app= array('team'=>0 ,'project'=>0 ,'customer'=>0 ,'supplier'=>0 ,'other'=>0  );
 	}
 
