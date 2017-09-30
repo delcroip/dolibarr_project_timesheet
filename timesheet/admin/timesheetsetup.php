@@ -36,7 +36,7 @@ $langs->load("timesheet@timesheet");
 if (!$user->admin) {
     $accessforbidden = accessforbidden("you need to be admin");           
 }
-$action = GETPOST('action');
+$action = $_GET['action'];
 $timetype=$conf->global->TIMESHEET_TIME_TYPE;
 $hoursperday=$conf->global->TIMESHEET_DAY_DURATION;
 $maxhoursperday=$conf->global->TIMESHEET_DAY_MAX_DURATION;
