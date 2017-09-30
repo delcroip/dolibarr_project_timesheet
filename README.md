@@ -25,22 +25,24 @@ Timesheet view for project in Dolibarr
 - Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
 
 
+# Next dev under anaylse
+- Ressource planning  (planning for TL and PM + weekly summary by email to user)
+    - non-project related TS 
+    - simple attendance logging
 
 # Next developement for other release
-
+- integrate weekly hour in the ts messages along with a week total (possible issue with splitted week) 
 - handle the right for cust /  supplier / other approval  
-- add automatic reminder for the approval
-- add feature in Project to foresee workload per user, task and "week"
-- reminder when TS is not filled in ( email and home page)
 - show the Quantity in the step 2 of invoicing (js)
-- maintain the ajax behavior
 - my timesheet page to see the status of the TS
+    - add automatic reminder for the approval
+    - reminder when TS is not filled in ( email and home page)
 - better ajax error when adding fav
 - add total to the otherAP
 - TS submission per month
-- non-project related TS 
-- simple attendance logging
-- Ressource planning  (planning for TL and PM + weekly summary by email to user)
+
+- maintain the ajax behavior
+
 
 
 
