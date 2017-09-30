@@ -51,6 +51,7 @@ Timesheet view for project in Dolibarr
 2.1.1 Change log from 2.0.1
  - fix: Contact email correction
  - fix: js blocked if the module was in the custom folder
+ - fix: default date for report is the current date not jan 2020
 
 2.1 Change log from 2.0.1
 - fix: Submit (without pushing save before)save correctly the time for approval
