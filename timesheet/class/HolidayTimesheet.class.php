@@ -27,11 +27,9 @@
 $statusColor=array('1'=>$conf->global->TIMESHEET_COL_DRAFT,'2'=>$conf->global->TIMESHEET_COL_SUBMITTED,'3'=>$conf->global->TIMESHEET_COL_APPROVED,'4'=>$conf->global->TIMESHEET_COL_CANCELLED,'5'=>$conf->global->TIMESHEET_COL_REJECTED);
 
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-//dol_include_once('/timesheet/class/projectTimesheet.class.php');
-//require_once './projectTimesheet.class.php';
 define('TIMESHEET_BC_FREEZED','909090');
 define('TIMESHEET_BC_VALUE','f0fff0');
-class holidayTimesheet extends Holiday 
+class HolidayTimesheet extends Holiday 
 {
         private $holidaylist;
         private $holidayPresent;

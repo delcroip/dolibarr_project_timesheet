@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       dev/timesheetwhitelists/timesheetwhitelist.class.php
+ *  \file       dev/timesheetFavourites/timesheetFavourite.class.php
  *  \ingroup    timesheet othermodule1 othermodule2
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
  *				Initialy built by build_class_from_table on 2015-08-01 08:59
@@ -33,12 +33,12 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 /**
  *	Put here description of your class
  */
-class Timesheetwhitelist extends CommonObject
+class TimesheetFavourite extends CommonObject
 {
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
-	var $element='timesheetwhitelist';			//!< Id that identify managed objects
+	var $element='timesheetFavourite';			//!< Id that identify managed objects
 	var $table_element='timesheet_whitelist';		//!< Name of table without prefix where object is stored
 
     var $id;
@@ -160,7 +160,7 @@ class Timesheetwhitelist extends CommonObject
      *  @param	int		$user   	Id object
     *  @param	date	$datestart	start date
     *  @param	date	$datestop	stopdate
-     *  @return             array)timesheetwhitelist          return the list of the user whiteliste	
+     *  @return             array)timesheetFavourite          return the list of the user whiteliste	
      */
     function fetchUserList($userid,$datestart,$datestop)
     {
@@ -195,7 +195,7 @@ class Timesheetwhitelist extends CommonObject
             {
                 
                 $obj = $this->db->fetch_object($resql);
-                $List[$i]=new Timesheetwhitelist($this->db);
+                $List[$i]=new TimesheetFavourite($this->db);
                 $List[$i]->id    = $obj->rowid;          
                 $List[$i]->user = $obj->fk_user;
                 $List[$i]->project = $obj->fk_project;
@@ -430,9 +430,9 @@ class Timesheetwhitelist extends CommonObject
         }
         
         if($id){
-            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetwhitelist.php?id='.$id.'&action=view">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetFavourite.php?id='.$id.'&action=view">';
         }else if (!empty($ref)){
-            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetwhitelist.php?ref='.$ref.'&action=view">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetFavourite.php?ref='.$ref.'&action=view">';
         }else{
             $lien =  "";
         }
@@ -524,7 +524,7 @@ class Timesheetwhitelist extends CommonObject
 
 		$error=0;
 
-		$object=new Timesheetwhitelist($this->db);
+		$object=new TimesheetFavourite($this->db);
 
 		$this->db->begin();
 

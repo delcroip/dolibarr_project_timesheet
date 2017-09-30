@@ -21,14 +21,12 @@
 #require_once('mysql.class.php');
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once 'class/Task_timesheet.class.php';
+require_once 'class/TaskTimesheet.class.php';
 
-//dol_include_once('/timesheet/class/projectTimesheet.class.php');
-//require_once './projectTimesheet.class.php';
 define('SECINDAY',86400);
 define('TIMESHEET_BC_FREEZED','909090');
 define('TIMESHEET_BC_VALUE','f0fff0');
-class Task_time_approval extends Task 
+class TaskTimeApproval extends Task 
 {
     	var $element='Task_time_approval';			//!< Id that identify managed objects
 	var $table_element='project_task_time_approval';		//!< Name of table without prefix where object is stored
@@ -1215,7 +1213,7 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
                     $ret=$this->delete($user);
             }
           if($ret>0 && $updateTS==true){// success of the update, then update the timesheet user if possible
-              $staticTS= new Task_timesheet($this->db );
+              $staticTS= new TaskTimesheet($this->db );
               $staticTS->fetch($this->task_timesheet);
               $ret=$staticTS->updateStatus($user,$status);
           }
@@ -1508,5 +1506,5 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
     
     
 }
-Task_time_approval::init()
+TaskTimeApproval::init()
 ?>

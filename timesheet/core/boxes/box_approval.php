@@ -53,7 +53,6 @@ class box_approval extends ModeleBoxes
 
 		$this->max=$max;
 
-        //require_once 'class/Task_timesheet.class.php';
 
 
 

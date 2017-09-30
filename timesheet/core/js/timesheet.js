@@ -394,7 +394,7 @@ function ShowHide(id){
  */
 function favOnOff(evt, prjtId, tskId){
     var favId=evt.target.id;
-    var url='timesheetwhitelist.php?ajax=1&Project='+prjtId+'&Projecttask='+tskId;
+    var url='timesheetFavourite.php?ajax=1&Project='+prjtId+'&Projecttask='+tskId;
     url+='&action='+((favId>0)?('confirm_delete&confirm=yes&id='+favId):'add');
     httpGetAsync(url,setId, evt);
 }

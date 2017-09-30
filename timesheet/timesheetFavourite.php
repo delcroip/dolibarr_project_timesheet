@@ -39,7 +39,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';;
 // Change this following line to use the correct relative path from htdocs
-require_once 'class/timesheetwhitelist.class.php';
+require_once 'class/TimesheetFavourite.class.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php'; 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -55,7 +55,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
-$langs->load("Timesheetwhitelist_class");
+
 
 // Get parameter
 $id			= GETPOST('id','int');
@@ -97,33 +97,10 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $userId=is_object($user)?$user->id:$user; // 3.5 compatibility
-//$upload_dir = $conf->timesheet->dir_output.'/Timesheetwhitelist/'.dol_sanitizeFileName($object->ref);
 
-
- // uncomment to avoid resubmision
-//if(isset( $_SESSION['Timesheetwhitelist_class'][$tms]))
-//{
-
- //   $cancel=TRUE;
- //  setEventMessages('Internal error, POST not exptected', null, 'errors');
-//}
-
-
-
-// Right Management
- /*
-if ($user->societe_id > 0 || 
-       (!$user->rights->timesheet->add && ($action=='add' || $action='create')) ||
-       (!$user->rights->timesheet->view && ($action=='list' || $action='view')) ||
-       (!$user->rights->timesheet->delete && ($action=='confirm_delete')) ||
-       (!$user->rights->timesheet->edit && ($action=='edit' || $action='update')))
-{
-	accessforbidden();
-}
-*/
 
 // create object and set id or ref if provided as parameter
-$object=new Timesheetwhitelist($db);
+$object=new TimesheetFavourite($db);
 if($id>0)
 {
     $object->id=$id; 
@@ -147,8 +124,8 @@ if ($cancel){
     if($tms=='') //to keep the tms on javvascript reload
     {
         $tms=time();
-        $_SESSION['Timesheetwhitelist_'.$tms]=array();
-        $_SESSION['Timesheetwhitelist_'.$tms]['action']=$action;
+        $_SESSION['timesheetFavourite_'.$tms]=array();
+        $_SESSION['timesheetFavourite_'.$tms]['action']=$action;
     }else {
         $editedUser=GETPOST('User');
         $editedProject=GETPOST('Project');		
@@ -158,7 +135,7 @@ if ($cancel){
 }else if (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
         //block resubmit
-        if($ajax!=1 && (empty($tms) || (!isset($_SESSION['Timesheetwhitelist_'.$tms])))){
+        if($ajax!=1 && (empty($tms) || (!isset($_SESSION['timesheetFavourite_'.$tms])))){
                 setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
                 $action=($action=='add')?'create':'edit';
         }
@@ -201,7 +178,7 @@ if ($cancel){
                             if ($result > 0)
                             {
                                 // Creation OK
-                                unset($_SESSION['Timesheetwhitelist_'.$tms]);
+                                unset($_SESSION['timesheetFavourite_'.$tms]);
                                     setEventMessage('RecordUpdated', 'mesgs');
                                     reloadpage($backtopage,$object->id,$ref); 
                             }
@@ -247,7 +224,7 @@ if ($cancel){
                             {
                                     // Creation OK
                                 // remove the tms
-                                   unset($_SESSION['Timesheetwhitelist_'.$tms]);                                   
+                                   unset($_SESSION['timesheetFavourite_'.$tms]);                                   
                                    if ($ajax==1){
                                            echo json_encode(array('id'=> $result));
                                            exit;
@@ -302,9 +279,9 @@ if ($cancel){
                             break;
             }             
 //Removing the tms array so the order can't be submitted two times
-if(isset( $_SESSION['Timesheetwhitelist_class'][$tms]))
+if(isset( $_SESSION['timesheetFavourite_class'][$tms]))
 {
-    unset($_SESSION['Timesheetwhitelist_class'][$tms]);
+    unset($_SESSION['timesheetFavourite_class'][$tms]);
 }
 if ($ajax==1){
     echo json_encode(array('errors'=> $object->errors));
@@ -316,7 +293,7 @@ if ($ajax==1){
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','Timesheetwhitelist','');
+llxHeader('','timesheetFavourite','');
 print "<div> <!-- module body-->";
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -369,7 +346,7 @@ switch ($action) {
         $edit=1;
    case 'delete';
         if( $action=='delete' && ($id>0 || $ref!="")){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDeleteTimesheetwhitelist'),'confirm_delete', '', 0, 1);
+         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeletetimesheetFavourite'),$langs->trans('ConfirmDeletetimesheetFavourite'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -381,10 +358,10 @@ switch ($action) {
 
         // tabs
         if($edit==0 && $new==0){ //show tabs
-            $head=Timesheetwhitelist_prepare_head($object);
-            dol_fiche_head($head,'card',$langs->trans('Timesheetwhitelist'),0,'timesheet@timesheet');            
+            $head=timesheetFavourite_prepare_head($object);
+            dol_fiche_head($head,'card',$langs->trans('timesheetFavourite'),0,'timesheet@timesheet');            
         }else{
-            print_fiche_titre($langs->trans('Timesheetwhitelist'));
+            print_fiche_titre($langs->trans('timesheetFavourite'));
         }
 
 	print '<br>';
@@ -553,12 +530,12 @@ switch ($action) {
                 print '<div class="tabsAction">';
 
                 // Boutons d'actions
-                //if($user->rights->Timesheetwhitelist->edit)
+                //if($user->rights->timesheetFavourite->edit)
                 //{
                     print '<a href="'.$PHP_SELF.'?id='.$id.'&action=edit" class="butAction">'.$langs->trans('Update').'</a>';
                 //}
                 
-                //if ($user->rights->Timesheetwhitelist->delete)
+                //if ($user->rights->timesheetFavourite->delete)
                 //{
                     print '<a class="butActionDelete" href="'.$PHP_SELF.'?id='.$id.'&action=delete">'.$langs->trans('Delete').'</a>';
                 //}
@@ -572,56 +549,12 @@ switch ($action) {
         }
         break;
     }
-  /*
-        case 'viewinfo':
-        print_fiche_titre($langs->trans('Timesheetwhitelist'));
-        $head=Timesheetwhitelist_prepare_head($object);
-        dol_fiche_head($head,'info',$langs->trans("Timesheetwhitelist"),0,'timesheet@timesheet');            
-        print '<table width="100%"><tr><td>';
-        dol_print_object_info($object);
-        print '</td></tr></table>';
-        print '</div>';
-        break;
-    case 'deletefile':
-        $action='delete';
-    case 'viewdoc':
-        print_fiche_titre($langs->trans('Timesheetwhitelist'));
-        if (! $sortfield) $sortfield='name';
-	$object->fetch_thirdparty();
 
-        $head=Timesheetwhitelist_prepare_head($object);
-        dol_fiche_head($head,'documents',$langs->trans("Timesheetwhitelist"),0,'timesheet@timesheet');            
-        
-        $filearray=dol_dir_list($upload_dir,'files',0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
-        print '<table class="border" width="100%">';
-        $linkback = '<a href="'.$PHP_SELF.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-  	// Ref
-  	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-        print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-  	print '</td></tr>';
-	// Societe
-	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
-        print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-        print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-        print '</table>';
-
-        print '</div>';
-
-        $modulepart = 'timesheet';
-        $permission = $user->rights->timesheet->add;
-        $param = '&id='.$object->id;
-        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-*/
         
         break;
     case 'delete':
         if( ($id>0 || $ref!='')){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDeleteTimesheetwhitelist'),'confirm_delete', '', 0, 1);
+         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeletetimesheetFavourite'),$langs->trans('ConfirmDeletetimesheetFavourite'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background        
         }
@@ -710,7 +643,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
-        print_barre_liste($langs->trans("Timesheetwhitelist"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+        print_barre_liste($langs->trans("timesheetFavourite"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="liste" width="100%">'."\n";
         //TITLE
@@ -809,7 +742,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '</from>'."\n";
     // new button
         print '<a href="?action=create" class="button" role="button">'.$langs->trans('New');
-    print ' '.$langs->trans('Timesheetwhitelist')."</a>\n";
+    print ' '.$langs->trans('timesheetFavourite')."</a>\n";
 
 
     
@@ -832,7 +765,7 @@ function reloadpage($backtopage,$id,$ref){
         }
 exit();
 }
-function Timesheetwhitelist_prepare_head($object)
+function timesheetFavourite_prepare_head($object)
 {
     global $langs, $conf, $user;
     $h = 0;

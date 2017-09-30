@@ -22,16 +22,13 @@
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once 'class/holidayTimesheet.class.php';
+require_once 'class/HolidayTimesheet.class.php';
 require_once 'core/lib/generic.lib.php';
-require_once 'class/Task_time_approval.class.php';
-require_once 'class/timesheetwhitelist.class.php';
-//require_once 'core/lib/timesheet.lib.php';
-//dol_include_once('/timesheet/class/projectTimesheet.class.php');
-//require_once './projectTimesheet.class.php';
-//define('$conf->global->TIMESHEET_BC_FREEZED','909090');
-//define('$conf->global->TIMESHEET_BC_VALUE','f0fff0');
-class Task_timesheet extends CommonObject
+require_once 'class/TaskTimeApproval.class.php';
+require_once 'class/TimesheetFavourite.class.php';
+
+
+class TaskTimesheet extends CommonObject
 {
     //common
     var $db;							//!< To store db handler
@@ -534,7 +531,7 @@ class Task_timesheet extends CommonObject
     *  @return     string                                       result
     */
     function fetchUserHoliday(){
-        $this->holidays=new holidayTimesheet($this->db);
+        $this->holidays=new HolidayTimesheet($this->db);
         $ret=$this->holidays->fetchUserWeek($this->userId,$this->date_start,$this->date_end);
         return $ret;
     }
@@ -577,7 +574,7 @@ function saveInSession(){
  
     if($userid==''){$userid=$this->userId;}
     $whiteList=array();
-    $staticWhiteList=new Timesheetwhitelist($this->db);
+    $staticWhiteList=new TimesheetFavourite($this->db);
     $datestart=$this->date_start;
     $datestop= $this->date_end;
     $whiteList=$staticWhiteList->fetchUserList($userid, $datestart, $datestop);
@@ -634,7 +631,7 @@ function saveInSession(){
             {
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
-                    $tasksList[$i] = NEW Task_time_approval($this->db,$obj->taskid);
+                    $tasksList[$i] = NEW TaskTimeApproval($this->db,$obj->taskid);
                     //$tasksList[$i]->id= $obj->taskid;                     
                     if($obj->appid){
                         $tasksList[$i]->fetch($obj->appid);
@@ -654,14 +651,12 @@ function saveInSession(){
             if(isset($this->taskTimesheet))unset($this->taskTimesheet);
              foreach($tasksList as $row)
             {
-                    dol_syslog("Timesheet::Task_timesheet.class.php task=".$row->id, LOG_DEBUG);
-                    if($this->appId==0)$row->getTaskInfo(); // get task info include in fetch                       
-                    $row->getActuals($datestart,$datestop,$userid); 
-                    $this->taskTimesheet[]=  $row->serialize();                   
+                dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
+                if($this->appId==0)$row->getTaskInfo(); // get task info include in fetch                       
+                $row->getActuals($datestart,$datestop,$userid); 
+                $this->taskTimesheet[]=  $row->serialize();                   
             }
-
-                
-                return 1;
+            return 1;
 
     }else
     {
@@ -691,7 +686,7 @@ function saveInSession(){
          * For each task store in matching the session timestamp
          */
         foreach ($this->taskTimesheet as $key  => $row) {
-            $tasktime= new Task_time_approval($this->db);
+            $tasktime= new TaskTimeApproval($this->db);
             $tasktime->unserialize($row);     
             $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status,$notes[$tasktime->appId]);
 
@@ -760,10 +755,10 @@ function updateStatus($user,$status=''){
     if($this->id<=0)return -1;
     $updatedStatus=2;
     if ($status!=''){
-        if(!in_array($status,Task_time_approval::$statusList ))return -1; // status not valid
-        $updatedStatus=  array_search($status, Task_time_approval::$statusList);
+        if(!in_array($status,TaskTimeApproval::$statusList ))return -1; // status not valid
+        $updatedStatus=  array_search($status, TaskTimeApproval::$statusList);
     }else if(!empty($this->status)){
-         $updatedStatus=  array_search($this->status, Task_time_approval::$statusList);
+         $updatedStatus=  array_search($this->status, TaskTimeApproval::$statusList);
     }
     
     
@@ -773,16 +768,16 @@ function updateStatus($user,$status=''){
     }
     //look for the status to apply to the TS  from the TTA
     foreach($this->taskTimesheet as $row){
-        $tta= new Task_time_approval($this->db);
+        $tta= new TaskTimeApproval($this->db);
         $tta->unserialize($row);
         if($tta->appId>0){ // tta already created
             $tta->fetch($tta->appId);
-            $statusPriorityCur=  array_search($tta->status, Task_time_approval::$statusList); //FIXME
+            $statusPriorityCur=  array_search($tta->status, TaskTimeApproval::$statusList); //FIXME
             $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
         }// no else as the tta should be created upon submission of the TS not status update
         
     }
-    $this->status= Task_time_approval::$statusList[$updatedStatus];
+    $this->status= TaskTimeApproval::$statusList[$updatedStatus];
     $this->update($user);
     return $this->status;
 }
@@ -798,7 +793,7 @@ function updateStatus($user,$status=''){
 Public function setStatus($user,$status,$id=0){ //role ?
             $error=0;
             //if the satus is not an ENUM status
-            if(!in_array($status, Task_time_approval::$statusList)){
+            if(!in_array($status, TaskTimeApproval::$statusList)){
                 dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERROR);
                 return false;
             }
@@ -821,7 +816,7 @@ Public function setStatus($user,$status,$id=0){ //role ?
                     }
                     if(count($this->taskTimesheet)>0 )foreach($this->taskTimesheet as $ts)
                     {
-                        $tasktime= new Task_time_approval($this->db);
+                        $tasktime= new TaskTimeApproval($this->db);
                         $tasktime->unserialize($ts);
                         //$tasktime->appId=$this->id;
                         if($Approved)$ret=$tasktime->Approved($user,'team',false);
@@ -959,7 +954,7 @@ function getHTMLHeader($ajax=false,$week=0){
         $html .= '<input type="submit" class="butAction" name="save" value="'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
 
-        if(in_array('1',Task_time_approval::$apflows)){
+        if(in_array('1',TaskTimeApproval::$apflows)){
             $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
         }
         $html .= '<a class="butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
@@ -1015,7 +1010,7 @@ function getHTMLHeader($ajax=false,$week=0){
         $Lines='';
         if(!$ajax & is_array($this->taskTimesheet)){
             foreach ($this->taskTimesheet as $timesheet) {          
-                $row=new Task_time_approval($this->db);            
+                $row=new TaskTimeApproval($this->db);            
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
                 if(in_array($this->status, array("REJECTED", "DRAFT","PLANNED",'CANCELLED' ))){
@@ -1243,7 +1238,7 @@ function GetTimeSheetXML()
         $i=0;
         $xml.="<userTs userid=\"{$this->userId}\"  count=\"".count($this->taskTimesheet)."\" userName=\"{$this->userName}\" >";
         foreach ($this->taskTimesheet as $timesheet) {
-            $row=new Task_time_approval($this->db);
+            $row=new TaskTimeApproval($this->db);
              $row->unserialize($timesheet);
             $xml.= $row->getXML($this->date_start);//FIXME
             $i++;

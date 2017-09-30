@@ -29,7 +29,7 @@ if($apflows[0]==0 && in_array('1',$apflows)){ // redirect to the correct page
 }
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
-require_once 'class/Task_timesheet.class.php';
+require_once 'class/TaskTimesheet.class.php';
 if(!$user->rights->timesheet->approval){
         $accessforbidden = accessforbidden("you need to have the approver rights");           
 }
@@ -79,7 +79,7 @@ if($action== 'submit'){
             $ret=0;
             $errors=0;
             $count=0;
-            $appflowOn=in_array('1',array_slice(Task_time_approval::$apflows,2));
+            $appflowOn=in_array('1',array_slice(TaskTimeApproval::$apflows,2));
             //$task_timesheet->db=$db;
             if (!empty($_POST['approval']))
             {
@@ -87,7 +87,7 @@ if($action== 'submit'){
                 $approvals=$_POST['approval'];
                 foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser){
                     
-                    $curTaskTimesheet= new Task_timesheet($db);
+                    $curTaskTimesheet= new TaskTimesheet($db);
                     $count++;
                     if($approvals[$key]!=$tsUser)switch($approvals[$key]){
                         case 'Approved':
@@ -184,7 +184,7 @@ if($xml){
     exit;
 }*/
 
-$task_timesheet= new Task_timesheet($db);
+$task_timesheet= new TaskTimesheet($db);
 $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
 $morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js?v2.0");
 llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
@@ -247,7 +247,7 @@ if(is_object($firstTimesheetUser)){
     }
 }else{
     $Form .='<h1>'.$langs->trans('NothingToValidate').'</h1>';
-    $staticTs=new Task_timesheet($db);
+    $staticTs=new TaskTimesheet($db);
     $Form .=$staticTs->getHTMLFooterAp($current,$timestamp);
 }
 
@@ -318,7 +318,7 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
                     $error=0;
                     $obj = $db->fetch_object($resql);
                    
-                    $tmpTs = NEW Task_timesheet($db,$obj->fk_userid);
+                    $tmpTs = NEW TaskTimesheet($db,$obj->fk_userid);
                     $tmpTs->id    = $obj->rowid;
                     //$tmpTs->userId = $obj->fk_userid;
                     $tmpTs->date_start = $tmpTs->db->jdate($obj->date_start);

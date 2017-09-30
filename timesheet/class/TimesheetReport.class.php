@@ -20,7 +20,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-class timesheetReport 
+class TimesheetReport 
 {
     var $db;
     var $projectid;
