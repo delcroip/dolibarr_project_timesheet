@@ -47,6 +47,10 @@ Timesheet view for project in Dolibarr
 
 
 # Change log
+2.1.1 Change log from 2.0.1
+ - fix: Contact email correction
+ - fix: js blocked if the module was in the custom folder
+
 2.0.1 Change log from 2.0
  - Project approval corrected (for non admin no approval was shown)
  - PHP warning removed
