@@ -319,7 +319,7 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'Timesheetapproval',
 									'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'Timesheetapproval',
-									'url'=>'/timesheet/timesheetAp.php',
+									'url'=>'/timesheet/TimesheetTeamApproval.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>130,
 									'enabled'=>'$user->rights->timesheet->approval',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

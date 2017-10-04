@@ -432,7 +432,7 @@ function showTimesheetApTabs($role){
 global $langs;
 global $conf;
 $roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
-$rolesUrl=array(0=> 'timesheetAp.php?role=team', 1=> 'otherAp.php?role=project',2=>'otherAp.php?role=customer',3=>'otherAp.php?role=supplier',4=>'otherAp.php?role=other');
+$rolesUrl=array(0=> 'TimesheetTeamApproval.php?role=team', 1=> 'TimesheetOtherApproval.php?role=project',2=>'TimesheetOtherApproval.php?role=customer',3=>'TimesheetOtherApproval.php?role=supplier',4=>'TimesheetOtherApproval.php?role=other');
 $apflows=array_slice(str_split($conf->global->TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
     foreach($roles as $key => $cur_role){
         if($apflows[$key]==1){

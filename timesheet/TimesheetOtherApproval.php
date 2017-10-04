@@ -35,7 +35,7 @@ $role         = GETPOST('role');
 if(!$role){
     $role_key=array_search('1',array_slice ($apflows,1)); // search other than team
     if($role_key===false){
-        header("location:timesheetAp.php");
+        header("location:TimesheetTeamApproval.php");
     }else{
         $role=$roles[$role_key];
     }

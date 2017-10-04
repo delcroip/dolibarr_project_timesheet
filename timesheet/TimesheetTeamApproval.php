@@ -25,7 +25,7 @@
 include 'core/lib/includeMain.lib.php';
 $apflows=array_slice(str_split($conf->global->TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
 if($apflows[0]==0 && in_array('1',$apflows)){ // redirect to the correct page
-    header("location:otherAp.php"); //TOBETESTED
+    header("location:TimesheetOtherApproval.php"); //TOBETESTED
 }
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';

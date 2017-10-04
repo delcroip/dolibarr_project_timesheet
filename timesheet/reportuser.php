@@ -49,11 +49,11 @@ $toDate                 = GETPOST('toDate');
 $toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday'):0; // to not look for the date if action not goTodate
 $toDatemonth                 = GETPOST('toDatemonth');
 $toDateyear                 = GETPOST('toDateyear');
-if($dateStart==0 && isset($_SESSION["dateStart"])) $dateStart=$_SESSION["dateStart"];
-if($dateStart==0 ) $dateStart=$_SESSION["dateStart"];
-$dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$dateStart);
-$_SESSION["dateStart"]=$dateStart ;
-$dateStart=  strtotime('fist day of month', $dateStart);
+if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
+    $dateStart=$_SESSION["dateStart"];
+}else {
+    $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
+}
 
 llxHeader('',$langs->trans('userReport'),'');
 
