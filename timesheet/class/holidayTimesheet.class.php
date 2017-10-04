@@ -155,7 +155,7 @@ class holidayTimesheet extends Holiday
            return '';
         $html ="<tr id='holiday'>\n";
         $html .='<th colspan="'.count($headers).'" align="right" > '.$langs->trans('Holiday').' </th>';
-        
+        $i=0;
         foreach ($this->holidaylist as $holiday)
         {
             $am=$holiday['am'];
@@ -193,7 +193,7 @@ class holidayTimesheet extends Holiday
                 
            // }
             $html .="</ul></th>\n";
-            
+            $i++;
         }
         $html .='</tr>';
         return $html;
