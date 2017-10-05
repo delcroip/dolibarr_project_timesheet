@@ -1080,8 +1080,10 @@ function serialize(){
     $arRet['note']=$this->note;			
     $arRet['fk_project']=$this->fk_project ;
     $arRet['ProjectTitle']=$this->ProjectTitle;
-    $arRet['date_start']=$this->date_start_approval;			
-    $arRet['date_end']=$this->date_end_approval	;		
+    $arRet['date_start']=$this->date_start;			
+    $arRet['date_end']=$this->date_end	;    
+    $arRet['date_start_approval']=$this->date_start_approval;			
+    $arRet['date_end_approval']=$this->date_end_approval	;		
     $arRet['duration_effective']=$this->duration_effective ;   
     $arRet['planned_workload']=$this->planned_workload ;
     $arRet['fk_projet_task_parent']=$this->fk_projet_task_parent ;
@@ -1112,8 +1114,10 @@ function unserialize($str){
     $this->note=$arRet['note'];			
     $this->fk_project=$arRet['fk_project'] ;
     $this->ProjectTitle=$arRet['ProjectTitle'];
-    $this->date_start_approval=$arRet['date_start'];			
-    $this->date_end_approval=$arRet['date_end']	;		
+    $this->date_start_approval=$arRet['date_start_approval'];			
+    $this->date_end_approval=$arRet['date_end_approval']	;		
+    $this->date_start=$arRet['date_start'];			
+    $this->date_end=$arRet['date_end']	;		
     $this->duration_effective=$arRet['duration_effective'] ;   
     $this->planned_workload=$arRet['planned_workload'] ;
     $this->fk_projet_task_parent=$arRet['fk_projet_task_parent'] ;
