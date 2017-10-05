@@ -48,6 +48,14 @@ Timesheet view for project in Dolibarr
 
 
 # Change log
+2.1.3 Change log from 2.1.2
+ - fix : start and end date missing in task line
+ - fix : task end/start in middle of the week wasn't taken into account
+
+2.1.2 Change log from 2.1.1
+ - fix third party not showed when note wasn't activated
+ - fix: holiday time wasnot adding-up in the total lines
+
 2.1.1 Change log from 2.0.1
  - fix: Contact email correction
  - fix: js blocked if the module was in the custom folder
