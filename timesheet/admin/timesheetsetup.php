@@ -549,7 +549,7 @@ echo '<a href="../doc/Module_timesheet.pdf">  PDF </a></br>'."\n\t\t";
 echo '<a href="../doc/Module_timesheet.docx">  DOCX </a></br></br>'."\n\t\t";
 
 print_titre($langs->trans("Feedback"));
-echo $langs->trans('feebackDesc').' : <a href="mailto:pmpdelroix@gmail.com?subject=TimesheetFeedback"> Patrick Delcroix</a></br></br>';
+echo $langs->trans('feebackDesc').' : <a href="mailto:pmpdelcroix@gmail.com?subject=TimesheetFeedback"> Patrick Delcroix</a></br></br>';
 
 print_titre($langs->trans("Reminder"));
 print '<br><div>'.$langs->trans('reminderEmailProcess').'</div>';

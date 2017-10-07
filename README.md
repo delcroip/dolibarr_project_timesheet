@@ -25,43 +25,68 @@ Timesheet view for project in Dolibarr
 - Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
 
 
+# Next dev under anaylse
+- Ressource planning  (planning for TL and PM + weekly summary by email to user)
+    - non-project related TS 
+    - simple attendance logging
 
 # Next developement for other release
-
+- integrate weekly hour in the ts messages along with a week total (possible issue with splitted week) 
 - handle the right for cust /  supplier / other approval  
-- add automatic reminder for the approval
-- add feature in Project to foresee workload per user, task and "week"
-- reminder when TS is not filled in ( email and home page)
 - show the Quantity in the step 2 of invoicing (js)
-- maintain the ajax behavior
 - my timesheet page to see the status of the TS
+    - add automatic reminder for the approval
+    - reminder when TS is not filled in ( email and home page)
 - better ajax error when adding fav
 - add total to the otherAP
+- add total 'line' and super total ts
 - TS submission per month
-- non-project related TS 
-- simple attendance logging
-- Ressource planning  (planning for TL and PM + weekly summary by email to user)
+
+- maintain the ajax behavior
+
 
 
 
 # Change log
+2.1.3 Change log from 2.1.2
+ - fix : start and end date missing in task line
+ - fix : task end/start in middle of the week wasn't taken into account
+
+2.1.2 Change log from 2.1.1
+ - fix third party not showed when note wasn't activated
+ - fix: holiday time wasnot adding-up in the total lines
+
+2.1.1 Change log from 2.0.1
+ - fix: Contact email correction
+ - fix: js blocked if the module was in the custom folder
+ - fix: default date for report is the current date not jan 2020
+
+2.1 Change log from 2.0.1
+- fix: Submit (without pushing save before)save correctly the time for approval
+- fix:javascript error that prevented to color change upon time entry
+- fix: progress not showing up
+- fix: weeks with a 8th day
+- fix: dolibarr 6.0 compatibility
+- change:"New" button removed from the admin page,
+- change: end date showed on the admin card page 
+
 2.0.1 Change log from 2.0
- - Project approval corrected (for non admin no approval was shown)
- - PHP warning removed
- - Home timesheet box correted (was not showing the # of timesheet to approve)
- - send email over TS rejection
+ - fix: Project approval corrected (for non admin no approval was shown)
+ - fix: PHP warning removed
+ - fix: Home timesheet box correted (was not showing the # of timesheet to approve)
+ - new: send email over TS rejection
 
 2.0 Change log from 1.5.1:   
- - Week over two month can be splited in 2 so an approval per month is possible.
- - note availale for each task (also in the approval flow)    
- - chained approval for project
- - create invoice from the project report
- - reports shows time in hours and days
- - tab in the setup for better browsing experience (in JS so config is kept when changing tab)
- - favoris in a tab (not a new page)
- - favoris can be set simply by pushing on a star next to the task name in timesheet screen
- - better handling of search boxes
- - more translation (ES, DE, IT, FR, US)
+ - new: Week over two month can be splited in 2 so an approval per month is possible.
+ - new: note availale for each task (also in the approval flow)    
+ - new: chained approval for project
+ - new: create invoice from the project report
+ - new: reports shows time in hours and days
+ - new: tab in the setup for better browsing experience (in JS so config is kept when changing tab)
+ - new: favoris in a tab (not a new page)
+ - new: favoris can be set simply by pushing on a star next to the task name in timesheet screen
+ - new: better handling of search boxes
+ - new: more translation (ES, DE, IT, FR, US)
 
 
 

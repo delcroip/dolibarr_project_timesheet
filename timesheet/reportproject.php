@@ -49,6 +49,9 @@ if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
 }
 
+$_SESSION["dateStart"]=$dateStart ;
+
+
 llxHeader('',$langs->trans('projectReport'),'');
 $mode=($_POST['short']==1)?1:2;
 

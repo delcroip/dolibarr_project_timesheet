@@ -23,18 +23,18 @@
 CREATE TABLE llx_time_spent
 (
 rowid                   integer     NOT NULL AUTO_INCREMENT,
-datetime_start              DATETIME        NOT NULL DEFAULT NOW(), -- start date of the period
+datetime_start              DATETIME        NOT NULL , -- start date of the period
 start_place             VARCHAR(1024) DEFAULT NULL, -- IP or equipment of loggin
-datetime_end                DATETIME        NOT NULL DEFAULT NOW(), -- start date of the period
+datetime_end                DATETIME        NOT NULL , -- start date of the period
 end_place               VARCHAR(1024) DEFAULT NULL, -- IP or equipment of loggin
-status                  enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
+status                  tinyint , -- (1-->'DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
 note                  VARCHAR(1024),
-date_creation         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+date_creation         DATETIME      NOT NULL,
 date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
 fk_userid             integer  NOT NULL,          -- timesheet user (redondant)
 fk_user_creation      integer,
 fk_user_modification  integer  default NULL,
-fk_third_party        integer DEFAULT NULL, --null mean for the company like 
+fk_third_party        integer DEFAULT NULL, -- null means time for the company
 PRIMARY KEY (rowid)
 ) 
 ENGINE=innodb;

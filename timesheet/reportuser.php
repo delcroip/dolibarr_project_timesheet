@@ -55,6 +55,8 @@ if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
 }
 
+$_SESSION["dateStart"]=$dateStart ;
+
 llxHeader('',$langs->trans('userReport'),'');
 
 //querry to get the project where the user have priviledge; either project responsible or admin
