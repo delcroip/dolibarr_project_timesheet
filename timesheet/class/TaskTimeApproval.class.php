@@ -655,8 +655,8 @@ class TaskTimeApproval extends Task
         
     public function getTaskInfo()
     {global $conf;
-        $Company=strpos($conf->global->TIMESHEET_HEADERS, 'Company')>0;
-        $taskParent=strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')>0;
+        $Company=strpos($conf->global->TIMESHEET_HEADERS, 'Company')!==FALSE;
+        $taskParent=strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')!==FALSE;
         $sql ='SELECT p.rowid,p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo, pt.dateo,pt.datee, pt.planned_workload, pt.duration_effective';
         if($conf->global->TIMESHEET_HIDE_REF==1){
             $sql .= ',p.title as title, pt.label as label,pt.planned_workload';
@@ -1079,8 +1079,10 @@ function serialize(){
     $arRet['note']=$this->note;			
     $arRet['fk_project']=$this->fk_project ;
     $arRet['ProjectTitle']=$this->ProjectTitle;
-    $arRet['date_start']=$this->date_start_approval;			
-    $arRet['date_end']=$this->date_end_approval	;		
+    $arRet['date_start']=$this->date_start;			
+    $arRet['date_end']=$this->date_end	;    
+    $arRet['date_start_approval']=$this->date_start_approval;			
+    $arRet['date_end_approval']=$this->date_end_approval	;		
     $arRet['duration_effective']=$this->duration_effective ;   
     $arRet['planned_workload']=$this->planned_workload ;
     $arRet['fk_projet_task_parent']=$this->fk_projet_task_parent ;
@@ -1111,8 +1113,10 @@ function unserialize($str){
     $this->note=$arRet['note'];			
     $this->fk_project=$arRet['fk_project'] ;
     $this->ProjectTitle=$arRet['ProjectTitle'];
-    $this->date_start_approval=$arRet['date_start'];			
-    $this->date_end_approval=$arRet['date_end']	;		
+    $this->date_start_approval=$arRet['date_start_approval'];			
+    $this->date_end_approval=$arRet['date_end_approval']	;		
+    $this->date_start=$arRet['date_start'];			
+    $this->date_end=$arRet['date_end']	;		
     $this->duration_effective=$arRet['duration_effective'] ;   
     $this->planned_workload=$arRet['planned_workload'] ;
     $this->fk_projet_task_parent=$arRet['fk_projet_task_parent'] ;
