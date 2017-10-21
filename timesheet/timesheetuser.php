@@ -398,7 +398,7 @@ switch ($action) {
 
 // show the field date_start
 
-		print '<td class="fieldrequired">'.$langs->trans('startDatedate').' </td><td>';
+		print '<td class="fieldrequired">'.$langs->trans('DateStart').' </td><td>';
 		if($edit==1){
 		if($new==1){
 			print $form->select_date(-1,'startDatedate');
@@ -413,7 +413,7 @@ switch ($action) {
 		print "<tr>\n";
 // show the field date_end
 
-		print '<td class="fieldrequired">'.$langs->trans('dateend').' </td><td>';
+		print '<td class="fieldrequired">'.$langs->trans('DateEnd').' </td><td>';
 		if($edit==1){
 		if($new==1){
 			print $form->select_date(-1,'dateend');
@@ -433,7 +433,7 @@ switch ($action) {
 		if($edit==1){
 		print select_enum('project_task_time_approval','status','Status',$object->status);
 		}else{
-		print $langs->trans($object->status);
+		print $langs->trans(strtolower($object->status));
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -716,7 +716,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userid','',$param,'',$sortfield,$sortorder);
 		print "\n";
-		print_liste_field_titre($langs->trans('startDate'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('DateStart'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
 		print "\n";
 		//print_liste_field_titre($langs->trans('dateend'),$PHP_SELF,'t.date_end','',$param,'',$sortfield,$sortorder);
 		//print "\n";
@@ -781,7 +781,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 				print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
 				print "<td>".dol_print_date($obj->date_start,'day')."</td>";
 				//print "<td>".dol_print_date($obj->date_end,'day')." (".getYearWeek(0,0,0,$db->jdate($obj->date_end)).")</td>";//FIXME
-                                print "<td>".$langs->trans($obj->status)."</td>";
+                                print "<td>".$langs->trans(strtolower($obj->status))."</td>";
 				//print "<td>".$langs->trans($obj->target)."</td>";
 				//print "<td>".$obj->fk_project_tasktime_list."</td>";
 				//print "<td>".print_generic('user','rowid',$obj->fk_user_approval,'lastname','firstname',' ')."</td>";

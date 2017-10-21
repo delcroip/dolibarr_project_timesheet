@@ -69,7 +69,7 @@ if($table=='' || $fieldValue=='' || $htmlName=='' )
                 foreach ($enums as $enum){
                     $select.= '<option value="'.(substr($enum,1,-1)).'" ';
                     $select.=((substr($enum,1,-1)===$selected)?'selected="selected" >':'>');                    
-                    $select.=$langs->trans(substr($enum,1,-1));          
+                    $select.=$langs->trans(strtolower(substr($enum,1,-1)));          
                     $select.="</option>\n";
                 }
                 if($addtionnalChoices)foreach($addtionnalChoices as $value => $choice){
