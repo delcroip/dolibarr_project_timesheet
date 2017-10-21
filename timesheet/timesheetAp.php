@@ -186,7 +186,7 @@ if($xml){
 
 $task_timesheet= new Task_timesheet($db);
 $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
-$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js?v2.0");
+$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js?v2.4");
 llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 showTimesheetApTabs('team');
@@ -226,9 +226,9 @@ if(is_object($firstTimesheetUser)){
                     $Form .= ob_get_contents().'</br>'."\n";
                     ob_end_clean();
                 }
-                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$task_timesheet->id.']" value="Approved" ><span>'.$langs->trans('APPROVED').'</span></label>'."\n";/*FIXME*/
-                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$task_timesheet->id.']" value="Rejected" ><span>'.$langs->trans('REJECTED').'</span></label>'."\n";/*FIXME*/
-                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$task_timesheet->id.']" value="Submitted" checked ><span>'.$langs->trans('SUBMITTED').'</span></label>'."\n";/*FIXME*/
+                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$task_timesheet->id.']" value="Approved" ><span>'.$langs->trans('approved').'</span></label>'."\n";/*FIXME*/
+                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$task_timesheet->id.']" value="Rejected" ><span>'.$langs->trans('rejected').'</span></label>'."\n";/*FIXME*/
+                $Form .= '<label class="butAction"><input type="radio"  name="approval['.$task_timesheet->id.']" value="Submitted" checked ><span>'.$langs->trans('submitted').'</span></label>'."\n";/*FIXME*/
                 $Form .= '</br></br></br>'."\n";
             }
             $i++;//use for the offset
@@ -299,7 +299,7 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
         }else if($byWeek==0){
             $sql.=' ORDER BY fk_userid DESC,date_start DESC';
         }else if($byWeek==2){
-            $sql.=' ORDER BY usermonth DESC, date_start ASC';
+            $sql.=' ORDER BY YEAR(date_start) DESC, MONTH(date_start) DESC, fk_userid DESC';
         }
         $sql.=' LIMIT '.$level;
         $sql.=' OFFSET '.$offset;
@@ -406,26 +406,26 @@ function getSelectAps($subId){
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
         $sql.=$sqlWhere;
-        $sql.=' group by ts.date_start ORDER BY ts.date_start DESC'; 
+        $sql.=' group by ts.date_start ORDER BY ts.date_start DESC,ts.fk_userid DESC'; 
 
     }else if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==0){
         $sql='SELECT COUNT(ts.fk_userid) as nb,ts.fk_userid as id,';
-        $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
+        $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label,ts.date_start";
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
         $sql.=$sqlWhere;
-        $sql.=' group by ts.fk_userid ORDER BY ts.fk_userid DESC'; 
+        $sql.=' group by ts.fk_userid ORDER BY ts.fk_userid DESC,ts.date_start DESC'; 
 
     }else{
 
         $sql='SELECT month,COUNT(rowid) as nb, CONCAT(month, fk_userid) as id,';
-        $sql.=' CONCAT(month,". ",fullname) as label,fk_userid';
+        $sql.=' CONCAT(month,". ",fullname) as label,fk_userid,date_start';
         $sql.=' FROM (SELECT DATE_FORMAT(ts.date_start," %m/%Y") as month, fk_userid,';
-        $sql.=' ts.rowid as rowid,CONCAT(usr.firstname, " - ",usr.lastname) as fullname ';
+        $sql.=' ts.rowid as rowid,CONCAT(usr.firstname, " - ",usr.lastname) as fullname,ts.date_start ';
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';   
         $sql.=$sqlWhere.') AS T';
-        $sql.=' group by fk_userid, month ORDER BY  fk_userid DESC, month DESC';        
+        $sql.=' group by fk_userid, month ORDER BY  YEAR (date_start) DESC, MONTH(date_start) DESC ,fk_userid DESC';        
     }
     
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
