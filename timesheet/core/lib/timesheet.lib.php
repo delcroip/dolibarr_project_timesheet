@@ -317,13 +317,31 @@ function getStartDate($datetime,$prevNext=0){
     /**************************
      * calculate the start date form php date
      ***************************/
-    switch($conf->global->TIMESHEET_APPROVAL_BY_WEEK){
+     switch($conf->global->TIMESHEET_TIME_SPAN){
 
-        case 2: //by Month   (FIXME/will be reactiated later when a layout solution would be found)   
+        case 'month': //by Month   (FIXME/will be reactiated later when a layout solution would be found)   
         //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
         //     break;
-        case 0: //by user   
-        case 1: //by week
+                if($prevNext==1){
+                    $startDate=  strtotime('first day of next month midnight',$datetime  ); 
+                }else if($prevNext==0){
+                    $startDate=  strtotime('first day of this month midnight',$datetime  ); 
+                }else if($prevNext==-1){
+                    $startDate=  strtotime('first day of previous month midnight',$datetime  ); 
+                }
+            break;            
+        case 'week': //by user   
+                    //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
+        //     break;
+                if($prevNext==1){
+                    $startDate=  strtotime('monday next week midnight',$datetime  ); 
+                }else if($prevNext==0){
+                    $startDate=  strtotime('monday this week midnight',$datetime  ); 
+                }else if($prevNext==-1){
+                    $startDate=  strtotime('monday previous week midnight',$datetime  ); 
+                }
+            break;  
+        case 'splitedWeek': //by week
         default:
 
                 if($prevNext==1){
@@ -358,13 +376,15 @@ function getEndDate($datetime){
     /**************************
      * calculate the end date form php date
      ***************************/
-    switch($conf->global->TIMESHEET_APPROVAL_BY_WEEK){
+    switch($conf->global->TIMESHEET_TIME_SPAN){
 
-        case 2: //by Month (FIXME/will be reactiated later when a layout solution would be found)   
-           //  $endDate=strtotime('first day of next month midnight',$datetime); 
-           // break;
-        case 0: //by user   
-        case 1: //by week
+        case 'month': 
+            $endDate=strtotime('first day of next month midnight',$datetime); 
+            break;
+        case 'week':  
+            $endDate=strtotime('monday next week midnight',$datetime); 
+            break;
+        case 'splitedWeek': 
         default:
             $day=date('d',$datetime);
             $dayOfWeek=date('N',$datetime);
@@ -399,7 +419,6 @@ function parseDate($day=0,$month=0,$year=0,$date=0){
         $datetime=dol_mktime(0,0,0,$month,$day,$year);
     // the date is already in linux format
     }else if(is_numeric($date) && $date!=0){  // if date is a datetime
-        
         $datetime=$date;
     }else if(is_string($date)&& $date!=""){  // if date is a string
         //foolproof: incase the yearweek in passed in date

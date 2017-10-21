@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-# admin (278)
+# admin (279)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addholidaytime=Add up holiday time
@@ -118,6 +118,7 @@ savedDuration=Saved duration
 searchbox=Activate search boxes
 searchboxDesc=Replace the drop down lists by search boxes for the Tasks. Needed when hundreds of tasks are defined in order to improve performance. (Project, contact, third partie use the search box configuration defined in other module)
 short=Short version
+splitedWeek=Splited week
 Submit=Submit
 submitted=Submitted
 submittedColorDesc=Color for the holiday & timesheet submitted for approval

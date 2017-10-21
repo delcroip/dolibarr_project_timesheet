@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-# admin (179)
+# admin (180)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addholidaytime=Sume el tiempo de vacaciones
@@ -118,6 +118,7 @@ savedDuration=Duración guardado
 searchbox=Activar búsqueda cajas
 searchboxDesc=Reemplace las listas desplegables por cuadros de búsqueda de las Tareas. Se necesita cuando se definen cientos de tareas para mejorar el rendimiento. (Proyecto, contacto, tercera parte utilizar la configuración de la caja de búsqueda definida en otro módulo)
 short=Version corta
+splitedWeek=Semana dividida
 Submit=Enviar
 submitted=Enviado
 submittedColorDesc=Color para el día festivo y la hoja de horas presentada para su aprobación

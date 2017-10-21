@@ -58,7 +58,7 @@ class modTimesheet extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Timesheet view";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '2.1.3';
+		$this->version = '2.1.4.dev.1';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -138,7 +138,7 @@ class modTimesheet extends DolibarrModules
                 $this->const[22] = array("TIMESHEET_INVOICE_SERVICE","chaine","0","set a default service for the invoice item"); 
                 $this->const[23] = array("TIMESHEET_INVOICE_SHOW_TASK","chaine","1","Show task on the invoice item "); 
                 $this->const[24] = array("TIMESHEET_INVOICE_SHOW_USER","chaine","1","Show user on the invoice item "); 
-                
+                $this->const[25] = array("TIMESHEET_TIME_SPAN","chaine","splitedWeek","timespan of the timesheets"); // hours or days
 
 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");

@@ -188,9 +188,13 @@ function updateTotal(ts,days,silent){
 
 //function to update all the totals
 function updateAll(){
-	var tsUser = document.getElementsByName('tsUserId')
-    for(i=0;i<7;i++){
-             for(j=0;j<tsUser.length;j++){
+	var tsUser = document.getElementsByName('tsUserId');
+        
+    for(j=0;j<tsUser.length;j++){
+            var daysClass='Days['+tsUser[j].value+']';
+            var nbDays= document.getElementsByClassName(daysClass);
+            for(i=0;i<nbDays.length;i++){
+                
 		updateTotal(tsUser[j].value,i,1);
             }
 	}
