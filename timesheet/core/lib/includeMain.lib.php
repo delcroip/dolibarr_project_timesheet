@@ -16,25 +16,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 //global $db;     
-/* FIXME Ver. 3 
+// FIXME Ver. 3 
 // Define status
-define('DRAFT_STATUS',1);
-define('SUBMITTED_STATUS',2);
-define('APPROVED_STATUS',3);
-define('CANCELLED_STATUS',4);
-define('REJECTED_STATUS',5);
-define('CHALLENGED_STATUS',6);
-define('INVOICED_STATUS',7);
-define('UNDERAPPROVAL_STATUS',8);
-define('PLANNED_STATUS',9);
-//define planned time link type
-define('NO_LINK',1);
-define('TASK_LINK',2);
-define('PROJECT_LINK',3);
-define('TIMESPENT_LINK',4);
 
-*/
-
+define("STATUS", [
+     0 => "NULL",
+     1 => "DRAFT",
+     2 => "SUBMITTED",
+     3 => "APPROVED",
+     4 => "CANCELLED",
+     5 => "REJECTED",
+     6 => "CHALLENGED",
+     7 => "INVOICED",
+     8 => "UNDERAPPROVAL",
+     9 => "'PLANNED"
+]);
+define("REDUNDANCY", [
+     0 => "NULL",
+     1 => "NONE",
+     2 => "WEEK",
+     3 => "MONTH",
+     4 => "QUARTER",
+     5 => "YEAR"
+]);
+define("LINKED_ITEM", [
+     0 => "NULL",
+     1 => "NONE",
+     2 => "TASK",
+     3 => "PROJECT",
+     4 => "TIMESPENT"
+]);
 
 $res=0;
 if($_SERVER['SERVER_NAME']== 'ide.pmpd.eu'){

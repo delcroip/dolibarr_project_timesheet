@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2014	   Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2017      Patrick Delcroix    <pmpdelcroix@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- *  \file       dev/timesheetactivitys/timesheetactivity.class.php
- *  \ingroup    timesheet othermodule1 othermodule2
- *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *				Initialy built by build_class_from_table on 2017-10-01 14:00
- */
 
 // Put here all includes required by your class file
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -33,13 +27,13 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 /**
  *	Put here description of your class
  */
-class TimesheetActivity extends CommonObject
+class ResourceActivity extends CommonObject
 {
     var $db;							//!< To store db handler
     var $error;							//!< To return error code (or message)
     var $errors=array();				//!< To return several error codes (or messages)
-    var $element='TimesheetActivity';			//!< Id that identify managed objects
-    var $table_element='timesheet_activity';		//!< Name of table without prefix where object is stored
+    var $element='ResourceActivity';			//!< Id that identify managed objects
+    var $table_element='resource_activity';		//!< Name of table without prefix where object is stored
 
     var $id;
     
@@ -66,15 +60,22 @@ class TimesheetActivity extends CommonObject
     /**
      *  Constructor
      *
-     *  @param	DoliDb		$db      Database handler
+     *  @param	DoliDb          $db      Database handler
+     *  @param	Object/int		$user    user object
      */
-    function __construct($db)
+    function __construct($db,$user=null)
     {
         $this->db = $db;
+        $this->userid=  is_object($user)?$user->id:$user;
         return 1;
+        
     }
 
-
+ /******************************************************************************
+  * 
+  *              database funciton
+  * 
+  *****************************************************************************/ 
     /**
      *  Create object into database
      *
@@ -322,55 +323,7 @@ class TimesheetActivity extends CommonObject
 		}
     }
 
-     /**
-     *	Return clickable name (with picto eventually)
-     *
-     *	@param		string			$htmlcontent 		text to show
-     *	@param		int			$id                     Object ID
-     *	@param		string			$ref                    Object ref
-     *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-     *	@return		string						String with URL
-     */
-    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
-    {
-    	global $langs;
-
-    	$result='';
-        if(empty($ref) && $id==0){
-            if(isset($this->id))  {
-                $id=$this->id;
-            }else if (isset($this->rowid)){
-                $id=$this->rowid;
-            }if(isset($this->ref)){
-                $ref=$this->ref;
-            }
-        }
-        
-        if($id){
-            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/TimesheetActivity.php?id='.$id.'&action=view">';
-        }else if (!empty($ref)){
-            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/TimesheetActivity.php?ref='.$ref.'&action=view">';
-        }else{
-            $lien =  "";
-        }
-        $lienfin=empty($lien)?'':'</a>';
-
-    	$picto='timesheet@timesheet';
-        
-        if($ref){
-            $label=$langs->trans("Show").': '.$ref;
-        }else if($id){
-            $label=$langs->trans("Show").': '.$id;
-        }
-    	if ($withpicto==1){ 
-            $result.=($lien.img_object($label,$picto).$htmlcontent.$lienfin);
-        }else if ($withpicto==2) {
-            $result.=$lien.img_object($label,$picto).$lienfin;
-        }else{  
-            $result.=$lien.$htmlcontent.$lienfin;
-        }
-    	return $result;
-    }    
+    
  	/**
 	 *  Delete object in database
 	 *
@@ -508,7 +461,77 @@ class TimesheetActivity extends CommonObject
 		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
 		if (isset($this->element_id)) $this->element_id=trim($this->element_id);
 
-            
+ /******************************************************************************
+  * 
+  *              Core funciton
+  * 
+  *****************************************************************************/ 
+     /**
+     *	Return clickable name (with picto eventually)
+     *
+     *	@param		string			$htmlcontent 		text to show
+     *	@param		int			$id                     Object ID
+     *	@param		string			$ref                    Object ref
+     *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+     *	@return		string						String with URL
+     */
+    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
+    {
+    	global $langs;
+
+    	$result='';
+        if(empty($ref) && $id==0){
+            if(isset($this->id))  {
+                $id=$this->id;
+            }else if (isset($this->rowid)){
+                $id=$this->rowid;
+            }if(isset($this->ref)){
+                $ref=$this->ref;
+            }
+        }
+        
+        if($id){
+            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/TimesheetActivity.php?id='.$id.'&action=view">'; // FIX ME, not possible in the Custom folder
+        }else if (!empty($ref)){
+            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/TimesheetActivity.php?ref='.$ref.'&action=view">';
+        }else{
+            $lien =  "";
+        }
+        $lienfin=empty($lien)?'':'</a>';
+
+    	$picto='timesheet@timesheet';
+        
+        if($ref){
+            $label=$langs->trans("Show").': '.$ref;
+        }else if($id){
+            $label=$langs->trans("Show").': '.$id;
+        }
+    	if ($withpicto==1){ 
+            $result.=($lien.img_object($label,$picto).$htmlcontent.$lienfin);
+        }else if ($withpicto==2) {
+            $result.=$lien.img_object($label,$picto).$lienfin;
+        }else{  
+            $result.=$lien.$htmlcontent.$lienfin;
+        }
+    	return $result;
+    }               
+                
+                
+  /******************************************************************************
+  * 
+  *              display  funciton
+  * 
+  *****************************************************************************/  
+    
+    
+    
+    
+    
+/******************************************************************************
+  * 
+  *              test  funciton
+  * 
+  *****************************************************************************/  
 	}
         /**
 	 *	Initialise object with example values

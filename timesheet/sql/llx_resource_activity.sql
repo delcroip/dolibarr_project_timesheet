@@ -20,14 +20,14 @@
 -- this table is used to store the timesheet favorit
 
 
-CREATE TABLE llx_timesheet_activity
+CREATE TABLE llx_resource_activity
 (
 rowid                   integer     NOT NULL AUTO_INCREMENT,
 date_start              DATE        NOT NULL , -- start date of the period
 date_end                DATE        NOT NULL , -- start date of the period
 time_start              TIME NOT NULL,
 time_end                TIME NOT NULL,
-weekdays                CHAR(8) default "x1111100",
+weekdays                CHAR(8) default "_1111100",
 redundancy              tinyint DEFAULT 1, -- 0/1 none, 2 weekly, 3 monthly, 4 quarterly   , 5 yearly
 timetype               tinyint DEFAULT 1 ,  -- ( 1-->'Not_related',2-->'task','project','timespent'
 status                 tinyint DEFAULT 1, -- (1-->'DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') 

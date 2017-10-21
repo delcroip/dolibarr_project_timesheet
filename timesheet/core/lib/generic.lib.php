@@ -338,7 +338,37 @@ function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2
       //$select.="\n";
       return $select;
  }
+ /*
+ * function to print a bitstring (or sting starting  with _)
+ * 
+ *  @param    string                                            $bitstring              list f bits
+ *  @param     array( string label))   $labels                 array of label ( dispaly label) for the bit number key
+ *  @param     array(string name))     $names                 array of name (input name) for the bit number key  
+ *  @param    int                       $edit             active the  read only mode
+ *  @return   string                htmlcode                                       
+ */
+ 
+ function printBitStringHTML($bitstring,$labels,$names,$edit=0){
+     global $langs;
+     $html="error, paramters of printBitStringHTML not valid";
+     $numberOfBits=count($labels);
+     if(is_array($labels) && count_chars(bitstring)!=($numberOfBits+1)){
+          $htmlValue='';
+          $html='<table class="noborder" width="100%"><tr class="titre">';  
 
+           for($i=0;$i<$numberOfBits;$i++){
+               // labels
+               $html.='<td width="'.floor(100/$numberOfBits).'%">'.$labels[$i].'<td>';
+               $htmlValue.='<td><input type="checkbox" name="'.$names[$i].'"'.((substr($bitstring, $i+1, 1))?' checked':'').(($edit)?'':' readonly').' ><td>';
+
+           }
+           $html.='</tr><tr>'.$htmlValue.'</tr></table>';
+     }
+     return $html;
+
+ }
+ 
+ 
  /*
  * function to genegate a select list from a table, the showed text will be a concatenation of some 
  * column defined in column bit, the Least sinificative bit will represent the first colum 

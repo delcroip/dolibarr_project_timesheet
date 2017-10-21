@@ -17,12 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- *   	\file       dev/skeletons/skeleton_page.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Initialy built by build_class_from_table on 2017-10-01 14:00
- */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 //if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -38,20 +32,13 @@
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
-
-// Change this following line to use the correct relative path from htdocs
-//include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
-//require_once 'lib/mymodule.lib.php';
-require_once 'class/TimesheetActivity.class.php';
+include 'core/lib/generic.lib.php';
+require_once 'class/ResourceActivity.class.php';
 dol_include_once('/core/lib/functions2.lib.php');
 //document handling
 dol_include_once('/core/lib/files.lib.php');
-//dol_include_once('/core/lib/images.lib.php');
 dol_include_once('/core/class/html.formfile.class.php');
-// include conditionnally of the dolibarr version
-//if((version_compare(DOL_VERSION, "3.8", "<"))){
-        dol_include_once('/timesheet/lib/timesheet.lib.php');
-//}
+//dol_include_once('/timesheet/lib/timesheet.lib.php');
 dol_include_once('/core/class/html.formother.class.php');
 $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
@@ -126,13 +113,13 @@ if ($user->societe_id > 0 ||
 */
 
 // create object and set id or ref if provided as parameter
-$object=new Timesheetactivity($db);
+$object=new ResourceActivity($db);
 if($id>0)
 {
     $object->id=$id; 
     $object->fetch($id);
     $ref=dol_sanitizeFileName($object->ref);
-    $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'Timesheetactivity').$ref;
+    $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'ResourceActivity').$ref;
     if(empty($action))$action='viewdoc'; //  the doc handling part send back only the ID without actions
 }
 if(!empty($ref))
@@ -141,7 +128,7 @@ if(!empty($ref))
     $object->id=$id; 
     $object->fetch($id);
     $ref=dol_sanitizeFileName($object->ref);
-    $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'Timesheetactivity').$ref;
+    $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'ResourceActivity').$ref;
     
 }
 
@@ -433,14 +420,13 @@ switch ($action) {
 // show the field weekdays
 
 		print '<td>'.$langs->trans('Weekdays').' </td><td>';
-		if($edit==1){
-		if ($new==1)
-			print '<input type="text" value="x1111100" name="Weekdays">';
-		else
-				print '<input type="text" value="'.$object->weekdays.'" name="Weekdays">';
-		}else{
-			print $object->weekdays;
-		}
+                
+
+                $labels=array($langs->trans("Monday"),$langs->trans("Tuesday"),$langs->trans("Wednesday"),$langs->trans("Thursday"),$langs->trans("Friday"),$langs->trans("Saturday"),$langs->trans("Sunday"));
+                $names=array('day[1]','day[2]','day[3]','day[4]','day[5]','day[6]','day[7]');
+                
+                print '<input type="hidden" name="day[0]" value="_">';
+                print     printBitStringHTML($bitstring,$labels,$names,$edit);
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
@@ -533,9 +519,12 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Elementid').' </td><td>';
 		if($edit==1){
-		print select_generic('element_id','rowid','Elementid','rowid','description',$object->element_id);
+		if ($new==1)
+			print '<input type="text" value="1" name="Priority">';
+		else
+				print '<input type="text" value="'.$object->element_id.'" name="Priority">';
 		}else{
-		print print_generic('element_id','rowid',$object->element_id,'rowid','description');
+			print $object->element_id;
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -816,7 +805,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '</td>';
 //Search field forelement_id
 	print '<td class="liste_titre" colspan="1" >';
-		print select_generic('element_id','rowid','ls_element_id','rowid','description',$ls_element_id);
+	print '<input class="flat" size="16" type="text" name="ls_element_id" value="'.$ls_priority.'">';
 	print '</td>';
 
         

@@ -129,7 +129,7 @@ if ($user->societe_id > 0 ||
 */
 
 // create object and set id or ref if provided as parameter
-$object=new TaskTimesheet($db);
+$object=new TimesheetUserTasks($db);
 if($id>0)
 {
     $object->id=$id;

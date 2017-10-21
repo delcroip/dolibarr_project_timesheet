@@ -22,44 +22,39 @@
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once 'class/HolidayTimesheet.class.php';
+require_once 'class/TimesheetHoliday.class.php';
 require_once 'core/lib/generic.lib.php';
-require_once 'class/TaskTimeApproval.class.php';
+require_once 'class/TimesheetTask.class.php';
 require_once 'class/TimesheetFavourite.class.php';
 
 
-class TaskTimesheet extends CommonObject
+class TimesheetUserTasks extends CommonObject
 {
     //common
     var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
-	var $element='timesheetuser';			//!< Id that identify managed objects
-	var $table_element='project_task_timesheet';		//!< Name of table without prefix where object is stored
+    var $error;							//!< To return error code (or message)
+    var $errors=array();				//!< To return several error codes (or messages)
+    var $element='timesheetuser';			//!< Id that identify managed objects
+    var $table_element='project_task_timesheet';		//!< Name of table without prefix where object is stored
 // from db
     var $id;
-	var $userId;
-	var $date_start='';
+    var $userId;
+    var $date_start='';
     var $date_end;
-	var $status;
-//	var $sender;
-//	var $recipient;
-//  var $estimates;
+    var $status;
     var $note;
-//  var $tracking;
-//  var $tracking_ids;
-//  var $fk_task;
-    //basic DB logging
-	var $date_creation='';
-	var $date_modification='';
-	var $user_creation;
-	var $user_modification;  
+
+//basic DB logging
+    var $date_creation='';
+    var $date_modification='';
+    var $user_creation;
+    var $user_modification;  
 
 //working variable
 
     var $duration;
     var $ref; 
-   var $user;
+    var $user;
     var $holidays;
     var $taskTimesheet;
     var $headers;
@@ -631,7 +626,7 @@ function saveInSession(){
             {
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
-                    $tasksList[$i] = NEW TaskTimeApproval($this->db,$obj->taskid);
+                    $tasksList[$i] = NEW TimesheetTask($this->db,$obj->taskid);
                     //$tasksList[$i]->id= $obj->taskid;                     
                     if($obj->appid){
                         $tasksList[$i]->fetch($obj->appid);
@@ -686,7 +681,7 @@ function saveInSession(){
          * For each task store in matching the session timestamp
          */
         foreach ($this->taskTimesheet as $key  => $row) {
-            $tasktime= new TaskTimeApproval($this->db);
+            $tasktime= new TimesheetTask($this->db);
             $tasktime->unserialize($row);     
             $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status,$notes[$tasktime->appId]);
 
@@ -755,10 +750,10 @@ function updateStatus($user,$status=''){
     if($this->id<=0)return -1;
     $updatedStatus=2;
     if ($status!=''){
-        if(!in_array($status,TaskTimeApproval::$statusList ))return -1; // status not valid
-        $updatedStatus=  array_search($status, TaskTimeApproval::$statusList);
+        if(!in_array($status,TimesheetTask::$statusList ))return -1; // status not valid
+        $updatedStatus=  array_search($status, TimesheetTask::$statusList);
     }else if(!empty($this->status)){
-         $updatedStatus=  array_search($this->status, TaskTimeApproval::$statusList);
+         $updatedStatus=  array_search($this->status, TimesheetTask::$statusList);
     }
     
     
@@ -768,16 +763,16 @@ function updateStatus($user,$status=''){
     }
     //look for the status to apply to the TS  from the TTA
     foreach($this->taskTimesheet as $row){
-        $tta= new TaskTimeApproval($this->db);
+        $tta= new TimesheetTask($this->db);
         $tta->unserialize($row);
         if($tta->appId>0){ // tta already created
             $tta->fetch($tta->appId);
-            $statusPriorityCur=  array_search($tta->status, TaskTimeApproval::$statusList); //FIXME
+            $statusPriorityCur=  array_search($tta->status, TimesheetTask::$statusList); //FIXME
             $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
         }// no else as the tta should be created upon submission of the TS not status update
         
     }
-    $this->status= TaskTimeApproval::$statusList[$updatedStatus];
+    $this->status= TimesheetTask::$statusList[$updatedStatus];
     $this->update($user);
     return $this->status;
 }
@@ -793,7 +788,7 @@ function updateStatus($user,$status=''){
 Public function setStatus($user,$status,$id=0){ //role ?
             $error=0;
             //if the satus is not an ENUM status
-            if(!in_array($status, TaskTimeApproval::$statusList)){
+            if(!in_array($status, TimesheetTask::$statusList)){
                 dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERROR);
                 return false;
             }
@@ -816,7 +811,7 @@ Public function setStatus($user,$status,$id=0){ //role ?
                     }
                     if(count($this->taskTimesheet)>0 )foreach($this->taskTimesheet as $ts)
                     {
-                        $tasktime= new TaskTimeApproval($this->db);
+                        $tasktime= new TimesheetTask($this->db);
                         $tasktime->unserialize($ts);
                         //$tasktime->appId=$this->id;
                         if($Approved)$ret=$tasktime->Approved($user,'team',false);
@@ -954,7 +949,7 @@ function getHTMLHeader($ajax=false,$week=0){
         $html .= '<input type="submit" class="butAction" name="save" value="'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
 
-        if(in_array('1',TaskTimeApproval::$apflows)){
+        if(in_array('1',TimesheetTask::$apflows)){
             $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
         }
         $html .= '<a class="butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
@@ -1010,7 +1005,7 @@ function getHTMLHeader($ajax=false,$week=0){
         $Lines='';
         if(!$ajax & is_array($this->taskTimesheet)){
             foreach ($this->taskTimesheet as $timesheet) {          
-                $row=new TaskTimeApproval($this->db);            
+                $row=new TimesheetTask($this->db);            
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
                 if(in_array($this->status, array("REJECTED", "DRAFT","PLANNED",'CANCELLED' ))){
@@ -1238,7 +1233,7 @@ function GetTimeSheetXML()
         $i=0;
         $xml.="<userTs userid=\"{$this->userId}\"  count=\"".count($this->taskTimesheet)."\" userName=\"{$this->userName}\" >";
         foreach ($this->taskTimesheet as $timesheet) {
-            $row=new TaskTimeApproval($this->db);
+            $row=new TimesheetTask($this->db);
              $row->unserialize($timesheet);
             $xml.= $row->getXML($this->date_start);//FIXME
             $i++;

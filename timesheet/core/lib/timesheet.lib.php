@@ -19,7 +19,7 @@
 global $langs;
 // to get the whitlist object
 require_once 'class/TimesheetFavourite.class.php';
-require_once 'class/TaskTimesheet.class.php';
+require_once 'class/TimesheetTask.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
