@@ -340,13 +340,11 @@ function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2
  }
 
  /*
- * function to genegate a select list from a table, the showed text will be a concatenation of some 
- * column defined in column bit, the Least sinificative bit will represent the first colum 
+ * function to genegate a random number
  * 
- *  @param    object             	$db                 db Object to do the querry
- *  @param    int/array                       $userid             ID of the user you want to get the subordinate liste *  @param    int                       $userid             ID of the user you want to get the subordinate liste
- *  @param    int                       $entity             entity 
- *  @return   array                                         List of the subordinate ids  and level [[id][lvl]]                                          
+ *  @param    int            	$min                min seed
+ *  @param    int                      $max            max seed
+ *  @return   int                                  random number                                         
  */
  
  
@@ -363,7 +361,12 @@ function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2
         } while ($rnd >= $range);
         return $min + $rnd;
 }
-
+ /*
+ * function to genegate a random string
+ * 
+ *  @param    int            	$lentgh                lentgh of the random string
+ *  @return   int                                  random sting                                        
+ */
 function getToken($length=32){
     $token = "";
     $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
