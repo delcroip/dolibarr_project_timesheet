@@ -69,7 +69,7 @@ $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
      .'WHERE (ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="181" OR ctc.fk_c_type_contact="160" OR ctc.fk_c_type_contact="161")';
 if(!$user->admin)
 {
-    $list=get_subordinate($db,$userid,3);
+    $list=getSubordinates($db,$userid,3);
     $list[]=$userid;
     $sql.=' AND (usr.rowid in ('.implode(',',$list).'))';  
 }

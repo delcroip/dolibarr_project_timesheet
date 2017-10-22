@@ -119,8 +119,8 @@ if($action=='submit'){
 *
 * Put here all code to build page
 ****************************************************/
-$subId=($user->admin)?'all':get_subordinate($db,$userId, 1,array($userId),$role); //FIx ME for other role
-$tasks=implode(',', array_keys(get_task($db, $userId)));
+$subId=($user->admin)?'all':getSubordinates($db,$userId, 1,array($userId),$role); //FIx ME for other role
+$tasks=implode(',', array_keys(getTasks($db, $userId)));
 if($tasks=="")$tasks=0;
 $selectList=getSelectAps($subId,$tasks,$role);
 if($current>=count($selectList))$current=0;

@@ -66,9 +66,9 @@ class box_approval extends ModeleBoxes
                 
         if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
-           $subordinate=implode(',',  get_subordinate($db, $userid,2));
+           $subordinate=implode(',',  getSubordinates($db, $userid,2));
            if($subordinate=='')$subordinate=0;
-           $tasks=implode(',', array_keys(get_task($db, $userid)));
+           $tasks=implode(',', array_keys(getTasks($db, $userid)));
            if($tasks=='')$tasks=0;
            // $sql.=' COUNT(t.rowid) as nb,';
             $sql.=' COUNT(DISTINCT t.rowid) as nbTsk, count(DISTINCT fk_project_task_timesheet) as nbTm ,t.recipient';
@@ -158,7 +158,7 @@ class box_approval extends ModeleBoxes
  *  @param     int              	$entity         entity where to look for
   *  @return     string                                                   html code
  */
-function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='team',$entity='1'){
+function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role='team',$entity='1'){
     if($userid=="")
     {
         return array();
@@ -212,7 +212,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
         }
         if(count($list)>0 && $depth>1){
             //this will get the same result plus the subordinate of the subordinate
-            $result=get_subordinate($db,$list,$depth-1,$ecludeduserid, $role, $entity);
+            $result=getSubordinates($db,$list,$depth-1,$ecludeduserid, $role, $entity);
             if(is_array($result))
             {
                 $list=array_merge($list,$result);
@@ -249,7 +249,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
  *  @param     int              	$entity         entity where to look for
   *  @return     string                                                   html code
  */
-function get_task($db,$userid,$role='project'){
+function getTasks($db,$userid,$role='project'){
     $sql='SELECT tk.fk_projet as project ,tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact ON  tk.fk_projet= element_id ';

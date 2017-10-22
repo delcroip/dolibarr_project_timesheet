@@ -144,7 +144,7 @@ if(!empty($timestamp)){
        unset($_SESSION['timesheetAp'][$timestamp]);
 }
 $timestamp=getToken();
-$subId=($user->admin)?'all':get_subordinate($db,$userId, 2,array($userId),'team');
+$subId=($user->admin)?'all':getSubordinates($db,$userId, 2,array($userId),'team');
 $selectList=getSelectAps($subId);
 $level=intval($conf->global->TIMESHEET_MAX_APPROVAL);
 $offset=0;

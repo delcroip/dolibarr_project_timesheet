@@ -1,8 +1,10 @@
 # Dolibarr language file - Deutch - timesheet
 # Translators
-# admin (190)
+# admin (191)
 adddocs=Beigefügte Dokumente
 adddocsDesc=Aktivieren Sie die Arbeitszeittabellen verknüpfte Dokumente hinzufügen
+addForOther=adding for others.
+addForOtherDesc=Aktivieren Sie den Zeit-Eintrag für Untergebenen.
 addholidaytime=Up Urlaubszeit
 addholidaytimeDesc=Fügen Sie die Ferienzeit in der Gesamtleitung
 Adminapproval=WP Admin-Bereich Zugang

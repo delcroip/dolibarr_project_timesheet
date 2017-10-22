@@ -919,7 +919,7 @@ function getHTMLHeader($ajax=false,$week=0){
  */
  function getHTMLFormHeader($ajax=false){
      global $langs;
-    $html ='<form id="timesheetForm" name="timesheet" action="?action=submit&wlm='.$this->whitelistmode.'" method="POST"';
+    $html ='<form id="timesheetForm" name="timesheet" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method="POST"';
     if($ajax)$html .=' onsubmit=" return submitTimesheet(0);"'; 
     $html .='>';
      return $html;
@@ -1107,60 +1107,74 @@ function getHTMLNavigation($optioncss, $ajax=false){
         $Nav.=  '">'.$langs->trans("Next").' &gt;&gt; </a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
         return $Nav;
 }
+/**
+*	Return clickable name (with picto eventually)
+*
+*	@param		string			$htmlcontent 		text to show
+*	@param		int			$id                     Object ID
+*	@param		string			$ref                    Object ref
+*	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+*	@return		string						String with URL
+*/
+function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
+{
+    global $langs;
 
-
-
-     /**
-     *	Return clickable name (with picto eventually)
-     *
-     *	@param		string			$htmlcontent 		text to show
-     *	@param		int			$id                     Object ID
-     *	@param		string			$ref                    Object ref
-     *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-     *	@return		string						String with URL
-     */
-    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
-    {
-    	global $langs;
-
-    	$result='';
-        if(empty($ref) && $id==0){
-            if(isset($this->id))  {
-                $id=$this->id;
-            }else if (isset($this->rowid)){
-                $id=$this->rowid;
-            }if(isset($this->ref)){
-                $ref=$this->ref;
-            }
+    $result='';
+    if(empty($ref) && $id==0){
+        if(isset($this->id))  {
+            $id=$this->id;
+        }else if (isset($this->rowid)){
+            $id=$this->rowid;
+        }if(isset($this->ref)){
+            $ref=$this->ref;
         }
+    }
+
+    if($id){
+        $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?id='.$id.'&action=view">';
+    }else if (!empty($ref)){
+        $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?ref='.$ref.'&action=view">';
+    }else{
+        $lien =  "";
+    }
+    $lienfin=empty($lien)?'':'</a>';
+
+    $picto='timesheet@timesheet';
+
+    if($ref){
+        $label=$langs->trans("Show").': '.$ref;
+    }else if($id){
+        $label=$langs->trans("Show").': '.$id;
+    }
+    if ($withpicto==1){ 
+        $result.=($lien.img_object($label,$picto).$htmlcontent.$lienfin);
+    }else if ($withpicto==2) {
+        $result.=$lien.img_object($label,$picto).$lienfin;
+    }else{  
+        $result.=$lien.$htmlcontent.$lienfin;
+    }
+    return $result;
+}    
+
+function getHTMLGetOtherUserTs($idsList,$selected){
+    global $langs;
+    $HTML='<form id="timesheetForm" name="OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method="POST">'; 
+    $userid=  is_object($user)?$user->id:$user;
+    
+    //if(!$user->admin){
+        $HTML.='<select name="userid"> ';
+        $Names=getUsersName($idsList);
+        foreach ($Names as $subordiateId => $subordiateName){
+            $HTML.='<option  value="'.$subordiateId.'" '.(($selected==$subordiateId)?'selected':'').'> '.$subordiateName.'</option>';    
+        }
+        $HTML.='</select> ';
+    //}else{
+        //FIXME
+       $HTML.='<input type="submit" name="'.$langs->trans('submit').'"/></form> ';
         
-        if($id){
-            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?id='.$id.'&action=view">';
-        }else if (!empty($ref)){
-            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?ref='.$ref.'&action=view">';
-        }else{
-            $lien =  "";
-        }
-        $lienfin=empty($lien)?'':'</a>';
-
-    	$picto='timesheet@timesheet';
-        
-        if($ref){
-            $label=$langs->trans("Show").': '.$ref;
-        }else if($id){
-            $label=$langs->trans("Show").': '.$id;
-        }
-    	if ($withpicto==1){ 
-            $result.=($lien.img_object($label,$picto).$htmlcontent.$lienfin);
-        }else if ($withpicto==2) {
-            $result.=$lien.img_object($label,$picto).$lienfin;
-        }else{  
-            $result.=$lien.$htmlcontent.$lienfin;
-        }
-    	return $result;
-    }    
-
-
+    return $HTML;
+}
 
 
 	/**

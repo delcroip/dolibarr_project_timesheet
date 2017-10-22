@@ -1,8 +1,10 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-# admin (180)
+# admin (181)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
+addForOther=adding for others.
+addForOtherDesc=permiten la entrada de tiempo de subordinados.
 addholidaytime=Sume el tiempo de vacaciones
 addholidaytimeDesc=Incluir el tiempo de vacaciones en la línea del total
 Adminapproval=Acceso de administrador

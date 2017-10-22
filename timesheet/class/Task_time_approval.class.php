@@ -892,7 +892,7 @@ class Task_time_approval extends Task
                 }
                  break;
             case 'User':
-                $userName=get_userName($this->userId);
+                $userName=getUsersName($this->userId);
                 $htmlTitle .=  $userName[$this->userId];
                 break;
              case 'Approval':

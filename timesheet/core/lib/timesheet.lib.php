@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  *  @param    array(int)/int 		$ecludeduserid  exection that shouldn't be part of the result ( to avoid recursive loop)
  *  @param     string              	$role           team will look for organigram subordinate, project for project subordinate
  *  @param     int              	$entity         entity where to look for
-  *  @return     string                                                   html code
+  *  @return     array(userId)                                                  html code
  */
-function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='team',$entity='1'){
+function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role='team',$entity='1'){
     if($userid=="")
     {
         return array();
@@ -88,7 +88,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
         }
         if(count($list)>0 && $depth>1){
             //this will get the same result plus the subordinate of the subordinate
-            $result=get_subordinate($db,$list,$depth-1,$ecludeduserid, $role, $entity);
+            $result=getSubordinates($db,$list,$depth-1,$ecludeduserid, $role, $entity);
             if(is_array($result))
             {
                 $list=array_merge($list,$result);
@@ -125,7 +125,7 @@ function get_subordinate($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
  *  @param     int              	$entity         entity where to look for
   *  @return     string                                                   html code
  */
-function get_task($db,$userid,$role='project'){
+function getTasks($db,$userid,$role='project'){
     $sql='SELECT tk.fk_projet as project ,tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact ON  tk.fk_projet= element_id ';
@@ -171,7 +171,7 @@ function get_task($db,$userid,$role='project'){
  *  @param    array(int)/int        $userids    	array of manager id 
   *  @return  array (int => String)  				array( ID => userName)
  */
-function get_userName($userids){
+function getUsersName($userids){
     global $db;
 	if($userids=="")
     {
