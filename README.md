@@ -3,7 +3,7 @@ Timesheet view for project in Dolibarr
 
 
 # Functionnalities
- - Timespend entry by week for all the eligible task of an user per week in the timesheet page (splited week possible)
+ - Timespend entry by week ot Month for all the eligible tasks of an user in the timesheet page (splited week possible, possible to add time spent for subordinates)
  - Holiday are showed in the timesheet page
  - Layout customisation (show/hide the '00:00', show/hide the draft project task,show ref or not, show the related project or not ... )
  - Dolibarr Print mode supported 
@@ -40,7 +40,6 @@ Timesheet view for project in Dolibarr
 - better ajax error when adding fav
 - add total to the otherAP
 - add total 'line' and super total ts
-- TS submission per month
 
 - maintain the ajax behavior
 
@@ -48,6 +47,10 @@ Timesheet view for project in Dolibarr
 
 
 # Change log
+2.1.4.dev.2 Change log from 2.1.3
+ - NEW : enter time spent for subordinates
+ - NEW : time entry per month
+
 2.1.3 Change log from 2.1.2
  - fix : start and end date missing in task line
  - fix : task end/start in middle of the week wasn't taken into account
