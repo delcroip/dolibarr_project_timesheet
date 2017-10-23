@@ -64,7 +64,8 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
     }
     $SubordiateIds=getSubordinates($db,$userid, 2,array(),$role='team',$entity='1');
     if (in_array($newuserid, $SubordiateIds)){
-        $userid=$newuserid;
+        $SubordiateIds[]=$userid;
+        $userid=$newuserid;       
     }
 
 }
@@ -228,8 +229,8 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //tmstp=time();
 //fetch ts for others
 
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER==1){
-    print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid);
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER==1 && (count($SubordiateIds)>1 || $user->admin)){
+    print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid,$user->admin);
 }
 
 $ajax=false;

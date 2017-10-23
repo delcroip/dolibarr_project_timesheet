@@ -1156,21 +1156,32 @@ function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
     }
     return $result;
 }    
-
-function getHTMLGetOtherUserTs($idsList,$selected){
+/**
+*	Return HTML to get other user
+*
+*	@param		string			$htmlcontent 		text to show
+*	@param		int			$id                     Object ID
+*	@param		string			$ref                    Object ref
+*	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+*	@return		string						String with URL
+*/
+function getHTMLGetOtherUserTs($idsList,$selected,$admin){
     global $langs;
+    $form=new Form($this->db);
     $HTML='<form id="timesheetForm" name="OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method="POST">'; 
-    $userid=  is_object($user)?$user->id:$user;
     
-    //if(!$user->admin){
-        $HTML.='<select name="userid"> ';
-        $Names=getUsersName($idsList);
-        foreach ($Names as $subordiateId => $subordiateName){
-            $HTML.='<option  value="'.$subordiateId.'" '.(($selected==$subordiateId)?'selected':'').'> '.$subordiateName.'</option>';    
-        }
-        $HTML.='</select> ';
-    //}else{
-        //FIXME
+    if(!$admin){
+        //$HTML.='<select name="userid"> ';
+        //$Names=getUsersName($idsList);
+        //foreach ($Names as $subordiateId => $subordiateName){
+        //    $HTML.='<option  value="'.$subordiateId.'" '.(($selected==$subordiateId)?'selected':'').'> '.$subordiateName.'</option>';    
+       // }
+       // $HTML.='</select> ';
+        $HTML.=$form->select_dolusers($selected,'userid',0,null,0,$idsList);
+    }else{
+        
+         $HTML.=$form->select_dolusers($selected,'userid');
+    }
        $HTML.='<input type="submit" name="'.$langs->trans('submit').'"/></form> ';
         
     return $HTML;
