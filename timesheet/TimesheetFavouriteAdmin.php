@@ -39,7 +39,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';;
 // Change this following line to use the correct relative path from htdocs
-require_once 'class/timesheetwhitelist.class.php';
+require_once 'class/TimesheetFavourite.class.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php'; 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -55,7 +55,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
-$langs->load("Timesheetwhitelist_class");
+$langs->load("Timesheet");
 
 // Get parameter
 $id			= GETPOST('id','int');
@@ -123,7 +123,7 @@ if ($user->societe_id > 0 ||
 */
 
 // create object and set id or ref if provided as parameter
-$object=new Timesheetwhitelist($db);
+$object=new TimesheetFavourite($db);
 if($id>0)
 {
     $object->id=$id; 

@@ -19,7 +19,7 @@ define('TIMESHEET_GROUP_OTHER_AP',"week");
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
-require_once 'class/Task_time_approval.class.php';
+require_once 'class/TimesheetTask.class.php';
 
 /*******************************************************************
 * ACTIONS
@@ -61,7 +61,7 @@ if($action=='submit'){
         //$task_timesheet->db=$db;
         if (!empty($_POST['approval']))
         {
-            $task_timesheet= new Task_time_approval($db);
+            $task_timesheet= new TimesheetTask($db);
             $approvals=$_POST['approval'];
             $notes=$_POST['note'];
             
@@ -245,7 +245,7 @@ function getTStobeApproved($current,$selectList){ // FIXME use the list tab as i
 
     $listTTA=array();
     foreach($selectList[$current]['idList'] as $idTTA){
-        $TTA= new Task_time_approval($db);
+        $TTA= new TimesheetTask($db);
         $TTA->fetch($idTTA);
         $listTTA[]=$TTA;
     }

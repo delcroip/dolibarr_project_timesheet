@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 //require_once './projectTimesheet.class.php';
 define('TIMESHEET_BC_FREEZED','909090');
 define('TIMESHEET_BC_VALUE','f0fff0');
-class holidayTimesheet extends Holiday 
+class TimesheetHoliday extends Holiday 
 {
         private $holidaylist;
         private $holidayPresent;

@@ -21,7 +21,7 @@
 include 'core/lib/includeMain.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once './core/lib/timesheet.lib.php';
-require_once './class/timesheetreport.class.php';
+require_once './class/TimesheetReport.class.php';
 $htmlother = new FormOther($db);
 
 
@@ -83,7 +83,7 @@ if ($resql)
         {
                 $error=0;
                 $obj = $db->fetch_object($resql);
-                $projectList[$obj->rowid]=new timesheetReport($db);
+                $projectList[$obj->rowid]=new TimesheetReport($db);
                 $projectList[$obj->rowid]->initBasic($obj->rowid,'',$obj->ref.' - '.$obj->title);
                 $i++;
         }

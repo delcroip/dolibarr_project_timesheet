@@ -237,7 +237,7 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'Timesheet',
 									'mainmenu'=>'timesheet',
 									'leftmenu'=>'timesheet',
-									'url'=>'/timesheet/timesheet.php',
+									'url'=>'/timesheet/Timesheet.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
 									'enabled'=>'$conf->timesheet->enabled',	// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -252,7 +252,7 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'Timesheet',
 									'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'Timesheet',
-									'url'=>'/timesheet/timesheet.php?action=list',
+									'url'=>'/timesheet/Timesheet.php?action=list',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
 									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -265,7 +265,7 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'userReport',
 									'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'timesheet',
-									'url'=>'/timesheet/reportuser.php',
+									'url'=>'/timesheet/TimesheetReportUser.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>120,
 									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -279,10 +279,10 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'Timesheetwhitelist',
 									'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'Timesheetwhitelist',
-									'url'=>'/timesheet/timesheetwhitelist.php',
+									'url'=>'/timesheet/TimesheetFavouriteAdmin.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>110,
-									'enabled'=>'TIMESHEET_WHITELIST==1',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'enabled'=>'$conf->global->TIMESHEET_WHITELIST==1',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
@@ -294,7 +294,7 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'projectReport',
 									'mainmenu'=>'project',
                                                                         'leftmenu'=>'projectReport',
-									'url'=>'/timesheet/reportproject.php',
+									'url'=>'/timesheet/TimesheetReportProject.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>120,
 									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -307,7 +307,7 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'projectInvoice',
 									'mainmenu'=>'project',
                                                                         'leftmenu'=>'projectInvoice',
-									'url'=>'/timesheet/timesheetProjectInvoice.php',
+									'url'=>'/timesheet/TimesheetProjectInvoice.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>121,
 									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -320,7 +320,7 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'Timesheetapproval',
 									'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'Timesheetapproval',
-									'url'=>'/timesheet/timesheetAp.php',
+									'url'=>'/timesheet/TimesheetTeamApproval.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>130,
 									'enabled'=>'$user->rights->timesheet->approval',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -334,7 +334,7 @@ class modTimesheet extends DolibarrModules
 									'titre'=>'Adminapproval',
 									'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'Adminapproval',
-									'url'=>'/timesheet/timesheetuser.php?action=list&sortfield=t.date_start&sortorder=desc',
+									'url'=>'/timesheet/TimesheetUserTasksAdmin.php?action=list&sortfield=t.date_start&sortorder=desc',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>131,
 									'enabled'=>'$user->rights->timesheet->approval',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

@@ -43,7 +43,7 @@ include 'core/lib/includeMain.lib.php';
 }   
 
 require_once 'core/lib/generic.lib.php';
-require_once 'class/Task_timesheet.class.php';
+require_once 'class/TimesheetUserTasks.class.php';
 require_once 'core/lib/timesheet.lib.php';
 dol_include_once('/core/lib/functions2.lib.php');
 //document handling
@@ -129,7 +129,7 @@ if ($user->societe_id > 0 ||
 */
 
 // create object and set id or ref if provided as parameter
-$object=new Task_timesheet($db);
+$object=new TimesheetUserTasks($db);
 if($id>0)
 {
     $object->id=$id;

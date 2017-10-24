@@ -29,7 +29,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
-require_once 'class/Task_timesheet.class.php';
+require_once 'class/TimesheetUserTasks.class.php';
 
 
 $action             = GETPOST('action');
@@ -73,7 +73,7 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
 
 
 
-$task_timesheet= new Task_timesheet($db,$userid);
+$task_timesheet= new TimesheetUserTasks($db,$userid);
 $confirm=GETPOST('confirm');
 
 if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
@@ -111,7 +111,7 @@ if ($user->societe_id > 0)
 
 */
   
-$task_timesheet= new Task_timesheet($db,$userid);
+$task_timesheet= new TimesheetUserTasks($db,$userid);
 
 /*******************************************************************
 * ACTIONS

@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 /**
  *	Put here description of your class
  */
-class Timesheetwhitelist extends CommonObject
+class TimesheetFavourite extends CommonObject
 {
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
@@ -195,7 +195,7 @@ class Timesheetwhitelist extends CommonObject
             {
                 
                 $obj = $this->db->fetch_object($resql);
-                $List[$i]=new Timesheetwhitelist($this->db);
+                $List[$i]=new TimesheetFavourite($this->db);
                 $List[$i]->id    = $obj->rowid;          
                 $List[$i]->user = $obj->fk_user;
                 $List[$i]->project = $obj->fk_project;
@@ -524,7 +524,7 @@ class Timesheetwhitelist extends CommonObject
 
 		$error=0;
 
-		$object=new Timesheetwhitelist($this->db);
+		$object=new TimesheetFavourite($this->db);
 
 		$this->db->begin();
 
