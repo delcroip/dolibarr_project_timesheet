@@ -888,7 +888,7 @@ function getHTMLHeader($ajax=false,$week=0){
     {
         $curDay=$this->date_start+ SECINDAY*$i;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
-        $html.="\t".'<th width="35px" style="text-align:center;" >'.substr($langs->trans(date('l',$curDay)),0,3).'<br>'.substr(dol_print_date($curDay,'day'),0,5)."</th>\n";
+        $html.="\t".'<th class="Days['.$this->id.']" width="35px" style="text-align:center;" >'.substr($langs->trans(date('l',$curDay)),0,3).'<br>'.substr(dol_print_date($curDay,'day'),0,5)."</th>\n"; //FIXME : should remove Y/,/Y and Y from the regex
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';
@@ -909,7 +909,7 @@ function getHTMLHeader($ajax=false,$week=0){
  */
  function getHTMLFormHeader($ajax=false){
      global $langs;
-    $html ='<form id="timesheetForm" name="timesheet" action="?action=submit&wlm='.$this->whitelistmode.'" method="POST"';
+    $html ='<form id="timesheetForm" name="timesheet" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method="POST"';
     if($ajax)$html .=' onsubmit=" return submitTimesheet(0);"'; 
     $html .='>';
      return $html;
@@ -924,8 +924,8 @@ function getHTMLHeader($ajax=false,$week=0){
 
     $html .="<tr>\n";
     $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
-    $weeklength=round(($this->date_end-$this->date_start)/SECINDAY);
-    for ($i=0;$i<$weeklength;$i++)
+    $length=round(($this->date_end-$this->date_start)/SECINDAY);
+    for ($i=0;$i<$length;$i++)
     {
        $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>\n"; // fixme the week shouldbe in it
      }
@@ -1079,7 +1079,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
             $Nav.=  '<a href="?wlm='.$this->whitelistmode.'&dateStart='.getStartDate($this->date_start,-1);   
         //}
         if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
-	$Nav.=  '">  &lt;&lt; '.$langs->trans("PreviousWeek").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+	$Nav.=  '">  &lt;&lt; '.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	//if($ajax){
         //    $Nav.=  '<form name="goToDate" onsubmit="return toDateHandler();" action="?action=goToDate&wlm='.$this->whitelistmode.'" method="POST">'."\n\t\t\t";
         //}else{
@@ -1094,7 +1094,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
             
         //}
         if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
-        $Nav.=  '">'.$langs->trans("NextWeek").' &gt;&gt; </a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
+        $Nav.=  '">'.$langs->trans("Next").' &gt;&gt; </a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
         return $Nav;
 }
 
@@ -1149,8 +1149,36 @@ function getHTMLNavigation($optioncss, $ajax=false){
         }
     	return $result;
     }    
+/**
+*	Return HTML to get other user
+*
+*	@param		string			$htmlcontent 		text to show
+*	@param		int			$id                     Object ID
+*	@param		string			$ref                    Object ref
+*	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+*	@return		string						String with URL
+*/
+function getHTMLGetOtherUserTs($idsList,$selected,$admin){
+    global $langs;
+    $form=new Form($this->db);
+    $HTML='<form id="timesheetForm" name="OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method="POST">'; 
 
+    if(!$admin){
+        //$HTML.='<select name="userid"> ';
+        //$Names=getUsersName($idsList);
+        //foreach ($Names as $subordiateId => $subordiateName){
+        //    $HTML.='<option  value="'.$subordiateId.'" '.(($selected==$subordiateId)?'selected':'').'> '.$subordiateName.'</option>';    
+       // }
+       // $HTML.='</select> ';
+        $HTML.=$form->select_dolusers($selected,'userid',0,null,0,$idsList);
+    }else{
 
+         $HTML.=$form->select_dolusers($selected,'userid');
+    }
+       $HTML.='<input type="submit" name="'.$langs->trans('submit').'"/></form> ';
+
+    return $HTML;
+}
 
 
 	/**

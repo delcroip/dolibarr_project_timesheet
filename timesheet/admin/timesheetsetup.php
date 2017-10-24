@@ -38,6 +38,7 @@ if (!$user->admin) {
 }
 $action = $_GET['action'];
 $timetype=$conf->global->TIMESHEET_TIME_TYPE;
+$timeSpan=$conf->global->TIMESHEET_TIME_SPAN;
 $hoursperday=$conf->global->TIMESHEET_DAY_DURATION;
 $maxhoursperday=$conf->global->TIMESHEET_DAY_MAX_DURATION;
 $maxApproval=$conf->global->TIMESHEET_MAX_APPROVAL;
@@ -57,6 +58,7 @@ $cancelledColor=$conf->global->TIMESHEET_COL_CANCELLED;
 $addholidaytime=$conf->global->TIMESHEET_ADD_HOLIDAY_TIME;
 $adddocs=$conf->global->TIMESHEET_ADD_DOCS;
 $opendays=str_split($conf->global->TIMESHEET_OPEN_DAYS);
+$addForOther=$conf->global->TIMESHEET_ADD_FOR_OTHER;
 //Invoice part
 
 $invoicetasktime=$conf->global->TIMESHEET_INVOICE_TASKTIME;
@@ -77,6 +79,7 @@ switch($action)
     case save:
         //general option
         $timetype=$_POST['timeType'];
+        $timeSpan=$_POST['timeSpan'];
         $hoursperday=null2zero($_POST['hoursperday']);
         $maxhoursperday=null2zero($_POST['maxhoursperday']);
         $hidedraft=null2zero($_POST['hidedraft']);
@@ -87,7 +90,9 @@ switch($action)
         $whiteListMode=null2zero($_POST['blackWhiteListMode']);
         $whiteList=null2zero($_POST['blackWhiteList']);
         $dropdownAjax=null2zero($_POST['dropdownAjax']);
+        $addForOther=null2zero($_POST['addForOther']);
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
+        dolibarr_set_const($db, "TIMESHEET_TIME_SPAN", $timeSpan, 'chaine', 0, '', $conf->entity);
         dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
         dolibarr_set_const($db, "TIMESHEET_DAY_MAX_DURATION", $maxhoursperday, 'chaine', 0, '', $conf->entity);
         dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", $hidedraft, 'chaine', 0, '', $conf->entity);
@@ -98,6 +103,7 @@ switch($action)
         dolibarr_set_const($db, "TIMESHEET_WHITELIST_MODE", $whiteList?$whiteListMode:2, 'int', 0, '', $conf->entity);
         dolibarr_set_const($db, "TIMESHEET_WHITELIST", $whiteList, 'int', 0, '', $conf->entity);
         dolibarr_set_const($db, "MAIN_DISABLE_AJAX_COMBOX", $dropdownAjax, 'int', 0, '', $conf->entity);
+        dolibarr_set_const($db, "TIMESHEET_ADD_FOR_OTHER", $addForOther, 'int', 0, '', $conf->entity);
         //headers handling
         $showProject=$_POST['showProject'];
         $showTaskParent=$_POST['showTaskParent'];
@@ -245,9 +251,9 @@ echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value
 // type time
 echo '<tr class="pair"><th align="left">'.$langs->trans("timeType").'</th><th align="left">'.$langs->trans("timeTypeDesc").'</th>';
 echo '<th align="left"><input type="radio" name="timeType" value="hours" ';
-echo ($timetype=="hours"?"checked":"").'> '.$langs->trans("hours").'<br>';
+echo ($timetype=="hours"?"checked":"").'> '.$langs->trans("Hours").'<br>';
 echo '<input type="radio" name="timeType" value="days" ';
-echo ($timetype=="days"?"checked":"").'> '.$langs->trans("days")."</th></tr>\n\t\t";
+echo ($timetype=="days"?"checked":"").'> '.$langs->trans("Days")."</th></tr>\n\t\t";
 //hours perdays
 echo '<tr class="impair"><th align="left">'.$langs->trans("hoursperdays");
 echo '</th><th align="left">'.$langs->trans("hoursPerDaysDesc").'</th>';
@@ -258,6 +264,14 @@ echo '<tr class="pair"><th align="left">'.$langs->trans("maxhoursperdays"); //FI
 echo '</th><th align="left">'.$langs->trans("maxhoursPerDaysDesc").'</th>'; // FIXTRAD
 echo '<th align="left"><input type="text" name="maxhoursperday" value="'.$maxhoursperday;
 echo "\" size=\"4\" ></th></tr>\n\t\t";
+// time span
+echo '<tr class="pair"><th align="left">'.$langs->trans("timeSpan").'</th><th align="left">'.$langs->trans("timeSpanDesc").'</th>';
+echo '<th align="left"><input type="radio" name="timeSpan" value="week" ';
+echo ($timeSpan=="week"?"checked":"").'> '.$langs->trans("Week").'<br>';
+echo '<input type="radio" name="timeSpan" value="splitedWeek" ';
+echo ($timeSpan=="splitedWeek"?"checked":"").'> '.$langs->trans("splitedWeek").'<br>';
+echo '<input type="radio" name="timeSpan" value="month" ';
+echo ($timeSpan=="month"?"checked":"").'> '.$langs->trans("Month")."</th></tr>\n\t\t";
 // hide draft
 echo  '<tr class="impair"><th align="left">'.$langs->trans("hidedraft");
 echo '</th><th align="left">'.$langs->trans("hideDraftDesc").'</th>';
@@ -287,6 +301,12 @@ echo  '<tr class="impair"><th align="left">'.$langs->trans("adddocs");
 echo '</th><th align="left">'.$langs->trans("adddocsDesc").'</th>';
 echo  '<th align="left"><input type="checkbox" name="adddocs" value="1" ';
 echo (($adddocs=='1')?'checked':'')."></th></tr>\n";
+
+//Add for other
+echo  '<tr class="pair"><th align="left">'.$langs->trans("addForOther");
+echo '</th><th align="left">'.$langs->trans("addForOtherDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="addForOther" value="1" ';
+echo (($addForOther=='1')?'checked':'')."></th></tr>\n\t\t";
 
 
 

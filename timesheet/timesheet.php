@@ -52,8 +52,27 @@ $toDateyear                 = GETPOST('toDateyear');
 $timestamp=GETPOST('timestamp');
 $whitelistmode=GETPOST('wlm','int');
 if($whitelistmode=='')$whitelistmode=$conf->global->TIMESHEET_WHITELIST_MODE;
-
 $userid=  is_object($user)?$user->id:$user;
+// if the user can enter ts for other the user id is diferent
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER==1  ){
+    
+    if($action=='getOtherTs' && isset($_POST['userid'])){
+        $newuserid=$_POST['userid'];
+        
+    }else if(isset($_GET['userid'])){
+        $newuserid=$_GET['userid'];
+    }
+    $SubordiateIds=getSubordinates($db,$userid, 2,array(),$role='team',$entity='1');
+    if (in_array($newuserid, $SubordiateIds)){
+        $SubordiateIds[]=$userid;
+        $userid=$newuserid;       
+    }
+
+}
+
+
+
+
 $task_timesheet= new TimesheetUserTasks($db,$userid);
 $confirm=GETPOST('confirm');
 
@@ -101,6 +120,7 @@ $task_timesheet= new TimesheetUserTasks($db,$userid);
 ********************************************************************/
 $status='';
 switch($action){
+
     case 'submit':
         if(isset($_SESSION['task_timesheet'][$timestamp]))
         {
@@ -207,7 +227,11 @@ llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 
 //tmstp=time();
+//fetch ts for others
 
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER==1 && (count($SubordiateIds)>1 || $user->admin)){
+    print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid,$user->admin);
+}
 
 $ajax=false;
 $Form =$task_timesheet->getHTMLNavigation($optioncss,$ajax);
