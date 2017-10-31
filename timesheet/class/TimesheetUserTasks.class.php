@@ -83,7 +83,7 @@ class TimesheetUserTasks extends CommonObject
         $this->user=$user;
         $this->userId= ($userId==0)?(is_object($user)?$user->id:$user):$userId;
         $this->headers=explode('||', $conf->global->TIMESHEET_HEADERS);
-        $this->get_userName();
+        $this->getUserName();
         
     }
  /******************************************************************************
@@ -594,7 +594,7 @@ function saveInSession(){
   
     
     $sql ='SELECT DISTINCT element_id as taskid,prj.fk_soc,tsk.fk_projet,';
-    $sql.='tsk.fk_task_parent,tsk.rowid,app.rowid as appid';
+    $sql.='tsk.fk_task_parent,tsk.rowid,app.rowid as appid,prj.ref as prjRef, tsk.ref as tskRef';
     $sql.=$sqlwhiteList;
     $sql.=" FROM ".MAIN_DB_PREFIX."element_contact "; 
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
@@ -619,7 +619,7 @@ function saveInSession(){
     $sql.=' AND (prj.dateo<="'.$this->db->idate($datestop).'" OR prj.dateo IS NULL)';
     $sql.=' AND (tsk.datee>="'.$this->db->idate($datestart).'" OR tsk.datee IS NULL)';
     $sql.=' AND (tsk.dateo<="'.$this->db->idate($datestop).'" OR tsk.dateo IS NULL)';
-    $sql.='  ORDER BY '.($whiteListNumber?'listed,':'').'prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ';
+    $sql.='  ORDER BY '.($whiteListNumber?'listed DESC,':'').'prj.fk_soc,prjRef,tskRef ';
 
      dol_syslog("timesheet::getTasksTimesheet full ", LOG_DEBUG);
 
@@ -715,7 +715,7 @@ function saveInSession(){
  *  @param    array(int)/int        $userids    	array of manager id 
   *  @return  array (int => String)  				array( ID => userName)
  */
-function get_userName(){
+function getUserName(){
 
 
     $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as userName FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
@@ -851,7 +851,9 @@ Public function setStatus($user,$status,$id=0){ //role ?
     
     
 function getHTML($ajax=false,$Approval=false){ // fixme shows the month by week
-    $Form =$this->getHTMLHeader($ajax);
+    var_dump(count($this->taskTimesheet));
+    $Form='<div style="overflow:auto;">'; 
+    $Form .=$this->getHTMLHeader($ajax);
 
     $Form .=$this->getHTMLHolidayLines($ajax);
 
@@ -859,10 +861,10 @@ function getHTML($ajax=false,$Approval=false){ // fixme shows the month by week
 
     $Form .=$this->getHTMLtaskLines($ajax);
     $Form .=$this->getHTMLTotal();
+    $html .= '</div>'; // overflow div
+    $Form .= '</table>';
     $Form .=$this->getHTMLNote($ajax);
-    if($Approval){
-        $Form .= '</table>';
-    }else{
+    if(!$Approval){
         $Form .=$this->getHTMLFooter($ajax);
     }
     $Form .= '</br>'."\n";
@@ -880,8 +882,8 @@ function getHTML($ajax=false,$Approval=false){ // fixme shows the month by week
 function getHTMLHeader($ajax=false,$week=0){
      global $langs,$conf;
      
-
-    $html.="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
+       
+    $html="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
      ///Whitelist tab
      $html.='<tr class="liste_titre" id="">'."\n";
      
@@ -891,18 +893,18 @@ function getHTMLHeader($ajax=false,$week=0){
  //               $html.='width="'.$headersWidth[$key].'"';
  //        }
          $html.=">".$langs->trans($value)."</th>\n";
-     }
+      }
     $opendays=str_split($conf->global->TIMESHEET_OPEN_DAYS);
-    $weeklength=round(($this->date_end-$this->date_start)/SECINDAY);
-    for ($i=0;$i<$weeklength;$i++)
+    $length=getDayInterval($this->date_start,$this->date_end);
+    for ($i=0;$i<$length;$i++)
     {
-        $curDay=$this->date_start+ SECINDAY*$i;
+        $curDay=$this->date_start+ SECINDAY*$i + SECINDAY/4;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
         $html.="\t".'<th class="Days['.$this->id.']" width="35px" style="text-align:center;" >'.substr($langs->trans(date('l',$curDay)),0,3).'<br>'.substr(dol_print_date($curDay,'day'),0,5)."</th>\n"; //FIXME : should remove Y/,/Y and Y from the regex
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';
-     $html.= '<td colspan="'.($this->headers.lenght+$weeklength).'"> ';
+     $html.= '<td colspan="'.($this->headers.lenght+$length).'"> ';
     $html .= '<input type="hidden" name="timestamp" value="'.$this->timestamp."\"/>\n";
     $html .= '<input type="hidden" name="startDate" value="'.$this->date_start.'" />';  
      $html .= '<input type="hidden" name="tsUserId" value="'.$this->id.'" />'; 
@@ -919,7 +921,8 @@ function getHTMLHeader($ajax=false,$week=0){
  */
  function getHTMLFormHeader($ajax=false){
      global $langs;
-    $html ='<form id="timesheetForm" name="timesheet" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method="POST"';
+
+     $html .='<form id="timesheetForm" name="timesheet" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method="POST"';
     if($ajax)$html .=' onsubmit=" return submitTimesheet(0);"'; 
     $html .='>';
      return $html;
@@ -934,7 +937,8 @@ function getHTMLHeader($ajax=false,$week=0){
 
     $html .="<tr>\n";
     $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
-    $length=round(($this->date_end-$this->date_start)/SECINDAY);
+    //$length=round(($this->date_end-$this->date_start)/SECINDAY);
+    $length=getDayInterval($this->date_start,$this->date_end);
     for ($i=0;$i<$length;$i++)
     {
        $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>\n"; // fixme the week shouldbe in it
@@ -952,7 +956,7 @@ function getHTMLHeader($ajax=false,$week=0){
  function getHTMLFooter($ajax=false){
      global $langs;
     //form button
-    $html .= '</table>';
+
     $html .= '<div class="tabsAction">';
      $isOpenSatus=($this->status=="DRAFT" || $this->status=="CANCELLED"|| $this->status=="REJECTED");
     if($isOpenSatus){
@@ -1041,15 +1045,15 @@ function getHTMLHeader($ajax=false,$week=0){
  function getHTMLNote(){
      global $langs;
      $isOpenSatus=(in_array($this->status, array("REJECTED", "DRAFT","PLANNED",'CANCELLED' )));
-     $html='<table class="noborder" width="50%"><tr><td>'.$langs->trans('Note').'</td></tr><tr><td>';
+     $html='<div class="noborder"><div  width="100%">'.$langs->trans('Note').'</div><div width="100%">';
    
 
     if($isOpenSatus){
         $html.='<textarea class="flat"  cols="75" name="Note['.$this->id.']" rows="3" >'.$this->note.'</textarea>';
-        $html.='</td></tr></table>';
+        $html.='</div>';
     }else if(!empty($this->note)){
         $html.=$this->note;
-        $html.='</td></tr></table>';
+        $html.='></div>';
     }else{
         $html="";
     }

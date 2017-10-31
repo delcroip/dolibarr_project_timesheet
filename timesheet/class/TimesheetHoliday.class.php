@@ -68,7 +68,7 @@ class TimesheetHoliday extends Holiday
          * next     --> is it the holiday continuing the day after
          * status   --> is the holiday submitted or approuved ( none if id=0)
          */
-        $timespan=round(($datestop-$datestart)/SECINDAY);
+        $timespan=getDayInterval($datestart,$datestop);
         for($day=0;$day<$timespan;$day++)
         {
             

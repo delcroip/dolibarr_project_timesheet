@@ -747,7 +747,7 @@ class TimesheetTask extends Task
         if($timeStart==0) $timeStart=$this->date_start_approval;
         if($timeEnd==0) $timeEnd=$this->date_end_approval;
         if($userid==0) $userid=$this->userId;
-        $dayelapsed=ceil($timeEnd-$timeStart)/SECINDAY;
+        $dayelapsed=getDayInterval($timeStart,$timeEnd);
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
@@ -765,7 +765,7 @@ class TimesheetTask extends Task
         dol_syslog(__METHOD__, LOG_DEBUG);
 		for($i=0;$i<$dayelapsed;$i++){
 			
-			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>$timeStart+SECINDAY*$i);
+			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>$timeStart+SECINDAY*$i+SECINDAY/4);
 		}
 
         $resql=$this->db->query($sql);
@@ -780,7 +780,7 @@ class TimesheetTask extends Task
                         $error=0;
                         $obj = $this->db->fetch_object($resql);
                         $dateCur=$this->db->jdate($obj->task_date);
-                        $day=(floor($dateCur-$timeStart)/SECINDAY);
+                        $day=getDayInterval($timeStart,$dateCur);
 
                         $this->tasklist[$day]=array('id'=>$obj->rowid,'date'=>$dateCur,'duration'=>$obj->task_duration);
                         $i++;
@@ -813,7 +813,7 @@ class TimesheetTask extends Task
            global $langs,$conf;
            // change the time to take all the TS per day
 
-           $dayelapsed=round(($this->date_end_approval-$this->date_start_approval)/SECINDAY);
+           $dayelapsed=getDayInterval($this->date_start_approval,$this->date_end_approval);
   
    
        if(($dayelapsed<1)||empty($headers))
@@ -930,7 +930,7 @@ class TimesheetTask extends Task
         {
 
             //$shrinkedStyle=(!$opendays[$dayCur+1] && $shrinked)?'display:none;':'';
-            $today= $this->date_start_approval+SECINDAY*$dayCur;
+            $today= $this->date_start_approval+SECINDAY*$dayCur +SECINDAY/4;
             # to avoid editing if the task is closed 
             $dayWorkLoadSec=isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
 
@@ -943,7 +943,7 @@ class TimesheetTask extends Task
             $startDates=($this->date_start>$this->startDatePjct )?$this->date_start:$this->startDatePjct;
             $stopDates=(($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct==0)?$this->date_end:$this->stopDatePjct;
             if($isOpenSatus){
-                $isOpen=$isOpenSatus && (($startDates==0) || ($startDates < $today +SECINDAY));
+                $isOpen=$isOpenSatus && (($startDates==0) || ($startDates < $today +SECINDAY*1.25));
                 $isOpen= $isOpen && (($stopDates==0) ||($stopDates >= $today ));
 
                 $isOpen= $isOpen && ($this->pStatus < "2") ;
@@ -1503,9 +1503,6 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
         return $ret+1;// team key is 0 
     }        
         
-    function dump(){
-       var_dump($this->serialize());
-    }
 
     
     

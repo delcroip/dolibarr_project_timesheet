@@ -43,7 +43,7 @@ $userid=  is_object($user)?$user->id:$user;
 //init handling object
 $form = new Form($db);
 
-//FIXME check autorisation for project and page/
+
 
 if ($user->rights->facture->creer & hasProjectRight($userid,$projectid))
 {
