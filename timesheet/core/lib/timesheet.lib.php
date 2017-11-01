@@ -15,11 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+define('SECINDAY',86400);
 //global $db;     
 global $langs;
 // to get the whitlist object
 require_once 'class/TimesheetFavourite.class.php';
-require_once 'class/TimesheetTask.class.php';
+require_once 'class/TimesheetUserTasks.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
@@ -319,7 +320,7 @@ function getStartDate($datetime,$prevNext=0){
      ***************************/
      switch($conf->global->TIMESHEET_TIME_SPAN){
 
-        case 'month': //by Month   (FIXME/will be reactiated later when a layout solution would be found)   
+        case 'month': //by Month   
         //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
         //     break;
                 if($prevNext==1){
@@ -345,17 +346,17 @@ function getStartDate($datetime,$prevNext=0){
         default:
 
                 if($prevNext==1){
-                    $startDateMonth=  strtotime('first day of next month midnight',$datetime  ); 
+                    $startDateMonth=  strtotime('first day of next month  midnight',$datetime  ); 
                     $startDateWeek=  strtotime('monday next week midnight',$datetime  ); 
                     $startDate=MIN( $startDateMonth, $startDateWeek);
                 }else if($prevNext==0){
                     $startDateMonth=  strtotime('first day of this month midnight',$datetime  ); 
-                    $startDateWeek=  strtotime('monday this week midnight',$datetime  ); 
+                    $startDateWeek=  strtotime('monday this week  midnight',$datetime  ); 
                     $startDate=MAX( $startDateMonth, $startDateWeek);
                 }else if($prevNext==-1){
-                    $startDateMonth=  strtotime('first day of this month midnight',$datetime  ); 
-                    $startDateWeek=  strtotime('monday this week midnight',$datetime  ); 
-                    $startDatePrevWeek=  strtotime('monday previous week midnight',$datetime  ); 
+                    $startDateMonth=  strtotime('first day of this month  midnight',$datetime  ); 
+                    $startDateWeek=  strtotime('monday this week  midnight',$datetime  ); 
+                    $startDatePrevWeek=  strtotime('monday previous week  midnight',$datetime  ); 
                     $startDate=( $startDateMonth>$startDateWeek)?$startDateWeek:$startDatePrevWeek;
                 }
             break;
@@ -461,4 +462,20 @@ $apflows=array_slice(str_split($conf->global->TIMESHEET_APPROVAL_FLOWS),1); //re
         }
     }
 
+}
+/*
+ * function to show the AP tab
+ * 
+
+ *  @param    string        $role    	active role
+  *  @return  void  				array( ID => userName)
+ */
+function getDayInterval($dateStart,$dateEnd){
+    global $db;
+    return round(($dateEnd-$dateStart)/SECINDAY, 0, PHP_ROUND_HALF_UP);
+    //$date1=new DateTime($db->idate($dateStart));
+    //$date1->setTimestamp($dateStart);
+   // $date2=new DateTime($db->idate($dateEnd));
+    //$date2->setTimestamp($dateEnd);
+   // return $date1->diff($date2)->format('%a')+round($date1->diff($date2)->format('%h')/24);   
 }

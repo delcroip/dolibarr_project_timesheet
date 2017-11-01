@@ -63,9 +63,9 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
         $newuserid=$_GET['userid'];
     }
     $SubordiateIds=getSubordinates($db,$userid, 2,array(),$role='team',$entity='1');
-    if (in_array($newuserid, $SubordiateIds)){
+    if (in_array($newuserid, $SubordiateIds) || $user->admin){
         $SubordiateIds[]=$userid;
-        $userid=$newuserid;       
+        $userid=$newuserid;    
     }
 
 }
