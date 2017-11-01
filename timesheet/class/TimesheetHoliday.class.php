@@ -29,7 +29,7 @@ $statusColor=array('1'=>$conf->global->TIMESHEET_COL_DRAFT,'2'=>$conf->global->T
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 define('TIMESHEET_BC_FREEZED','909090');
 define('TIMESHEET_BC_VALUE','f0fff0');
-class HolidayTimesheet extends Holiday 
+class TimesheetHoliday extends Holiday 
 {
         private $holidaylist;
         private $holidayPresent;
@@ -66,7 +66,7 @@ class HolidayTimesheet extends Holiday
          * next     --> is it the holiday continuing the day after
          * status   --> is the holiday submitted or approuved ( none if id=0)
          */
-        $timespan=round(($datestop-$datestart)/SECINDAY);
+        $timespan=getDayInterval($datestart,$datestop);
         for($day=0;$day<$timespan;$day++)
         {
             
@@ -153,7 +153,7 @@ class HolidayTimesheet extends Holiday
            return '';
         $html ="<tr id='holiday'>\n";
         $html .='<th colspan="'.count($headers).'" align="right" > '.$langs->trans('Holiday').' </th>';
-        
+        $i=0;
         foreach ($this->holidaylist as $holiday)
         {
             $am=$holiday['am'];
@@ -191,7 +191,7 @@ class HolidayTimesheet extends Holiday
                 
            // }
             $html .="</ul></th>\n";
-            
+            $i++;
         }
         $html .='</tr>';
         return $html;

@@ -75,7 +75,7 @@ class TimesheetUserTasks extends CommonObject
         $this->user=$user;
         $this->userId= ($userId==0)?(is_object($user)?$user->id:$user):$userId;
         $this->headers=explode('||', $conf->global->TIMESHEET_HEADERS);
-        $this->get_userName();
+        $this->getUserName();
         
     }
  /******************************************************************************
@@ -526,7 +526,7 @@ class TimesheetUserTasks extends CommonObject
     *  @return     string                                       result
     */
     function fetchUserHoliday(){
-        $this->holidays=new HolidayTimesheet($this->db);
+        $this->holidays=new TimesheetHoliday($this->db);
         $ret=$this->holidays->fetchUserWeek($this->userId,$this->date_start,$this->date_end);
         return $ret;
     }
@@ -586,7 +586,7 @@ function saveInSession(){
   
     
     $sql ='SELECT DISTINCT element_id as taskid,prj.fk_soc,tsk.fk_projet,';
-    $sql.='tsk.fk_task_parent,tsk.rowid,app.rowid as appid';
+    $sql.='tsk.fk_task_parent,tsk.rowid,app.rowid as appid,prj.ref as prjRef, tsk.ref as tskRef';
     $sql.=$sqlwhiteList;
     $sql.=" FROM ".MAIN_DB_PREFIX."element_contact "; 
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
@@ -611,7 +611,7 @@ function saveInSession(){
     $sql.=' AND (prj.dateo<="'.$this->db->idate($datestop).'" OR prj.dateo IS NULL)';
     $sql.=' AND (tsk.datee>="'.$this->db->idate($datestart).'" OR tsk.datee IS NULL)';
     $sql.=' AND (tsk.dateo<="'.$this->db->idate($datestop).'" OR tsk.dateo IS NULL)';
-    $sql.='  ORDER BY '.($whiteListNumber?'listed,':'').'prj.fk_soc,tsk.fk_projet,tsk.fk_task_parent,tsk.rowid ';
+    $sql.='  ORDER BY '.($whiteListNumber?'listed DESC,':'').'prj.fk_soc,prjRef,tskRef ';
 
      dol_syslog("timesheet::getTasksTimesheet full ", LOG_DEBUG);
 
@@ -705,7 +705,7 @@ function saveInSession(){
  *  @param    array(int)/int        $userids    	array of manager id 
   *  @return  array (int => String)  				array( ID => userName)
  */
-function get_userName(){
+function getUserName(){
 
 
     $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as userName FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
@@ -840,8 +840,9 @@ Public function setStatus($user,$status,$id=0){ //role ?
  */
     
     
-function getHTML($ajax=false,$Approval=false){ // fixme shows the month by week
-    $Form =$this->getHTMLHeader($ajax);
+function getHTML($ajax=false,$Approval=false){ 
+    $Form='<div style="overflow:auto;">'; //FIXME, max height should be defined
+    $Form .=$this->getHTMLHeader($ajax);
 
     $Form .=$this->getHTMLHolidayLines($ajax);
 
@@ -849,10 +850,10 @@ function getHTML($ajax=false,$Approval=false){ // fixme shows the month by week
 
     $Form .=$this->getHTMLtaskLines($ajax);
     $Form .=$this->getHTMLTotal();
+    $html .= '</div>'; // overflow div
+    $Form .= '</table>';
     $Form .=$this->getHTMLNote($ajax);
-    if($Approval){
-        $Form .= '</table>';
-    }else{
+    if(!$Approval){
         $Form .=$this->getHTMLFooter($ajax);
     }
     $Form .= '</br>'."\n";
@@ -942,7 +943,7 @@ function getHTMLHeader($ajax=false,$week=0){
  function getHTMLFooter($ajax=false){
      global $langs;
     //form button
-    $html .= '</table>';
+
     $html .= '<div class="tabsAction">';
      $isOpenSatus=($this->status=="DRAFT" || $this->status=="CANCELLED"|| $this->status=="REJECTED");
     if($isOpenSatus){
@@ -1031,15 +1032,15 @@ function getHTMLHeader($ajax=false,$week=0){
  function getHTMLNote(){
      global $langs;
      $isOpenSatus=(in_array($this->status, array("REJECTED", "DRAFT","PLANNED",'CANCELLED' )));
-     $html='<table class="noborder" width="50%"><tr><td>'.$langs->trans('Note').'</td></tr><tr><td>';
+     $html='<div class="noborder"><div  width="100%">'.$langs->trans('Note').'</div><div width="100%">';
    
 
     if($isOpenSatus){
         $html.='<textarea class="flat"  cols="75" name="Note['.$this->id.']" rows="3" >'.$this->note.'</textarea>';
-        $html.='</td></tr></table>';
+        $html.='</div>';
     }else if(!empty($this->note)){
         $html.=$this->note;
-        $html.='</td></tr></table>';
+        $html.='></div>';
     }else{
         $html="";
     }

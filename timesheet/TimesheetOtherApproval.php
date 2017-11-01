@@ -119,8 +119,8 @@ if($action=='submit'){
 *
 * Put here all code to build page
 ****************************************************/
-$subId=($user->admin)?'all':get_subordinate($db,$userId, 1,array($userId),$role); //FIx ME for other role
-$tasks=implode(',', array_keys(get_task($db, $userId)));
+$subId=($user->admin)?'all':getSubordinates($db,$userId, 1,array($userId),$role); //FIx ME for other role
+$tasks=implode(',', array_keys(getTasks($db, $userId)));
 if($tasks=="")$tasks=0;
 $selectList=getSelectAps($subId,$tasks,$role);
 if($current>=count($selectList))$current=0;
@@ -165,7 +165,7 @@ echo '<div id="'.$role.'" class="tabBar">';
 //FIXME Approve/reject/leave all buton
 
     if(!$print) echo getHTMLNavigation($role,$optioncss, $selectList,$current);
-    //FIXME
+ 
     // form header
     echo '<form action="?action=submit" method="POST" name="OtherAp" id="OtherAp">';
     echo '<input type="hidden" name="token" value="'.$token.'"/>';
@@ -302,7 +302,7 @@ function getSelectAps($subId, $tasks, $role){
             $sql.=' AND tsk.rowid in ('.$tasks.') ';
         }
     }
-    $sql.=' group by id ORDER BY id DESC, label '; 
+    $sql.=' group by id ORDER BY id DESC,pjt.title, label '; 
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
@@ -356,10 +356,10 @@ function getSelectAps($subId, $tasks, $role){
     echo '<th>'.$langs->trans('Note').'</th>';
     echo '<th>'.$langs->trans('Task').'</th>';
     echo '<th>'.$langs->trans('User').'</th>';
-    $weeklength=round(($objectArray[0]->date_end_approval-$objectArray[0]->date_start_approval)/SECINDAY);
+    $weeklength=getDayInterval($objectArray[0]->date_end_approval-$objectArray[0]->date_start_approval);
     for ($i=0;$i<$weeklength;$i++)
     {
-        $curDay=$objectArray[0]->date_start_approval+ SECINDAY*$i;
+        $curDay=$objectArray[0]->date_start_approval+ SECINDAY*$i+SECINDAY/4;
         echo"\t".'<th width="60px" style="text-align:center;" >'.$langs->trans(date('l',$curDay)).'<br>'.dol_print_date($curDay,'day')."</th>\n";
     }
     echo "<tr>\n";    

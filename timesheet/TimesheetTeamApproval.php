@@ -144,7 +144,7 @@ if(!empty($timestamp)){
        unset($_SESSION['timesheetAp'][$timestamp]);
 }
 $timestamp=getToken();
-$subId=($user->admin)?'all':get_subordinate($db,$userId, 2,array($userId),'team');
+$subId=($user->admin)?'all':getSubordinates($db,$userId, 2,array($userId),'team');
 $selectList=getSelectAps($subId);
 $level=intval($conf->global->TIMESHEET_MAX_APPROVAL);
 $offset=0;
@@ -186,7 +186,7 @@ if($xml){
 
 $task_timesheet= new TimesheetUserTasks($db);
 $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
-$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js?v2.0");
+$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js?v2.4");
 llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
 showTimesheetApTabs('team');

@@ -430,9 +430,9 @@ class TimesheetFavourite extends CommonObject
         }
         
         if($id){
-            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetFavourite.php?id='.$id.'&action=view">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?id='.$id.'&action=view">';
         }else if (!empty($ref)){
-            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetFavourite.php?ref='.$ref.'&action=view">';
+            $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?ref='.$ref.'&action=view">';
         }else{
             $lien =  "";
         }

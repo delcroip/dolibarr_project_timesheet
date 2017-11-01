@@ -55,7 +55,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
-
+$langs->load("Timesheet");
 
 // Get parameter
 $id			= GETPOST('id','int');
@@ -124,8 +124,8 @@ if ($cancel){
     if($tms=='') //to keep the tms on javvascript reload
     {
         $tms=time();
-        $_SESSION['timesheetFavourite_'.$tms]=array();
-        $_SESSION['timesheetFavourite_'.$tms]['action']=$action;
+        $_SESSION['timesheetFavourite'][$tms]=array();
+        $_SESSION['timesheetFavourite'][$tms]['action']=$action;
     }else {
         $editedUser=GETPOST('User');
         $editedProject=GETPOST('Project');		
@@ -135,7 +135,7 @@ if ($cancel){
 }else if (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
         //block resubmit
-        if($ajax!=1 && (empty($tms) || (!isset($_SESSION['timesheetFavourite_'.$tms])))){
+        if($ajax!=1 && (empty($tms) || (!isset($_SESSION['timesheetFavourite'][$tms])))){
                 setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
                 $action=($action=='add')?'create':'edit';
         }
@@ -178,7 +178,7 @@ if ($cancel){
                             if ($result > 0)
                             {
                                 // Creation OK
-                                unset($_SESSION['timesheetFavourite_'.$tms]);
+                                unset($_SESSION['timesheetFavourite'][$tms]);
                                     setEventMessage('RecordUpdated', 'mesgs');
                                     reloadpage($backtopage,$object->id,$ref); 
                             }
@@ -224,7 +224,7 @@ if ($cancel){
                             {
                                     // Creation OK
                                 // remove the tms
-                                   unset($_SESSION['timesheetFavourite_'.$tms]);                                   
+                                   unset($_SESSION['timesheetFavourite'][$tms]);                                   
                                    if ($ajax==1){
                                            echo json_encode(array('id'=> $result));
                                            exit;
@@ -279,9 +279,9 @@ if ($cancel){
                             break;
             }             
 //Removing the tms array so the order can't be submitted two times
-if(isset( $_SESSION['timesheetFavourite_class'][$tms]))
+if(isset( $_SESSION['timesheetFavourite'][$tms]))
 {
-    unset($_SESSION['timesheetFavourite_class'][$tms]);
+    unset($_SESSION['timesheetFavourite'][$tms]);
 }
 if ($ajax==1){
     echo json_encode(array('errors'=> $object->errors));
@@ -346,7 +346,7 @@ switch ($action) {
         $edit=1;
    case 'delete';
         if( $action=='delete' && ($id>0 || $ref!="")){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeletetimesheetFavourite'),$langs->trans('ConfirmDeletetimesheetFavourite'),'confirm_delete', '', 0, 1);
+         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDeleteTimesheetwhitelist'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -359,9 +359,9 @@ switch ($action) {
         // tabs
         if($edit==0 && $new==0){ //show tabs
             $head=timesheetFavourite_prepare_head($object);
-            dol_fiche_head($head,'card',$langs->trans('timesheetFavourite'),0,'timesheet@timesheet');            
+            dol_fiche_head($head,'card',$langs->trans('Timesheetwhitelist'),0,'timesheet@timesheet');            
         }else{
-            print_fiche_titre($langs->trans('timesheetFavourite'));
+            print_fiche_titre($langs->trans('Timesheetwhitelist'));
         }
 
 	print '<br>';
@@ -554,7 +554,7 @@ switch ($action) {
         break;
     case 'delete':
         if( ($id>0 || $ref!='')){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeletetimesheetFavourite'),$langs->trans('ConfirmDeletetimesheetFavourite'),'confirm_delete', '', 0, 1);
+         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDeleteTimesheetwhitelist'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background        
         }
@@ -643,7 +643,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
-        print_barre_liste($langs->trans("timesheetFavourite"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+        print_barre_liste($langs->trans("Timesheetwhitelist"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="liste" width="100%">'."\n";
         //TITLE
@@ -742,7 +742,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '</from>'."\n";
     // new button
         print '<a href="?action=create" class="button" role="button">'.$langs->trans('New');
-    print ' '.$langs->trans('timesheetFavourite')."</a>\n";
+    print ' '.$langs->trans('Timesheetwhitelist')."</a>\n";
 
 
     
