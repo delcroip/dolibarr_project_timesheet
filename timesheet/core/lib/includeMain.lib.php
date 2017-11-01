@@ -46,6 +46,7 @@ define("LINKED_ITEM", [
      3 => "PROJECT",
      4 => "TIMESPENT"
 ]);
+$roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
 
 $res=0;
 

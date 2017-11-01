@@ -24,8 +24,10 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 $apflows=array_slice(str_split($conf->global->TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-if($apflows[0]==0 && in_array('1',$apflows)){ // redirect to the correct page
-    header("location:TimesheetOtherApproval.php"); //TOBETESTED
+$role_key=array_search('1',array_slice ($apflows,1));
+
+if($apflows[0]==0 && $role_key!==false){ // redirect to the correct page
+    header("location:TimesheetOtherApproval.php?role=".$roles[$role_key+1]); //TOBETESTED
 }
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';

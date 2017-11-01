@@ -29,7 +29,6 @@ require_once 'class/TimesheetTask.class.php';
 $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1);
 $userId=  is_object($user)?$user->id:$user;
 
-$roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
 // find the Role //FIX ME SHOW ONLY if he has right
 $role         = GETPOST('role');
 if(!$role){
