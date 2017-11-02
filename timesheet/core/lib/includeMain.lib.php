@@ -54,5 +54,5 @@ $path=dirname(__FILE__);
 if (! $res && file_exists($path."/../../../main.inc.php")) $res=@include $path.'/../../../main.inc.php'; // in HTdocs
 if (! $res && file_exists($path."/../../../../main.inc.php")) $res=@include $path.'/../../../../main.inc.php'; //in custom
 if (! $res && file_exists($path."/dev.inc.php")) $res=@include $path.'/dev.inc.php';
-if (! $res) die("Include of main fails")
+if (! $res) die("Include of main fails") 
 ?>
