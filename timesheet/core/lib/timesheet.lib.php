@@ -464,18 +464,13 @@ $apflows=array_slice(str_split($conf->global->TIMESHEET_APPROVAL_FLOWS),1); //re
 
 }
 /*
- * function to show the AP tab
+ * function calculate the number of day between two dates
  * 
 
- *  @param    string        $role    	active role
+ *  @param    string        $dateStart    	start date
+ *  @param    string        $datEnd             end date
   *  @return  void  				array( ID => userName)
  */
 function getDayInterval($dateStart,$dateEnd){
-    global $db;
     return round(($dateEnd-$dateStart)/SECINDAY, 0, PHP_ROUND_HALF_UP);
-    //$date1=new DateTime($db->idate($dateStart));
-    //$date1->setTimestamp($dateStart);
-   // $date2=new DateTime($db->idate($dateEnd));
-    //$date2->setTimestamp($dateEnd);
-   // return $date1->diff($date2)->format('%a')+round($date1->diff($date2)->format('%h')/24);   
 }
