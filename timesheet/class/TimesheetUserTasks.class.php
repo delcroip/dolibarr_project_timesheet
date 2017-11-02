@@ -885,11 +885,17 @@ function getHTMLHeader($ajax=false,$week=0){
      }
     $opendays=str_split($conf->global->TIMESHEET_OPEN_DAYS);
     $weeklength=round(($this->date_end-$this->date_start)/SECINDAY);
+    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);       
+    if($conf->global->TIMESHEET_TIME_SPAN=="month"){
+        //remove Year
+        $format=str_replace('Y','',str_replace('%Y','',str_replace('Y/','',str_replace('/%Y','',$format))));    
+    }
     for ($i=0;$i<$weeklength;$i++)
     {
         $curDay=$this->date_start+ SECINDAY*$i;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
-        $html.="\t".'<th class="Days['.$this->id.']" width="35px" style="text-align:center;" >'.substr($langs->trans(date('l',$curDay)),0,3).'<br>'.substr(dol_print_date($curDay,'day'),0,5)."</th>\n"; //FIXME : should remove Y/,/Y and Y from the regex
+        $htmlDay=($conf->global->TIMESHEET_TIME_SPAN=="month")?substr($langs->trans(date('l',$curDay)),0,3):$langs->trans(date('l',$curDay));
+        $html.="\t".'<th class="Days['.$this->id.']" width="35px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay,$format)."</th>\n"; //FIXME : should remove Y/,/Y and Y from the regex
     }
      $html.="</tr>\n";
      $html.='<tr id="hiddenParam" style="display:none;">';

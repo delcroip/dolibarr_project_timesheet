@@ -348,7 +348,7 @@ function getSelectAps($subId, $tasks, $role){
  }
  
  function  getHTMLRows($objectArray){
-     global $langs;
+     global $langs,$conf;
      $headers=array('Approval','Note','Tasks','User');
      if(!is_array($objectArray) || !is_object($objectArray[0])) return -1;
     echo '<tr class="liste_titre">';
@@ -357,10 +357,16 @@ function getSelectAps($subId, $tasks, $role){
     echo '<th>'.$langs->trans('Task').'</th>';
     echo '<th>'.$langs->trans('User').'</th>';
     $weeklength=getDayInterval($objectArray[0]->date_start_approval,$objectArray[0]->date_end_approval);
+    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);       
+    if($conf->global->TIMESHEET_TIME_SPAN=="month"){
+        //remove Year
+        $format=str_replace('Y','',str_replace('%Y','',str_replace('Y/','',str_replace('/%Y','',$format))));    
+    }
     for ($i=0;$i<$weeklength;$i++)
     {
         $curDay=$objectArray[0]->date_start_approval+ SECINDAY*$i+SECINDAY/4;
-        echo"\t".'<th width="60px" style="text-align:center;" >'.$langs->trans(date('l',$curDay)).'<br>'.dol_print_date($curDay,'day')."</th>\n";
+        $htmlDay=($conf->global->TIMESHEET_TIME_SPAN=="month")?substr($langs->trans(date('l',$curDay)),0,3):$langs->trans(date('l',$curDay));
+        echo"\t".'<th width="60px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay,$format)."</th>\n";
     }
     echo "<tr>\n";    
      foreach($objectArray as $key=> $object){
