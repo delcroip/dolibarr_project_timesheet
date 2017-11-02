@@ -1413,11 +1413,11 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
         $this->user_app[$role]=$userId;
         //update the roles
         $rolepassed=false;
+        // look for the role open after the curent role and set it as recipient
         foreach(self::$apflows as $key=> $value){         
             if ($value==1 ){  
                 if ( self::$roleList[$key]==$role){
-                    $this->sender= self::$roleList[$key];
-                    //$this->user_app['{$role}=$sender;
+                     $this->sender=$role;
                      $rolepassed=true;
                 }else if ($rolepassed){
                     $this->recipient= self::$roleList[$key];
@@ -1429,15 +1429,16 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
         }
         
         if($ret>0){//other approval found
-            $nextStatus='UNDERAPPROVAL';
-        }else{
-            $nextStatus='APPROVED'; 
+            $ret=$this->setStatus($user,'UNDERAPPROVAL',$updteTS);
+        }else if($this->sender==$role){ // only if the role was alloed
+             $this->recipient='user';
+             $ret=$this->setStatus($user,'APPROVED',$updteTS);
             // if approved,recipient 
-            $this->recipient='user';
+
             //$this->recipient= self::$roleList[array_search('1', self::$apflows)];
         }
         // save the change in the db
-         $ret=$this->setStatus($user,$nextStatus,$updteTS);
+         
          if($ret>0)$ret=$this->updateTaskTime($nextStatus);
 
     
@@ -1462,28 +1463,25 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
         $ret=-1;
        //unset the approver ( could be set previsouly)
         $this->user_app[$role]=$userId;
-        //update the roles
+        //update the roles, look for the open role and define it as sender and save the previous role open as recipient 
         foreach(self::$apflows as $key=> $recipient){
             if ($recipient==1){  
                 if ( self::$roleList[$key]==$role){
-                    $this->sender= self::$roleList[$key];
+                        $this->sender= $role;
                     break;
                 }else{
-                    $this->recipient= self::$roleList[$key];
-                    $ret=$key;      
-                    
-                }                
-                          
+                    $this->recipient= self::$roleList[$key]; 
+                    $ret=$key;
+                }                                          
             }
         } 
-        
         if($ret>0){//other approval found
-            $nextStatus='CHALLENGED';
-        }else{
-            $nextStatus='REJECTED';
-             $this->recipient='user';
+            $ret=$this->setStatus($user,'CHALLENGED',$updteTS);
+        }else if($this->sender==$role) { //update only if the role was allowed
+            $this->recipient='user';
+            $ret=$this->setStatus($user,'REJECTED',$updteTS);                   
         }
-       $ret=$this->setStatus($user,$nextStatus,$updteTS);
+       
         if($ret>0)$ret=$this->updateTaskTime($nextStatus);
         return $ret+1;// team key is 0 
     }        
@@ -1497,6 +1495,14 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
  */
   
     Public function submitted($user,$updteTS=false){
+        // assign the first role open as recipient, put user as default
+        $this->recipient='user';
+        foreach(self::$apflows as $key=> $recipient){       
+            if ($recipient==1){  
+                    $this->recipient= self::$roleList[$key];
+                    break;                                      
+            }
+        } 
       //Update the the fk_tta in the project task time 
         $ret=$this->setStatus($user,'SUBMITTED',$updteTS); // must be executed first to get the appid
         if($ret>0)$ret=$this->updateTaskTime('SUBMITTED');

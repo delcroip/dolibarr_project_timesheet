@@ -49,15 +49,10 @@ define("LINKED_ITEM", [
 $roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
 
 $res=0;
+$path=dirname(__FILE__);
 
-if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';		
-if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';
-if (! $res && file_exists("../../../main.inc.php")) $res=@include '../../../main.inc.php';
-if (! $res && file_exists("../../../../main.inc.php")) $res=@include '../../../../main.inc.php';
-if (! $res && file_exists("core/lib/dev.inc.php")) $res=@include 'core/lib/dev.inc.php';
-if (! $res && file_exists("../core/lib/dev.inc.php")) $res=@include '../core/lib/dev.inc.php';
-if (! $res && file_exists("../../core/lib/dev.inc.php")) $res=@include '../../core/lib/dev.inc.php';
+if (! $res && file_exists($path."/../../../main.inc.php")) $res=@include $path.'/../../../main.inc.php'; // in HTdocs
+if (! $res && file_exists($path."/../../../../main.inc.php")) $res=@include $path.'/../../../../main.inc.php'; //in custom
+if (! $res && file_exists($path."/dev.inc.php")) $res=@include $path.'/dev.inc.php';
 if (! $res) die("Include of main fails")
-
-
 ?>

@@ -26,6 +26,7 @@ require_once 'class/TimesheetTask.class.php';
 *
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
+//FIXME: correct admin approval
 $apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1);
 $userId=  is_object($user)?$user->id:$user;
 
@@ -355,7 +356,7 @@ function getSelectAps($subId, $tasks, $role){
     echo '<th>'.$langs->trans('Note').'</th>';
     echo '<th>'.$langs->trans('Task').'</th>';
     echo '<th>'.$langs->trans('User').'</th>';
-    $weeklength=getDayInterval($objectArray[0]->date_end_approval-$objectArray[0]->date_start_approval);
+    $weeklength=getDayInterval($objectArray[0]->date_start_approval,$objectArray[0]->date_end_approval);
     for ($i=0;$i<$weeklength;$i++)
     {
         $curDay=$objectArray[0]->date_start_approval+ SECINDAY*$i+SECINDAY/4;
