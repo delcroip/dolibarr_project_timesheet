@@ -47,9 +47,15 @@ Timesheet view for project in Dolibarr
 
 
 # Change log
-2.1.4.dev.2 Change log from 2.1.3
- - NEW : enter time spent for subordinates
- - NEW : time entry per month
+
+2.2 Change log from 2.1.3
+ - NEW: timesheet entry per month
+ - NEW: add time spent for subordinates
+ - fix: colation issue with latin/latin_swedish on approval page
+ - fix: approval with project only
+ - clean: files and classes renaming
+ - clean: small date only appear for month mode
+
 
 2.1.3 Change log from 2.1.2
  - fix : start and end date missing in task line
