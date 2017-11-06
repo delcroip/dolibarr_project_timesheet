@@ -421,7 +421,7 @@ function getSelectAps($subId){
     }else{
 
         $sql='SELECT month,COUNT(rowid) as nb, CONCAT(month, fk_userid) as id,';
-        $sql.=' CONCAT(month,". ",fullname) as label,fk_userid,date_start';
+        $sql.=' CONCAT(CAST(month AS char),CAST(". " AS char),fullname) as label,fk_userid,date_start';
         $sql.=' FROM (SELECT DATE_FORMAT(ts.date_start," %m/%Y") as month, fk_userid,';
         $sql.=' ts.rowid as rowid,CONCAT(usr.firstname, " - ",usr.lastname) as fullname,ts.date_start ';
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
