@@ -1,9 +1,9 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-# admin (213)
+# admin (214)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
-addForOther=adding for others.
+addForOther=registrare il tempo speso per gli altri.
 addForOtherDesc=attivare la voce di tempo speso per i subordinati.
 addholidaytime=Integrare il congedo
 addholidaytimeDesc=Includere il tempo di vacanza nella riga del totale

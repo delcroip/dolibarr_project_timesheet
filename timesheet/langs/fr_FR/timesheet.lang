@@ -1,9 +1,9 @@
 # Dolibarr language file - Francais - timesheet
 # Translators
-# admin (282)
+# admin (288)
 adddocs=Documents joints
 adddocsDesc=Permet d’ajouter des documents annexés à la feuille de temps
-addForOther=d'autres.
+addForOther=enregistrement du temps pour les autres
 addForOtherDesc=activer l’entrée de temps passé pour les subordonnés.
 addholidaytime=Intégrer les congés
 addholidaytimeDesc=Inclure le temps de vacances dans la ligne totale

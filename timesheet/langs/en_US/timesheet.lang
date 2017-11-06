@@ -1,9 +1,9 @@
 # Dolibarr language file - English - timesheet
 # Translators
-# admin (282)
+# admin (292)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
-addForOther=adding for others.
+addForOther=register time spent for others.
 addForOtherDesc=enable the time spent entry for subordinates.
 addholidaytime=Add up holiday time
 addholidaytimeDesc=Include the holiday time in the total line
