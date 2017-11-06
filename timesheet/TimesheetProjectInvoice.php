@@ -60,8 +60,10 @@ if(empty($month) || empty($year) || empty($projectId)){
     }else {
         $year=date('Y');
     }
-            
-}
+ }
+ $langs->load("main");
+$langs->load("projects");
+$langs->load('timesheet@timesheet');
 //steps
     switch ($step)
     { 
@@ -260,18 +262,18 @@ $edit=0;
  //           $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Month').'</th><th ><input type="text" name="month" value ="'.$month.'"></th></tr>';
            // $Form .='<tr class="impair"><th align="left" width="80%">'.$langs->trans('Customer').'</th><th "><input type="text" name="ccust" value ="'.$custId.'"></th></tr>';
             $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Mode').'</th><th align="left"><input type="radio" name="invoicingMethod" value="task" ';
-            $Form .=($invoicingMethod=="task"?"checked":"").'> '.$langs->trans("Task").' ';
+            $Form .=($invoicingMethod=="task"?"checked":"").'> '.$langs->trans("Tasks").'</br> ';
             $Form .='<input type="radio" name="invoicingMethod" value="user" ';
-            $Form .=($invoicingMethod=="user"?"checked":"").'> '.$langs->trans("User")." ";
+            $Form .=($invoicingMethod=="user"?"checked":"").'> '.$langs->trans("User")."</br> ";
             $Form .='<input type="radio" name="invoicingMethod" value="taskUser" ';
-            $Form .=($invoicingMethod=="taskUser"?"checked":"").'> '.$langs->trans("Task").'&'.$langs->trans("User")."</th></tr>\n\t\t";
+            $Form .=($invoicingMethod=="taskUser"?"checked":"").'> '.$langs->trans("Tasks").' & '.$langs->trans("User")."</th></tr>\n\t\t";
 
 //cust list
             $Form .='<tr class="impair"><th  align="left">'.$langs->trans('Customer').'</th><th  align="left">'.$form->select_company($socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1).'</th></tr>';
 //all ts or only approved
            $ts2Invoice=$conf->global->TIMESHEET_INVOICE_TASKTIME;
             $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('TimesheetToInvoice').'</th><th align="left"><input type="radio" name="ts2Invoice" value="approved" ';
-            $Form .=($ts2Invoice=="approved"?"checked":"").'> '.$langs->trans("approvedOnly").' ';
+            $Form .=($ts2Invoice=="approved"?"checked":"").'> '.$langs->trans("approvedOnly").' </br>';
             $Form .='<input type="radio" name="ts2Invoice" value="all" ';
             $Form .=($ts2Invoice=="all"?"checked":"").'> '.$langs->trans("All")."</th></tr>";
 // not alreqdy invoice
