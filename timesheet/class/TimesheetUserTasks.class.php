@@ -1077,27 +1077,30 @@ function getHTMLHeader($ajax=false,$week=0){
  *  @return     string                                       HTML
  */
 function getHTMLNavigation($optioncss, $ajax=false){
-	global $langs;
+	global $langs,$conf;
         $form= new Form($this->db);
+        $tail='';
+        //$tail='&wlm='.$this->whitelistmode;
+        if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER==1  )$tail='&userid='.$this->userId;
         $Nav=  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
 	//if($ajax){
        //     $Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.getStartDate($this->date_start,-1).'\',0);';
         //}else{
-            $Nav.=  '<a href="?wlm='.$this->whitelistmode.'&dateStart='.getStartDate($this->date_start,-1);   
+            $Nav.=  '<a href="?dateStart='.getStartDate($this->date_start,-1).$tail;   
         //}
         if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
 	$Nav.=  '">  &lt;&lt; '.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	//if($ajax){
         //    $Nav.=  '<form name="goToDate" onsubmit="return toDateHandler();" action="?action=goToDate&wlm='.$this->whitelistmode.'" method="POST">'."\n\t\t\t";
         //}else{
-            $Nav.=  '<form name="goToDate" action="?action=goToDate&wlm='.$this->whitelistmode.'" method="POST" >'."\n\t\t\t";
+            $Nav.=  '<form name="goToDate" action="?action=goToDate'.$tail.'" method="POST" >'."\n\t\t\t";
         //}
         $Nav.=   $langs->trans("GoTo").': '.$form->select_date(-1,'toDate',0,0,0,"",1,1,1)."\n\t\t\t";;
 	$Nav.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	//if($ajax){
         //    $Nav.=  '<a id="navNext" onClick="loadXMLTimesheet(\''.getStartDate($this->date_start,1).'\',0);';
 	//}else{
-            $Nav.=  '<a href="?wlm='.$this->whitelistmode.'&dateStart='.getStartDate($this->date_start,1);
+            $Nav.=  '<a href="?dateStart='.getStartDate($this->date_start,1).$tail;
             
         //}
         if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
