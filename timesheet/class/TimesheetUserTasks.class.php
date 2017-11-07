@@ -884,7 +884,7 @@ function getHTMLHeader($ajax=false,$week=0){
          $html.=">".$langs->trans($value)."</th>\n";
      }
     $opendays=str_split($conf->global->TIMESHEET_OPEN_DAYS);
-    $weeklength=round(($this->date_end-$this->date_start)/SECINDAY);
+    $weeklength=  getDayInterval($this->date_start, $this->date_end);
     $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);       
     if($conf->global->TIMESHEET_TIME_SPAN=="month"){
         //remove Year
@@ -892,7 +892,7 @@ function getHTMLHeader($ajax=false,$week=0){
     }
     for ($i=0;$i<$weeklength;$i++)
     {
-        $curDay=$this->date_start+ SECINDAY*$i;
+        $curDay=$this->date_start+ SECINDAY*$i+SECINDAY/4;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
         $htmlDay=($conf->global->TIMESHEET_TIME_SPAN=="month")?substr($langs->trans(date('l',$curDay)),0,3):$langs->trans(date('l',$curDay));
         $html.="\t".'<th class="Days['.$this->id.']" width="35px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay,$format)."</th>\n"; //FIXME : should remove Y/,/Y and Y from the regex
@@ -931,7 +931,7 @@ function getHTMLHeader($ajax=false,$week=0){
 
     $html .="<tr>\n";
     $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
-    $length=round(($this->date_end-$this->date_start)/SECINDAY);
+    $length=  getDayInterval($this->date_start,$this->date_end);
     for ($i=0;$i<$length;$i++)
     {
        $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>\n"; // fixme the week shouldbe in it

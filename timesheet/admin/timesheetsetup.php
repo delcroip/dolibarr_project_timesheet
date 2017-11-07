@@ -513,7 +513,7 @@ echo (($invoicemethod=='task')?'checked':'').">".$langs->trans("Task").'<br>';
 echo '<input type="radio" name="invoiceMethod" value="user" ';
 echo (($invoicemethod=='user')?'checked':'').">".$langs->trans("User").'<br>';
 echo '<input type="radio" name="invoiceMethod" value="taskUser" ';
-echo (($invoicemethod=='taskUser')?'checked':'').">".$langs->trans("taskUser").'<br>';
+echo (($invoicemethod=='taskUser')?'checked':'').">".$langs->trans("Tasks").' & '.$langs->trans("User").'<br>';
 echo "</th></tr>\n\t\t";
 //line invoice Service
 echo  '<tr class="impair"><th align="left">'.$langs->trans("invoiceService");

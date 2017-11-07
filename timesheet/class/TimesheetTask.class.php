@@ -766,7 +766,7 @@ class TimesheetTask extends Task
         dol_syslog(__METHOD__, LOG_DEBUG);
 		for($i=0;$i<$dayelapsed;$i++){
 			
-			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>$timeStart+SECINDAY*$i);
+			$this->tasklist[$i]=array('id'=>0,'duration'=>0,'date'=>$timeStart+SECINDAY*$i+SECINDAY/4);
 		}
 
         $resql=$this->db->query($sql);
