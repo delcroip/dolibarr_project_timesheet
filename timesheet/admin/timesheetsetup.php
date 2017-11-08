@@ -80,6 +80,12 @@ switch($action)
         //general option
         $timetype=$_POST['timeType'];
         $timeSpan=$_POST['timeSpan'];
+        if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN){
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX.'project_task_timesheet';
+            $sql.= " WHERE status IN ('DRAFT','REJECTED')";
+            dol_syslog(__METHOD__);
+            $resql = $db->query($sql);
+        }
         $hoursperday=null2zero($_POST['hoursperday']);
         $maxhoursperday=null2zero($_POST['maxhoursperday']);
         $hidedraft=null2zero($_POST['hidedraft']);
