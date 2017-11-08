@@ -841,16 +841,16 @@ Public function setStatus($user,$status,$id=0){ //role ?
     
     
 function getHTML($ajax=false,$Approval=false){ 
-    $Form='<div style="overflow:auto;">'; //FIXME, max height should be defined
-    $Form .=$this->getHTMLHeader($ajax);
+    
+    $Form =$this->getHTMLHeader($ajax);
 
     $Form .=$this->getHTMLHolidayLines($ajax);
 
     if(!$Approval)$Form .=$this->getHTMLTotal();
-
+    $Form .='<tbody style="overflow:auto;">'; //FIXME, max height should be defined
     $Form .=$this->getHTMLtaskLines($ajax);
+    $Form .= '</tbody>'; // overflow div
     $Form .=$this->getHTMLTotal();
-    $html .= '</div>'; // overflow div
     $Form .= '</table>';
     $Form .=$this->getHTMLNote($ajax);
     if(!$Approval){
