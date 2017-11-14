@@ -47,6 +47,13 @@ Timesheet view for project in Dolibarr
 
 
 # Change log
+2.2.3 Change log from 2.2.2
+ - fix: trad issue
+ - fix: sql error in approvals
+
+2.2.2 Change log from 2.2
+ - new: deletion of draft timsheet when switching between time span (no impact on time entered) 
+ - fix: issue with winter time
 
 2.2 Change log from 2.1.3
  - NEW: timesheet entry per month
