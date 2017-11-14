@@ -408,26 +408,26 @@ function getSelectAps($subId){
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
         $sql.=$sqlWhere;
-        $sql.=' group by ts.date_start ORDER BY ts.date_start DESC,ts.fk_userid DESC'; 
+        $sql.=' group by ts.date_start ORDER BY ts.date_start DESC'; 
 
     }else if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==0){
-        $sql='SELECT COUNT(ts.fk_userid) as nb,ts.fk_userid as id,';
-        $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label,ts.date_start";
+        $sql='SELECT COUNT(ts.rowid) as nb,ts.fk_userid as id,';
+        $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
         $sql.=$sqlWhere;
-        $sql.=' group by ts.fk_userid,ts.date_start ORDER BY ts.fk_userid DESC,ts.date_start DESC'; 
+        $sql.=' group by ts.fk_userid ORDER BY ts.fk_userid DESC'; 
 
     }else{
 
-        $sql='SELECT month,COUNT(rowid) as nb, CONCAT(month, fk_userid) as id,';
-        $sql.=' CONCAT(CAST(month AS char),CAST(". " AS char),fullname) as label,fk_userid,date_start';
-        $sql.=' FROM (SELECT DATE_FORMAT(ts.date_start," %m/%Y") as month, fk_userid,';
-        $sql.=' ts.rowid as rowid,CONCAT(usr.firstname, " - ",usr.lastname) as fullname,ts.date_start ';
+        $sql='SELECT month,COUNT(rowid) as nb, month as id,';
+        $sql.=' month as label';
+        $sql.=' FROM (SELECT DATE_FORMAT(ts.date_start," %m/%Y") as month,';
+        $sql.=' ts.rowid as rowid';
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
-        $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';   
+        //$sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';   
         $sql.=$sqlWhere.') AS T';
-        $sql.=' group by fk_userid, date_start ORDER BY  YEAR (date_start) DESC, MONTH(date_start) DESC ,fk_userid DESC';        
+        $sql.=' group by month ORDER BY  RIGHT(month,4) DESC, month DESC';        
     }
     
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);

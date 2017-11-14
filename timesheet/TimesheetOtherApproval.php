@@ -279,13 +279,21 @@ function getSelectAps($subId, $tasks, $role){
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
     }*/
     $sql="SELECT COUNT(ts.rowid) as nb, ";
-  //  if(TIMESHEET_GROUP_OTHER_AP=="week"){
-        $sql.=" CONCAT(ts.date_start, '-',pjt.`ref`) as id,";
-    if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==2){   
-        $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,' (%m/%Y) #')COLLATE utf8_unicode_ci) as label,";
-    }else{
-        $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,'- ".$langs->trans('Week')." %v (%m/%Y) #')COLLATE utf8_unicode_ci) as label,";
-    }
+  //  if(TIMESHEET_GROUP_OTHER_AP=="week"){       
+
+switch($conf->global->TIMESHEET_TIME_SPAN){
+        case 'month': 
+            $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.`ref`) as id,";
+            $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,' (%m/%Y) #')COLLATE utf8_unicode_ci) as label,";
+            break;
+        case 'week':  
+        case 'splitedWeek': 
+        default:
+            $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%v/%Y'), '-',pjt.`ref`) as id,";
+           $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."',DATE_FORMAT(ts.date_start,' %v/%Y) #')COLLATE utf8_unicode_ci) as label,";
+            break;
+}
+
 /*    }else{
         $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.`ref`) as id,";
         $sql.=" CONCAT(pjt.title,' (', DATE_FORMAT(ts.date_start,'%m/%Y'),')') as label,";
@@ -302,7 +310,7 @@ function getSelectAps($subId, $tasks, $role){
             $sql.=' AND tsk.rowid in ('.$tasks.') ';
         }
     }
-    $sql.=' group by ts.date_start,pjt.`ref`,pjt.title ORDER BY id DESC,pjt.title, label '; 
+    $sql.=' group by ts.date_start,pjt.`ref`,pjt.title ORDER BY id DESC,pjt.title, ts.date_start '; 
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
