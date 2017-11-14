@@ -416,7 +416,7 @@ function getSelectAps($subId){
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
         $sql.=$sqlWhere;
-        $sql.=' group by ts.fk_userid ORDER BY ts.fk_userid DESC,ts.date_start DESC'; 
+        $sql.=' group by ts.fk_userid,ts.date_start ORDER BY ts.fk_userid DESC,ts.date_start DESC'; 
 
     }else{
 
@@ -427,7 +427,7 @@ function getSelectAps($subId){
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';   
         $sql.=$sqlWhere.') AS T';
-        $sql.=' group by fk_userid, month ORDER BY  YEAR (date_start) DESC, MONTH(date_start) DESC ,fk_userid DESC';        
+        $sql.=' group by fk_userid, date_start ORDER BY  YEAR (date_start) DESC, MONTH(date_start) DESC ,fk_userid DESC';        
     }
     
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);

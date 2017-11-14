@@ -302,7 +302,7 @@ function getSelectAps($subId, $tasks, $role){
             $sql.=' AND tsk.rowid in ('.$tasks.') ';
         }
     }
-    $sql.=' group by id ORDER BY id DESC,pjt.title, label '; 
+    $sql.=' group by ts.date_start,pjt.`ref`,pjt.title ORDER BY id DESC,pjt.title, label '; 
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
