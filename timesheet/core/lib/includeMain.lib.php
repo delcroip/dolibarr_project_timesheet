@@ -19,7 +19,7 @@
 // FIXME Ver. 3 
 // Define status
 
-define("STATUS", [
+const STATUS= [
      0 => "NULL",
      1 => "DRAFT",
      2 => "SUBMITTED",
@@ -30,22 +30,22 @@ define("STATUS", [
      7 => "INVOICED",
      8 => "UNDERAPPROVAL",
      9 => "'PLANNED"
-]);
-define("REDUNDANCY", [
+];
+const REDUNDANCY=[
      0 => "NULL",
      1 => "NONE",
      2 => "WEEK",
      3 => "MONTH",
      4 => "QUARTER",
      5 => "YEAR"
-]);
-define("LINKED_ITEM", [
+];
+const LINKED_ITEM = [
      0 => "NULL",
      1 => "NONE",
      2 => "TASK",
      3 => "PROJECT",
      4 => "TIMESPENT"
-]);
+];
 $roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
 
 $res=0;
@@ -54,5 +54,4 @@ $path=dirname(__FILE__);
 if (! $res && file_exists($path."/../../../main.inc.php")) $res=@include $path.'/../../../main.inc.php'; // in HTdocs
 if (! $res && file_exists($path."/../../../../main.inc.php")) $res=@include $path.'/../../../../main.inc.php'; //in custom
 if (! $res && file_exists($path."/dev.inc.php")) $res=@include $path.'/dev.inc.php';
-if (! $res) die("Include of main fails") 
-?>
+if (! $res) die("Include of main fails") ;
