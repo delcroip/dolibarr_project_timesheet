@@ -871,10 +871,23 @@ function getHTML($ajax=false,$Approval=false){
 function getHTMLHeader($ajax=false,$week=0){
      global $langs,$conf;
      
-
-    $html.="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
+    $weeklength=  getDayInterval($this->date_start, $this->date_end);
+    $maxColSpan=$weeklength+count($this->headers);
+    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);     
+    $html="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
      ///Whitelist tab
-     $html.='<tr class="liste_titre" id="">'."\n";
+        if($conf->global->TIMESHEET_TIME_SPAN=="month"){
+        //remove Year
+        //$format=str_replace('Y','',str_replace('%Y','',str_replace('Y/','',str_replace('/%Y','',$format))));    
+        $format="%d";
+        $html.='<tr class="liste_titre" id="">'."\n";
+        $html.='<td colspan="'.$maxColSpan.'" align="center"><a >'.$langs->trans(date('F',$this->date_start)).' '.date('Y',$this->date_start).'</a></td>';
+        $html.='</tr>';
+    }
+    
+    
+    $html.='<tr class="liste_titre" id="">'."\n";
+     
      
      foreach ($this->headers as $key => $value){
          $html.="\t<th ";
@@ -884,12 +897,9 @@ function getHTMLHeader($ajax=false,$week=0){
          $html.=">".$langs->trans($value)."</th>\n";
      }
     $opendays=str_split($conf->global->TIMESHEET_OPEN_DAYS);
-    $weeklength=  getDayInterval($this->date_start, $this->date_end);
-    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);       
-    if($conf->global->TIMESHEET_TIME_SPAN=="month"){
-        //remove Year
-        $format=str_replace('Y','',str_replace('%Y','',str_replace('Y/','',str_replace('/%Y','',$format))));    
-    }
+    
+  
+
     for ($i=0;$i<$weeklength;$i++)
     {
         $curDay=$this->date_start+ SECINDAY*$i+SECINDAY/4;
