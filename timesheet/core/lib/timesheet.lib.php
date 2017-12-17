@@ -357,7 +357,11 @@ function getStartDate($datetime,$prevNext=0){
                     $startDateMonth=  strtotime('first day of this month  midnight',$datetime  ); 
                     $startDateWeek=  strtotime('monday this week  midnight',$datetime  ); 
                     $startDatePrevWeek=  strtotime('monday previous week  midnight',$datetime  ); 
-                    $startDate=( $startDateMonth>$startDateWeek)?$startDateWeek:$startDatePrevWeek;
+                    if($startDateMonth>$startDateWeek ){
+                        $startDate=$startDateWeek;
+                    }else{
+                        $startDate=( $startDateMonth<$startDatePrevWeek)?$startDatePrevWeek:$startDateMonth;                 
+                    }
                 }
             break;
     }
