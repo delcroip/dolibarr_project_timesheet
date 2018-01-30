@@ -439,18 +439,6 @@ switch ($action) {
 		print "\n</tr>\n";
 		print "<tr>\n";
 
-// show the field target
-/*
-		print '<td>'.$langs->trans('Target').' </td><td>';
-		if($edit==1){
-		print select_enum('project_task_time_approval','target','Target',$object->target);
-		}else{
-		print $langs->trans($object->target);
-		}
-		print "</td>";
-		print "\n</tr>\n";
-		print "<tr>\n";
-*/
 
 
 // show the field project_tasktime_list
@@ -722,11 +710,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		//print "\n";
 		print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
 		print "\n";
-		//print_liste_field_titre($langs->trans('Target'),$PHP_SELF,'t.target','',$param,'',$sortfield,$sortorder);
-		//print "\n";
-		//print_liste_field_titre($langs->trans('Projecttasktimelist'),$PHP_SELF,'t.fk_project_tasktime_list','',$param,'',$sortfield,$sortorder);
-		//print "\n";
-		//print_liste_field_titre($langs->trans('Userapproval'),$PHP_SELF,'t.fk_user_approval','',$param,'',$sortfield,$sortorder);
 		//print "\n";
 		print '<td class="liste_titre" colspan="1" >';
 		print '</tr>';
