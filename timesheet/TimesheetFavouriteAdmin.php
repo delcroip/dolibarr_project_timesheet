@@ -415,8 +415,9 @@ switch ($action) {
  //               $formUserWhere.=' AND (projet.dateo<=FROM_UNIXTIME("'.time().'") OR prj.dateo IS NULL)';
                 if(!$user->admin)
                 {
-                        $formUserJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
-                        $formUserWhere.=" AND (((fk_c_type_contact='161' OR fk_c_type_contact='160') AND ec.fk_socpeople='".$user->id."' )";
+                        $formTaskJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
+                        $formTaskJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
+                        $formTaskWhere.=" AND (ctc.element='project' AND ctc.active='1'  AND ec.fk_socpeople='".$user->id."' )";
                         $formUserWhere.=" OR (t.public='1') )";
 
                 }
@@ -441,7 +442,8 @@ switch ($action) {
                 if(!$user->admin)
                 {
                         $formTaskJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
-                        $formTaskWhere.=" AND ((fk_c_type_contact='181' OR fk_c_type_contact='180') AND ec.fk_socpeople='".$user->id."' )";
+                        $formTaskJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
+                        $formTaskWhere.=" AND (ctc.element='project_task' AND ctc.active='1'  AND ec.fk_socpeople='".$user->id."' )";
 
 
                 }

@@ -246,9 +246,10 @@ $edit=0;
         $sqlTail='';
         
         if(!$user->admin){    
-            $sqlTailJoin=' JOIN llx_element_contact ON t.rowid= element_id ';
-            $sqlTailWhere.='  (fk_c_type_contact = "160" OR fk_c_type_contact = "161")'; // should be part of the project with the invoice right
-            $sqlTailWhere.=' AND fk_socpeople="'.$userid.'" AND fk_statut=1';
+            $formTaskJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
+            $formTaskJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
+            $formTaskWhere.=" AND ctc.element='project' AND ctc.active='1' ";
+            $sqlTailWhere.=' AND fk_socpeople="'.$userid.'" AND fk_statut>0';
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";

@@ -66,7 +66,8 @@ $sql='SELECT DISTINCT usr.rowid as userId, usr.lastname , usr.firstname '
   
 $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
      .'ON ctc.fk_socpeople=usr.rowid '
-     .'WHERE (ctc.fk_c_type_contact ="180" OR ctc.fk_c_type_contact="181" OR ctc.fk_c_type_contact="160" OR ctc.fk_c_type_contact="161")';
+     .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact'
+     .'WHERE ctc.element in ("project_task","project") AND ctc.active="1" ';
 if(!$user->admin)
 {
     $list=getSubordinates($db,$userid,3);
