@@ -18,7 +18,7 @@
 //global $db;     
 // FIXME Ver. 3 
 // Define status
-
+/*
 const STATUS= [
      0 => "NULL",
      1 => "DRAFT",
@@ -45,13 +45,22 @@ const LINKED_ITEM = [
      2 => "TASK",
      3 => "PROJECT",
      4 => "TIMESPENT"
-];
+];*/
 $roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
 
 $res=0;
 $path=dirname(__FILE__);
+if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
+if (! $res && file_exists($path."/../../../main.inc.php")){
+    $res=@include $path.'/../../../main.inc.php'; // in HTdocs
+    $_SERVER["CONTEXT_DOCUMENT_ROOT"]=realpath($path."/../../../");
+}
+if (! $res && file_exists($path."/../../../../main.inc.php")) {
+    $res=@include $path.'/../../../../main.inc.php'; //in custom
+    $_SERVER["CONTEXT_DOCUMENT_ROOT"]=realpath($path."/../../../../");
+}
+if (! $res && file_exists($path."/dev.inc.php")) {
+    $res=@include $path.'/dev.inc.php';
+}
 
-if (! $res && file_exists($path."/../../../main.inc.php")) $res=@include $path.'/../../../main.inc.php'; // in HTdocs
-if (! $res && file_exists($path."/../../../../main.inc.php")) $res=@include $path.'/../../../../main.inc.php'; //in custom
-if (! $res && file_exists($path."/dev.inc.php")) $res=@include $path.'/dev.inc.php';
 if (! $res) die("Include of main fails") ;
