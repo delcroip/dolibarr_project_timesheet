@@ -565,7 +565,7 @@ function saveInSession(){
  *  @return     array(string)                                             array of timesheet (serialized)
  */
  function fetchTaskTimesheet($userid=''){     
-
+    global $conf;
  
     if($userid==''){$userid=$this->userId;}
     $whiteList=array();
@@ -606,7 +606,7 @@ function saveInSession(){
     //end approval
     $sql.=" WHERE ctc.element='project_task' AND ctc.active='1' AND fk_socpeople='".$userid."' ";
     if($conf->global->TIMESHEET_HIDE_DRAFT=='1'){
-         $sql.=' AND prj.fk_statut<>"0" ';
+         $sql.=' AND prj.fk_statut>"0" ';
     }
     $sql.=' AND (prj.datee>="'.$this->db->idate($datestart).'" OR prj.datee IS NULL)';
     $sql.=' AND (prj.dateo<="'.$this->db->idate($datestop).'" OR prj.dateo IS NULL)';
