@@ -246,9 +246,9 @@ $edit=0;
         $sqlTail='';
         
         if(!$user->admin){    
-            $formTaskJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
-            $formTaskJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
-            $formTaskWhere.=" AND ctc.element='project' AND ctc.active='1' ";
+            $sqlTailJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
+            $sqlTailJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
+            $sqlTailWhere.=" AND ctc.element='project' AND ctc.active='1' ";
             $sqlTailWhere.=' AND fk_socpeople="'.$userid.'" AND fk_statut>0';
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";

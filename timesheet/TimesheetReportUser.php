@@ -64,10 +64,10 @@ $sql='SELECT DISTINCT usr.rowid as userId, usr.lastname , usr.firstname '
      .'FROM '.MAIN_DB_PREFIX.'user as usr ';
         
   
-$sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ctc '
-     .'ON ctc.fk_socpeople=usr.rowid '
-     .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact'
-     .'WHERE ctc.element in ("project_task","project") AND ctc.active="1" ';
+$sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
+     .' ON ec.fk_socpeople=usr.rowid '
+     .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact'
+     .' WHERE ctc.element in ("project_task","project") AND ctc.active="1" ';
 if(!$user->admin)
 {
     $list=getSubordinates($db,$userid,3);
