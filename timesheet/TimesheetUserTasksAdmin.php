@@ -155,7 +155,7 @@ $error=0;
 if ($cancel){
     reloadpage($backtopage,$id,$ref);
 }else if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
-    $tms=time();
+    $tms=getToken();
     $_SESSION['Timesheetuser_'.$tms]=array();
     $_SESSION['Timesheetuser_'.$tms]['action']=$action;
             
@@ -301,9 +301,9 @@ if ($cancel){
         }      
     }
 //Removing the tms array so the order can't be submitted two times
-if(isset( $_SESSION['Timesheetuser_class'][$tms]))
+if(isset( $_SESSION['Timesheetuser_'.$tms]))
 {
-    unset($_SESSION['Timesheetuser_class'][$tms]);
+    unset($_SESSION['Timesheetuser_'.$tms]);
 }
 
 /***************************************************
