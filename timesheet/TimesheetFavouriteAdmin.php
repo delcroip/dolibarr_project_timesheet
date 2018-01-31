@@ -121,11 +121,11 @@ $error=0;
 if ($cancel){
         reloadpage($backtopage,$id,$ref);
 }else if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
-    if($tms=='') //to keep the tms on javvascript reload
+    if(GETPOST('User')=="" ) //to keep the tms on javvascript reload
     {
-        $tms=time();
-        $_SESSION['timesheetFavourite'][$tms]=array();
-        $_SESSION['timesheetFavourite'][$tms]['action']=$action;
+        $tms=getToken();
+        $_SESSION['timesheetFavourite'.$tms]=array();
+        $_SESSION['timesheetFavourite'.$tms]['action']=$action;
     }else {
         $editedUser=GETPOST('User');
         $editedProject=GETPOST('Project');		
@@ -135,7 +135,7 @@ if ($cancel){
 }else if (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
         //block resubmit
-        if($ajax!=1 && (empty($tms) || (!isset($_SESSION['timesheetFavourite'][$tms])))){
+        if($ajax!=1 && (empty($tms) || (!isset($_SESSION['timesheetFavourite'.$tms])))){
                 setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
                 $action=($action=='add')?'create':'edit';
         }
@@ -178,7 +178,7 @@ if ($cancel){
                             if ($result > 0)
                             {
                                 // Creation OK
-                                unset($_SESSION['timesheetFavourite'][$tms]);
+                                unset($_SESSION['timesheetFavourite'.$tms]);
                                     setEventMessage('RecordUpdated', 'mesgs');
                                     reloadpage($backtopage,$object->id,$ref); 
                             }
@@ -224,7 +224,7 @@ if ($cancel){
                             {
                                     // Creation OK
                                 // remove the tms
-                                   unset($_SESSION['timesheetFavourite'][$tms]);                                   
+                                   unset($_SESSION['timesheetFavourite'.$tms]);                                   
                                    if ($ajax==1){
                                            echo json_encode(array('id'=> $result));
                                            exit;
@@ -279,9 +279,9 @@ if ($cancel){
                             break;
             }             
 //Removing the tms array so the order can't be submitted two times
-if(isset( $_SESSION['timesheetFavourite'][$tms]))
+if(isset( $_SESSION['timesheetFavourite'.$tms]) &&  !GETPOST('Project') )
 {
-    unset($_SESSION['timesheetFavourite'][$tms]);
+   // unset($_SESSION['timesheetFavourite'.$tms]);
 }
 if ($ajax==1){
     echo json_encode(array('errors'=> $object->errors));
@@ -319,7 +319,7 @@ for(index = 0; index < param_array.length; ++index){
 
 var pjt=document.getElementById("Project").value;
 var usr=document.getElementById("User").value;
-self.location="'.$PHP_SELF.'?action=" + action + id +"&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
+self.location="'.$PHP_SELF.'?&action=" + action + id +"&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
 }
 </script>';
 
@@ -415,9 +415,9 @@ switch ($action) {
  //               $formUserWhere.=' AND (projet.dateo<=FROM_UNIXTIME("'.time().'") OR prj.dateo IS NULL)';
                 if(!$user->admin)
                 {
-                        $formTaskJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
-                        $formTaskJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
-                        $formTaskWhere.=" AND (ctc.element='project' AND ctc.active='1'  AND ec.fk_socpeople='".$user->id."' )";
+                        $formUserJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
+                        $formUserJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
+                        $formUserWhere.=" AND (ctc.element='project' AND ctc.active='1'  AND ec.fk_socpeople='".$user->id."' )";
                         $formUserWhere.=" OR (t.public='1') )";
 
                 }
