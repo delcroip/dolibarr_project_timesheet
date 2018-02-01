@@ -648,9 +648,7 @@ function saveInSession(){
              foreach($tasksList as $row)
             {
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
-                //if($this->appId==0){
-                    $row->getTaskInfo(); // get task info include in fetch    
-                //}
+                $row->getTaskInfo(); // get task info include in fetch    
                 $row->getActuals($datestart,$datestop,$userid); 
                 $this->taskTimesheet[]=  $row->serialize();                   
             }
