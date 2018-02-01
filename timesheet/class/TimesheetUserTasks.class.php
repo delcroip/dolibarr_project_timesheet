@@ -588,9 +588,9 @@ function saveInSession(){
     $sql ='SELECT DISTINCT element_id as taskid,prj.fk_soc,tsk.fk_projet,';
     $sql.='tsk.fk_task_parent,tsk.rowid,app.rowid as appid,prj.ref as prjRef, tsk.ref as tskRef';
     $sql.=$sqlwhiteList;
-    $sql.=" FROM ".MAIN_DB_PREFIX."element_contact "; 
-    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
-    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=element_id ';
+    $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec"; 
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid=ec.fk_c_type_contact  AND ctc.active="1") ';
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=ec.element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
     //approval
     if( $this->status=="DRAFT" || $this->status=="REJECTED"){
@@ -604,7 +604,7 @@ function saveInSession(){
     $sql.=' AND app.date_end="'.$this->db->idate($datestop).'"';    
 
     //end approval
-    $sql.=" WHERE ctc.element='project_task' AND ctc.active='1' AND fk_socpeople='".$userid."' ";
+    $sql.=" WHERE fk_socpeople='".$userid."' AND ctc.element='project_task' ";
     if($conf->global->TIMESHEET_HIDE_DRAFT=='1'){
          $sql.=' AND prj.fk_statut>"0" ';
     }
@@ -648,7 +648,9 @@ function saveInSession(){
              foreach($tasksList as $row)
             {
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
-                if($this->appId==0)$row->getTaskInfo(); // get task info include in fetch                       
+                //if($this->appId==0){
+                    $row->getTaskInfo(); // get task info include in fetch    
+                //}
                 $row->getActuals($datestart,$datestop,$userid); 
                 $this->taskTimesheet[]=  $row->serialize();                   
             }
