@@ -23,14 +23,12 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once 'class/TimesheetUserTasks.class.php';
 
-define('SECINDAY',86400);
-define('TIMESHEET_BC_FREEZED','909090');
-define('TIMESHEET_BC_VALUE','f0fff0');
+
 class TimesheetTask extends Task 
 {
     	var $element='Task_time_approval';			//!< Id that identify managed objects
 	var $table_element='project_task_time_approval';		//!< Name of table without prefix where object is stored
-        static $statusList,$apflows,$roleList,$statusColor;
+        static $statusColor;
         private $ProjectTitle		=	"Not defined";
         var $tasklist;
        // private $fk_project;
@@ -88,9 +86,9 @@ class TimesheetTask extends Task
          */
         global $conf;
         self::$statusColor=array('PLANNED'=>$conf->global->TIMESHEET_COL_DRAFT,'DRAFT'=>$conf->global->TIMESHEET_COL_DRAFT,'SUBMITTED'=>$conf->global->TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>$conf->global->TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>$conf->global->TIMESHEET_COL_REJECTED,'APPROVED'=>$conf->global->TIMESHEET_COL_APPROVED,'INVOICED'=>$conf->global->TIMESHEET_COL_APPROVED,'CANCELLED'=>$conf->global->TIMESHEET_COL_CANCELLED,'REJECTED'=>$conf->global->TIMESHEET_COL_REJECTED);
-        self::$statusList=array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=>'INVOICED',4=>'APPROVED',5=>'SUBMITTED',6=>'UNDERAPPROVAL',7=>'CHALLENGED',8=>'REJECTED');
-        self::$roleList=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
-        self::$apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS); //remove the leading _
+        //self::$statusList=array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=>'INVOICED',4=>'APPROVED',5=>'SUBMITTED',6=>'UNDERAPPROVAL',7=>'CHALLENGED',8=>'REJECTED');
+        //self::$roleList=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
+ //       self::$apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS); //remove the leading _
     
     }
     public function __construct($db,$taskId=0,$id=0) 
@@ -98,9 +96,9 @@ class TimesheetTask extends Task
 		$this->db=$db;
 		$this->id=$taskId;
                 $this->appId=$id;
-                $this->status='DRAFT';
-                $this->sender='user';
-                $this->recipient='team';
+                $this->status=DRAFT;
+                $this->sender=USER;
+                $this->recipient=TEAM;
                 $this->user_app= array('team'=>0 ,'project'=>0 ,'customer'=>0 ,'supplier'=>0 ,'other'=>0  );
 	}
 
@@ -138,8 +136,8 @@ class TimesheetTask extends Task
 		if (isset($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
 		if (isset($this->user_app['supplier'])) $this->user_app['supplier']=trim($this->user_app['supplier']);
 		if (isset($this->user_app['other'])) $this->user_app['other']=trim($this->user_app['other']);
-		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
-		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
+		//if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
+		//if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
 		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
 		if (isset($this->id)) $this->id=trim($this->id);
@@ -167,6 +165,7 @@ class TimesheetTask extends Task
                 $sql.= 'fk_user_app_supplier,';
                 $sql.= 'fk_user_app_other,';               
 		$sql.= 'date_creation,';
+                $sql.= 'date_modification,';
 		$sql.= 'fk_user_creation,';
                 $sql.= 'fk_projet_task,';
                 $sql.= 'fk_project_task_timesheet,';
@@ -178,9 +177,9 @@ class TimesheetTask extends Task
 		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
 		$sql.=' '.(! isset($this->date_start_approval) || dol_strlen($this->date_start_approval)==0?'NULL':'"'.$this->db->idate($this->date_start_approval).'"').',';
 		$sql.=' '.(! isset($this->date_end_approval) || dol_strlen($this->date_end_approval)==0?'NULL':'"'.$this->db->idate($this->date_end_approval).'"').',';
-		$sql.=' '.(! isset($this->status)?'"DRAFT"':'"'.$this->status.'"').',';
-		$sql.=' '.(! isset($this->sender)?'"user"':'"'.$this->sender.'"').',';
-		$sql.=' '.(! isset($this->recipient)?'"team"':'"'.$this->recipient.'"').',';
+		$sql.=' '.(! isset($this->status)?'1':'"'.$this->status.'"').',';
+		$sql.=' '.(! isset($this->sender)?USER:'"'.$this->sender.'"').',';
+		$sql.=' '.(! isset($this->recipient)?TEAM:'"'.$this->recipient.'"').',';
 		$sql.=' '.(! isset($this->planned_workload_approval)?'NULL':'"'.$this->planned_workload_approval.'"').',';
 		$sql.=' '.(! isset($this->user_app['team'])?'NULL':'"'.$this->user_app['team'].'"').',';
 		$sql.=' '.(! isset($this->user_app['project'])?'NULL':'"'.$this->user_app['project'].'"').',';
@@ -188,6 +187,7 @@ class TimesheetTask extends Task
 		$sql.=' '.(! isset($this->user_app['supplier'])?'NULL':'"'.$this->user_app['supplier'].'"').',';
 		$sql.=' '.(! isset($this->user_app['other'])?'NULL':'"'.$this->user_app['other'].'"').',';
 		$sql.=' NOW() ,';
+                $sql.=' NOW() ,';
 		$sql.=' "'.$userId.'",'; 
 		$sql.=' '.(! isset($this->id)?'NULL':'"'.$this->id.'"').',';
 		$sql.=' '.(! isset($this->task_timesheet)?'NULL':'"'.$this->task_timesheet.'"').',';
@@ -600,7 +600,7 @@ class TimesheetTask extends Task
  */
   
     Public function updateTaskTime($status){
-        if(!in_array($status, self::$statusList) ) return -1; // role not valide      
+        if($status<0 || $status>STATUSMAX) return -1; // role not valide      
 //Update the the fk_tta in the project task time 
         $idList=array(); 
         if(!is_array($this->tasklist)) $this->getActuals ($this->date_start_approval, $this->date_end_approval, $this->userId);
@@ -664,9 +664,9 @@ class TimesheetTask extends Task
             $sql .= ',p.title as title, pt.label as label,pt.planned_workload';
             if($taskParent)$sql .= ',pt.fk_task_parent,ptp.label as taskParentLabel';	        	
         }else{
-            $sql .= ",CONCAT(p.`ref`,' - ',p.title) as title";
-            $sql .= ",CONCAT(pt.`ref`,' - ',pt.label) as label";
-            if($taskParent)$sql .= ",pt.fk_task_parent,CONCAT(ptp.`ref`,' - ',ptp.label) as taskParentLabel";	
+            $sql .= ",CONCAT(p.ref,' - ',p.title) as title";
+            $sql .= ",CONCAT(pt.ref,' - ',pt.label) as label";
+            if($taskParent)$sql .= ",pt.fk_task_parent,CONCAT(ptp.ref,' - ',ptp.label) as taskParentLabel";	
         }
         if($Company)$sql .= ',p.fk_soc as companyId,s.nom as companyName';
 
@@ -755,7 +755,8 @@ class TimesheetTask extends Task
         $sql .= " WHERE ";
         // FIXME If status above
 
-        if(in_array($this->status,array_slice(self::$statusList, 3,4))){
+//        if(in_array($this->status,array_slice(self::$statusList, 3,4))){
+        if(in_array($this->status, array(SUBMITTED,UNDERAPPROVAL,APPROVED,CHALLENGED,INVOICED))){
             $sql.=' ptt.fk_task_time_approval="'.$this->appId.'"';
         }else{
             $sql.=" ptt.fk_task='".$this->id."' ";
@@ -834,13 +835,13 @@ class TimesheetTask extends Task
   if(($this->pStatus == "2")){
       $linestyle.='background:#'.TIMESHEET_BC_FREEZED.';';
   }else{
-      $linestyle.='background:#'.self::$statusColor[$this->status].';';
+      $linestyle.='background:#'.self::$statusColor[$this->status].';';// --FIXME
   }
     /*
      * Open task ?
      */
-        if($status=='INVOICED')$openOveride=-1; // once invoice it should not change
-        $isOpenSatus=($openOveride==1) || ($status=='DRAFT' || $status=='CANCELLED'|| $status=='REJECTED' || $status=='PLANNED');
+        if($status==INVOICED)$openOveride=-1; // once invoice it should not change
+        $isOpenSatus=($openOveride==1) || in_array($status ,array(DRAFT ,CANCELLED,REJECTED,PLANNED));
         if($openOveride==-1)$isOpenSatus=false;
         $opendays=str_split($conf->global->TIMESHEET_OPEN_DAYS);
     
@@ -954,7 +955,7 @@ class TimesheetTask extends Task
 
                 if($isOpen){
                     $bkcolor='background:#'.self::$statusColor[$this->status];
-                    if($dayWorkLoadSec!=0 && $this->status=='DRAFT' )$bkcolor='background:#'.TIMESHEET_BC_VALUE;
+                    if($dayWorkLoadSec!=0 && $this->status==DRAFT )$bkcolor='background:#'.TIMESHEET_BC_VALUE;
                     
                     
                 }else{
@@ -1201,8 +1202,9 @@ Public function setStatus($user,$status,$updateTS=true){ //FIXME
             $error=0;
             $ret=0;
             //if the satus is not an ENUM status
-            if(!in_array($status, self::$statusList)){
-                dol_syslog(__METHOD__." this status '{$status}' is not part or the enum list", LOG_ERROR);
+//            if(!in_array($status, self::$statusList)){
+            if($this->status<0 || $this->status> STATUSMAX){
+                dol_syslog(__METHOD__." this status '{$status}' is not part or the possible list", LOG_ERR);
                 return false;
             }
             // Check parameters
@@ -1404,8 +1406,9 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
  */
   
     Public function Approved($user,$role, $updteTS =true){
+        global $apflows;
         $userId=  is_object($user)?$user->id:$user;
-        if(!in_array($role, self::$roleList)) return -1; // role not valide
+        if($role<0&& $role>ROLEMAX) return -1; // role not valide
         $nextStatus='';
         $ret=0;
 
@@ -1414,13 +1417,14 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
         //update the roles
         $rolepassed=false;
         // look for the role open after the curent role and set it as recipient
-        foreach(self::$apflows as $key=> $value){         
+        foreach(array_slice ($apflows,1) as $key=> $value){
+            $key++;
             if ($value==1 ){  
-                if ( self::$roleList[$key]==$role){
-                     $this->sender=$role;
+                if ( $key==$role){
+                     $this->sender=$key;
                      $rolepassed=true;
                 }else if ($rolepassed){
-                    $this->recipient= self::$roleList[$key];
+                    $this->recipient=$key;
                     $ret=$key;      
                     break;
                 }                         
@@ -1429,10 +1433,10 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
         }
         
         if($ret>0){//other approval found
-            $ret=$this->setStatus($user,'UNDERAPPROVAL',$updteTS);
+            $ret=$this->setStatus($user,UNDERAPPROVAL,$updteTS);
         }else if($this->sender==$role){ // only if the role was alloed
-             $this->recipient='user';
-             $ret=$this->setStatus($user,'APPROVED',$updteTS);
+             $this->recipient=USER;
+             $ret=$this->setStatus($user,APPROVED,$updteTS);
             // if approved,recipient 
 
             //$this->recipient= self::$roleList[array_search('1', self::$apflows)];
@@ -1457,29 +1461,31 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
  */
   
     Public function challenged($user,$role,$updteTS=true){
+        global $apflows;
         $userId=  is_object($user)?$user->id:$user;
         $nextStatus='';
-        if(!in_array($role, self::$roleList)) return -1; // role not valide      
+        if($role<0&& $role>ROLEMAX) return -1; // role not valide
         $ret=-1;
        //unset the approver ( could be set previsouly)
         $this->user_app[$role]=$userId;
         //update the roles, look for the open role and define it as sender and save the previous role open as recipient 
-        foreach(self::$apflows as $key=> $recipient){
+        foreach(array_slice ($apflows,1) as $key=> $recipient){
+            $key++;
             if ($recipient==1){  
-                if ( self::$roleList[$key]==$role){
+                if ( $key==$role){
                         $this->sender= $role;
                     break;
                 }else{
-                    $this->recipient= self::$roleList[$key]; 
+                    $this->recipient= $key; 
                     $ret=$key;
                 }                                          
             }
         } 
         if($ret>0){//other approval found
-            $ret=$this->setStatus($user,'CHALLENGED',$updteTS);
+            $ret=$this->setStatus($user,CHALLENGED,$updteTS);
         }else if($this->sender==$role) { //update only if the role was allowed
-            $this->recipient='user';
-            $ret=$this->setStatus($user,'REJECTED',$updteTS);                   
+            $this->recipient=USER;
+            $ret=$this->setStatus($user,REJECTED,$updteTS);                   
         }
        
         if($ret>0)$ret=$this->updateTaskTime($nextStatus);
@@ -1495,17 +1501,19 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
  */
   
     Public function submitted($user,$updteTS=false){
+        global $apflows;
         // assign the first role open as recipient, put user as default
-        $this->recipient='user';
-        foreach(self::$apflows as $key=> $recipient){       
+        $this->recipient=USER;
+        foreach(array_slice ($apflows,1) as $key=> $recipient){   
+            $key++;
             if ($recipient==1){  
-                    $this->recipient= self::$roleList[$key];
+                    $this->recipient= $key;
                     break;                                      
             }
         } 
       //Update the the fk_tta in the project task time 
-        $ret=$this->setStatus($user,'SUBMITTED',$updteTS); // must be executed first to get the appid
-        if($ret>0)$ret=$this->updateTaskTime('SUBMITTED');
+        $ret=$this->setStatus($user,SUBMITTED,$updteTS); // must be executed first to get the appid
+        if($ret>0)$ret=$this->updateTaskTime(SUBMITTED);
        
         return $ret+1;// team key is 0 
     }        

@@ -27,10 +27,15 @@ $htmlother = new FormOther($db);
 
 $id		= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$dateStart	= GETPOST('dateStart');
-$exportfriendly=GETPOST('exportfriendly');
+$dateStart	= GETPOST('dateStart','alpha');
+$exportfriendly=GETPOST('exportfriendly','alpha');
 $optioncss = GETPOST('optioncss','alpha');
-
+$short=GETPOST('short','int');
+$mode=GETPOST('mode','alpha');
+if(!$mode)$mode='UTD';
+$projectSelectedId=GETPOST('projectSelected');
+    $year=GETPOST('year','int');
+    $month=GETPOST('month','alpha');//strtotime(str_replace('/', '-',$_POST['Date']))
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("main");
@@ -39,10 +44,10 @@ $langs->load('timesheet@timesheet');
 
 //find the right week
 //find the right week
-$toDate                 = GETPOST('toDate');
-$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday'):0; // to not look for the date if action not goTodate
-$toDatemonth                 = GETPOST('toDatemonth');
-$toDateyear                 = GETPOST('toDateyear');
+$toDate                 = GETPOST('toDate', 'alpha');
+$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday', 'int'):0; // to not look for the date if action not goTodate
+$toDatemonth                 = GETPOST('toDatemonth', 'int');
+$toDateyear                 = GETPOST('toDateyear', 'int');
 if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=$_SESSION["dateStart"];
 }else {
@@ -53,7 +58,6 @@ $_SESSION["dateStart"]=$dateStart ;
 
 
 llxHeader('',$langs->trans('projectReport'),'');
-$mode=($_POST['short']==1)?1:2;
 
 $userid=  is_object($user)?$user->id:$user;
 
@@ -63,8 +67,9 @@ $userid=  is_object($user)?$user->id:$user;
 
 $sql='SELECT pjt.rowid,pjt.ref,pjt.title,pjt.dateo,pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
 if(!$user->admin){    
-    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact ON pjt.rowid= element_id ';
-    $sql.=' WHERE fk_c_type_contact = "160" ';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid= element_id ';
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
+    $sql.=' WHERE ctc.element in ("project_task") AND ctc.active="1" AND ctc.code LIKE "%EXECUTIVE%" '; 
     $sql.=' AND fk_socpeople="'.$userid.'"';
 }
 
@@ -104,25 +109,22 @@ $Form='<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss=
         <td><select  name="projectSelected">
         ';
 foreach($projectList as $pjt){
-    $Form.='<option value="'.$pjt->projectid.'" '.(($_POST['projectSelected']==$pjt->projectid)?"selected":'').' >'.$pjt->name.'</option>'."\n";
+    $Form.='<option value="'.$pjt->projectid.'" '.(($projectSelectedId==$pjt->projectid)?"selected":'').' >'.$pjt->name.'</option>'."\n";
 }
 //    if($user->admin){
-        $Form.='<option value="-999" '.(($_POST['projectSelected']=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+        $Form.='<option value="-999" '.(($projectSelectedId=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
 //    }
    
-$mode='UTD';
+
 $querryRes='';
-if (!empty($_POST['projectSelected']) && is_numeric($_POST['projectSelected']) 
-        &&!empty($_POST['month']))
+if ($projectSelectedId   &&!empty($month))
 {
-    $mode=$_POST['mode'];
-    $short=$_POST['short'];
-    $projectSelected=$projectList[$_POST['projectSelected']];
-    $year=$_POST['year'];
-    $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
+
+    $projectSelected=$projectList[$projectSelectedId];
+; 
     $firstDay= strtotime('01-'.$month.'-'. $year);
     $lastDay=  strtotime('last day of this month',$firstDay);
-    if($_POST['projectSelected']=='-999'){
+    if($projectSelectedId=='-999'){
         foreach($projectList as $project){
         $querryRes.=$project->getHTMLreport($firstDay,$lastDay,$mode,$short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
@@ -153,7 +155,7 @@ $Form.='</select></td>'
         . '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'')
         .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
         .'<td><input class="butAction" type="submit" value="'.$langs->trans('getReport').'"><br>';
-if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<br><a class="butAction" href="TimesheetProjectInvoice.php?step=0&year='.$_POST['year'].'&month='.$_POST['month'].'&projectid='.$_POST['projectSelected'].'" >'.$langs->trans('Invoice').'</a>';
+if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<br><a class="butAction" href="TimesheetProjectInvoice.php?step=0&year='.$year.'&month='.$month.'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
         $Form.='</td></tr></table></form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 

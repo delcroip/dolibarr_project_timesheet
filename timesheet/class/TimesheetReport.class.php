@@ -71,9 +71,9 @@ class TimesheetReport
     $title=array('1'=>'Project','4'=>'Day','3'=>'Tasks','7'=>'User');
     $titleWidth=array('4'=>'120','7'=>'200');
     
-    $sql='SELECT prj.rowid as projectId, prj.`ref` as projectRef, ptt.fk_user as userId,';
-    $sql.= ' prj.title as projectTitle,tsk.rowid as taskId, CONCAT(usr.firstname,\' - \',usr.lastname) as userName,';
-    $sql.= ' tsk.`ref` as taskRef,tsk.label as taskTitle,';
+    $sql='SELECT MAX(prj.rowid) as projectId, MAX(prj.ref) as projectRef, ptt.fk_user as userId,';
+    $sql.= ' MAX(prj.title) as projectTitle,ptt.fk_task as taskId, MAX(CONCAT(usr.firstname,\' - \',usr.lastname)) as userName,';
+    $sql.= ' MAX(tsk.ref) as taskRef, MAX(tsk.label) as taskTitle,';
     $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
     $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task ';
@@ -88,7 +88,7 @@ class TimesheetReport
             
      $sql.='AND task_date>='.$this->db->idate($startDay)
                     .' AND task_date<='.$this->db->idate($stopDay)
-                    .' GROUP BY ptt.fk_user,prj.rowid, ptt.task_date,ptt.fk_task ';
+                    .' GROUP BY ptt.fk_user, ptt.task_date,ptt.fk_task ';
     switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing
                 

@@ -30,15 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 //get param
 $staticProject=new Project($db);
-$projectId=GETPOST('projectid');
+$projectId=GETPOST('projectid','int');
 
-$socid=GETPOST('socid');
-$month=GETPOST('month');
-$year=GETPOST('year');
-$mode=GETPOST('invoicingMethod');
-$step=GETPOST('step');
-$ts2Invoice=GETPOST('ts2Invoice');
-$tsNotInvoiced=GETPOST('tsNotInvoiced');
+$socid=GETPOST('socid','int');
+$month=GETPOST('month','alpha');
+$year=GETPOST('year','int');
+$mode=GETPOST('invoicingMethod','alpha');
+$step=GETPOST('step','alpha');
+$ts2Invoice=GETPOST('ts2Invoice','alpha');
+$tsNotInvoiced=GETPOST('tsNotInvoiced','alpha');
 $userid=  is_object($user)?$user->id:$user;
 //init handling object
 $form = new Form($db);
@@ -82,7 +82,7 @@ $langs->load('timesheet@timesheet');
                 $sql.=' WHERE status= "APPROVED" AND MONTH(date_start)='.$month;  
                 $sql.=' AND YEAR(date_start)="'.$year.'")'; 
                 $sql.=' AND YEAR(date_start)="'.$year.'")'; */
-                $sql.=' AND tt.status = "APPROVED"'; 
+                $sql.=' AND tt.status = '.APPROVED; 
             }
             if($tsNotInvoiced==1){
                 $sql.=' AND tt.invoice_id IS NULL'; 
@@ -248,7 +248,7 @@ $edit=0;
         if(!$user->admin){    
             $sqlTailJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
             $sqlTailJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
-            $sqlTailWhere.=" AND ctc.element='project' AND ctc.active='1' ";
+            $sqlTailWhere.=" AND ctc.element='project' AND ctc.active='1' "; // WARINING: any project role can do the invoice if they have the right to create invoices
             $sqlTailWhere.=' AND fk_socpeople="'.$userid.'" AND fk_statut>0';
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";

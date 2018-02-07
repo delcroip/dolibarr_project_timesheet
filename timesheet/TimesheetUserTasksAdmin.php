@@ -64,9 +64,9 @@ $langs->load("timesheet@timesheet");
 $id			= GETPOST('id','int');
 $ref        = GETPOST('ref','alpha');
 $action		= GETPOST('action','alpha');
-$backtopage = GETPOST('backtopage');
-$cancel=GETPOST('cancel');
-$confirm=GETPOST('confirm');
+$backtopage = GETPOST('backtopage','alpha');
+$cancel=GETPOST('cancel','alpha');
+$confirm=GETPOST('confirm','alpha');
 $tms= GETPOST('tms','alpha');
 //// Get parameters
 $sortfield = GETPOST('sortfield','alpha'); 
@@ -154,32 +154,19 @@ if(!empty($ref))
 $error=0;
 if ($cancel){
     reloadpage($backtopage,$id,$ref);
-}else if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
-    $tms=getToken();
-    $_SESSION['Timesheetuser_'.$tms]=array();
-    $_SESSION['Timesheetuser_'.$tms]['action']=$action;
-            
 }else if (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
         //block resubmit
         if(empty($tms) || (!isset($_SESSION['Timesheetuser_'.$tms]))){
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
-            $action=($action=='add')?'create':'edit';
+            $action=($action=='add')?'create':'view';
         }
         //retrive the data
-        $object->userId=GETPOST('Userid');
-		$object->date_start=dol_mktime(0, 0, 0,GETPOST('startDatedatemonth'),GETPOST('startDatedateday'),GETPOST('startDatedateyear'));
-		$object->date_end=dol_mktime(0, 0, 0,GETPOST('dateendmonth'),GETPOST('dateendday'),GETPOST('dateendyear'));
-                $object->status=GETPOST('Status');
-		$object->target=GETPOST('Target');
-		$object->project_tasktime_list=GETPOST('Projecttasktimelist');
-		$object->user_approval=GETPOST('Userapproval');
-            if($object->user_approval==-1)unset($object->user_approval);
-		$object->timesheetuser=GETPOST('Timesheetuser');
-            if($object->timesheetuser==-1)unset($object->timesheetuser);
-		$object->task=GETPOST('Task');
-            if($object->task==-1)unset($object->task);
-		$object->note=GETPOST('Note');
+        $object->userId=GETPOST('Userid','int');
+		$object->date_start=dol_mktime(0, 0, 0,GETPOST('startDatedatemonth','int'),GETPOST('startDatedateday','int'),GETPOST('startDatedateyear','int'));
+		$object->date_end=dol_mktime(0, 0, 0,GETPOST('dateendmonth','int'),GETPOST('dateendday','int'),GETPOST('dateendyear','int'));
+                $object->status=GETPOST('Status','alpha');
+		$object->note=GETPOST('Note','alpha');
 
 
         
@@ -209,14 +196,16 @@ if ($cancel){
                                 // Creation OK
                                 unset($_SESSION['Timesheetuser_'.$tms]);
                                     setEventMessage('RecordUpdated','mesgs');
-                                    reloadpage($backtopage,$object->id,$ref); 
+                                   // reloadpage($backtopage,$object->id,$ref); 
+                                    $action='view';
                             }
                             else
                             {
                                     // Creation KO
                                     if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
                                     else setEventMessage('RecordNotUpdated', 'errors');
-                                    $action='edit';
+                                    //reloadpage($backtopage,$object->id,$ref);
+                                        $action='view';
                             }
                     case 'delete':
                         if(isset($_GET['urlfile'])) $action='deletefile';
@@ -305,6 +294,13 @@ if(isset( $_SESSION['Timesheetuser_'.$tms]))
 {
     unset($_SESSION['Timesheetuser_'.$tms]);
 }
+ if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
+    $tms=getToken();
+    $_SESSION['Timesheetuser_'.$tms]=array();
+    $_SESSION['Timesheetuser_'.$tms]['action']=$action;
+            
+}
+
 
 /***************************************************
 * VIEW
@@ -431,9 +427,9 @@ switch ($action) {
 
 		print '<td>'.$langs->trans('Status').' </td><td>';
 		if($edit==1){
-		print select_enum('project_task_time_approval','status','Status',$object->status);
+		print  $form->selectarray('Status',$statusA,$object->status);
 		}else{
-		print $langs->trans(strtolower($object->status));
+                print $statusA[$object->status];
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -441,61 +437,7 @@ switch ($action) {
 
 
 
-// show the field project_tasktime_list
-/*
-		print '<td>'.$langs->trans('Projecttasktimelist').' </td><td>';
-		if($edit==1){
-                    print '<input class="flat" size="16" type="text" name="Projecttasktimelist" value="'.$object->project_tasktime_list.'"/>';
- 		}else{
-                    print $object->project_tasktime_list;
-		//print print_generic('project_tasktime_list','rowid',$object->project_tasktime_list,'rowid','description');
-		}
-		print "</td>";
-		print "\n</tr>\n";
-		print "<tr>\n";
-*/
-// show the field user_approval
-/*
-		print '<td>'.$langs->trans('Userapproval').' </td><td>';
-		if($edit==1){
-		print $form->select_dolusers($object->user_approval, 'Userapproval', 1, '', 0 );
-		}else{
-		print print_generic('user', 'rowid',$object->user_approval,'lastname','firstname',' ');
-		}
-		print "</td>";
-		print "\n</tr>\n";
-		print "<tr>\n";
-*/
-// show the field timsesheetuser
-/*
-		print '<td>'.$langs->trans('Timesheetuser').' </td><td>';
-                $sqltail= "JOIN ".MAIN_DB_PREFIX."user AS u ON u.rowid=t.fk_userid";
-		if($edit==1){
-                    //avoid full table scan print select_generic('project_task_time_approval', 'rowid','Timesheetuser','CONCAT(u.lastname," ",u.firstname) AS username','CONCAT(t.date_start," ",t.target) AS weektarget',$object->timesheetuser,' - ',$sqltail);
-                    print '<input class="flat" size="5" type="text" name="Timesheetuser" value="'.$object->timesheetuser.'"/>';
 
-		}else{
-                    print print_generic('project_task_time_approval', 'rowid',$object->timesheetuser,'CONCAT(lastname," ",firstname) AS username','CONCAT(date_start," ",target) AS weektarget',' - ','',$sqltail);
-                    //print $object->project_tasktime_list;
-
-                }
-		print "</td>";
-		print "\n</tr>\n";
-		print "<tr>\n";
-*/
-// show the field task
-/*
-		print '<td>'.$langs->trans('Task').' </td><td>';
-        if($edit==1){
-		print select_generic('projet_task', 'rowid','Task','ref','label',$object->task);
-
-		}else{
-		print print_generic('projet_task', 'rowid',$object->task,'ref','label');
-		}
-		print "</td>";
-		print "\n</tr>\n";
-		print "<tr>\n";
-*/
 // show the field note
 
 		print '<td>'.$langs->trans('Note').' </td><td>';
@@ -512,7 +454,7 @@ switch ($action) {
 
 	print '</table>'."\n";
 	print '<br>';
-        if($object->status != "DRAFT" && $edit!=1){
+        if($object->status != DRAFT && $edit!=1){
             print $object->userName." - ".$object->date_start;
             print $object->getHTMLHeader(false);
 
@@ -532,11 +474,11 @@ switch ($action) {
 	print '<div class="center">';
         if($edit==1){
         if($new==1){
-                print '<input type="submit" class="button" name="add" value="'.$langs->trans('Add').'">';
+                print '<input type="submit" class="butAction" name="add" value="'.$langs->trans('Add').'">';
             }else{
-                print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="button">';
+                print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="butAction">';
             }
-            print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
+            print ' &nbsp; <input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
             print '</form>';
         }else{
             $parameters=array();
@@ -596,7 +538,7 @@ switch ($action) {
         $linkback = '<a href="'.$PHP_SELF.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
   	// Ref
   	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-  	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+  	print $form->showrefnav($object, 'action=view&id', $linkback, 1, 'rowid', 'ref', '');
   	print '</td></tr>';
 	// Societe
 	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
@@ -729,7 +671,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print '</td>';
 		//Search field forstatus
 		print '<td class="liste_titre" colspan="1" >';
-		print select_enum('project_task_time_approval','status','ls_status',$ls_status);
+		print $form->selectarray('ls_status',$statusA,$ls_status);
 		print '</td>';
 		//Search field fortarget
 		//	print '<td class="liste_titre" colspan="1" >';
@@ -764,7 +706,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 				print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
 				print "<td>".dol_print_date($obj->date_start,'day')."</td>";
 				//print "<td>".dol_print_date($obj->date_end,'day')." (".getYearWeek(0,0,0,$db->jdate($obj->date_end)).")</td>";//FIXME
-                                print "<td>".$langs->trans(strtolower($obj->status))."</td>";
+                                print "<td>".$langs->trans(strtolower($statusA[$obj->status]))."</td>";
 				//print "<td>".$langs->trans($obj->target)."</td>";
 				//print "<td>".$obj->fk_project_tasktime_list."</td>";
 				//print "<td>".print_generic('user','rowid',$obj->fk_user_approval,'lastname','firstname',' ')."</td>";

@@ -10,7 +10,7 @@ include 'lib/includeMain.lib.php';
  global $conf,$langs,$db;
  top_httphead();
 //get the token,exit if 
-$token=GETPOST('token');
+$token=GETPOST('token','apha');
 
 if(!isset($_SESSION['ajaxQuerry'][$token]))exit();
 
@@ -23,7 +23,7 @@ $sqlTailTable=$_SESSION['ajaxQuerry'][$token]['sqlTailTable'];
 $sqlTailWhere=$_SESSION['ajaxQuerry'][$token]['sqlTailWhere'];
 $htmlName=$_SESSION['ajaxQuerry'][$token]['htmlName'];
 $addtionnalChoices=$_SESSION['ajaxQuerry'][$token]['addtionnalChoices'];
- $search=GETPOST($htmlName);
+ $search=GETPOST($htmlName,'alpha');
 //find if barckets
 $posBs=strpos($htmlName,'[');
 if($posBs>0){

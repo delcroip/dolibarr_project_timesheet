@@ -27,26 +27,30 @@ require_once 'class/TimesheetTask.class.php';
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 //FIXME: correct admin approval
-$apflows=array_slice(str_split(TIMESHEET_APPROVAL_FLOWS),1);
+
 $userId=  is_object($user)?$user->id:$user;
 
 // find the Role //FIX ME SHOW ONLY if he has right
-$role         = GETPOST('role');
+$role         = GETPOST('role','alpha');
+$role_key='';
 if(!$role){
-    $role_key=array_search('1',array_slice ($apflows,1)); // search other than team
+    $role_key=array_search('1',array_slice ($apflows,2)); // search other than team
     if($role_key===false){
         header("location:TimesheetTeamApproval.php");
     }else{
+        $role_key++;
         $role=$roles[$role_key];
     }
+}else{
+    $role_key=  array_search($role, $roles);
 }
 // end find the role
 // get other param
-$action             = GETPOST('action');
+$action             = GETPOST('action','alpha');
 if(!is_numeric($offset))$offset=0;
-$print=(GETPOST('optioncss')=='print')?true:false;
+$print=(GETPOST('optioncss','alpha')=='print')?true:false;
 $current=  GETPOST('target','int');
-$token=  GETPOST('token');
+$token=  GETPOST('token','alpha');
 if($current==NULL)$current='0';
 //handle submission
 if($action=='submit'){
@@ -62,11 +66,11 @@ if($action=='submit'){
         if (!empty($_POST['approval']))
         {
             $task_timesheet= new TimesheetTask($db);
-            $approvals=$_POST['approval'];
-            $notes=$_POST['note'];
+            $approvals=GETPOST ('approval','array');
+            $notes=GETPOST ('note','array');
             
             $update=false;
-            foreach($_SESSION['task_timesheet'][$token] as $id => $role){
+            foreach($_SESSION['task_timesheet'][$token] as $id => $role_row){
                 $count++;
                 $task_timesheet->fetch($id);
                 if($notes[$id]!=$task_timesheet->note){                   
@@ -75,12 +79,12 @@ if($action=='submit'){
                 }
                 switch(uniordHex($approvals[$id])){
                     case '2705'://Approved':
-                       $ret=$task_timesheet->Approved($user,$role); 
+                       $ret=$task_timesheet->Approved($user,array_search($role_row , $roles) ); 
                         if($ret<0)$errors++;
                         else $tsApproved++;
                         break;
                     case '274C'://'Rejected':
-                        $ret=$task_timesheet->challenged($user,$role);
+                        $ret=$task_timesheet->challenged($user,array_search($role_row , $roles) );
                         if($ret<0)$errors++;
                         else $tsRejected++;
                         break;
@@ -119,10 +123,10 @@ if($action=='submit'){
 *
 * Put here all code to build page
 ****************************************************/
-$subId=($user->admin)?'all':getSubordinates($db,$userId, 1,array($userId),$role); //FIx ME for other role
+$subId=($user->admin)?'all':getSubordinates($db,$userId, 1,array($userId),$role_key); //FIx ME for other role
 $tasks=implode(',', array_keys(getTasks($db, $userId)));
 if($tasks=="")$tasks=0;
-$selectList=getSelectAps($subId,$tasks,$role);
+$selectList=getSelectAps($subId,$tasks,$role_key);
 if($current>=count($selectList))$current=0;
 // number of TS to show
 $level=intval(TIMESHEET_MAX_TTA_APPROVAL);
@@ -160,7 +164,7 @@ $morejs=array();
 $morejs=array("/timesheet/core/js/timesheet.js?v2.0");
 llxHeader($head,$langs->trans('Timesheet'),'','','','',$morejs);
 //calculate the week days
-showTimesheetApTabs($role);
+showTimesheetApTabs($role_key);
 echo '<div id="'.$role.'" class="tabBar">';
 //FIXME Approve/reject/leave all buton
 
@@ -258,59 +262,37 @@ function getTStobeApproved($current,$selectList){ // FIXME use the list tab as i
  *  @param    array(int)/int        $userids    	array of manager id 
   *  @return  array (int => String)  				array( ID => userName)
  */
-function getSelectAps($subId, $tasks, $role){
+function getSelectAps($subId, $tasks, $role_key){
     if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
-    global $db,$langs,$conf;
-   /* if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==1){
-        $sql='SELECT COUNT(ts.date_start) as nb,ts.date_start as id,';
-        $sql.=" DATE_FORMAT(ts.date_start,'".$langs->trans('Week')." %u (%m/%Y)') as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
-        $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
-
-    }else if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==0){
-        $sql='SELECT COUNT(ts.fk_userid) as nb,ts.fk_userid as id,';
-        $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
-        $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
-    }else{
-        $sql="SELECT COUNT(ts.fk_userid) as nb,CONCAT(DATE_FORMAT(ts.date_start,' %m/%Y'),usr.firstname,' ',usr.lastname) as id,";
-        $sql.=" CONCAT(usr.firstname,' ',usr.lastname,DATE_FORMAT(ts.date_start,' %m/%Y')) as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
-        $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';         
-    }*/
+    global $db,$langs,$conf,$roles;
     $sql="SELECT COUNT(ts.rowid) as nb, ";
-  //  if(TIMESHEET_GROUP_OTHER_AP=="week"){       
 
 switch($conf->global->TIMESHEET_TIME_SPAN){
         case 'month': 
-            $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.`ref`) as id,";
+            $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.ref) as id,";
             $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,' (%m/%Y) #')COLLATE utf8_unicode_ci) as label,";
             break;
         case 'week':  
         case 'splitedWeek': 
         default:
-            $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%v/%Y'), '-',pjt.`ref`) as id,";
+            $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%v/%Y'), '-',pjt.ref) as id,";
            $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."',DATE_FORMAT(ts.date_start,' %v/%Y) #')COLLATE utf8_unicode_ci) as label,";
             break;
 }
 
-/*    }else{
-        $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.`ref`) as id,";
-        $sql.=" CONCAT(pjt.title,' (', DATE_FORMAT(ts.date_start,'%m/%Y'),')') as label,";
-    }*/
     $sql.=" GROUP_CONCAT(ts.rowid SEPARATOR ',') as idList";
     $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk on ts.fk_projet_task= tsk.rowid ';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as pjt on tsk.fk_projet=pjt.rowid ';
-    $sql.=' WHERE (ts.status="SUBMITTED" OR ts.status="UNDERAPPROVAL" OR ts.status="CHALLENGED" )'; 
-    $sql.=' AND recipient="'.$role.'"';
+    $sql.=' WHERE ts.status in ('.SUBMITTED.','.UNDERAPPROVAL.','.CHALLENGED.' )'; 
+    $sql.=' AND recipient='.$role_key;
     if($subId!='all'){
         $sql.=' AND ts.fk_userid in ('.implode(',',$subId).')';
-        if($role=='project'){
+        if($role_key==PROJECT){
             $sql.=' AND tsk.rowid in ('.$tasks.') ';
         }
     }
-    $sql.=' group by ts.date_start,pjt.`ref`,pjt.title ORDER BY id DESC,pjt.title, ts.date_start '; 
+    $sql.=' group by ts.date_start,pjt.ref,pjt.title ORDER BY id DESC,pjt.title, ts.date_start '; 
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);

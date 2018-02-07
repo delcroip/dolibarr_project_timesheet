@@ -22,7 +22,7 @@
 
 CREATE TABLE llx_timesheet_whitelist 
 (
-rowid                 integer NOT NULL AUTO_INCREMENT,
+rowid                 integer NOT NULL ,
 fk_user               integer NOT NULL,
 fk_project            integer NOT NULL,   
 fk_project_task       integer,               

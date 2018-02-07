@@ -23,12 +23,12 @@
 
 CREATE TABLE llx_project_task_time_approval
 (
-rowid                   integer     NOT NULL AUTO_INCREMENT,
+rowid                   integer     NOT NULL ,
 date_start              DATE        NOT NULL, -- start date of the period
 date_end             DATE        NOT NULL, -- start date of the period
-status                  enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
-sender                  enum('team','project','customer','provider','other','user') DEFAULT 'user', -- a team ts is always needed 
-recipient               enum('team','project','customer','provider','other','user') DEFAULT 'team', -- a team ts is always needed 
+status                  integer default 1, -- enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
+sender                   integer default 1, -- enum('team','project','customer','provider','other','user') DEFAULT 'user', -- a team ts is always needed 
+recipient                integer default 1, -- enum('team','project','customer','provider','other','user') DEFAULT 'team', -- a team ts is always needed 
 note                  VARCHAR(1024), -- in case target is not team, querry on task
 planned_workload                integer DEFAULT NULL,
 fk_user_app_team         integer DEFAULT NULL, -- id of the team approver once approved 

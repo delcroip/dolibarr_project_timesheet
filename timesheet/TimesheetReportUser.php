@@ -28,11 +28,11 @@ $htmlother = new FormOther($db);
 $userid=  is_object($user)?$user->id:$user;
 $id		= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$dateStart	= GETPOST('dateStart');
-$userIdSelected   = GETPOST('userSelected');
-$exportFriendly = GETPOST('exportFriendly');
+$dateStart	= GETPOST('dateStart', 'alpha');
+$userIdSelected   = GETPOST('userSelected','int');
+$exportFriendly = GETPOST('exportFriendly', 'alpha');
 if(empty($userIdSelected))$userIdSelected=$userid;
-$exportfriendly=GETPOST('exportfriendly');
+$exportfriendly=GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss','alpha');
 
 
@@ -45,10 +45,10 @@ $langs->load('timesheet@timesheet');
 
 
 //find the right week
-$toDate                 = GETPOST('toDate');
-$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday'):0; // to not look for the date if action not goTodate
-$toDatemonth                 = GETPOST('toDatemonth');
-$toDateyear                 = GETPOST('toDateyear');
+$toDate                 = GETPOST('toDate', 'alpha');
+$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday','int'):0; // to not look for the date if action not goTodate
+$toDatemonth                 = GETPOST('toDatemonth','int');
+$toDateyear                 = GETPOST('toDateyear','int');
 if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=$_SESSION["dateStart"];
 }else {

@@ -81,8 +81,8 @@ switch($action)
         $timetype=$_POST['timeType'];
         $timeSpan=$_POST['timeSpan'];
         if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN){
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX.'project_task_timesheet';
-            $sql.= " WHERE status IN ('DRAFT','REJECTED')";
+            $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
+            $sql.= ' WHERE status IN ('.DRAFT.','.REJECTED.')'; //'DRAFT','REJECTED'
             dol_syslog(__METHOD__);
             $resql = $db->query($sql);
         }
@@ -249,7 +249,7 @@ echo '</div>';
  * General
  */
 echo '<div id="General" class="tabBar">';
-print_titre($langs->trans("GeneralOption"));
+load_fiche_titre($langs->trans("GeneralOption"));
 echo '<form name="settings" action="?action=save" method="POST" >'."\n\t";
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
@@ -337,7 +337,7 @@ echo (($opendays[$i]=='1')?'checked':'')."></th>\n\t\t";
         }
 echo "</tr>\n\t</table><br>\n";
 
-print_titre($langs->trans("ColumnToShow"));
+load_fiche_titre($langs->trans("ColumnToShow"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
@@ -401,7 +401,7 @@ echo "</div>\n";
 
 echo '<div id="Advanced" class="tabBar">';
 
-print_titre($langs->trans("Approval")); 
+load_fiche_titre($langs->trans("Approval")); 
 echo '<table class="noborder" width="100%">'."\n\t\t";
 // approval by week
 echo  '<tr class="pair"><th align="left">'.$langs->trans("approvalbyweek");
@@ -441,7 +441,7 @@ if($i>2){ //FIXME  cust / supp other not yet supported
 echo "</tr>\n\t</table><br>\n";
 
 //Color
-print_titre($langs->trans("Color"));
+load_fiche_titre($langs->trans("Color"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
@@ -478,7 +478,7 @@ echo '</table><br>';
 
 
 //whitelist mode
-print_titre($langs->trans("blackWhiteList"));
+load_fiche_titre($langs->trans("blackWhiteList"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
@@ -507,7 +507,7 @@ echo '</div>';
  * INVOICE
  */
 echo '<div id="Invoice" class="tabBar">';
-print_titre($langs->trans("Invoice"));
+load_fiche_titre($langs->trans("Invoice"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
@@ -554,7 +554,7 @@ echo '</div>';//taskbar
  * Other
  */
 echo '<div id="Other" class="tabBar">';
-print_titre($langs->trans("Dolibarr"));
+load_fiche_titre($langs->trans("Dolibarr"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th width="100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
@@ -570,14 +570,14 @@ echo (($searchbox=='1')?'checked':'')."></th></tr>\n";
 
 echo '</table><br>';
 // doc
-print_titre($langs->trans("Manual"));
+load_fiche_titre($langs->trans("Manual"));
 echo '<a href="../doc/Module_timesheet.pdf">  PDF </a></br>'."\n\t\t";
 echo '<a href="../doc/Module_timesheet.docx">  DOCX </a></br></br>'."\n\t\t";
 
-print_titre($langs->trans("Feedback"));
+load_fiche_titre($langs->trans("Feedback"));
 echo $langs->trans('feebackDesc').' : <a href="mailto:pmpdelcroix@gmail.com?subject=TimesheetFeedback"> Patrick Delcroix</a></br></br>';
 
-print_titre($langs->trans("Reminder"));
+load_fiche_titre($langs->trans("Reminder"));
 print '<br><div>'.$langs->trans('reminderEmailProcess').'</div>';
 echo '</div>';
 echo '</div>'; // end fiche

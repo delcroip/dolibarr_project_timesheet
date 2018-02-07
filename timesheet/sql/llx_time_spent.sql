@@ -22,12 +22,12 @@
 
 CREATE TABLE llx_time_spent
 (
-rowid                   integer     NOT NULL AUTO_INCREMENT,
+rowid                   integer     NOT NULL ,
 datetime_start              DATETIME        NOT NULL , -- start date of the period
 start_place             VARCHAR(1024) DEFAULT NULL, -- IP or equipment of loggin
 datetime_end                DATETIME        NOT NULL , -- start date of the period
 end_place               VARCHAR(1024) DEFAULT NULL, -- IP or equipment of loggin
-status                  tinyint , -- (1-->'DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
+status                  integer default 1,-- (1-->'DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
 note                  VARCHAR(1024),
 date_creation         DATETIME      NOT NULL,
 date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  

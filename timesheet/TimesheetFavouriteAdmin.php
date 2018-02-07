@@ -61,15 +61,15 @@ $langs->load("Timesheet");
 $id			= GETPOST('id','int');
 $ref                    = GETPOST('ref','alpha');
 $action		= GETPOST('action','alpha');
-$backtopage = GETPOST('backtopage');
-$cancel=GETPOST('cancel');
-$confirm=GETPOST('confirm');
+$backtopage = GETPOST('backtopage','aplha');
+$cancel=GETPOST('cancel','aplha');
+$confirm=GETPOST('confirm','aplha');
 $tms= GETPOST('tms','alpha');
 $ajax	= GETPOST('ajax','int');
 //// Get parameters
 $sortfield = GETPOST('sortfield','alpha'); 
 $sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
-$removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
+$removefilter=GETPOSTISSET("removefilter_x") || GETPOSTISSET("removefilter");
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )		// Both test must be present to be compatible with all browsers
 {
@@ -121,14 +121,14 @@ $error=0;
 if ($cancel){
         reloadpage($backtopage,$id,$ref);
 }else if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
-    if(GETPOST('User')=="" ) //to keep the tms on javvascript reload
+    if(GETPOST('User','int')=="" ) //to keep the tms on javvascript reload
     {
         $tms=getToken();
         $_SESSION['timesheetFavourite'.$tms]=array();
         $_SESSION['timesheetFavourite'.$tms]['action']=$action;
     }else {
-        $editedUser=GETPOST('User');
-        $editedProject=GETPOST('Project');		
+        $editedUser=GETPOST('User','int');
+        $editedProject=GETPOST('Project','int');		
         
     }
     
@@ -140,16 +140,16 @@ if ($cancel){
                 $action=($action=='add')?'create':'edit';
         }
         //retrive the data
-             $object->user=($user->admin && $ajax!=1)?GETPOST('User'):$userId;
-            $object->project=GETPOST('Project');
+             $object->user=($user->admin && $ajax!=1)?GETPOST('User','int'):$userId;
+            $object->project=GETPOST('Project','int');
             if($object->project==-1)$object->project='';
-            $object->project_task=GETPOST('Projecttask');
+            $object->project_task=GETPOST('Projecttask','int');
             if($object->project_task==-1)$object->project_task='';
             $object->subtask=GETPOST('Subtask','int');
             if( $object->subtask=="") $object->subtask=0;
             
-            $object->date_start=dol_mktime(0, 0, 0,GETPOST('Datestartmonth'),GETPOST('Datestartday'),GETPOST('Datestartyear'));
-            $object->date_end=dol_mktime(0, 0, 0,GETPOST('Dateendmonth'),GETPOST('Dateendday'),GETPOST('Dateendyear'));
+            $object->date_start=dol_mktime(0, 0, 0,GETPOST('Datestartmonth','int'),GETPOST('Datestartday','int'),GETPOST('Datestartyear','int'));
+            $object->date_end=dol_mktime(0, 0, 0,GETPOST('Dateendmonth','int'),GETPOST('Dateendday','int'),GETPOST('Dateendyear','int'));
 
         
         
@@ -279,7 +279,7 @@ if ($cancel){
                             break;
             }             
 //Removing the tms array so the order can't be submitted two times
-if(isset( $_SESSION['timesheetFavourite'.$tms]) &&  !GETPOST('Project') )
+if(isset( $_SESSION['timesheetFavourite'.$tms]) &&  !GETPOST('Project','int') )
 {
    // unset($_SESSION['timesheetFavourite'.$tms]);
 }
@@ -516,11 +516,11 @@ switch ($action) {
 	print '<div class="center">';
         if($edit==1){
         if($new==1){
-                print '<input type="submit" class="button" name="add" value="'.$langs->trans('Add').'">';
+                print '<input type="submit" class="butAction" name="add" value="'.$langs->trans('Add').'">';
             }else{
-                print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="button">';
+                print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="butAction">';
             }
-            print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
+            print ' &nbsp; <input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
             print '</form>';
         }else{
             $parameters=array();
@@ -743,7 +743,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '</table>'."\n";
     print '</from>'."\n";
     // new button
-        print '<a href="?action=create" class="button" role="button">'.$langs->trans('New');
+        print '<a href="?action=create" class="butAction" role="button">'.$langs->trans('New');
     print ' '.$langs->trans('Timesheetwhitelist')."</a>\n";
 
 

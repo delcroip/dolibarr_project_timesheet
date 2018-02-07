@@ -35,22 +35,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  *  @param     int              	$entity         entity where to look for
   *  @return     array(userId)                                                  html code
  */
-function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role='team',$entity='1'){
+function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM,$entity='1'){
     if($userid=="")
     {
         return array();
     }
-    $sql['project'][0] ='SELECT DISTINCT fk_socpeople as userid FROM '.MAIN_DB_PREFIX.'element_contact';
-    $sql['project'][0] .= ' WHERE element_id in (SELECT element_id';
-    $sql['project'][0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact';
-    $sql['project'][0] .= ' WHERE (fk_c_type_contact="160" OR fk_c_type_contact="180")';
-    $sql['project'][0] .= ' AND fk_socpeople in (';
-    $sql['project'][2] = ')) AND fk_socpeople not in (';
-    $sql['project'][4] = ')';
-    $sql['team'][0]='SELECT usr.rowid as userid FROM '.MAIN_DB_PREFIX.'user AS usr WHERE';
-    $sql['team'][0].=' usr.fk_user in (';
-    $sql['team'][2]=') AND usr.rowid not in (';
-    $sql['team'][4] = ')';
+    $sql[PROJECT][0] ='SELECT DISTINCT fk_socpeople as userid FROM '.MAIN_DB_PREFIX.'element_contact';
+    $sql[PROJECT][0] .= ' WHERE element_id in (SELECT element_id';
+    $sql[PROJECT][0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
+    $sql[PROJECT][0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
+    $sql[PROJECT][0] .= ' WHERE ctc.active="1" AND ctc.element in ("project","project_task") AND  (ctc.code LIKE "%LEADER%" OR ctc.code LIKE "%EXECUTIVE%"  )'; 
+    $sql[PROJECT][0] .= ' AND fk_socpeople in (';
+    $sql[PROJECT][2] = ')) AND fk_socpeople not in (';
+    $sql[PROJECT][4] = ')';
+    $sql[TEAM][0]='SELECT usr.rowid as userid FROM '.MAIN_DB_PREFIX.'user AS usr WHERE';
+    $sql[TEAM][0].=' usr.fk_user in (';
+    $sql[TEAM][2]=') AND usr.rowid not in (';
+    $sql[TEAM][4] = ')';
     $idlist='';
     if(is_array($userid)){
         $ecludeduserid=array_merge($userid,$ecludeduserid);
@@ -116,7 +117,7 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
  }
 
   /*
- * function to genegate list of the subordinate ID
+ * function to genegate list of the task that can have approval pending
  * 
   *  @param    object           	$db             database objet
  *  @param    array(int)/int        $id    		    array of manager id 
@@ -129,15 +130,17 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role='tea
 function getTasks($db,$userid,$role='project'){
     $sql='SELECT tk.fk_projet as project ,tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
-    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact ON  tk.fk_projet= element_id ';
-    $sql.=' WHERE fk_c_type_contact = "160" ';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON  tk.fk_projet= ec.element_id ';
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
+    $sql.=' WHERE ctc.element in ("project") AND ctc.active="1" AND ctc.code LIKE "%LEADER%" '; 
     $sql.=' AND fk_socpeople="'.$userid.'"';
     $sql.=' UNION ';
     $sql.=' SELECT tk.fk_projet as project ,tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
-    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact on (tk.rowid= element_id )';
-    $sql.=' WHERE fk_c_type_contact = "180" ';
-    $sql.=' AND fk_socpeople="'.$userid.'"';
+    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on (tk.rowid= element_id )';
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
+    $sql.=' WHERE ctc.element in ("project_task") AND ctc.active="1" AND ctc.code LIKE "%EXECUTIVE%" '; 
+    $sql.=' AND ec.fk_socpeople="'.$userid.'"';
 
 
    dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
@@ -219,8 +222,18 @@ function getUsersName($userids){
       //$select.="\n";
       return $list;
  }
-
-
+if (!is_callable( GETPOSTISSET)){
+/**
+ * Return true if we are in a context of submitting a parameter
+ *
+ * @param 	string	$paramname		Name or parameter to test
+ * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ */
+function GETPOSTISSET($paramname)
+{
+	return (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+}
+}
 
 if (!is_callable(setEventMessages)){
     // function from /htdocs/core/lib/function.lib.php in Dolibarr 3.8
@@ -452,17 +465,16 @@ function parseDate($day=0,$month=0,$year=0,$date=0){
  *  @param    string        $role    	active role
   *  @return  void  				array( ID => userName)
  */
-function showTimesheetApTabs($role){
-global $langs;
+function showTimesheetApTabs($role_key){
+global $langs, $roles,$apflows;
 global $conf;
-$roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
-$rolesUrl=array(0=> 'TimesheetTeamApproval.php?role=team', 1=> 'TimesheetOtherApproval.php?role=project',2=>'TimesheetOtherApproval.php?role=customer',3=>'TimesheetOtherApproval.php?role=supplier',4=>'TimesheetOtherApproval.php?role=other');
-$apflows=array_slice(str_split($conf->global->TIMESHEET_APPROVAL_FLOWS),1); //remove the leading _
-    foreach($roles as $key => $cur_role){
-        if($apflows[$key]==1){
+//$roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
+$rolesUrl=array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOtherApproval.php?role=project',3=>'TimesheetOtherApproval.php?role=customer',4=>'TimesheetOtherApproval.php?role=supplier',5=>'TimesheetOtherApproval.php?role=other');
+    foreach($apflows as $key=> $value){
+        if($value==1){
             echo '  <div class="inline-block tabsElem"><a  href="'.$rolesUrl[$key].'&leftmenu=timesheet" class="';
-            echo    ($role==$cur_role)?'tabactive':'tabunactive';
-            echo   ' tab inline-block" data-role="button">'.$langs->trans($cur_role)."</a></div>\n";
+            echo    ($role_key==$key)?'tabactive':'tabunactive';
+            echo   ' tab inline-block" data-role="button">'.$langs->trans($roles[$key])."</a></div>\n";
         }
     }
 

@@ -32,37 +32,37 @@ require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 
 
-$action             = GETPOST('action');
-$datestart          = GETPOST('dateStart');
+$action             = GETPOST('action','alpha');
+$datestart          = GETPOST('dateStart','alpha');
 
 //should return the XMLDoc
-$ajax               = GETPOST('ajax');
-$xml               = GETPOST('xml');
+$ajax               = GETPOST('ajax','int');
+$xml               = GETPOST('xml','int');
 $optioncss = GETPOST('optioncss','alpha');
 
-$id=GETPOST('id');
+$id=GETPOST('id','int');
 //$toDate                 = GETPOST('toDate');
-$toDate                 = GETPOST('toDate');
+$toDate                 = GETPOST('toDate','alpha');
 if(!empty($toDate) && $action=='goToDate'){
-$toDateday                  =GETPOST('toDateday'); // to not look for the date if action not goTodate
-$toDatemonth                 = GETPOST('toDatemonth');
-$toDateyear                 = GETPOST('toDateyear');
+$toDateday                  =GETPOST('toDateday','int'); // to not look for the date if action not goTodate
+$toDatemonth                 = GETPOST('toDatemonth','int');
+$toDateyear                 = GETPOST('toDateyear','int');
 }
 
-$timestamp=GETPOST('timestamp');
+$timestamp=GETPOST('timestamp','alpha');
 $whitelistmode=GETPOST('wlm','int');
 if($whitelistmode=='')$whitelistmode=$conf->global->TIMESHEET_WHITELIST_MODE;
 $userid=  is_object($user)?$user->id:$user;
 // if the user can enter ts for other the user id is diferent
 if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER==1  ){
     
-    if($action=='getOtherTs' && isset($_POST['userid'])){
+    if($action=='getOtherTs' && isset($_POST['userid'])){ //FIXME unsecured
         $newuserid=$_POST['userid'];
         
     }else if(isset($_GET['userid'])){
         $newuserid=$_GET['userid'];
     }
-    $SubordiateIds=getSubordinates($db,$userid, 2,array(),$role='team',$entity='1');
+    $SubordiateIds=getSubordinates($db,$userid, 2,array(),TEAM,$entity='1');
     $SubordiateIds[]=$userid;
     if (in_array($newuserid, $SubordiateIds) || $user->admin){
         $SubordiateIds[]=$userid;
@@ -75,7 +75,7 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
 
 
 $task_timesheet= new TimesheetUserTasks($db,$userid);
-$confirm=GETPOST('confirm');
+$confirm=GETPOST('confirm','alpha');
 
 if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=$_SESSION["dateStart"];
@@ -126,32 +126,35 @@ switch($action){
         if(isset($_SESSION['task_timesheet'][$timestamp]))
         {
             
-            if(isset($_POST['task']))
+            if(GETPOSTISSET('task'))
             {
                                  $ret=0;
-                                 $notes=$_POST['note'];
-				 foreach($_POST['task'] as $key => $tasktab){
+                                 $notes=GETPOST('note','array');
+                                 $notesTta=GETPOST('Note','array');
+                                 $tasks=GETPOST('task','array');
+				 foreach($tasks as $key => $tasktab){
 					 $task_timesheet->loadFromSession($timestamp,$key);  
-                                         if($task_timesheet->note!=$_POST['Note'][$key]){
-                                            $task_timesheet->note=$_POST['Note'][$key];
+                                         if($task_timesheet->note!=$notesTta[$key]){
+                                            $task_timesheet->note=$notesTta[$key];
                                             $task_timesheet->update($user);
                                          }
                                          $ret=$task_timesheet->updateActuals($tasktab,$notes);
                                          
                                          
-                                         if(isset($_POST['submit']) ){
-                                                $task_timesheet->setStatus($user,"SUBMITTED");
+                                         if(GETPOSTISSET('submit') ){
+                                                $task_timesheet->setStatus($user,SUBMITTED);
+                                                $ret++;
                                              //$task_timesheet->status="SUBMITTED";
 						
 					 }else{
-                                             $task_timesheet->setStatus($user,"DRAFT");
+                                             $task_timesheet->setStatus($user,DRAFT);
                                          }       
 					 
 
                 		//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
 					 if(!empty($ret))
 					 {
-						 if(isset($_POST['submit']))setEventMessage($langs->transnoentitiesnoconv("timesheetSumitted"));
+						 if(GETPOSTISSET('submit'))setEventMessage($langs->transnoentitiesnoconv("timesheetSubmitted"));
 						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']);
 						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['task_timesheet'][$timestamp]['timeSpendModified']);
 						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']);
@@ -164,10 +167,10 @@ switch($action){
 						 }
 					 }
 				 }
-            }else if(isset($_POST['recall'])){
-				$task_timesheet->loadFromSession($timestamp,$_POST['tsUserId']); /*FIXME to support multiple TS sent*/
+            }else if(GETPOSTISSET('recall')){
+				$task_timesheet->loadFromSession($timestamp,GETPOST('tsUserId','int')); /*FIXME to support multiple TS sent*/
                                 //$task_timesheet->status="DRAFT";
-                                $ret=$task_timesheet->setStatus($user,"DRAFT");
+                                $ret=$task_timesheet->setStatus($user,DRAFT);
                 if($ret>0)setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
                 else setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"),'errors');
             }else{

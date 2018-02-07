@@ -107,7 +107,6 @@ class TimesheetUserTasks extends CommonObject
 		if (isset($this->note)) $this->note=trim($this->note);
                 $userId= (is_object($user)?$user->id:$user);
         
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -119,6 +118,7 @@ class TimesheetUserTasks extends CommonObject
                 $sql.= 'date_end,';
 		$sql.= 'status,';
 		$sql.= 'date_creation,';
+                $sql.= 'date_modification,';
                 $sql.= 'fk_user_modification,';
                 $sql.= 'note';
 
@@ -128,8 +128,9 @@ class TimesheetUserTasks extends CommonObject
 		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
 		$sql.=' '.(! isset($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'"'.$this->db->idate($this->date_start).'"').',';
 		$sql.=' '.(! isset($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'"'.$this->db->idate($this->date_end).'"').',';
-		$sql.=' '.(! isset($this->status)?'"DRAFT"':'"'.$this->status.'"').',';
+		$sql.=' '.(! isset($this->status)?DRAFT:$this->status).',';
 		$sql.=' NOW() ,';
+                $sql.=' NOW() ,';
 		$sql.=' "'.$userId.'",'; //fixme 3.5
 		$sql.=' '.(! isset($this->note)?'NULL':'"'.$this->note.'"');
         
@@ -341,7 +342,7 @@ class TimesheetUserTasks extends CommonObject
 		$sql.=' fk_userid='.(empty($this->userId) ? 'null':'"'.$this->userId.'"').',';
 		$sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '"'.$this->db->idate($this->date_start).'"':'null').',';
 		$sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '"'.$this->db->idate($this->date_end).'"':'null').',';
-		$sql.=' status='.(empty($this->status)? 'null':'"'.$this->status.'"').',';
+		$sql.=' status='.(empty($this->status)? DRAFT:$this->status).',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification="'.$userId.'",';
 		$sql.=' note="'.$this->note.'"';
@@ -576,7 +577,7 @@ function saveInSession(){
 
      // Save the param in the SeSSION
      $tasksList=array();
-     $whiteListNumber=count($whiteList);
+     $whiteListNumber=is_array($whiteList)?count($whiteList):0;
      $sqlwhiteList='';
      if($whiteListNumber){
          
@@ -593,7 +594,8 @@ function saveInSession(){
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=ec.element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
     //approval
-    if( $this->status=="DRAFT" || $this->status=="REJECTED"){
+
+    if( $this->status==DRAFT || $this->status==REJECTED){
      $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
     }else{ // take only the ones with a task_time linked
         $sql.='JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
@@ -604,7 +606,7 @@ function saveInSession(){
     $sql.=' AND app.date_end="'.$this->db->idate($datestop).'"';    
 
     //end approval
-    $sql.=" WHERE fk_socpeople='".$userid."' AND ctc.element='project_task' ";
+    $sql.=" WHERE ec.fk_socpeople='".$userid."' AND ctc.element='project_task' ";
     if($conf->global->TIMESHEET_HIDE_DRAFT=='1'){
          $sql.=' AND prj.fk_statut>"0" ';
     }
@@ -670,7 +672,7 @@ function saveInSession(){
  function updateActuals($tabPost,$notes=array())
 {
      //FIXME, tta should be creted
-    if($this->status=='APPROVED')
+    if($this->status==APPROVED)
         return -1;
     dol_syslog('Entering in Timesheet::task_timesheet.php::updateActuals()');     
     $ret=0;
@@ -751,10 +753,10 @@ function updateStatus($user,$status=''){
     if($this->id<=0)return -1;
     $updatedStatus=2;
     if ($status!=''){
-        if(!in_array($status,TimesheetTask::$statusList ))return -1; // status not valid
-        $updatedStatus=  array_search($status, TimesheetTask::$statusList);
+        if($status<0 || $status> STATUSMAX)return -1; // status not valid
+        $updatedStatus=  $status;
     }else if(!empty($this->status)){
-         $updatedStatus=  array_search($this->status, TimesheetTask::$statusList);
+         $updatedStatus=  $this->status;
     }
     
     
@@ -768,12 +770,12 @@ function updateStatus($user,$status=''){
         $tta->unserialize($row);
         if($tta->appId>0){ // tta already created
             $tta->fetch($tta->appId);
-            $statusPriorityCur=  array_search($tta->status, TimesheetTask::$statusList); //FIXME
+            $statusPriorityCur=  $tta->status; 
             $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
         }// no else as the tta should be created upon submission of the TS not status update
         
     }
-    $this->status= TimesheetTask::$statusList[$updatedStatus];
+    $this->status= $updatedStatus;
     $this->update($user);
     return $this->status;
 }
@@ -789,14 +791,14 @@ function updateStatus($user,$status=''){
 Public function setStatus($user,$status,$id=0){ //role ?
             $error=0;
             //if the satus is not an ENUM status
-            if(!in_array($status, TimesheetTask::$statusList)){
-                dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERROR);
+            if($status<0 || $status>STATUSMAX){
+                dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERR);
                 return false;
             }
-            $Approved=(in_array($status, array('APPROVED','UNDERAPPROVAL')));
-            $Rejected=(in_array($status, array('REJECTED','CHALLENGED')));
-            $Submitted= ($status=='SUBMITTED')?true:false;
-            $draft= ($status=='DRAFT')?true:false;
+            $Approved=(in_array($status, array(APPROVED,UNDERAPPROVAL)));
+            $Rejected=(in_array($status, array(REJECTED,CHALLENGED)));
+            $Submitted= ($status==SUBMITTED)?true:false;
+            $draft= ($status==DRAFT)?true:false;
             // Check parameters
             
             if($id!=0)$this->fetch($id);
@@ -804,7 +806,7 @@ Public function setStatus($user,$status,$id=0){ //role ?
         // Update request
             $error=($this->id<=0)?$this->create($user):$this->update($user);
             if($error>0){  
-                    if($status=='REJECTED')$this->sendRejectedReminders($user);
+                    if($status==REJECTED)$this->sendRejectedReminders($user);
                     if(count($this->taskTimesheet)<1 ){
                         $this->fetch($id);
                         $this->fetchTaskTimesheet();
@@ -815,10 +817,10 @@ Public function setStatus($user,$status,$id=0){ //role ?
                         $tasktime= new TimesheetTask($this->db);
                         $tasktime->unserialize($ts);
                         //$tasktime->appId=$this->id;
-                        if($Approved)$ret=$tasktime->Approved($user,'team',false);
-                        else if($Rejected)$ret=$tasktime->challenged($user,'team',false);
+                        if($Approved)$ret=$tasktime->Approved($user,TEAM,false);
+                        else if($Rejected)$ret=$tasktime->challenged($user,TEAM,false);
                         else if($Submitted)$ret=$tasktime->submitted($user);
-                        else if($draft)$ret=$tasktime->setStatus($user,'DRAFT');
+                        else if($draft)$ret=$tasktime->setStatus($user,DRAFT);
                     }
                       //if($ret>0)$this->db->commit();
 			return 1;
@@ -958,21 +960,21 @@ function getHTMLHeader($ajax=false,$week=0){
  *  @return     string                                               html code
  */
  function getHTMLFooter($ajax=false){
-     global $langs;
+     global $langs,$apflows;
     //form button
 
     $html .= '<div class="tabsAction">';
-     $isOpenSatus=($this->status=="DRAFT" || $this->status=="CANCELLED"|| $this->status=="REJECTED");
+     $isOpenSatus=in_array($this->status, array(DRAFT,CANCELLED,REJECTED));
     if($isOpenSatus){
         $html .= '<input type="submit" class="butAction" name="save" value="'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
 
-        if(in_array('1',TimesheetTask::$apflows)){
+        if(in_array('1',array_slice ($apflows,1))){
             $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
         }
         $html .= '<a class="butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
 
-    }else if($this->status=="SUBMITTED")$html .= '<input type="submit" class="butAction" name="recall" " value="'.$langs->trans('Recall')."\" />\n";
+    }else if($this->status==SUBMITTED)$html .= '<input type="submit" class="butAction" name="recall" " value="'.$langs->trans('Recall')."\" />\n";
 
     $html .= '</div>';
     $html .= "</form>\n";
@@ -1026,9 +1028,9 @@ function getHTMLHeader($ajax=false,$week=0){
                 $row=new TimesheetTask($this->db);            
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
-                if(in_array($this->status, array("REJECTED", "DRAFT","PLANNED",'CANCELLED' ))){
+                if(in_array($this->status, array(REJECTED, DRAFT,PLANNED,CANCELLED ))){
                     $openOveride= 1;
-                }else if(in_array($this->status, array("UNDERAPPROVAL", "INVOICED", "APPROVED",'CHALLENGED','SUBMITTED' ))) {
+                }else if(in_array($this->status, array(UNDERAPPROVAL, INVOICED, APPROVED,CHALLENGED,SUBMITTED ))) {
                     $openOveride= -1;
                 }else{
                     $openOveride= 0;
@@ -1048,7 +1050,7 @@ function getHTMLHeader($ajax=false,$week=0){
  */
  function getHTMLNote(){
      global $langs;
-     $isOpenSatus=(in_array($this->status, array("REJECTED", "DRAFT","PLANNED",'CANCELLED' )));
+     $isOpenSatus=(in_array($this->status, array(REJECTED, DRAFT,PLANNED,CANCELLED )));
      $html='<div class="noborder"><div  width="100%">'.$langs->trans('Note').'</div><div width="100%">';
    
 
@@ -1243,6 +1245,7 @@ function getHTMLGetOtherUserTs($idsList,$selected,$admin){
  * 
  *  @return     string                                         XML result containing the timesheet info
  */
+        /*
 function GetTimeSheetXML()
 {
     global $langs,$conf;
@@ -1291,7 +1294,7 @@ function GetTimeSheetXML()
     //}
     $xml.="</timesheet>";
     return $xml;
-}	
+}	*/
         /**
 	 *	function that will send email to 
 	 *
@@ -1305,8 +1308,8 @@ function GetTimeSheetXML()
             $sql.=' u.fk_user as approverid';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
             $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid=u.rowid ';
-            $sql.= ' WHERE (t.status="SUBMITTED" OR t.status="UNDERAPPROVAL" OR t.status="CHALLENGED") ';
-            $sql.= '  AND t.recipient="team" GROUP BY u.fk_user';
+            $sql.= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
+            $sql.= '  AND t.recipient='.TEAM.' GROUP BY u.fk_user';
              dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
             
