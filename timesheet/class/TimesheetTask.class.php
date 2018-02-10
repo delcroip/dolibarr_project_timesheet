@@ -905,7 +905,7 @@ class TimesheetTask extends Task
                    break;
              case 'Note':
                  $htmlTitle .=img_object('Note', 'generic', ' onClick="ShowHide(\'note_'.$this->userId.'_'.$this->id.'\')"');
-                 $htmltail='<tr hidden class="timesheet_note" id="note_'.$this->userId.'_'.$this->id.'"><th colspan="1">';
+                 $htmltail='<tr class="timesheet_note" id="note_'.$this->userId.'_'.$this->id.'" style="display:none;"><th colspan="1">';
                  $htmltail.='<a>'.$langs->trans('Note').'</a></th><th colspan="100%">';
                 //if($isOpenSatus){
                      $htmltail.= '<textarea class="flat"  rows="2" cols="100"';

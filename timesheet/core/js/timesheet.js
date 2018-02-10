@@ -293,7 +293,10 @@ function showFavoris(evt, tabName) {
             break;
     }
     tslist = document.getElementsByClassName("timesheet_line");
-
+    tsNote = document.getElementsByClassName("timesheet_note");
+    for (i = 0; i < tsNote.length; i++) {
+               tsNote[i].style.display = "none";
+    }
     if(tabName=='All'){
         for (i = 0; i < tslist.length; i++) {
             tslist[i].style.display = "";
@@ -301,7 +304,8 @@ function showFavoris(evt, tabName) {
     }else{
         for (i = 0; i < tslist.length; i++) {
                tslist[i].style.display = "none";
-        }        
+        }
+        
         if(tabName=='whitelist'){
             wlist = document.getElementsByClassName("timesheet_whitelist");
             for (i = 0; i < wlist.length; i++) {
@@ -387,10 +391,12 @@ function checkEmptyFormFields(even,Myform,msg){
  */
 function ShowHide(id){
     elmt=document.getElementById(id);
-    if(elmt.hidden==true){
-        elmt.hidden=false;
+    if(elmt.style.display != ""){
+        //elmt.hidden=false;
+        elmt.style.display = "";
     }else{
-        elmt.hidden=true;
+       /// elmt.hidden=true;
+        elmt.style.display = "none";
     }
 } 
 /*

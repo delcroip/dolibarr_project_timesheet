@@ -140,7 +140,7 @@ class modTimesheet extends DolibarrModules
                 $this->const[24] = array("TIMESHEET_INVOICE_SHOW_USER","chaine","1","Show user on the invoice item "); 
                 $this->const[25] = array("TIMESHEET_TIME_SPAN","chaine","splitedWeek","timespan of the timesheets"); // hours or days
                 $this->const[26] = array("TIMESHEET_ADD_FOR_OTHER","chaine","0","enable to time spent entry for subordinates"); // hours or days
-
+                $this->const[26] = array("TIMESHEET_VERSION","chaine",$this->version,"save the timesheet verison"); // hours or days
 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
@@ -373,10 +373,11 @@ class modTimesheet extends DolibarrModules
 	 */
 	function init($options='')
 	{
+                global $db;
 		$sql = array();
 
 		$result=$this->_load_tables('/timesheet/sql/');
-
+                dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
 		return $this->_init($sql, $options);
 	}
 
