@@ -79,12 +79,12 @@ class TimesheetFavourite extends CommonObject
 
 		// Clean parameters
         
-		if (isset($this->user)) $this->user=trim($this->user);
-		if (isset($this->project)) $this->project=trim($this->project);
-		if (isset($this->project_task)) $this->project_task=trim($this->project_task);
-		if (isset($this->subtask)) $this->subtask=trim($this->subtask);
-		if (isset($this->date_start)) $this->date_start=trim($this->date_start);
-		if (isset($this->date_end)) $this->date_end=trim($this->date_end);
+		if (!empty($this->user)) $this->user=trim($this->user);
+		if (!empty($this->project)) $this->project=trim($this->project);
+		if (!empty($this->project_task)) $this->project_task=trim($this->project_task);
+		if (!empty($this->subtask)) $this->subtask=trim($this->subtask);
+		if (!empty($this->date_start)) $this->date_start=trim($this->date_start);
+		if (!empty($this->date_end)) $this->date_end=trim($this->date_end);
 
         
 
@@ -104,12 +104,12 @@ class TimesheetFavourite extends CommonObject
 		
         $sql.= ") VALUES (";
         
-		$sql.=' '.(! isset($this->user)?'NULL':'"'.$this->user.'"').',';
-		$sql.=' '.(! isset($this->project)?'NULL':'"'.$this->project.'"').',';
-		$sql.=' '.(! isset($this->project_task)?'NULL':'"'.$this->project_task.'"').',';
-		$sql.=' '.(! isset($this->subtask)?'0':'"'.$this->subtask.'"').',';
-		$sql.=' '.(! isset($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'"'.$this->db->idate($this->date_start).'"').',';
-		$sql.=' '.(! isset($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'"'.$this->db->idate($this->date_end).'"').'';
+		$sql.=' \''.$this->user.'\',';
+		$sql.=' \''.$this->project.'\',';
+		$sql.=' '.(empty($this->project_task)?'NULL':'\''.$this->project_task.'\'').',';
+		$sql.=' '.(($this->subtask) ? 'TRUE':'FALSE').',';
+		$sql.=' '.(empty($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'\''.$this->db->idate($this->date_start).'\'').',';
+		$sql.=' '.(empty($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'\''.$this->db->idate($this->date_end).'\'').'';
 
         
 		$sql.= ")";
@@ -180,9 +180,9 @@ class TimesheetFavourite extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.fk_user = ".$userid;
         if($datestart)
-                $sql.= ' AND (t.date_end >'.$this->db->idate($datestart).' OR t.date_end IS NULL)';
+                $sql.= ' AND (t.date_end >\''.$this->db->idate($datestart).'\' OR t.date_end IS NULL)';
         if($datestop)
-                $sql.= ' AND (t.date_start <'.$this->db->idate($datestop).' OR t.date_start IS NULL)';
+                $sql.= ' AND (t.date_start <\''.$this->db->idate($datestop).'\' OR t.date_start IS NULL)';
 
         dol_syslog(get_class($this)."::fetchUserList");
         $resql=$this->db->query($sql);
@@ -237,12 +237,12 @@ class TimesheetFavourite extends CommonObject
 		$sql.= " t.rowid";		
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
          if($this->project_task && $this->subtask){
-             $sql.= '  WHERE  (t.rowid="'.$this->project_task.'"';  
-             $sql.= '  OR  t.fk_task_parent="'.$this->project_task.'")';               
+             $sql.= '  WHERE  (t.rowid=\''.$this->project_task.'\'';  
+             $sql.= '  OR  t.fk_task_parent=\''.$this->project_task.'\')';               
          }else if($this->project_task ){
-            $sql.= '  WHERE t.rowid="'.$this->project_task.'"';
+            $sql.= '  WHERE t.rowid=\''.$this->project_task.'\'';
          }else{
-            $sql.= ' WHERE t.fk_projet="'.$this->project.'"';
+            $sql.= ' WHERE t.fk_projet=\''.$this->project.'\'';
         }
         
     	dol_syslog(get_class($this)."::getTaskList");
@@ -294,7 +294,7 @@ class TimesheetFavourite extends CommonObject
 
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        if ($ref) $sql.= ' WHERE t.ref = "'.$ref.'"';
+        if ($ref) $sql.= ' WHERE t.ref = \''.$ref.'\'';
         else $sql.= " WHERE t.rowid = ".$id;
 
     	dol_syslog(get_class($this)."::fetch");
@@ -342,12 +342,12 @@ class TimesheetFavourite extends CommonObject
 
 		// Clean parameters
         
-		if (isset($this->user)) $this->user=trim($this->user);
-		if (isset($this->project)) $this->project=trim($this->project);
-		if (isset($this->project_task)) $this->project_task=trim($this->project_task);
-		if (isset($this->subtask)) $this->subtask=trim($this->subtask);
-		if (isset($this->date_start)) $this->date_start=trim($this->date_start);
-		if (isset($this->date_end)) $this->date_end=trim($this->date_end);
+		if (!empty($this->user)) $this->user=trim($this->user);
+		if (!empty($this->project)) $this->project=trim($this->project);
+		if (!empty($this->project_task)) $this->project_task=trim($this->project_task);
+		if (!empty($this->subtask)) $this->subtask=trim($this->subtask);
+		if (!empty($this->date_start)) $this->date_start=trim($this->date_start);
+		if (!empty($this->date_end)) $this->date_end=trim($this->date_end);
 
         
 
@@ -357,12 +357,12 @@ class TimesheetFavourite extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         
-		$sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'"'.$this->user.'"').',';
-		$sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'"'.$this->project.'"').',';
-		$sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'"'.$this->project_task.'"').',';
-		$sql.=' subtask='.(empty($this->subtask)!=0 ? 'null':'"'.$this->subtask.'"').',';
-		$sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '"'.$this->db->idate($this->date_start).'"':'null').',';
-		$sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '"'.$this->db->idate($this->date_end).'"':'null').'';
+		$sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'\''.$this->user.'\'').',';
+		$sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'\''.$this->project.'\'').',';
+		$sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'\''.$this->project_task.'\'').',';
+		$sql.=' subtask='.(($this->subtask) ? 'TRUE':'FALSE').',';
+		$sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').',';
+		$sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').'';
 
         
         $sql.= " WHERE rowid=".$this->id;
@@ -420,11 +420,11 @@ class TimesheetFavourite extends CommonObject
 
     	$result='';
         if(empty($ref) && $id==0){
-            if(isset($this->id))  {
+            if(!empty($this->id))  {
                 $id=$this->id;
-            }else if (isset($this->rowid)){
+            }else if (!empty($this->rowid)){
                 $id=$this->rowid;
-            }if(isset($this->ref)){
+            }if(!empty($this->ref)){
                 $ref=$this->ref;
             }
         }

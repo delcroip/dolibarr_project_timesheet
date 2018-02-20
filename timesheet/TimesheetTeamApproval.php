@@ -411,7 +411,7 @@ function getSelectAps($subId){
 
     }else if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==0){
         $sql='SELECT COUNT(ts.rowid) as nb,ts.fk_userid as id,';
-        $sql.=" CONCAT(usr.firstname,' ',usr.lastname) as label";
+        $sql.=" MAX(CONCAT(usr.firstname,' ',usr.lastname)) as label";
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
         $sql.=$sqlWhere;
@@ -421,7 +421,7 @@ function getSelectAps($subId){
 
         $sql='SELECT month,COUNT(rowid) as nb, month as id,';
         $sql.=' month as label';
-        $sql.=' FROM (SELECT DATE_FORMAT(ts.date_start," %m/%Y") as month,';
+        $sql.=' FROM (SELECT DATE_FORMAT(ts.date_start,\' %m/%Y\') as month,';
         $sql.=' ts.rowid as rowid';
         $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
         //$sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';   

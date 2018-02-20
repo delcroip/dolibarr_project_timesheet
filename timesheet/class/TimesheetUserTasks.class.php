@@ -125,14 +125,14 @@ class TimesheetUserTasks extends CommonObject
 		
         $sql.= ") VALUES (";
         
-		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
-		$sql.=' '.(! isset($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'"'.$this->db->idate($this->date_start).'"').',';
-		$sql.=' '.(! isset($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'"'.$this->db->idate($this->date_end).'"').',';
+		$sql.=' '.(! isset($this->userId)?'NULL':'\''.$this->userId.'\'').',';
+		$sql.=' '.(! isset($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'\''.$this->db->idate($this->date_start).'\'').',';
+		$sql.=' '.(! isset($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'\''.$this->db->idate($this->date_end).'\'').',';
 		$sql.=' '.(! isset($this->status)?DRAFT:$this->status).',';
 		$sql.=' NOW() ,';
                 $sql.=' NOW() ,';
-		$sql.=' "'.$userId.'",'; //fixme 3.5
-		$sql.=' '.(! isset($this->note)?'NULL':'"'.$this->note.'"');
+		$sql.=' \''.$userId.'\','; //fixme 3.5
+		$sql.=' '.(! isset($this->note)?'NULL':'\''.$this->note.'\'');
         
 		$sql.= ")";
 
@@ -339,13 +339,13 @@ class TimesheetUserTasks extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         
-		$sql.=' fk_userid='.(empty($this->userId) ? 'null':'"'.$this->userId.'"').',';
-		$sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '"'.$this->db->idate($this->date_start).'"':'null').',';
-		$sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '"'.$this->db->idate($this->date_end).'"':'null').',';
+		$sql.=' fk_userid='.(empty($this->userId) ? 'null':'\''.$this->userId.'\'').',';
+		$sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').',';
+		$sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').',';
 		$sql.=' status='.(empty($this->status)? DRAFT:$this->status).',';
 		$sql.=' date_modification=NOW() ,';
-		$sql.=' fk_user_modification="'.$userId.'",';
-		$sql.=' note="'.$this->note.'"';
+		$sql.=' fk_user_modification=\''.$userId.'\',';
+		$sql.=' note=\''.$this->note.'\'';
 
         
         $sql.= " WHERE rowid=".$this->id;
@@ -590,7 +590,7 @@ function saveInSession(){
     $sql.='tsk.fk_task_parent,tsk.rowid,app.rowid as appid,prj.ref as prjRef, tsk.ref as tskRef';
     $sql.=$sqlwhiteList;
     $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec"; 
-    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid=ec.fk_c_type_contact  AND ctc.active="1") ';
+    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid=ec.fk_c_type_contact  AND ctc.active=\'1\') ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=ec.element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
     //approval
@@ -602,18 +602,18 @@ function saveInSession(){
     }
     $sql.=' ON tsk.rowid= app.fk_projet_task AND app.fk_userid=fk_socpeople'; 
 
-    $sql.=' AND app.date_start="'.$this->db->idate($datestart).'"';    
-    $sql.=' AND app.date_end="'.$this->db->idate($datestop).'"';    
+    $sql.=' AND app.date_start=\''.$this->db->idate($datestart).'\'';    
+    $sql.=' AND app.date_end=\''.$this->db->idate($datestop).'\'';    
 
     //end approval
     $sql.=" WHERE ec.fk_socpeople='".$userid."' AND ctc.element='project_task' ";
     if($conf->global->TIMESHEET_HIDE_DRAFT=='1'){
          $sql.=' AND prj.fk_statut>"0" ';
     }
-    $sql.=' AND (prj.datee>="'.$this->db->idate($datestart).'" OR prj.datee IS NULL)';
-    $sql.=' AND (prj.dateo<="'.$this->db->idate($datestop).'" OR prj.dateo IS NULL)';
-    $sql.=' AND (tsk.datee>="'.$this->db->idate($datestart).'" OR tsk.datee IS NULL)';
-    $sql.=' AND (tsk.dateo<="'.$this->db->idate($datestop).'" OR tsk.dateo IS NULL)';
+    $sql.=' AND (prj.datee>=\''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
+    $sql.=' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
+    $sql.=' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
+    $sql.=' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
     $sql.='  ORDER BY '.($whiteListNumber?'listed DESC,':'').'prj.fk_soc,prjRef,tskRef ';
 
      dol_syslog("timesheet::getTasksTimesheet full ", LOG_DEBUG);

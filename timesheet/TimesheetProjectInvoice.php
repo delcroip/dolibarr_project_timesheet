@@ -70,7 +70,7 @@ $langs->load('timesheet@timesheet');
         case 2:{
            $fields=($mode=='user')?'fk_user':(($mode=='taskUser')?'fk_user,fk_task':'fk_task'); 
             $sql= 'SELECT  '.$fields.', SUM(tt.task_duration) as duration ';
-            $sql.=', GROUP_CONCAT(tt.rowid SEPARATOR ", ") as task_time_list';
+            $sql.=', GROUP_CONCAT(tt.rowid SEPARATOR \', \') as task_time_list';
              $sql.=' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
             $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task=t.rowid';
             $sql.=' WHERE t.fk_projet='.$projectId;
@@ -249,7 +249,7 @@ $edit=0;
             $sqlTailJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
             $sqlTailJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
             $sqlTailWhere.=" AND ctc.element='project' AND ctc.active='1' "; // WARINING: any project role can do the invoice if they have the right to create invoices
-            $sqlTailWhere.=' AND fk_socpeople="'.$userid.'" AND fk_statut>0';
+            $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' AND fk_statut>0';
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
@@ -360,8 +360,8 @@ function hasProjectRight($userid,$projectid){
     $res=true;
     if($projectid && !$user->admin){
         $sql=' SELECT rowid FROM '.MAIN_DB_PREFIX.'element_contact ';
-        $sql.=' WHERE fk_c_type_contact = "160" AND element_id="'.$projectid;
-        $sql.='" AND fk_socpeople="'.$userid.'"';
+        $sql.=' WHERE fk_c_type_contact = \'160\' AND element_id=\''.$projectid; //FIXME 
+        $sql.='\' AND fk_socpeople=\''.$userid.'\'';
         $resql=$db->query($sql);
         if (!$resql)$res=false;
     }

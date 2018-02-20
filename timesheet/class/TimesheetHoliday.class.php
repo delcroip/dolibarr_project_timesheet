@@ -51,8 +51,8 @@ class TimesheetHoliday extends Holiday
     public function fetchUserWeek($userId,$datestart,$datestop)
     {
        
-        $SQLfilter=  " AND (cp.date_fin>=".$this->db->idate($datestart).") ";
-        $SQLfilter.= " AND (cp.date_debut<".$this->db->idate($datestop).")";
+        $SQLfilter=  " AND (cp.date_fin>='".$this->db->idate($datestart)."') ";
+        $SQLfilter.= " AND (cp.date_debut<'".$this->db->idate($datestop)."')";
         $ret=$this->fetchByUser($userId,'',$SQLfilter);
         $this->holidayPresent=($ret==1);
         $this->holidaylist=array();

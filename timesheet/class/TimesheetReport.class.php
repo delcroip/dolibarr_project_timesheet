@@ -80,15 +80,15 @@ class TimesheetReport
     $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
     $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';      
     if(!empty($this->userid)){
-        $sql.='WHERE ptt.fk_user="'.$this->userid.'" ';
+        $sql.='WHERE ptt.fk_user=\''.$this->userid.'\' ';
     }else{
         
-        $sql.='WHERE tsk.fk_projet="'.$this->projectid.'" ';
+        $sql.='WHERE tsk.fk_projet=\''.$this->projectid.'\' ';
     }
             
-     $sql.='AND task_date>='.$this->db->idate($startDay)
-                    .' AND task_date<='.$this->db->idate($stopDay)
-                    .' GROUP BY ptt.fk_user, ptt.task_date,ptt.fk_task ';
+     $sql.='AND task_date>=\''.$this->db->idate($startDay)
+                    .'\' AND task_date<=\''.$this->db->idate($stopDay)
+                    .'\' GROUP BY ptt.fk_user, ptt.task_date,ptt.fk_task ';
     switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing
                 

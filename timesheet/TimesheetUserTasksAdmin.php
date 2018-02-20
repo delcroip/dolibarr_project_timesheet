@@ -591,8 +591,8 @@ switch ($action) {
     }
     //pass the search criteria
     	if($ls_userId) $sqlwhere .= natural_search(array('t.fk_userid'), $ls_userId);
-	if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start)="'.$ls_date_start_month.'"';
-	if($ls_date_start_year)$sqlwhere .= ' AND YEAR(t.date_start)="'.$ls_date_start_year.'"';
+	if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start)=\''.$ls_date_start_month.'\'';
+	if($ls_date_start_year)$sqlwhere .= ' AND YEAR(t.date_start)=\''.$ls_date_start_year.'\'';
 	if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
 	if($ls_target) $sqlwhere .= natural_search(array('t.target'), $ls_target);
 	if($ls_project_tasktime_list) $sqlwhere .= natural_search('t.fk_project_tasktime_list', $ls_project_tasktime_list);
@@ -607,7 +607,7 @@ switch ($action) {
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-        $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'project_task_timeshet as t';
+        $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
         if(!empty($sqlwhere))
             $sqlcount.=' WHERE '.substr ($sqlwhere, 5);
 	$result = $db->query($sqlcount);

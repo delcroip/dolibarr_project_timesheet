@@ -122,27 +122,27 @@ class TimesheetTask extends Task
 
 		// Clean parameters
         
-		if (isset($this->userId)) $this->userId=trim($this->userId);
-		if (isset($this->date_start)) $this->date_start=trim($this->date_start);
-		if (isset($this->date_end)) $this->date_end=trim($this->date_end);
-		if (isset($this->date_start_approval)) $this->date_start_approval=trim($this->date_start_approval);
-		if (isset($this->date_end_approval)) $this->date_end_approval=trim($this->date_end_approval);
-		if (isset($this->status)) $this->status=trim($this->status);
-		if (isset($this->sender)) $this->sender=trim($this->sender);
-		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
-		if (isset($this->planned_workload_approval)) $this->planned_workload_approval=trim($this->planned_workload_approval);
-		if (isset($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
-		if (isset($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
-		if (isset($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
-		if (isset($this->user_app['supplier'])) $this->user_app['supplier']=trim($this->user_app['supplier']);
-		if (isset($this->user_app['other'])) $this->user_app['other']=trim($this->user_app['other']);
-		//if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
-		//if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
-		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
-		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
-		if (isset($this->id)) $this->id=trim($this->id);
-		if (isset($this->note)) $this->note=trim($this->note);
-		if (isset($this->task_timesheet)) $this->task_timesheet=trim($this->task_timesheet);
+		if (!empty($this->userId)) $this->userId=trim($this->userId);
+		if (!empty($this->date_start)) $this->date_start=trim($this->date_start);
+		if (!empty($this->date_end)) $this->date_end=trim($this->date_end);
+		if (!empty($this->date_start_approval)) $this->date_start_approval=trim($this->date_start_approval);
+		if (!empty($this->date_end_approval)) $this->date_end_approval=trim($this->date_end_approval);
+		if (!empty($this->status)) $this->status=trim($this->status);
+		if (!empty($this->sender)) $this->sender=trim($this->sender);
+		if (!empty($this->recipient)) $this->recipient=trim($this->recipient);
+		if (!empty($this->planned_workload_approval)) $this->planned_workload_approval=trim($this->planned_workload_approval);
+		if (!empty($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
+		if (!empty($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
+		if (!empty($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
+		if (!empty($this->user_app['supplier'])) $this->user_app['supplier']=trim($this->user_app['supplier']);
+		if (!empty($this->user_app['other'])) $this->user_app['other']=trim($this->user_app['other']);
+		//if (!empty($this->date_creation)) $this->date_creation=trim($this->date_creation);
+		//if (!empty($this->date_modification)) $this->date_modification=trim($this->date_modification);
+		if (!empty($this->user_creation)) $this->user_creation=trim($this->user_creation);
+		if (!empty($this->user_modification)) $this->user_modification=trim($this->user_modification);
+		if (!empty($this->id)) $this->id=trim($this->id);
+		if (!empty($this->note)) $this->note=trim($this->note);
+		if (!empty($this->task_timesheet)) $this->task_timesheet=trim($this->task_timesheet);
 
                 $userId= (is_object($user)?$user->id:$user);
 
@@ -174,24 +174,24 @@ class TimesheetTask extends Task
 		
         $sql.= ") VALUES (";
         
-		$sql.=' '.(! isset($this->userId)?'NULL':'"'.$this->userId.'"').',';
-		$sql.=' '.(! isset($this->date_start_approval) || dol_strlen($this->date_start_approval)==0?'NULL':'"'.$this->db->idate($this->date_start_approval).'"').',';
-		$sql.=' '.(! isset($this->date_end_approval) || dol_strlen($this->date_end_approval)==0?'NULL':'"'.$this->db->idate($this->date_end_approval).'"').',';
-		$sql.=' '.(! isset($this->status)?'1':'"'.$this->status.'"').',';
-		$sql.=' '.(! isset($this->sender)?USER:'"'.$this->sender.'"').',';
-		$sql.=' '.(! isset($this->recipient)?TEAM:'"'.$this->recipient.'"').',';
-		$sql.=' '.(! isset($this->planned_workload_approval)?'NULL':'"'.$this->planned_workload_approval.'"').',';
-		$sql.=' '.(! isset($this->user_app['team'])?'NULL':'"'.$this->user_app['team'].'"').',';
-		$sql.=' '.(! isset($this->user_app['project'])?'NULL':'"'.$this->user_app['project'].'"').',';
-		$sql.=' '.(! isset($this->user_app['customer'])?'NULL':'"'.$this->user_app['customer'].'"').',';
-		$sql.=' '.(! isset($this->user_app['supplier'])?'NULL':'"'.$this->user_app['supplier'].'"').',';
-		$sql.=' '.(! isset($this->user_app['other'])?'NULL':'"'.$this->user_app['other'].'"').',';
+		$sql.=' '.(empty($this->userId)?'NULL':'\''.$this->userId.'\'').',';
+		$sql.=' '.(empty($this->date_start_approval) || dol_strlen($this->date_start_approval)==0?'NULL':'\''.$this->db->idate($this->date_start_approval).'\'').',';
+		$sql.=' '.(empty($this->date_end_approval) || dol_strlen($this->date_end_approval)==0?'NULL':'\''.$this->db->idate($this->date_end_approval).'\'').',';
+		$sql.=' '.(empty($this->status)?'1':'\''.$this->status.'\'').',';
+		$sql.=' '.(empty($this->sender)?USER:'\''.$this->sender.'\'').',';
+		$sql.=' '.(empty($this->recipient)?TEAM:'\''.$this->recipient.'\'').',';
+		$sql.=' '.(empty($this->planned_workload_approval)?'NULL':'\''.$this->planned_workload_approval.'\'').',';
+		$sql.=' '.(empty($this->user_app['team'])?'NULL':'\''.$this->user_app['team'].'\'').',';
+		$sql.=' '.(empty($this->user_app['project'])?'NULL':'\''.$this->user_app['project'].'\'').',';
+		$sql.=' '.(empty($this->user_app['customer'])?'NULL':'\''.$this->user_app['customer'].'\'').',';
+		$sql.=' '.(empty($this->user_app['supplier'])?'NULL':'\''.$this->user_app['supplier'].'\'').',';
+		$sql.=' '.(empty($this->user_app['other'])?'NULL':'\''.$this->user_app['other'].'\'').',';
 		$sql.=' NOW() ,';
                 $sql.=' NOW() ,';
-		$sql.=' "'.$userId.'",'; 
-		$sql.=' '.(! isset($this->id)?'NULL':'"'.$this->id.'"').',';
-		$sql.=' '.(! isset($this->task_timesheet)?'NULL':'"'.$this->task_timesheet.'"').',';
-		$sql.=' '.(! isset($this->note)?'NULL':'"'.$this->note.'"');
+		$sql.=' \''.$userId.'\','; 
+		$sql.=' '.(empty($this->id)?'NULL':'\''.$this->id.'\'').',';
+		$sql.=' '.(empty($this->task_timesheet)?'NULL':'\''.$this->task_timesheet.'\'').',';
+		$sql.=' '.(empty($this->note)?'NULL':'\''.$this->note.'\'');
         
 		$sql.= ")";
 
@@ -437,25 +437,25 @@ class TimesheetTask extends Task
 
 		// Clean parameters
         
-		if (isset($this->userId)) $this->userId=trim($this->userId);
-		if (isset($this->date_start_approval)) $this->date_start_approval=trim($this->date_start_approval);
-		if (isset($this->date_end_approval)) $this->date_end_approval=trim($this->date_end_approval);
-		if (isset($this->status)) $this->status=trim($this->status);
-		if (isset($this->sender)) $this->sender=trim($this->sender);
-		if (isset($this->recipient)) $this->recipient=trim($this->recipient);
-		if (isset($this->planned_workload_approval)) $this->planned_workload_approval=trim($this->planned_workload_approval);
-		if (isset($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
-		if (isset($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
-		if (isset($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
-		if (isset($this->user_app['supplier'])) $this->user_app['supplier']=trim($this->user_app['supplier']);
-		if (isset($this->user_app['other'])) $this->user_app['other']=trim($this->user_app['other']);
-		if (isset($this->date_creation)) $this->date_creation=trim($this->date_creation);
-		if (isset($this->date_modification)) $this->date_modification=trim($this->date_modification);
-		if (isset($this->user_creation)) $this->user_creation=trim($this->user_creation);
-		if (isset($this->user_modification)) $this->user_modification=trim($this->user_modification);
-		if (isset($this->id)) $this->id=trim($this->id);
-		if (isset($this->task_timesheet)) $this->task_timesheet=trim($this->task_timesheet);
-		if (isset($this->note)) $this->note=trim($this->note);
+		if (!empty($this->userId)) $this->userId=trim($this->userId);
+		if (!empty($this->date_start_approval)) $this->date_start_approval=trim($this->date_start_approval);
+		if (!empty($this->date_end_approval)) $this->date_end_approval=trim($this->date_end_approval);
+		if (!empty($this->status)) $this->status=trim($this->status);
+		if (!empty($this->sender)) $this->sender=trim($this->sender);
+		if (!empty($this->recipient)) $this->recipient=trim($this->recipient);
+		if (!empty($this->planned_workload_approval)) $this->planned_workload_approval=trim($this->planned_workload_approval);
+		if (!empty($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
+		if (!empty($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
+		if (!empty($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
+		if (!empty($this->user_app['supplier'])) $this->user_app['supplier']=trim($this->user_app['supplier']);
+		if (!empty($this->user_app['other'])) $this->user_app['other']=trim($this->user_app['other']);
+		if (!empty($this->date_creation)) $this->date_creation=trim($this->date_creation);
+		if (!empty($this->date_modification)) $this->date_modification=trim($this->date_modification);
+		if (!empty($this->user_creation)) $this->user_creation=trim($this->user_creation);
+		if (!empty($this->user_modification)) $this->user_modification=trim($this->user_modification);
+		if (!empty($this->id)) $this->id=trim($this->id);
+		if (!empty($this->task_timesheet)) $this->task_timesheet=trim($this->task_timesheet);
+		if (!empty($this->note)) $this->note=trim($this->note);
                 $userId= (is_object($user)?$user->id:$user);
         
 
@@ -465,23 +465,23 @@ class TimesheetTask extends Task
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         
-		$sql.=' fk_userid='.(empty($this->userId) ? 'null':'"'.$this->userId.'"').',';
-		$sql.=' date_start='.(dol_strlen($this->date_start_approval)!=0 ? '"'.$this->db->idate($this->date_start_approval).'"':'null').',';
-		$sql.=' date_end='.(dol_strlen($this->date_end_approval)!=0 ? '"'.$this->db->idate($this->date_end_approval).'"':'null').',';
-		$sql.=' status='.(empty($this->status)? 'null':'"'.$this->status.'"').',';
-		$sql.=' sender='.(empty($this->sender) ? 'null':'"'.$this->sender.'"').',';
-		$sql.=' recipient='.(empty($this->recipient) ? 'null':'"'.$this->recipient.'"').',';
-		$sql.=' planned_workload='.(empty($this->planned_workload_approval) ? 'null':'"'.$this->planned_workload_approval.'"').',';
-		$sql.=' fk_user_app_team='.(empty($this->user_app['team']) ? 'NULL':'"'.$this->user_app['team'].'"').',';
-		$sql.=' fk_user_app_project='.(empty($this->user_app['project']) ? 'NULL':'"'.$this->user_app['project'].'"').',';
-		$sql.=' fk_user_app_customer='.(empty($this->user_app['customer']) ? 'NULL':'"'.$this->user_app['customer'].'"').',';
-		$sql.=' fk_user_app_supplier='.(empty($this->user_app['supplier']) ? 'NULL':'"'.$this->user_app['supplier'].'"').',';
-		$sql.=' fk_user_app_other='.(empty($this->user_app['other']) ? 'NULL':'"'.$this->user_app['other'].'"').',';
+		$sql.=' fk_userid='.(empty($this->userId) ? 'null':'\''.$this->userId.'\'').',';
+		$sql.=' date_start='.(dol_strlen($this->date_start_approval)!=0 ? '\''.$this->db->idate($this->date_start_approval).'\'':'null').',';
+		$sql.=' date_end='.(dol_strlen($this->date_end_approval)!=0 ? '\''.$this->db->idate($this->date_end_approval).'\'':'null').',';
+		$sql.=' status='.(empty($this->status)? 'null':'\''.$this->status.'\'').',';
+		$sql.=' sender='.(empty($this->sender) ? 'null':'\''.$this->sender.'\'').',';
+		$sql.=' recipient='.(empty($this->recipient) ? 'null':'\''.$this->recipient.'\'').',';
+		$sql.=' planned_workload='.(empty($this->planned_workload_approval) ? 'null':'\''.$this->planned_workload_approval.'\'').',';
+		$sql.=' fk_user_app_team='.(empty($this->user_app['team']) ? 'NULL':'\''.$this->user_app['team'].'\'').',';
+		$sql.=' fk_user_app_project='.(empty($this->user_app['project']) ? 'NULL':'\''.$this->user_app['project'].'\'').',';
+		$sql.=' fk_user_app_customer='.(empty($this->user_app['customer']) ? 'NULL':'\''.$this->user_app['customer'].'\'').',';
+		$sql.=' fk_user_app_supplier='.(empty($this->user_app['supplier']) ? 'NULL':'\''.$this->user_app['supplier'].'\'').',';
+		$sql.=' fk_user_app_other='.(empty($this->user_app['other']) ? 'NULL':'\''.$this->user_app['other'].'\'').',';
 		$sql.=' date_modification=NOW() ,';
-		$sql.=' fk_user_modification="'.$userId.'",';
-		$sql.=' fk_projet_task='.(empty($this->id) ? 'null':'"'.$this->id.'"').',';
-		$sql.=' fk_project_task_timesheet='.(empty($this->task_timesheet) ? 'null':'"'.$this->task_timesheet.'"').',';
-		$sql.=' note="'.$this->note.'"';
+		$sql.=' fk_user_modification=\''.$userId.'\',';
+		$sql.=' fk_projet_task='.(empty($this->id) ? 'null':'\''.$this->id.'\'').',';
+		$sql.=' fk_project_task_timesheet='.(empty($this->task_timesheet) ? 'null':'\''.$this->task_timesheet.'\'').',';
+		$sql.=' note=\''.$this->note.'\'';
 
         
         $sql.= " WHERE rowid=".$this->appId;
@@ -608,8 +608,8 @@ class TimesheetTask extends Task
             if($item['id']!='')$idList[]=$item['id'];
         }
         $ids=implode(',',$idList);
-        $sql='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET fk_task_time_approval="';
-        $sql.=$this->appId.'", status="'.$status.'" WHERE rowid in ('.$ids.')';
+        $sql='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET fk_task_time_approval=\'';
+        $sql.=$this->appId.'\', status=\''.$status.'\' WHERE rowid in ('.$ids.')';
         // SQL start
         dol_syslog(__METHOD__);
         $this->db->begin();
@@ -757,12 +757,12 @@ class TimesheetTask extends Task
 
 //        if(in_array($this->status,array_slice(self::$statusList, 3,4))){
         if(in_array($this->status, array(SUBMITTED,UNDERAPPROVAL,APPROVED,CHALLENGED,INVOICED))){
-            $sql.=' ptt.fk_task_time_approval="'.$this->appId.'"';
+            $sql.=' ptt.fk_task_time_approval=\''.$this->appId.'\'';
         }else{
             $sql.=" ptt.fk_task='".$this->id."' ";
             $sql .= " AND (ptt.fk_user='".$userid."') ";
-            $sql .= " AND (ptt.task_date>=".$this->db->idate($timeStart).") ";
-            $sql .= " AND (ptt.task_date<".$this->db->idate($timeEnd).")";
+            $sql .= " AND (ptt.task_date>='".$this->db->idate($timeStart)."') ";
+            $sql .= " AND (ptt.task_date<'".$this->db->idate($timeEnd)."')";
         }  
         dol_syslog(__METHOD__, LOG_DEBUG);
 		for($i=0;$i<$dayelapsed;$i++){

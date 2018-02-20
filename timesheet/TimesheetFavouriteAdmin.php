@@ -411,7 +411,7 @@ switch ($action) {
 		print '<td class="fieldrequired">'.$langs->trans('Project').' </td><td>';
 		if($edit==1){
                     if(!empty($editedProject))$object->project=$editedProject;
-                $formUserWhere=' (t.datee>='.$object->db->idate(time()).' OR t.datee IS NULL)';
+                $formUserWhere=' (t.datee>=\''.$object->db->idate(time()).'\' OR t.datee IS NULL)';
  //               $formUserWhere.=' AND (projet.dateo<=FROM_UNIXTIME("'.time().'") OR prj.dateo IS NULL)';
                 if(!$user->admin)
                 {
@@ -438,7 +438,7 @@ switch ($action) {
 		print '<td>'.$langs->trans('Task').' </td><td>';
 		if($edit==1){
                 $formTaskJoin='';
-                $formTaskWhere=' fk_projet="'.$object->project.'"';
+                $formTaskWhere=' fk_projet=\''.($object->project?$object->project:'0').'\'';
                 if(!$user->admin)
                 {
                         $formTaskJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
@@ -592,15 +592,15 @@ switch ($action) {
     	if($ls_user){
             $sqlwhere .= natural_search(array('t.fk_user'), $ls_user);
         }else if (!$user->admin){
-            $sqlwhere .= ' AND t.fk_user="'.$userId.'"';
+            $sqlwhere .= ' AND t.fk_user=\''.$userId.'\'';
         }
 	if($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
 	if($ls_project_task) $sqlwhere .= natural_search(array('t.fk_project_task'), $ls_project_task);
 	if($ls_subtask) $sqlwhere .= natural_search(array('t.subtask'), $ls_subtask);
-	if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start)="'.$ls_date_start_month.'"';
-	if($ls_date_start_year)$sqlwhere .= ' AND YEAR(t.date_start)="'.$ls_date_start_year.'"';
-	if($ls_date_end_month)$sqlwhere .= ' AND MONTH(t.date_end)="'.$ls_date_end_month.'"';
-	if($ls_date_end_year)$sqlwhere .= ' AND YEAR(t.date_end)="'.$ls_date_end_year.'"';
+	if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start)=\''.$ls_date_start_month.'\'';
+	if($ls_date_start_year)$sqlwhere .= ' AND YEAR(t.date_start)=\''.$ls_date_start_year.'\'';
+	if($ls_date_end_month)$sqlwhere .= ' AND MONTH(t.date_end)=\''.$ls_date_end_month.'\'';
+	if($ls_date_end_year)$sqlwhere .= ' AND YEAR(t.date_end)=\''.$ls_date_end_year.'\'';
 
     
     //list limit

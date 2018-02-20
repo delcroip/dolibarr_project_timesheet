@@ -69,8 +69,8 @@ $sql='SELECT pjt.rowid,pjt.ref,pjt.title,pjt.dateo,pjt.datee FROM '.MAIN_DB_PREF
 if(!$user->admin){    
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid= element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql.=' WHERE ctc.element in ("project_task") AND ctc.active="1" AND ctc.code LIKE "%EXECUTIVE%" '; 
-    $sql.=' AND fk_socpeople="'.$userid.'"';
+    $sql.=' WHERE ctc.element in (\'project_task\') AND ctc.active=\'1\' AND ctc.code LIKE \'%EXECUTIVE%\' '; 
+    $sql.=' AND fk_socpeople=\''.$userid.'\'';
 }
 
 dol_syslog('timesheet::report::projectList ', LOG_DEBUG);

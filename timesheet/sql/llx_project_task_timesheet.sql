@@ -1,5 +1,4 @@
 -- ===================================================================
--- Copyright (C) 2013  Alexandre Spangaro <alexandre.spangaro@gmail.com>
 -- Copyright (C) 2015  Patrick Delcroix <pmpdelcroix@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -23,7 +22,7 @@
 
 CREATE TABLE llx_project_task_timesheet
 (
-rowid                   integer     NOT NULL ,
+rowid                 serial ,
 date_start              DATE        NOT NULL, -- start date of the period
 date_end               DATE        NOT NULL, -- start date of the period
 status                   integer default 1, -- enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',

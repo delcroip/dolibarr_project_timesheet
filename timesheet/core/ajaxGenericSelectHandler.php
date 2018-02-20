@@ -43,9 +43,9 @@ if($posBs>0){
     $sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as t';
     if(!empty($sqlTailTable))
         $sql.='  '.$sqlTailTable;   
-    $sql.= ' WHERE ( t.'.$fieldValue.' LIKE "%'.$search.'%"';
-    $sql.= ' OR '.$fieldToShow1.' LIKE "%'.$search.'%"';
-    $sql.= ' OR '.$fieldToShow2.' LIKE "%'.$search.'%")';
+    $sql.= ' WHERE ( t.'.$fieldValue.' LIKE \'%'.$search.'%\'';
+    $sql.= ' OR '.$fieldToShow1.' LIKE \'%'.$search.'%\'';
+    $sql.= ' OR '.$fieldToShow2.' LIKE \'%'.$search.'%\')';
     if(!empty($sqlTailWhere))
         $sql.=' AND '.$sqlTailWhere;
        

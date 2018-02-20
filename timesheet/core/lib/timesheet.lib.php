@@ -15,7 +15,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+//const STATUS= [
+Define( "NULL",0);
+Define( "DRAFT",1);
+Define( "SUBMITTED",2);
+Define( "APPROVED",3);
+Define( "CANCELLED",4);
+Define( "REJECTED",5);
+Define( "CHALLENGED",6);
+Define( "INVOICED",7);
+Define( "UNDERAPPROVAL",8);
+Define( "PLANNED",9);
+Define( "STATUSMAX",10);
+
+//APPFLOW
+//const LINKED_ITEM = [
+Define( "USER",0);
+Define( "TEAM",1);
+Define( "PROJECT",2);
+Define( "CUSTOMER",3);
+Define( "SUPPLIER",4);
+Define( "OTHER",5);
+Define( "ROLEMAX",6);
+
+//const REDUNDANCY=[
+/*Define( "NULL",0);
+Define( "NONE",1);
+Define( "WEEK",2);
+Define( "MONTH",3);
+Define( "QUARTER",4);
+Define( "YEAR",5);
+
+//const LINKED_ITEM = [
+Define( "NULL",0);
+Define( "NONE",1);
+Define( "TASK",2);
+Define( "PROJECT",3);
+Define( "TIMESPENT",4);
+
+*/
+
+// back ground colors
+define('TIMESHEET_BC_FREEZED','909090');
+define('TIMESHEET_BC_VALUE','f0fff0');
+
+// number of second in a day, used to make the code readable
 define('SECINDAY',86400);
+
 //global $db;     
 global $langs;
 // to get the whitlist object
@@ -44,7 +90,7 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM
     $sql[PROJECT][0] .= ' WHERE element_id in (SELECT element_id';
     $sql[PROJECT][0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
     $sql[PROJECT][0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql[PROJECT][0] .= ' WHERE ctc.active="1" AND ctc.element in ("project","project_task") AND  (ctc.code LIKE "%LEADER%" OR ctc.code LIKE "%EXECUTIVE%"  )'; 
+    $sql[PROJECT][0] .= ' WHERE ctc.active=\'1\' AND ctc.element in (\'project\',\'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\'  )'; 
     $sql[PROJECT][0] .= ' AND fk_socpeople in (';
     $sql[PROJECT][2] = ')) AND fk_socpeople not in (';
     $sql[PROJECT][4] = ')';
@@ -132,15 +178,15 @@ function getTasks($db,$userid,$role='project'){
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON  tk.fk_projet= ec.element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql.=' WHERE ctc.element in ("project") AND ctc.active="1" AND ctc.code LIKE "%LEADER%" '; 
-    $sql.=' AND fk_socpeople="'.$userid.'"';
+    $sql.=' WHERE ctc.element in (\'project\') AND ctc.active=\'1\' AND ctc.code LIKE \'%LEADER%\' '; 
+    $sql.=' AND fk_socpeople=\''.$userid.'\'';
     $sql.=' UNION ';
     $sql.=' SELECT tk.fk_projet as project ,tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on (tk.rowid= element_id )';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql.=' WHERE ctc.element in ("project_task") AND ctc.active="1" AND ctc.code LIKE "%EXECUTIVE%" '; 
-    $sql.=' AND ec.fk_socpeople="'.$userid.'"';
+    $sql.=' WHERE ctc.element in (\'project_task\') AND ctc.active=\'1\' AND ctc.code LIKE \'%EXECUTIVE%\' '; 
+    $sql.=' AND ec.fk_socpeople=\''.$userid.'\'';
 
 
    dol_syslog('timesheet::report::projectList ', LOG_DEBUG);

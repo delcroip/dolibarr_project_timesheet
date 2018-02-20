@@ -22,7 +22,7 @@
 
 CREATE TABLE llx_time_spent
 (
-rowid                   integer     NOT NULL ,
+rowid                   serial ,
 datetime_start              DATETIME        NOT NULL , -- start date of the period
 start_place             VARCHAR(1024) DEFAULT NULL, -- IP or equipment of loggin
 datetime_end                DATETIME        NOT NULL , -- start date of the period

@@ -18,52 +18,6 @@
 //global $db;     
 // FIXME Ver. 3 
 // Define status
-//const STATUS= [
-Define( "NULL",0);
-Define( "DRAFT",1);
-Define( "SUBMITTED",2);
-Define( "APPROVED",3);
-Define( "CANCELLED",4);
-Define( "REJECTED",5);
-Define( "CHALLENGED",6);
-Define( "INVOICED",7);
-Define( "UNDERAPPROVAL",8);
-Define( "PLANNED",9);
-Define( "STATUSMAX",10);
-
-//APPFLOW
-//const LINKED_ITEM = [
-Define( "USER",0);
-Define( "TEAM",1);
-Define( "PROJECT",2);
-Define( "CUSTOMER",3);
-Define( "SUPPLIER",4);
-Define( "OTHER",5);
-Define( "ROLEMAX",6);
-
-//const REDUNDANCY=[
-/*Define( "NULL",0);
-Define( "NONE",1);
-Define( "WEEK",2);
-Define( "MONTH",3);
-Define( "QUARTER",4);
-Define( "YEAR",5);
-
-//const LINKED_ITEM = [
-Define( "NULL",0);
-Define( "NONE",1);
-Define( "TASK",2);
-Define( "PROJECT",3);
-Define( "TIMESPENT",4);
-
-*/
-
-// back ground colors
-define('TIMESHEET_BC_FREEZED','909090');
-define('TIMESHEET_BC_VALUE','f0fff0');
-
-// number of second in a day, used to make the code readable
-define('SECINDAY',86400);
 
 
 
