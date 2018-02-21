@@ -1143,7 +1143,7 @@ public function updateTimeUsed()
     $this->db->begin();
     $error=0;
           $sql ="UPDATE ".MAIN_DB_PREFIX."projet_task AS pt "
-               ."SET pt.duration_effective=(SELECT SUM(ptt.task_duration) "
+               ."SET duration_effective=(SELECT SUM(ptt.task_duration) "
                ."FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt "
                ."WHERE ptt.fk_task ='".$this->id."') "
                ."WHERE pt.rowid='".$this->id."' ";

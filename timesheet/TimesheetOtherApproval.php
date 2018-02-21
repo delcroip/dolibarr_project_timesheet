@@ -105,7 +105,7 @@ if($action=='submit'){
  
                 if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").$tsApproved);
                 if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").$tsRejected);
-                if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").$errors);
+                if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").$errors,'errors');
 
                 if($errors==0 && $tsApproved==0 && $tsRejected==0){
                     setEventMessage($langs->transnoentitiesnoconv("NothingChanged"),'warning');
@@ -270,17 +270,20 @@ function getSelectAps($subId, $tasks, $role_key){
 switch($conf->global->TIMESHEET_TIME_SPAN){
         case 'month': 
             $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.ref) as id,";
-            $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,' (%m/%Y) #')COLLATE utf8_unicode_ci) as label,";
+            $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,' (%m/%Y) #')".($db->type!='pgsql'?" COLLATE ".$conf->db->dolibarr_main_db_collation:'').") as label,";
             break;
         case 'week':  
         case 'splitedWeek': 
         default:
             $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%v/%Y'), '-',pjt.ref) as id,";
-           $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."',DATE_FORMAT(ts.date_start,' %v/%Y) #')COLLATE utf8_unicode_ci) as label,";
+           $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."',DATE_FORMAT(ts.date_start,' %v/%Y), #')".($db->type!='pgsql'?" COLLATE ".$conf->db->dolibarr_main_db_collation:'')." ) as label,";
             break;
 }
-
-    $sql.=" GROUP_CONCAT(ts.rowid SEPARATOR ',') as idList";
+if($db->type!='pgsql'){
+    $sql.=" GROUP_CONCAT(ts.rowid  SEPARATOR ',') as idlist";
+}else{
+    $sql.=" STRING_AGG(to_char(ts.rowid,'9999999999999999'), ',') as idlist";
+}
     $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk on ts.fk_projet_task= tsk.rowid ';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as pjt on tsk.fk_projet=pjt.rowid ';
@@ -310,8 +313,7 @@ switch($conf->global->TIMESHEET_TIME_SPAN){
             {
                 $j=1;
                 $nb=$obj->nb;
-                $idsList=explode(',',$obj->idList);
-                
+                $idsList=explode(',',$obj->idlist);
                 // split the nb in x line to avoid going over the max approval
                 while($nb>TIMESHEET_MAX_TTA_APPROVAL){
                     $custIdList=  array_slice($idsList, $nb-TIMESHEET_MAX_TTA_APPROVAL, TIMESHEET_MAX_TTA_APPROVAL);

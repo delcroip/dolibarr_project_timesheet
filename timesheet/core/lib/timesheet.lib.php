@@ -228,16 +228,22 @@ function getUsersName($userids){
         return array();
     }
 
-    $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as userName,usr.lastname FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
-
-	$sql.=' usr.rowid in (';
-	$nbIds=(is_array($userids))?count($userids)-1:0;
-	for($i=0; $i<$nbIds-1 ; $i++)
+    $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as username,usr.lastname FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
+if(is_array($userids)){
+	$sql.=' usr.rowid in ('.implode(',',$userids).')';
+}else{
+    $sql.=' usr.rowid ='.$userids;
+}
+	/*
+        $nbIds=(is_array($userids))?count($userids)-1:0;
+	
+        for($i=0; $i<$nbIds-1 ; $i++)
 	{
-		$sql.='"'.$userids[$i].'",';
+		$sql."'".$userids[$i]."',";
 	}
-	$sql.=((is_array($userids))?('"'.$userids[$nbIds-1].'"'):('"'.$userids.'"')).')';
-        $sql.='ORDER BY usr.lastname ASC';
+	$sql.=((is_array($userids))?("'".$userids[$nbIds-1]."'"):('"'.$userids.'"')).')';
+        */
+        $sql.=' ORDER BY usr.lastname ASC';
 
     dol_syslog('form::get_userName '.$sql, LOG_DEBUG);
     $list=array();
@@ -253,7 +259,7 @@ function getUsersName($userids){
             
             if ($obj)
             {
-                $list[$obj->rowid]=$obj->userName;        
+                $list[$obj->rowid]=$obj->username;        
             }
             $i++;
         }

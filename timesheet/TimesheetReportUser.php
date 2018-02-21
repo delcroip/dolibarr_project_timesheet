@@ -60,10 +60,8 @@ $_SESSION["dateStart"]=$dateStart ;
 llxHeader('',$langs->trans('userReport'),'');
 
 //querry to get the project where the user have priviledge; either project responsible or admin
-$sql='SELECT DISTINCT usr.rowid as userId, usr.lastname , usr.firstname '
-     .'FROM '.MAIN_DB_PREFIX.'user as usr ';
-        
-  
+$sql='SELECT DISTINCT usr.rowid as userid, usr.lastname , usr.firstname '
+     .'FROM '.MAIN_DB_PREFIX.'user as usr ';      
 $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
      .' ON ec.fk_socpeople=usr.rowid '
      .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact'
@@ -91,8 +89,8 @@ if ($resql)
         {
                 $error=0;
                 $obj = $db->fetch_object($resql);
-                $userList[$obj->userId]=new TimesheetReport($db);
-                $userList[$obj->userId]->initBasic('',$obj->userId,$obj->firstname.' '.$obj->lastname);
+                $userList[$obj->userid]=new TimesheetReport($db);
+                $userList[$obj->userid]->initBasic('',$obj->userid,$obj->firstname.' '.$obj->lastname);
                 $i++;
         }
         $db->free($resql);

@@ -455,7 +455,7 @@ switch ($action) {
 	print '</table>'."\n";
 	print '<br>';
         if($object->status != DRAFT && $edit!=1){
-            print $object->userName." - ".$object->date_start;
+            print $object->userName." - ".dol_print_date($object->date_start,'day');
             print $object->getHTMLHeader(false);
 
             print $object->getHTMLHolidayLines(false);

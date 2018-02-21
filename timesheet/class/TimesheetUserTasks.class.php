@@ -711,7 +711,7 @@ function saveInSession(){
 function getUserName(){
 
 
-    $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as userName FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
+    $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as username FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
 
 	$sql.=' usr.rowid = '.$this->userId;
       dol_syslog("task_timesheet::get_userName ", LOG_DEBUG);
@@ -727,7 +727,7 @@ function getUserName(){
             
             if ($obj)
             {
-                $this->userName=$obj->userName;        
+                $this->userName=$obj->username;        
             }else{
                 return -1;
             }

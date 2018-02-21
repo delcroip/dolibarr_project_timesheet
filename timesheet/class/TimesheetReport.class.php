@@ -71,9 +71,9 @@ class TimesheetReport
     $title=array('1'=>'Project','4'=>'Day','3'=>'Tasks','7'=>'User');
     $titleWidth=array('4'=>'120','7'=>'200');
     
-    $sql='SELECT MAX(prj.rowid) as projectId, MAX(prj.ref) as projectRef, ptt.fk_user as userId,';
-    $sql.= ' MAX(prj.title) as projectTitle,ptt.fk_task as taskId, MAX(CONCAT(usr.firstname,\' - \',usr.lastname)) as userName,';
-    $sql.= ' MAX(tsk.ref) as taskRef, MAX(tsk.label) as taskTitle,';
+    $sql='SELECT prj.rowid as projectid, prj.ref as projectref, usr.rowid as userid,';
+    $sql.= ' prj.title as projecttitle,tsk.rowid as taskid, CONCAT(usr.firstname,\' - \',usr.lastname) as username,';
+    $sql.= ' tsk.ref as taskref, tsk.label as tasktitle,';
     $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
     $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task ';
@@ -88,11 +88,11 @@ class TimesheetReport
             
      $sql.='AND task_date>=\''.$this->db->idate($startDay)
                     .'\' AND task_date<=\''.$this->db->idate($stopDay)
-                    .'\' GROUP BY ptt.fk_user, ptt.task_date,ptt.fk_task ';
+                    .'\' GROUP BY usr.rowid, ptt.task_date,tsk.rowid, prj.rowid ';
     switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing
                 
-                $sql.='ORDER BY prj.rowid,ptt.task_date,ptt.fk_task ASC   ';
+                $sql.='ORDER BY prj.rowid,ptt.task_date,tsk.rowid ASC   ';
                 //title
                 $lvl1Title=1;
                 $lvl2Title=4;
@@ -103,7 +103,7 @@ class TimesheetReport
                 break;
         
         case 'DPT'://day /project /task
-                $sql.='ORDER BY ptt.task_date,prj.rowid,ptt.fk_task ASC   ';
+                $sql.='ORDER BY ptt.task_date,prj.rowid,tsk.rowid ASC   ';
                 //title
                 $lvl1Title=4;
                 $lvl2Title=1;
@@ -113,7 +113,7 @@ class TimesheetReport
                 $lvl2Key=0;
                 break;
         case 'PTD'://day /project /task
-                $sql.='ORDER BY prj.rowid,ptt.fk_task,ptt.task_date ASC   ';
+                $sql.='ORDER BY prj.rowid,tsk.rowid,ptt.task_date ASC   ';
                 //title
                 $lvl1Title=1;
                 $lvl2Title=3;
@@ -124,7 +124,7 @@ class TimesheetReport
                 break;
         case 'UDT': //project  / task / Days //FIXME dayoff missing
                 
-    $sql.='ORDER BY ptt.fk_user,ptt.task_date,ptt.fk_task ASC   ';
+    $sql.='ORDER BY usr.rowid,ptt.task_date,tsk.rowid ASC   ';
                 //title
                 $lvl1Title=7;
                 $lvl2Title=4;
@@ -135,7 +135,7 @@ class TimesheetReport
                 break;
         
         case 'DUT'://day /project /task
-                $sql.='ORDER BY ptt.task_date,ptt.fk_user,ptt.fk_task ASC   ';
+                $sql.='ORDER BY ptt.task_date,usr.rowidr,tsk.rowid ASC   ';
                 //title
                 $lvl1Title=4;
                 $lvl2Title=7;
@@ -145,7 +145,7 @@ class TimesheetReport
                 $lvl2Key=6;
                 break;
         case 'UTD'://day /project /task
-                $sql.='ORDER BY ptt.fk_user,ptt.fk_task,ptt.task_date ASC   ';
+                $sql.='ORDER BY usr.rowid,tsk.rowid,ptt.task_date ASC   ';
                 //title
                 $lvl1Title=7;
                 $lvl2Title=3;
@@ -174,14 +174,14 @@ class TimesheetReport
                             
                         $error=0;
                         $obj = $this->db->fetch_object($resql);
-                        $resArray[$i]=array($obj->projectId,
-                                    $obj->projectRef.' - '.$obj->projectTitle,
-                                    $obj->taskId,
-                                    $obj->taskRef.' - '.$obj->taskTitle,
+                        $resArray[$i]=array($obj->projectid,
+                                    $obj->projectref.' - '.$obj->projecttitle,
+                                    $obj->taskid,
+                                    $obj->taskref.' - '.$obj->tasktitle,
                                     $obj->task_date,
                                     $obj->duration,
-                                    $obj->userId,
-                                    $obj->userName);
+                                    $obj->userid,
+                                    $obj->username);
                             
                         $i++;
                             

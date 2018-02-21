@@ -281,7 +281,7 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
        
 
         $sql ="SELECT *";
-        if($byWeek==2)$sql.=",CONCAT(DATE_FORMAT(date_start,' %m/%Y') COLLATE utf8_unicode_ci ,fk_userid) as usermonth";
+        if($byWeek==2)$sql.=",CONCAT(DATE_FORMAT(date_start,' %m/%Y') ".($db->type!='pgsql'?" COLLATE ".$conf->db->dolibarr_main_db_collation:'').",fk_userid) as usermonth";
         $sql.=" FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts"; 
         $sql.=' WHERE (ts.status='.SUBMITTED.' OR ts.status='.CHALLENGED.') ';
 
