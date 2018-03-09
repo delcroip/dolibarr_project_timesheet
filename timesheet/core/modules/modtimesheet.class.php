@@ -49,7 +49,6 @@ class modTimesheet extends DolibarrModules
 		$this->numero = 861002;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'timesheet';
-
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "projects";
@@ -58,7 +57,7 @@ class modTimesheet extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Timesheet view";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '2.2.4.rc2';
+		$this->version = '2.2.6';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
