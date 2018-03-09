@@ -391,6 +391,7 @@ class modTimesheet extends DolibarrModules
 	function remove($options='')
 	{
 		$sql = array();
+            $sql[0] .= 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
 
 		return $this->_remove($sql, $options);
 	}
