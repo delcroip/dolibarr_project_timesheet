@@ -270,13 +270,13 @@ function getSelectAps($subId, $tasks, $role_key){
 switch($conf->global->TIMESHEET_TIME_SPAN){
         case 'month': 
             $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.ref) as id,";
-            $sql.=" CONCAT(pjt.title, DATE_FORMAT(ts.date_start,' (%m/%Y) #')".($db->type!='pgsql'?" COLLATE ".$conf->db->dolibarr_main_db_collation:'').") as label,";
+            $sql.=" CONCAT(pjt.title,' (', MONTH(date_start),'/',YEAR(date_start), ' )#' ) as label,";
             break;
         case 'week':  
         case 'splitedWeek': 
         default:
             $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%v/%Y'), '-',pjt.ref) as id,";
-           $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."',DATE_FORMAT(ts.date_start,' %v/%Y), #')".($db->type!='pgsql'?" COLLATE ".$conf->db->dolibarr_main_db_collation:'')." ) as label,";
+           $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start,1),'/',YEAR(ts.date_start), ' )#' ) as label,";
             break;
 }
 if($db->type!='pgsql'){
