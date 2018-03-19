@@ -45,5 +45,3 @@ fk_project_task_timesheet     integer NOT NULL,
 PRIMARY KEY (rowid)
 ) 
 ENGINE=innodb;
-
-

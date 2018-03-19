@@ -399,4 +399,3 @@ class modTimesheet extends DolibarrModules
 
 }
 
-?>

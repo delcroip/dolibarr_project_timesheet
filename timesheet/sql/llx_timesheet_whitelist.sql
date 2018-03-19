@@ -32,4 +32,3 @@ date_end              date default NULL,
 PRIMARY KEY (rowid)
 ) 
 ENGINE=innodb;
-

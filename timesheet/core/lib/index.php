@@ -18,4 +18,3 @@
  */
     
   header('Location: ../../timesheet.php');      
-?>

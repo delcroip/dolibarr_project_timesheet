@@ -34,5 +34,3 @@ fk_user_modification  integer  default NULL,
 PRIMARY KEY (rowid)
 ) 
 ENGINE=innodb;
-
-

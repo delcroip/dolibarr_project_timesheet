@@ -1396,4 +1396,3 @@ function GetTimeSheetXML()
 
     }
 }
-?>
