@@ -26,11 +26,11 @@ require_once 'class/TimesheetUserTasks.class.php';
 
 class TimesheetTask extends Task 
 {
-    	var $element='Task_time_approval';			//!< Id that identify managed objects
-	var $table_element='project_task_time_approval';		//!< Name of table without prefix where object is stored
+    	public $element='Task_time_approval';			//!< Id that identify managed objects
+	public $table_element='project_task_time_approval';		//!< Name of table without prefix where object is stored
         static $statusColor;
         private $ProjectTitle		=	"Not defined";
-        var $tasklist;
+        public $tasklist;
        // private $fk_project;
         private $taskParentDesc;
         //company info
@@ -44,30 +44,30 @@ class TimesheetTask extends Task
         private $hidden; // in the whitelist 
 	//time
         // from db
-        var $appId;
-        var $planned_workload_approval;
-	var $userId;
-	var $date_start_approval=''; 
-        var $date_end_approval;
-	var $status;
-	var $sender;
-	var $recipient;
-        var $note; 
-        var $user_app;
+        public $appId;
+        public $planned_workload_approval;
+	public $userId;
+	public $date_start_approval=''; 
+        public $date_end_approval;
+	public $status;
+	public $sender;
+	public $recipient;
+        public $note; 
+        public $user_app;
 
         //basic DB logging
-	var $date_creation='';
-	var $date_modification='';
-//	var $user_creation;
-	var $user_modification;
-        var $task_timesheet;
+	public $date_creation='';
+	public $date_modification='';
+//	public $user_creation;
+	public $user_modification;
+        public $task_timesheet;
         
 
 //working variable
 
-    var $duration;
-    var $weekDays;
-    var $userName;
+    public $duration;
+    public $weekDays;
+    public $userName;
     
     /**
      *  init the static variable

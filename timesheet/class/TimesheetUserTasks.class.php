@@ -31,37 +31,37 @@ require_once 'class/TimesheetFavourite.class.php';
 class TimesheetUserTasks extends CommonObject
 {
     //common
-    var $db;							//!< To store db handler
-    var $error;							//!< To return error code (or message)
-    var $errors=array();				//!< To return several error codes (or messages)
-    var $element='timesheetuser';			//!< Id that identify managed objects
-    var $table_element='project_task_timesheet';		//!< Name of table without prefix where object is stored
+    public $db;							//!< To store db handler
+    public $error;							//!< To return error code (or message)
+    public $errors=array();				//!< To return several error codes (or messages)
+    public $element='timesheetuser';			//!< Id that identify managed objects
+    public $table_element='project_task_timesheet';		//!< Name of table without prefix where object is stored
 // from db
-    var $id;
-    var $userId;
-    var $date_start='';
-    var $date_end;
-    var $status;
-    var $note;
+    public $id;
+    public $userId;
+    public $date_start='';
+    public $date_end;
+    public $status;
+    public $note;
 
 //basic DB logging
-    var $date_creation='';
-    var $date_modification='';
-    var $user_creation;
-    var $user_modification;  
+    public $date_creation='';
+    public $date_modification='';
+    public $user_creation;
+    public $user_modification;  
 
 //working variable
 
-    var $duration;
-    var $ref; 
-    var $user;
-    var $holidays;
-    var $taskTimesheet;
-    var $headers;
-    var $weekDays;
-    var $timestamp;
-    var $whitelistmode;
-    var $userName;
+    public $duration;
+    public $ref; 
+    public $user;
+    public $holidays;
+    public $taskTimesheet;
+    public $headers;
+    public $weekDays;
+    public $timestamp;
+    public $whitelistmode;
+    public $userName;
     /**
      *   Constructor
      *
@@ -470,7 +470,7 @@ class TimesheetUserTasks extends CommonObject
             // ...
 
             // Create clone
-            $result=$object->create($user);
+            $result=$object->create();
 
             // Other options
             if ($result < 0)

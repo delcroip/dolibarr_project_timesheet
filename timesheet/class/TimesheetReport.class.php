@@ -22,10 +22,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 class TimesheetReport 
 {
-    var $db;
-    var $projectid;
-    var $userid;
-    var $name;
+    public $db;
+    public $projectid;
+    public $userid;
+    public $name;
     
     public function __construct($db) 
 	{

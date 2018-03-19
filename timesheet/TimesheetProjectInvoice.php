@@ -172,7 +172,7 @@ $langs->load('timesheet@timesheet');
                 $object->date				= $dateinvoice;
                 $object->fk_project			= $projectid;
                 $object->fetch_thirdparty();
-                $id = $object->create($user);
+                $id = $object->create();
                 $resArray=$_POST['userTask'];
                 $task_time_array=array();
                 if(is_array($resArray)){

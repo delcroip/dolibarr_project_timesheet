@@ -174,7 +174,7 @@ if ($cancel){
   switch($action){		
                     case 'update':
                             
-                            $result=($user->admin || ($user->id==$object->user))?$object->update($user):-1;
+                            $result=($user->admin || ($user->id==$object->user))?$object->update():-1;
                             if ($result > 0)
                             {
                                 // Creation OK
@@ -219,7 +219,7 @@ if ($cancel){
                             }
                             break;
                     case 'add':
-                            $result=$object->create($user);                        
+                            $result=$object->create();                        
                             if ($result > 0)
                             {
                                     // Creation OK
@@ -244,7 +244,7 @@ if ($cancel){
 
                      case 'confirm_delete':
                             
-                            $result=($confirm=='yes')?$object->delete($user):0;
+                            $result=($confirm=='yes')?$object->delete():0;
                             if ($result > 0)
                             {
                                     // Delete OK
