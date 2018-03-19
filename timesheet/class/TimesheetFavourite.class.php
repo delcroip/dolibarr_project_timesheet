@@ -68,13 +68,11 @@ class TimesheetFavourite extends CommonObject
     /**
      *  Create object into database
      *
-     *  @param	User	$user        User that creates
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    function create( $notrigger=0)
     {
-    	global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
@@ -157,7 +155,7 @@ class TimesheetFavourite extends CommonObject
         /**
      *  Load the list of the user whitelist open between those date
      *
-     *  @param	int		$user   	Id object
+     *  @param	int      $userid   	Id object
     *  @param	date	$datestart	start date
     *  @param	date	$datestop	stopdate
      *  @return             array)timesheetFavourite          return the list of the user whiteliste	
@@ -281,22 +279,17 @@ class TimesheetFavourite extends CommonObject
      */
     function fetch($id,$ref='')
     {
-    	global $langs;
         $sql = "SELECT";
-		$sql.= " t.rowid,";
-		
-		$sql.=' t.fk_user,';
-		$sql.=' t.fk_project,';
-		$sql.=' t.fk_project_task,';
-		$sql.=' t.subtask,';
-		$sql.=' t.date_start,';
-		$sql.=' t.date_end';
-
-		
+        $sql.= " t.rowid,";
+        $sql.=' t.fk_user,';
+        $sql.=' t.fk_project,';
+        $sql.=' t.fk_project_task,';
+        $sql.=' t.subtask,';
+        $sql.=' t.date_start,';
+        $sql.=' t.date_end';		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql.= ' WHERE t.ref = \''.$ref.'\'';
         else $sql.= " WHERE t.rowid = ".$id;
-
     	dol_syslog(get_class($this)."::fetch");
         $resql=$this->db->query($sql);
         if ($resql)
@@ -304,20 +297,15 @@ class TimesheetFavourite extends CommonObject
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-
                 $this->id    = $obj->rowid;
-                
-				$this->user = $obj->fk_user;
-				$this->project = $obj->fk_project;
-				$this->project_task = $obj->fk_project_task;
-				$this->subtask = $obj->subtask;
-				$this->date_start = $this->db->jdate($obj->date_start);
-				$this->date_end = $this->db->jdate($obj->date_end);
-
-                
+                $this->user = $obj->fk_user;
+                $this->project = $obj->fk_project;
+                $this->project_task = $obj->fk_project_task;
+                $this->subtask = $obj->subtask;
+                $this->date_start = $this->db->jdate($obj->date_start);
+                $this->date_end = $this->db->jdate($obj->date_end); 
             }
             $this->db->free($resql);
-
             return 1;
         }
         else
@@ -335,74 +323,60 @@ class TimesheetFavourite extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user, $notrigger=0)
+    function update( $notrigger=0)
     {
-    	global $conf, $langs;
-		$error=0;
-
-		// Clean parameters
-        
-		if (!empty($this->user)) $this->user=trim($this->user);
-		if (!empty($this->project)) $this->project=trim($this->project);
-		if (!empty($this->project_task)) $this->project_task=trim($this->project_task);
-		if (!empty($this->subtask)) $this->subtask=trim($this->subtask);
-		if (!empty($this->date_start)) $this->date_start=trim($this->date_start);
-		if (!empty($this->date_end)) $this->date_end=trim($this->date_end);
-
-        
-
-		// Check parameters
-		// Put here code to add a control on parameters values
-
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        
-		$sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'\''.$this->user.'\'').',';
-		$sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'\''.$this->project.'\'').',';
-		$sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'\''.$this->project_task.'\'').',';
-		$sql.=' subtask='.(($this->subtask) ? 'TRUE':'FALSE').',';
-		$sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').',';
-		$sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').'';
-
-        
+        $error=0;
+        // Clean parameters
+        if (!empty($this->user)) $this->user=trim($this->user);
+        if (!empty($this->project)) $this->project=trim($this->project);
+        if (!empty($this->project_task)) $this->project_task=trim($this->project_task);
+        if (!empty($this->subtask)) $this->subtask=trim($this->subtask);
+        if (!empty($this->date_start)) $this->date_start=trim($this->date_start);
+        if (!empty($this->date_end)) $this->date_end=trim($this->date_end);
+        // Check parameters
+        // Put here code to add a control on parameters values
+    // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";      
+        $sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'\''.$this->user.'\'').',';
+        $sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'\''.$this->project.'\'').',';
+        $sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'\''.$this->project_task.'\'').',';
+        $sql.=' subtask='.(($this->subtask) ? 'TRUE':'FALSE').',';
+        $sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').',';
+        $sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').'';
         $sql.= " WHERE rowid=".$this->id;
-
-		$this->db->begin();
-
-		dol_syslog(__METHOD__);
+        $this->db->begin();
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			 }
-		}
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
+            if (! $error)
+            {
+                    if (! $notrigger)
+                    {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action calls a trigger.
+                //// Call triggers
+                //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+                //// End call triggers
+                     }
+            }
+    // Commit or rollback
+            if ($error)
+            {
+                foreach($this->errors as $errmsg)
+                {
+                    dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+                    $this->error.=($this->error?', '.$errmsg:$errmsg);
+                }
+                $this->db->rollback();
+                return -1*$error;
+            }
+            else
+            {
+                $this->db->commit();
+                return 1;
+            }
     }
 
      /**
@@ -417,7 +391,6 @@ class TimesheetFavourite extends CommonObject
     function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
     {
     	global $langs;
-
     	$result='';
         if(empty($ref) && $id==0){
             if(!empty($this->id))  {
@@ -428,7 +401,6 @@ class TimesheetFavourite extends CommonObject
                 $ref=$this->ref;
             }
         }
-        
         if($id){
             $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?id='.$id.'&action=view">';
         }else if (!empty($ref)){
@@ -461,53 +433,46 @@ class TimesheetFavourite extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete( $notrigger=0)
 	{
-		global $conf, $langs;
-		$error=0;
+            $error=0;
+            $this->db->begin();
+            if (! $error)
+            {
+                    if (! $notrigger)
+                    {
+                //// Call triggers
+                //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+                //// End call triggers
+                    }
+            }
 
-		$this->db->begin();
+            if (! $error)
+            {
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+                $sql.= " WHERE rowid=".$this->id;
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action calls a trigger.
-
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			}
-		}
-
-		if (! $error)
-		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-    		$sql.= " WHERE rowid=".$this->id;
-
-    		dol_syslog(__METHOD__);
-    		$resql = $this->db->query($sql);
-        	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		}
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
+                dol_syslog(__METHOD__);
+                $resql = $this->db->query($sql);
+                if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            }
+    // Commit or rollback
+            if ($error)
+            {
+                    foreach($this->errors as $errmsg)
+                    {
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                    }
+                    $this->db->rollback();
+                    return -1*$error;
+            }
+            else
+            {
+                    $this->db->commit();
+                    return 1;
+            }
 	}
 
 
@@ -537,7 +502,7 @@ class TimesheetFavourite extends CommonObject
 		// ...
 
 		// Create clone
-		$result=$object->create($user);
+		$result=$object->create();
 
 		// Other options
 		if ($result < 0)
