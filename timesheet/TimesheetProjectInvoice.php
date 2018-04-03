@@ -69,8 +69,12 @@ $langs->load('timesheet@timesheet');
     { 
         case 2:{
            $fields=($mode=='user')?'fk_user':(($mode=='taskUser')?'fk_user,fk_task':'fk_task'); 
-            $sql= 'SELECT  '.$fields.', SUM(tt.task_duration) as duration ';
-            $sql.=', GROUP_CONCAT(tt.rowid SEPARATOR \', \') as task_time_list';
+            $sql= 'SELECT  '.$fields.', SUM(tt.task_duration) as duration, ';
+            if($db->type!='pgsql'){
+                $sql.=" GROUP_CONCAT(tt.rowid  SEPARATOR ',') as task_time_list";
+            }else{
+                $sql.=" STRING_AGG(to_char(tt.rowid,'9999999999999999'), ',') as task_time_list";
+            }
              $sql.=' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
             $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task=t.rowid';
             $sql.=' WHERE t.fk_projet='.$projectId;
