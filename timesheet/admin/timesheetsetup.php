@@ -82,7 +82,7 @@ switch($action)
         $timeSpan=$_POST['timeSpan'];
         if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN){
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
-            $sql.= ' WHERE status IN ('.DRAFT.','.REJECTED.')'; //'DRAFT','REJECTED'
+            $sql.= ' WHERE status IN (1,5)'; //'DRAFT','REJECTED'
             dol_syslog(__METHOD__);
             $resql = $db->query($sql);
         }
