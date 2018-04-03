@@ -146,9 +146,9 @@ $langs->load('timesheet@timesheet');
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
             $Form .='<tr class="liste_titre" width="100%" ><th colspan="8">'.$langs->trans('invoicedServiceSelectoin').'</th><th>';
             $Form .='<tr class="liste_titre" width="100%" ><th >'.$langs->trans("User").'</th>';
-            $Form .='<th >'.$langs->trans("Task").'</th><th >'.$langs->trans("Existing").':'.$langs->trans("Service").'</th>';
-            $Form .='<th >'.$langs->trans("New").':'.$langs->trans("Description").'</th><th >'.$langs->trans("New").':'.$langs->trans("PriceHT").'</th>';
-            $Form .='<th >'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("savedDuration").'</th>';
+            $Form .='<th >'.$langs->trans("Task").'</th><th >'.$langs->trans("Service").':'.$langs->trans("Existing")."/".$langs->trans("Custom").'</th>';
+            $Form .='<th >'.$langs->trans("Custom").':'.$langs->trans("Description").'</th><th >'.$langs->trans("Custom").':'.$langs->trans("PriceHT").'</th>';
+            $Form .='<th >'.$langs->trans("Custom").':'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("savedDuration").'</th>';
             $form = new Form($db);
             foreach($resArray as $res){
                 $Form .=htmlPrintServiceChoice($res["USER"],$res["TASK"],'pair',$res["DURATION"],$res['LIST'],$mysoc,$socid);
@@ -335,7 +335,7 @@ function getProjectCustomer($projectID){
 /***
  * Function to print the line to chose between a predefined service or an ad-hoc one
  */
-function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$seller,$byer){
+function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$seller,$buyer){
     global $form,$langs,$conf;
     $userName=($user=='any')?(' - '):print_generic('user','rowid',$user,'lastname','firstname',' ');
     $taskLabel=($task=='any')?(' - '):print_generic('projet_task','rowid',$task,'ref','label',' ');
@@ -345,9 +345,10 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskLabel]"  value="'. $taskLabel.'">';
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskTimeList]"  value="'. $tasktimelist.'">';
     $defaultService=$conf->global->TIMESHEET_INVOICE_SERVICE; 
-    $addchoices=array('-999'=> $langs->transnoentitiesnoconv('not2invoice'));
+    $addchoices=array('-999'=> $langs->transnoentitiesnoconv('not2invoice'),-1=> $langs->transnoentitiesnoconv('Custom'));
+    
     $ajaxNbChar=$conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
-    $html.='</th><th >'.select_generic('product', 'rowid','userTask['.$user.']['.$task.'][Service]','ref','label',$defaultService,$separator=' - ',$sqlTail=' tosell=1 AND fk_product_type=1', $selectparam='',$addchoices,'',$ajaxNbChar).'</th>';
+    $html.='</th><th >'.select_generic('product', 'rowid','userTask['.$user.']['.$task.'][Service]','ref','label',$defaultService,$separator=' - ',$sqlTail=' tosell=1 AND fk_product_type=1', $selectparam='',$addchoices,'',$ajaxNbChar,0).'</th>';
     $html.='<th ><input type="text"  size="30" name="userTask['.$user.']['.$task.'][Desc]" ></th>';
     $html.='<th><input type="text"  size="6" name="userTask['.$user.']['.$task.'][PriceHT]" ></th>';
     //$html.='<th><input type="text" size="6" name="userTask['.$user.']['.$task.']["VAT"]" ></th>';
