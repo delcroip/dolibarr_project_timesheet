@@ -44,7 +44,7 @@ $userid=  is_object($user)?$user->id:$user;
 $form = new Form($db);
 
 
-if ($user->rights->facture->creer & hasProjectRight($userid,$projectid))
+if ($user->rights->facture->creer & hasProjectRight($userid,$projectId))
 {
     if($projectId>0)$staticProject->fetch($projectId);
     if($socid==0 || !is_numeric($socid))$socid=$staticProject->socid; //FIXME check must be in place to ensure the user hqs the right to see the project details
@@ -170,9 +170,9 @@ $langs->load('timesheet@timesheet');
                 $object->socid				= $socid;
                 $object->type				= 0;//Facture::TYPE_STANDARD;
                 $object->date				= $dateinvoice;
-                $object->fk_project			= $projectid;
+                $object->fk_project			= $projectId;
                 $object->fetch_thirdparty();
-                $id = $object->create();
+                $id = $object->create($user);
                 $resArray=$_POST['userTask'];
                 $task_time_array=array();
                 if(is_array($resArray)){
@@ -194,9 +194,11 @@ $langs->load('timesheet@timesheet');
                                  $product->fetch($service['Service']);
 
                                  $unit_duration_unit=substr($product->duration, -1);
-                                 $factor=($unit_duration_unit=='h')?3600:8*3600;//FIXME support week and month 
-                                 $factor=$factor*intval(substr($product->duration,0, -1));
-                                 $quantity= $duration/$factor;
+                                 $unit_factor=($unit_duration_unit=='h')?3600:8*3600;//FIXME support week and month 
+                                 
+                                 $factor=intval(substr($product->duration,0, -1));
+                                 if($factor==0)$factor=1;//to avoid divided by $factor0
+                                 $quantity= $duration/($factor*$unit_factor);
                                  $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $service['Service'], 0, $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
 
 
