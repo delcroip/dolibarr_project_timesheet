@@ -525,9 +525,9 @@ echo "</th></tr>\n\t\t";
 echo  '<tr class="impair"><th align="left">'.$langs->trans("invoiceService");
 echo '</th><th align="left">'.$langs->trans("invoiceServiceDesc").'</th>';
 echo  '<th align="left">';
-$addchoices=array('-999'=> $langs->transnoentitiesnoconv('not2invoice'));
+$addchoices=array('-999'=> $langs->transnoentitiesnoconv('not2invoice'),-1=> $langs->transnoentitiesnoconv('Custom'));
 $ajaxNbChar=$conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
-echo select_generic('product','rowid','invoiceService','ref','label',$invoiceservice,$separator=' - ',$sqlTailWhere='tosell=1 AND fk_product_type=1', $selectparam='',$addchoices,$sqltail='',$ajaxNbChar);
+echo select_generic('product','rowid','invoiceService','ref','label',$invoiceservice,$separator=' - ',$sqlTailWhere='tosell=1 AND fk_product_type=1', $selectparam='',$addchoices,$sqltail='',$ajaxNbChar,0);
 echo "</th></tr>\n\t\t";
 //line tasktime ==
 echo  '<tr class="pair"><th align="left">'.$langs->trans("invoiceTaskTime");

@@ -122,7 +122,7 @@ if($table=='' || $fieldValue=='' || $htmlName=='' )
 //$conf->global->BARCODE_USE_SEARCH_TO_SELECT
 //$conf->global->CONTACT_USE_SEARCH_TO_SELECT
  
-function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxNbChar=''){
+function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxNbChar='',$showempty=1){
 
    
     
@@ -204,7 +204,7 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
         if($starfields2>0)
             $fieldToShow2=  substr($fieldToShow2, $starfields2+4);
 
-        $selectOptions.= "<option value=\"-1\" ".(empty($selected)?"selected":"").">&nbsp;</option>\n";
+        if($showempty==1)$selectOptions.= "<option value=\"-1\" ".(empty($selected)?"selected":"").">&nbsp;</option>\n";
         $i=0;
          //return $table."this->db".$field;
         $num = $db->num_rows($resql);
