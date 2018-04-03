@@ -71,9 +71,14 @@ class TimesheetReport
     $title=array('1'=>'Project','4'=>'Day','3'=>'Tasks','7'=>'User');
     $titleWidth=array('4'=>'120','7'=>'200');
     
-    $sql='SELECT prj.rowid as projectid, prj.ref as projectref, usr.rowid as userid,';
-    $sql.= ' prj.title as projecttitle,tsk.rowid as taskid, CONCAT(usr.firstname,\' - \',usr.lastname) as username,';
-    $sql.= ' tsk.ref as taskref, tsk.label as tasktitle,';
+    $sql='SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid,';
+    if($db->type!='pgsql'){
+        $sql.= ' MAX(prj.title) as projecttitle,MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname,\' - \',usr.lastname)) as username,';
+        $sql.= ' MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle,';
+    }else{
+        $sql.= ' prj.title as projecttitle,prj.ref as projectref, CONCAT(usr.firstname,\' - \',usr.lastname) as username,';
+        $sql.= ' tsk.ref as taskref, tsk.label as tasktitle,';
+    }
     $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
     $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task ';
