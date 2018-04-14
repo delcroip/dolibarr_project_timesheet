@@ -894,9 +894,9 @@ function getHTMLHeader($ajax=false,$week=0){
      
      foreach ($this->headers as $key => $value){
          $html.="\t<th ";
-//         if ($headersWidth[$key]){
- //               $html.='width="'.$headersWidth[$key].'"';
- //        }
+         if (count($this->headers)==1){
+                $html.='colspan="2" ';
+         }
          $html.=">".$langs->trans($value)."</th>\n";
      }
     $opendays=str_split($conf->global->TIMESHEET_OPEN_DAYS);
@@ -938,16 +938,17 @@ function getHTMLHeader($ajax=false,$week=0){
   /* function to genegate ttotal line
  * 
   *  @param     int            $week    week to show (0 means show all)  // FIXME
-  *  @return     string                                                   html code
+  *  @return     string                                                   
  */
  function getHTMLTotal($week=0){
 
     $html .="<tr>\n";
-    $html .='<th colspan="'.count($this->headers).'" align="right" > TOTAL </th>';
+    $html .='<th colspan="'.(count($this->headers)-1).'" align="right" > TOTAL </th>';
     $length=  getDayInterval($this->date_start,$this->date_end);
+    $html .="<th><div class=\"Total[{$this->id}][total]\">&nbsp;</div></th>\n"; 
     for ($i=0;$i<$length;$i++)
     {
-       $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>\n"; // fixme the week shouldbe in it
+       $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>\n";
      }
     $html .="</tr>\n";
     return $html;

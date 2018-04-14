@@ -80,6 +80,7 @@ function parseTime(timeStr, dt) {
 
 function updateTotal(ts,days,silent){
 	try{
+            totalMinutes=0;
             var err=false;
             var curDay = document.getElementsByClassName('time4day['+ts+']['+days+']');
             var nbline = curDay.length;
@@ -110,7 +111,7 @@ function updateTotal(ts,days,silent){
                         {
                             parseTime("00:00",taskTime);
                         }
-                       
+                        totalMinutes+=taskTime.getMinutes()+60*taskTime.getHours();
                         total.setHours(total.getHours()+taskTime.getHours());
                         total.setMinutes(total.getMinutes()+taskTime.getMinutes());
                         }
@@ -132,7 +133,7 @@ function updateTotal(ts,days,silent){
                         TotalList[i].style.backgroundColor = "red";
                     }
                 }
-                return !err;
+                return err?-1:totalMinutes;
             
                 
 		//addText(,total.getHours()+':'+total.getMinutes());
@@ -149,14 +150,17 @@ function updateTotal(ts,days,silent){
                         if (element.value)
                         {   
                             total+=parseFloat(element.value);
+                            totalMinutes+=parseFloat(element.value);
                         }
                         else if(element.innerHTML)
                         {
                             total+=parseFloat(element.innerHTML);
+                            totalMinutes+=parseFloat(element.innerHTML);
                         }else
                         {
                             total+=0;
                         }
+                        
                     }
 		}
                 if(total>day_max_hours/day_hours){
@@ -172,11 +176,11 @@ function updateTotal(ts,days,silent){
                         TotalList[i].innerHTML = total;
                         TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
                     }else if(TotalList[i].innerHTML ="&nbsp;"){
-                        TotalList[i].innerHTML = day_max_hours/day_hours;
+                        TotalList[i].innerHTML = (day_max_hours/day_hours).toFixed(2.);
                         TotalList[i].style.backgroundColor = "red";
                     }
                 }
-                return !err;
+                return err?-1:totalMinutes;
             
 
             }
@@ -189,13 +193,28 @@ function updateTotal(ts,days,silent){
 //function to update all the totals
 function updateAll(){
 	var tsUser = document.getElementsByName('tsUserId');
-        
+        err=false;
+        total=0;
     for(j=0;j<tsUser.length;j++){
             var daysClass='Days['+tsUser[j].value+']';
             var nbDays= document.getElementsByClassName(daysClass);
             for(i=0;i<nbDays.length;i++){
                 
-		updateTotal(tsUser[j].value,i,1);
+		res=updateTotal(tsUser[j].value,i,1);
+                total+=res;
+                if (res<0)err=true;
+                
+            }
+            if(!err){
+             var TotalList=document.getElementsByClassName('Total['+tsUser[j].value+'][total]');
+              var nblineTotal = TotalList.length;
+                for (var i=0;i<nblineTotal;i++)
+                {   if(time_type=="hours"){
+                        TotalList[i].innerHTML = pad(Math.floor(total/60))+':'+pad(total-Math.floor(total/60)*60.);
+                    }else{
+                        TotalList[i].innerHTML = total.toFixed(2);
+                    }
+                }
             }
 	}
 }
@@ -244,11 +263,13 @@ function validateTime(object,ts, day,silent){
             }
             break;
       }
-      if(updateTotal(ts,day,silent)==false){
+      if(updateTotal(ts,day,silent)<0){
           object.value=object.defaultValue;
           object.style.backgroundColor = "red";
+         
           
       }
+       updateAll();
 }
 function openTab(evt, tabName) {
     // Declare all variables

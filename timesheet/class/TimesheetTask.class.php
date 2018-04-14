@@ -921,7 +921,7 @@ class TimesheetTask extends Task
                 $htmltail.="</th></tr>\n";
          }
 
-          $html.='<th align="left" >'.$htmlTitle."</th>\n";
+          $html.='<th align="left" '.((count($headers)==1)?'colspan="2" ':'').'>'.$htmlTitle."</th>\n";
              
      }
 
