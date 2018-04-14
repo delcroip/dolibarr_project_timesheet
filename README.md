@@ -1,9 +1,10 @@
 # dolibarr_project_timesheet
-Timesheet view for project in Dolibarr
+Module to increase time registration efficiency for Dolibarr, well suited for counsulting firm but not only
 
 
 # Functionnalities
  - Timespend entry by week ot Month for all the eligible tasks of an user in the timesheet page (splited week possible, possible to add time spent for subordinates)
+ - total per day and per timesheet
  - Holiday are showed in the timesheet page
  - Layout customisation (show/hide the '00:00', show/hide the draft project task,show ref or not, show the related project or not ... )
  - Dolibarr Print mode supported 
@@ -15,15 +16,12 @@ Timesheet view for project in Dolibarr
 
  
 # Functionnalities eligible for removal
-- favoris 
 
 # Functionnalities not maintained
  - timesheet navigation & submit done with Ajax ( no reload of the entire page needed)
 
 # known bug/limitation
-- If the combo box ajax bug, it's not possible to enter new whitelist, new config parameters enable to deactivate for all dolibarr.
 - Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
-
 
 # Next dev under anaylse
 - Ressource planning  (planning for TL and PM + weekly summary by email to user)
@@ -39,14 +37,30 @@ Timesheet view for project in Dolibarr
     - reminder when TS is not filled in ( email and home page)
 - better ajax error when adding fav
 - add total to the otherAP
-- add total 'line' and super total ts
-
 - maintain the ajax behavior
 
 
 
-
 # Change log
+
+2.2.8 change log from 2.2.7
+ - new: add a super total: total of every day present on the timesheet screen 2.2.7 change log from 2.2.6
+ - fix: error in pgsql while generating the invoice
+ - fix: link the created invoice to the project
+ - fix: error in the reports pages with mysql
+ - fix:ts draft not removed upon timespan change leading to days not accessible
+ - clean: Invoice creation page: layout improvement
+
+2.2.6 Change log from 2.2.3
+ - new: support PostGreSQL database
+ - new/fix: support custom project roles
+ - new/fix: support Dolibarr 7.0.0
+ - fix: behaviour of notes in the timesheet pages with favourites
+ - fix: "not defied" showing instead of project name
+ - fix: correction of the message when a favourite was added
+ - clean: enum are not user anymore
+ - clean: removal of dead code
+
 2.2.3 Change log from 2.2.2
  - fix: trad issue
  - fix: sql error in approvals
