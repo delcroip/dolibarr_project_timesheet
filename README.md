@@ -44,7 +44,9 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
 # Change log
 
 2.2.8 change log from 2.2.7
- - new: add a super total: total of every day present on the timesheet screen 2.2.7 change log from 2.2.6
+ - new: add a super total: total of every day present on the timesheet screen 
+
+2.2.7 change log from 2.2.6
  - fix: error in pgsql while generating the invoice
  - fix: link the created invoice to the project
  - fix: error in the reports pages with mysql
