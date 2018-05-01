@@ -43,6 +43,11 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
 
 # Change log
 
+2.2.9 change log from 2.2.8
+ - fix: project invoice not working
+ - fix: project report (date/user/task) not working
+ - clean: use oddeven instead of pair/impair as list class
+
 2.2.8 change log from 2.2.7
  - new: add a super total: total of every day present on the timesheet screen 
 
