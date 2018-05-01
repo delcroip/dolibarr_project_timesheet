@@ -151,7 +151,7 @@ $langs->load('timesheet@timesheet');
             $Form .='<th >'.$langs->trans("Custom").':'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("savedDuration").'</th>';
             $form = new Form($db);
             foreach($resArray as $res){
-                $Form .=htmlPrintServiceChoice($res["USER"],$res["TASK"],'pair',$res["DURATION"],$res['LIST'],$mysoc,$socid);
+                $Form .=htmlPrintServiceChoice($res["USER"],$res["TASK"],'oddeven',$res["DURATION"],$res['LIST'],$mysoc,$socid);
             }
             
             $Form .='</table>';
@@ -254,21 +254,21 @@ $edit=0;
         if(!$user->admin){    
             $sqlTailJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
             $sqlTailJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
-            $sqlTailWhere.=" AND ctc.element='project' AND ctc.active='1' "; // WARINING: any project role can do the invoice if they have the right to create invoices
+            $sqlTailWhere=" ctc.element='project' AND ctc.active='1' "; // WARINING: any project role can do the invoice if they have the right to create invoices
             $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' AND fk_statut>0';
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
             $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans('generalInvoiceProjectParam').'</th><th>';    
             $invoicingMethod=$conf->global->TIMESHEET_INVOICE_METHOD;
-            $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Project').'</th><th  >';
+            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Project').'</th><th  >';
             //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
             $ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ',$sqlTailWhere,'',NULL,$sqlTailJoin,$ajaxNbChar);
-            $Form .='</th></tr><tr class="impair"><th align="left" width="80%">'.$langs->trans('Month').' - '.$langs->trans('Year').'</th><th align="left">'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3).'</th></tr>';
- //           $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Month').'</th><th ><input type="text" name="month" value ="'.$month.'"></th></tr>';
-           // $Form .='<tr class="impair"><th align="left" width="80%">'.$langs->trans('Customer').'</th><th "><input type="text" name="ccust" value ="'.$custId.'"></th></tr>';
-            $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('Mode').'</th><th align="left"><input type="radio" name="invoicingMethod" value="task" ';
+            $Form .='</th></tr><tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Month').' - '.$langs->trans('Year').'</th><th align="left">'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3).'</th></tr>';
+ //           $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Month').'</th><th ><input type="text" name="month" value ="'.$month.'"></th></tr>';
+           // $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Customer').'</th><th "><input type="text" name="ccust" value ="'.$custId.'"></th></tr>';
+            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Mode').'</th><th align="left"><input type="radio" name="invoicingMethod" value="task" ';
             $Form .=($invoicingMethod=="task"?"checked":"").'> '.$langs->trans("Tasks").'</br> ';
             $Form .='<input type="radio" name="invoicingMethod" value="user" ';
             $Form .=($invoicingMethod=="user"?"checked":"").'> '.$langs->trans("User")."</br> ";
@@ -276,16 +276,16 @@ $edit=0;
             $Form .=($invoicingMethod=="taskUser"?"checked":"").'> '.$langs->trans("Tasks").' & '.$langs->trans("User")."</th></tr>\n\t\t";
 
 //cust list
-            $Form .='<tr class="impair"><th  align="left">'.$langs->trans('Customer').'</th><th  align="left">'.$form->select_company($socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1).'</th></tr>';
+            $Form .='<tr class="oddeven"><th  align="left">'.$langs->trans('Customer').'</th><th  align="left">'.$form->select_company($socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1).'</th></tr>';
 //all ts or only approved
            $ts2Invoice=$conf->global->TIMESHEET_INVOICE_TASKTIME;
-            $Form .='<tr class="pair"><th align="left" width="80%">'.$langs->trans('TimesheetToInvoice').'</th><th align="left"><input type="radio" name="ts2Invoice" value="approved" ';
+            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('TimesheetToInvoice').'</th><th align="left"><input type="radio" name="ts2Invoice" value="approved" ';
             $Form .=($ts2Invoice=="approved"?"checked":"").'> '.$langs->trans("approvedOnly").' </br>';
             $Form .='<input type="radio" name="ts2Invoice" value="all" ';
             $Form .=($ts2Invoice=="all"?"checked":"").'> '.$langs->trans("All")."</th></tr>";
 // not alreqdy invoice
             if(version_compare(DOL_VERSION,"4.9.9")>=0){
-                $Form .='<tr class="impair"><th align="left" width="80%">'.$langs->trans('TimesheetNotInvoiced');
+                $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('TimesheetNotInvoiced');
                 $Form .='</th><th align="left"><input type="checkbox" name="tsNotInvoiced" value="1" ></th></tr>';
                 
             }else{
