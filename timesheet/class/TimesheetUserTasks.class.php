@@ -850,9 +850,9 @@ function getHTML($ajax=false,$Approval=false){
     $Form .=$this->getHTMLHolidayLines($ajax);
 
     if(!$Approval)$Form .=$this->getHTMLTotal();
-    $Form .='<tbody style="overflow:auto;">'; //FIXME, max height should be defined
+    //$Form .='<tbody style="overflow:auto;">'; //FIXME, max height should be defined
     $Form .=$this->getHTMLtaskLines($ajax);
-    $Form .= '</tbody>'; // overflow div
+    //$Form .= '</tbody>'; // overflow div
     $Form .=$this->getHTMLTotal();
     $Form .= '</table>';
     $Form .=$this->getHTMLNote($ajax);
@@ -876,8 +876,11 @@ function getHTMLHeader($ajax=false,$week=0){
      
     $weeklength=  getDayInterval($this->date_start, $this->date_end);
     $maxColSpan=$weeklength+count($this->headers);
-    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);     
-    $html="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
+    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);  
+        $html = '<input type="hidden" name="timestamp" value="'.$this->timestamp."\"/>\n";
+    $html .= '<input type="hidden" name="startDate" value="'.$this->date_start.'" />';  
+     $html .= '<input type="hidden" name="tsUserId" value="'.$this->id.'" />'; 
+    $html.="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
      ///Whitelist tab
         if($conf->global->TIMESHEET_TIME_SPAN=="month"){
         //remove Year
@@ -910,13 +913,11 @@ function getHTMLHeader($ajax=false,$week=0){
         $htmlDay=($conf->global->TIMESHEET_TIME_SPAN=="month")?substr($langs->trans(date('l',$curDay)),0,3):$langs->trans(date('l',$curDay));
         $html.="\t".'<th class="Days['.$this->id.']" width="35px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay,$format)."</th>\n"; //FIXME : should remove Y/,/Y and Y from the regex
     }
-     $html.="</tr>\n";
-     $html.='<tr id="hiddenParam" style="display:none;">';
-     $html.= '<td colspan="'.($this->headers.lenght+$weeklength).'"> ';
-    $html .= '<input type="hidden" name="timestamp" value="'.$this->timestamp."\"/>\n";
-    $html .= '<input type="hidden" name="startDate" value="'.$this->date_start.'" />';  
-     $html .= '<input type="hidden" name="tsUserId" value="'.$this->id.'" />'; 
-    $html .='</td></tr>';
+    // $html.="</tr>\n";
+     //$html.='<tr id="hiddenParam" style="display:none;">';
+     //$html.= '<td colspan="'.($this->headers.lenght+$weeklength).'"> ';
+
+    //$html .='</td></tr>';
 
      return $html;
      
@@ -942,7 +943,7 @@ function getHTMLHeader($ajax=false,$week=0){
  */
  function getHTMLTotal($week=0){
 
-    $html .="<tr>\n";
+    $html .="<tr class='oddeven'>\n";
     $html .='<th colspan="'.(count($this->headers)-1).'" align="right" > TOTAL </th>';
     $length=  getDayInterval($this->date_start,$this->date_end);
     $html .="<th><div class=\"Total[{$this->id}][total]\">&nbsp;</div></th>\n"; 

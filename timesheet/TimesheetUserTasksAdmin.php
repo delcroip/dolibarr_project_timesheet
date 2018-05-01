@@ -701,7 +701,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 			if ($obj)
 			{
 				// You can use here results
-				print "<tr class=\"dblist ".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
+				print "<tr class=\"dblist oddeven\"  onclick=\"location.href='";
 				print $basedurl.$obj->rowid."'\" >";
 				print "<td>".print_generic('user','rowid',$obj->fk_userid,'lastname','firstname',' ')."</td>";
 				print "<td>".dol_print_date($obj->date_start,'day')."</td>";

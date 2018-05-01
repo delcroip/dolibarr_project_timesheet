@@ -70,7 +70,7 @@ function refreshTimesheet(Wlmode){
             {
                     var CurRow = MT.insertRow(idxT+1);
                     //FIXME mode whitelist
-                    CurRow.className =(i%2==0)?'pair':'impair';
+                    CurRow.className ='oddeven';
                     var rowContent=generateTaskLine(headers[0],tasks[j].childNodes[i],timetype);
                     CurRow.innerHTML=rowContent;
                     // document.getElementById("timesheetTable").innerHTML = table;

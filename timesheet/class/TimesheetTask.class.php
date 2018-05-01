@@ -829,7 +829,7 @@ class TimesheetTask extends Task
 
     //if(($whitelistemode==0 && !$this->listed)||($whitelistemode==1 && $this->listed))$hidden=true;
     //$linestyle=(($hidden)?'display:none;':'');
-    $Class=(($this->listed)?'timesheet_whitelist':'timesheet_blacklist').' timesheet_line '.(($lineNumber%2=='0')?'pair':'impair');
+    $Class='oddeven '.(($this->listed)?'timesheet_whitelist':'timesheet_blacklist').' timesheet_line ';
     $htmltail='';
   $linestyle='';
   if(($this->pStatus == "2")){

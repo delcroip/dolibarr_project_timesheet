@@ -717,7 +717,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             if ($obj)
             {
                 // You can use here results
-                		print "<tr class=\"".(($i%2==0)?'pair':'impair')."\"  onclick=\"location.href='";
+                		print "<tr class=\"oddeven\"  onclick=\"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
 		if($user->admin)print "<td>".print_generic('user','rowid',$obj->fk_user,'lastname','firstname',' ')."</td>";
 		print "<td>".print_generic('projet','rowid',$obj->fk_project,'ref','title', ' - ')."</td>";
