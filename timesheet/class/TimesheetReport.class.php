@@ -140,7 +140,7 @@ class TimesheetReport
                 break;
         
         case 'DUT'://day /project /task
-                $sql.='ORDER BY ptt.task_date,usr.rowidr,tsk.rowid ASC   ';
+                $sql.='ORDER BY ptt.task_date,usr.rowid,tsk.rowid ASC   ';
                 //title
                 $lvl1Title=4;
                 $lvl2Title=7;
@@ -212,7 +212,7 @@ class TimesheetReport
             $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
             foreach($resArray as $key => $item)
             {
-               $HTMLRes.= '<tr class="pair" align="left"><th width="200px">'.$this->name.'</th>';
+               $HTMLRes.= '<tr class="oddeven" align="left"><th width="200px">'.$this->name.'</th>';
                $HTMLRes.= '<th '.(isset($titleWidth[$lvl1Title])?'width="'.$titleWidth[$lvl1Title].'"':'' ).'>'.$item[$lvl1Title].'</th>';
                $HTMLRes.='<th '.(isset($titleWidth[$lvl2Title])?'width="'.$titleWidth[$lvl2Title].'"':'' ).'>'.$item[$lvl2Title].'</th>';
                $HTMLRes.='<th '.(isset($titleWidth[$lvl3Title])?'width="'.$titleWidth[$lvl3Title].'"':'' ).'>'.$item[$lvl3Title].'</th>';
@@ -229,7 +229,7 @@ class TimesheetReport
             if(($resArray[$Curlvl2][$lvl2Key]!=$resArray[$key][$lvl2Key])
                     ||($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
             {
-                $lvl2HTML.='<tr class="pair" align="left"><th></th><th>'
+                $lvl2HTML.='<tr class="oddeven" align="left"><th></th><th>'
                         .$resArray[$Curlvl2][$lvl2Title].'</th>';
                 if(!$short)$lvl2HTML.='<th></th>';
                 $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,0).'</th>';
@@ -241,7 +241,7 @@ class TimesheetReport
                 $Curlvl2=$key;
                 if(($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
                 {
-                    $lvl1HTML.='<tr class="pair" align="left"><th >'
+                    $lvl1HTML.='<tr class="oddeven" align="left"><th >'
                             .$resArray[$Curlvl1][$lvl1Title].'</th><th></th>';
                     if(!$short)$lvl1HTML.='<th></th>';
                     $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,0).'</th>';
@@ -255,7 +255,7 @@ class TimesheetReport
             }
             if(!$short)
             {
-                $lvl3HTML.='<tr class="impair" align="left"><th></th><th></th><th>'
+                $lvl3HTML.='<tr class="oddeven" align="left"><th></th><th></th><th>'
                     .$resArray[$key][$lvl3Title].'</th><th>';
                 $lvl3HTML.=$this->formatTime($item[5],0).'</th><th>';
                 $lvl3HTML.=$this->formatTime($item[5],$hoursperdays).'</th></tr>';                
@@ -272,14 +272,14 @@ class TimesheetReport
 
         }
        //handle the last line 
-        $lvl2HTML.='<tr class="pair" align="left"><th></th><th>'
+        $lvl2HTML.='<tr class="oddeven" align="left"><th></th><th>'
                 .$resArray[$Curlvl2][$lvl2Title].'</th>';
         if(!$short)$lvl2HTML.='<th></th>';
         $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,0).'</th>';
         $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
         $lvl2HTML.=$lvl3HTML;
         $lvl2Total+=$lvl3Total;
-        $lvl1HTML.='<tr class="pair" align="left"><th >'
+        $lvl1HTML.='<tr class="oddeven" align="left"><th >'
                 .$resArray[$Curlvl1][$lvl1Title].'</th><th></th>';
         if(!$short)$lvl1HTML.='<th></th>';
         $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,0).'</th>';
