@@ -43,6 +43,13 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
 
 # Change log
 
+2.2.10 change log from 2.2.9
+ - new: line total header
+ - new: add a total line every 10 task line
+ - fix: in day mode, the leading 0 isn't mandatory anymore (e.g. ".1")
+ - clean: use liste_title for totals
+ - clean: improve total & overtime behaviour
+
 2.2.9 change log from 2.2.8
  - fix: project invoice not working
  - fix: project report (date/user/task) not working
