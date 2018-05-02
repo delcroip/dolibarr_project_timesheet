@@ -1023,8 +1023,9 @@ function getHTMLHeader($ajax=false,$week=0){
  */
  function getHTMLtaskLines($ajax=false){
 
-        $i=0;
+        $i=1;
         $Lines='';
+        $nbline=count($this->taskTimesheet);
         if(!$ajax & is_array($this->taskTimesheet)){
             foreach ($this->taskTimesheet as $timesheet) {          
                 $row=new TimesheetTask($this->db);            
@@ -1040,6 +1041,7 @@ function getHTMLHeader($ajax=false,$week=0){
                         
             
                 $Lines.=$row->getFormLine( $i,$this->headers,$this->id,$openOveride); 
+                if( $i%10==0 &&  $nbline-$i >5) $Lines.=$this->getHTMLTotal ();
 		$i++;
             }
         }
