@@ -217,11 +217,12 @@ function validateTime(object,ts, day,silent){
                 object.style.backgroundColor = "lightgreen";       
                 object.value=object.value.replace(',','.');
                 var regex=/^[0-5]{1}([.,]{1}[0-9]{1,3})?$/;
+                var regex2=/^[.,]{1}[0-9]{1,3}$/;
 
-                if(!regex.test(object.value) ){      
+                if(!regex.test(object.value) &&  !regex2.test(object.value)){      
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
-                  }                  
+                  }      
                 if(hide_zero && object.value=='0')object.value='';
             }else{
                 object.style.backgroundColor = object.style.getPropertyValue("background");
@@ -325,7 +326,7 @@ function getTotal(dayList){
                 }    
         } 
         retVal= total.toFixed(2);
-        if(hide_zero && retVal=='0')retVal='';
+        if(hide_zero && total==0)retVal='';
 
     }
     return retVal;
