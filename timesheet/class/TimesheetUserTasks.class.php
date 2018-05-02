@@ -943,7 +943,7 @@ function getHTMLHeader($ajax=false,$week=0){
  */
  function getHTMLTotal($week=0){
 
-    $html .="<tr class='oddeven'>\n";
+    $html .="<tr class='liste_titre'>\n";
     $html .='<th colspan="'.(count($this->headers)-1).'" align="right" > TOTAL </th>';
     $length=  getDayInterval($this->date_start,$this->date_end);
     $html .="<th><div class=\"Total[{$this->id}][total]\">&nbsp;</div></th>\n"; 
