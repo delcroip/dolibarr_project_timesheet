@@ -946,10 +946,10 @@ function getHTMLHeader($ajax=false,$week=0){
     $html .="<tr class='liste_titre'>\n";
     $html .='<th colspan="'.(count($this->headers)-1).'" align="right" > TOTAL </th>';
     $length=  getDayInterval($this->date_start,$this->date_end);
-    $html .="<th><div class=\"Total[{$this->id}][total]\">&nbsp;</div></th>\n"; 
+    $html .="<th><div class=\"TotalUser_{$this->id}\">&nbsp;</div></th>\n"; 
     for ($i=0;$i<$length;$i++)
     {
-       $html .="<th><div class=\"Total[{$this->id}][{$i}]\">&nbsp;</div></th>\n";
+       $html .="<th><div class=\"TotalColumn_{$this->id}_{$i}\">&nbsp;</div></th>\n";
      }
     $html .="</tr>\n";
     return $html;

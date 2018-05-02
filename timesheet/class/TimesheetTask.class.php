@@ -897,7 +897,10 @@ class TimesheetTask extends Task
                 $userName=getUsersName($this->userId);
                 $htmlTitle .=  $userName[$this->userId];
                 break;
-             case 'Approval':
+             case 'Total':
+                 $htmlTitle='<div class="lineTotal" id="'.$this->userId.'_'.$this->id.'">&nbsp;</div>';
+                 break;
+            case 'Approval':
                  $htmlTitle .= "<input type='text' style='border: none;' class = 'approval_switch'";
                  $htmlTitle .=' name="approval['.$this->appId.']" ';
                  $htmlTitle .=' id="task_'.$this->userId.'_'.$this->appId.'_approval" ';
@@ -963,7 +966,7 @@ class TimesheetTask extends Task
                 } 
 
 
-                $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="time4day['.$this->userId.']['.$dayCur.']" ';
+                $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'" ';
 //                    $html .= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" '; if one whant multiple ts per validation
                 $html .= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" ';
                 $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
@@ -974,7 +977,7 @@ class TimesheetTask extends Task
             }else{
                 //$bkcolor='background:#'.(($dayWorkLoadSec!=0)?(self::$statusColor[$this->status]):'#FFFFFF');
                 //$html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$this->userId.']['.$dayCur.']"';
-                $html .= ' <th ><a class="time4day['.$this->userId.']['.$dayCur.']"';
+                $html .= ' <th ><a class="column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
                 //$html .= ' name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
                 $html .= ' name="task['.$this->id.']['.$dayCur.']" ';
                 $html .= ' style="width: 90%;"';

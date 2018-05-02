@@ -119,6 +119,7 @@ switch($action)
         $showProgress=$_POST['showProgress'];
         $showCompany=$_POST['showCompany'];
         $showNote=$_POST['showNote'];
+        $showTotal=$_POST['showTotal'];
         
         $headers=$showNote?'Note':'';
         $headers.=$showCompany?(empty($headers)?'':'||').'Company':'';
@@ -128,7 +129,7 @@ switch($action)
         $headers.=$showDateStart?(empty($headers)?'':'||').'DateStart':'';
         $headers.=$showDateEnd?(empty($headers)?'':'||').'DateEnd':'';
         $headers.=$showProgress?(empty($headers)?'':'||').'Progress':'';
-
+        $headers.=$showTotal?(empty($headers)?'':'||').'Total':'';
         dolibarr_set_const($db, "TIMESHEET_HEADERS", $headers, 'chaine', 0, '', $conf->entity);
         
         //color handling
@@ -212,6 +213,9 @@ foreach ($headersT as $header) {
             Break;
         case 'Note':
             $showNote=1;
+            Break;
+        case 'Total':
+            $showTotal=1;
             Break;
         default:
             break;
@@ -381,6 +385,11 @@ echo  '<tr class="oddeven"><th align="left">'.$langs->trans("Note");
 echo '</th><th align="left">'.$langs->trans("NoteDesc").'</th>';
 echo  '<th align="left"><input type="checkbox" name="showNote" value="1" ';
 echo (($showNote=='1')?'checked':'')."></th></tr>\n\t\t";
+//Total
+echo  '<tr class="oddeven"><th align="left">'.$langs->trans("Total");
+echo '</th><th align="left">'.$langs->trans("TotalDesc").'</th>';
+echo  '<th align="left"><input type="checkbox" name="showTotal" value="1" ';
+echo (($showTotal=='1')?'checked':'')."></th></tr>\n\t\t";
 
 
 /*

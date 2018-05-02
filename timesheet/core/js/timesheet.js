@@ -78,13 +78,13 @@ function parseTime(timeStr, dt) {
 
 //update both total lines day 0-6, mode hour/day
 
-function updateTotal(ts,days,silent,hidezero){
+function updateTotal(ts,days,silent){
 	try{
             totalMinutes=0;
             var err=false;
-            var curDay = document.getElementsByClassName('time4day['+ts+']['+days+']');
+            var curDay = document.getElementsByClassName('column_'+ts+'_'+days);
             var nbline = curDay.length;
-            var TotalList=document.getElementsByClassName('Total['+ts+']['+days+']');
+            var TotalList=document.getElementsByClassName('TotalColumn_'+ts+'_'+days);
             var nblineTotal = TotalList.length;
             if(time_type=="hours")
             {
@@ -129,10 +129,7 @@ function updateTotal(ts,days,silent,hidezero){
                         
                         TotalList[i].innerHTML = pad((total.getDate()-1)*24+total.getHours())+':'+pad(total.getMinutes());
                         TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
-                        if(TotalList[i].innerHTML=='00:00' && hidezero)TotalList[i].innerHTML ="&nbsp;";
-                    }else{
-                        TotalList[i].innerHTML = day_max_hours+":00";
-                        TotalList[i].style.backgroundColor = "red";
+                        if(TotalList[i].innerHTML=='00:00' && hide_zero)TotalList[i].innerHTML ="&nbsp;";
                     }
                 }
                 return err?-1:totalMinutes;
@@ -177,10 +174,7 @@ function updateTotal(ts,days,silent,hidezero){
                     if(!err){
                         TotalList[i].innerHTML = total;
                         TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
-                        if(TotalList[i].innerHTML=='0' && hidezero)TotalList[i].innerHTML ="&nbsp;";
-                    }else{
-                        TotalList[i].innerHTML = (day_max_hours/day_hours).toFixed(2.);
-                        TotalList[i].style.backgroundColor = "red";
+                        if(TotalList[i].innerHTML=='0' && hide_zero)TotalList[i].innerHTML ="&nbsp;";
                     }
                 }
                 return err?-1:totalMinutes;
@@ -194,35 +188,26 @@ function updateTotal(ts,days,silent,hidezero){
 }
 
 //function to update all the totals
-function updateAll(hidezero){
+function updateAll(){
 	var tsUser = document.getElementsByName('tsUserId');
+        var retVal;
         err=false;
         total=0;
     for(j=0;j<tsUser.length;j++){
-            var daysClass='Days['+tsUser[j].value+']';
+            var daysClass='user_'+tsUser[j].value;
             var nbDays= document.getElementsByClassName(daysClass);
-            for(i=0;i<nbDays.length;i++){
-                
-		res=updateTotal(tsUser[j].value,i,1,hidezero);
-                total+=res;
-                if (res<0)err=true;
-                
-            }
-            if(!err){
-             var TotalList=document.getElementsByClassName('Total['+tsUser[j].value+'][total]');
+            retVal=getTotal(nbDays);
+             var TotalList=document.getElementsByClassName('TotalUser_'+tsUser[j].value);
               var nblineTotal = TotalList.length;
                 for (var i=0;i<nblineTotal;i++)
-                {   if(time_type=="hours"){                 
-                        TotalList[i].innerHTML = pad(Math.floor(total/60))+':'+pad(total-Math.floor(total/60)*60.);
-                    }else{
-                        TotalList[i].innerHTML = total.toFixed(2);
-                    }
-                }
-            }
+                {                 
+                    TotalList[i].innerHTML = retVal;
+                }          
 	}
+        updateLineTotal();
 }
 
-function validateTime(object,ts, day,silent,hidezero){
+function validateTime(object,ts, day,silent){
     updated=false;
     switch(time_type)
       {
@@ -237,7 +222,7 @@ function validateTime(object,ts, day,silent,hidezero){
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
                   }                  
-                if(hidezero && object.value=='0')object.value='';
+                if(hide_zero && object.value=='0')object.value='';
             }else{
                 object.style.backgroundColor = object.style.getPropertyValue("background");
             }
@@ -261,21 +246,91 @@ function validateTime(object,ts, day,silent,hidezero){
                         object.style.backgroundColor = "red";
                     }
                   } 
-                  if(hidezero && object.value=='0:00')object.value='';
+                  if(hide_zero && object.value=='0:00')object.value='';
               }else
             {
                 object.style.backgroundColor = object.style.getPropertyValue("background");
             }
             break;
       }
-      if(updateTotal(ts,day,silent,hidezero)<0){
+      if(updateTotal(ts,day,silent)<0){
           object.value=object.defaultValue;
           object.style.backgroundColor = "red";
          
           
+      }else{
+        updateAll();
       }
-       updateAll(hidezero);
 }
+/*
+ * Function to update the line Total when there is any
+ * @param   
+ * @returns None
+ */
+function updateLineTotal(){
+        var TotalList=document.getElementsByClassName('lineTotal');
+        var nblineTotal = TotalList.length;
+        for(i=0;i<nblineTotal;i++){
+            var classLine='line_'+ TotalList[i].id;
+            var dayList=document.getElementsByClassName(classLine);
+            TotalList[i].innerHTML=getTotal(dayList);
+        }
+    
+}
+
+/*
+ * Function to generate a total 
+ * @param {table of elm} daylist   list of the day element to sumup
+ * @param {string} daytype hour or day
+ * @returns {undefined}
+ */
+function getTotal(dayList){
+    var nbline = dayList.length;
+    var total=0;
+    var retVal;
+
+    if(time_type=="hours")
+    {
+        for (var i=0;i<nbline;i++)
+        {  
+            var taskTime= new Date(0);
+            var element=dayList[i];
+            if(element)
+            {
+                if (element.value){   
+                    parseTime(element.value,taskTime);
+                }else if(element.innerHTML){
+                    parseTime(element.innerHTML,taskTime);
+                }else {
+                    parseTime("00:00",taskTime);
+                }
+                total+=taskTime.getMinutes()+60*taskTime.getHours();
+            }
+        }
+        retVal=pad(Math.floor(total/60))+':'+pad(total-Math.floor(total/60)*60.);
+        if(hide_zero && retVal=='00:00')retVal='';
+    }else{
+        for (var i=0;i<nbline;i++)
+        {  
+                var element=dayList[i];
+                if(element)
+                {
+                    if (element.value){   
+                        total+=parseFloat(element.value);
+                    }else if(element.innerHTML){
+                        total+=parseFloat(element.innerHTML);
+                    }else{
+                        total+=0;
+                    }
+                }    
+        } 
+        retVal= total.toFixed(2);
+        if(hide_zero && retVal=='0')retVal='';
+
+    }
+    return retVal;
+}
+            
 function openTab(evt, tabName) {
     // Declare all variables
     var i, tabcontent, tablinks;
