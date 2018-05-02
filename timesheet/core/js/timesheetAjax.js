@@ -17,7 +17,7 @@ t/*
 
 var xmlTs;
 
-function refreshTimesheet(Wlmode){
+function refreshTimesheet(Wlmode,hidezero){
       var i;
       var xmlDoc=xmlTs;
       try{
@@ -85,7 +85,7 @@ function refreshTimesheet(Wlmode){
         $.jnotify("refreshTimesheet "+err,'error',true);
     }
         UpdateNavigation(nextDate,prevDate);
-        updateAll();
+        updateAll(hidezero);
         
         
 }
@@ -110,7 +110,7 @@ function generateHiddenParam(timestamp,dateStart){
     return hiddenParam;
 }
 
-function generateTaskLine(headers,task,timetype){
+function generateTaskLine(headers,task,timetype,hidezero){
 	var html='';
 	for( i =0; i< headers.childNodes.length; i++){
 		var header=headers.childNodes[i];
@@ -136,7 +136,7 @@ function generateTaskLine(headers,task,timetype){
 		if(open==0)color='909090';
 		if(color!='')html +='background:#'+color;
 		html +='; " onkeypress="return regexEvent(this,event,\'timeChar\')" ';
-		html += 'onblur="regexEvent(this,event,\''+timetype+'\');updateTotal('+i+',\''+timetype+'\')" />';
+		html += 'onblur="regexEvent(this,event,\''+timetype+'\');updateTotal('+i+',\''+timetype+'\',0,'+hidezero+')" />';
 		html += "</th>";
 	}
 	return html;

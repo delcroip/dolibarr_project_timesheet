@@ -468,7 +468,7 @@ switch ($action) {
 
             print "</table>";
             print  '<script type="text/javascript">'."\n\t";
-            print 'updateAll(0);';
+            print 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');';
             print  "\n\t".'</script>'."\n";
         }
 	print '<div class="center">';

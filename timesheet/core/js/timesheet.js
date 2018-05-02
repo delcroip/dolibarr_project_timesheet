@@ -78,7 +78,7 @@ function parseTime(timeStr, dt) {
 
 //update both total lines day 0-6, mode hour/day
 
-function updateTotal(ts,days,silent){
+function updateTotal(ts,days,silent,hidezero){
 	try{
             totalMinutes=0;
             var err=false;
@@ -126,9 +126,11 @@ function updateTotal(ts,days,silent){
                 for (var i=0;i<nblineTotal;i++)
                 {
                     if(!err){
+                        
                         TotalList[i].innerHTML = pad((total.getDate()-1)*24+total.getHours())+':'+pad(total.getMinutes());
                         TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
-                    }else if(TotalList[i].innerHTML ="&nbsp;"){
+                        if(TotalList[i].innerHTML=='00:00' && hidezero)TotalList[i].innerHTML ="&nbsp;";
+                    }else{
                         TotalList[i].innerHTML = day_max_hours+":00";
                         TotalList[i].style.backgroundColor = "red";
                     }
@@ -175,7 +177,8 @@ function updateTotal(ts,days,silent){
                     if(!err){
                         TotalList[i].innerHTML = total;
                         TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
-                    }else if(TotalList[i].innerHTML ="&nbsp;"){
+                        if(TotalList[i].innerHTML=='0' && hidezero)TotalList[i].innerHTML ="&nbsp;";
+                    }else{
                         TotalList[i].innerHTML = (day_max_hours/day_hours).toFixed(2.);
                         TotalList[i].style.backgroundColor = "red";
                     }
@@ -191,7 +194,7 @@ function updateTotal(ts,days,silent){
 }
 
 //function to update all the totals
-function updateAll(){
+function updateAll(hidezero){
 	var tsUser = document.getElementsByName('tsUserId');
         err=false;
         total=0;
@@ -200,7 +203,7 @@ function updateAll(){
             var nbDays= document.getElementsByClassName(daysClass);
             for(i=0;i<nbDays.length;i++){
                 
-		res=updateTotal(tsUser[j].value,i,1);
+		res=updateTotal(tsUser[j].value,i,1,hidezero);
                 total+=res;
                 if (res<0)err=true;
                 
@@ -209,7 +212,7 @@ function updateAll(){
              var TotalList=document.getElementsByClassName('Total['+tsUser[j].value+'][total]');
               var nblineTotal = TotalList.length;
                 for (var i=0;i<nblineTotal;i++)
-                {   if(time_type=="hours"){
+                {   if(time_type=="hours"){                 
                         TotalList[i].innerHTML = pad(Math.floor(total/60))+':'+pad(total-Math.floor(total/60)*60.);
                     }else{
                         TotalList[i].innerHTML = total.toFixed(2);
@@ -219,7 +222,7 @@ function updateAll(){
 	}
 }
 
-function validateTime(object,ts, day,silent){
+function validateTime(object,ts, day,silent,hidezero){
     updated=false;
     switch(time_type)
       {
@@ -234,7 +237,7 @@ function validateTime(object,ts, day,silent){
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
                   }                  
-
+                if(hidezero && object.value=='0')object.value='';
             }else{
                 object.style.backgroundColor = object.style.getPropertyValue("background");
             }
@@ -249,27 +252,29 @@ function validateTime(object,ts, day,silent){
                   var regex2=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1})$/;
                   if(!regex.test(object.value))
                   { 
-                      if(regex2.test(object.value))
+
+                       if(regex2.test(object.value)){
                         object.value=object.value+':00';
       
-                      else{
+                    }else{
                         object.value=object.defaultValue;
                         object.style.backgroundColor = "red";
                     }
                   } 
+                  if(hidezero && object.value=='0:00')object.value='';
               }else
             {
                 object.style.backgroundColor = object.style.getPropertyValue("background");
             }
             break;
       }
-      if(updateTotal(ts,day,silent)<0){
+      if(updateTotal(ts,day,silent,hidezero)<0){
           object.value=object.defaultValue;
           object.style.backgroundColor = "red";
          
           
       }
-       updateAll();
+       updateAll(hidezero);
 }
 function openTab(evt, tabName) {
     // Declare all variables

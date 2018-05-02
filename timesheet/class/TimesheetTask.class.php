@@ -969,7 +969,7 @@ class TimesheetTask extends Task
                 $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
                 $html .='" maxlength="5" style="width: 90%;'.$bkcolor.'" ';
                 $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
-                $html .= 'onblur="validateTime(this,'.$this->userId.','.$dayCur.',0)" />';
+                $html .= 'onblur="validateTime(this,'.$this->userId.','.$dayCur.',0,'.$conf->global->TIMESHEET_HIDE_ZEROS.')" />';
                 $html .= "</th>\n"; 
             }else{
                 //$bkcolor='background:#'.(($dayWorkLoadSec!=0)?(self::$statusColor[$this->status]):'#FFFFFF');

@@ -257,7 +257,7 @@ if(is_object($firstTimesheetUser)){
 $timetype=$conf->global->TIMESHEET_TIME_TYPE;
 //$Form .= ' <script type="text/javascript" src="timesheet.js"></script>'."\n";
 $Form .= '<script type="text/javascript">'."\n\t";
-$Form .='updateAll();';
+$Form .='updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .='</div>';//TimesheetPage
 print $Form;
