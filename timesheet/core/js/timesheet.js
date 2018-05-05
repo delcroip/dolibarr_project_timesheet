@@ -78,203 +78,143 @@ function parseTime(timeStr, dt) {
 
 //update both total lines day 0-6, mode hour/day
 
-function updateTotal(ts,days,silent){
-	try{
-            totalMinutes=0;
-            var err=false;
-            var curDay = document.getElementsByClassName('column_'+ts+'_'+days);
-            var nbline = curDay.length;
-            var TotalList=document.getElementsByClassName('TotalColumn_'+ts+'_'+days);
-            var nblineTotal = TotalList.length;
-            if(time_type=="hours")
-            {
-                var total = new Date(0);
-                total.setHours(0);
-                total.setMinutes(0);
-
-                for (var i=0;i<nbline;i++)
-                { 
-                    //var id='task['+i+']['+days+']';   
-                    var taskTime= new Date(0);
-                    var element=curDay[i];
-                    
-                    if(element)
-                    {
-                        if (element.value)
-                        {   
-                            parseTime(element.value,taskTime);
-                        }
-                        else if(element.innerHTML)
-                        {
-                            parseTime(element.innerHTML,taskTime);
-                        }else
-                        {
-                            parseTime("00:00",taskTime);
-                        }
-                        totalMinutes+=taskTime.getMinutes()+60*taskTime.getHours();
-                        total.setHours(total.getHours()+taskTime.getHours());
-                        total.setMinutes(total.getMinutes()+taskTime.getMinutes());
-                        }
-               }
-               if(total.getDate()>1 || (total.getHours()+total.getMinutes()/60)>day_max_hours){
-                    if( silent == 0)$.jnotify(err_msg_max_hours_exceded ,'error',false);   //
-                     err=true;
-               }else if((total.getHours()+total.getMinutes()/60)>day_hours){
-                    if( silent == 0)$.jnotify(wng_msg_hours_exceded ,'warning',false); 
-                }
-               
-                for (var i=0;i<nblineTotal;i++)
-                {
-                    if(!err){
-                        
-                        TotalList[i].innerHTML = pad((total.getDate()-1)*24+total.getHours())+':'+pad(total.getMinutes());
-                        TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
-                        if(TotalList[i].innerHTML=='00:00' && hide_zero)TotalList[i].innerHTML ="&nbsp;";
-                    }
-                }
-                return err?-1:totalMinutes;
-            
-                
-		//addText(,total.getHours()+':'+total.getMinutes());
-            }else
-            {
-		var total =0;
-		for (var i=0;i<nbline;i++)
-		{ 
-                    //var id='task['+i+']['+days+']';   
-                    var taskTime= new Date(0);
-                    var element=curDay[i];
-                    if(element)
-                    {
-                        if (element.value)
-                        {   
-                            total+=parseFloat(element.value);
-                            totalMinutes+=parseFloat(element.value);
-                        }
-                        else if(element.innerHTML)
-                        {
-                            total+=parseFloat(element.innerHTML);
-                            totalMinutes+=parseFloat(element.innerHTML);
-                        }else
-                        {
-                            total+=0;
-                        }
-                        
-                    }
-		}
-                if(total>day_max_hours/day_hours){
-                   if( silent == 0)$.jnotify(err_msg_max_hours_exceded ,'error',false);   //
-                    err=true;
-                }else if(total>1 ){
-                   if( silent == 0)$.jnotify(wng_msg_hours_exceded ,'warning',false); 
-                }
-
-                for (var i=0;i<nblineTotal;i++)
-                {
-                    if(!err){
-                        TotalList[i].innerHTML = total;
-                        TotalList[i].style.backgroundColor = TotalList[i].style.getPropertyValue("background");
-                        if(TotalList[i].innerHTML=='0' && hide_zero)TotalList[i].innerHTML ="&nbsp;";
-                    }
-                }
-                return err?-1:totalMinutes;
-            
-
-            }
-	}
-	catch(err) {
-            if(silent == 0)$.jnotify("updateTotal "+err,'error',true);
-	}
+function validateTotal(col_id){
+    var total=0;
+    try
+    {
+        var Total =document.getElementsByClassName('TotalColumn_'+col_id);    
+        var lines =document.getElementsByClassName('column_'+col_id);
+        total=getTotal(lines);
+        if(Total[0].innerHTML!=minutesToHTML(total) ){
+            var hours=total/60;
+            if(hours>day_max_hours){
+               $.jnotify(err_msg_max_hours_exceded ,'error',false);   //
+                return -1;
+            }else if(hours>day_hours ){
+               $.jnotify(wng_msg_hours_exceded ,'warning',false); 
+            }   
+        }
+    }
+    catch(err) {
+        $.jnotify("updateTotal "+err,'error',true);
+    }
+    return 1;
 }
 
 //function to update all the totals
+/*
+ * 
+ * @returns {undefined}
+ */
 function updateAll(){
-	var tsUser = document.getElementsByName('tsUserId');
-        var retVal;
-        err=false;
-        total=0;
+    var tsUser = document.getElementsByName('tsUserId');
+    err=false;
+    total=0;
     for(j=0;j<tsUser.length;j++){
-            var daysClass='user_'+tsUser[j].value;
-            var nbDays= document.getElementsByClassName(daysClass);
-            retVal=getTotal(nbDays);
-             var TotalList=document.getElementsByClassName('TotalUser_'+tsUser[j].value);
-              var nblineTotal = TotalList.length;
-                for (var i=0;i<nblineTotal;i++)
-                {                 
-                    TotalList[i].innerHTML = retVal;
-                }          
+        total=0;
+        var daysClass="days_"+tsUser[j].value;
+        var days= document.getElementsByClassName(daysClass);
+        var nbDays=days.length;
+        for(i=0;i<nbDays;i++){
+            total+=updateTotals('column_'+days[i].id,'TotalColumn_'+days[i].id);
+        }
+        var TotalList=document.getElementsByClassName('TotalUser_'+tsUser[j].value);
+        var nblineTotal = TotalList.length;
+          for (var i=0;i<nblineTotal;i++)
+          {                 
+              TotalList[i].innerHTML = minutesToHTML(total);
+          }          
 	}
-        updateLineTotal();
+        updateAllLinesTotal();
 }
 
-function validateTime(object,ts, day,silent){
+
+
+/* function to update the totals
+ * 
+ * @param {type} classSource
+ * @param {type} classTarget
+ * @returns {undefined}
+ */
+function updateTotals(classSource,classTarget){
+    var source = document.getElementsByClassName(classSource);
+    var total= getTotal(source);
+    var TotalList=document.getElementsByClassName(classTarget);
+    for (var i=0;i<TotalList.length;i++)
+    {                 
+        TotalList[i].innerHTML = minutesToHTML(total);
+    } 
+    return total;
+}
+
+
+/*
+ * 
+ * @param {type} object where the data has to e validated
+ * @param {type} ts     timesheet id
+ * @param {type} day    day to update total
+ * @param {type} silent will show message to user or not
+ * @returns {undefined}
+ */
+function validateTime(object,col_id){
     updated=false;
+    if(object.value!=object.defaultValue)
+    {
     switch(time_type)
       {
           case 'days':
-            if(object.value!=object.defaultValue)
-            {
                 object.style.backgroundColor = "lightgreen";       
                 object.value=object.value.replace(',','.');
                 var regex=/^[0-5]{1}([.,]{1}[0-9]{1,3})?$/;
                 var regex2=/^[.,]{1}[0-9]{1,3}$/;
-
                 if(!regex.test(object.value) &&  !regex2.test(object.value)){      
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
                   }      
                 if(hide_zero && object.value=='0')object.value='';
-            }else{
-                object.style.backgroundColor = object.style.getPropertyValue("background");
-            }
-          break; 
-         
+          break;  
           case 'hours':
-          default: 
-              if(object.value!=object.defaultValue)
-              {
+          default:
                   object.style.backgroundColor = "lightgreen";
                   var regex= /^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1}):[0-9]{2}$/;
                   var regex2=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1})$/;
                   if(!regex.test(object.value))
                   { 
-
                        if(regex2.test(object.value)){
-                        object.value=object.value+':00';
-      
+                        object.value=object.value+':00';     
                     }else{
                         object.value=object.defaultValue;
                         object.style.backgroundColor = "red";
                     }
                   } 
                   if(hide_zero && object.value=='0:00')object.value='';
-              }else
-            {
-                object.style.backgroundColor = object.style.getPropertyValue("background");
-            }
+//              }
             break;
       }
-      if(updateTotal(ts,day,silent)<0){
-          object.value=object.defaultValue;
+    }else{
+        object.style.backgroundColor = object.style.getPropertyValue("background");
+    }
+    if(validateTotal(col_id)<0){
+          object.value=minutesToHTML(0);
           object.style.backgroundColor = "red";
-         
-          
-      }else{
-        updateAll();
-      }
+    }
+    updateAll();
+
 }
 /*
  * Function to update the line Total when there is any
  * @param   
  * @returns None
  */
-function updateLineTotal(){
-        var TotalList=document.getElementsByClassName('lineTotal');
+function updateAllLinesTotal(){
+        
+        
+    var TotalList=document.getElementsByClassName('lineTotal');
         var nblineTotal = TotalList.length;
         for(i=0;i<nblineTotal;i++){
-            var classLine='line_'+ TotalList[i].id;
+            var classLine='line_'+ TotalList[i].id;          
             var dayList=document.getElementsByClassName(classLine);
-            TotalList[i].innerHTML=getTotal(dayList);
+            TotalList[i].innerHTML=minutesToHTML(getTotal(dayList));
         }
     
 }
@@ -288,8 +228,6 @@ function updateLineTotal(){
 function getTotal(dayList){
     var nbline = dayList.length;
     var total=0;
-    var retVal;
-
     if(time_type=="hours")
     {
         for (var i=0;i<nbline;i++)
@@ -307,9 +245,7 @@ function getTotal(dayList){
                 }
                 total+=taskTime.getMinutes()+60*taskTime.getHours();
             }
-        }
-        retVal=pad(Math.floor(total/60))+':'+pad(total-Math.floor(total/60)*60.);
-        if(hide_zero && retVal=='00:00')retVal='';
+        }       
     }else{
         for (var i=0;i<nbline;i++)
         {  
@@ -325,9 +261,20 @@ function getTotal(dayList){
                     }
                 }    
         } 
-        retVal= total.toFixed(2);
-        if(hide_zero && total==0)retVal='';
+        total=total*day_hours*60;
+    }
+    return total;
+}
 
+function minutesToHTML(total){ 
+    var retVal='';
+    if(time_type=="hours")
+    {
+        retVal=pad(Math.floor(total/60))+':'+pad(total-Math.floor(total/60)*60.);
+        if(hide_zero && retVal=='00:00')retVal='';
+    }else{
+        retVal= (total/60/day_hours).toFixed(2);
+        if(hide_zero && total==0)retVal='';
     }
     return retVal;
 }

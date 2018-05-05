@@ -614,7 +614,7 @@ function saveInSession(){
     $sql.=' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
     $sql.=' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
     $sql.=' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
-    $sql.='  ORDER BY '.($whiteListNumber?'listed DESC,':'').'prj.fk_soc,prjRef,tskRef ';
+    $sql.='  ORDER BY prj.fk_soc,prjRef,tskRef ';
 
      dol_syslog("timesheet::getTasksTimesheet full ", LOG_DEBUG);
 
@@ -911,7 +911,7 @@ function getHTMLHeader($ajax=false,$week=0){
         $curDay=$this->date_start+ SECINDAY*$i+SECINDAY/4;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
         $htmlDay=($conf->global->TIMESHEET_TIME_SPAN=="month")?substr($langs->trans(date('l',$curDay)),0,3):$langs->trans(date('l',$curDay));
-        $html.="\t".'<th class="Days['.$this->id.']" width="35px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay,$format)."</th>\n"; //FIXME : should remove Y/,/Y and Y from the regex
+        $html.="\t".'<th class="days_'.$this->id.'" id="'.$this->id.'_'.$i.'" width="35px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay,$format)."</th>\n"; //FIXME : should remove Y/,/Y and Y from the regex
     }
     // $html.="</tr>\n";
      //$html.='<tr id="hiddenParam" style="display:none;">';
@@ -949,7 +949,7 @@ function getHTMLHeader($ajax=false,$week=0){
     $html .="<th><div class=\"TotalUser_{$this->id}\">&nbsp;</div></th>\n"; 
     for ($i=0;$i<$length;$i++)
     {
-       $html .="<th><div class=\"TotalColumn_{$this->id}_{$i}\">&nbsp;</div></th>\n";
+       $html .="<th><div class=\"TotalColumn_{$this->id} TotalColumn_{$this->id}_{$i}\">&nbsp;</div></th>\n";
      }
     $html .="</tr>\n";
     return $html;

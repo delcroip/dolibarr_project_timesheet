@@ -38,10 +38,85 @@ class TimesheetReport
             $this->userid =$userid; // coul
             $this->name =$name; // coul
 	}
-    
-     /*
-      * startday ; start of report
-      * stopday: end of Querry
+/* Function to generate array for the resport
+ * @param   date    $startDay   start date for the query
+ * @param   date    $stopDay   start date for the query
+ * @param   string  $sqltail    sql tail after the where
+ * @return array()
+ */   
+    public function getReportArray($startDay,$stopDay, $sqltail){
+        $resArray=array();
+        $sql='SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid,';
+        if($db->type!='pgsql'){
+            $sql.= ' MAX(prj.title) as projecttitle,MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname,\' - \',usr.lastname)) as username,';
+            $sql.= ' MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle,';
+        }else{
+            $sql.= ' prj.title as projecttitle,prj.ref as projectref, CONCAT(usr.firstname,\' - \',usr.lastname) as username,';
+            $sql.= ' tsk.ref as taskref, tsk.label as tasktitle,';
+        }
+        $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
+        $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task ';
+        $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
+        $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';      
+        if(!empty($this->userid)){
+            $sql.='WHERE ptt.fk_user=\''.$this->userid.'\' ';
+        }else{
+
+            $sql.='WHERE tsk.fk_projet=\''.$this->projectid.'\' ';
+        }
+
+         $sql.='AND task_date>=\''.$this->db->idate($startDay)
+                        .'\' AND task_date<=\''.$this->db->idate($stopDay)
+                        .'\' GROUP BY usr.rowid, ptt.task_date,tsk.rowid, prj.rowid ';
+        if(!empty($sqltail)){
+            $sql.=$sqltail;
+        }
+        dol_syslog("timesheet::userreport::tasktimeList", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+                $numTaskTime = $this->db->num_rows($resql);
+                $i = 0;
+
+                // Loop on each record found,
+                while ($i < $numTaskTime)
+                {
+
+                    $error=0;
+                    $obj = $this->db->fetch_object($resql);
+                    $resArray[$i]=array('projectId' =>$obj->projectid,
+                                'projectLabel' =>$obj->projectref.' - '.$obj->projecttitle,
+                                'taskId' =>$obj->taskid,
+                                'taskLabel' =>$obj->taskref.' - '.$obj->tasktitle,
+                                'date' =>$obj->task_date,
+                                'duration' =>$obj->duration,
+                                'userid' =>$obj->userid,
+                                'userName' =>$obj->username);
+
+                    $i++;
+
+                }
+                $this->db->free($resql);
+                return $resArray;
+        }else
+        {
+                dol_print_error($this->db);
+                return array();
+        }
+        
+    }
+        
+        
+    /*
+    *  Function to generate HTML for the report
+    * @param   date    $startDay   start date for the query
+    * @param   date    $stopDay   start date for the query
+    * @param   string   $mode       specify the query type
+    * @param   
+    * @param   string  $sqltail    sql tail after the where
+    * @return string   
+
       * mode layout PTD project/task /day , PDT, DPT
       * periodeTitle give a name to the report
       * timemode show time using day or hours (==0)
@@ -68,135 +143,81 @@ class TimesheetReport
     //mode 2, PER TASK
     //list of task
     //list of user per 
-    $title=array('1'=>'Project','4'=>'Day','3'=>'Tasks','7'=>'User');
+    $title=array('projectLabel'=>'Project','date'=>'Day','taskLabel'=>'Tasks','userName'=>'User');
     $titleWidth=array('4'=>'120','7'=>'200');
-    
-    $sql='SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid,';
-    if($db->type!='pgsql'){
-        $sql.= ' MAX(prj.title) as projecttitle,MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname,\' - \',usr.lastname)) as username,';
-        $sql.= ' MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle,';
-    }else{
-        $sql.= ' prj.title as projecttitle,prj.ref as projectref, CONCAT(usr.firstname,\' - \',usr.lastname) as username,';
-        $sql.= ' tsk.ref as taskref, tsk.label as tasktitle,';
-    }
-    $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
-    $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task ';
-    $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
-    $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';      
-    if(!empty($this->userid)){
-        $sql.='WHERE ptt.fk_user=\''.$this->userid.'\' ';
-    }else{
-        
-        $sql.='WHERE tsk.fk_projet=\''.$this->projectid.'\' ';
-    }
-            
-     $sql.='AND task_date>=\''.$this->db->idate($startDay)
-                    .'\' AND task_date<=\''.$this->db->idate($stopDay)
-                    .'\' GROUP BY usr.rowid, ptt.task_date,tsk.rowid, prj.rowid ';
+    $sqltail='';
+
     switch ($mode) {
-        case 'PDT': //project  / task / Days //FIXME dayoff missing
-                
-                $sql.='ORDER BY prj.rowid,ptt.task_date,tsk.rowid ASC   ';
-                //title
-                $lvl1Title=1;
-                $lvl2Title=4;
-                $lvl3Title=3;
-                //keys
-                $lvl1Key=0;
-                $lvl2Key=4;
-                break;
-        
+        case 'PDT': //project  / task / Days //FIXME dayoff missing               
+            $sqltail='ORDER BY prj.rowid,ptt.task_date,tsk.rowid ASC   ';
+            //title
+            $lvl1Title='projectLabel';
+            $lvl2Title='date';
+            $lvl3Title='taskLabel';
+            //keys
+            $lvl1Key='projectId';
+            $lvl2Key='date';
+            break;
         case 'DPT'://day /project /task
-                $sql.='ORDER BY ptt.task_date,prj.rowid,tsk.rowid ASC   ';
-                //title
-                $lvl1Title=4;
-                $lvl2Title=1;
-                $lvl3Title=3;
-                //keys
-                $lvl1Key=4;
-                $lvl2Key=0;
-                break;
+            $sqltail='ORDER BY ptt.task_date,prj.rowid,tsk.rowid ASC   ';
+            //title
+            $lvl1Title='date';
+            $lvl2Title='projectLabel';
+            $lvl3Title='taskLabel';
+            //keys
+            $lvl1Key='date';
+            $lvl2Key='projectId';
+            break;
         case 'PTD'://day /project /task
-                $sql.='ORDER BY prj.rowid,tsk.rowid,ptt.task_date ASC   ';
-                //title
-                $lvl1Title=1;
-                $lvl2Title=3;
-                $lvl3Title=4;
-                //keys
-                $lvl1Key=0;
-                $lvl2Key=2;
-                break;
+            $sqltail='ORDER BY prj.rowid,tsk.rowid,ptt.task_date ASC   ';
+            //title
+            $lvl1Title='projectLabel';
+            $lvl2Title='taskLabel';
+            $lvl3Title='date';
+            //keys
+            $lvl1Key='projectId';
+            $lvl2Key='taskId';
+            break;
         case 'UDT': //project  / task / Days //FIXME dayoff missing
                 
-    $sql.='ORDER BY usr.rowid,ptt.task_date,tsk.rowid ASC   ';
-                //title
-                $lvl1Title=7;
-                $lvl2Title=4;
-                $lvl3Title=3;
-                //keys
-                $lvl1Key=6;
-                $lvl2Key=4;
-                break;
+            $sqltail='ORDER BY usr.rowid,ptt.task_date,tsk.rowid ASC   ';
+            //title
+            $lvl1Title='userName';
+            $lvl2Title='date';
+            $lvl3Title='taskLabel';
+            //keys
+            $lvl1Key='userId';
+            $lvl2Key='date';
+            break;
         
         case 'DUT'://day /project /task
-                $sql.='ORDER BY ptt.task_date,usr.rowid,tsk.rowid ASC   ';
-                //title
-                $lvl1Title=4;
-                $lvl2Title=7;
-                $lvl3Title=3;
-                //keys
-                $lvl1Key=4;
-                $lvl2Key=6;
-                break;
+            $sqltail='ORDER BY ptt.task_date,usr.rowid,tsk.rowid ASC   ';
+            //title
+            $lvl1Title='date';
+            $lvl2Title='userName';
+            $lvl3Title='taskLabel';
+            //keys
+            $lvl1Key='date';
+            $lvl2Key='userId';
+            break;
         case 'UTD'://day /project /task
-                $sql.='ORDER BY usr.rowid,tsk.rowid,ptt.task_date ASC   ';
-                //title
-                $lvl1Title=7;
-                $lvl2Title=3;
-                $lvl3Title=4;
-                //keys
-                $lvl1Key=6;
-                $lvl2Key=2;
-                break;
+            $sqltail=' ORDER BY usr.rowid,tsk.rowid,ptt.task_date ASC   ';
+            //title
+            $lvl1Title='userName';
+            $lvl2Title='taskLabel';
+            $lvl3Title='date';
+            //keys
+            $lvl1Key='userId';
+            $lvl2Key='taskId';
+            break;
 
         default:
             break;
     }
             
-            dol_syslog("timesheet::userreport::tasktimeList", LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            $numTaskTime=0;
-            $resArray=array();
-            if ($resql)
-            {
-                    $numTaskTime = $this->db->num_rows($resql);
-                    $i = 0;
-                   
-                    // Loop on each record found,
-                    while ($i < $numTaskTime)
-                    {
-                            
-                        $error=0;
-                        $obj = $this->db->fetch_object($resql);
-                        $resArray[$i]=array($obj->projectid,
-                                    $obj->projectref.' - '.$obj->projecttitle,
-                                    $obj->taskid,
-                                    $obj->taskref.' - '.$obj->tasktitle,
-                                    $obj->task_date,
-                                    $obj->duration,
-                                    $obj->userid,
-                                    $obj->username);
-                            
-                        $i++;
-                            
-                    }
-                    $this->db->free($resql);
-            }else
-            {
-                    dol_print_error($this->db);
-                    return '';
-            }
+            $resArray=$this->getReportArray($startDay, $stopDay, $sqltail);
+            $numTaskTime=count($resArray);
+
         if($numTaskTime>0) 
         {       
            // current
@@ -216,8 +237,8 @@ class TimesheetReport
                $HTMLRes.= '<th '.(isset($titleWidth[$lvl1Title])?'width="'.$titleWidth[$lvl1Title].'"':'' ).'>'.$item[$lvl1Title].'</th>';
                $HTMLRes.='<th '.(isset($titleWidth[$lvl2Title])?'width="'.$titleWidth[$lvl2Title].'"':'' ).'>'.$item[$lvl2Title].'</th>';
                $HTMLRes.='<th '.(isset($titleWidth[$lvl3Title])?'width="'.$titleWidth[$lvl3Title].'"':'' ).'>'.$item[$lvl3Title].'</th>';
-               $HTMLRes.='<th width="70px">'.$this->formatTime($item[5],0).'</th>';
-               $HTMLRes.='<th width="70px">'.$this->formatTime($item[5],$hoursperdays).'</th></tr>';
+               $HTMLRes.='<th width="70px">'.$this->formatTime($item['duration'],0).'</th>';
+               $HTMLRes.='<th width="70px">'.$this->formatTime($item['duration'],$hoursperdays).'</th></tr>';
             } 
             $HTMLRes.='</table>';
         }else   
@@ -257,17 +278,17 @@ class TimesheetReport
             {
                 $lvl3HTML.='<tr class="oddeven" align="left"><th></th><th></th><th>'
                     .$resArray[$key][$lvl3Title].'</th><th>';
-                $lvl3HTML.=$this->formatTime($item[5],0).'</th><th>';
-                $lvl3HTML.=$this->formatTime($item[5],$hoursperdays).'</th></tr>';                
+                $lvl3HTML.=$this->formatTime($item['duration'],0).'</th><th>';
+                $lvl3HTML.=$this->formatTime($item['duration'],$hoursperdays).'</th></tr>';                
                /*
                 if($hoursperdays==0)
                 {
-                    $lvl3HTML.=date('G:i',mktime(0,0,$resArray[$key][5])).'</th></tr>';
+                    $lvl3HTML.=date('G:i',mktime(0,0,$resArray[$key]['duration'])).'</th></tr>';
                 }else{
-                    $lvl3HTML.=$resArray[$key][5]/3600/$hoursperdays.'</th></tr>';
+                    $lvl3HTML.=$resArray[$key]['duration']/3600/$hoursperdays.'</th></tr>';
                 }*/
             }
-            $lvl3Total+=$resArray[$key][5];
+            $lvl3Total+=$resArray[$key]['duration'];
             
 
         }
