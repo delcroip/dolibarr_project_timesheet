@@ -182,7 +182,7 @@ echo '<div id="'.$role.'" class="tabBar">';
     // table footer
     echo "\n</table>";
     echo '<div class="tabsAction">';
-    echo '<input type="submit" class="butAction" name="Send" value="'.$langs->trans('Submit').'/'.$langs->trans('Next')."\" />\n";
+    echo '<input type="submit" class="butAction" name="Send" value="'.$langs->trans('ValidateAndSubmit').'/'.$langs->trans('Next')."\" />\n";
     //form footer
     echo '</div>';
     echo "\n</form>";

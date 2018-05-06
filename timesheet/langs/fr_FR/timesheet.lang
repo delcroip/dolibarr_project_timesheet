@@ -1,6 +1,6 @@
 # Dolibarr language file - Francais - timesheet
 # Translators
-# admin (288)
+#  (297)
 adddocs=Documents joints
 adddocsDesc=Permet d’ajouter des documents annexés à la feuille de temps
 addForOther=enregistrement du temps pour les autres
@@ -27,6 +27,7 @@ ColumnToShow=Colonnes à afficher
 Company=Société
 CompanyColDesc=Indique le nom de l'entreprise associée au projet
 ConfirmDeleteTimesheetwhitelist=Êtes-vous certain de vouloir supprimer ce favoris ?
+Custom=Personnalisé
 customer=Client
 customerSignature=Signature client
 DateEndColDesc=Indique la date de fin de la tâche
@@ -38,6 +39,7 @@ dropdownAjax=Désactiver l'Ajax des dropdown
 dropdownAjaxDesc=Désactiver l'ajax pour les listes déroulantes Dolibarr (en cas de problème pour entrer un nouveau favori)
 employeeSignature=Signature employé(e)
 errMsgMaxHoursExceded=Vous ne pouvez pas faire autant d'heures supplémentaires par jour
+Existing=Existant
 exportfriendly=Compatible export
 feebackDesc=Si vous êtes confronté à un problème (comportement ou traduction), si vous avez une idée d'amélioration ou une nouvelle demande de fonctionnalités, contactez-moi.
 Feedback=Commentaire
@@ -70,6 +72,7 @@ invoiceShowUser=Afficher l'utilisateur sur la facture
 invoiceShowUserDesc=Indiquer le nom d'utilisateur sur la facture lorsque le mode de facturation est 'utilisateur' ou 'utilisateur et tâche'
 invoiceTaskTime=Feuilles de temps
 invoiceTaskTimeDesc=Facture toutes les feuilles de temps ou seulement celles approuvées.
+invoicingMethod=Méthode de facturation
 managerSignature=Signature du chef d'équipe
 Manual=Manuel du module
 maxapproval=Approbations par page
@@ -106,6 +109,7 @@ ProjectColDesc=Montre la référence et le titre du projet liés à la tâche
 projectInvoice=Facturer le projet
 projectReport=Rapport de projet
 Projecttasktimelist=Listes des tasktime id
+ProjectTimeReport=Relevé d'heures du projet
 Recall=Réouvrir
 RecordDeleted=Enregistrement supprimé
 RecordNotSucessfullyCreated=Enregistrement non créé
@@ -126,7 +130,6 @@ submitted=Envoyé
 submittedColorDesc=Couleur des congés et feuilles de temps envoyées pour validation
 Subtask=Tâche enfant
 supplier=Fournisseur
-Target=Type d'approbation
 TaskParent=Tâche parente
 TaskParentColDesc=Affiche la référence de la tâche parent et le titre s'il existe une tâche parent.
 TasksColDesc=Contient la référence et le label de la tâche

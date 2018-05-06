@@ -111,35 +111,65 @@ class modTimesheet extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
+                $r=0;
 		$this->const = array();
-                $this->const[0] = array("TIMESHEET_TIME_TYPE","chaine","hours","layout mode of the timesheets"); // hours or days
-                $this->const[1] = array("TIMESHEET_DAY_DURATION","chaine","8","number of hour per day (used for the layout per day)"); 
-                $this->const[2] = array("TIMESHEET_HIDE_DRAFT","chaine","0","option to mask to task belonging to draft project"); 
-                $this->const[3] = array("TIMESHEET_HIDE_ZEROS","chaine","0","option to hide the 00:00"); 
-                $this->const[4] = array("TIMESHEET_HEADERS","chaine","Tasks","list of headers to show inthe timesheets"); 
-                $this->const[5] = array("TIMESHEET_HIDE_REF","chaine","0","option to hide the ref in the timesheets"); 
-                $this->const[6] = array("TIMESHEET_WHITELIST_MODE","chaine","0","Option to change the behaviour of the whitelist:-whiteliste,1-blackliste,2-no impact "); 
-                $this->const[7] = array("TIMESHEET_WHITELIST","chaine","1","Activate the whitelist:"); 
-                $this->const[8] = array("TIMESHEET_COL_DRAFT","chaine","FFFFFF","color of draft"); 
-                $this->const[9] = array("TIMESHEET_COL_SUBMITTED","chaine","00FFFF","color of submitted"); 
-                $this->const[10] = array("TIMESHEET_COL_APPROVED","chaine","00FF00","color of approved"); 
-                $this->const[11] = array("TIMESHEET_COL_CANCELLED","chaine","FFFF00","color of cancelled"); 
-                $this->const[12] = array("TIMESHEET_COL_REJECTED","chaine","FF0000","color of rejected"); 
-                $this->const[13] = array("TIMESHEET_DAY_MAX_DURATION","chaine","12","max working hours per days"); 
-                $this->const[14] = array("TIMESHEET_ADD_HOLIDAY_TIME","chaine","1","count the holiday in total or not"); 
-                $this->const[15] = array("TIMESHEET_OPEN_DAYS","chaine","_1111100","normal day for time booking"); 
-                $this->const[16] = array("TIMESHEET_APPROVAL_BY_WEEK","chaine","0","Approval by week instead of by user"); 
-                $this->const[17] = array("TIMESHEET_MAX_APPROVAL","chaine","5","Max TS per Approval page"); 
-                $this->const[18] = array("TIMESHEET_ADD_DOCS","chaine","0","Allow to join files to timesheets"); 
-                $this->const[19] = array("TIMESHEET_APPROVAL_FLOWS","chaine","_00000","Approval flows "); 
-                 $this->const[20] = array("TIMESHEET_INVOICE_METHOD","chaine","0","Approval by week instead of by user"); 
-                $this->const[21] = array("TIMESHEET_INVOICE_TASKTIME","chaine","all","set the default task to include in the invoice item"); 
-                $this->const[22] = array("TIMESHEET_INVOICE_SERVICE","chaine","0","set a default service for the invoice item"); 
-                $this->const[23] = array("TIMESHEET_INVOICE_SHOW_TASK","chaine","1","Show task on the invoice item "); 
-                $this->const[24] = array("TIMESHEET_INVOICE_SHOW_USER","chaine","1","Show user on the invoice item "); 
-                $this->const[25] = array("TIMESHEET_TIME_SPAN","chaine","splitedWeek","timespan of the timesheets"); // hours or days
-                $this->const[26] = array("TIMESHEET_ADD_FOR_OTHER","chaine","0","enable to time spent entry for subordinates"); // hours or days
-                $this->const[26] = array("TIMESHEET_VERSION","chaine",$this->version,"save the timesheet verison"); // hours or days
+                $this->const[$r] = array("TIMESHEET_TIME_TYPE","chaine","hours","layout mode of the timesheets"); // hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_DAY_DURATION","chaine","8","number of hour per day (used for the layout per day)"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_HIDE_DRAFT","chaine","0","option to mask to task belonging to draft project"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_HIDE_ZEROS","chaine","0","option to hide the 00:00"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_HEADERS","chaine","Tasks","list of headers to show inthe timesheets"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_HIDE_REF","chaine","0","option to hide the ref in the timesheets"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_WHITELIST_MODE","chaine","0","Option to change the behaviour of the whitelist:-whiteliste,1-blackliste,2-no impact "); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_WHITELIST","chaine","1","Activate the whitelist:"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_COL_DRAFT","chaine","FFFFFF","color of draft"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_COL_SUBMITTED","chaine","00FFFF","color of submitted"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_COL_APPROVED","chaine","00FF00","color of approved"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_COL_CANCELLED","chaine","FFFF00","color of cancelled"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_COL_REJECTED","chaine","FF0000","color of rejected"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_DAY_MAX_DURATION","chaine","12","max working hours per days"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_ADD_HOLIDAY_TIME","chaine","1","count the holiday in total or not"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_OPEN_DAYS","chaine","_1111100","normal day for time booking"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_APPROVAL_BY_WEEK","chaine","0","Approval by week instead of by user"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_MAX_APPROVAL","chaine","5","Max TS per Approval page"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_ADD_DOCS","chaine","0","Allow to join files to timesheets"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_APPROVAL_FLOWS","chaine","_00000","Approval flows "); 
+                $r++;
+                 $this->const[$r] = array("TIMESHEET_INVOICE_METHOD","chaine","0","Approval by week instead of by user"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_INVOICE_TASKTIME","chaine","all","set the default task to include in the invoice item"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_INVOICE_SERVICE","chaine","0","set a default service for the invoice item"); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_TASK","chaine","1","Show task on the invoice item "); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_USER","chaine","1","Show user on the invoice item "); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_TIME_SPAN","chaine","splitedWeek","timespan of the timesheets"); // hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER","chaine","0","enable to time spent entry for subordinates"); // hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_VERSION","chaine",$this->version,"save the timesheet verison"); // hours or days
+                $r++;
+
 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs

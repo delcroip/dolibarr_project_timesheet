@@ -969,10 +969,10 @@ function getHTMLHeader($ajax=false,$week=0){
      $isOpenSatus=in_array($this->status, array(DRAFT,CANCELLED,REJECTED));
     if($isOpenSatus){
         $html .= '<input type="submit" class="butAction" name="save" value="'.$langs->trans('Save')."\" />\n";
-        //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
+        //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('ValidateAndSubmit')."\" />\n";
 
         if(in_array('1',array_slice ($apflows,1))){
-            $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
+            $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('ValidateAndSubmit')."\" />\n";
         }
         $html .= '<a class="butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
 
@@ -1003,7 +1003,7 @@ function getHTMLHeader($ajax=false,$week=0){
     $html .= '<input type="hidden" name="target" value="'.($current+1)."\"/>\n";
     $html .= '<div class="tabsAction">';
     if($offset==0 || $prevOffset!=$offset)$html .= '<input type="submit" class="butAction" name="Send" value="'.$langs->trans('Next')."\" />\n";
-    //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
+    //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('ValidateAndSubmit')."\" />\n";
 
 
     $html .= '</div>';
@@ -1202,7 +1202,7 @@ function getHTMLGetOtherUserTs($idsList,$selected,$admin){
 
          $HTML.=$form->select_dolusers($selected,'userid');
     }
-       $HTML.='<input type="submit" name="'.$langs->trans('submit').'"/></form> ';
+       $HTML.='<input type="submit" name="'.$langs->trans('ValidateAndSubmit').'"/></form> ';
 
     return $HTML;
 }

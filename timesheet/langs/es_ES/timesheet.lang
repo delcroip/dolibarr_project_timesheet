@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-# admin (182)
+#  (186)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addForOther=registrar el tiempo pasado por otros.
@@ -27,6 +27,7 @@ ColumnToShow=Columnas para mostrar
 Company=Compañía
 CompanyColDesc=Muestra el nombre de la empresa asociada al proyecto
 ConfirmDeleteTimesheetwhitelist=Está seguro de eliminar esto?
+Custom=Personalizado
 customer=Cliente
 customerSignature=Firma del cliente
 DateEndColDesc=Muestra la fecha de finalización de la tarea
@@ -38,6 +39,7 @@ dropdownAjax=Desactivar dropdown Ajax
 dropdownAjaxDesc=desactivar el ajax para la lista desplegable de Dolibarr (en el caso en cuestión para entrar en un nuevo favoris)
 employeeSignature=Firma del empleado
 errMsgMaxHoursExceded=No puedes entrar tanto tiempo por un solo día.
+Existing=Existente
 exportfriendly=Ambiente de exportación
 feebackDesc=Si se enfrenta a un problema (comportamiento o traducción), si tiene ideas de mejora o solicitud de nuevas características, póngase en contacto conmigo.
 Feedback=Sugerencias
@@ -70,6 +72,7 @@ invoiceShowUser=Mostrar usuario en factura
 invoiceShowUserDesc=Mostrar el nombre de usuario en la factura cuando el modo de facturación es 'usuario' o 'usuario y tarea'
 invoiceTaskTime=Hojas de asistencia
 invoiceTaskTimeDesc=Facturar todas las hojas de tiempos o sólo las aprobadas.
+invoicingMethod=2) Nuevo método de facturación
 managerSignature=Firma del Jefe de Equipo.
 Manual=Manual del módulo
 maxapproval=Aprobaciones por página
@@ -106,6 +109,7 @@ ProjectColDesc=Muestra la referencia y el título del proyecto vinculados a la t
 projectInvoice=Factura de proyecto
 projectReport=Informe del proyecto
 Projecttasktimelist=Lista de id de tareas
+ProjectTimeReport=Informe de la hoja de tiempo del proyecto
 Recall=Recuperación
 RecordDeleted=Registro borrado
 RecordNotSucessfullyCreated=Registro no creado
@@ -126,7 +130,6 @@ submitted=Enviado
 submittedColorDesc=Color para el día festivo y la hoja de horas presentada para su aprobación
 Subtask=Tarea
 supplier=Proveedor
-Target=Tipo de aprobación
 TaskParent=Tarea principal
 TaskParentColDesc=Muestra la referencia de la tarea padre y el título si hay alguna tarea padre.
 TasksColDesc=Muestra la referencia y el título de la tarea

@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-# admin (214)
+#  (218)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addForOther=registrare il tempo speso per gli altri.
@@ -27,6 +27,7 @@ ColumnToShow=Colonne da mostrare
 Company=Azienda
 CompanyColDesc=Contiene il nome della società  relativo al progetto
 ConfirmDeleteTimesheetwhitelist=Sei sicuro di voler eliminare questa voce?
+Custom=Personalizzato
 customer=Cliente
 customerSignature=Firma del Cliente
 DateEndColDesc=Indica la data di fine del compito
@@ -38,6 +39,7 @@ dropdownAjax=Disabilita discesa Ajax
 dropdownAjaxDesc=Disattivare il ajax per gli elenchi a discesa Dolibarr (nel caso in cui alla data di rilascio per inserire una nuova whitelist)
 employeeSignature=Firma del lavoratore
 errMsgMaxHoursExceded=Non è possibile inserire più di tanto tempo per un solo giorno
+Existing=Existing
 exportfriendly=esportazione Compatibile
 feebackDesc=Se sei di fronte a un problema (comportamento o traduzione), se hai idea di miglioramento o richiede nuove funzionalità, contattaci.
 Feedback=Feedback
@@ -70,6 +72,7 @@ invoiceShowUser=Mostra utente sulla fattura
 invoiceShowUserDesc=Mostra il nome utente sulla fattura quando la modalità di fatturazione è 'utente' o 'utente e compito'
 invoiceTaskTime=Schede orarie
 invoiceTaskTimeDesc=fatturare tutte le schede o solo l'approvazione.
+invoicingMethod=Modalità di Fatturazione
 managerSignature=Firma del responsabile del team
 Manual=Manuale del modulo
 maxapproval=Approvazioni per pagina
@@ -106,6 +109,7 @@ ProjectColDesc=Contiene il riferimento e il titolo del progetto che il compito a
 projectInvoice=Progetto di fatturazione
 projectReport=Relazione di progetto
 Projecttasktimelist=Lista id TaskTime
+ProjectTimeReport=Rapporto della scheda attività del progetto
 Recall=Richiamo
 RecordDeleted=Risparmio cancellato
 RecordNotSucessfullyCreated=Record non creato
@@ -126,7 +130,6 @@ submitted=Inviato
 submittedColorDesc=Colore per la festa e scheda attività sottoposto all'approvazione
 Subtask=Bambino Task
 supplier=Fornitore
-Target=Tipo di approvazione
 TaskParent=attività  principale
 TaskParentColDesc=Contiene il riferimento e l'etichetta del compito genitore a compito
 TasksColDesc=Contiene il riferimento e il compito di etichette

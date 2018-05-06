@@ -48,7 +48,7 @@ class TimesheetReport
         $resArray=array();
         $sql='SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid,';
         if($db->type!='pgsql'){
-            $sql.= ' MAX(prj.title) as projecttitle,MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname,\' - \',usr.lastname)) as username,';
+            $sql.= ' MAX(prj.title) as projecttitle,MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname,\', \',usr.lastname)) as username,';
             $sql.= ' MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle,';
         }else{
             $sql.= ' prj.title as projecttitle,prj.ref as projectref, CONCAT(usr.firstname,\' - \',usr.lastname) as username,';
@@ -66,9 +66,9 @@ class TimesheetReport
             $sql.='WHERE tsk.fk_projet=\''.$this->projectid.'\' ';
         }
 
-         $sql.='AND task_date>=\''.$this->db->idate($startDay)
-                        .'\' AND task_date<=\''.$this->db->idate($stopDay)
-                        .'\' GROUP BY usr.rowid, ptt.task_date,tsk.rowid, prj.rowid ';
+         if(!empty($startDay))$sql.='AND task_date>=\''.$this->db->idate($startDay).'\'';
+          if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
+         $sql.=' GROUP BY usr.rowid, ptt.task_date,tsk.rowid, prj.rowid ';
         if(!empty($sqltail)){
             $sql.=$sqltail;
         }

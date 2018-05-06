@@ -147,7 +147,7 @@ $langs->load('timesheet@timesheet');
             $Form .='<tr class="liste_titre" width="100%" ><th colspan="8">'.$langs->trans('invoicedServiceSelectoin').'</th><th>';
             $Form .='<tr class="liste_titre" width="100%" ><th >'.$langs->trans("User").'</th>';
             $Form .='<th >'.$langs->trans("Task").'</th><th >'.$langs->trans("Service").':'.$langs->trans("Existing")."/".$langs->trans("Custom").'</th>';
-            $Form .='<th >'.$langs->trans("Custom").':'.$langs->trans("Description").'</th><th >'.$langs->trans("Custom").':'.$langs->trans("PriceHT").'</th>';
+            $Form .='<th >'.$langs->trans("Custom").':'.$langs->trans("Description").'</th><th >'.$langs->trans("Custom").':'.$langs->trans("UnitPriceHT").'</th>';
             $Form .='<th >'.$langs->trans("Custom").':'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("savedDuration").'</th>';
             $form = new Form($db);
             foreach($resArray as $res){
@@ -268,7 +268,7 @@ $edit=0;
             $Form .='</th></tr><tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Month').' - '.$langs->trans('Year').'</th><th align="left">'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3).'</th></tr>';
  //           $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Month').'</th><th ><input type="text" name="month" value ="'.$month.'"></th></tr>';
            // $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Customer').'</th><th "><input type="text" name="ccust" value ="'.$custId.'"></th></tr>';
-            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Mode').'</th><th align="left"><input type="radio" name="invoicingMethod" value="task" ';
+            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('invoicingMethod').'</th><th align="left"><input type="radio" name="invoicingMethod" value="task" ';
             $Form .=($invoicingMethod=="task"?"checked":"").'> '.$langs->trans("Tasks").'</br> ';
             $Form .='<input type="radio" name="invoicingMethod" value="user" ';
             $Form .=($invoicingMethod=="user"?"checked":"").'> '.$langs->trans("User")."</br> ";
@@ -308,7 +308,7 @@ $edit=0;
 * Put here all code to build page
 ****************************************************/
 $morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js");
-llxHeader('',$langs->trans('TimesheetInvoice'),'','','','',$morejs);
+llxHeader('',$langs->trans('TimesheetToInvoice'),'','','','',$morejs);
 
 
 print $Form;
