@@ -103,9 +103,9 @@ if($action=='submit'){
 
                            //$ret =postActuals($db,$user,$_POST['task'],$token);
  
-                if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").$tsApproved);
-                if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").$tsRejected);
-                if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").$errors,'errors');
+                if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").' '.$tsApproved);
+                if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").' '.$tsRejected);
+                if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").' '.$errors,'errors');
 
                 if($errors==0 && $tsApproved==0 && $tsRejected==0){
                     setEventMessage($langs->transnoentitiesnoconv("NothingChanged"),'warning');

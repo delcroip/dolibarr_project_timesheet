@@ -345,7 +345,7 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskLabel]"  value="'. $taskLabel.'">';
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskTimeList]"  value="'. $tasktimelist.'">';
     $defaultService=$conf->global->TIMESHEET_INVOICE_SERVICE; 
-    $addchoices=array('-999'=> $langs->transnoentitiesnoconv('not2invoice'),-1=> $langs->transnoentitiesnoconv('Custom'));
+    $addchoices=array('-999'=> $langs->transnoentities('not2invoice'),-1=> $langs->transnoentities('Custom'));
     
     $ajaxNbChar=$conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
     $html.='</th><th >'.select_generic('product', 'rowid','userTask['.$user.']['.$task.'][Service]','ref','label',$defaultService,$separator=' - ',$sqlTail=' tosell=1 AND fk_product_type=1', $selectparam='',$addchoices,'',$ajaxNbChar,0).'</th>';
