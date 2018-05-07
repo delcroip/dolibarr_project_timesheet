@@ -42,6 +42,11 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
 
 
 # Change log
+2.2.11 change log from 2.2.10
+ -fix: background color missing with approval status
+ -clean: total calculation improvments 
+ -clean: add new trads
+ -clean: remove display error
 
 2.2.10 change log from 2.2.9
  - new: line total header
