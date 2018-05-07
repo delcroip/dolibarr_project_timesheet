@@ -749,7 +749,8 @@ function getUserName(){
  *  @param    string              	$status              to overrule the logic if the status enter has an higher priority
  *  @return     string                         status updated of KO(-1)
  */
-function updateStatus($user,$status=''){
+function updateStatus($user,$status=0){
+
     if($this->id<=0)return -1;
     $updatedStatus=2;
     if ($status!=''){
@@ -777,7 +778,7 @@ function updateStatus($user,$status=''){
     }
     $this->status= $updatedStatus;
     $this->update($user);
-    return $this->status;
+     return $this->status;
 }
  
  /*
@@ -969,10 +970,10 @@ function getHTMLHeader($ajax=false,$week=0){
      $isOpenSatus=in_array($this->status, array(DRAFT,CANCELLED,REJECTED));
     if($isOpenSatus){
         $html .= '<input type="submit" class="butAction" name="save" value="'.$langs->trans('Save')."\" />\n";
-        //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('ValidateAndSubmit')."\" />\n";
+        //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
 
         if(in_array('1',array_slice ($apflows,1))){
-            $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('ValidateAndSubmit')."\" />\n";
+            $html .= '<input type="submit" class="butAction" name="submit"  value="'.$langs->trans('Submit')."\" />\n";
         }
         $html .= '<a class="butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
 
@@ -1003,7 +1004,7 @@ function getHTMLHeader($ajax=false,$week=0){
     $html .= '<input type="hidden" name="target" value="'.($current+1)."\"/>\n";
     $html .= '<div class="tabsAction">';
     if($offset==0 || $prevOffset!=$offset)$html .= '<input type="submit" class="butAction" name="Send" value="'.$langs->trans('Next')."\" />\n";
-    //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('ValidateAndSubmit')."\" />\n";
+    //$html .= '<input type="submit" class="butAction" name="submit" onClick="return submitTs();" value="'.$langs->trans('Submit')."\" />\n";
 
 
     $html .= '</div>';
@@ -1202,7 +1203,7 @@ function getHTMLGetOtherUserTs($idsList,$selected,$admin){
 
          $HTML.=$form->select_dolusers($selected,'userid');
     }
-       $HTML.='<input type="submit" name="'.$langs->trans('ValidateAndSubmit').'"/></form> ';
+       $HTML.='<input type="submit" value="'.$langs->trans('Submit').'"/></form> ';
 
     return $HTML;
 }

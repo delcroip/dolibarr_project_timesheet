@@ -28,7 +28,6 @@ class TimesheetTask extends Task
 {
     	public $element='Task_time_approval';			//!< Id that identify managed objects
 	public $table_element='project_task_time_approval';		//!< Name of table without prefix where object is stored
-        static $statusColor;
         private $ProjectTitle		=	"Not defined";
         public $tasklist;
        // private $fk_project;
@@ -85,8 +84,7 @@ class TimesheetTask extends Task
          * 
          */
         global $conf;
-        self::$statusColor=array('PLANNED'=>$conf->global->TIMESHEET_COL_DRAFT,'DRAFT'=>$conf->global->TIMESHEET_COL_DRAFT,'SUBMITTED'=>$conf->global->TIMESHEET_COL_SUBMITTED,'UNDERAPPROVAL'=>$conf->global->TIMESHEET_COL_SUBMITTED,'CHALLENGED'=>$conf->global->TIMESHEET_COL_REJECTED,'APPROVED'=>$conf->global->TIMESHEET_COL_APPROVED,'INVOICED'=>$conf->global->TIMESHEET_COL_APPROVED,'CANCELLED'=>$conf->global->TIMESHEET_COL_CANCELLED,'REJECTED'=>$conf->global->TIMESHEET_COL_REJECTED);
-        //self::$statusList=array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=>'INVOICED',4=>'APPROVED',5=>'SUBMITTED',6=>'UNDERAPPROVAL',7=>'CHALLENGED',8=>'REJECTED');
+     //self::$statusList=array(0=>'CANCELLED',1=>'PLANNED',2=>'DRAFT',3=>'INVOICED',4=>'APPROVED',5=>'SUBMITTED',6=>'UNDERAPPROVAL',7=>'CHALLENGED',8=>'REJECTED');
         //self::$roleList=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
  //       self::$apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS); //remove the leading _
     
@@ -600,6 +598,7 @@ class TimesheetTask extends Task
  */
   
     Public function updateTaskTime($status){
+        $error=0;
         if($status<0 || $status>STATUSMAX) return -1; // role not valide      
 //Update the the fk_tta in the project task time 
         $idList=array(); 
@@ -614,36 +613,41 @@ class TimesheetTask extends Task
         dol_syslog(__METHOD__);
         $this->db->begin();
 	$resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			 }
-		}
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}  
-        return $ret;// team key is 0 
+
+    	if (! $resql) { 
+            $error++; 
+            $this->errors[]="Error ".$this->db->lasterror();  
+        }
+        if (! $error)
+        {
+                if (! $notrigger)
+                {
+            // Uncomment this and change MYOBJECT to your own tag if you
+            // want this action calls a trigger.
+            //// Call triggers
+            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+            //// End call triggers
+                 }
+        }
+// Commit or rollback
+        if ($error)
+        {
+                foreach($this->errors as $errmsg)
+                {
+            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+            $this->error.=($this->error?', '.$errmsg:$errmsg);
+                }
+                $this->db->rollback();
+                return -1*$error;
+        }
+        else
+        {
+                $this->db->commit();
+                return 1;
+        }  
+
+        return 1;
     }            
         
         
@@ -812,7 +816,7 @@ class TimesheetTask extends Task
  */
        public function getFormLine( $lineNumber,$headers,$tsUserId=0,$openOveride=0)
     {
-           global $langs,$conf;
+           global $langs,$conf,$statusColor;
            // change the time to take all the TS per day
 
            $dayelapsed=getDayInterval($this->date_start_approval,$this->date_end_approval);
@@ -835,7 +839,7 @@ class TimesheetTask extends Task
   if(($this->pStatus == "2")){
       $linestyle.='background:#'.TIMESHEET_BC_FREEZED.';';
   }else{
-      $linestyle.='background:#'.self::$statusColor[$this->status].';';// --FIXME
+      $linestyle.='background:#'.$statusColor[$this->status].';';// --FIXME
   }
     /*
      * Open task ?
@@ -957,7 +961,7 @@ class TimesheetTask extends Task
                 $bkcolor='';
 
                 if($isOpen){
-                    $bkcolor='background:#'.self::$statusColor[$this->status];
+                    $bkcolor='background:#'.$statusColor[$this->status];
                     if($dayWorkLoadSec!=0 && $this->status==DRAFT )$bkcolor='background:#'.TIMESHEET_BC_VALUE;
                     
                     
@@ -1412,8 +1416,8 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
         global $apflows;
         $userId=  is_object($user)?$user->id:$user;
         if($role<0&& $role>ROLEMAX) return -1; // role not valide
-        $nextStatus='';
-        $ret=0;
+        $nextStatus=0;
+        $ret=-1;
 
         //set the approver
         $this->user_app[$role]=$userId;
@@ -1434,23 +1438,20 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
             }
 
         }
-        
+       
         if($ret>0){//other approval found
+            $nextStatus=UNDERAPPROVAL;
             $ret=$this->setStatus($user,UNDERAPPROVAL,$updteTS);
         }else if($this->sender==$role){ // only if the role was alloed
              $this->recipient=USER;
-             $ret=$this->setStatus($user,APPROVED,$updteTS);
+             $nextStatus=APPROVED;           
             // if approved,recipient 
 
             //$this->recipient= self::$roleList[array_search('1', self::$apflows)];
         }
+        $ret=$this->setStatus($user,$nextStatus,$updteTS);
         // save the change in the db
-         
-         if($ret>0)$ret=$this->updateTaskTime($nextStatus);
-
-    
-        
-        
+         if($ret>0)$ret=$this->updateTaskTime($nextStatus); 
         return $ret;
     }
         
@@ -1466,7 +1467,7 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
     Public function challenged($user,$role,$updteTS=true){
         global $apflows;
         $userId=  is_object($user)?$user->id:$user;
-        $nextStatus='';
+        $nextStatus=0;
         if($role<0&& $role>ROLEMAX) return -1; // role not valide
         $ret=-1;
        //unset the approver ( could be set previsouly)
@@ -1485,14 +1486,14 @@ function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status
             }
         } 
         if($ret>0){//other approval found
-            $ret=$this->setStatus($user,CHALLENGED,$updteTS);
+            $nextStatus=CHALLENGED;
         }else if($this->sender==$role) { //update only if the role was allowed
-            $this->recipient=USER;
-            $ret=$this->setStatus($user,REJECTED,$updteTS);                   
+            $this->recipient=USER;   
+            $nextStatus=REJECTED;
         }
-       
+        $ret=$this->setStatus($user,$nextStatus,$updteTS);  
         if($ret>0)$ret=$this->updateTaskTime($nextStatus);
-        return $ret+1;// team key is 0 
+        return $ret;// team key is 0 
     }        
         
 
