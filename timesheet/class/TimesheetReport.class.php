@@ -26,17 +26,90 @@ class TimesheetReport
     public $projectid;
     public $userid;
     public $name;
+    public $startDate;
+    public $stopDate;
+    public $mode;
+    public $modeSQLOrder;
+    public $lvl1Title;
+    public $lvl2Title;
+    public $lvl3Title;
+    public $lvl1Key;
+    public $lvl2Key;
+    
     
     public function __construct($db) 
 	{
             $this->db = $db;
 	}
         
-    public function initBasic($projectid,$userid,$name) 
+    public function initBasic($projectid,$userid,$name,$startDate,$stopDate,$mode) 
 	{
             $this->projectid =$projectid; // coul
             $this->userid =$userid; // coul
             $this->name =$name; // coul
+            $this->startDate=$startDate;
+            $this->stopDate=$stopDate;
+            $this->mode=$mode;
+        switch ($mode) {
+        case 'PDT': //project  / task / Days //FIXME dayoff missing               
+            $this->modeSQLOrder='ORDER BY prj.rowid,ptt.task_date,tsk.rowid ASC   ';
+            //title
+            $this->lvl1Title='projectLabel';
+            $this->lvl2Title='date';
+            $this->lvl3Title='taskLabel';
+            //keys
+            $this->lvl1Key='projectId';
+            $this->lvl2Key='date';
+            break;
+        case 'DPT'://day /project /task
+            $sqltail='ORDER BY ptt.task_date,prj.rowid,tsk.rowid ASC   ';
+            //title
+            $this->lvl1Title='date';
+            $this->lvl2Title='projectLabel';
+            $this->lvl3Title='taskLabel';
+            //keys
+            $this->lvl1Key='date';
+            $this->lvl2Key='projectId';
+            break;
+        case 'PTD'://day /project /task
+            $sqltail='ORDER BY prj.rowid,tsk.rowid,ptt.task_date ASC   ';
+            //title
+            $this->lvl1Title='projectLabel';
+            $this->lvl2Title='taskLabel';
+            $this->lvl3Title='date';
+            //keys
+            $this->lvl1Key='projectId';
+            $this->lvl2Key='taskId';
+            break;
+        case 'UDT': //project  / task / Days //FIXME dayoff missing
+                
+            $sqltail='ORDER BY usr.rowid,ptt.task_date,tsk.rowid ASC   ';
+            //title
+            $this->lvl1Title='userName';
+            $this->lvl2Title='date';
+            $this->lvl3Title='taskLabel';
+            //keys
+            $this->lvl1Key='userId';
+            $this->lvl2Key='date';
+            break;
+        
+        case 'DUT'://day /project /task
+            $sqltail='ORDER BY ptt.task_date,usr.rowid,tsk.rowid ASC   ';
+            //title
+            $this->lvl1Title='date';
+            $this->lvl2Title='userName';
+            $this->lvl3Title='taskLabel';
+            //keys
+            $this->lvl1Key='date';
+            $this->lvl2Key='userId';
+            break;
+        case 'UTD'://day /project /task
+            $sqltail=' ORDER BY usr.rowid,tsk.rowid,ptt.task_date ASC   ';
+            break;
+
+        default:
+            break;
+    }
 	}
 /* Function to generate array for the resport
  * @param   date    $startDay   start date for the query
@@ -44,7 +117,7 @@ class TimesheetReport
  * @param   string  $sqltail    sql tail after the where
  * @return array()
  */   
-    public function getReportArray($startDay,$stopDay, $sqltail){
+    public function getReportArray($sqltail=''){
         $resArray=array();
         $sql='SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid,';
         if($db->type!='pgsql'){
@@ -66,12 +139,13 @@ class TimesheetReport
             $sql.='WHERE tsk.fk_projet=\''.$this->projectid.'\' ';
         }
 
-         if(!empty($startDay))$sql.='AND task_date>=\''.$this->db->idate($startDay).'\'';
-          if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
+         if(!empty($startDay))$sql.='AND task_date>=\''.$this->db->idate($this->startDate).'\'';
+          if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
          $sql.=' GROUP BY usr.rowid, ptt.task_date,tsk.rowid, prj.rowid ';
         if(!empty($sqltail)){
             $sql.=$sqltail;
         }
+        $sql.=$this->modeSQLOrder;
         dol_syslog("timesheet::userreport::tasktimeList", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -121,7 +195,7 @@ class TimesheetReport
       * periodeTitle give a name to the report
       * timemode show time using day or hours (==0)
       */
-    public function getHTMLreport($startDay,$stopDay,$mode,$short,$periodTitle,$hoursperdays,$reportfriendly=0){
+    public function getHTMLreport($short,$periodTitle,$hoursperdays,$reportfriendly=0){
     // HTML buffer
     global $langs;
     $lvl1HTML='';
@@ -146,76 +220,8 @@ class TimesheetReport
     $title=array('projectLabel'=>'Project','date'=>'Day','taskLabel'=>'Tasks','userName'=>'User');
     $titleWidth=array('4'=>'120','7'=>'200');
     $sqltail='';
-
-    switch ($mode) {
-        case 'PDT': //project  / task / Days //FIXME dayoff missing               
-            $sqltail='ORDER BY prj.rowid,ptt.task_date,tsk.rowid ASC   ';
-            //title
-            $lvl1Title='projectLabel';
-            $lvl2Title='date';
-            $lvl3Title='taskLabel';
-            //keys
-            $lvl1Key='projectId';
-            $lvl2Key='date';
-            break;
-        case 'DPT'://day /project /task
-            $sqltail='ORDER BY ptt.task_date,prj.rowid,tsk.rowid ASC   ';
-            //title
-            $lvl1Title='date';
-            $lvl2Title='projectLabel';
-            $lvl3Title='taskLabel';
-            //keys
-            $lvl1Key='date';
-            $lvl2Key='projectId';
-            break;
-        case 'PTD'://day /project /task
-            $sqltail='ORDER BY prj.rowid,tsk.rowid,ptt.task_date ASC   ';
-            //title
-            $lvl1Title='projectLabel';
-            $lvl2Title='taskLabel';
-            $lvl3Title='date';
-            //keys
-            $lvl1Key='projectId';
-            $lvl2Key='taskId';
-            break;
-        case 'UDT': //project  / task / Days //FIXME dayoff missing
-                
-            $sqltail='ORDER BY usr.rowid,ptt.task_date,tsk.rowid ASC   ';
-            //title
-            $lvl1Title='userName';
-            $lvl2Title='date';
-            $lvl3Title='taskLabel';
-            //keys
-            $lvl1Key='userId';
-            $lvl2Key='date';
-            break;
         
-        case 'DUT'://day /project /task
-            $sqltail='ORDER BY ptt.task_date,usr.rowid,tsk.rowid ASC   ';
-            //title
-            $lvl1Title='date';
-            $lvl2Title='userName';
-            $lvl3Title='taskLabel';
-            //keys
-            $lvl1Key='date';
-            $lvl2Key='userId';
-            break;
-        case 'UTD'://day /project /task
-            $sqltail=' ORDER BY usr.rowid,tsk.rowid,ptt.task_date ASC   ';
-            //title
-            $lvl1Title='userName';
-            $lvl2Title='taskLabel';
-            $lvl3Title='date';
-            //keys
-            $lvl1Key='userId';
-            $lvl2Key='taskId';
-            break;
-
-        default:
-            break;
-    }
-            
-            $resArray=$this->getReportArray($startDay, $stopDay, $sqltail);
+            $resArray=$this->getReportArray();
             $numTaskTime=count($resArray);
 
         if($numTaskTime>0) 
@@ -226,17 +232,17 @@ class TimesheetReport
             //$HTMLRes='<br><div class="titre">'.$this->name.', '.$periodTitle.'</div>';
             $HTMLRes.='<table class="noborder" width="100%">';
             $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans('Name');
-            $HTMLRes.='</th><th>'.$langs->trans($title[$lvl1Title]).'</th><th>';
-            $HTMLRes.=$langs->trans($title[$lvl2Title]).'</th>';
-            $HTMLRes.='<th>'.$langs->trans($title[$lvl3Title]).'</th>';
+            $HTMLRes.='</th><th>'.$langs->trans($title[$this->lvl1Title]).'</th><th>';
+            $HTMLRes.=$langs->trans($title[$this->lvl2Title]).'</th>';
+            $HTMLRes.='<th>'.$langs->trans($title[$this->lvl3Title]).'</th>';
             $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
             $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
             foreach($resArray as $key => $item)
             {
                $HTMLRes.= '<tr class="oddeven" align="left"><th width="200px">'.$this->name.'</th>';
-               $HTMLRes.= '<th '.(isset($titleWidth[$lvl1Title])?'width="'.$titleWidth[$lvl1Title].'"':'' ).'>'.$item[$lvl1Title].'</th>';
-               $HTMLRes.='<th '.(isset($titleWidth[$lvl2Title])?'width="'.$titleWidth[$lvl2Title].'"':'' ).'>'.$item[$lvl2Title].'</th>';
-               $HTMLRes.='<th '.(isset($titleWidth[$lvl3Title])?'width="'.$titleWidth[$lvl3Title].'"':'' ).'>'.$item[$lvl3Title].'</th>';
+               $HTMLRes.= '<th '.(isset($titleWidth[$this->lvl1Title])?'width="'.$titleWidth[$this->lvl1Title].'"':'' ).'>'.$item[$this->lvl1Title].'</th>';
+               $HTMLRes.='<th '.(isset($titleWidth[$this->lvl2Title])?'width="'.$titleWidth[$this->lvl2Title].'"':'' ).'>'.$item[$this->lvl2Title].'</th>';
+               $HTMLRes.='<th '.(isset($titleWidth[$this->lvl3Title])?'width="'.$titleWidth[$this->lvl3Title].'"':'' ).'>'.$item[$this->lvl3Title].'</th>';
                $HTMLRes.='<th width="70px">'.$this->formatTime($item['duration'],0).'</th>';
                $HTMLRes.='<th width="70px">'.$this->formatTime($item['duration'],$hoursperdays).'</th></tr>';
             } 
@@ -247,11 +253,11 @@ class TimesheetReport
         {
             
 
-            if(($resArray[$Curlvl2][$lvl2Key]!=$resArray[$key][$lvl2Key])
-                    ||($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
+            if(($resArray[$Curlvl2][$this->lvl2Key]!=$resArray[$key][$this->lvl2Key])
+                    ||($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key]))
             {
                 $lvl2HTML.='<tr class="oddeven" align="left"><th></th><th>'
-                        .$resArray[$Curlvl2][$lvl2Title].'</th>';
+                        .$resArray[$Curlvl2][$this->lvl2Title].'</th>';
                 if(!$short)$lvl2HTML.='<th></th>';
                 $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,0).'</th>';
                 $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
@@ -260,10 +266,10 @@ class TimesheetReport
                 $lvl2Total+=$lvl3Total;
                 $lvl3Total=0;
                 $Curlvl2=$key;
-                if(($resArray[$Curlvl1][$lvl1Key]!=$resArray[$key][$lvl1Key]))
+                if(($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key]))
                 {
                     $lvl1HTML.='<tr class="oddeven" align="left"><th >'
-                            .$resArray[$Curlvl1][$lvl1Title].'</th><th></th>';
+                            .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
                     if(!$short)$lvl1HTML.='<th></th>';
                     $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,0).'</th>';
                     $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
@@ -277,7 +283,7 @@ class TimesheetReport
             if(!$short)
             {
                 $lvl3HTML.='<tr class="oddeven" align="left"><th></th><th></th><th>'
-                    .$resArray[$key][$lvl3Title].'</th><th>';
+                    .$resArray[$key][$this->lvl3Title].'</th><th>';
                 $lvl3HTML.=$this->formatTime($item['duration'],0).'</th><th>';
                 $lvl3HTML.=$this->formatTime($item['duration'],$hoursperdays).'</th></tr>';                
                /*
@@ -294,14 +300,14 @@ class TimesheetReport
         }
        //handle the last line 
         $lvl2HTML.='<tr class="oddeven" align="left"><th></th><th>'
-                .$resArray[$Curlvl2][$lvl2Title].'</th>';
+                .$resArray[$Curlvl2][$this->lvl2Title].'</th>';
         if(!$short)$lvl2HTML.='<th></th>';
         $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,0).'</th>';
         $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
         $lvl2HTML.=$lvl3HTML;
         $lvl2Total+=$lvl3Total;
         $lvl1HTML.='<tr class="oddeven" align="left"><th >'
-                .$resArray[$Curlvl1][$lvl1Title].'</th><th></th>';
+                .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
         if(!$short)$lvl1HTML.='<th></th>';
         $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,0).'</th>';
         $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
@@ -310,9 +316,9 @@ class TimesheetReport
         // make the whole result
          $HTMLRes='<br><div class="titre">'.$this->name.', '.$periodTitle.'</div>';
          $HTMLRes.='<table class="noborder" width="100%">';
-         $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans($title[$lvl1Title]).'</th><th>'
-                .$langs->trans($title[$lvl2Title]).'</th>';
-         $HTMLRes.=(!$short)?'<th>'.$langs->trans($title[$lvl3Title]).'</th>':'';
+         $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans($title[$this->lvl1Title]).'</th><th>'
+                .$langs->trans($title[$this->lvl2Title]).'</th>';
+         $HTMLRes.=(!$short)?'<th>'.$langs->trans($title[$this->lvl3Title]).'</th>':'';
          $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
          $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
             

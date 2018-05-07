@@ -54,7 +54,13 @@ if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
 }else {
     $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
 }
-
+    $mode=$_POST['mode'];
+    $short=$_POST['short'];
+    $userSelected=$userList[$userIdSelected];
+    $year=$_POST['year'];
+    $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
+    $firstDay= ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
+$lastDay=  ($month)?strtotime('last day of this month',$firstDay):strtotime('last day of previous month');
 $_SESSION["dateStart"]=$dateStart ;
 
 llxHeader('',$langs->trans('userReport'),'');
@@ -126,22 +132,16 @@ $querryRes='';
 if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected']) 
         &&!empty($_POST['month']))
 {
-    $mode=$_POST['mode'];
-    $short=$_POST['short'];
-    $userSelected=$userList[$userIdSelected];
-    $year=$_POST['year'];
-    $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
-    
-    $firstDay= strtotime('01-'.$month.'-'. $year);
-    $lastDay=  strtotime('last day of this month',$firstDay);
+
+
     if($userIdSelected=='-999'){
         foreach($userList as $userSt){
-        $querryRes.=$userSt->getHTMLreport($firstDay,$lastDay,$mode,$short,
+        $querryRes.=$userSt->getHTMLreport($short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
         }
     }else{
-        $querryRes=$userSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
+        $querryRes=$userSelected->getHTMLreport($short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
     }

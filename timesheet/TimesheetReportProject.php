@@ -38,6 +38,9 @@ $projectSelectedId=GETPOST('projectSelected');
     $month=GETPOST('month','alpha');//strtotime(str_replace('/', '-',$_POST['Date']))
 // Load traductions files requiredby by page
 //$langs->load("companies");
+$firstDay= ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
+$lastDay=  ($month)?strtotime('last day of this month',$firstDay):strtotime('last day of previous month');
+
 $langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
@@ -89,7 +92,7 @@ if ($resql)
                 $error=0;
                 $obj = $db->fetch_object($resql);
                 $projectList[$obj->rowid]=new TimesheetReport($db);
-                $projectList[$obj->rowid]->initBasic($obj->rowid,'',$obj->ref.' - '.$obj->title);
+                $projectList[$obj->rowid]->initBasic($obj->rowid,'',$obj->ref.' - '.$obj->title,$firstDay,$lastDay,$mode);
                 $i++;
         }
         $db->free($resql);
@@ -121,17 +124,15 @@ if ($projectSelectedId   &&!empty($month))
 {
 
     $projectSelected=$projectList[$projectSelectedId];
-; 
-    $firstDay= strtotime('01-'.$month.'-'. $year);
-    $lastDay=  strtotime('last day of this month',$firstDay);
+
     if($projectSelectedId=='-999'){
         foreach($projectList as $project){
-        $querryRes.=$project->getHTMLreport($firstDay,$lastDay,$mode,$short,
+        $querryRes.=$project->getHTMLreport($short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
         }
     }else{
-    $querryRes=$projectSelected->getHTMLreport($firstDay,$lastDay,$mode,$short,
+    $querryRes=$projectSelected->getHTMLreport($short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
     }
