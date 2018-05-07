@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-#  (301)
+#  (310)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addForOther=register time spent for others.
@@ -92,6 +92,7 @@ NoteDesc=Show an icon that will open a note line below the task's line when clic
 NothingChanged=Nothing has change
 NothingToValidate=Nothing to validate
 notYourWhitelist=This entry doesn't belong to you
+NumberOfErrors=Number of errors:
 NumberOfTimesheetApproved=Number of timesheet approved :
 NumberOfTimesheetRejected=Number of timesheet rejected :
 NumberOfTimeSpendCreated=Number of time spend created :
@@ -135,15 +136,16 @@ TaskParentColDesc=Shows the parent task's reference and the title if there is an
 TasksColDesc=Shows the task's reference and title
 team=Team
 Timesheet=Timesheet
-Timesheet view=Timesheet view
 Timesheetapproval=Timesheet approval
 TimesheetNotInvoiced=Include only timesheet not invoiced
 timesheetNotRecalled=Timesheet not recalled
 timesheetRecalled=Timesheet recalled succesfully
 timesheetSetup=Setup of the timesheet module
+timesheetSubmitted=Timesheet sent for Approval
 timesheetSumitted=Timesheet submitted
 TimesheetToInvoice=Timesheet to invoice
 Timesheetuser=User's timesheet
+TimesheetView=Module to have a nicer timesheet view, to generate report on users or projects and to invoice project based on the time registered.
 Timesheetwhitelist=Favorites
 timeSpan=time span
 timeSpanDesc=Time span for the timesheet entries.

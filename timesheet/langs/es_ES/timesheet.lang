@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-#  (186)
+#  (190)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addForOther=registrar el tiempo pasado por otros.
@@ -92,6 +92,7 @@ NoteDesc=Mostrar un icono que abrirá una línea de la nota por debajo de línea
 NothingChanged=Nada ha cambiado
 NothingToValidate=Nada que validar
 notYourWhitelist=Esta entrada no te pertenece
+NumberOfErrors=Cantidad de errores:
 NumberOfTimesheetApproved=Número de hojas aprobadas:
 NumberOfTimesheetRejected=Número de hoja de horarios rechazada:
 NumberOfTimeSpendCreated=Cantidad de tiempo invertido:
@@ -135,15 +136,16 @@ TaskParentColDesc=Muestra la referencia de la tarea padre y el título si hay al
 TasksColDesc=Muestra la referencia y el título de la tarea
 team=Equipo
 Timesheet=Parte de horas
-Timesheet view=hoja de asistencia
 Timesheetapproval=Aprobación de hojas de trabajo
 TimesheetNotInvoiced=Incluir sólo la hoja de horas no facturada
 timesheetNotRecalled=Hoja de tiempos no recordada
 timesheetRecalled=Hoja de tiempos recordada con éxito
 timesheetSetup=Configuración del módulo de hoja de horas
+timesheetSubmitted=Enviado para su aprobación de parte de horas
 timesheetSumitted=Hoja de tiempo enviada
 TimesheetToInvoice=Parte de horas a facturar
 Timesheetuser=Hoja de tiempos del usuario
+TimesheetView=Módulo para tener una vista de hoja de horas más agradable, generar informes sobre usuarios o proyectos y facturar proyectos en función del tiempo registrado.
 Timesheetwhitelist=Favoritos
 timeSpan=Periodo de tiempo
 timeSpanDesc=Plazo de tiempo para las entradas de la hoja de tiempo.
