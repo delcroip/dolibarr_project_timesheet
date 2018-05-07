@@ -57,7 +57,7 @@ class modTimesheet extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Timesheet view";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '2.2.10';
+		$this->version = '2.2.11';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -406,6 +406,8 @@ class modTimesheet extends DolibarrModules
 		$sql = array();
 
 		$result=$this->_load_tables('/timesheet/sql/');
+                $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
+                $sql[0].= ' WHERE status IN (1,5)'; //'DRAFT','REJECTED'
                 dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
 		return $this->_init($sql, $options);
 	}
@@ -421,8 +423,7 @@ class modTimesheet extends DolibarrModules
 	function remove($options='')
 	{
 		$sql = array();
-            $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
-            $sql[0].= ' WHERE status IN (1,5)'; //'DRAFT','REJECTED'
+
 
 		return $this->_remove($sql, $options);
 	}
