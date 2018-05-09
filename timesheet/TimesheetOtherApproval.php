@@ -270,14 +270,23 @@ function getSelectAps($subId, $tasks, $role_key){
 switch($conf->global->TIMESHEET_TIME_SPAN){
         case 'month': 
             $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%m/%Y'), '-',pjt.ref) as id,";
-            $sql.=" CONCAT(pjt.title,' (', MONTH(date_start),'/',YEAR(date_start), ' )#' ) as label,";
+             if($db->type!='pgsql'){
+                $sql.=" CONCAT(pjt.title,' (', MONTH(date_start),'/',YEAR(date_start), ' )#' ) as label,";
+             }else{
+                $sql.=" CONCAT(pjt.title,' (', date_part('month',date_start),'/',date_part('year',date_start), ' )#' ) as label,";
+             }
             break;
         case 'week':  
         case 'splitedWeek': 
         default:
             $sql.=" CONCAT(DATE_FORMAT(ts.date_start,'%v/%Y'), '-',pjt.ref) as id,";
-           $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start,1),'/',YEAR(ts.date_start), ' )#' ) as label,";
-            break;
+           if($db->type!='pgsql'){
+               $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start,1),'/',YEAR(ts.date_start), ' )#' ) as label,";
+           }else  {
+               $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week',ts.date_start),'/',date_part('year',ts.date_start), ' )#' ) as label,";
+               
+           }
+           break;
 }
 if($db->type!='pgsql'){
     $sql.=" GROUP_CONCAT(ts.rowid  SEPARATOR ',') as idlist";

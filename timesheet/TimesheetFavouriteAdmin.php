@@ -594,14 +594,21 @@ switch ($action) {
         }else if (!$user->admin){
             $sqlwhere .= ' AND t.fk_user=\''.$userId.'\'';
         }
+        
 	if($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
 	if($ls_project_task) $sqlwhere .= natural_search(array('t.fk_project_task'), $ls_project_task);
 	if($ls_subtask) $sqlwhere .= natural_search(array('t.subtask'), $ls_subtask);
-	if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start)=\''.$ls_date_start_month.'\'';
-	if($ls_date_start_year)$sqlwhere .= ' AND YEAR(t.date_start)=\''.$ls_date_start_year.'\'';
-	if($ls_date_end_month)$sqlwhere .= ' AND MONTH(t.date_end)=\''.$ls_date_end_month.'\'';
-	if($ls_date_end_year)$sqlwhere .= ' AND YEAR(t.date_end)=\''.$ls_date_end_year.'\'';
-
+        if($db->type!='pgsql'){
+            if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start)=\''.$ls_date_start_month.'\''; 
+            if($ls_date_start_year)$sqlwhere .= ' AND YEAR(t.date_start)=\''.$ls_date_start_year.'\'';
+            if($ls_date_end_month)$sqlwhere .= ' AND MONTH(t.date_end)=\''.$ls_date_end_month.'\'';
+            if($ls_date_end_year)$sqlwhere .= ' AND YEAR(t.date_end)=\''.$ls_date_end_year.'\'';
+        }else{
+            if($ls_date_start_month)$sqlwhere .= ' AND date_part(\'month\',t.date_start)=\''.$ls_date_start_month.'\''; //FIXME PGSQL
+            if($ls_date_start_year)$sqlwhere .= ' AND date_part(\'year\',t.date_start)=\''.$ls_date_start_year.'\'';
+            if($ls_date_end_month)$sqlwhere .= ' AND date_part(\'month\',t.date_end)=\''.$ls_date_end_month.'\'';
+            if($ls_date_end_year)$sqlwhere .= ' AND date_part(\'year\',t.date_end)=\''.$ls_date_end_year.'\'';            
+        }
     
     //list limit
     if(!empty($sqlwhere))

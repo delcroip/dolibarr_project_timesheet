@@ -281,7 +281,14 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
        
 
         $sql ="SELECT *";
-        if($byWeek==2)$sql.=",CONCAT( MONTH(date_start),'/',YEAR(date_start), '#' ,fk_userid) as usermonth";
+        
+        if($byWeek==2){
+            if($db->type!='pgsql'){
+                $sql.=",CONCAT( MONTH(date_start),'/',YEAR(date_start), '#' ,fk_userid) as usermonth";
+            }else{
+                $sql.=",CONCAT( date_part('month',date_start),'/',date_part('year',date_start), '#' ,fk_userid) as usermonth";                
+            }
+        }
         $sql.=" FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts"; 
         $sql.=' WHERE (ts.status='.SUBMITTED.' OR ts.status='.CHALLENGED.') ';
 
@@ -300,7 +307,11 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
         }else if($byWeek==0){
             $sql.=' ORDER BY fk_userid DESC,date_start DESC';
         }else if($byWeek==2){
-            $sql.=' ORDER BY YEAR(date_start) DESC, MONTH(date_start) DESC, fk_userid DESC';
+            if($db->type!='pgsql'){
+                $sql.=' ORDER BY YEAR(date_start) DESC, MONTH(date_start) DESC, fk_userid DESC';
+            }else{
+                $sql.=' ORDER BY date_part(\'year\',date_start) DESC, ate_part(\'month\',date_start) DESC, fk_userid DESC';                
+            }
         }
         $sql.=' LIMIT '.$level;
         $sql.=' OFFSET '.$offset;
