@@ -14,6 +14,15 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
 * Github: https://github.com/delcroip/dolibarr_project_timesheet
 * FR development thread: https://www.dolibarr.fr/forum/11-suggestionsnouvelles-fonctionnalites/49379-timesheet-vue-pour-les-projets
 
+# Installation
+* Download and unzip the module
+* Move the `timesheet` folder in Dolibarr's web root
+* Enable the module in the **Configuration > Modules/Applications**
+
+# Prerequisites
+* **Active projects and tasks**
+* Users assigned to the project(s) and task(s)
+
 # Functionnalities
  - Timespend entry by week or Month for all the eligible tasks of a user in the timesheet page (splitted week possible, possible to add time spent for subordinates)
  - total per day and per timesheet
