@@ -30,10 +30,10 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
 ## Functionnalities eligible for removal
 
 ## Functionnalities not maintained
- - timesheet navigation & submit done with Ajax (no reload of the entire page needed)
+ - Timesheet navigation & submit done with Ajax (no reload of the entire page needed)
 
 # Known bug/limitation
-- Back ground color not working with the metro theme (work arround: replace "background:#fafafa!important" by "background:" in htdocs\theme\metro\style.css.php:2253).
+- Background color not working with the metro theme (work arround: replace `background:#fafafa!important` by `background:` in `htdocs\theme\metro\style.css.php:2253`).
 
 # Next dev under analysis
 - Ressource planning  (planning for TL and PM + weekly summary by email to user)
