@@ -232,13 +232,14 @@ class TimesheetTask extends Task
 		}
     }        
     /**
-     *  Load object in memory from the database
-     *
-     *  @param	int		$id    	Id object
-     *  @param	string	$ref	Ref
-     *  @return int          	<0 if KO, >0 if OK
+	 *  Load object in memory from database
+	 *
+	 *  @param	int		$id					Id object
+	 *  @param	int		$ref				ref object
+	 *  @param	int		$loadparentdata		Also load parent data
+	 *  @return int 		        		<0 if KO, 0 if not found, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id, $ref='', $loadparentdata=0)
     {
     	global $langs;
         $sql = "SELECT";
