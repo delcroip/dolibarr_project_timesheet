@@ -239,7 +239,7 @@ class TimesheetTask extends Task
 	 *  @param	int		$loadparentdata		Also load parent data
 	 *  @return int 		        		<0 if KO, 0 if not found, >0 if OK
      */
-    function fetch($id, $ref='', $loadparentdata=0)
+    function fetch($id, $ref='', $loadparentdata=1)
     {
     	global $langs;
         $sql = "SELECT";
@@ -303,7 +303,7 @@ class TimesheetTask extends Task
             $this->db->free($resql);
             $this->ref=$this->date_start_approval.'_'.$this->userId.'_'.$this->id;
             $this->whitelistmode=2; // no impact
-            $this->getTaskInfo();
+            if($loadparentdata)$this->getTaskInfo();
             return 1;
         }
         else
