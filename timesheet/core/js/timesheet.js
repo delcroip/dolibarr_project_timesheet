@@ -179,10 +179,10 @@ function validateTime(object,col_id){
                   var regex2=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1})$/;
                   if(!regex.test(object.value))
                   { 
-                     if(regex2.test(object.value)){
+                    if(regex2.test(object.value)){
                         object.value=object.value+':00';     
                     }else if(!object.value){
-                        object.value=object.value+'0:00';
+                        object.value='0:00';
                     }
                     else{
                         object.value=object.defaultValue;
