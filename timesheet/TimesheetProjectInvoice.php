@@ -260,7 +260,7 @@ $edit=0;
             $sqlTailJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
             $sqlTailJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
             $sqlTailWhere=" ctc.element='project' AND ctc.active='1' "; // WARINING: any project role can do the invoice if they have the right to create invoices
-            $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' AND fk_statut>0';
+            $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' AND fk_statut = 1';
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
