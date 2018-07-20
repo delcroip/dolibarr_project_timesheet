@@ -35,7 +35,10 @@ if (! $res && file_exists($path."/../../../../main.inc.php")) {
     $res=@include $path.'/../../../../main.inc.php'; //in custom
     $_SERVER["CONTEXT_DOCUMENT_ROOT"]=realpath($path."/../../../../");
 }
-
+if (! $res && file_exists($path."/../../main.inc.php")) {
+    $res=@include $path.'/../../main.inc.php'; //in custom
+    $_SERVER["CONTEXT_DOCUMENT_ROOT"]=realpath($path."/../../");
+}
 
 if (! $res) die("Include of main fails") ;
 
