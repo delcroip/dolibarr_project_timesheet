@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-#  (310)
+#  (315)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addForOther=register time spent for others.
@@ -20,6 +20,7 @@ blackWhiteList=Favourites
 blackWhiteListDesc=activate the favorites' filtering
 blackWhiteListMode=favorites' filtering
 blackWhiteListModeDesc=Chose the default behaviour for favoris filtering
+BoxApproval=Timesheet approbations
 cancelled=Cancelled
 cancelledColorDesc=Color for the holiday & timesheet canceled
 challenged=Challenged
@@ -89,6 +90,7 @@ noIdPresent=No reference (id) present
 not2invoice=Don't invoice it.
 NoTaskToUpdate=No task for this week
 NoteDesc=Show an icon that will open a note line below the task's line when clicked on it.
+NoteUpdated=The note field was updated
 NothingChanged=Nothing has change
 NothingToValidate=Nothing to validate
 notYourWhitelist=This entry doesn't belong to you
@@ -135,6 +137,7 @@ TaskParent=Parent task
 TaskParentColDesc=Shows the parent task's reference and the title if there is any parent task.
 TasksColDesc=Shows the task's reference and title
 team=Team
+test=
 Timesheet=Timesheet
 Timesheetapproval=Timesheet approval
 TimesheetNotInvoiced=Include only timesheet not invoiced

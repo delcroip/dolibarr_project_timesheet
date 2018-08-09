@@ -1,6 +1,6 @@
 # Dolibarr language file - Deutch - timesheet
 # Translators
-#  (202)
+#  (204)
 adddocs=Beigefügte Dokumente
 adddocsDesc=Aktivieren Sie die Arbeitszeittabellen verknüpfte Dokumente hinzufügen
 addForOther=Registerzeit für andere.
@@ -20,6 +20,7 @@ blackWhiteList=Favoriten
 blackWhiteListDesc=Aktiviere die Favoritenfilterung
 blackWhiteListMode=Favoriten Filterung
 blackWhiteListModeDesc=Wählen Sie das Standardverhalten für favoris Filterung
+BoxApproval=Arbeitszeittabelle Approbationen
 cancelled=Abgebrochen
 cancelledColorDesc=Farbe für den Urlaub & Stundenzettel storniert
 challenged=Herausgeforderter
@@ -89,6 +90,7 @@ noIdPresent=Keine Referenz (id) vorhanden
 not2invoice=Rechn es nicht.
 NoTaskToUpdate=Keine Aufgabe für diese Woche
 NoteDesc=Zeigen Sie ein Symbol, das eine Note-Line unter der Aufgabe-Linie, wenn darauf geklickt wird geöffnet.
+NoteUpdated=Das Notizfeld wurde aktualisiert
 NothingChanged=Nichts hat sich geändert
 NothingToValidate=Nichts zu bestätigen
 notYourWhitelist=Dieser Eintrag gehört dir nicht
@@ -135,6 +137,7 @@ TaskParent=Übergeordnete Aufgabe
 TaskParentColDesc=Zeigt die Referenz der übergeordneten Aufgabe und den Titel an, wenn es eine übergeordnete Aufgabe gibt.
 TasksColDesc=Zeigt die Referenz und den Titel der Aufgabe an
 team=Team
+test=
 Timesheet=Stundenzettel
 Timesheetapproval=Timesheet Zulassung
 TimesheetNotInvoiced=Fügen Sie nur die Arbeitszeittabelle in Rechnung, die nicht in Rechnung gestellt wird
