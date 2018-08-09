@@ -74,7 +74,6 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
 
 
 
-$task_timesheet= new TimesheetUserTasks($db,$userid);
 $confirm=GETPOST('confirm','alpha');
 
 if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
@@ -120,6 +119,7 @@ $task_timesheet= new TimesheetUserTasks($db,$userid);
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 $status='';
+$update=false;
 switch($action){
 
     case 'submit':
@@ -135,9 +135,10 @@ switch($action){
 				 foreach($tasks as $key => $tasktab){
 					 $task_timesheet->loadFromSession($timestamp,$key);  
                                          if($task_timesheet->note!=$notesTta[$key]){
+                                            $update=true;
                                             $task_timesheet->note=$notesTta[$key];
                                             $task_timesheet->update($user);
-                                         }
+                                         }                                    
                                          $ret=$task_timesheet->updateActuals($tasktab,$notes);
                                          
                                          
@@ -152,13 +153,14 @@ switch($action){
 					 
 
                 		//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
-					 if(!empty($ret))
+					 if(!empty($ret) || $update)
 					 {
 						 if(GETPOSTISSET('submit'))setEventMessage($langs->transnoentitiesnoconv("timesheetSubmitted"));
 						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']);
 						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['task_timesheet'][$timestamp]['timeSpendModified']);
 						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']);
-					 }else
+                                                 if($update)setEventMessage($langs->transnoentitiesnoconv("NoteUpdated"));
+                                         }else
 					 {
 						 if($_SESSION['task_timesheet'][$timestamp]['updateError']){
 							 setEventMessage( $langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" Update failed").':'.$ret,'errors');
