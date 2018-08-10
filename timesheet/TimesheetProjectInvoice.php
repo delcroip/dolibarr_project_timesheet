@@ -78,8 +78,13 @@ $langs->load('timesheet@timesheet');
              $sql.=' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
             $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task=t.rowid';
             $sql.=' WHERE t.fk_projet='.$projectId;
-            $sql.=' AND MONTH(tt.task_date)='.$month;
-            $sql.=' AND YEAR(tt.task_date)='.$year;
+             if($db->type!='pgsql'){
+                $sql.=' AND MONTH(tt.task_date)='.$month;
+                $sql.=' AND YEAR(tt.task_date)='.$year;
+             }else{
+                $sql.=' AND date_part(\'month\',tt.task_date)='.$month;
+                $sql.=' AND date_part(\'month\',tt.task_date)='.$year;                
+             }
             if($ts2Invoice!='all'){
                 /*$sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_s SEPARATOR ", ")';
                 $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval';  
@@ -255,7 +260,7 @@ $edit=0;
             $sqlTailJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
             $sqlTailJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
             $sqlTailWhere=" ctc.element='project' AND ctc.active='1' "; // WARINING: any project role can do the invoice if they have the right to create invoices
-            $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' AND fk_statut>0';
+            $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' AND fk_statut = 1';
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";

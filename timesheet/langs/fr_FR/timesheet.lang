@@ -1,6 +1,6 @@
 # Dolibarr language file - Francais - timesheet
 # Translators
-#  (297)
+#  (306)
 adddocs=Documents joints
 adddocsDesc=Permet d’ajouter des documents annexés à la feuille de temps
 addForOther=enregistrement du temps pour les autres
@@ -20,6 +20,7 @@ blackWhiteList=Mes favoris
 blackWhiteListDesc=Activez le filtrage des favoris
 blackWhiteListMode=Filtrage des favoris
 blackWhiteListModeDesc=Choisir le comportement par défaut pour le filtrage des favoris
+BoxApproval=Approbations de feuille de temps
 cancelled=Annulé
 cancelledColorDesc=Couleur pour vacances et feuille de temps annulée
 challenged=Contesté
@@ -89,9 +90,11 @@ noIdPresent=Pas de référence (id) présente
 not2invoice=Ne pas facturer.
 NoTaskToUpdate=Pas de tâche pour cette semaine
 NoteDesc=Afficher une icône qui va ouvrir une ligne de remarque au-dessous de ligne de la tâche lorsque cliqué dessus.
+NoteUpdated=Le champ de note a été mis à jour
 NothingChanged=Rien n’a changé
 NothingToValidate=Rien à  valider
 notYourWhitelist=Ce favori ne vous concerne pas
+NumberOfErrors=nombre d'erreurs:
 NumberOfTimesheetApproved=Nombre de feuille(s) de temps approuvée(s) :
 NumberOfTimesheetRejected=Nombre de feuille(s) de temps rejetée(s) :
 NumberOfTimeSpendCreated=Création(s) de temps consommé(s) :
@@ -134,16 +137,18 @@ TaskParent=Tâche parente
 TaskParentColDesc=Affiche la référence de la tâche parent et le titre s'il existe une tâche parent.
 TasksColDesc=Contient la référence et le label de la tâche
 team=équipe
+test=
 Timesheet=Feuille de temps
-Timesheet view=feuille de temps
 Timesheetapproval=Approbation des feuilles de temps
 TimesheetNotInvoiced=Inclure uniquement la feuille de temps non facturée
 timesheetNotRecalled=Feuille de temps non réouverte
 timesheetRecalled=Feuille de temps réouverte
 timesheetSetup=Configuration du module feuille de temps
+timesheetSubmitted=Envoyé pour approbation
 timesheetSumitted=Feuille de temps envoyée pour approbation
 TimesheetToInvoice=Feuille de temps à facturer
 Timesheetuser=Feuille de temps de l'utilisateur
+TimesheetView=Module pour avoir une meilleure vue de feuille de temps, pour générer un rapport sur les utilisateurs ou les projets et pour facturer le projet en fonction de l'heure enregistrée.
 Timesheetwhitelist=Favoris
 timeSpan=Période
 timeSpanDesc=Durée pour les entrées de feuille de temps.

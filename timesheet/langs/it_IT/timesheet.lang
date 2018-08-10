@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-#  (218)
+#  (224)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addForOther=registrare il tempo speso per gli altri.
@@ -20,6 +20,7 @@ blackWhiteList=Preferiti
 blackWhiteListDesc=Attivare il filtraggio dei preferiti
 blackWhiteListMode=Filtri preferiti
 blackWhiteListModeDesc=Abbiamo scelto il comportamento predefinito per il filtraggio favoris
+BoxApproval=Approvazioni di timesheet
 cancelled=Annullato
 cancelledColorDesc=Colore per la festa & scheda attività annullata
 challenged=Conflict
@@ -89,9 +90,11 @@ noIdPresent=Riferimento (id) non presente
 not2invoice=Non fattura esso.
 NoTaskToUpdate=Nessuna attività  per questa settimana
 NoteDesc=Visualizza un'icona che aprirà una linea nota sotto la linea dell'attività quando si fa clic su di esso.
+NoteUpdated=Il campo della nota è stato aggiornato
 NothingChanged=Nulla è cambiata
 NothingToValidate=Niente da convalidare
 notYourWhitelist=Questa voce non appartiene a te
+NumberOfErrors=Numero di errori:
 NumberOfTimesheetApproved=Numero di scheda attività ha approvato:
 NumberOfTimesheetRejected=Numero di scheda attività respinto:
 NumberOfTimeSpendCreated=Tempo impiegato creato :
@@ -134,16 +137,18 @@ TaskParent=attività  principale
 TaskParentColDesc=Contiene il riferimento e l'etichetta del compito genitore a compito
 TasksColDesc=Contiene il riferimento e il compito di etichette
 team=Gruppo
+test=
 Timesheet=Timesheet
-Timesheet view=Visualizzazione Scheda attività
 Timesheetapproval=Approvazione schede attività
 TimesheetNotInvoiced=Includi Timesheet solo non è fatturato
 timesheetNotRecalled=Timesheet non ricorda
 timesheetRecalled=Timesheet ha ricordato con successo
 timesheetSetup=Configurazione del modulo Timesheet
+timesheetSubmitted=Inviato per approvazione
 timesheetSumitted=timesheet presentato
 TimesheetToInvoice=Scheda attività di fatturare
 Timesheetuser=scheda attività per l'utente
+TimesheetView=Modulo per avere una migliore visualizzazione della scheda attività, per generare report su utenti o progetti e per fatturare il progetto in base al tempo registrato.
 Timesheetwhitelist=Preferiti
 timeSpan=Arco di tempo:
 timeSpanDesc=Intervallo di tempo per le voci dei tempi.

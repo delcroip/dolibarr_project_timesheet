@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-#  (301)
+#  (315)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addForOther=register time spent for others.
@@ -20,6 +20,7 @@ blackWhiteList=Favourites
 blackWhiteListDesc=activate the favorites' filtering
 blackWhiteListMode=favorites' filtering
 blackWhiteListModeDesc=Chose the default behaviour for favoris filtering
+BoxApproval=Timesheet approbations
 cancelled=Cancelled
 cancelledColorDesc=Color for the holiday & timesheet canceled
 challenged=Challenged
@@ -89,9 +90,11 @@ noIdPresent=No reference (id) present
 not2invoice=Don't invoice it.
 NoTaskToUpdate=No task for this week
 NoteDesc=Show an icon that will open a note line below the task's line when clicked on it.
+NoteUpdated=The note field was updated
 NothingChanged=Nothing has change
 NothingToValidate=Nothing to validate
 notYourWhitelist=This entry doesn't belong to you
+NumberOfErrors=Number of errors:
 NumberOfTimesheetApproved=Number of timesheet approved :
 NumberOfTimesheetRejected=Number of timesheet rejected :
 NumberOfTimeSpendCreated=Number of time spend created :
@@ -134,16 +137,18 @@ TaskParent=Parent task
 TaskParentColDesc=Shows the parent task's reference and the title if there is any parent task.
 TasksColDesc=Shows the task's reference and title
 team=Team
+test=
 Timesheet=Timesheet
-Timesheet view=Timesheet view
 Timesheetapproval=Timesheet approval
 TimesheetNotInvoiced=Include only timesheet not invoiced
 timesheetNotRecalled=Timesheet not recalled
 timesheetRecalled=Timesheet recalled succesfully
 timesheetSetup=Setup of the timesheet module
+timesheetSubmitted=Timesheet sent for Approval
 timesheetSumitted=Timesheet submitted
 TimesheetToInvoice=Timesheet to invoice
 Timesheetuser=User's timesheet
+TimesheetView=Module to have a nicer timesheet view, to generate report on users or projects and to invoice project based on the time registered.
 Timesheetwhitelist=Favorites
 timeSpan=time span
 timeSpanDesc=Time span for the timesheet entries.
