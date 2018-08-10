@@ -1,11 +1,12 @@
 # dolibarr_project_timesheet changelog
-3.0.0 change log from 2.2.11
+3.0.1 change log from 2.2.11
+ - fix: #57 note were not saved when containing a simple quote
  - fix: install in htdoc folder
  - fix: #50 boxapproval
  - fix: format & typo
  - fix: #48 timesheet start 1 day in advance
- - fix : #55 invoice show close & draf project in the dropdown list
- - fix #49: removing the value in a timesheet will put it a 0
+ - fix: #55 invoice show close & draf project in the dropdown list
+ - fix: #49 removing the value in a timesheet will put it a 0
 
 
 2.2.11 change log from 2.2.10
