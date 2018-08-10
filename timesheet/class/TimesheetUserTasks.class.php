@@ -132,7 +132,7 @@ class TimesheetUserTasks extends CommonObject
 		$sql.=' NOW() ,';
                 $sql.=' NOW() ,';
 		$sql.=' \''.$userId.'\','; //fixme 3.5
-		$sql.=' '.(! isset($this->note)?'NULL':'\''.$this->note.'\'');
+		$sql.=' '.(! isset($this->note)?'NULL':'\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'');
         
 		$sql.= ")";
 
@@ -345,7 +345,7 @@ class TimesheetUserTasks extends CommonObject
 		$sql.=' status='.(empty($this->status)? DRAFT:$this->status).',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification=\''.$userId.'\',';
-		$sql.=' note=\''.$this->note.'\'';
+		$sql.=' note=\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'';
 
         
         $sql.= " WHERE rowid=".$this->id;

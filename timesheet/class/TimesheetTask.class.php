@@ -192,7 +192,7 @@ class TimesheetTask extends Task
 		$sql.=' \''.$userId.'\','; 
 		$sql.=' '.(empty($this->id)?'NULL':'\''.$this->id.'\'').',';
 		$sql.=' '.(empty($this->task_timesheet)?'NULL':'\''.$this->task_timesheet.'\'').',';
-		$sql.=' '.(empty($this->note)?'NULL':'\''.$this->note.'\'');
+		$sql.=' '.(empty($this->note)?'NULL':'\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'');
         
 		$sql.= ")";
 
@@ -483,7 +483,7 @@ class TimesheetTask extends Task
 		$sql.=' fk_user_modification=\''.$userId.'\',';
 		$sql.=' fk_projet_task='.(empty($this->id) ? 'null':'\''.$this->id.'\'').',';
 		$sql.=' fk_project_task_timesheet='.(empty($this->task_timesheet) ? 'null':'\''.$this->task_timesheet.'\'').',';
-		$sql.=' note=\''.$this->note.'\'';
+		$sql.=' note=\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'';
 
         
         $sql.= " WHERE rowid=".$this->appId;
