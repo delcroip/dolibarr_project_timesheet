@@ -92,7 +92,7 @@ class modTimesheet extends DolibarrModules
                 //$this->module_parts = array('css' => array('/timesheet/css/timesheet.css'));
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
-		$this->dirs = array();
+		$this->dirs = array("/timesheet","/timesheet/reports","/timesheet/users","/timesheet/tasks");
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
 		$this->config_page_url = array("timesheetsetup.php@timesheet");
@@ -244,6 +244,12 @@ class modTimesheet extends DolibarrModules
 		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'approval';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $this->rights[$r][5] = 'admin';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		 $r++;		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
+		 $this->rights[$r][0] = 86100203; 				// Permission id (must not be already used)
+		 $this->rights[$r][1] = 'Read';	// Permission label
+		 $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		 //$this->rights[$r][5] = 'admin';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $r++;		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
@@ -402,13 +408,13 @@ class modTimesheet extends DolibarrModules
 	 */
 	function init($options='')
 	{
-                global $db;
+                global $db,$conf;
                 $result=$this->_load_tables('/timesheet/sql/');
 		$sql = array();
                 $sql[0] = 'DELETE IGNORE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
                 $sql[0].= ' WHERE status IN (1,5)'; //'DRAFT','REJECTED'
                 $sql[1] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'rat' AND type='timesheetReport' AND entity = ".$conf->entity;
-                $sql[1] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('rat','timesheetReport',".$conf->entity.")";
+                $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('rat','timesheetReport',".$conf->entity.")";
                 dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
 		return $this->_init($sql, $options);
 	}
