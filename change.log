@@ -1,5 +1,6 @@
 # dolibarr_project_timesheet changelog
-3.0.1 change log from 2.2.11
+3.1.0 change log from 2.2.11
+ - new: button to generate users' attendance sheet from project report pages
  - fix: #57 note were not saved when containing a simple quote
  - fix: install in htdoc folder
  - fix: #50 boxapproval
