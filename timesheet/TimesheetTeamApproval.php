@@ -220,7 +220,7 @@ if(is_object($firstTimesheetUser)){
                     $permission = 1;//$user->rights->timesheet->add;
                     $param = '&action=viewdoc&id='.$object->id;
                     $ref=dol_sanitizeFileName($object->ref);
-                    $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
+                    $upload_dir = $conf->timesheet->dir_output.'/tasks/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
                     $filearray=dol_dir_list($upload_dir,'files',0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
                     ob_start();
                     $formfile->list_of_documents($filearray, $object,$modulepart,$param,0,$relativepathwithnofile,$permission);

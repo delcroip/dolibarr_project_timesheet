@@ -135,7 +135,7 @@ if($id>0)
     $object->id=$id;
     $object->fetch($id);
     $ref=dol_sanitizeFileName($object->ref);
-    $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
+    $upload_dir = $conf->timesheet->dir_output.'/tasks/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
     if(empty($action))$action='viewdoc';//  the doc handling part send back only the ID without actions
 }
 if(!empty($ref))
@@ -282,7 +282,7 @@ if ($cancel){
         if($conf->global->TIMESHEET_ADD_DOCS && $id>0){
         $object->fetch($id);
         $ref=dol_sanitizeFileName($object->ref);
-        $upload_dir = $conf->timesheet->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
+        $upload_dir = $conf->timesheet->dir_output.'/tasks/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
         if(version_compare(DOL_VERSION,"4.0")>=0){
            include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
         }else{
