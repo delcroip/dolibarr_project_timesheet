@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-#  (197)
+#  (199)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addForOther=registrar el tiempo pasado por otros.
@@ -38,6 +38,7 @@ draft=Borrador
 draftColorDesc=Color para las vacaciones de proyecto y parte de horas
 dropdownAjax=Desactivar dropdown Ajax
 dropdownAjaxDesc=desactivar el ajax para la lista desplegable de Dolibarr (en el caso en cuestión para entrar en un nuevo favoris)
+Employee=Colaboradora
 employeeSignature=Firma del empleado
 errMsgMaxHoursExceded=No puedes entrar tanto tiempo por un solo día.
 Existing=Existente

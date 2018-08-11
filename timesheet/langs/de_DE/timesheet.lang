@@ -1,6 +1,6 @@
 # Dolibarr language file - Deutch - timesheet
 # Translators
-#  (209)
+#  (210)
 adddocs=Beigefügte Dokumente
 adddocsDesc=Aktivieren Sie die Arbeitszeittabellen verknüpfte Dokumente hinzufügen
 addForOther=Registerzeit für andere.
@@ -38,6 +38,7 @@ draft=Feld-Gruppe Entwurf aktualisiert
 draftColorDesc=Farbe für den Entwurf Urlaub & Arbeitszeittabelle
 dropdownAjax=Drop-Down-Ajax deaktivieren
 dropdownAjaxDesc=Deaktivieren Sie die Ajax für Dolibarr Dropdown-Liste (in einem Fall in Frage, eine neue Favoris einzugeben)
+Employee=Mitarbeiter
 employeeSignature=Unterschrift Mitarbeiter
 errMsgMaxHoursExceded=Du kannst nicht so viel Zeit für einen Tag eintreten.
 Existing=Bestehend

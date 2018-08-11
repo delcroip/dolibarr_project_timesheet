@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-#  (322)
+#  (327)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addForOther=register time spent for others.
@@ -38,6 +38,7 @@ draft=Draft
 draftColorDesc=Color for the draft holiday & timesheet
 dropdownAjax=Disable dropdown Ajax
 dropdownAjaxDesc=disable the ajax for the Dolibarr dropdown list (in case on issue to enter a new favoris)
+Employee=Collaborator
 employeeSignature=employee's signature
 errMsgMaxHoursExceded=you can't enter that much time for a single day.
 Existing=Existing

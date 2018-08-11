@@ -1,6 +1,6 @@
 # Dolibarr language file - Francais - timesheet
 # Translators
-#  (311)
+#  (316)
 adddocs=Documents joints
 adddocsDesc=Permet d’ajouter des documents annexés à la feuille de temps
 addForOther=enregistrement du temps pour les autres
@@ -38,6 +38,7 @@ draft=Brouillon
 draftColorDesc=Couleur des brouillons de congés
 dropdownAjax=Désactiver l'Ajax des dropdown
 dropdownAjaxDesc=Désactiver l'ajax pour les listes déroulantes Dolibarr (en cas de problème pour entrer un nouveau favori)
+Employee=Collaborateur
 employeeSignature=Signature employé(e)
 errMsgMaxHoursExceded=Vous ne pouvez pas faire autant d'heures supplémentaires par jour
 Existing=Existant

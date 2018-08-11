@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-#  (229)
+#  (231)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addForOther=registrare il tempo speso per gli altri.
@@ -38,6 +38,7 @@ draft=Bozza
 draftColorDesc=Colore per il progetto di vacanze & scheda attività
 dropdownAjax=Disabilita discesa Ajax
 dropdownAjaxDesc=Disattivare il ajax per gli elenchi a discesa Dolibarr (nel caso in cui alla data di rilascio per inserire una nuova whitelist)
+Employee=Collaboratore
 employeeSignature=Firma del lavoratore
 errMsgMaxHoursExceded=Non è possibile inserire più di tanto tempo per un solo giorno
 Existing=Existing
