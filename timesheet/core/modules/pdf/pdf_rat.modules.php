@@ -548,7 +548,10 @@ class pdf_rat extends ModelPDFTimesheetReport
 			}
 		}
 		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
-                if(!empty($userName))$pdf->MultiCell(100+$height, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
+                if(!empty($userName)){
+                    $pdf->SetXY($this->marge_gauche,$height+$default_font_size + 3);
+                    $pdf->MultiCell(100, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
+                }
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
