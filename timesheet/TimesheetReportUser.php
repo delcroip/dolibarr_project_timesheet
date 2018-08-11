@@ -54,11 +54,12 @@ if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
 }else {
     $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
 }
-    $mode=$_POST['mode'];
-    $short=$_POST['short'];
+    $mode=GETPOST('mode','alpha');
+    if(empty($mode))$mode='PTD';
+    $short=GETPOST('short','int');;
     $userSelected=$userList[$userIdSelected];
-    $year=$_POST['year'];
-    $month=$_POST['month'];//strtotime(str_replace('/', '-',$_POST['Date'])); 
+    $year=GETPOST('year','int');;
+    $month=GETPOST('month','int');;//strtotime(str_replace('/', '-',$_POST['Date'])); 
     $firstDay= ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
 $lastDay=  ($month)?strtotime('last day of this month',$firstDay):strtotime('last day of previous month');
 $_SESSION["dateStart"]=$dateStart ;
@@ -96,7 +97,7 @@ if ($resql)
                 $error=0;
                 $obj = $db->fetch_object($resql);
                 $userList[$obj->userid]=new TimesheetReport($db);
-                $userList[$obj->userid]->initBasic('',$obj->userid,$obj->firstname.' '.$obj->lastname);
+                $userList[$obj->userid]->initBasic('',$obj->userid,$obj->firstname.' '.$obj->lastname,$firstDay,$lastDay,$mode );
                 $i++;
         }
         $db->free($resql);
@@ -124,7 +125,7 @@ foreach($userList as $usr){
 }
     $Form.='<option value="-999" '.(($userIdSelected=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
 
-$mode='PTD';
+//$mode='PTD';
 $querryRes='';
 
 
@@ -141,7 +142,8 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
             $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
         }
     }else{
-        $querryRes=$userSelected->getHTMLreport($short,
+        
+        $querryRes=$userList[$userIdSelected]->getHTMLreport($short,
             $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
     }

@@ -1,6 +1,6 @@
 # Dolibarr language file - Deutch - timesheet
 # Translators
-#  (204)
+#  (209)
 adddocs=Beigefügte Dokumente
 adddocsDesc=Aktivieren Sie die Arbeitszeittabellen verknüpfte Dokumente hinzufügen
 addForOther=Registerzeit für andere.
@@ -30,7 +30,7 @@ CompanyColDesc=Zeigt den Namen des mit dem Projekt verbundenen Unternehmens an
 ConfirmDeleteTimesheetwhitelist=Sind Sie sicher, diesen Rechnungseintrag zu löschen?
 Custom=Kundenspezifisch
 customer=Kunde
-customerSignature=Unterschrift Kunde
+customerSignature=Des Kunden Visum
 DateEndColDesc=Zeigt das Enddatum der Aufgabe an
 DateStartColDesc=Zeigt das Startdatum der Aufgabe an
 DeleteTimesheetwhitelist=Eintrag gelöscht
@@ -133,6 +133,7 @@ submitted=Gesendet
 submittedColorDesc=Farbe für den Urlaub & Arbeitszeitblatt zur Genehmigung eingereicht
 Subtask=Teilaufgabe hinzufügen
 supplier=Lieferant
+supplierSignature=Des Lieferanten Visum
 TaskParent=Übergeordnete Aufgabe
 TaskParentColDesc=Zeigt die Referenz der übergeordneten Aufgabe und den Titel an, wenn es eine übergeordnete Aufgabe gibt.
 TasksColDesc=Zeigt die Referenz und den Titel der Aufgabe an
@@ -142,6 +143,7 @@ Timesheet=Stundenzettel
 Timesheetapproval=Timesheet Zulassung
 TimesheetNotInvoiced=Fügen Sie nur die Arbeitszeittabelle in Rechnung, die nicht in Rechnung gestellt wird
 timesheetNotRecalled=Arbeitszeittabelle nicht zurückgerufen
+TimesheetPDF=Teilnahmeblatt der Projektressourcen
 timesheetRecalled=Timesheet erinnerte sich erfolgreich
 timesheetSetup=Einrichtung des Zeiterfassungsmoduls
 timesheetSubmitted=Zur Genehmigung eingereicht

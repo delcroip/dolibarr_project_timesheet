@@ -19,10 +19,13 @@
 
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 class TimesheetReport 
 {
     public $db;
+    public $ref;
     public $projectid;
     public $userid;
     public $name;
@@ -35,6 +38,9 @@ class TimesheetReport
     public $lvl3Title;
     public $lvl1Key;
     public $lvl2Key;
+    public $thirdparty;
+    public $project;
+    public $user;
     
     
     public function __construct($db) 
@@ -44,12 +50,32 @@ class TimesheetReport
         
     public function initBasic($projectid,$userid,$name,$startDate,$stopDate,$mode) 
 	{
+        global $langs;
+        $this->ref="";
+        $first=false;
             $this->projectid =$projectid; // coul
+            if($projectid){
+                $this->project=new Project($this->db);
+                $this->project->fetch($projectid);
+                $this->ref= $this->project->ref.' - '.$this->project->title;
+                $first=true;
+                $this->thirdparty= new Societe($this->db);
+                $this->thirdparty->fetch($this->project->socid);
+                
+            }
             $this->userid =$userid; // coul
-            $this->name =$name; // coul
+            if($userid){
+                $this->user=new User($this->db);
+                $this->user->fetch($userid);
+                //$this->ref.= ($first?'':' - ').$this->user->lastname.' '.$this->user->firstname;
+            }            
+            
             $this->startDate=$startDate;
             $this->stopDate=$stopDate;
             $this->mode=$mode;
+
+             $this->name =($name!="")?$name:$this->ref; // coul
+             $this->ref.='_'.$startDate.'_'.$stopDate;
         switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing               
             $this->modeSQLOrder='ORDER BY prj.rowid,ptt.task_date,tsk.rowid ASC   ';
@@ -105,6 +131,12 @@ class TimesheetReport
             break;
         case 'UTD'://day /project /task
             $sqltail=' ORDER BY usr.rowid,tsk.rowid,ptt.task_date ASC   ';
+            $this->lvl1Title='userName';
+            $this->lvl2Title='taskLabel';
+            $this->lvl3Title='date';
+            //keys
+            $this->lvl1Key='userId';
+            $this->lvl2Key='taskId';
             break;
 
         default:
@@ -117,14 +149,15 @@ class TimesheetReport
  * @param   string  $sqltail    sql tail after the where
  * @return array()
  */   
-    public function getReportArray($sqltail=''){
+    public function getReportArray($startDay='',$stopDay='',$sqltail=''){
         $resArray=array();
+        $first=true;
         $sql='SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid,';
         if($db->type!='pgsql'){
-            $sql.= ' MAX(prj.title) as projecttitle,MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname,\', \',usr.lastname)) as username,';
+            $sql.= ' MAX(prj.title) as projecttitle,MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname,\' \',usr.lastname)) as username,';
             $sql.= ' MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle,';
         }else{
-            $sql.= ' prj.title as projecttitle,prj.ref as projectref, CONCAT(usr.firstname,\' - \',usr.lastname) as username,';
+            $sql.= ' prj.title as projecttitle,prj.ref as projectref, CONCAT(usr.firstname,\'  \',usr.lastname) as username,';
             $sql.= ' tsk.ref as taskref, tsk.label as tasktitle,';
         }
         $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
@@ -132,15 +165,20 @@ class TimesheetReport
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';      
+        $sql.= ' WHERE ';
         if(!empty($this->userid)){
-            $sql.='WHERE ptt.fk_user=\''.$this->userid.'\' ';
-        }else{
-
-            $sql.='WHERE tsk.fk_projet=\''.$this->projectid.'\' ';
+            $sql.=' ptt.fk_user=\''.$this->userid.'\' ';
+            $first=false;
+        }
+        if(!empty($this->projectid)){
+            
+            $sql.=($first?'':'AND ').'tsk.fk_projet=\''.$this->projectid.'\' ';
         }
 
-         if(!empty($startDay))$sql.='AND task_date>=\''.$this->db->idate($this->startDate).'\'';
-          if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
+         if(!empty($startDay))$sql.='AND task_date>=\''.$this->db->idate($startDay).'\'';
+          else $sql.='AND task_date>=\''.$this->db->idate($this->startDate).'\'';
+          if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
+          else $sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
          $sql.=' GROUP BY usr.rowid, ptt.task_date,tsk.rowid, prj.rowid ';
         if(!empty($sqltail)){
             $sql.=$sqltail;
@@ -163,10 +201,10 @@ class TimesheetReport
                                 'projectLabel' =>$obj->projectref.' - '.$obj->projecttitle,
                                 'taskId' =>$obj->taskid,
                                 'taskLabel' =>$obj->taskref.' - '.$obj->tasktitle,
-                                'date' =>$obj->task_date,
+                                'date' =>$this->db->jdate($obj->task_date),
                                 'duration' =>$obj->duration,
                                 'userid' =>$obj->userid,
-                                'userName' =>$obj->username);
+                                'userName' =>trim($obj->username));
 
                     $i++;
 

@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-#  (224)
+#  (229)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addForOther=registrare il tempo speso per gli altri.
@@ -30,7 +30,7 @@ CompanyColDesc=Contiene il nome della società  relativo al progetto
 ConfirmDeleteTimesheetwhitelist=Sei sicuro di voler eliminare questa voce?
 Custom=Personalizzato
 customer=Cliente
-customerSignature=Firma del Cliente
+customerSignature=Visto del cliente
 DateEndColDesc=Indica la data di fine del compito
 DateStartColDesc=Contiene la data di inizio per l'attività
 DeleteTimesheetwhitelist=L'iscrizione è stata cancellata
@@ -133,6 +133,7 @@ submitted=Inviato
 submittedColorDesc=Colore per la festa e scheda attività sottoposto all'approvazione
 Subtask=Bambino Task
 supplier=Fornitore
+supplierSignature=Visto del fornitore
 TaskParent=attività  principale
 TaskParentColDesc=Contiene il riferimento e l'etichetta del compito genitore a compito
 TasksColDesc=Contiene il riferimento e il compito di etichette
@@ -142,6 +143,7 @@ Timesheet=Timesheet
 Timesheetapproval=Approvazione schede attività
 TimesheetNotInvoiced=Includi Timesheet solo non è fatturato
 timesheetNotRecalled=Timesheet non ricorda
+TimesheetPDF=Foglio di presenza delle risorse del progetto
 timesheetRecalled=Timesheet ha ricordato con successo
 timesheetSetup=Configurazione del modulo Timesheet
 timesheetSubmitted=Inviato per approvazione

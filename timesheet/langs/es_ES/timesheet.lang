@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-#  (192)
+#  (197)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addForOther=registrar el tiempo pasado por otros.
@@ -30,7 +30,7 @@ CompanyColDesc=Muestra el nombre de la empresa asociada al proyecto
 ConfirmDeleteTimesheetwhitelist=Está seguro de eliminar esto?
 Custom=Personalizado
 customer=Cliente
-customerSignature=Firma del cliente
+customerSignature=Visa del cliente
 DateEndColDesc=Muestra la fecha de finalización de la tarea
 DateStartColDesc=Muestra la fecha de inicio de la tarea
 DeleteTimesheetwhitelist=Entrada eliminada.
@@ -133,6 +133,7 @@ submitted=Enviado
 submittedColorDesc=Color para el día festivo y la hoja de horas presentada para su aprobación
 Subtask=Tarea
 supplier=Proveedor
+supplierSignature=Visa del proveedor
 TaskParent=Tarea principal
 TaskParentColDesc=Muestra la referencia de la tarea padre y el título si hay alguna tarea padre.
 TasksColDesc=Muestra la referencia y el título de la tarea
@@ -142,6 +143,7 @@ Timesheet=Parte de horas
 Timesheetapproval=Aprobación de hojas de trabajo
 TimesheetNotInvoiced=Incluir sólo la hoja de horas no facturada
 timesheetNotRecalled=Hoja de tiempos no recordada
+TimesheetPDF=Hoja de asistencia de recursos del proyecto
 timesheetRecalled=Hoja de tiempos recordada con éxito
 timesheetSetup=Configuración del módulo de hoja de horas
 timesheetSubmitted=Enviado para su aprobación de parte de horas

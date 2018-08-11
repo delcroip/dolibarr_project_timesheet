@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-#  (315)
+#  (322)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addForOther=register time spent for others.
@@ -30,7 +30,7 @@ CompanyColDesc=Shows the name of the company associated with the project
 ConfirmDeleteTimesheetwhitelist=Are you sure to delete this entry ?
 Custom=Customized
 customer=Customer
-customerSignature=Customer signature
+customerSignature=Customer's visa
 DateEndColDesc=Shows the end date of the task
 DateStartColDesc=Shows the start date of the task
 DeleteTimesheetwhitelist=Entry deleted
@@ -133,6 +133,7 @@ submitted=Submitted
 submittedColorDesc=Color for the holiday & timesheet submitted for approval
 Subtask=Subtask
 supplier=Supplier
+supplierSignature=Supplier's visa
 TaskParent=Parent task
 TaskParentColDesc=Shows the parent task's reference and the title if there is any parent task.
 TasksColDesc=Shows the task's reference and title
@@ -142,6 +143,7 @@ Timesheet=Timesheet
 Timesheetapproval=Timesheet approval
 TimesheetNotInvoiced=Include only timesheet not invoiced
 timesheetNotRecalled=Timesheet not recalled
+TimesheetPDF=Project resources' attendance sheet
 timesheetRecalled=Timesheet recalled succesfully
 timesheetSetup=Setup of the timesheet module
 timesheetSubmitted=Timesheet sent for Approval

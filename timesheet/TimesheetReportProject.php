@@ -22,6 +22,8 @@ include 'core/lib/includeMain.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once './core/lib/timesheet.lib.php';
 require_once './class/TimesheetReport.class.php';
+require_once './core/modules/pdf/pdf_rat.modules.php';
+
 $htmlother = new FormOther($db);
 
 
@@ -55,6 +57,18 @@ if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=$_SESSION["dateStart"];
 }else {
     $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
+}
+
+if($action=='getpdf'){
+    $report=new TimesheetReport($db);
+    $report->initBasic($projectSelectedId,'','',$firstDay,$lastDay,$mode);
+    $pdf=new pdf_rat($db);
+    //$outputlangs=$langs;
+    if( $pdf->write_file($report, $langs)>0){
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$report->ref.".pdf");
+    	return;
+    }
+    exit();
 }
 
 $_SESSION["dateStart"]=$dateStart ;
@@ -157,6 +171,8 @@ $Form.='</select></td>'
         .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
         .'<td><input class="butAction" type="submit" value="'.$langs->trans('getReport').'"><br>';
 if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<br><a class="butAction" href="TimesheetProjectInvoice.php?step=0&year='.$year.'&month='.$month.'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
+
+if(!empty($querryRes))$Form.='<br><br><a class="butAction" href="?action=getpdf&year='.$year.'&month='.$month.'&projectSelected='.$projectSelectedId.'" >'.$langs->trans('TimesheetPDF').'</a>';
         $Form.='</td></tr></table></form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 

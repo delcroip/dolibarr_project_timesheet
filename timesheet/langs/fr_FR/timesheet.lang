@@ -1,6 +1,6 @@
 # Dolibarr language file - Francais - timesheet
 # Translators
-#  (306)
+#  (311)
 adddocs=Documents joints
 adddocsDesc=Permet d’ajouter des documents annexés à la feuille de temps
 addForOther=enregistrement du temps pour les autres
@@ -30,7 +30,7 @@ CompanyColDesc=Indique le nom de l'entreprise associée au projet
 ConfirmDeleteTimesheetwhitelist=Êtes-vous certain de vouloir supprimer ce favoris ?
 Custom=Personnalisé
 customer=Client
-customerSignature=Signature client
+customerSignature=Visa du client
 DateEndColDesc=Indique la date de fin de la tâche
 DateStartColDesc=Contient la date de départ de la tâche
 DeleteTimesheetwhitelist=favoris supprimé.
@@ -133,6 +133,7 @@ submitted=Envoyé
 submittedColorDesc=Couleur des congés et feuilles de temps envoyées pour validation
 Subtask=Tâche enfant
 supplier=Fournisseur
+supplierSignature=Visa du fournisseur
 TaskParent=Tâche parente
 TaskParentColDesc=Affiche la référence de la tâche parent et le titre s'il existe une tâche parent.
 TasksColDesc=Contient la référence et le label de la tâche
@@ -142,6 +143,7 @@ Timesheet=Feuille de temps
 Timesheetapproval=Approbation des feuilles de temps
 TimesheetNotInvoiced=Inclure uniquement la feuille de temps non facturée
 timesheetNotRecalled=Feuille de temps non réouverte
+TimesheetPDF=Feuille de présence des ressources du projet
 timesheetRecalled=Feuille de temps réouverte
 timesheetSetup=Configuration du module feuille de temps
 timesheetSubmitted=Envoyé pour approbation
