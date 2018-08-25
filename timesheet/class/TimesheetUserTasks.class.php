@@ -577,13 +577,13 @@ function saveInSession(){
 
      // Save the param in the SeSSION
      $tasksList=array();
-     $whiteListNumber=is_array($whiteList)?count($whiteList):0;
+     //$whiteListNumber=is_array($whiteList)?count($whiteList):0;
      $sqlwhiteList='';
-     if($whiteListNumber){
+    /* if($whiteListNumber){
          
             $sqlwhiteList=', (CASE WHEN tsk.rowid IN ('.implode(",",  array_keys($whiteList)).') THEN \'1\' ';
             $sqlwhiteList.=' ELSE \'0\' END ) AS listed';
-    }
+    }*/
   
     
     $sql ='SELECT DISTINCT element_id as taskid,prj.fk_soc,tsk.fk_projet,';
