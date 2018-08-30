@@ -65,8 +65,8 @@ define('SECINDAY',86400);
 //global $db;     
 global $langs;
 // to get the whitlist object
-require_once 'class/TimesheetFavourite.class.php';
-require_once 'class/TimesheetUserTasks.class.php';
+//require_once 'class/TimesheetFavourite.class.php';
+//require_once 'class/TimesheetUserTasks.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
@@ -542,3 +542,32 @@ $rolesUrl=array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOtherAp
 function getDayInterval($dateStart,$dateEnd){
     return round(($dateEnd-$dateStart)/SECINDAY, 0, PHP_ROUND_HALF_UP);
 }
+/* Function to format the duration
+ * 
+ *  @param    int        $duration             time in seconds
+ *  @param    int        $hoursperdays          mode -1 fetch from config, 0 show in hours, >0 shows in days 
+ *  @return  string       			time display
+ */
+function formatTime($duration,$hoursperdays=-1)
+    {
+        global $conf;
+        if($hoursperdays<0){
+            $hoursperdays=($conf->global->TIMESHEET_TIME_TYPE=="days")?$conf->global->TIMESHEET_DAY_DURATION:0;           
+        }
+        
+        if($hoursperdays==0)
+        {
+            $TotalSec=$duration%60;
+            $TotalMin=(($duration-$TotalSec)/60)%60;
+            $TotalHours=$TotalHours=($duration-$TotalMin*60- $TotalSec)/3600;
+            return $TotalHours.':'.sprintf("%02s",$TotalMin);
+        }else
+        {
+            
+            $totalDay=round($duration/3600/$hoursperdays,3);
+            return strval($totalDay);
+            
+        }
+
+    }
+    
