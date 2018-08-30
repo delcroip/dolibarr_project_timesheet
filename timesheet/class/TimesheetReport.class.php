@@ -21,6 +21,7 @@
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once 'core/lib/timesheet.lib.php';
 
 class TimesheetReport 
 {
@@ -50,14 +51,14 @@ class TimesheetReport
         
     public function initBasic($projectid,$userid,$name,$startDate,$stopDate,$mode) 
 	{
-        global $langs;
+        global $langs,$conf;
         $this->ref="";
         $first=false;
             $this->projectid =$projectid; // coul
             if($projectid){
                 $this->project=new Project($this->db);
                 $this->project->fetch($projectid);
-                $this->ref= $this->project->ref.' - '.$this->project->title;
+                $this->ref= (($conf->global->TIMESHEET_HIDE_REF==1)?'':$this->project->ref.' - ').$this->project->title;
                 $first=true;
                 $this->thirdparty= new Societe($this->db);
                 $this->thirdparty->fetch($this->project->socid);
@@ -150,6 +151,7 @@ class TimesheetReport
  * @return array()
  */   
     public function getReportArray($startDay='',$stopDay='',$sqltail=''){
+        global $conf;
         $resArray=array();
         $first=true;
         $sql='SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid,';
@@ -198,9 +200,9 @@ class TimesheetReport
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
                     $resArray[$i]=array('projectId' =>$obj->projectid,
-                                'projectLabel' =>$obj->projectref.' - '.$obj->projecttitle,
+                                'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF==1)?'':$obj->projectref.' - ').$obj->projecttitle,
                                 'taskId' =>$obj->taskid,
-                                'taskLabel' =>$obj->taskref.' - '.$obj->tasktitle,
+                                'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF==1)?'':$obj->taskref.' - ').$obj->tasktitle,
                                 'date' =>$this->db->jdate($obj->task_date),
                                 'duration' =>$obj->duration,
                                 'userid' =>$obj->userid,
@@ -281,8 +283,8 @@ class TimesheetReport
                $HTMLRes.= '<th '.(isset($titleWidth[$this->lvl1Title])?'width="'.$titleWidth[$this->lvl1Title].'"':'' ).'>'.$item[$this->lvl1Title].'</th>';
                $HTMLRes.='<th '.(isset($titleWidth[$this->lvl2Title])?'width="'.$titleWidth[$this->lvl2Title].'"':'' ).'>'.$item[$this->lvl2Title].'</th>';
                $HTMLRes.='<th '.(isset($titleWidth[$this->lvl3Title])?'width="'.$titleWidth[$this->lvl3Title].'"':'' ).'>'.$item[$this->lvl3Title].'</th>';
-               $HTMLRes.='<th width="70px">'.$this->formatTime($item['duration'],0).'</th>';
-               $HTMLRes.='<th width="70px">'.$this->formatTime($item['duration'],$hoursperdays).'</th></tr>';
+               $HTMLRes.='<th width="70px">'.formatTime($item['duration'],0).'</th>';
+               $HTMLRes.='<th width="70px">'.formatTime($item['duration'],$hoursperdays).'</th></tr>';
             } 
             $HTMLRes.='</table>';
         }else   
@@ -297,8 +299,8 @@ class TimesheetReport
                 $lvl2HTML.='<tr class="oddeven" align="left"><th></th><th>'
                         .$resArray[$Curlvl2][$this->lvl2Title].'</th>';
                 if(!$short)$lvl2HTML.='<th></th>';
-                $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,0).'</th>';
-                $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
+                $lvl2HTML.='<th>'.formatTime($lvl3Total,0).'</th>';
+                $lvl2HTML.='<th>'.formatTime($lvl3Total,$hoursperdays).'</th></tr>';
                 $lvl2HTML.=$lvl3HTML;
                 $lvl3HTML='';
                 $lvl2Total+=$lvl3Total;
@@ -309,8 +311,8 @@ class TimesheetReport
                     $lvl1HTML.='<tr class="oddeven" align="left"><th >'
                             .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
                     if(!$short)$lvl1HTML.='<th></th>';
-                    $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,0).'</th>';
-                    $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
+                    $lvl1HTML.='<th>'.formatTime($lvl2Total,0).'</th>';
+                    $lvl1HTML.='<th>'.formatTime($lvl2Total,$hoursperdays).'</th></tr>';
                     $lvl1HTML.=$lvl2HTML;
                     $lvl2HTML='';
                     $lvl1Total+=$lvl2Total;
@@ -322,8 +324,8 @@ class TimesheetReport
             {
                 $lvl3HTML.='<tr class="oddeven" align="left"><th></th><th></th><th>'
                     .$resArray[$key][$this->lvl3Title].'</th><th>';
-                $lvl3HTML.=$this->formatTime($item['duration'],0).'</th><th>';
-                $lvl3HTML.=$this->formatTime($item['duration'],$hoursperdays).'</th></tr>';                
+                $lvl3HTML.=formatTime($item['duration'],0).'</th><th>';
+                $lvl3HTML.=formatTime($item['duration'],$hoursperdays).'</th></tr>';                
                /*
                 if($hoursperdays==0)
                 {
@@ -340,15 +342,15 @@ class TimesheetReport
         $lvl2HTML.='<tr class="oddeven" align="left"><th></th><th>'
                 .$resArray[$Curlvl2][$this->lvl2Title].'</th>';
         if(!$short)$lvl2HTML.='<th></th>';
-        $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,0).'</th>';
-        $lvl2HTML.='<th>'.$this->formatTime($lvl3Total,$hoursperdays).'</th></tr>';
+        $lvl2HTML.='<th>'.formatTime($lvl3Total,0).'</th>';
+        $lvl2HTML.='<th>'.formatTime($lvl3Total,$hoursperdays).'</th></tr>';
         $lvl2HTML.=$lvl3HTML;
         $lvl2Total+=$lvl3Total;
         $lvl1HTML.='<tr class="oddeven" align="left"><th >'
                 .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
         if(!$short)$lvl1HTML.='<th></th>';
-        $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,0).'</th>';
-        $lvl1HTML.='<th>'.$this->formatTime($lvl2Total,$hoursperdays).'</th></tr>';
+        $lvl1HTML.='<th>'.formatTime($lvl2Total,0).'</th>';
+        $lvl1HTML.='<th>'.formatTime($lvl2Total,$hoursperdays).'</th></tr>';
         $lvl1HTML.=$lvl2HTML;
         $lvl1Total+=$lvl2Total;
         // make the whole result
@@ -361,8 +363,8 @@ class TimesheetReport
          $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
             
          $HTMLRes.='<tr class="liste_titre">'.((!$short)?'<th></th>':'').'<th colspan=2> TOTAL</th>';
-         $HTMLRes.='<th>'.$this->formatTime($lvl1Total,0).'</th>';
-         $HTMLRes.='<th>'.$this->formatTime($lvl1Total,$hoursperdays).'</th></tr>';
+         $HTMLRes.='<th>'.formatTime($lvl1Total,0).'</th>';
+         $HTMLRes.='<th>'.formatTime($lvl1Total,$hoursperdays).'</th></tr>';
         $HTMLRes.=$lvl1HTML;
         $HTMLRes.='</table>';
         } // end else reportfiendly
@@ -375,21 +377,5 @@ class TimesheetReport
 
     }
     
-    private function formatTime($duration,$hoursperdays)
-    {
-        if($hoursperdays==0)
-        {
-            $TotalSec=$duration%60;
-            $TotalMin=(($duration-$TotalSec)/60)%60;
-            $TotalHours=$TotalHours=($duration-$TotalMin*60- $TotalSec)/3600;
-            return $TotalHours.':'.sprintf("%02s",$TotalMin);
-        }else
-        {
-            $totalDay=$duration/3600/$hoursperdays;
-            return strval($totalDay);
-            
-        }
 
-    }
-    
  }   

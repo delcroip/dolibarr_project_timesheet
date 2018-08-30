@@ -275,7 +275,7 @@ function minutesToHTML(total){
         retVal=pad(Math.floor(total/60))+':'+pad(total-Math.floor(total/60)*60.);
         if(hide_zero && retVal=='00:00')retVal='';
     }else{
-        retVal= (total/60/day_hours).toFixed(2);
+        retVal= Math.round(total/60/day_hours*1000)/1000;
         if(hide_zero && total==0)retVal='';
     }
     return retVal;

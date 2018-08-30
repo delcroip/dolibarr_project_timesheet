@@ -209,8 +209,8 @@ class TimesheetFavourite extends CommonObject
      */
     function getTaskList()
     {
-              $sql = "SELECT";
-		$sql.= " t.rowid";		
+        $sql = "SELECT";
+	$sql.= " t.rowid";		
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
          if($this->project_task && $this->subtask){
              $sql.= '  WHERE  (t.rowid=\''.$this->project_task.'\'';  
