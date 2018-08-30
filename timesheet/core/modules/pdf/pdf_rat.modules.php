@@ -79,15 +79,15 @@ class pdf_rat extends ModelPDFTimesheetReport
 		// Defini position des colonnes
 		$this->posxref=$this->marge_gauche+1;
                 $this->posxdate=$this->marge_gauche+9;
-                $this->posxworker=$this->marge_gauche+27;
-		$this->posxlabel=$this->marge_gauche+65;
-                
+                //$this->posxworker=$this->marge_gauche+27;
+		//$this->posxlabel=$this->marge_gauche+65;
+                $this->posxlabel=$this->marge_gauche+29;
                 //$this->posxworkload=$this->marge_gauche+120;
 		//$this->posxprogress=$this->marge_gauche+140;
 		//$this->posxdatestart=$this->marge_gauche+152;
                 
 		//$this->posxdateend=$this->marge_gauche+170;
-                $this->posxduration=$this->marge_gauche+180;
+                $this->posxduration=$this->marge_gauche+175;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxref-=20;
@@ -180,15 +180,12 @@ class pdf_rat extends ModelPDFTimesheetReport
             $TotalLines=array();
             $userTaskArray=array();
             foreach($tasktimearray as $line){
-                $userTaskArray[$line['userid']][]=$line;
+                $userTaskArray[$line['userid']]['lines'][]=$line;
                 $TotalLines[$line['userid']]+=$line['duration'];
             }
-           
+           /* add a line with the total*/
             foreach($userTaskArray as $userid => $taskArray){
-            $userTaskArray[$userid][]=array('projectId'=>'','projectLabel'=>convertSecondToTime($TotalLines[$userid],'allhourmin'),
-                'taskId'=>'','taskLabel'=>convertSecondToTime($TotalLines[$userid],'allhourmin'),  
-                'userid'=>'','userName'=>$outputlangs->transnoentities('Total'),'duration'=>0,
-                'date'=>'');
+            $userTaskArray[$userid]['Total']=formatTime($TotalLines[$userid],-1);
             }
 
             $pdf->Open();
@@ -211,7 +208,7 @@ class pdf_rat extends ModelPDFTimesheetReport
                 $pdf->AddPage();
                 if (! empty($tplidx)) $pdf->useTemplate($tplidx);
                 $pagenb++;
-                $this->_pagehead($pdf, $object, 1, $outputlangs,$tasktimearray[0]['userName']);
+                $this->_pagehead($pdf, $object, 1, $outputlangs,$tasktimearray['lines'][0]['userName']);
                 $pdf->SetFont('','', $default_font_size - 1);
                 $pdf->MultiCell(0, 3, '');		// Set interline to 3
                 $pdf->SetTextColor(0,0,0);
@@ -225,14 +222,14 @@ class pdf_rat extends ModelPDFTimesheetReport
 
                 $tab_height = $tab_height - $height_note;
                 //$tab_top = $nexY+6;
-                $heightoftitleline = 10;
+                $heightoftitleline =6;
                 $iniY = $tab_top + $heightoftitleline + 1;
                 $curY = $tab_top + $heightoftitleline + 1;
                 $nexY = $tab_top + $heightoftitleline + 1;
 
-                $nblignes=count($tasktimearray);
-                // Loop on each lines
-                for ($i = 0 ; $i < $nblignes ; $i++)
+                $nblignes=count($tasktimearray['lines']);
+                // Loop on each lines but total
+                for ($i = 0 ; $i < $nblignes-1 ; $i++)
                 {
                     $curY = $nexY;
                     $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
@@ -244,17 +241,17 @@ class pdf_rat extends ModelPDFTimesheetReport
 
                     // Description of line
                     $ref=$i;
-                    $libelleline=$tasktimearray[$i]['taskLabel'];
-                    $userName=$tasktimearray[$i]['userName'];
-                    $date=dol_print_date($tasktimearray[$i]['date'],'day');
-                    $duration=($tasktimearray[$i]['duration']>0)?convertSecondToTime((int) $tasktimearray[$i]['duration'],'allhourmin'):'';
-
+                    $libelleline=$tasktimearray['lines'][$i]['taskLabel'];
+                    $userName=$tasktimearray['lines'][$i]['userName'];
+                    $date=dol_print_date($tasktimearray['lines'][$i]['date'],'day');
+                    //$duration=($tasktimearray[$i]['duration']>0)?convertSecondToTime((int) $tasktimearray[$i]['duration'],'allhourmin'):'';
+                    $duration=formatTime($tasktimearray['lines'][$i]['duration'],-1);
                     $showpricebeforepagebreak=1;//FIXME
 
                     $pdf->startTransaction();
                     // Label
                     $pdf->SetXY($this->posxlabel, $curY);
-                    $pdf->MultiCell($this->posxworker-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+                    $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
                     $pageposafter=$pdf->getPage();
                     if ($pageposafter > $pageposbefore)	// There is a pagebreak
                     {
@@ -265,7 +262,7 @@ class pdf_rat extends ModelPDFTimesheetReport
                         // Label
                         $pdf->SetXY($this->posxlabel, $curY);
                         $posybefore=$pdf->GetY();
-                        $pdf->MultiCell($this->posxworker-$this->posxlabel, 0, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+                        $pdf->MultiCell($this->posxduration-$this->posxlabel, 0, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
                         $pageposafter=$pdf->getPage();
                         $posyafter=$pdf->GetY();
                         if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
@@ -303,7 +300,7 @@ class pdf_rat extends ModelPDFTimesheetReport
                                 // Label
                                 $pdf->SetXY($this->posxlabel, $curY);
                                 $posybefore=$pdf->GetY();
-                                $pdf->MultiCell($this->posxworker-$this->posxlabel, 0, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+                                $pdf->MultiCell($this->posxduration-$this->posxlabel, 0, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
                                 $pageposafter=$pdf->getPage();
                                 $posyafter=$pdf->GetY();
                             }
@@ -333,10 +330,10 @@ class pdf_rat extends ModelPDFTimesheetReport
                     $pdf->MultiCell($this->posxdate-$this->posxref, 0, $outputlangs->convToOutputCharset($ref), 0, 'L');
                     // date
                     $pdf->SetXY($this->posxdate, $curY);
-                    $pdf->MultiCell($this->posxworker-$this->posxdate, 0, $date, 0, 'L');
+                    $pdf->MultiCell($this->posxlabel-$this->posxdate, 0, $date, 0, 'L');
                     // Workler
-                    $pdf->SetXY($this->posxworker, $curY);
-                    $pdf->MultiCell($this->posxlabel-$this->posxworker, 0, $userName?substr($userName, 0, 23):'', 0, 'L');
+                    //$pdf->SetXY($this->posxworker, $curY);
+                    //$pdf->MultiCell($this->posxlabel-$this->posxworker, 0, $userName?substr($userName, 0, 23):'', 0, 'L');
 
                     // Duration
                     $pdf->SetXY($this->posxduration, $curY);
@@ -360,11 +357,11 @@ class pdf_rat extends ModelPDFTimesheetReport
                         $pdf->setPage($pagenb);
                         if ($pagenb == 1)
                         {
-                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, $heightoftitleline, $outputlangs, 0, 1);
                         }
                         else
                         {
-                                $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+                                $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, $heightoftitleline, $outputlangs, 1, 1);
                         }
                         $this->_pagefoot($pdf,$object,$outputlangs,1);
                         $pagenb++;
@@ -376,11 +373,11 @@ class pdf_rat extends ModelPDFTimesheetReport
                     {
                         if ($pagenb == 1)
                         {
-                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, $heightoftitleline, $outputlangs, 0, 1);
                         }
                         else
                         {
-                                $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+                                $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, $heightoftitleline, $outputlangs, 1, 1);
                         }
                         $this->_pagefoot($pdf,$object,$outputlangs,1);
                         // New page
@@ -395,9 +392,9 @@ class pdf_rat extends ModelPDFTimesheetReport
 
                 // Show square
                 if ($pagenb == 1)
-                        $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
+                        $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, $heightoftitleline, $outputlangs, 0, 0);
                 else
-                        $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
+                        $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, $heightoftitleline, $outputlangs, 1, 0);
                 $bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
                 if ($showSign=1)
                 {
@@ -405,16 +402,22 @@ class pdf_rat extends ModelPDFTimesheetReport
                     $HeightSignBox=30;
 
 
+                    $pdf->SetFont('', 'B', $default_font_size );
+                    $txtTotal= $tasktimearray['Total']." ".$outputlangs->transnoentities('Days');
+//                   
+                    $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1,0,true,'L');
+                    $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $txtTotal, 0, 1,0,true,'R');
                     $pdf->SetFont('','', $default_font_size - 1);
-                    $pdf->writeHTMLCell(80, 3, $this->marge_gauche+1, $bottomlasttab+1, $outputlangs->transnoentities('employeeSignature'), 0, 1);
-                    $pdf->writeHTMLCell(80, 3, $this->marge_gauche+$widthSignBox+2, $bottomlasttab+1, $outputlangs->transnoentities('customerSignature'), 0, 1);
+                    $pdf->writeHTMLCell(80, 3, $this->marge_gauche+1, $bottomlasttab+7, $outputlangs->transnoentities('employeeSignature'), 0, 1);
+                    $pdf->writeHTMLCell(80, 3, $this->marge_gauche+$widthSignBox+2, $bottomlasttab+7, $outputlangs->transnoentities('customerSignature'), 0, 1);
                     $nexY = $pdf->GetY();
                     $height_note=$nexY-$tab_top;
 
                     // Rect prend une longueur en 3eme param
                     $pdf->SetDrawColor(192,192,192);
-                    $pdf->Rect($this->marge_gauche, $bottomlasttab+1, $widthSignBox, $HeightSignBox);
-                    $pdf->Rect($this->marge_gauche+$widthSignBox+1, $bottomlasttab+1, $widthSignBox, $HeightSignBox);
+                    $pdf->Rect($this->page_largeur-$this->marge_droite-60, $bottomlasttab, 60, 5);
+                    $pdf->Rect($this->marge_gauche, $bottomlasttab+6, $widthSignBox, $HeightSignBox);
+                    $pdf->Rect($this->marge_gauche+$widthSignBox+1, $bottomlasttab+6, $widthSignBox, $HeightSignBox);
 
                     $tab_height = $tab_height - $height_note;
                     $tab_top = $nexY+6;
@@ -466,11 +469,11 @@ class pdf_rat extends ModelPDFTimesheetReport
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
+	function _tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outputlangs, $hidetop=0, $hidebottom=0)
 	{
 		global $conf,$mysoc;
 
-		$heightoftitleline = 10;
+		//$heightoftitleline = 10;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -483,26 +486,30 @@ class pdf_rat extends ModelPDFTimesheetReport
 		$pdf->line($this->marge_gauche, $tab_top+$heightoftitleline, $this->page_largeur-$this->marge_droite, $tab_top+$heightoftitleline);
 
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','', $default_font_size);
+		$pdf->SetFont('','B', $default_font_size  );
 
 		$pdf->SetXY($this->posxref, $tab_top+1);
-		$pdf->MultiCell($this->posxlabel-$this->posxref,3, "#",'','L');
+		$pdf->MultiCell($this->posxdate-$this->posxref,3, "#",'','L');
                 
                 $pdf->SetXY($this->posxdate, $tab_top+1);
-		$pdf->MultiCell($this->posxduration-$this->posxdate, 3, $outputlangs->transnoentities('Date'), 0, 'L');
+		$pdf->MultiCell($this->posxlabel-$this->posxdate, 3, $outputlangs->transnoentities('Date'), 0, 'L');
 
 
-		$pdf->SetXY($this->posxworker, $tab_top+1);
-		$pdf->MultiCell($this->posxdate-$this->posxworker, 3, $outputlangs->transnoentities("Name"), 0, 'L');
+		//$pdf->SetXY($this->posxworker, $tab_top+1);
+		//$pdf->MultiCell($this->posxdate-$this->posxworker, 3, $outputlangs->transnoentities("Name"), 0, 'L');
                 
                 $pdf->SetXY($this->posxlabel, $tab_top+1);
-		$pdf->MultiCell($this->posxworker-$this->posxlabel, 3, $outputlangs->transnoentities("Task"), 0, 'L');
+		$pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $outputlangs->transnoentities("Task"), 0, 'L');
 
 
 
 
 		$pdf->SetXY($this->posxduration, $tab_top+1);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, 'h:m', 0, 'L');
+		if ($conf->global->TIMESHEET_TIME_TYPE=="hours"){
+                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, 'h:m', 0, 'R');             
+                }else{
+                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, $outputlangs->transnoentities("Days"), 0, 'R');
+                }
 	}
 
 	/**
@@ -532,11 +539,14 @@ class pdf_rat extends ModelPDFTimesheetReport
                 $height=$default_font_size + 3;
 		// Logo
 		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
+                $logoWidth=0;
 		if ($mysoc->logo)
 		{
 			if (is_readable($logo))
 			{
 			    $height=pdf_getHeightForLogo($logo);
+                            $tmp=dol_getImageSize($logo, $url);
+                            $logoWidth=$tmp['width']>130?130:$tmp['width'];
 			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);	// width=0 (auto)
 			}
 			else
@@ -548,28 +558,29 @@ class pdf_rat extends ModelPDFTimesheetReport
 			}
 		}
 		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
+ 
+		$pdf->SetFont('','B', $default_font_size +1 );
+		$pdf->SetXY($this->marge_gauche+$logoWidth,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->name), '', 'R');
                 if(!empty($userName)){
                     $pdf->SetXY($this->marge_gauche,$height+$default_font_size + 3);
-                    $pdf->MultiCell(100, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
+                    $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
                 }
-		$pdf->SetFont('','B', $default_font_size + 3);
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($object->name), '', 'R');
-		$pdf->SetFont('','', $default_font_size + 2);
+		$pdf->SetFont('','', $default_font_size  );
 
-		$posy+=6;
+		$posy+=12;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : " . dol_print_date($object->startDate,'day',false,$outputlangs,true), '', 'R');
 
-		$posy+=6;
+		$posy+=5;
 		$pdf->SetXY($posx,$posy);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->stopDate,'day',false,$outputlangs,true), '', 'R');
 
 		if (is_object($object->thirdparty))
 		{
-			$posy+=6;
+			$posy+=5;
 			$pdf->SetXY($posx,$posy);
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $object->thirdparty->getFullName($outputlangs), '', 'R');
 		}
