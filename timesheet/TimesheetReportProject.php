@@ -87,9 +87,9 @@ if(!$user->admin){
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid= element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
     $sql.=' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active=\'1\'  '; 
-    $sql.=' AND fk_socpeople=\''.$userid.'\'';
+    $sql.=' AND fk_socpeople=\''.$userid.'\' and fk_statut = \'1\'';
 }else{
-    $sql.=' WHERE ctc.active=\'1\'  '; 
+    $sql.=' WHERE fk_statut = \'1\' '; 
 }
 
 dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
