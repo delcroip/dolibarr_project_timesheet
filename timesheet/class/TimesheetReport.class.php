@@ -291,8 +291,8 @@ class TimesheetReport
         {
         foreach($resArray as $key => $item)
         {
+        $resArray[$key]['date']=dol_print_date($item['date'],'day');
             
-
             if(($resArray[$Curlvl2][$this->lvl2Key]!=$resArray[$key][$this->lvl2Key])
                     ||($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key]))
             {
