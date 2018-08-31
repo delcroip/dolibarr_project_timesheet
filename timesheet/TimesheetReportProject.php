@@ -88,6 +88,8 @@ if(!$user->admin){
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
     $sql.=' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active=\'1\'  '; 
     $sql.=' AND fk_socpeople=\''.$userid.'\'';
+}else{
+    $sql.=' WHERE ctc.active=\'1\'  '; 
 }
 
 dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
