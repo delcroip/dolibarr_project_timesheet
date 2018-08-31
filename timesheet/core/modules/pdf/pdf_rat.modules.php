@@ -81,7 +81,7 @@ class pdf_rat extends ModelPDFTimesheetReport
                 $this->posxdate=$this->marge_gauche+9;
                 //$this->posxworker=$this->marge_gauche+27;
 		//$this->posxlabel=$this->marge_gauche+65;
-                $this->posxlabel=$this->marge_gauche+29;
+                $this->posxlabel=$this->marge_gauche+33;
                 //$this->posxworkload=$this->marge_gauche+120;
 		//$this->posxprogress=$this->marge_gauche+140;
 		//$this->posxdatestart=$this->marge_gauche+152;
@@ -92,7 +92,7 @@ class pdf_rat extends ModelPDFTimesheetReport
 		{
 			$this->posxref-=20;
 			$this->posxlabel-=20;
-			$this->posxworker-=20;
+			//$this->posxworker-=20;
 			$this->posxdate-=20;
 			$this->posxduration-=20;
 		}
@@ -563,7 +563,7 @@ class pdf_rat extends ModelPDFTimesheetReport
 		$pdf->SetXY($this->marge_gauche+$logoWidth,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->name), '', 'R');
-                if(!empty($userName)){
+                if(!empty($userName) && !$conf->global->TIMESHEET_HIDE_NAME){
                     $pdf->SetXY($this->marge_gauche,$height+$default_font_size + 3);
                     $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
                 }
