@@ -71,8 +71,8 @@ if(sizeof($opendays)!=8)$opendays=array('_','0','0','0','0','0','0','0');
 $apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 if(sizeof($apflows)!=6)$apflows=array('_','0','0','0','0','0');
 $error=0;
-function null2zero($var){
-    return ($var=='')?0:$var;
+function null2int($var,$int=0){
+    return ($var=='')?$int:$var;
 } 
 switch($action)
 {
@@ -86,17 +86,17 @@ switch($action)
             dol_syslog(__METHOD__);
             $resql = $db->query($sql);
         }
-        $hoursperday=null2zero($_POST['hoursperday']);
-        $maxhoursperday=null2zero($_POST['maxhoursperday']);
-        $hidedraft=null2zero($_POST['hidedraft']);
-        $hidezeros=null2zero($_POST['hidezeros']);
-        $maxApproval=null2zero($_POST['maxapproval']);
-        $approvalbyweek=null2zero($_POST['approvalbyweek']);
-        $hideref=null2zero($_POST['hideref']);        
-        $whiteListMode=null2zero($_POST['blackWhiteListMode']);
-        $whiteList=null2zero($_POST['blackWhiteList']);
-        $dropdownAjax=null2zero($_POST['dropdownAjax']);
-        $addForOther=null2zero($_POST['addForOther']);
+        $hoursperday=null2int($_POST['hoursperday']);
+        $maxhoursperday=null2int($_POST['maxhoursperday']);
+        $hidedraft=null2int($_POST['hidedraft']);
+        $hidezeros=null2int($_POST['hidezeros']);
+        $maxApproval=null2int($_POST['maxapproval'],5);
+        $approvalbyweek=null2int($_POST['approvalbyweek']);
+        $hideref=null2int($_POST['hideref']);        
+        $whiteListMode=null2int($_POST['blackWhiteListMode']);
+        $whiteList=null2int($_POST['blackWhiteList']);
+        $dropdownAjax=null2int($_POST['dropdownAjax']);
+        $addForOther=null2int($_POST['addForOther']);
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         dolibarr_set_const($db, "TIMESHEET_TIME_SPAN", $timeSpan, 'chaine', 0, '', $conf->entity);
         dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
@@ -151,7 +151,7 @@ switch($action)
         $addholidaytime=$_POST['addholidaytime'];
         dolibarr_set_const($db, "TIMESHEET_ADD_HOLIDAY_TIME", $addholidaytime, 'chaine', 0, '', $conf->entity);
         
-        $adddocs=null2zero($_POST['adddocs']);
+        $adddocs=null2int($_POST['adddocs']);
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
                 
         $opendays=array('_','0','0','0','0','0','0','0');
@@ -170,16 +170,16 @@ switch($action)
         dolibarr_set_const($db, "TIMESHEET_APPROVAL_FLOWS", implode('',$apflows), 'chaine', 0, '', $conf->entity)  ;             
         $invoicemethod=$_POST['invoiceMethod'];
         dolibarr_set_const($db, "TIMESHEET_INVOICE_METHOD", $invoicemethod, 'chaine', 0, '', $conf->entity);        
-        $invoicetasktime=null2zero($_POST['invoiceTaskTime']);
+        $invoicetasktime=null2int($_POST['invoiceTaskTime']);
         dolibarr_set_const($db, "TIMESHEET_INVOICE_TASKTIME", $invoicetasktime, 'chaine', 0, '', $conf->entity);        
-        $invoiceservice=null2zero($_POST['invoiceService']);
+        $invoiceservice=null2int($_POST['invoiceService']);
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SERVICE", $invoiceservice, 'chaine', 0, '', $conf->entity);       
-        $invoiceshowtask=null2zero($_POST['invoiceShowTask']);
+        $invoiceshowtask=null2int($_POST['invoiceShowTask']);
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SHOW_TASK", $invoiceshowtask, 'chaine', 0, '', $conf->entity);       
-        $invoiceshowuser=null2zero($_POST['invoiceShowUser']);
+        $invoiceshowuser=null2int($_POST['invoiceShowUser']);
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SHOW_USER", $invoiceshowuser, 'chaine', 0, '', $conf->entity);
         // serach box
-        $searchbox=null2zero($_POST['searchBox']);
+        $searchbox=null2int($_POST['searchBox']);
         dolibarr_set_const($db, "TIMESHEET_SEARCHBOX", $searchbox, 'chaine', 0, '', $conf->entity);       
 
 
