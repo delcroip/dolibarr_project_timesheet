@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015 Patrick Delcoix  <delcroip@gmail.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) Patrick Delcroix <pmpdelcroix@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -418,7 +418,7 @@ switch ($action) {
                         $formUserJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
                         $formUserJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
                         $formUserWhere.=" AND (ctc.element='project' AND ctc.active='1'  AND ec.fk_socpeople='".$user->id."' )";
-                        $formUserWhere.=" OR (t.public='1') )";
+                        $formUserWhere.=" OR (t.public='1')";
 
                 }
                     //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')

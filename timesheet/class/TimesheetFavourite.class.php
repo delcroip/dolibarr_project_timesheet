@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) Patrick Delcroix <pmpdelcroix@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
