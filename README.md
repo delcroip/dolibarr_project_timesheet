@@ -28,11 +28,10 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
  - total per day and per timesheet
  - Holiday are showed in the timesheet page
  - Layout customisation (show/hide the '00:00', show/hide the draft project task,show ref or not, show the related project or not ... )
- - Dolibarr Print mode supported 
  - Timesheet approval by N+1 (home box & email reminder possible)
  - Tasks can be masked/showed via favoris
  - User report by month
- - Project report by month
+ - Project report between dates
  - create invoice from the project report
 
  
@@ -51,6 +50,7 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
 
 # Next developement for other release
 - integrate weekly hour in the ts messages along with a week total (possible issue with splitted week) 
+- finetune the modules rights management (admin ...) 
 - handle the right for cust /  supplier / other approval  
 - show the Quantity in the step 2 of invoicing (js)
 - my timesheet page to see the status of the TS
