@@ -24,6 +24,7 @@ define('$conf->global->TIMESHEET_INVOICE_SHOW_USER','1');
 //load class
 include 'core/lib/includeMain.lib.php';
 include 'core/lib/generic.lib.php';
+include 'core/lib/timesheet.lib.php';
 //require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -33,8 +34,8 @@ $staticProject=new Project($db);
 $projectId=GETPOST('projectid','int');
 
 $socid=GETPOST('socid','int');
-$month=GETPOST('month','alpha');
-$year=GETPOST('year','int');
+//$month=GETPOST('month','alpha');
+//$year=GETPOST('year','int');
 $mode=GETPOST('invoicingMethod','alpha');
 $step=GETPOST('step','alpha');
 $ts2Invoice=GETPOST('ts2Invoice','alpha');
@@ -43,6 +44,19 @@ $userid=  is_object($user)?$user->id:$user;
 //init handling object
 $form = new Form($db);
 
+$dateStart                 = strtotime(GETPOST('dateStart', 'alpha'));
+$dateStartday =(!empty($dateStart) )? GETPOST('dateStartday', 'int'):0; // to not look for the date if action not goTodate
+$dateStartmonth                 = GETPOST('dateStartmonth', 'int');
+$dateStartyear                 = GETPOST('dateStartyear', 'int');
+$dateStart=parseDate($dateStartday,$dateStartmonth,$dateStartyear,$dateStart);
+
+$dateEnd                 = strtotime(GETPOST('dateEnd', 'alpha'));
+$dateEndday =(!empty($dateEnd) )? GETPOST('dateEndday', 'int'):0; // to not look for the date if action not goTodate
+$dateEndmonth                 = GETPOST('dateEndmonth', 'int');
+$dateEndyear                 = GETPOST('dateEndyear', 'int');
+$dateEnd=parseDate($dateEndday,$dateEndmonth,$dateEndyear,$dateEnd);
+
+
 
 if ($user->rights->facture->creer & hasProjectRight($userid,$projectId))
 {
@@ -50,16 +64,10 @@ if ($user->rights->facture->creer & hasProjectRight($userid,$projectId))
     if($socid==0 || !is_numeric($socid))$socid=$staticProject->socid; //FIXME check must be in place to ensure the user hqs the right to see the project details
 $edit=1;
 // avoid SQL issue
-if(empty($month) || empty($year) || empty($projectId)){
-    $step=1;
-    
-    $month=(date('m')-1);
-    if ($month==0){
-        $month=12;
-        $year=date('Y')-1;
-    }else {
-        $year=date('Y');
-    }
+if(empty($dateStart) || empty($dateEnd) || empty($projectId)){
+    $step=0;
+    $dateStart=  strtotime("first day of previous month",time());
+    $dateEnd=  strtotime("last day of previous month",time());
  }
  $langs->load("main");
 $langs->load("projects");
@@ -78,13 +86,10 @@ $langs->load('timesheet@timesheet');
              $sql.=' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
             $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task=t.rowid';
             $sql.=' WHERE t.fk_projet='.$projectId;
-             if($db->type!='pgsql'){
-                $sql.=' AND MONTH(tt.task_date)='.$month;
-                $sql.=' AND YEAR(tt.task_date)='.$year;
-             }else{
-                $sql.=' AND date_part(\'month\',tt.task_date)='.$month;
-                $sql.=' AND date_part(\'month\',tt.task_date)='.$year;                
-             }
+
+                $sql.=" AND tt.task_date BETWEEN '".$db->idate($dateStart);
+                $sql.="' AND '".$db->idate($dateEnd)."'";
+
             if($ts2Invoice!='all'){
                 /*$sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_s SEPARATOR ", ")';
                 $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval';  
@@ -102,8 +107,8 @@ $langs->load('timesheet@timesheet');
             
             $Form ='<form name="settings" action="?step=3" method="POST" >'."\n\t"; 
             $Form .='<input type="hidden" name="projectid" value ="'.$projectId.'">';
-            $Form .='<input type="hidden" name="year" value ="'.$year.'">';
-            $Form .='<input type="hidden" name="month" value ="'.$month.'">';
+            $Form .='<input type="hidden" name="dateStart" value ="'.dol_print_date($dateStart,'dayxcard').'">';
+            $Form .='<input type="hidden" name="dateEnd" value ="'.dol_print_date($dateEnd,'dayxcard').'">';
             $Form .='<input type="hidden" name="socid" value ="'.$socid.'">';
             $Form .='<input type="hidden" name="invoicingMethod" value ="'.$mode.'">';
             $Form .='<input type="hidden" name="ts2Invoice" value ="'.$ts2Invoice.'">';
@@ -190,8 +195,8 @@ $langs->load('timesheet@timesheet');
                         if(is_array($userTaskService ))foreach($userTaskService as  $tId => $service){
                             $durationTab=explode (':',$service['duration']);
                             $duration=$durationTab[1]*60+$durationTab[0]*3600;   
-                            $startday = dol_mktime(12, 0, 0, $month, 1, $year);
-                            $endday = dol_mktime(12, 0, 0, $month, date('t',$startday), $year);
+                            //$startday = dol_mktime(12, 0, 0, $month, 1, $year);
+                            //$endday = dol_mktime(12, 0, 0, $month, date('t',$startday), $year);
 
                             $details='';
                             $result ='';
@@ -216,7 +221,7 @@ $langs->load('timesheet@timesheet');
                                  $factor=$factor*intval($service['unit_duration']);
 
                                  $quantity= $duration/$factor;
-                                 $result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], '', '', '', 0, $startday, $endday, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
+                                 $result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], '', '', '', 0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
 
                              }
                              if($service['taskTimeList']<>'' &&  $result>0)$task_time_array[$result]=$service['taskTimeList'];
@@ -264,15 +269,16 @@ $edit=0;
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
-            $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans('generalInvoiceProjectParam').'</th><th>';    
+            $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans('generalInvoiceProjectParam').'</th></tr>';    
             $invoicingMethod=$conf->global->TIMESHEET_INVOICE_METHOD;
-            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Project').'</th><th  >';
+            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Project').'</th><th align="left" width="80%" >';
             //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
             $ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ',$sqlTailWhere,'',NULL,$sqlTailJoin,$ajaxNbChar);
-            $Form .='</th></tr><tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Month').' - '.$langs->trans('Year').'</th><th align="left">'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',1,10,3).'</th></tr>';
- //           $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Month').'</th><th ><input type="text" name="month" value ="'.$month.'"></th></tr>';
-           // $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Customer').'</th><th "><input type="text" name="ccust" value ="'.$custId.'"></th></tr>';
+           $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('dateStart').'</th>';
+            $Form.=   '<th align="left" width="80%">'.$form->select_date($dateStart,'dateStart',0,0,0,"",1,1,1)."</th></tr>";
+            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('dateEnd').'</th>';
+            $Form.=   '<th align="left" width="80%">'.$form->select_date($dateEnd,'dateEnd',0,0,0,"",1,1,1)."</th></tr>";
             $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('invoicingMethod').'</th><th align="left"><input type="radio" name="invoicingMethod" value="task" ';
             $Form .=($invoicingMethod=="task"?"checked":"").'> '.$langs->trans("Tasks").'</br> ';
             $Form .='<input type="radio" name="invoicingMethod" value="user" ';

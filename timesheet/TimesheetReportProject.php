@@ -29,7 +29,7 @@ $htmlother = new FormOther($db);
 
 $id		= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$dateStart	= GETPOST('dateStart','alpha');
+//$dateStart	= GETPOST('dateStart','alpha');
 $exportfriendly=GETPOST('exportfriendly','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $short=GETPOST('short','int');
@@ -40,6 +40,7 @@ $projectSelectedId=GETPOST('projectSelected');
     $month=GETPOST('month','alpha');//strtotime(str_replace('/', '-',$_POST['Date']))
 // Load traductions files requiredby by page
 //$langs->load("companies");
+
 $firstDay= ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
 $lastDay=  ($month)?strtotime('last day of this month',$firstDay):strtotime('last day of previous month');
 
@@ -49,19 +50,28 @@ $langs->load('timesheet@timesheet');
 
 //find the right week
 //find the right week
-$toDate                 = GETPOST('toDate', 'alpha');
-$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday', 'int'):0; // to not look for the date if action not goTodate
-$toDatemonth                 = GETPOST('toDatemonth', 'int');
-$toDateyear                 = GETPOST('toDateyear', 'int');
-if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
-    $dateStart=$_SESSION["dateStart"];
-}else {
-    $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
-}
+$dateStart                 = strtotime(GETPOST('dateStart', 'alpha'));
+$dateStartday =(!empty($dateStart) )? GETPOST('dateStartday', 'int'):0; // to not look for the date if action not goTodate
+$dateStartmonth                 = GETPOST('dateStartmonth', 'int');
+$dateStartyear                 = GETPOST('dateStartyear', 'int');
+$dateStart=parseDate($dateStartday,$dateStartmonth,$dateStartyear,$dateStart);
+
+$dateEnd                 = strtotime(GETPOST('dateEnd', 'alpha'));
+$dateEndday =(!empty($dateEnd) )? GETPOST('dateEndday', 'int'):0; // to not look for the date if action not goTodate
+$dateEndmonth                 = GETPOST('dateEndmonth', 'int');
+$dateEndyear                 = GETPOST('dateEndyear', 'int');
+$dateEnd=parseDate($dateEndday,$dateEndmonth,$dateEndyear,$dateEnd);
+
+if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)){
+    $step=0;
+    $dateStart=  strtotime("first day of previous month",time());
+    $dateEnd=  strtotime("last day of previous month",time());
+ }
 
 if($action=='getpdf'){
     $report=new TimesheetReport($db);
-    $report->initBasic($projectSelectedId,'','',$firstDay,$lastDay,$mode);
+   
+    $report->initBasic($projectSelectedId,'','',$dateStart,$dateEnd,$mode);
     $pdf=new pdf_rat($db);
     //$outputlangs=$langs;
     if( $pdf->write_file($report, $langs)>0){
@@ -71,7 +81,7 @@ if($action=='getpdf'){
     exit();
 }
 
-$_SESSION["dateStart"]=$dateStart ;
+//$_SESSION["dateStart"]=$dateStart ;
 
 
 llxHeader('',$langs->trans('projectReport'),'');
@@ -108,7 +118,7 @@ if ($resql)
                 $error=0;
                 $obj = $db->fetch_object($resql);
                 $projectList[$obj->rowid]=new TimesheetReport($db);
-                $projectList[$obj->rowid]->initBasic($obj->rowid,'',$obj->ref.' - '.$obj->title,$firstDay,$lastDay,$mode);
+                $projectList[$obj->rowid]->initBasic($obj->rowid,'',$obj->ref.' - '.$obj->title,$dateStart,$dateEnd,$mode);
                 $i++;
         }
         $db->free($resql);
@@ -121,7 +131,8 @@ $Form='<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss=
         <table class="noborder"  width="100%">
         <tr>
         <td>'.$langs->trans('Project').'</td>
-        <td>'.$langs->trans('Month').'</td>
+        <td>'.$langs->trans('dateStart').'</td>
+        <td>'.$langs->trans('dateEnd').'</td>
         <td></td>
         </tr>
         <tr >
@@ -136,7 +147,7 @@ foreach($projectList as $pjt){
    
 
 $querryRes='';
-if ($projectSelectedId   &&!empty($month))
+if ($projectSelectedId   &&!empty($dateStart))
 {
 
     $projectSelected=$projectList[$projectSelectedId];
@@ -144,12 +155,12 @@ if ($projectSelectedId   &&!empty($month))
     if($projectSelectedId=='-999'){
         foreach($projectList as $project){
         $querryRes.=$project->getHTMLreport($short,
-            $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
+           dol_print_date($dateStart,'day').'-'.dol_print_date($dateEnd,'day'),
             $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
         }
     }else{
     $querryRes=$projectSelected->getHTMLreport($short,
-            $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
+            dol_print_date($dateStart,'day').'-'.dol_print_date($dateEnd,'day'),
             $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
     }
     
@@ -159,9 +170,12 @@ if ($projectSelectedId   &&!empty($month))
     $month=date('m',$dateStart);
 }
 
-$Form.='</select></td>'
-        .'<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',0,10,3)
-        .' </td><td><input type="checkbox" name="short" value="1" '
+$Form.='</select></td>';
+        //}
+$Form.=   '<td>'.$form->select_date($dateStart,'dateStart',0,0,0,"",1,1,1)."</td>";
+$Form.=   '<td>'.$form->select_date($dateEnd,'dateEnd',0,0,0,"",1,1,1)."</td>";
+//$Form.='<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',0,10,3)
+$Form.=' <td><input type="checkbox" name="short" value="1" '
         .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
         .'<td><input type="checkbox" name="exportfriendly" value="1" '
         .(($exportfriendly==1)?'checked>':'>').$langs->trans('exportfriendly').'</td>'
@@ -172,9 +186,9 @@ $Form.='</select></td>'
         . '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'')
         .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
         .'<td><input class="butAction" type="submit" value="'.$langs->trans('getReport').'"><br>';
-if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<br><a class="butAction" href="TimesheetProjectInvoice.php?step=0&year='.$year.'&month='.$month.'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
+if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<br><a class="butAction" href="TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 
-if(!empty($querryRes))$Form.='<br><br><a class="butAction" href="?action=getpdf&year='.$year.'&month='.$month.'&projectSelected='.$projectSelectedId.'" >'.$langs->trans('TimesheetPDF').'</a>';
+if(!empty($querryRes))$Form.='<br><br><a class="butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectSelected='.$projectSelectedId.'" >'.$langs->trans('TimesheetPDF').'</a>';
         $Form.='</td></tr></table></form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 
