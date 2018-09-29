@@ -1,4 +1,19 @@
 # dolibarr_project_timesheet changelog
+3.2 change log from 3.1.7
+ - new: report project between dates instead of per month
+ - new: invoice project between dates instead of per month
+ - new: show the cusror pointer when the favourite start is hoovered
+ - fix: fix pdf layout issue when there is too many time for an user
+ 
+3.1.7 change log from 3.1.2
+ - fix: date were sometime displayed on two lines
+ - fix: avoid max approval to be set at 0 (was genereating issues elsewhere)
+ - fix remove project closed from admin view of project report
+ - fix: support installation in a subfolder of the custom folder
+ - fix: error in case the timesheet favourite didn't have any task related
+ - clean: align time formating accros the module
+ - better layout for the total in the pdf
+
 3.1.2 change log from 2.2.11
  - new: button to generate users' attendance sheet from project report pages
  - fix: #57 note were not saved when containing a simple quote
