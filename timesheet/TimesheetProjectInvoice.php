@@ -275,9 +275,9 @@ $edit=0;
             //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
             $ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             $Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ',$sqlTailWhere,'',NULL,$sqlTailJoin,$ajaxNbChar);
-           $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('dateStart').'</th>';
+           $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('DateStart').'</th>';
             $Form.=   '<th align="left" width="80%">'.$form->select_date($dateStart,'dateStart',0,0,0,"",1,1,1)."</th></tr>";
-            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('dateEnd').'</th>';
+            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('DateEnd').'</th>';
             $Form.=   '<th align="left" width="80%">'.$form->select_date($dateEnd,'dateEnd',0,0,0,"",1,1,1)."</th></tr>";
             $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('invoicingMethod').'</th><th align="left"><input type="radio" name="invoicingMethod" value="task" ';
             $Form .=($invoicingMethod=="task"?"checked":"").'> '.$langs->trans("Tasks").'</br> ';

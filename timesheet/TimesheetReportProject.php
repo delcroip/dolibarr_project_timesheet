@@ -131,8 +131,11 @@ $Form='<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss=
         <table class="noborder"  width="100%">
         <tr>
         <td>'.$langs->trans('Project').'</td>
-        <td>'.$langs->trans('dateStart').'</td>
-        <td>'.$langs->trans('dateEnd').'</td>
+        <td>'.$langs->trans('DateStart').'</td>
+        <td>'.$langs->trans('DateEnd').'</td>
+        <td>'.$langs->trans('short').'</td>
+        <td>'.$langs->trans('exportfriendly').'</td>
+        <td>'.$langs->trans('Mode').'</td>
         <td></td>
         </tr>
         <tr >
@@ -176,20 +179,22 @@ $Form.=   '<td>'.$form->select_date($dateStart,'dateStart',0,0,0,"",1,1,1)."</td
 $Form.=   '<td>'.$form->select_date($dateEnd,'dateEnd',0,0,0,"",1,1,1)."</td>";
 //$Form.='<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',0,10,3)
 $Form.=' <td><input type="checkbox" name="short" value="1" '
-        .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
+        .(($short==1)?'checked>':'>').'</td>'
         .'<td><input type="checkbox" name="exportfriendly" value="1" '
-        .(($exportfriendly==1)?'checked>':'>').$langs->trans('exportfriendly').'</td>'
+        .(($exportfriendly==1)?'checked>':'>').'</td>'
         . '<td><input type="radio" name="mode" value="UTD" '.($mode=='UTD'?'checked':'')
         .'> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>'
         . '<input type="radio" name="mode" value="UDT" '.($mode=='UDT'?'checked':'')
         .'> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>'
         . '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'')
-        .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>'
-        .'<td><input class="butAction" type="submit" value="'.$langs->trans('getReport').'"><br>';
-if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<br><a class="butAction" href="TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
+        .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
+ $Form.='</td></tr></table>';
+ $Form.='<input class="butAction" type="submit" value="'.$langs->trans('getReport').'">';
 
-if(!empty($querryRes))$Form.='<br><br><a class="butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectSelected='.$projectSelectedId.'" >'.$langs->trans('TimesheetPDF').'</a>';
-        $Form.='</td></tr></table></form>';
+if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<a class="butAction" href="TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
+
+if(!empty($querryRes))$Form.='<a class="butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectSelected='.$projectSelectedId.'" >'.$langs->trans('TimesheetPDF').'</a>';
+ $Form.='</form>';      
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 
 
