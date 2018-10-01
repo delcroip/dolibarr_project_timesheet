@@ -89,7 +89,7 @@ class TimesheetReport
             $this->lvl2Key='date';
             break;
         case 'DPT'://day /project /task
-            $sqltail='ORDER BY ptt.task_date,prj.rowid,tsk.rowid ASC   ';
+            $this->modeSQLOrder='ORDER BY ptt.task_date,prj.rowid,tsk.rowid ASC   ';
             //title
             $this->lvl1Title='date';
             $this->lvl2Title='projectLabel';
@@ -99,7 +99,7 @@ class TimesheetReport
             $this->lvl2Key='projectId';
             break;
         case 'PTD'://day /project /task
-            $sqltail='ORDER BY prj.rowid,tsk.rowid,ptt.task_date ASC   ';
+            $this->modeSQLOrder='ORDER BY prj.rowid,tsk.rowid,ptt.task_date ASC   ';
             //title
             $this->lvl1Title='projectLabel';
             $this->lvl2Title='taskLabel';
@@ -110,7 +110,7 @@ class TimesheetReport
             break;
         case 'UDT': //project  / task / Days //FIXME dayoff missing
                 
-            $sqltail='ORDER BY usr.rowid,ptt.task_date,tsk.rowid ASC   ';
+            $this->modeSQLOrder='ORDER BY usr.rowid,ptt.task_date,tsk.rowid ASC   ';
             //title
             $this->lvl1Title='userName';
             $this->lvl2Title='date';
@@ -121,7 +121,7 @@ class TimesheetReport
             break;
         
         case 'DUT'://day /project /task
-            $sqltail='ORDER BY ptt.task_date,usr.rowid,tsk.rowid ASC   ';
+            $this->modeSQLOrder='ORDER BY ptt.task_date,usr.rowid,tsk.rowid ASC   ';
             //title
             $this->lvl1Title='date';
             $this->lvl2Title='userName';
@@ -131,7 +131,7 @@ class TimesheetReport
             $this->lvl2Key='userId';
             break;
         case 'UTD'://day /project /task
-            $sqltail=' ORDER BY usr.rowid,tsk.rowid,ptt.task_date ASC   ';
+            $this->modeSQLOrder=' ORDER BY usr.rowid,tsk.rowid,ptt.task_date ASC   ';
             $this->lvl1Title='userName';
             $this->lvl2Title='taskLabel';
             $this->lvl3Title='date';
