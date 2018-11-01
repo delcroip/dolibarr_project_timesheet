@@ -313,6 +313,32 @@ function openTab(evt, tabName) {
      evt.currentTarget.firstChild.className=evt.currentTarget.firstChild.className.replace("tabunactive", "tabactive");
 }
 
+function searchTask(evt){
+    var search= new RegExp(evt.value,"i");
+    tslist = document.getElementsByClassName("timesheet_line");
+    tsNote = document.getElementsByClassName("timesheet_note");
+    //hide all notes without the search 
+    for (i = 0; i < tsNote.length; i++) {
+               tsNote[i].style.display = "none";
+    }
+    //hide all 
+    
+    for (i = 0; i < tslist.length; i++) {
+        tslist[i].style.display = "";
+        fields=tslist[i].children;
+        var displayLine=(tslist[i].id=="searchline")?true:false;
+        for (j=0; j<fields.length;j++ ){
+           var found=0;
+           found+=fields[j].innerText.search(search);
+           if(found>=0){
+             displayLine=true;
+            }
+        }
+        if(!displayLine)tslist[i].style.display = "none";
+    }
+    
+}
+// function use to switch between tabs
 function showFavoris(evt, tabName) {
     // Declare all variables
     var i, tabcontent, tablinks;

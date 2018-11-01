@@ -252,7 +252,7 @@ $Form .=$task_timesheet->getHTMLFormHeader($ajax);
      }
 $Form .=$task_timesheet->getHTML($ajax);
 
-
+//simulualate a click on of of the tabs
 $Form .='<script>document.getElementById("defaultOpen").click()</script>';
 
 //Javascript

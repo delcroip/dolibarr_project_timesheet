@@ -845,9 +845,12 @@ Public function setStatus($user,$status,$id=0){ //role ?
     
     
 function getHTML($ajax=false,$Approval=false){ 
-    
+    global $langs;
     $Form =$this->getHTMLHeader($ajax);
-
+// show the filter
+    $Form .='<tr class="timesheet_line" id="searchline">';
+    $Form .='<td><a>'.$langs->trans("Search").'</a></td>';
+    $Form .='<td span="0"><input type="texte" name="taskSearch" onkeyup="searchTask(this)"></td></tr>';
     $Form .=$this->getHTMLHolidayLines($ajax);
 
     if(!$Approval)$Form .=$this->getHTMLTotal();
