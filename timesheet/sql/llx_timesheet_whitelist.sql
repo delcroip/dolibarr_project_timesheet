@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2013  Alexandre Spangaro <alexandre.spangaro@gmail.com>
--- Copyright (C) 2015  Patrick Delcroix <pmpdelcroix@gmail.com>
+-- Copyright (C) 2015  Patrick Delcroix <patrick@pmpd.eu>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

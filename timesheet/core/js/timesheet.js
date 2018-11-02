@@ -1,5 +1,5 @@
 /* 
- *Copyright (C) 2014 delcroip <delcroip@gmail.com>
+ *Copyright (C) 2014 delcroip <patrick@pmpd.eu>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

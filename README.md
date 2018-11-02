@@ -49,7 +49,6 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
     - simple attendance logging
 
 # Next developement for other release
-- integrate weekly hour in the ts messages along with a week total (possible issue with splitted week) 
 - finetune the modules rights management (admin ...) 
 - handle the right for cust /  supplier / other approval  
 - show the Quantity in the step 2 of invoicing (js)

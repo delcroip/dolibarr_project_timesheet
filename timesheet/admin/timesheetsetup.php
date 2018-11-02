@@ -584,7 +584,7 @@ echo '<a href="../doc/Module_timesheet.pdf">  PDF </a></br>'."\n\t\t";
 echo '<a href="../doc/Module_timesheet.docx">  DOCX </a></br></br>'."\n\t\t";
 
 load_fiche_titre($langs->trans("Feedback"));
-echo $langs->trans('feebackDesc').' : <a href="mailto:pmpdelcroix@gmail.com?subject=TimesheetFeedback"> Patrick Delcroix</a></br></br>';
+echo $langs->trans('feebackDesc').' : <a href="mailto:patrick@pmpd.eu?subject=TimesheetFeedback"> Patrick Delcroix</a></br></br>';
 
 load_fiche_titre($langs->trans("Reminder"));
 print '<br><div>'.$langs->trans('reminderEmailProcess').'</div>';
