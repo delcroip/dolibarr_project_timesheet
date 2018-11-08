@@ -190,10 +190,9 @@ $Form.=' <td><input type="checkbox" name="short" value="1" '
         .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
  $Form.='</td></tr></table>';
  $Form.='<input class="butAction" type="submit" value="'.$langs->trans('getReport').'">';
-
 if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<a class="butAction" href="TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 
-if(!empty($querryRes))$Form.='<a class="butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectSelected='.$projectSelectedId.'" >'.$langs->trans('TimesheetPDF').'</a>';
+if(!empty($querryRes))$Form.='<a class="butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU" >'.$langs->trans('TimesheetPDF').'</a>';
  $Form.='</form>';      
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 

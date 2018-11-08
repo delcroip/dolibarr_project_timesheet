@@ -178,7 +178,7 @@ function write_file($object,$outputlangs)
                 $tplidx = $pdf->importPage(1);
             }
             //get data
-            $tasktimearray=$object->getReportArray('','',' ORDER BY task_date,taskid,userid');
+            $tasktimearray=$object->getReportArray('','','');
             $TotalLines=array();
             $userTaskArray=array();
             //order data per user id and calc total per user
@@ -219,7 +219,7 @@ function write_file($object,$outputlangs)
                 $nexY = $tab_top + $heightoftitleline + 1;
                 $nblignes=count($tasktimearray['lines']);
                 // Loop on each lines but total
-                for ($i = 0 ; $i < $nblignes-1 ; $i++)
+                for ($i = 0 ; $i < $nblignes ; $i++)
                 {
                     // move the cusor to add space between records
                     $curY = ($i == 0)? $nexY:$nexY+2;
