@@ -45,13 +45,13 @@ $userid=  is_object($user)?$user->id:$user;
 $form = new Form($db);
 
 $dateStart                 = strtotime(GETPOST('dateStart', 'alpha'));
-$dateStartday =(!empty($dateStart) )? GETPOST('dateStartday', 'int'):0; // to not look for the date if action not goTodate
+$dateStartday =GETPOST('dateStartday', 'int'); // to not look for the date if action not goTodate
 $dateStartmonth                 = GETPOST('dateStartmonth', 'int');
 $dateStartyear                 = GETPOST('dateStartyear', 'int');
 $dateStart=parseDate($dateStartday,$dateStartmonth,$dateStartyear,$dateStart);
 
 $dateEnd                 = strtotime(GETPOST('dateEnd', 'alpha'));
-$dateEndday =(!empty($dateEnd) )? GETPOST('dateEndday', 'int'):0; // to not look for the date if action not goTodate
+$dateEndday =GETPOST('dateEndday', 'int'); // to not look for the date if action not goTodate
 $dateEndmonth                 = GETPOST('dateEndmonth', 'int');
 $dateEndyear                 = GETPOST('dateEndyear', 'int');
 $dateEnd=parseDate($dateEndday,$dateEndmonth,$dateEndyear,$dateEnd);
