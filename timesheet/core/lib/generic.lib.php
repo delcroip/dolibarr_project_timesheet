@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) 2015-2018	   Patrick DELCROIX     <patrick@pmpd.eu>
+ * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,212 +31,230 @@ global $langs;
  *  @param    string              	$fieldToShow2    second part of the concatenation
  *  @param    string              	$selected            which value must be selected
  *  @param    string              	$separator          separator between the tow contactened fileds
- *  @param    string              	$sqlTailWhere              to limit per entity, to filter ...
- *  @param    string              	$selectparam          to add parameters to the select
+*  @param    string              	$sqlTailWhere              to limit per entity, to filter ...
+*  @param    string              	$selectparam          to add parameters to the select
  *  @param    array(string)             $addtionnalChoices    array of additionnal fields Array['VALUE']=string to show
- *  @param    string              	$sqlTailTAble              to add join ... 
- *  @param    string              	$ajaxUrl             path to the ajax handler ajaxSelectGenericHandler.php
+*  @param    string              	$sqlTailTAble              to add join ... 
+*  @param    string              	$ajaxUrl             path to the ajax handler ajaxSelectGenericHandler.php
 
  *  @return string                                                   html code
  */
 // to be taken into account when passing a Ajax handler
 //$conf->global->COMPANY_USE_SEARCH_TO_SELECT
-//$conf->global->PRODUIT_USE_SEARCH_TO_SELECT
-//$conf->global->PROJECT_USE_SEARCH_TO_SELECT
-//$conf->global->RESOURCE_USE_SEARCH_TO_SELECT
+ //$conf->global->PRODUIT_USE_SEARCH_TO_SELECT
+ //$conf->global->PROJECT_USE_SEARCH_TO_SELECT
+ //$conf->global->RESOURCE_USE_SEARCH_TO_SELECT
 //$conf->global->BARCODE_USE_SEARCH_TO_SELECT
 //$conf->global->CONTACT_USE_SEARCH_TO_SELECT
-function select_sellist($sqlarray = array('table' => 'user', 'keyfield' => 'rowid', 'fields' => 'firstname,lastname', 'join' => '', 'where' => '', 'tail' => ''), $htmlarray = array('name' => 'HTMLSellist', 'class' => '', 'otherparam' => '', '$ajaxNbChar' => '', 'separator' => ' '), $selected = '', $addtionnalChoices = array('NULL' => 'NULL')) {
-    global $conf, $langs, $db;
-    $ajax = $conf->use_javascript_ajax;
-    if (!isset($sqlarray['table']) || !isset($sqlarray['keyfield']) || !isset($sqlarray['fields']) || !isset($htmlarray['name'])) {
+function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','fields'=>'firstname,lastname', 'join' => '', 'where'=>'','tail'=>''),
+                        $htmlarray=array('name'=> 'HTMLSellist','class'=>'','otherparam'=>'','$ajaxNbChar'=>'','separator'=> ' ','noajax'=>0),
+                        $selected='',
+                        $addtionnalChoices=array('NULL'=>'NULL')){
+        global $conf,$langs,$db;
+
+     $noajax=   isset($htmlarray['noajax']);
+     $ajax=$conf->use_javascript_ajax && !$noajax ;
+    if( !isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) || !isset($htmlarray['name']))
+    {
         return 'error, one of the mandatory field of the function  select_sellist is missing';
     }
-    $htmlName = $htmlarray['name'];
-    $ajaxNbChar = $htmlarray['ajaxNbChar'];
-    $listFields = explode(',', $sqlarray['fields']);
-    $fields = array();
-    if(is_array($listFields))
-    {
-        foreach ($listFields as $item) {
-            $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
-            $label = ($start) ? substr($item, $start + 4) : $item;
-            $fields[] = array('select' => $item, 'label' => $label);
-        }
-    }else{
-        $start = MAX(strpos($listFields, ' AS '), strpos($listFields, ' as '));
-        $label = ($start) ? substr($listFields, $start + 4) : $listFields;
-        $fields[] = array('select' => $listFields, 'label' => $label);
+    $htmlName=$htmlarray['name'];
+    $ajaxNbChar=$htmlarray['ajaxNbChar'];
+    $listFields=explode(',',$sqlarray['fields']);
+    $fields=array();
+    foreach($listFields as $item){
+        $start=MAX(strpos($item,' AS '),strpos($item,' as '));
+        $label=($start)? substr($item, $start+4):$item;
+        $fields[]=array('select' => $item, 'label'=>$label);
     }
-    $select = "\n";
-    if ($ajax) {
+    $select="\n";
+    if ($ajax)
+    {
 
         include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-        $token = getToken();
+       $token=getToken();
 
-        $urloption = 'token=' . $token;
+        $urloption='token='.$token;
         $comboenhancement = '';
         //$ajaxUrl='';
-        $searchfields = '';
-        if ($ajaxNbChar) {
-            $ajaxUrl = dol_buildpath('/project_cost/core/ajaxGenericSelectHandler.php', 1);
-            $_SESSION['ajaxQuerry'][$token]['sql'] = $sqlarray;
-            $_SESSION['ajaxQuerry'][$token]['fields'] = $fields;
-            $_SESSION['ajaxQuerry'][$token]['html'] = $htmlarray;
-            $_SESSION['ajaxQuerry'][$token]['option'] = $addtionnalChoices;
-
-            //array('table'=>$table, 'fieldValue'=>$fieldValue,'htmlName'=> $htmlName,'fieldToShow1'=>$fieldToShow1,'fieldToShow2'=>$fieldToShow2,'separator'=> $separator,'sqlTailTable'=>$sqlTailTable,'sqlTailWhere'=>$sqlTailWhere,'addtionnalChoices'=>$addtionnalChoices);
-            $comboenhancement = ajax_autocompleter($selected, $htmlName, $ajaxUrl, $urloption, $ajaxNbChar);
+        $searchfields='';
+        if($ajaxNbChar ){
+            $ajaxUrl=dol_buildpath('/project_cost/core/ajaxGenericSelectHandler.php',1);
+            $_SESSION['ajaxQuerry'][$token]['sql']=$sqlarray;
+            $_SESSION['ajaxQuerry'][$token]['fields']=$fields;
+            $_SESSION['ajaxQuerry'][$token]['html']=$htmlarray; 
+            $_SESSION['ajaxQuerry'][$token]['option']=$addtionnalChoices;
+            
+                    //array('table'=>$table, 'fieldValue'=>$fieldValue,'htmlName'=> $htmlName,'fieldToShow1'=>$fieldToShow1,'fieldToShow2'=>$fieldToShow2,'separator'=> $separator,'sqlTailTable'=>$sqlTailTable,'sqlTailWhere'=>$sqlTailWhere,'addtionnalChoices'=>$addtionnalChoices);
+            $comboenhancement = ajax_autocompleter($selected, $htmlName, $ajaxUrl, $urloption,$ajaxNbChar);
             $sqlTail.=" LIMIT 5";
             // put \\ before barket so the js will work for Htmlname before it is change to seatch HTMLname
-            $htmlid = str_replace('[', '\\\\[', str_replace(']', '\\\\]', $htmlName));
-            $comboenhancement = str_replace('#' . $htmlName, '#' . $htmlid, $comboenhancement);
-            $comboenhancement = str_replace($htmlName . ':', '"' . $htmlName . '":', $comboenhancement); // #htmlname doesn't cover everything
-            $htmlName = 'search_' . $htmlName;
-        } else {
+            $htmlid=str_replace('[','\\\\[',str_replace(']','\\\\]',$htmlName));
+            $comboenhancement=str_replace('#'.$htmlName, '#'.$htmlid,$comboenhancement);
+            $comboenhancement=str_replace($htmlName.':', '"'.$htmlName.'":',$comboenhancement); // #htmlname doesn't cover everything
+            $htmlName='search_'.$htmlName;
+        }else{
             $comboenhancement = ajax_combobox($htmlName);
         }
         // put \\ before barket so the js will work
-        $htmlid = '#' . str_replace('[', '\\\\[', str_replace(']', '\\\\]', $htmlName));
-        $comboenhancement = str_replace('#' . $htmlName, $htmlid, $comboenhancement);
+        $htmlid='#'.str_replace('[','\\\\[',str_replace(']','\\\\]',$htmlName));
+        $comboenhancement=str_replace('#'.$htmlName, $htmlid,$comboenhancement);
         //incluse js code in the html response
         $select.=$comboenhancement;
-        $nodatarole = ($comboenhancement ? ' data-role="none"' : '');
+        $nodatarole=($comboenhancement?' data-role="none"':'');
+        
     }
-
+    
     //dBQuerry
 
-    $SelectOptions = '';
-    $selectedValue = '';
-    $sql = 'SELECT DISTINCT ';
+    $SelectOptions='';
+    $selectedValue='';
+    $sql='SELECT DISTINCT ';
     $sql.=$sqlarray['keyfield'];
-    $sql.=' ,' . $sqlarray['fields'];
-    $sql.= ' FROM ' . MAIN_DB_PREFIX . $sqlarray['table'] . ' as t';
-    if (isset($sqlarray['join']) && !empty($sqlarray['join']))
-        $sql.=' ' . $sqlarray['join'];
-    if (isset($sqlarray['where']) && !empty($sqlarray['where']))
-        $sql.=' WHERE ' . $sqlarray['where'];
-    if (isset($sqlarray['tail']) && !empty($sqlarray['tail']))
-        $sql.=' ' . $sqlarray['tail'];
+    $sql.=' ,'.$sqlarray['fields'];
+    $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
+    if(isset($sqlarray['join']) && !empty($sqlarray['join']))
+            $sql.=' '.$sqlarray['join'];
+    if(isset($sqlarray['where']) && !empty($sqlarray['where']))
+            $sql.=' WHERE '.$sqlarray['where'];
+    if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
+            $sql.=' '.$sqlarray['tail'];      
     dol_syslog('form::select_sellist ', LOG_DEBUG);
+    
+    $resql=$db->query($sql);
+   
+    if ($resql)
+    {
 
-    $resql = $db->query($sql);
 
-    if ($resql) {
-
-
-        $selectOptions.= "<option value=\"-1\" " . (empty($selected) ? "selected" : "") . ">&nbsp;</option>\n";
-        $i = 0;
-        $separator = isset($htmlarray['separator']) ? $htmlarray['separator'] : ' ';
-        //return $table."this->db".$field;
+        $selectOptions.= "<option value=\"-1\" ".(empty($selected)?"selected":"").">&nbsp;</option>\n";
+        $i=0;
+        $separator=isset($htmlarray['separator'])?$htmlarray['separator']:' ';
+         //return $table."this->db".$field;
         $num = $db->num_rows($resql);
-        while ($i < $num) {
-
+        while ($i < $num)
+        {
+            
             $obj = $db->fetch_object($resql);
-
-            if ($obj) {
-                $fieldtoshow = '';
-                
-                foreach ($fields as $item) {
-                    if (!empty($fieldtoshow))
-                        $fieldtoshow.=$separator;
+            
+            if ($obj)
+            {
+                $fieldtoshow='';
+                foreach($fields as $item){
+                    if(!empty($fieldtoshow))$fieldtoshow.=$separator;
                     $fieldtoshow.=$obj->{$item['label']};
                 }
-                $selectOptions.= "<option value=\"" . $obj->{$sqlarray['keyfield']} . "\" ";
-                if ($obj->{$sqlarray['keyfield']} == $selected) {
-                    $selectOptions.='selected=\"selected\"';
-                    $selectedValue = $fieldtoshow;
-                }
-                $selectOptions.=">";
-                $selectOptions.=$fieldtoshow;
+                $selectOptions.= "<option value=\"".$obj->{$sqlarray['keyfield']}."\" ";
+                if($obj->{$sqlarray['keyfield']}==$selected){
+                     $selectOptions.='selected=\"selected\"';
+                     $selectedValue=$fieldtoshow;
+                 }
+                 $selectOptions.=">";                    
+                 $selectOptions.=$fieldtoshow;
 
-                $selectOptions.="</option>\n";
-            }
+                 $selectOptions.="</option>\n";
+            } 
             $i++;
         }
-        if ($addtionnalChoices)
-            foreach ($addtionnalChoices as $value => $choice) {
-                $selectOptions.= '<option value="' . $value . '" ' . (($selected == $value) ? 'selected' : '') . ">{$choice}</option>\n";
-            }
-    } else {
+        if($addtionnalChoices)foreach($addtionnalChoices as $value => $choice){
+            $selectOptions.= '<option value="'.$value.'" '.(($selected==$value)?'selected':'').">{$choice}</option>\n";
+        }
+
+        
+    }
+    else
+    {
         $error++;
         dol_print_error($db);
-        $select.= "<option value=\"-1\" selected=\"selected\">ERROR</option>\n";
+       $select.= "<option value=\"-1\" selected=\"selected\">ERROR</option>\n";
     }
-
-
-    if ($ajaxNbChar && $ajax) {
-        if ($selectedValue == '' && is_array($addtionnalChoices)) {
-            $selectedValue = $addtionnalChoices[$selected];
+     
+   
+    if($ajaxNbChar && $ajax){
+        if ($selectedValue=='' && is_array($addtionnalChoices)){
+            $selectedValue=$addtionnalChoices[$selected];
         }
-        $select.='<input type="text" class="minwidth200 ' . (isset($htmlarray['class']) ? $htmlarray['class'] : '') . '" name="' . $htmlName . '" id="' . (isset($htmlarray['id']) ? $htmlarray['id'] : $htmlName) . '" value="' . $selectedValue . '"' . $htmlarray['otherparam'] . ' />';
-    } else {
-        $select.='<select class="flat minwidth200 ' . (isset($htmlarray['class']) ? $htmlarray['class'] : '') . '" id="' . (isset($htmlarray['id']) ? $htmlarray['id'] : $htmlName) . ' name="' . $htmlName . '"' . $nodatarole . ' ' . $htmlarray['otherparam'] . '>';
+        $select.='<input type="text" class="minwidth200 '.(isset($htmlarray['class'])?$htmlarray['class']:'').'" name="'.$htmlName.'" id="'.(isset($htmlarray['id'])?$htmlarray['id']:$htmlName).'" value="'.$selectedValue.'"'.$htmlarray['otherparam'].' />';
+    }else{
+        $select.='<select class="flat minwidth200 '.(isset($htmlarray['class'])?$htmlarray['class']:'').'" id="'.(isset($htmlarray['id'])?$htmlarray['id']:$htmlName).'" name="'.$htmlName.'"'.$nodatarole.' '.$htmlarray['otherparam'].'>';
         $select.=$selectOptions;
         $select.="</select>\n";
     }
-    // }
-    return $select;
-}
+   // }
+      return $select;
+    
+} 
 
-function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL' => 'NULL'), $sqlTailTable = '', $ajaxNbChar = '') {
-    return select_sellist($sqlarray = array('table' => $table, 'keyfield' => $fieldValue, 'fields' => $fieldToShow1 . (empty($fieldToShow2) ? '' : ',' . $fieldToShow2), 'join' => '', 'where' => $sqlTailWhere, 'tail' => $sqlTailTable), $htmlarray = array('name' => $htmlName, 'class' => '', 'otherparam' => $selectparam, '$ajaxNbChar' => $ajaxNbChar, 'separator' => $separator), $selected, $addtionnalChoices);
-}
-
-function print_sellist($sqlarray = array('table' => 'user', 'keyfield' => 'rowid', 'fields' => 'firstname,lastname', 'join' => '', 'where' => '', 'tail' => ''), $selected, $separator = ' ') {
-    global $conf, $langs, $db;
-    if (!isset($sqlarray['table']) || !isset($sqlarray['keyfield']) || !isset($sqlarray['fields'])) {
-        return 'error, one of the mandatory field of the function  select_sellist is missing';
-    } else if (empty($selected)) {
+function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxNbChar=''){
+    return select_sellist($sqlarray=array('table'=> $table,'keyfield'=> $fieldValue,'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':','.$fieldToShow2), 'join' => '', 'where'=>$sqlTailWhere,'tail'=>$sqlTailTable),
+                        $htmlarray=array('name'=>$htmlName,'class'=>'','otherparam'=>$selectparam,'ajaxNbChar'=>$ajaxNbChar,'separator'=> $separator),
+                        $selected,
+                        $addtionnalChoices);
+ }
+ 
+ 
+ function print_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','fields'=>'firstname,lastname', 'join' => '', 'where'=>'','tail'=>''),
+                        $selected,$separator=' ',$url=''){
+    global $conf,$langs,$db;
+    if( !isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) )
+    {
+        return 'error, one of the mandatory field of the function  select_sellist is missing:'.$sqlarray['table'].$sqlarray['keyfield'].$sqlarray['fields'];
+    }else if (empty($selected)){
         return "NuLL";
     }
-
-    $sql = 'SELECT DISTINCT ';
+    
+    $sql='SELECT DISTINCT ';
     $sql.=$sqlarray['keyfield'];
-    $sql.=' ,' . $sqlarray['fields'];
-    $sql.= ' FROM ' . MAIN_DB_PREFIX . $sqlarray['table'] . ' as t';
-    if (isset($sqlarray['join']) && !empty($sqlarray['join']))
-        $sql.=' ' . $sqlarray['join'];
-    if (isset($sqlarray['where']) && !empty($sqlarray['where']))
-        $sql.=' WHERE ' . $sqlarray['where'];
-    if (isset($sqlarray['tail']) && !empty($sqlarray['tail']))
-        $sql.=' ' . $sqlarray['tail'];
+    $sql.=' ,'.$sqlarray['fields'];
+    $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
+    if(isset($sqlarray['join']) && !empty($sqlarray['join']))
+            $sql.=' '.$sqlarray['join'];
+    $sql.= ' WHERE '.$sqlarray['keyfield'].'=\''.$selected.'\'';
+    if(isset($sqlarray['where']) && !empty($sqlarray['where']))
+            $sql.=' AND '.$sqlarray['where'];
+    if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
+            $sql.=' '.$sqlarray['tail'];      
     dol_syslog('form::print_sellist ', LOG_DEBUG);
-    $resql = $db->query($sql);
-    if ($resql) {
-        $listFields = explode(',', $sqlarray['fields']);
-        $fields = array();
-        foreach ($listFields as $item) {
-            $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
-            $label = ($start) ? substr($item, $start + 4) : $item;
-            $fields[] = array('select' => $item, 'label' => $label);
+    $resql=$db->query($sql);
+     if ($resql)
+    {
+        $listFields=explode(',',$sqlarray['fields']);
+        $fields=array();
+        foreach($listFields as $item){
+           $start=MAX(strpos($item,' AS '),strpos($item,' as '));
+           $label=($start)? substr($item, $start+4):$item;
+           $fields[]=array('select' => $item, 'label'=>$label);
         }
         $num = $db->num_rows($resql);
-        if ($num) {
+        if ( $num)
+        {
             $obj = $db->fetch_object($resql);
-
-            if ($obj) {
-                $select = '';
-                foreach ($fields as $item) {
-                    if (!empty($select))
-                        $select.=$separator;
+            
+            if ($obj)
+            {
+                $select='';
+                foreach($fields as $item){
+                    if(!empty($select))$select.=$separator;
                     $select.=$obj->{$item['label']};
                 }
-            }else {
-                $select = "NULL";
+                     if(!empty($url))$select='<a href="'.$url.$obj->{$sqlarray['keyfield']}.'">'.$select.'</a>';
+            }else{
+                $select= "NULL";
             }
-        } else {
-            $select = "NULL";
+        }else{
+            $select= "NULL";
         }
-    } else {
+    }
+    else
+    {
         $error++;
         dol_print_error($db);
-        $select.= "ERROR";
+       $select.= "ERROR";
     }
-    //$select.="\n";
-    return $select;
-}
-
+      //$select.="\n";
+      return $select;
+ }
+ 
 /*
  * function to genegate a select list from a table, the showed text will be a concatenation of some 
  * column defined in column bit, the Least sinificative bit will represent the first colum 
@@ -250,13 +268,12 @@ function print_sellist($sqlarray = array('table' => 'user', 'keyfield' => 'rowid
 
  *  @return string                                                   html code
  */
-
-function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2 = "", $separator = ' - ', $sqltail = "", $sqljoin = "") {
-    //return $table.$db.$field;
-    return print_sellist($sqlarray = array('table' => $table, 'keyfield' => $fieldValue, 'fields' => $fieldToShow1 . (empty($fieldToShow2) ? '' : ',' . $fieldToShow2), 'join' => $sqljoin, 'where' => '', 'tail' => $sqltail), $selected, $separator);
-}
-
-/*
+function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2="",$separator=' - ',$sqltail="",$sqljoin=""){
+   //return $table.$db.$field;
+ return  print_sellist($sqlarray=array('table'=> $table,'keyfield'=> $fieldValue,'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':','.$fieldToShow2), 'join' => $sqljoin, 'where'=>'','tail'=>$sqltail),
+                        $selected,$separator);
+ }
+ /*
  * function to print a bitstring (or sting starting  with _)
  * 
  *  @param    string                                            $bitstring              list f bits
@@ -265,61 +282,63 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
  *  @param    int                       $edit             active the  read only mode
  *  @return   string                htmlcode                                       
  */
+ 
+ function printBitStringHTML($bitstring,$labels,$names,$edit=0){
+     global $langs;
+     $html="error, paramters of printBitStringHTML not valid";
+     $numberOfBits=count($labels);
+     if(is_array($labels) && count_chars(bitstring)!=($numberOfBits+1)){
+          $htmlValue='';
+          $html='<table class="noborder" width="100%"><tr class="titre">';  
 
-function printBitStringHTML($bitstring, $labels, $names, $edit = 0) {
-    global $langs;
-    $html = "error, paramters of printBitStringHTML not valid";
-    $numberOfBits = count($labels);
-    if (is_array($labels) && count_chars(bitstring) != ($numberOfBits + 1)) {
-        $htmlValue = '';
-        $html = '<table class="noborder" width="100%"><tr class="titre">';
+           for($i=0;$i<$numberOfBits;$i++){
+               // labels
+               $html.='<td width="'.floor(100/$numberOfBits).'%">'.$labels[$i].'<td>';
+               $htmlValue.='<td><input type="checkbox" name="'.$names[$i].'"'.((substr($bitstring, $i+1, 1))?' checked':'').(($edit)?'':' readonly').' ><td>';
 
-        for ($i = 0; $i < $numberOfBits; $i++) {
-            // labels
-            $html.='<td width="' . floor(100 / $numberOfBits) . '%">' . $labels[$i] . '<td>';
-            $htmlValue.='<td><input type="checkbox" name="' . $names[$i] . '"' . ((substr($bitstring, $i + 1, 1)) ? ' checked' : '') . (($edit) ? '' : ' readonly') . ' ><td>';
-        }
-        $html.='</tr><tr>' . $htmlValue . '</tr></table>';
-    }
-    return $html;
-}
+           }
+           $html.='</tr><tr>'.$htmlValue.'</tr></table>';
+     }
+     return $html;
 
-/*
+ }
+ 
+ 
+ /*
  * function to genegate a random number
  * 
  *  @param    int            	$min                min seed
  *  @param    int                      $max            max seed
  *  @return   int                                  random number                                         
  */
-
-function crypto_rand_secure($min, $max) {
-    $range = $max - $min;
-    if ($range < 0)
-        return $min; // not so random...
-    $log = log($range, 2);
-    $bytes = (int) ($log / 8) + 1; // length in bytes
-    $bits = (int) $log + 1; // length in bits
-    $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
-    do {
-        $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
-        $rnd = $rnd & $filter; // discard irrelevant bits
-    } while ($rnd >= $range);
-    return $min + $rnd;
+ 
+ 
+ function crypto_rand_secure($min, $max) {
+        $range = $max - $min;
+        if ($range < 0) return $min; // not so random...
+        $log = log($range, 2);
+        $bytes = (int) ($log / 8) + 1; // length in bytes
+        $bits = (int) $log + 1; // length in bits
+        $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
+        do {
+            $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+            $rnd = $rnd & $filter; // discard irrelevant bits
+        } while ($rnd >= $range);
+        return $min + $rnd;
 }
-/*
+ /*
  * function to genegate a random string
  * 
  *  @param    int            	$lentgh                lentgh of the random string
  *  @return   int                                  random sting                                        
  */
-
-function getToken($length = 32) {
+function getToken($length=32){
     $token = "";
     $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
     $codeAlphabet.= "0123456789";
-    for ($i = 0; $i < $length; $i++) {
-        $token .= $codeAlphabet[crypto_rand_secure(0, strlen($codeAlphabet))];
+    for($i=0;$i<$length;$i++){
+        $token .= $codeAlphabet[crypto_rand_secure(0,strlen($codeAlphabet))];
     }
     return $token;
 }

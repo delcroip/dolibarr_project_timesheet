@@ -660,9 +660,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		//Search field foruserId
 		print '<td class="liste_titre" colspan="1" >';
        	//select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl=''){
-                $ajaxNbChar=$conf->global->CONTACT_USE_SEARCH_TO_SELECT;
-                print select_generic('user','rowid','ls_userId','lastname','firstname',$ls_userId, ' - ','', '', NULL,'', $ajaxNbChar);
-		print '</td>';
+                //print select_generic('user','rowid','ls_userId','lastname','firstname',$ls_userId, ' - ','', '', NULL,'', $ajaxNbChar);
+		print $form->select_users($ls_userId,'ls_userId');
+                print '</td>';
 		//Search field fordate_start
 		print '<td class="liste_titre" colspan="1" >';
 		print '<input class="flat" type="text" size="1" maxlength="2" name="date_start_month" value="'.$ls_date_start_month.'">';

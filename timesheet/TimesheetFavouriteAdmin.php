@@ -423,8 +423,12 @@ switch ($action) {
                 }
                     //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
 		$ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
-                print select_generic('projet','rowid','Project','ref','title',$object->project,' - ',$formUserWhere,' onchange="reload(this.form)"',NULL,$formUserJoin,$ajaxNbChar);
-		if($ajaxNbChar>=0) print "\n<script type='text/javascript'>\n$('input#Project').change(function(){\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
+            $htmlProjectArray=array('name'=>'Project','ajaxNbChar'=>$ajaxNbChar,'otherparam'=>' onchange="reload(this.form)"');
+            $sqlProjectArray=array('table'=>'projet','keyfield'=>'rowid','fields'=>'ref,title','join'=>$formUserJoin,'where'=>$formUserWhere,'separator' => ' - ');
+            print select_sellist($sqlProjectArray,$htmlProjectArray,$object->project);
+                //print select_generic('projet','rowid','Project','ref','title',$object->project,' - ',$formUserWhere,'',NULL,$formUserJoin);
+		
+                if($ajaxNbChar>=0) print "\n<script type='text/javascript'>\n$('input#Project').change(function(){\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
   //FIXME best to feed additionnal param to the search generic       
                 }else{
 		print print_generic('projet','rowid',$object->project,'ref','title');
@@ -449,8 +453,12 @@ switch ($action) {
                 }
 
                   //if (isset($formProject)){  
-                        $ajaxNbChar=intval($conf->global->TIMESHEET_SEARCHBOX);
-                        print select_generic('projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',$formTaskWhere,'',NULL,$formTaskJoin,$ajaxNbChar);
+                    $ajaxNbChar=intval($conf->global->TIMESHEET_SEARCHBOX);
+                        
+                    $htmlProjectTaskArray=array('name'=>'Projecttask','ajaxNbChar'=>$ajaxNbChar);
+                    $sqlProjectTaskArray=array('table'=>'projet_task','keyfield'=>'rowid','fields'=>'ref,label','join'=>$formTaskJoin,'where'=>$formTaskWhere,'separator' => ' - ');
+                    print select_sellist($sqlProjectTaskArray,$htmlProjectTaskArray,$object->project_task);
+                    //print select_generic('projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',$formTaskWhere,'',NULL,$formTaskJoin,$ajaxNbChar);
                   //}else{
                   //      print '<select class="flat minwidth200" id="Projecttask" name="Projecttask"></select>';
                   //}
@@ -678,18 +686,24 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	if($user->admin){
             print '<td class="liste_titre" colspan="1" >';
             $ajaxNbChar=$conf->global->CONTACT_USE_SEARCH_TO_SELECT;
-            print select_generic('user','rowid','ls_user','lastname','firstname',$ls_user ,' ','', '', NULL,'', $ajaxNbChar);
-            print '</td>';
+            print $form->select_users($ls_user,'ls_user');
+           print '</td>';
         }
 //Search field forproject
 	print '<td class="liste_titre" colspan="1" >';
         $ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
-        print select_generic('projet','rowid','ls_project','ref','title',$ls_project ,' - ','', '', NULL,'', $ajaxNbChar);
+        $htmlProjectArray=array('name'=>'ls_project','ajaxNbChar'=>$ajaxNbChar);
+        $sqlProjectArray=array('table'=>'projet','keyfield'=>'rowid','fields'=>'ref,title','join'=>$formUserJoin,'where'=>$formUserWhere,'separator' => ' - ');
+        print select_sellist($sqlProjectArray,$htmlProjectArray,$ls_project);
+//        print select_generic('projet','rowid','ls_project','ref','title',$ls_project ,' - ','', '', NULL,'', $ajaxNbChar);
 	print '</td>';
 //Search field forproject_task
 	print '<td class="liste_titre" colspan="1" >';
         $ajaxNbChar=intval($conf->global->TIMESHEET_SEARCHBOX);
-        print select_generic('projet_task','rowid','ls_project_task','ref','label',$ls_project_task ,' - ','', '', NULL,'', $ajaxNbChar);
+        $htmlProjectTaskArray=array('name'=>'ls_project_task','ajaxNbChar'=>$ajaxNbChar);
+        $sqlProjectTaskArray=array('table'=>'projet_task','keyfield'=>'rowid','fields'=>'ref,label','join'=>$formTaskJoin,'where'=>$formTaskWhere,'separator' => ' - ');
+        print select_sellist($sqlProjectTaskArray,$htmlProjectTaskArray,$object->project_task);
+        //print select_generic('projet_task','rowid','ls_project_task','ref','label',$ls_project_task ,' - ','', '', NULL,'', $ajaxNbChar);
 	print '</td>';
 //Search field forsubtask
 	print '<td class="liste_titre" colspan="1" >';
