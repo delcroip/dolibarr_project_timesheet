@@ -52,7 +52,7 @@ class pdf_rat extends ModelPDFTimesheetReport
             $langs->load("main");
             $langs->load("projects");
             $langs->load("companies");
-
+            $this->noteISOtask=$conf->global->TIMESHEET_PDF_NOTEISOTASK;
             $this->db = $db;
             $this->name = "rat";
             $this->description = $langs->trans("DocumentModelRat");
@@ -109,7 +109,7 @@ class pdf_rat extends ModelPDFTimesheetReport
 function write_file($object,$outputlangs)
 {
     global $conf, $hookmanager, $langs, $user;
-
+    
     if (! is_object($outputlangs)) $outputlangs=$langs;
     // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
     if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
@@ -183,8 +183,8 @@ function write_file($object,$outputlangs)
             $userTaskArray=array();
             //order data per user id and calc total per user
             foreach($tasktimearray as $line){
-                $userTaskArray[$line['userid']]['lines'][]=$line;
-                $TotalLines[$line['userid']]+=$line['duration'];
+                $userTaskArray[$line['userId']]['lines'][]=$line;
+                $TotalLines[$line['userId']]+=$line['duration'];
             }
            /* add a line with the total*/
             foreach($userTaskArray as $userid => $taskArray){
@@ -358,7 +358,19 @@ function write_file($object,$outputlangs)
     function write_line(&$pdf, $line,$curY,$outputlangs){
         global $conf;
         $ref=$line['ref'];
-        $libelleline=$line['taskLabel'];
+        $libelleline="";
+        switch($this->noteISOtask){
+            case 2: // show task and Note
+                $libelleline=$line['taskLabel'].(empty($line['note'])?'':':'.$line['note']);
+                break;
+            case 1:       // show note   
+                $libelleline.=$line['note'];
+                 break;
+            case 0: //show task
+            default:
+                $libelleline=$line['taskLabel'];
+        }
+        $libelleline=($this->noteISOtask)?$line['note']:$line['taskLabel'];
         $userName=$line['userName'];
         $date=dol_print_date($line['date'],'day');
         //$duration=($tasktimearray[$i]['duration']>0)?convertSecondToTime((int) $tasktimearray[$i]['duration'],'allhourmin'):'';
@@ -427,7 +439,19 @@ function write_file($object,$outputlangs)
             //$pdf->MultiCell($this->posxdate-$this->posxworker, 3, $outputlangs->transnoentities("Name"), 0, 'L');
             //task title
             $pdf->SetXY($this->posxlabel, $tab_top+1);
-            $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $outputlangs->transnoentities("Task"), 0, 'L');
+            $libelleline="";
+            switch($this->noteISOtask){
+                case 2: // show task and Note
+                    $libelleline=$outputlangs->transnoentities("Task").':'.$outputlangs->transnoentities("Note");
+                    break;
+                case 1:       // show note   
+                    $libelleline=$outputlangs->transnoentities("Note");
+                     break;
+                case 0: //show task
+                default:
+                    $libelleline=$outputlangs->transnoentities("Task");
+            }
+            $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $libelleline, 0, 'L');
             //duration title
             $pdf->SetXY($this->posxduration, $tab_top+1);
             if ($conf->global->TIMESHEET_TIME_TYPE=="hours"){
