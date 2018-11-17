@@ -1063,7 +1063,7 @@ function getHTMLHeader($ajax=false,$week=0){
    
 
     if($isOpenSatus){
-        $html.='<textarea class="flat"  cols="75" name="Note['.$this->id.']" rows="3" >'.$this->note.'</textarea>';
+        $html.='<textarea class="flat"  cols="75" name="noteTaskApproval['.$this->id.']" rows="3" >'.$this->note.'</textarea>';
         $html.='</div>';
     }else if(!empty($this->note)){
         $html.=$this->note;

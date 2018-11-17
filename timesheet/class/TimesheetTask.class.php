@@ -755,7 +755,7 @@ class TimesheetTask extends Task
         if($userid==0) $userid=$this->userId;
         $dayelapsed=getDayInterval($timeStart,$timeEnd);
         if($dayelapsed<1)return -1;
-        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";	
+        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date,ptt.note";	
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ";
         // FIXME If status above
@@ -789,7 +789,7 @@ class TimesheetTask extends Task
                 $dateCur=$this->db->jdate($obj->task_date);
                 $day=getDayInterval($timeStart,$dateCur);
 
-                $this->tasklist[$day]=array('id'=>$obj->rowid,'date'=>$dateCur,'duration'=>$obj->task_duration);
+                $this->tasklist[$day]=array('id'=>$obj->rowid,'date'=>$dateCur,'duration'=>$obj->task_duration,'note'=>$obj->note);
                 $i++;
             }
             
@@ -911,8 +911,8 @@ class TimesheetTask extends Task
                         break;
                 case 'Note':
                     $htmlTitle .=img_object('Note', 'generic', ' onClick="ShowHide(\'note_'.$this->userId.'_'.$this->id.'\')"');
-                    $htmltail='<tr class="timesheet_note" id="note_'.$this->userId.'_'.$this->id.'" style="display:none;"><th colspan="1">';
-                    $htmltail.='<a>'.$langs->trans('Note').'</a></th><th colspan="100%">';
+                    $htmltail='<tr class="timesheet_note" id="noteTask_'.$this->userId.'_'.$this->id.'" style="display:none;"><td colspan="1">';
+                    $htmltail.='<a>'.$langs->trans('Note').'</a></td><td colspan="100%">';
                     //if($isOpenSatus){
                         $htmltail.= '<textarea class="flat"  rows="2" cols="100"';
                         if($this->appId!=0){
@@ -924,10 +924,10 @@ class TimesheetTask extends Task
                     //}else if(!empty($this->note)){
                     //    $htmltail.=$this->note;                
                     //}
-                    $htmltail.="</th></tr>\n";
+                    $htmltail.="</td></tr>\n";
             }
 
-            $html.='<th align="left" '.((count($headers)==1)?'colspan="2" ':'').'>'.$htmlTitle."</th>\n";
+            $html.='<td align="left" '.((count($headers)==1)?'colspan="2" ':'').'>'.$htmlTitle."</td>\n";
                 
         }
 
@@ -966,26 +966,41 @@ class TimesheetTask extends Task
                 } else {
                     $bkcolor='background:#'.TIMESHEET_BC_FREEZED;
                 } 
-
-
-                $html .= '<th  ><input type="text" '.(($isOpen)?'':'readonly').' class="column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'" ';
+                $html .= "<td >\n"; 
+                // add note popup
+                if($isOpen){
+                $html .=img_object('Note', 'generic', ' style="display:inline-block;float:right;" onClick="openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
+                //note code
+                $html .='<div class="modal" id="note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';
+                $html .='<div class="modal-content">';
+                $html .='<span class="close " onclick="closeNotes()">&times;</span>';
+                $html.='<a align="left">'.$langs->trans('Note').'</a></br>';                    
+                $html.= '<textarea class="flat"  rows="3" style="width:350px;top:10px"';
+                $html.= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.'][1]" ';
+                $html .= '>'.$this->tasklist[$dayCur]['note'].'</textarea>';
+                $html .='</div></div>';  
+                }
+                //add input day
+                $html .= '<div style="display:inline-block;"><input  type="text" '.(($isOpen)?'':'readonly').' class="column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'" ';
                 // $html .= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" '; if one whant multiple ts per validation
-                $html .= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" ';
+                $html .= ' name="task['.$this->userId.']['.$this->id.']['.$dayCur.'][0]" ';
                 $html .=' value="'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
-                $html .='" maxlength="5" style="width: 90%;'.$bkcolor.'" ';
+                $html .='" maxlength="5" size="2" style="'.$bkcolor.'" ';
                 $html .='onkeypress="return regexEvent(this,event,\'timeChar\')" ';
-                $html .= 'onblur="validateTime(this,\''.$this->userId.'_'.$dayCur.'\')" />';
-                $html .= "</th>\n"; 
+                $html .= 'onblur="validateTime(this,\''.$this->userId.'_'.$dayCur.'\')" /></div>';
+
+                 //end note code       
+                $html .= "</td>\n"; 
             } else {
                 //$bkcolor='background:#'.(($dayWorkLoadSec!=0)?(self::$statusColor[$this->status]):'#FFFFFF');
-                //$html .= ' <th style="'.$bkcolor.'"><a class="time4day['.$this->userId.']['.$dayCur.']"';
-                $html .= ' <th ><a class="column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
+                //$html .= ' <td style="'.$bkcolor.'"><a class="time4day['.$this->userId.']['.$dayCur.']"';
+                $html .= ' <td ><a class="column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
                 //$html .= ' name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
                 $html .= ' name="task['.$this->id.']['.$dayCur.']" ';
                 $html .= ' style="width: 90%;"';
                 $html .=' >'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
                 $html .='</a> ';
-                $html .= "</th>\n"; 
+                $html .= "</td>\n"; 
 
 
             }
@@ -1264,7 +1279,9 @@ class TimesheetTask extends Task
             $noteUpdate++;
         }
             
-        if(is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $wkload){		
+        if(is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $dayData){
+            $wkload=$dayData[0];
+            $note=$dayData[1];
             $item=$this->tasklist[$dayKey];
             
             if($conf->global->TIMESHEET_TIME_TYPE=="days")
@@ -1287,9 +1304,12 @@ class TimesheetTask extends Task
                 $this->timespent_id=$item['id'];
                 $this->timespent_old_duration=$item['duration'];
                 $this->timespent_duration=$duration; 
-                if($item['duration']!=$duration)
+                $this->timespent_note=$note;
+
+                if($item['duration']!=$duration || $note!=$this->tasklist[$dayKey]['note'])
                 {
-                    if($this->timespent_duration>0){ 
+
+                    if($this->timespent_duration>0 || !empty($note)){ 
                         dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
                         if($this->updateTimeSpent($Submitter,0)>=0)
                         {
@@ -1324,7 +1344,7 @@ class TimesheetTask extends Task
                 }
             }
             //update the task list
-            
+
 
             $this->tasklist[$dayKey]['duration']=$duration;
         }

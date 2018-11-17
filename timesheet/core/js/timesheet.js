@@ -177,10 +177,13 @@ function validateTime(object,col_id){
                   object.style.backgroundColor = "lightgreen";
                   var regex= /^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1}):[0-9]{2}$/;
                   var regex2=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1})$/;
+                  var regex3=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1}):[0-9]{1}$/;
                   if(!regex.test(object.value))
                   { 
-                    if(regex2.test(object.value)){
+                    if(regex2.test(object.value)){ // simple number will assume hours
                         object.value=object.value+':00';     
+                    }else if(regex3.test(object.value)){ //missing 0 will assume ten of min
+                        object.value=object.value+'0'; 
                     }else if(!object.value){
                         object.value='0:00';
                     }
@@ -487,4 +490,34 @@ function setId(evt, JsonStr){
          evt.target.src="img/fav_off.png";
          evt.target.parentElement.parentElement.className=evt.target.parentElement.parentElement.className.replace('timesheet_whitelist','timesheet_blacklist');
      }
+}
+
+
+ // popup modal
+
+
+// Get the button that opens the modal
+
+function openNote(noteid){
+    var modal = document.getElementById(noteid);
+    modal.style.display = "block";
+    
+
+}
+
+//function to close note
+function closeNotes(){
+    var modals = document.getElementsByClassName("modal");
+    for(var modal in modals){
+        (modals[modal]).style.display = "none";
+    };
+}
+
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    
+    if (!event.target.classList.contains('modal')) {
+        //closeNotes();
+    }
 }

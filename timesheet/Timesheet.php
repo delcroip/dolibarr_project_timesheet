@@ -129,17 +129,17 @@ switch($action){
             if(GETPOSTISSET('task'))
             {
                                  $ret=0;
-                                 $notes=GETPOST('note','array');
-                                 $notesTta=GETPOST('Note','array');
+                                 $notesTask=GETPOST('noteTask','array');
+                                 $notesTaskApproval=GETPOST('noteTaskApproval','array');
                                  $tasks=GETPOST('task','array');
 				 foreach($tasks as $key => $tasktab){
 					 $task_timesheet->loadFromSession($timestamp,$key);  
-                                         if($task_timesheet->note!=$notesTta[$key]){
+                                         if($task_timesheet->note!=$notesTaskApproval[$key]){
                                             $update=true;
-                                            $task_timesheet->note=$notesTta[$key];
+                                            $task_timesheet->note=$notesTaskApproval[$key];
                                             $task_timesheet->update($user);
                                          }                                    
-                                         $ret=$task_timesheet->updateActuals($tasktab,$notes);
+                                         $ret=$task_timesheet->updateActuals($tasktab,$notesTask);
                                          
                                          
                                          if(GETPOSTISSET('submit') ){
