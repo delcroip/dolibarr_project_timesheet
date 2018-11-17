@@ -64,7 +64,7 @@ if ($user->rights->facture->creer & hasProjectRight($userid,$projectId))
     if($socid==0 || !is_numeric($socid))$socid=$staticProject->socid; //FIXME check must be in place to ensure the user hqs the right to see the project details
 $edit=1;
 // avoid SQL issue
-if(empty($dateStart) || empty($dateEnd) || empty($projectId)){
+if(empty($dateStart) || empty($dateEnd) ||$dateStart==$dateEnd ){
     $step=0;
     $dateStart=  strtotime("first day of previous month",time());
     $dateEnd=  strtotime("last day of previous month",time());
@@ -275,7 +275,7 @@ $edit=0;
             //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
             $ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             //$Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ',$sqlTailWhere,'',NULL,,$ajaxNbChar);
-            $htmlProjectArray=array('name'=>'projectid','ajaxNbChar'=>$ajaxNbChar);
+            $htmlProjectArray=array('name'=>'projectid','ajaxNbChar'=>$ajaxNbChar,'otherparam'=>' onchange="reload(this.form)"');
             $sqlProjectArray=array('table'=>'projet','keyfield'=>'rowid','fields'=>'ref,title','join'=>$sqlTailJoin,'where'=>$sqlTailWhere,'separator' => ' - ');
             $Form .= select_sellist($sqlProjectArray,$htmlProjectArray,$projectId);
             $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('DateStart').'</th>';
@@ -288,7 +288,6 @@ $edit=0;
             $Form .=($invoicingMethod=="user"?"checked":"").'> '.$langs->trans("User")."</br> ";
             $Form .='<input type="radio" name="invoicingMethod" value="taskUser" ';
             $Form .=($invoicingMethod=="taskUser"?"checked":"").'> '.$langs->trans("Tasks").' & '.$langs->trans("User")."</th></tr>\n\t\t";
-
 //cust list
             $Form .='<tr class="oddeven"><th  align="left">'.$langs->trans('Customer').'</th><th  align="left">'.$form->select_company($socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1).'</th></tr>';
 //all ts or only approved
@@ -310,12 +309,13 @@ $edit=0;
  
             $Form .='<input type="submit" onclick="return checkEmptyFormFields(event,\'settings\',\'';
             $Form .=$langs->trans("pleaseFillAll").'\')" class="butAction" value="'.$langs->trans('Next')."\">\n</from>";
- 
+            if($ajaxNbChar>=0) $Form .= "\n<script type='text/javascript'>\n$('input#Project').change(function(){\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
             break;
     }
 }else{
     $accessforbidden = accessforbidden("you don't have enough rights to see this page");   
 }
+
 /***************************************************
 * VIEW
 *
@@ -327,7 +327,14 @@ llxHeader('',$langs->trans('TimesheetToInvoice'),'','','','',$morejs);
 
 print $Form;
 
-
+//javascript to reload the page with the poject selected
+print '
+<SCRIPT type="text/javascript">
+function reload(form){
+var pjt=document.getElementById("projectid").value;
+self.location="?projectid=" + pjt ;
+}
+</script>';
 
 llxFooter();
 $db->close();
@@ -358,7 +365,7 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][userName]" value="'.$userName.'">';
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskLabel]"  value="'. $taskLabel.'">';
     $html.='<input type="hidden"   name="userTask['.$user.']['.$task.'][taskTimeList]"  value="'. $tasktimelist.'">';
-    $defaultService=$conf->global->TIMESHEET_INVOICE_SERVICE; 
+    $defaultService=getDefaultService($user,$task);
     $addchoices=array('-999'=> $langs->transnoentities('not2invoice'),-1=> $langs->transnoentities('Custom'));
     
     $ajaxNbChar=$conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
@@ -368,12 +375,28 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
     //$html.='<th><input type="text" size="6" name="userTask['.$user.']['.$task.']["VAT"]" ></th>';
     $html.='<th>'.$form->load_tva('userTask['.$user.']['.$task.'][VAT]', -1, $seller, $buyer, 0, 0, '', false, 1).'</th>';
     $html.='<th><input type="text" size="2" maxlength="2" name="userTask['.$user.']['.$task.'][unit_duration]" value="1" >';
-    $html.='</br><input name="userTask['.$user.']['.$task.'][unit_duration_unit]" type="radio" value="h" >'.$langs->trans('Hour');
-    $html.='</br><input name="userTask['.$user.']['.$task.'][unit_duration_unit]" type="radio" value="d" checked>'.$langs->trans('Days').'</th>';
+    $html.='</br><input name="userTask['.$user.']['.$task.'][unit_duration_unit]" type="radio" value="h" '.(($conf->global->TIMESHEET_TIME_TYPE=="days")?'':'checked').'>'.$langs->trans('Hour');
+    $html.='</br><input name="userTask['.$user.']['.$task.'][unit_duration_unit]" type="radio" value="d" '.(($conf->global->TIMESHEET_TIME_TYPE=="days")?'checked':'').'>'.$langs->trans('Days').'</th>';
     $html.='<th><input type="text" size="2" maxlength="2" name="userTask['.$user.']['.$task.'][duration]" value="'.$duration.'" >';
     
     $html.='</th</tr>';
     return $html;
+}
+
+function getDefaultService($userid,$taskid){
+    global $db,$conf;
+    $res= 0;
+    $sql.=' SELECT fk_service FROM '.MAIN_DB_PREFIX.'projet_task_extrafields WHERE fk_object=\''.$taskid.'\'';
+    $sql.=' UNION ALL';
+    $sql.=' SELECT fk_service FROM '.MAIN_DB_PREFIX.'user_extrafields WHERE fk_object=\''.$userid.'\'';
+    $sql.=' LIMIT 1';
+    $resql=$db->query($sql);
+        
+    if ($db->num_rows($resql)>0){
+        $obj = $db->fetch_object($resql);
+        $res=$obj->fk_service;
+    }
+    return ($res>0)?$res:$conf->global->TIMESHEET_INVOICE_SERVICE;
 }
 
 function hasProjectRight($userid,$projectid){

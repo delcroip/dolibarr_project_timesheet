@@ -57,7 +57,7 @@ class modTimesheet extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "TimesheetView";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '3.2.4';
+		$this->version = '3.2.5';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -416,6 +416,12 @@ class modTimesheet extends DolibarrModules
                 $sql[1] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'rat' AND type='timesheetReport' AND entity = ".$conf->entity;
                 $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('rat','timesheetReport',".$conf->entity.")";
                 dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
+                include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+                $extrafields->addExtraField('fk_service', "DefaultService", 'sellist',    1, '', 'user',         0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+                $extrafields->addExtraField('fk_service', "DefaultService", 'sellist',    1, '', 'projet_task',  0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+                $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean',    1, '', 'projet_task',  0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+
 		return $this->_init($sql, $options);
 	}
 
