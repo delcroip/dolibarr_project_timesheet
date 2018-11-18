@@ -910,7 +910,7 @@ class TimesheetTask extends Task
                         $htmlTitle .= " onfocus='this.blur()' readonly='true' size='1' value='&#x2753;' onclick='tristate_Marks(this)' />\n";
                         break;
                 case 'Note':
-                    $htmlTitle .=img_object('Note', 'generic', ' onClick="ShowHide(\'note_'.$this->userId.'_'.$this->id.'\')"');
+                    $htmlTitle .=img_object('Note', 'generic', ' onClick="ShowHide(\'noteTask_'.$this->userId.'_'.$this->id.'\')"');
                     $htmltail='<tr class="timesheet_note" id="noteTask_'.$this->userId.'_'.$this->id.'" style="display:none;"><td colspan="1">';
                     $htmltail.='<a>'.$langs->trans('Note').'</a></td><td colspan="100%">';
                     //if($isOpenSatus){
