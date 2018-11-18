@@ -61,6 +61,7 @@ $dateEndday = GETPOST('dateEndday', 'int'); // to not look for the date if actio
 $dateEndmonth                 = GETPOST('dateEndmonth', 'int');
 $dateEndyear                 = GETPOST('dateEndyear', 'int');
 $dateEnd=parseDate($dateEndday,$dateEndmonth,$dateEndyear,$dateEnd);
+$invoicabletaskOnly=GETPOST('invoicabletaskOnly', 'int');
 
 if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)){
     $step=0;
@@ -71,7 +72,7 @@ if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)){
 if($action=='getpdf'){
     $report=new TimesheetReport($db);
    
-    $report->initBasic($projectSelectedId,'','',$dateStart,$dateEnd,$mode);
+    $report->initBasic($projectSelectedId,'','',$dateStart,$dateEnd,$mode,$invoicabletaskOnly);
     $pdf=new pdf_rat($db);
     //$outputlangs=$langs;
     if( $pdf->write_file($report, $langs)>0){
@@ -118,7 +119,7 @@ if ($resql)
                 $error=0;
                 $obj = $db->fetch_object($resql);
                 $projectList[$obj->rowid]=new TimesheetReport($db);
-                $projectList[$obj->rowid]->initBasic($obj->rowid,'',$obj->ref.' - '.$obj->title,$dateStart,$dateEnd,$mode);
+                $projectList[$obj->rowid]->initBasic($obj->rowid,'',$obj->ref.' - '.$obj->title,$dateStart,$dateEnd,$mode,$invoicabletaskOnly);
                 $i++;
         }
         $db->free($resql);
@@ -126,29 +127,6 @@ if ($resql)
 {
         dol_print_error($db);
 }
-
-$Form='<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method="POST">
-        <table class="noborder"  width="100%">
-        <tr>
-        <td>'.$langs->trans('Project').'</td>
-        <td>'.$langs->trans('DateStart').'</td>
-        <td>'.$langs->trans('DateEnd').'</td>
-        <td>'.$langs->trans('short').'</td>
-        <td>'.$langs->trans('exportfriendly').'</td>
-        <td>'.$langs->trans('Mode').'</td>
-        <td></td>
-        </tr>
-        <tr >
-        <td><select  name="projectSelected">
-        ';
-foreach($projectList as $pjt){
-    $Form.='<option value="'.$pjt->projectid.'" '.(($projectSelectedId==$pjt->projectid)?"selected":'').' >'.$pjt->name.'</option>'."\n";
-}
-//    if($user->admin){
-        $Form.='<option value="-999" '.(($projectSelectedId=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
-//    }
-   
-
 $querryRes='';
 if ($projectSelectedId   &&!empty($dateStart))
 {
@@ -172,27 +150,58 @@ if ($projectSelectedId   &&!empty($dateStart))
     $year=date('Y',$dateStart);
     $month=date('m',$dateStart);
 }
-
+$Form='<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method="POST">
+        <table class="noborder"  width="100%">
+        <tr>
+        <td>'.$langs->trans('Project').'</td>
+        <td>'.$langs->trans('DateStart').'</td>
+        <td>'.$langs->trans('DateEnd').'</td>
+        <td>'.$langs->trans('short').'</td>
+        <td>'.$langs->trans('InvoicableOnly').'</td>
+        <td>'.$langs->trans('exportfriendly').'</td>
+        <td>'.$langs->trans('Mode').'</td>
+        <td></td>
+        </tr>
+        <tr >
+        <td><select  name="projectSelected">
+        ';
+// select project
+foreach($projectList as $pjt){
+    $Form.='<option value="'.$pjt->projectid.'" '.(($projectSelectedId==$pjt->projectid)?"selected":'').' >'.$pjt->name.'</option>'."\n";
+}
+//    if($user->admin){
+        $Form.='<option value="-999" '.(($projectSelectedId=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+//    }
 $Form.='</select></td>';
         //}
+// select start date
 $Form.=   '<td>'.$form->select_date($dateStart,'dateStart',0,0,0,"",1,1,1)."</td>";
+// select end date
 $Form.=   '<td>'.$form->select_date($dateEnd,'dateEnd',0,0,0,"",1,1,1)."</td>";
 //$Form.='<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',0,10,3)
-$Form.=' <td><input type="checkbox" name="short" value="1" '
-        .(($short==1)?'checked>':'>').'</td>'
-        .'<td><input type="checkbox" name="exportfriendly" value="1" '
-        .(($exportfriendly==1)?'checked>':'>').'</td>'
-        . '<td><input type="radio" name="mode" value="UTD" '.($mode=='UTD'?'checked':'')
-        .'> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>'
-        . '<input type="radio" name="mode" value="UDT" '.($mode=='UDT'?'checked':'')
-        .'> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>'
-        . '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'')
-        .'> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
+// Select short
+$Form.=' <td><input type="checkbox" name="short" value="1" ';
+$Form.=(($short==1)?'checked>':'>').'</td>' ;
+// Select invoiceable only
+$Form.='<td><input type="checkbox" name="invoicabletaskOnly" value="1" ';
+$Form.=(($invoicabletaskOnly==1)?'checked>':'>').'</td>';
+// Select Export friendly
+$Form.='<td><input type="checkbox" name="exportfriendly" value="1" ';
+$Form.=(($exportfriendly==1)?'checked>':'>').'</td>';
+
+// Select mode
+$Form.= '<td><input type="radio" name="mode" value="UTD" '.($mode=='UTD'?'checked':'');
+$Form.='> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>';
+$Form.= '<input type="radio" name="mode" value="UDT" '.($mode=='UDT'?'checked':'');
+$Form.='> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>';
+$Form.= '<input type="radio" name="mode" value="DUT" '.($mode=='DUT'?'checked':'');
+$Form.='> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
  $Form.='</td></tr></table>';
+ //submit
  $Form.='<input class="butAction" type="submit" value="'.$langs->trans('getReport').'">';
 if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION,"3.7")<=0 ))$Form.='<a class="butAction" href="TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 
-if(!empty($querryRes))$Form.='<a class="butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU" >'.$langs->trans('TimesheetPDF').'</a>';
+if(!empty($querryRes))$Form.='<a class="butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart,'dayxcard').'&dateEnd='.dol_print_date($dateEnd,'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
  $Form.='</form>';      
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 

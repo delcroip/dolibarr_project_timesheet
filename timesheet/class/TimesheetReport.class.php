@@ -49,11 +49,13 @@ class TimesheetReport
             $this->db = $db;
 	}
         
-    public function initBasic($projectid,$userid,$name,$startDate,$stopDate,$mode) 
+    public function initBasic($projectid,$userid,$name,$startDate,$stopDate,$mode,$invoiceableOnly='0',$taskarray=NULL) 
 	{
         global $langs,$conf;
         $this->ref="";
         $first=false;
+        $this->invoiceableOnly=$invoiceableOnly;
+        $this->taskarray=$taskarray;
             $this->projectid =$projectid; // coul
             if($projectid){
                 $this->project=new Project($this->db);
@@ -145,28 +147,29 @@ class TimesheetReport
     }
 	}
 /* Function to generate array for the resport
- * @param   date    $startDay   start date for the query
- * @param   date    $stopDay   start date for the query
+ * @param   int    $invoiceableOnly   will return only the invoicable task
+ * @param   array(int)   $taskarray   return the report only for those tasks
  * @param   string  $sqltail    sql tail after the where
  * @return array()
  */   
-    public function getReportArray($startDay='',$stopDay='',$sqltail=''){
+    public function getReportArray(){
         global $conf;
         $resArray=array();
         $first=true;
         $sql='SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid,';
         if($db->type!='pgsql'){
             $sql.= ' MAX(prj.title) as projecttitle,MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname,\' \',usr.lastname)) as username,';
-            $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note,";
+            $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable,";
         }else{
             $sql.= ' prj.title as projecttitle,prj.ref as projectref, CONCAT(usr.firstname,\'  \',usr.lastname) as username,';
-            $sql.= " tsk.ref as taskref, tsk.label as tasktitle, STRING_AGG(ptt.note,'. ') as note,";
+            $sql.= " tsk.ref as taskref, tsk.label as tasktitle, STRING_AGG(ptt.note,'. ') as note,MAX(tske.invoiceable) as invoicable,";
         }
         $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task ';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object=tsk.rowid ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
-        $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';      
+        $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';   
         $sql.= ' WHERE ';
         if(!empty($this->userid)){
             $sql.=' ptt.fk_user=\''.$this->userid.'\' ';
@@ -175,16 +178,23 @@ class TimesheetReport
         if(!empty($this->projectid)){
             
             $sql.=($first?'':'AND ').'tsk.fk_projet=\''.$this->projectid.'\' ';
+            $first=false;
+        }
+        if(is_array($this->taskarray) && count($this->taskarray)>1){
+            $sql.=($first?'':'AND ').'tsk.rowid in ('.explode($taskarray,',').') ';
+        }
+        if($this->invoiceableOnly==1){
+            $sql.=($first?'':'AND ').'tske.invoiceable= \'1\'';
         }
 
-         if(!empty($startDay))$sql.='AND task_date>=\''.$this->db->idate($startDay).'\'';
-          else $sql.='AND task_date>=\''.$this->db->idate($this->startDate).'\'';
-          if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
-          else $sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
+         /*if(!empty($startDay))$sql.='AND task_date>=\''.$this->db->idate($startDay).'\'';
+          else */$sql.='AND task_date>=\''.$this->db->idate($this->startDate).'\'';
+          /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
+          else */$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
          $sql.=' GROUP BY usr.rowid, ptt.task_date,tsk.rowid, prj.rowid ';
-        if(!empty($sqltail)){
+        /*if(!empty($sqltail)){
             $sql.=$sqltail;
-        }
+        }*/
         $sql.=$this->modeSQLOrder;
         dol_syslog("timesheet::userreport::tasktimeList", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -207,7 +217,8 @@ class TimesheetReport
                                 'duration' =>$obj->duration,
                                 'userId' =>$obj->userid,
                                 'userName' =>trim($obj->username),
-                                'note'=>$this->db->escape($obj->note) );
+                                'note'=>$this->db->escape($obj->note),
+                                'invoiceable'=>$obj->invoiceable );
 
                     $i++;
 
