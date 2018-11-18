@@ -178,7 +178,7 @@ function write_file($object,$outputlangs)
                 $tplidx = $pdf->importPage(1);
             }
             //get data
-            $tasktimearray=$object->getReportArray('','','');
+            $tasktimearray=$object->getReportArray();
             $TotalLines=array();
             $userTaskArray=array();
             //order data per user id and calc total per user
@@ -301,7 +301,7 @@ function write_file($object,$outputlangs)
                 {
                     
                     $pdf->SetFont('', 'B', $default_font_size );
-                    $txtTotal= $tasktimearray['Total']." ".$outputlangs->transnoentities('Days');  
+                    $txtTotal= $tasktimearray['Total']." ".(($conf->global->TIMESHEET_TIME_TYPE=="days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));  
                     $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1,0,true,'L');
                     $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $txtTotal, 0, 1,0,true,'R');
                     $pdf->SetFont('','', $default_font_size - 1);
@@ -361,16 +361,16 @@ function write_file($object,$outputlangs)
         $libelleline="";
         switch($this->noteISOtask){
             case 2: // show task and Note
-                $libelleline=$line['taskLabel'].(empty($line['note'])?'':':'.$line['note']);
+                $libelleline=$line['taskLabel'].(empty($line['note'])?'':': '.$line['note']);
                 break;
             case 1:       // show note   
-                $libelleline.=$line['note'];
+                $libelleline=$line['note'];
                  break;
             case 0: //show task
             default:
                 $libelleline=$line['taskLabel'];
         }
-        $libelleline=($this->noteISOtask)?$line['note']:$line['taskLabel'];
+
         $userName=$line['userName'];
         $date=dol_print_date($line['date'],'day');
         //$duration=($tasktimearray[$i]['duration']>0)?convertSecondToTime((int) $tasktimearray[$i]['duration'],'allhourmin'):'';
