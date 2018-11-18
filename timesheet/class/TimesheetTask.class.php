@@ -968,7 +968,7 @@ class TimesheetTask extends Task
                 } 
                 $html .= "<td >\n"; 
                 // add note popup
-                if($isOpen){
+                if($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE){
                 $html .=img_object('Note', 'generic', ' style="display:inline-block;float:right;" onClick="openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
                 //note code
                 $html .='<div class="modal" id="note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';

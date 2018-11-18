@@ -57,7 +57,7 @@ class modTimesheet extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "TimesheetView";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '3.2.5';
+		$this->version = '3.3.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -168,6 +168,10 @@ class modTimesheet extends DolibarrModules
                 $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER","chaine","0","enable to time spent entry for subordinates"); // hours or days
                 $r++;
                 $this->const[$r] = array("TIMESHEET_VERSION","chaine",$this->version,"save the timesheet verison"); // hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_SHOW_TIMESPENT_NOTE","chaine","1","show the note next to the time entry"); // hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_PDF_NOTEISOTASK","chaine","0","save the timesheet verison"); // hours or days
                 $r++;
 
 
