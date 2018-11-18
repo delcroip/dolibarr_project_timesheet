@@ -838,7 +838,7 @@ class TimesheetTask extends Task
         $linestyle='';
         if(($this->pStatus == "2")){
             $linestyle.='background:#'.TIMESHEET_BC_FREEZED.';';
-        } else{
+        } else if($statusColor[$this->status]!='' &&  $statusColor[$this->status]!='FFFFFF') {
             $linestyle.='background:#'.$statusColor[$this->status].';';// --FIXME
         }
         /*
@@ -910,7 +910,19 @@ class TimesheetTask extends Task
                         $htmlTitle .= " onfocus='this.blur()' readonly='true' size='1' value='&#x2753;' onclick='tristate_Marks(this)' />\n";
                         break;
                 case 'Note':
-                    $htmlTitle .=img_object('Note', 'generic', ' onClick="ShowHide(\'noteTask_'.$this->userId.'_'.$this->id.'\')"');
+                    $htmlTitle .=img_object('Note', 'generic', ' onClick="openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\')"');
+                    $html .='<div class="modal" id="noteTask_'.$this->userId.'_'.$this->id.'" >';
+                    $html .='<div class="modal-content">';
+                    $html .='<span class="close " onclick="closeNotes()">&times;</span>';
+                    $html.='<a align="left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.")".'</a></br>';                    
+                    $html.= '<textarea class="flat"  rows="3" style="width:350px;top:10px"';
+                    $html.= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.'][1]" ';
+                    $html .= '>'.$this->tasklist[$dayCur]['note'].'</textarea>';
+                    $html .='</div></div>';  
+ 
+                    
+                    
+               /*     
                     $htmltail='<tr class="timesheet_note" id="noteTask_'.$this->userId.'_'.$this->id.'" style="display:none;"><td colspan="1">';
                     $htmltail.='<a>'.$langs->trans('Note').'</a></td><td colspan="100%">';
                     //if($isOpenSatus){
@@ -924,7 +936,7 @@ class TimesheetTask extends Task
                     //}else if(!empty($this->note)){
                     //    $htmltail.=$this->note;                
                     //}
-                    $htmltail.="</td></tr>\n";
+                    $htmltail.="</td></tr>\n";*/
             }
 
             $html.='<td align="left" '.((count($headers)==1)?'colspan="2" ':'').'>'.$htmlTitle."</td>\n";
@@ -974,7 +986,7 @@ class TimesheetTask extends Task
                 $html .='<div class="modal" id="note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';
                 $html .='<div class="modal-content">';
                 $html .='<span class="close " onclick="closeNotes()">&times;</span>';
-                $html.='<a align="left">'.$langs->trans('Note').'</a></br>';                    
+                $html.='<a align="left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.', '.dol_print_date($today,'day').")".'</a></br>';                    
                 $html.= '<textarea class="flat"  rows="3" style="width:350px;top:10px"';
                 $html.= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.'][1]" ';
                 $html .= '>'.$this->tasklist[$dayCur]['note'].'</textarea>';
