@@ -64,8 +64,14 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
     $fields=array();
     foreach($listFields as $item){
         $start=MAX(strpos($item,' AS '),strpos($item,' as '));
-        $label=($start)? substr($item, $start+4):$item;
-        $fields[]=array('select' => $item, 'label'=>$label);
+        $start2=strpos($item,'.');
+        $label=$item;
+        if($start){
+            $label=substr($item, $start+4);
+        }else if($start2){
+            $label=substr($item, $start2+1);
+        }
+        $fields[]=array('select' => $item, 'label'=>trim($label));
     }
     $select="\n";
     if ($ajax)
@@ -79,7 +85,7 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
         //$ajaxUrl='';
         $searchfields='';
         if($ajaxNbChar ){
-            $ajaxUrl=dol_buildpath('/project_cost/core/ajaxGenericSelectHandler.php',1);
+            $ajaxUrl=dol_buildpath('/timesheet/core/ajaxGenericSelectHandler.php',1);
             $_SESSION['ajaxQuerry'][$token]['sql']=$sqlarray;
             $_SESSION['ajaxQuerry'][$token]['fields']=$fields;
             $_SESSION['ajaxQuerry'][$token]['html']=$htmlarray; 
@@ -120,6 +126,9 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
             $sql.=' '.$sqlarray['tail'];      
     dol_syslog('form::select_sellist ', LOG_DEBUG);
+    // remove the 't." if any
+    $startkey=strpos($sqlarray['keyfield'],'.');
+    $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
     
     $resql=$db->query($sql);
    
@@ -139,13 +148,14 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
             
             if ($obj)
             {
+
                 $fieldtoshow='';
                 foreach($fields as $item){
                     if(!empty($fieldtoshow))$fieldtoshow.=$separator;
                     $fieldtoshow.=$obj->{$item['label']};
-                }
-                $selectOptions.= "<option value=\"".$obj->{$sqlarray['keyfield']}."\" ";
-                if($obj->{$sqlarray['keyfield']}==$selected){
+                } 
+                $selectOptions.= "<option value=\"".$obj->{$labelKey}."\" ";
+                if($obj->{$labelKey}==$selected){
                      $selectOptions.='selected=\"selected\"';
                      $selectedValue=$fieldtoshow;
                  }
@@ -215,16 +225,25 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
             $sql.=' '.$sqlarray['tail'];      
     dol_syslog('form::print_sellist ', LOG_DEBUG);
+    $startkey=strpos($sqlarray['keyfield'],'.');
+    $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
+
     $resql=$db->query($sql);
      if ($resql)
     {
         $listFields=explode(',',$sqlarray['fields']);
         $fields=array();
-        foreach($listFields as $item){
-           $start=MAX(strpos($item,' AS '),strpos($item,' as '));
-           $label=($start)? substr($item, $start+4):$item;
-           $fields[]=array('select' => $item, 'label'=>$label);
+    foreach($listFields as $item){
+        $start=MAX(strpos($item,' AS '),strpos($item,' as '));
+        $start2=strpos($item,'.');
+        $label=$item;
+        if($start){
+            $label=substr($item, $start+4);
+        }else if($start2){
+            $label=substr($item, $start2+1);
         }
+        $fields[]=array('select' => $item, 'label'=>trim($label));
+    }
         $num = $db->num_rows($resql);
         if ( $num)
         {

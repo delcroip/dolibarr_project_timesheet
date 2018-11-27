@@ -58,7 +58,7 @@ $dateEnd=parseDate($dateEndday,$dateEndmonth,$dateEndyear,$dateEnd);
 
 
 
-if ($user->rights->facture->creer & hasProjectRight($userid,$projectId))
+if ($user->rights->facture->creer && hasProjectRight($userid,$projectId))
 {
     if($projectId>0)$staticProject->fetch($projectId);
     if($socid==0 || !is_numeric($socid))$socid=$staticProject->socid; //FIXME check must be in place to ensure the user hqs the right to see the project details
@@ -262,10 +262,10 @@ $edit=0;
         $sqlTail='';
         
         if(!$user->admin){    
-            $sqlTailJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid=ec.element_id';
-            $sqlTailJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=fk_c_type_contact';
-            $sqlTailWhere=" ctc.element='project' AND ctc.active='1' "; // WARINING: any project role can do the invoice if they have the right to create invoices
-            $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' AND fk_statut = 1';
+            $sqlTailJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON t.rowid= element_id ';
+            $sqlTailJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
+            $sqlTailWhere=' ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active=\'1\'  '; 
+            $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' and t.fk_statut = \'1\'';  
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
@@ -276,7 +276,7 @@ $edit=0;
             $ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             //$Form .=select_generic('projet', 'rowid','projectid','ref','title',$projectId,' - ',$sqlTailWhere,'',NULL,,$ajaxNbChar);
             $htmlProjectArray=array('name'=>'projectid','ajaxNbChar'=>$ajaxNbChar,'otherparam'=>' onchange="reload(this.form)"');
-            $sqlProjectArray=array('table'=>'projet','keyfield'=>'rowid','fields'=>'ref,title','join'=>$sqlTailJoin,'where'=>$sqlTailWhere,'separator' => ' - ');
+            $sqlProjectArray=array('table'=>'projet','keyfield'=>'t.rowid','fields'=>'t.ref ,t.title ','join'=>$sqlTailJoin,'where'=>$sqlTailWhere,'separator' => ' - ');
             $Form .= select_sellist($sqlProjectArray,$htmlProjectArray,$projectId);
             $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('DateStart').'</th>';
             $Form.=   '<th align="left" width="80%">'.$form->select_date($dateStart,'dateStart',0,0,0,"",1,1,1)."</th></tr>";
@@ -386,10 +386,11 @@ function htmlPrintServiceChoice($user,$task,$class,$duration,$tasktimelist,$sell
 function getDefaultService($userid,$taskid){
     global $db,$conf;
     $res= 0;
-    $sql.=' SELECT fk_service FROM '.MAIN_DB_PREFIX.'projet_task_extrafields WHERE fk_object=\''.$taskid.'\'';
+    $sql=' SELECT fk_service FROM '.MAIN_DB_PREFIX.'projet_task_extrafields WHERE fk_object=\''.$taskid.'\'';
     $sql.=' UNION ALL';
     $sql.=' SELECT fk_service FROM '.MAIN_DB_PREFIX.'user_extrafields WHERE fk_object=\''.$userid.'\'';
     $sql.=' LIMIT 1';
+     dol_syslog("ProjectInvoice::getDefaultService", LOG_DEBUG);
     $resql=$db->query($sql);
         
     if ($db->num_rows($resql)>0){
@@ -402,24 +403,28 @@ function getDefaultService($userid,$taskid){
 function hasProjectRight($userid,$projectid){
     global $db,$user;
     $res=true;
-    if($projectid && !$user->admin){
-        $sql=' SELECT rowid FROM '.MAIN_DB_PREFIX.'element_contact ';
-        $sql.=' WHERE fk_c_type_contact = \'160\' AND element_id=\''.$projectid; //FIXME 
-        $sql.='\' AND fk_socpeople=\''.$userid.'\'';
+    if($projectid && !($user->admin)){
+        $res=false;
+        $sql=' SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec ';
+        $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
+        $sql.=' WHERE element_id=\''.$projectid; 
+        $sql.='\' AND (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\') AND ctc.active=\'1\'  '; 
+        $sql.=' AND fk_socpeople=\''.$userid.'\' ';  
+        dol_syslog("ProjectInvoice::hasProjectRight", LOG_DEBUG);
         $resql=$db->query($sql);
-        if (!$resql)$res=false;
+        if ($db->num_rows($resql))$res=true;
     }
     return $res;
 }
 
 function Update_task_time_invoice($idInvoice, $idLine,$task_time_list){
     global $db;
-    $res=true;
+    $res=false;
     $sql='UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
-    $sql.=" SET invoice_id={$idInvoice}, invoice_line_id={$idLine}";
+    $sql.=" SET invoice_id='{$idInvoice}', invoice_line_id='{$idLine}'";
     $sql.=" WHERE rowid in ({$task_time_list})";
     dol_syslog("ProjectInvoice::setnvoice", LOG_DEBUG);
     $resql=$db->query($sql);
-        if (!$resql)$res=false;
+        if ($db->num_rows($resql))$res=true;
     return $res;
 }

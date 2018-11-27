@@ -1,9 +1,20 @@
 <?php
 
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2018 Patric Delcroix <pmpdelcroix@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 include 'lib/includeMain.lib.php';
@@ -14,15 +25,13 @@ $token=GETPOST('token','apha');
 
 if(!isset($_SESSION['ajaxQuerry'][$token]))exit();
 
-$table=$_SESSION['ajaxQuerry'][$token]['table'];
-$fieldValue=$_SESSION['ajaxQuerry'][$token]['fieldValue'];
-$fieldToShow1=$_SESSION['ajaxQuerry'][$token]['fieldToShow1'];
-$fieldToShow2=$_SESSION['ajaxQuerry'][$token]['fieldToShow2'];
-$separator=$_SESSION['ajaxQuerry'][$token]['separator'];
-$sqlTailTable=$_SESSION['ajaxQuerry'][$token]['sqlTailTable'];
-$sqlTailWhere=$_SESSION['ajaxQuerry'][$token]['sqlTailWhere'];
-$htmlName=$_SESSION['ajaxQuerry'][$token]['htmlName'];
-$addtionnalChoices=$_SESSION['ajaxQuerry'][$token]['addtionnalChoices'];
+$sqlarray=$_SESSION['ajaxQuerry'][$token]['sql'];
+$fields=$_SESSION['ajaxQuerry'][$token]['fields'];
+$htmlarray=$_SESSION['ajaxQuerry'][$token]['html']; 
+$addtionnalChoices=$_SESSION['ajaxQuerry'][$token]['option'];
+$separator=isset($htmlarray['separator'])?$htmlarray['separator']:' ';
+
+
  $search=GETPOST($htmlName,'alpha');
 //find if barckets
 $posBs=strpos($htmlName,'[');
@@ -35,34 +44,44 @@ if($posBs>0){
 }
 
 
-    $sql='SELECT DISTINCT';
-    $sql.=' t.'.$fieldValue;
-    $sql.=' ,'.$fieldToShow1;
-    if(!empty($fieldToShow2))
-        $sql.=' ,'.$fieldToShow2;
-    $sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as t';
-    if(!empty($sqlTailTable))
-        $sql.='  '.$sqlTailTable;   
-    $sql.= ' WHERE ( t.'.$fieldValue.' LIKE \'%'.$search.'%\'';
-    $sql.= ' OR '.$fieldToShow1.' LIKE \'%'.$search.'%\'';
-    $sql.= ' OR '.$fieldToShow2.' LIKE \'%'.$search.'%\')';
-    if(!empty($sqlTailWhere))
-        $sql.=' AND '.$sqlTailWhere;
-       
+        $SelectOptions='';
+    $selectedValue='';
+    $sql='SELECT DISTINCT ';
+    $sql.=$sqlarray['keyfield'];
+    $sql.=' ,'.$sqlarray['fields'];
+    $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
+    if(isset($sqlarray['join']) && !empty($sqlarray['join']))
+            $sql.=' '.$sqlarray['join'];
+    if(isset($sqlarray['where']) && !empty($sqlarray['where']))
+            $sql.=' WHERE '.$sqlarray['where'];
+    if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
+            $sql.=' '.$sqlarray['tail'];      
     dol_syslog('form::ajax_select_generic ', LOG_DEBUG);
     $return_arr = array();
     $resql=$db->query($sql);
-   
+   //remove the 't. from key fields
+    $startkey=strpos($sqlarray['keyfield'],'.');
+    $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
+    
+    
     if ($resql)
     {
           // support AS in the fields ex $field1='CONTACT(u.firstname,' ',u.lastname) AS fullname'
         // with sqltail= 'JOIN llx_user as u ON t.fk_user=u.rowid'
-        $starfields1=strpos($fieldToShow1,' AS ');
-        if($starfields1>0)
-            $fieldToShow1=  substr($fieldToShow1, $starfields1+4);
-        $starfields2=strpos($fieldToShow2,' AS ');
-        if($starfields2>0)
-            $fieldToShow2=  substr($fieldToShow2, $starfields2+4);
+        $listFields=explode(',',$sqlarray['fields']);
+        $fields=array();
+    foreach($listFields as $item){
+        $start=MAX(strpos($item,' AS '),strpos($item,' as '));
+        $start2=strpos($item,'.');
+        $label=$item;
+        if($start){
+            $label=substr($item, $start+4);
+        }else if($start2){
+            $label=substr($item, $start2+1);
+        }
+        
+        $fields[]=array('select' => $item, 'label'=>trim($label));
+    }
 
         $i=0;
          //return $table."this->db".$field;
@@ -74,11 +93,13 @@ if($posBs>0){
             
             if ($obj)
             {
-                    
-                $label=$obj->{$fieldToShow1};
-                $label.=(!empty($fieldToShow2))?($separator.$obj->{$fieldToShow2}):'';
+                $label='';
+                foreach($fields as $item){
+                    if(!empty($label))$label.=$separator;
+                    $label.=$obj->{$item['label']};
+                }    
                 $row_array['label'] =  $label;
-                $value=$obj->{$fieldValue};
+                $value=$obj->{$labelKey};
 		//$row_array['value'] = $value;
                 $row_array['value'] =  $label;
 	        $row_array['key'] =$value;
