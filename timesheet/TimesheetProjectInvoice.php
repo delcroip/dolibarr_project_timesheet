@@ -55,7 +55,7 @@ $dateEndday =GETPOST('dateEndday', 'int'); // to not look for the date if action
 $dateEndmonth                 = GETPOST('dateEndmonth', 'int');
 $dateEndyear                 = GETPOST('dateEndyear', 'int');
 $dateEnd=parseDate($dateEndday,$dateEndmonth,$dateEndyear,$dateEnd);
-
+$invoicabletaskOnly=GETPOST('invoicabletaskOnly', 'int');
 
 
 if ($user->rights->facture->creer && hasProjectRight($userid,$projectId))
@@ -85,10 +85,12 @@ $langs->load('timesheet@timesheet');
             }
              $sql.=' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
             $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task=t.rowid';
+            if($invoicabletaskOnly==1)$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object=t.rowid ';
             $sql.=' WHERE t.fk_projet='.$projectId;
 
                 $sql.=" AND tt.task_date BETWEEN '".$db->idate($dateStart);
                 $sql.="' AND '".$db->idate($dateEnd)."'";
+             if($invoicabletaskOnly==1)$sql.=' AND tske.invoiceable= \'1\'';
 
             if($ts2Invoice!='all'){
                 /*$sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_s SEPARATOR ", ")';
@@ -305,6 +307,9 @@ $edit=0;
                 $Form .='<input type="hidden" name="tsNotInvoiced" value ="0">';
 
             }
+            //$invoicabletaskOnly
+            $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('InvoicableOnly');
+            $Form .='</th><th align="left"><input type="checkbox" name="invoicabletaskOnly" value="1" '.(($invoicabletaskOnly==1)?'checked':'').' ></th></tr>';
             $Form .='</table>';
  
             $Form .='<input type="submit" onclick="return checkEmptyFormFields(event,\'settings\',\'';
