@@ -89,6 +89,11 @@ switch($action)
             $resql = $db->query($sql);
         }
         $hoursperday=null2int($_POST['hoursperday']);
+        if($hoursperday==0){
+            $hoursperday=$conf->global->TIMESHEET_DAY_DURATION;
+            setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"),'errors');
+            break;
+        }
         $maxhoursperday=null2int($_POST['maxhoursperday']);
         $hidedraft=null2int($_POST['hidedraft']);
         $hidezeros=null2int($_POST['hidezeros']);
@@ -188,7 +193,7 @@ switch($action)
         $searchbox=null2int($_POST['searchBox']);
         dolibarr_set_const($db, "TIMESHEET_SEARCHBOX", $searchbox, 'chaine', 0, '', $conf->entity);       
 
-
+        setEventMessage($langs->transnoentitiesnoconv("ConfigurationSaved"));
         break;
     default:
         break;
