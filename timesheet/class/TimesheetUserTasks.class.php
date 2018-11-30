@@ -677,16 +677,17 @@ function saveInSession(){
     dol_syslog('Entering in Timesheet::task_timesheet.php::updateActuals()');     
     $ret=0;
    // $tmpRet=0;
-    $_SESSION['task_timesheet'][$this->timestamp]['timeSpendCreated']=0;
-    $_SESSION['task_timesheet'][$this->timestamp]['timeSpendDeleted']=0;
-    $_SESSION['task_timesheet'][$this->timestamp]['timeSpendModified']=0;
+    //$_SESSION['task_timesheet'][$this->timestamp]['timeSpendCreated']=0;
+    //$_SESSION['task_timesheet'][$this->timestamp]['timeSpendDeleted']=0;
+    //$_SESSION['task_timesheet'][$this->timestamp]['timeSpendModified']=0;
+    // $_SESSION['task_timesheet'][$timestamp]['NoteUpdated']=0
         /*
          * For each task store in matching the session timestamp
          */
         foreach ($this->taskTimesheet as $key  => $row) {
             $tasktime= new TimesheetTask($this->db);
             $tasktime->unserialize($row);     
-            $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status,$notes[$tasktime->appId]);
+            $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status,$notes[$tasktime->id]);
 
             $this->taskTimesheet[$key]=$tasktime->serialize();
             

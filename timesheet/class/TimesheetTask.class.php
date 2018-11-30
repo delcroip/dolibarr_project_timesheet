@@ -434,7 +434,7 @@ class TimesheetTask extends Task
      */
     function update($user = NULL, $notrigger=0)
     {
-    	global $conf, $langs;
+    	global $conf, $langs,$user;
 		$error=0;
 
 		// Clean parameters
@@ -910,14 +910,14 @@ class TimesheetTask extends Task
                         $htmlTitle .= " onfocus='this.blur()' readonly='true' size='1' value='&#x2753;' onclick='tristate_Marks(this)' />\n";
                         break;
                 case 'Note':
-                    $htmlTitle .=img_object('Note', 'generic', ' onClick="openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\')"');
+                    $htmlTitle .=img_object('', 'generic', ' onClick="openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\')"');
                     $html .='<div class="modal" id="noteTask_'.$this->userId.'_'.$this->id.'" >';
                     $html .='<div class="modal-content">';
                     $html .='<span class="close " onclick="closeNotes()">&times;</span>';
                     $html.='<a align="left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.")".'</a></br>';                    
                     $html.= '<textarea class="flat"  rows="3" style="width:350px;top:10px"';
-                    $html.= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.'][1]" ';
-                    $html .= '>'.$this->tasklist[$dayCur]['note'].'</textarea>';
+                    $html.= 'name="notesTask['.$this->userId.']['.$this->id.']" ';
+                    $html .= '>'.$this->note.'</textarea>';
                     $html .='</div></div>';  
  
                     
@@ -1277,23 +1277,23 @@ class TimesheetTask extends Task
     */
     function postTaskTimeActual($timesheetPost,$userId,$Submitter,$timestamp,$status,$note='')
     {
-        global $conf;
+        global $conf,$user;
         $ret=0;
         $noteUpdate=0;
         dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user=$userId;
-        
-        if(isset($timesheetPost['Note'])&& $timesheetPost['Note']!=$this->note){
+       /* if(isset($timesheetPost['Note'])&& $timesheetPost['Note']!=$this->note){
             $this->note=$timesheetPost['Note'];
             $noteUpdate++;
-        }else if($note!=NULL && $note!=$this->note){
-            $this->note=($note);
+        }else*/ if(!empty($note) && $note!=$this->note){
+            $this->note=$note;
+           
             $noteUpdate++;
         }
-            
+             
         if(is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $dayData){
             $wkload=$dayData[0];
-            $note=$dayData[1];
+            $daynote=$dayData[1];
             $item=$this->tasklist[$dayKey];
             
             if($conf->global->TIMESHEET_TIME_TYPE=="days")
@@ -1316,12 +1316,12 @@ class TimesheetTask extends Task
                 $this->timespent_id=$item['id'];
                 $this->timespent_old_duration=$item['duration'];
                 $this->timespent_duration=$duration; 
-                $this->timespent_note=$note;
+                $this->timespent_note=$daynote;
 
-                if($item['duration']!=$duration || $note!=$this->tasklist[$dayKey]['note'])
+                if($item['duration']!=$duration || $daynote!=$item['note'])
                 {
 
-                    if($this->timespent_duration>0 || !empty($note)){ 
+                    if($this->timespent_duratio1n>0 || !empty($daynote)){ 
                         dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
                         if($this->updateTimeSpent($Submitter,0)>=0)
                         {
@@ -1342,8 +1342,9 @@ class TimesheetTask extends Task
                         }
                     }
                 }
-            } elseif ($duration>0)
+            } elseif ($duration>0 || !empty($daynote))
             { 
+                $this->timespent_note=$daynote;
                 $this->timespent_duration=$duration; 
                 $newId=$this->addTimeSpent($Submitter,0);
                 if($newId>=0)
@@ -1361,6 +1362,14 @@ class TimesheetTask extends Task
             $this->tasklist[$dayKey]['duration']=$duration;
         }
         if($ret)$this->updateTimeUsed(); // needed upon delete
+        if($noteUpdate){
+            $retNote=$this->update($user);
+            if($retNote){
+                $_SESSION['task_timesheet'][$timestamp]['NoteUpdated']++;
+            }else{
+                 $_SESSION['task_timesheet'][$timestamp]['updateError']++;
+            }
+        }
         return $ret+$noteUpdate;
         //return $idList;
     }

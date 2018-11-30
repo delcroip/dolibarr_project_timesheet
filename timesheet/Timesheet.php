@@ -129,7 +129,7 @@ switch($action){
             if(GETPOSTISSET('task'))
             {
                                  $ret=0;
-                                 $notesTask=GETPOST('noteTask','array');
+                                 $notesTask=GETPOST('notesTask','array');
                                  $notesTaskApproval=GETPOST('noteTaskApproval','array');
                                  $tasks=GETPOST('task','array');
 				 foreach($tasks as $key => $tasktab){
@@ -139,7 +139,7 @@ switch($action){
                                             $task_timesheet->note=$notesTaskApproval[$key];
                                             $task_timesheet->update($user);
                                          }                                    
-                                         $ret=$task_timesheet->updateActuals($tasktab,$notesTask);
+                                         $ret=$task_timesheet->updateActuals($tasktab,$notesTask[$key]);
                                          
                                          
                                          if(GETPOSTISSET('submit') ){
@@ -159,7 +159,7 @@ switch($action){
 						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']);
 						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['task_timesheet'][$timestamp]['timeSpendModified']);
 						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']);
-                                                 if($update)setEventMessage($langs->transnoentitiesnoconv("NoteUpdated"));
+                                                 if($update || $_SESSION['task_timesheet'][$timestamp]['NoteUpdated'])setEventMessage($langs->transnoentitiesnoconv("NoteUpdated"));
                                          }else
 					 {
 						 if($_SESSION['task_timesheet'][$timestamp]['updateError']){
