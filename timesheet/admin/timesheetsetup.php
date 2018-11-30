@@ -80,6 +80,12 @@ switch($action)
 {
     case "save":
         //general option
+        $hoursperday=null2int($_POST['hoursperday']);
+        if($hoursperday==0){
+            $hoursperday=$conf->global->TIMESHEET_DAY_DURATION;
+            setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"),'errors');
+            break;
+        }
         $timetype=$_POST['timeType'];
         $timeSpan=$_POST['timeSpan'];
         if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN){
@@ -88,12 +94,7 @@ switch($action)
             dol_syslog(__METHOD__);
             $resql = $db->query($sql);
         }
-        $hoursperday=null2int($_POST['hoursperday']);
-        if($hoursperday==0){
-            $hoursperday=$conf->global->TIMESHEET_DAY_DURATION;
-            setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"),'errors');
-            break;
-        }
+
         $maxhoursperday=null2int($_POST['maxhoursperday']);
         $hidedraft=null2int($_POST['hidedraft']);
         $hidezeros=null2int($_POST['hidezeros']);
