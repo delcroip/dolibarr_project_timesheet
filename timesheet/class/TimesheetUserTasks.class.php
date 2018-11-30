@@ -1202,7 +1202,11 @@ function getHTMLGetOtherUserTs($idsList,$selected,$admin){
         //    $HTML.='<option  value="'.$subordiateId.'" '.(($selected==$subordiateId)?'selected':'').'> '.$subordiateName.'</option>';    
        // }
        // $HTML.='</select> ';
+//if(version_compare(DOL_VERSION,"5.0")>=0){
+//        $HTML.=$form->select_dolusers($selected,'userid',0,null,0,'hierarchyme');
+//}else{
         $HTML.=$form->select_dolusers($selected,'userid',0,null,0,$idsList);
+//}
     }else{
 
          $HTML.=$form->select_dolusers($selected,'userid');

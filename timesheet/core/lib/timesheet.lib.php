@@ -82,6 +82,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
   *  @return     array(userId)                                                  html code
  */
 function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM,$entity='1'){
+    //FIX ME handle multicompany
     if($userid=="")
     {
         return array();
@@ -159,7 +160,7 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM
         $list= array();
     }
       //$select.="\n";
-      return $list;
+      return array_unique($list);
  }
 
   /*

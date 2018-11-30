@@ -67,6 +67,9 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
     if (in_array($newuserid, $SubordiateIds) || $user->admin){
         $SubordiateIds[]=$userid;
         $userid=$newuserid;    
+    }else if($action=='getOtherTs'){
+        setEventMessage($langs->transnoentitiesnoconv("NotAllowed"),'errors');
+        unset($action);
     }
 
 }
