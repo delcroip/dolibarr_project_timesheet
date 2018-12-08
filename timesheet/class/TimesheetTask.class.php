@@ -1008,6 +1008,7 @@ class TimesheetTask extends Task
                 //$html .= ' <td style="'.$bkcolor.'"><a class="time4day['.$this->userId.']['.$dayCur.']"';
                 $html .= ' <td ><a class="column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
                 //$html .= ' name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
+                if(!empty($this->tasklist[$dayCur]['note']))$html.=' title="'.htmlentities($this->tasklist[$dayCur]['note']).'"';
                 $html .= ' name="task['.$this->id.']['.$dayCur.']" ';
                 $html .= ' style="width: 90%;"';
                 $html .=' >'.((($hidezeros==1) && ($dayWorkLoadSec==0))?"":$dayWorkLoad);
