@@ -190,6 +190,7 @@ $langs->load('timesheet@timesheet');
                 $object->fetch_thirdparty();
                 $id = $object->create($user);
                 $resArray=$_POST['userTask'];
+                $hoursPerDay=$conf->global->TIMESHEET_DAY_DURATION;
                 $task_time_array=array();
                 if(is_array($resArray)){
                     foreach($resArray as $uId =>$userTaskService){
@@ -210,7 +211,7 @@ $langs->load('timesheet@timesheet');
                                  $product->fetch($service['Service']);
 
                                  $unit_duration_unit=substr($product->duration, -1);
-                                 $unit_factor=($unit_duration_unit=='h')?3600:8*3600;//FIXME support week and month 
+                                 $unit_factor=($unit_duration_unit=='h')?3600:$hoursPerDay*3600;//FIXME support week and month 
                                  
                                  $factor=intval(substr($product->duration,0, -1));
                                  if($factor==0)$factor=1;//to avoid divided by $factor0
@@ -219,7 +220,7 @@ $langs->load('timesheet@timesheet');
 
 
                             }elseif ($service['Service']<>-999){
-                                 $factor=($service['unit_duration_unit']=='h')?3600:8*3600;//FIXME support week and month 
+                                 $factor=($service['unit_duration_unit']=='h')?3600:$hoursPerDay*3600;//FIXME support week and month 
                                  $factor=$factor*intval($service['unit_duration']);
 
                                  $quantity= $duration/$factor;
