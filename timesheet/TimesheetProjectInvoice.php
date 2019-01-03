@@ -215,7 +215,7 @@ $langs->load('timesheet@timesheet');
                                  $factor=intval(substr($product->duration,0, -1));
                                  if($factor==0)$factor=1;//to avoid divided by $factor0
                                  $quantity= $duration/($factor*$unit_factor);
-                                 $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $service['Service'], 0, $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
+                                 $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
 
 
                             }elseif ($service['Service']<>-999){
