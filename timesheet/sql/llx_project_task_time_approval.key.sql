@@ -20,11 +20,11 @@
 
 -- this table is used to store the timesheet favorite
 
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_ida  FOREIGN KEY (fk_user_app_team) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_ida  FOREIGN KEY (fk_user_app_project) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_ida  FOREIGN KEY (fk_user_app_customer) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_ida  FOREIGN KEY (fk_user_app_suplier) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_ida  FOREIGN KEY (fk_user_app_other) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idat  FOREIGN KEY (fk_user_app_team) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idap  FOREIGN KEY (fk_user_app_project) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idac  FOREIGN KEY (fk_user_app_customer) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idas  FOREIGN KEY (fk_user_app_suplier) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idac  FOREIGN KEY (fk_user_app_other) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idc  FOREIGN KEY (fk_user_creation ) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
