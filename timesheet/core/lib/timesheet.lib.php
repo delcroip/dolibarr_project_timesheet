@@ -571,4 +571,61 @@ function formatTime($duration,$hoursperdays=-1)
         }
 
     }
-    
+
+
+    /** function to send the eventmessage to dolibarr
+     * 
+     * @global type $langs
+     * @param array $arraymessage
+     * @param bool $returnstring    
+     * @return string   messages
+     */
+    function TimesheetsetEventMessage($arraymessage,$returnstring=false){
+        global $langs;
+        $messages=array();
+        $messages[]= array('type'=>'mesgs','text'=>'NumberOfTimeSpendCreated','param'=>$arraymessage['timeSpendCreated']);
+        $messages[]=array('type'=>'mesgs','text'=>'NumberOfTimeSpendModified','param'=>$arraymessage['timeSpendModified']);
+        $messages[]= array('type'=>'mesgs','text'=>'NumberOfTimeSpendDeleted','param'=>$arraymessage['timeSpendDeleted']);
+        $default=          array('type'=>'warnings','text'=>'NothingChanged','param'=>0);
+        $messages[]=      array('type'=>'errors','text'=>'NoteUpdated','param'=>$arraymessage['NoteUpdated']);
+        $messages[]=      array('type'=>'errors','text'=>'updateError','param'=>$arraymessage['updateError']);
+        $nbr=0;
+        foreach($messages as $key=> $message){
+            if($message['param']>0 ){
+                if($returnstring==false)setEventMessage($langs->transnoentitiesnoconv($message['text']).$message['param'],$message['type']);
+                else $messages[$key]['text']=$langs->trans($message['text']);
+                $nbr++;
+            }else{
+                unset($messages[$key]);
+            }           
+        } 
+        if($nbr==0) setEventMessage($langs->transnoentitiesnoconv(
+                    $default['text']),$default['type']);
+        /*
+        if (array_sum($arraymessage)==0){
+            setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"),'warnings');
+        }else{
+            if($arraymessage['timeSpendCreated']>0) 
+                $str=$langs->transnoentitiesnoconv("NumberOfTimeSpendCreated")
+                        .':'.$arraymessage['timeSpendCreated'];
+                if($returnstring==true)setEventMessage($str);
+                $retStr+=$str;
+            
+            if($arraymessage['timeSpendModified']>0) 
+                setEventMessage( $langs->transnoentitiesnoconv("NumberOfTimeSpendModified")
+                        .':'.$arraymessage['timeSpendCreated']);
+            
+            if($arraymessage['timeSpendDeleted']>0) 
+                setEventMessage( $langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted")
+                        .':'.$arraymessage['timeSpendDeleted']);
+            if($arraymessage['NoteUpdated']>0) 
+                setEventMessage( $langs->transnoentitiesnoconv("NoteUpdated")
+                        .':'.$arraymessage['NoteUpdated']);            
+            if($arraymessage['updateError']>0) 
+                setEventMessage( $langs->transnoentitiesnoconv("InternalError")
+                        .$langs->transnoentitiesnoconv(" Update failed")
+                        .':'.$arraymessage['updateError'],'errors');
+            
+        }*/
+        if($returnstring==true)return json_encode($messages);
+    }
