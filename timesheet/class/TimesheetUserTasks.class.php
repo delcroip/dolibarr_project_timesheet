@@ -515,11 +515,11 @@ class TimesheetUserTasks extends CommonObject
         $this->ref=$this->date_start.'_'.$this->userId;
         $this->date_end= getEndDate($this->date_start);
         $this->timestamp=  getToken();
-        $ret=$this->fetchByWeek();
-        $ret+=$this->fetchTaskTimesheet();
+        $this->fetchByWeek();
+        $this->fetchTaskTimesheet();
         //$ret+=$this->getTaskTimeIds(); 
         //FIXME module holiday should be activated ?
-        $ret2=$this->fetchUserHoliday(); 
+        $this->fetchUserHoliday(); 
         $this->saveInSession();
     }        
     
@@ -567,7 +567,7 @@ function saveInSession(){
  */
  function fetchTaskTimesheet($userid=''){     
     global $conf;
- 
+    $res=array();
     if($userid==''){$userid=$this->userId;}
     $whiteList=array();
     $staticWhiteList=new TimesheetFavourite($this->db);
@@ -641,6 +641,7 @@ function saveInSession(){
                     //$tasksList[$i]->listed=$obj->listed;
                     $tasksList[$i]->listed=$whiteList[$obj->taskid];
                     $i++;
+                    $ret[$obj->appid]=1;
                     
                     
             }
@@ -654,7 +655,7 @@ function saveInSession(){
                 $row->getActuals($datestart,$datestop,$userid); 
                 $this->taskTimesheet[]=  $row->serialize();                   
             }
-            return 1;
+            return $ret;
 
     }else
     {
@@ -687,7 +688,7 @@ function saveInSession(){
         foreach ($this->taskTimesheet as $key  => $row) {
             $tasktime= new TimesheetTask($this->db);
             $tasktime->unserialize($row);     
-            $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status,$notes[$tasktime->id]);
+            $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status,$notes[$tasktime->appId]);
 
             $this->taskTimesheet[$key]=$tasktime->serialize();
             
@@ -753,12 +754,14 @@ function getUserName(){
 function updateStatus($user,$status=0){
 
     if($this->id<=0)return -1;
-    $updatedStatus=2;
+    
     if ($status!=''){
         if($status<0 || $status> STATUSMAX)return -1; // status not valid
         $updatedStatus=  $status;
     }else if(!empty($this->status)){
          $updatedStatus=  $this->status;
+    }else{ // no status 
+        $updatedStatus=2;
     }
     
     
@@ -766,6 +769,16 @@ function updateStatus($user,$status=0){
     if($status==$this->status){ // to avoid eternal loop
         return 1;
     }
+    $Priority=array(
+    DRAFT=>0,
+    SUBMITTED=>1,
+    APPROVED=>2,
+    CANCELLED=>4,
+    REJECTED=>5,
+    CHALLENGED=>6,
+    INVOICED=>7,
+    UNDERAPPROVAL=>3,
+    PLANNED=>9);
     //look for the status to apply to the TS  from the TTA
     foreach($this->taskTimesheet as $row){
         $tta= new TimesheetTask($this->db);
@@ -773,7 +786,7 @@ function updateStatus($user,$status=0){
         if($tta->appId>0){ // tta already created
             $tta->fetch($tta->appId);
             $statusPriorityCur=  $tta->status; 
-            $updatedStatus=($updatedStatus>$statusPriorityCur)?$updatedStatus:$statusPriorityCur;
+            $updatedStatus=($Priority[$updatedStatus]>$Priority[$statusPriorityCur])?$updatedStatus:$statusPriorityCur;
         }// no else as the tta should be created upon submission of the TS not status update
         
     }
