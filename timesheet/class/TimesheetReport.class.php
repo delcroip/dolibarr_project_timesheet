@@ -78,7 +78,8 @@ class TimesheetReport
             $this->mode=$mode;
 
              $this->name =($name!="")?$name:$this->ref; // coul
-             $this->ref.='_'.$startDate.'_'.$stopDate;
+              $this->ref.='_'.str_replace('/','-',dol_print_date($startDate,'day')).'_'.str_replace('/','-',dol_print_date($stopDate,'day'));
+             //$this->ref.='_'.$startDate.'_'.$stopDate;
         switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing               
             $this->modeSQLOrder='ORDER BY prj.rowid,ptt.task_date,tsk.rowid ASC   ';
