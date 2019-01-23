@@ -24,8 +24,6 @@
          *   4) CancelCP
          *   5) RefuseCP
          */
-$statusColor=array('1'=>$conf->global->TIMESHEET_COL_DRAFT,'2'=>$conf->global->TIMESHEET_COL_SUBMITTED,'3'=>$conf->global->TIMESHEET_COL_APPROVED,'4'=>$conf->global->TIMESHEET_COL_CANCELLED,'5'=>$conf->global->TIMESHEET_COL_REJECTED);
-
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 class TimesheetHoliday extends Holiday 
