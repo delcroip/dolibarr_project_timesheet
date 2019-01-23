@@ -42,8 +42,3 @@ if (! $res && file_exists($path."/../../../../../main.inc.php")) {
 
 if (! $res) die("Include of main fails") ;
 
-// for display trads
-$roles=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
-$statusA=array(0=> $langs->trans('null'),1 =>$langs->trans('draft'),2=>$langs->trans('submitted'),3=>$langs->trans('approved'),4=>$langs->trans('cancelled'),5=>$langs->trans('rejected'),6=>$langs->trans('challenged'),7=>$langs->trans('invoiced'),8=>$langs->trans('underapproval'),9=>$langs->trans('planned'));
-$apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
-$statusColor=array(PLANNED=>$conf->global->TIMESHEET_COL_DRAFT,DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED,APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,INVOICED=>$conf->global->TIMESHEET_COL_APPROVED,CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,REJECTED=>$conf->global->TIMESHEET_COL_REJECTED);

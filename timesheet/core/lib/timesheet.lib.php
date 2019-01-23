@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 //const STATUS= [
 Define( "NULL",0);
 Define( "DRAFT",1);
@@ -27,7 +28,6 @@ Define( "INVOICED",7);
 Define( "UNDERAPPROVAL",8);
 Define( "PLANNED",9);
 Define( "STATUSMAX",10);
-
 //APPFLOW
 //const LINKED_ITEM = [
 Define( "USER",0);
@@ -37,6 +37,26 @@ Define( "CUSTOMER",3);
 Define( "SUPPLIER",4);
 Define( "OTHER",5);
 Define( "ROLEMAX",6);
+// back ground colors
+define('TIMESHEET_BC_FREEZED','909090');
+define('TIMESHEET_BC_VALUE','f0fff0');
+
+// number of second in a day, used to make the code readable
+define('SECINDAY',86400);
+// for display trads
+$roles=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
+$statusA=array(0=> $langs->trans('null'),1 =>$langs->trans('draft'),2=>$langs->trans('submitted'),3=>$langs->trans('approved'),4=>$langs->trans('cancelled'),5=>$langs->trans('rejected'),6=>$langs->trans('challenged'),7=>$langs->trans('invoiced'),8=>$langs->trans('underapproval'),9=>$langs->trans('planned'));
+$apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
+$statusColor=array(
+    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
+    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,
+    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,
+    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,
+    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED,
+    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED,
+    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED,
+    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,
+    PLANNED=>$conf->global->TIMESHEET_COL_DRAFT);
 
 //const REDUNDANCY=[
 /*Define( "NULL",0);
@@ -55,12 +75,6 @@ Define( "TIMESPENT",4);
 
 */
 
-// back ground colors
-define('TIMESHEET_BC_FREEZED','909090');
-define('TIMESHEET_BC_VALUE','f0fff0');
-
-// number of second in a day, used to make the code readable
-define('SECINDAY',86400);
 
 //global $db;     
 global $langs;
@@ -552,8 +566,10 @@ function getDayInterval($dateStart,$dateEnd){
 function formatTime($duration,$hoursperdays=-1)
     {
         global $conf;
-        if($hoursperdays<0){
+        if($hoursperdays==-1){
             $hoursperdays=($conf->global->TIMESHEET_TIME_TYPE=="days")?$conf->global->TIMESHEET_DAY_DURATION:0;           
+        }else if($hoursperdays==-2){
+            $hoursperdays=($conf->global->TIMESHEET_INVOICE_TIMETYPE=="days")?$conf->global->TIMESHEET_DAY_DURATION:0;           
         }
         
         if($hoursperdays==0)
@@ -587,7 +603,7 @@ function formatTime($duration,$hoursperdays=-1)
         $messages[]=array('type'=>'mesgs','text'=>'NumberOfTimeSpendModified','param'=>$arraymessage['timeSpendModified']);
         $messages[]= array('type'=>'mesgs','text'=>'NumberOfTimeSpendDeleted','param'=>$arraymessage['timeSpendDeleted']);
         $default=          array('type'=>'warnings','text'=>'NothingChanged','param'=>0);
-        $messages[]=      array('type'=>'errors','text'=>'NoteUpdated','param'=>$arraymessage['NoteUpdated']);
+        $messages[]=      array('type'=>'mesgs','text'=>'NoteUpdated','param'=>$arraymessage['NoteUpdated']);
         $messages[]=      array('type'=>'errors','text'=>'updateError','param'=>$arraymessage['updateError']);
         $nbr=0;
         foreach($messages as $key=> $message){
