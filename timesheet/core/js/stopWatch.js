@@ -63,11 +63,11 @@ class Stopwatch {
          this.timestampClock=performance.now();
          this.time =performance.now()+ (this.event.datetime_event_start-this.event.processedTime)*1000;
         
-        if (this.running==false && this.event.event_type!=3) { // launch the clock
+        if (this.running==false && this.event.event_type<3) { // launch the clock
              this.running = true;
              this.updatePlayStopIcon(this.running,this.event.task);  
              this.animationframeID=requestAnimationFrame(this.step.bind(this));
-         }else if (this.event.event_type==3){ // stop the clock 
+         }else if (this.event.event_type==3 || this.event.event_type==0){ // stop the clock 
              if(this.event.status!=null){ //  display status
                 var obj=JSON.parse(this.event.status);
                 Object.keys(obj).forEach(function(key){
@@ -132,7 +132,7 @@ class Stopwatch {
     start(taskid) {
         //saving the actual update  location
  //       this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
-        var Url="AttendanceWatch.php?action=start"
+        var Url="AttendanceClock.php?action=start"
         if(taskid!==0) Url+="&taskid="+taskid;
         $.ajax({
             type: "POST",
@@ -145,7 +145,7 @@ class Stopwatch {
     // sent PSOT request for heartbeat creation
     save() {
 //        this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
-        var Url="AttendanceWatch.php?action=heartbeat"
+        var Url="AttendanceClock.php?action=heartbeat"
         Url+="&eventToken="+this.event.token;
         $.ajax({
             type: "POST",
@@ -173,7 +173,7 @@ class Stopwatch {
         this.running = false;
         cancelAnimationFrame(this.animationframeID);
  //       this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
-        var Url="AttendanceWatch.php?action=stop"
+        var Url="AttendanceClock.php?action=stop"
         Url+="&eventToken="+this.event.token;
         $.ajax({
             type: "POST",
