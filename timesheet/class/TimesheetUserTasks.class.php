@@ -805,15 +805,20 @@ Public function setStatus($user,$status,$id=0){ //role ?
             
             if($id!=0)$this->fetch($id);
             $this->status=$status;
+            
         // Update request
             $error=($this->id<=0)?$this->create($user):$this->update($user);
             if($error>0){  
                     if($status==REJECTED)$this->sendRejectedReminders($user);
                     if(count($this->taskTimesheet)<1 ){
                         $this->fetch($id);
-                        $this->fetchTaskTimesheet();
-                  
                     }
+                        $this->status=DRAFT; // SET THE STATUS TO DRAFT TO GET ALL
+                        $this->fetchTaskTimesheet();
+                        $this->status=$status;
+                  
+                    
+                    $this->status=$status;
                     if(count($this->taskTimesheet)>0 )foreach($this->taskTimesheet as $ts)
                     {
                         $tasktime= new TimesheetTask($this->db);
