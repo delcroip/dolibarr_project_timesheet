@@ -100,7 +100,7 @@ class TimesheetTask extends Task
             $this->status=DRAFT;
             $this->sender=USER;
             $this->recipient=TEAM;
-            $this->user_app= array('team'=>0 ,'project'=>0 ,'customer'=>0 ,'supplier'=>0 ,'other'=>0  );
+            $this->user_app= array(TEAM=>0 ,PROJECT=>0 ,CUSTOMER=>0 ,SUPPLIER=>0 ,OTHER=>0  );
 	}
 
     /******************************************************************************
@@ -132,11 +132,11 @@ class TimesheetTask extends Task
 		if (!empty($this->sender)) $this->sender=trim($this->sender);
 		if (!empty($this->recipient)) $this->recipient=trim($this->recipient);
 		if (!empty($this->planned_workload_approval)) $this->planned_workload_approval=trim($this->planned_workload_approval);
-		if (!empty($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
-		if (!empty($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
-		if (!empty($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
-		if (!empty($this->user_app['supplier'])) $this->user_app['supplier']=trim($this->user_app['supplier']);
-		if (!empty($this->user_app['other'])) $this->user_app['other']=trim($this->user_app['other']);
+		if (!empty($this->user_app[TEAM])) $this->user_app[TEAM]=trim($this->user_app[TEAM]);
+		if (!empty($this->user_app[PROJECT])) $this->user_app[PROJECT]=trim($this->user_app[PROJECT]);
+		if (!empty($this->user_app[CUSTOMER])) $this->user_app[CUSTOMER]=trim($this->user_app[CUSTOMER]);
+		if (!empty($this->user_app[SUPPLIER])) $this->user_app[SUPPLIER]=trim($this->user_app[SUPPLIER]);
+		if (!empty($this->user_app[OTHER])) $this->user_app[OTHER]=trim($this->user_app[OTHER]);
 		//if (!empty($this->date_creation)) $this->date_creation=trim($this->date_creation);
 		//if (!empty($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (!empty($this->user_creation)) $this->user_creation=trim($this->user_creation);
@@ -182,11 +182,11 @@ class TimesheetTask extends Task
         $sql.=' '.(empty($this->sender)?USER:'\''.$this->sender.'\'').',';
         $sql.=' '.(empty($this->recipient)?TEAM:'\''.$this->recipient.'\'').',';
         $sql.=' '.(empty($this->planned_workload_approval)?'NULL':'\''.$this->planned_workload_approval.'\'').',';
-        $sql.=' '.(empty($this->user_app['team'])?'NULL':'\''.$this->user_app['team'].'\'').',';
-        $sql.=' '.(empty($this->user_app['project'])?'NULL':'\''.$this->user_app['project'].'\'').',';
-        $sql.=' '.(empty($this->user_app['customer'])?'NULL':'\''.$this->user_app['customer'].'\'').',';
-        $sql.=' '.(empty($this->user_app['supplier'])?'NULL':'\''.$this->user_app['supplier'].'\'').',';
-        $sql.=' '.(empty($this->user_app['other'])?'NULL':'\''.$this->user_app['other'].'\'').',';
+        $sql.=' '.(empty($this->user_app[TEAM])?'NULL':'\''.$this->user_app[TEAM].'\'').',';
+        $sql.=' '.(empty($this->user_app[PROJECT])?'NULL':'\''.$this->user_app[PROJECT].'\'').',';
+        $sql.=' '.(empty($this->user_app[CUSTOMER])?'NULL':'\''.$this->user_app[CUSTOMER].'\'').',';
+        $sql.=' '.(empty($this->user_app[SUPPLIER])?'NULL':'\''.$this->user_app[SUPPLIER].'\'').',';
+        $sql.=' '.(empty($this->user_app[OTHER])?'NULL':'\''.$this->user_app[OTHER].'\'').',';
         $sql.=' NOW() ,';
         $sql.=' NOW() ,';
         $sql.=' \''.$userId.'\','; 
@@ -288,11 +288,11 @@ class TimesheetTask extends Task
                 $this->sender = $obj->sender;
                 $this->recipient = $obj->recipient;
                 $this->planned_workload_approval = $obj->planned_workload;
-                $this->user_app['team'] = $obj->fk_user_app_team;
-                $this->user_app['other'] = $obj->fk_user_app_other;
-                $this->user_app['supplier'] = $obj->fk_user_app_supplier;
-                $this->user_app['customer'] = $obj->fk_user_app_customer;
-                $this->user_app['project'] = $obj->fk_user_app_project;               
+                $this->user_app[TEAM] = $obj->fk_user_app_team;
+                $this->user_app[OTHER] = $obj->fk_user_app_other;
+                $this->user_app[SUPPLIER] = $obj->fk_user_app_supplier;
+                $this->user_app[CUSTOMER] = $obj->fk_user_app_customer;
+                $this->user_app[PROJECT] = $obj->fk_user_app_project;               
                 $this->date_creation = $this->db->jdate($obj->date_creation);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
@@ -370,11 +370,11 @@ class TimesheetTask extends Task
                 $this->status = $obj->status;
                 $this->sender = $obj->sender;
                 $this->recipient = $obj->recipient;
-                $this->user_app['team'] = $obj->fk_user_app_team;
-                $this->user_app['other'] = $obj->fk_user_app_other;
-                $this->user_app['supplier'] = $obj->fk_user_app_supplier;
-                $this->user_app['customer'] = $obj->fk_user_app_customer;
-                $this->user_app['project'] = $obj->fk_user_app_project;  
+                $this->user_app[TEAM] = $obj->fk_user_app_team;
+                $this->user_app[OTHER] = $obj->fk_user_app_other;
+                $this->user_app[SUPPLIER] = $obj->fk_user_app_supplier;
+                $this->user_app[CUSTOMER] = $obj->fk_user_app_customer;
+                $this->user_app[PROJECT] = $obj->fk_user_app_project;  
                 $this->date_creation = $this->db->jdate($obj->date_creation);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_creation = $obj->fk_user_creation;
@@ -391,11 +391,11 @@ class TimesheetTask extends Task
                 unset($this->tracking) ;
                 unset($this->tracking_ids) ;
                 unset($this->date_modification );
-                unset($this->user_app['team ']);
-                unset($this->user_app['project'] );
-                unset($this->user_app['customer'] );
-                unset($this->user_app['supplier'] );
-                unset($this->user_app['other'] );
+                unset($this->user_app[TEAM]);
+                unset($this->user_app[PROJECT] );
+                unset($this->user_app[CUSTOMER] );
+                unset($this->user_app[SUPPLIER] );
+                unset($this->user_app[OTHER] );
                 // unset($this->date_start ); 
                 // unset($this->date_end );
                 // unset($this->date_start_approval );
@@ -445,11 +445,11 @@ class TimesheetTask extends Task
 		if (!empty($this->sender)) $this->sender=trim($this->sender);
 		if (!empty($this->recipient)) $this->recipient=trim($this->recipient);
 		if (!empty($this->planned_workload_approval)) $this->planned_workload_approval=trim($this->planned_workload_approval);
-		if (!empty($this->user_app['team'])) $this->user_app['team']=trim($this->user_app['team']);
-		if (!empty($this->user_app['project'])) $this->user_app['project']=trim($this->user_app['project']);
-		if (!empty($this->user_app['customer'])) $this->user_app['customer']=trim($this->user_app['customer']);
-		if (!empty($this->user_app['supplier'])) $this->user_app['supplier']=trim($this->user_app['supplier']);
-		if (!empty($this->user_app['other'])) $this->user_app['other']=trim($this->user_app['other']);
+		if (!empty($this->user_app[TEAM])) $this->user_app[TEAM]=trim($this->user_app[TEAM]);
+		if (!empty($this->user_app[PROJECT])) $this->user_app[PROJECT]=trim($this->user_app[PROJECT]);
+		if (!empty($this->user_app[CUSTOMER])) $this->user_app[CUSTOMER]=trim($this->user_app[CUSTOMER]);
+		if (!empty($this->user_app[SUPPLIER])) $this->user_app[SUPPLIER]=trim($this->user_app[SUPPLIER]);
+		if (!empty($this->user_app[OTHER])) $this->user_app[OTHER]=trim($this->user_app[OTHER]);
 		if (!empty($this->date_creation)) $this->date_creation=trim($this->date_creation);
 		if (!empty($this->date_modification)) $this->date_modification=trim($this->date_modification);
 		if (!empty($this->user_creation)) $this->user_creation=trim($this->user_creation);
@@ -473,11 +473,11 @@ class TimesheetTask extends Task
 		$sql.=' sender='.(empty($this->sender) ? 'null':'\''.$this->sender.'\'').',';
 		$sql.=' recipient='.(empty($this->recipient) ? 'null':'\''.$this->recipient.'\'').',';
 		$sql.=' planned_workload='.(empty($this->planned_workload_approval) ? 'null':'\''.$this->planned_workload_approval.'\'').',';
-		$sql.=' fk_user_app_team='.(empty($this->user_app['team']) ? 'NULL':'\''.$this->user_app['team'].'\'').',';
-		$sql.=' fk_user_app_project='.(empty($this->user_app['project']) ? 'NULL':'\''.$this->user_app['project'].'\'').',';
-		$sql.=' fk_user_app_customer='.(empty($this->user_app['customer']) ? 'NULL':'\''.$this->user_app['customer'].'\'').',';
-		$sql.=' fk_user_app_supplier='.(empty($this->user_app['supplier']) ? 'NULL':'\''.$this->user_app['supplier'].'\'').',';
-		$sql.=' fk_user_app_other='.(empty($this->user_app['other']) ? 'NULL':'\''.$this->user_app['other'].'\'').',';
+		$sql.=' fk_user_app_team='.(empty($this->user_app[TEAM]) ? 'NULL':'\''.$this->user_app[TEAM].'\'').',';
+		$sql.=' fk_user_app_project='.(empty($this->user_app[PROJECT]) ? 'NULL':'\''.$this->user_app[PROJECT].'\'').',';
+		$sql.=' fk_user_app_customer='.(empty($this->user_app[CUSTOMER]) ? 'NULL':'\''.$this->user_app[CUSTOMER].'\'').',';
+		$sql.=' fk_user_app_supplier='.(empty($this->user_app[SUPPLIER]) ? 'NULL':'\''.$this->user_app[SUPPLIER].'\'').',';
+		$sql.=' fk_user_app_other='.(empty($this->user_app[OTHER]) ? 'NULL':'\''.$this->user_app[OTHER].'\'').',';
 		$sql.=' date_modification=NOW() ,';
 		$sql.=' fk_user_modification=\''.$userId.'\',';
 		$sql.=' fk_projet_task='.(empty($this->id) ? 'null':'\''.$this->id.'\'').',';
@@ -1018,7 +1018,7 @@ class TimesheetTask extends Task
                     $html .='<span class="close " onclick="closeNotes()">&times;</span>';
                     $html.='<a align="left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.")".'</a></br>';                    
                     $html.= '<textarea class="flat"  rows="3" style="width:350px;top:10px"';
-                    $html.= 'name="notesTask['.$this->userId.']['.$this->id.']" ';
+                    $html.= 'name="notesTask['.$this->appId.']" ';
                     $html .= '>'.$this->note.'</textarea>';
                     $html .='</div></div>';  
  
@@ -1604,7 +1604,7 @@ class TimesheetTask extends Task
         if($role<0&& $role>ROLEMAX) return -1; // role not valide
         $ret=-1;
        //unset the approver ( could be set previsouly)
-        $this->user_app[$role]=$userId;
+
         //update the roles, look for the open role and define it as sender and save the previous role open as recipient 
         foreach(array_slice ($apflows,1) as $key=> $recipient){
             $key++;
@@ -1624,6 +1624,7 @@ class TimesheetTask extends Task
             $this->recipient=USER;   
             $nextStatus=REJECTED;
         }
+        
         $ret=$this->setStatus($user,$nextStatus,$updteTS);  
         if($ret>0)$ret=$this->updateTaskTime($nextStatus);
         return $ret;// team key is 0 
