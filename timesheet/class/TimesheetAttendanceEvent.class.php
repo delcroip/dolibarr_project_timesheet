@@ -631,9 +631,12 @@ public $datetime_event_start;
             $location_ref=$this->event_location_ref;
             //close the most recent one if any 
             $this->ajaxStop($user,$json);
+            //$this->status=
         }        
 //erase the data
+        $status=$this->status;
         $this->initAsSpecimen();
+        
         $this->userid=$user->id;
         //load the data of the new
         if (!empty($task)){
@@ -644,11 +647,13 @@ public $datetime_event_start;
         if (!empty($customer)) $this->third_party=trim($customer);
         $this->token=  getToken();
         $this->event_type= EVENT_START;
-        $this->datetime_event=  mktime();
+        $this->datetime_event=  mktime()+1;
         $this->datetime_event_start=  $this->datetime_event;
         $this->event_location_ref=$location_ref;
         $this->create($user);
+        
         //$this->getInfo();
+        $this->status=$status;
         return $this->serialize(2);
     }
 
@@ -668,14 +673,20 @@ public $datetime_event_start;
         $retJson='';
         if(!empty($json)){
             $this->unserialize($json, 1);
+            $this->status="";
             $location_ref=$this->event_location_ref;
             $note=$this->note;
             $tokenJson=$this->token;
+            $this->fetch('','',$tokenJson);
+        }  else {
+             $this->fetch('',$user);   
         }
-        $this->fetch('',$user);
+        
         $tokenDb=$this->token;
         if(empty($tokenDb) ){  //00
-            $retJson='{"errorType":"stopError","error":"event not active"}';
+            $this->status='{"text":"No active chrono found","type":errors","param:""}';
+        }else if($this->event_type==3){
+            $this->status='{"text":"Chrono already stopped","type":errors","param:""}';
         }else{// 11 && 10
             if(!empty($tokenJson)){ //11
                 $this->event_location_ref=$location_ref;
@@ -945,11 +956,11 @@ function createTimeSpend($user,$token=''){
             $this->third_party=$staticTask->companyId;
             $this->third_partyLabel=$staticTask->companyName;     
         }else{
-            if(!empty($this->project)){
+            if(!empty($this->project) && empty($this->projectLabel) ){
                 $this->projectLabel=print_sellist(array('table'=>"projet",'keyfield'=> 'rowid','fields'=>'title'),$this->project);
             }
-            if(!empty($this->third_party)){
-                $this->third_partyLabel==print_sellist(array('table'=>"societe",'keyfield'=> 'rowid','fields'=>'nom'), $this->third_party);
+            if(!empty($this->third_party) && empty($this->third_partyLabel)){
+                $this->third_partyLabel=print_sellist(array('table'=>"societe",'keyfield'=> 'rowid','fields'=>'nom'), $this->third_party);
             }
         }
     }

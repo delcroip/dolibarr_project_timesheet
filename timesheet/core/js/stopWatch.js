@@ -54,7 +54,7 @@ class Stopwatch {
     //function called to load stopwatch data (json)
     loadSuccess(data){
        this.reset();
-       if( typeof data.errorType === 'undefined'){
+       if( typeof data.event_type !== 'undefined'){
         this.event =data;
 
         
@@ -63,36 +63,38 @@ class Stopwatch {
          this.timestampClock=performance.now();
          this.time =performance.now()+ (this.event.datetime_event_start-this.event.processedTime)*1000;
         
-        if (this.running==false && this.event.event_type<3) { // launch the clock
+        if (this.event.event_type<3  ) { // launch the clock for heartbeat and 
              this.running = true;
              this.updatePlayStopIcon(this.running,this.event.task);  
              this.animationframeID=requestAnimationFrame(this.step.bind(this));
          }else if (this.event.event_type==3 || this.event.event_type==0){ // stop the clock 
-             if(this.event.status!=null){ //  display status
-                var obj=JSON.parse(this.event.status);
-                Object.keys(obj).forEach(function(key){
-                    $.jnotify(obj[key].text+obj[key].param,obj[key].type)
-                });
-             }
+
              this.running = false;
              this.reset();
              this.updatePlayStopIcon(this.running,this.event.task);
              cancelAnimationFrame(this.animationframeID);
-             
-             
+          
          }
          document.getElementById('project').innerText = this.event.projectLabel;
          document.getElementById('customer').innerText = this.event.third_partyLabel;
          document.getElementById('task').innerText = this.event.taskLabel;
          document.getElementById('eventNote').value = this.event.note;
 
-     }else if(data.errorType!="loadError"){
-         this.loadError(data.error);
-     }else{
+     }else{ // load without data
           this.running = false;
           this.reset();
           this.updatePlayStopIcon(this.running,this.event.task);
      }
+     
+
+     if(typeof data.status!== 'undefined' && data.status!=""){ //  display status
+                var obj=JSON.parse(data.status);
+                Object.keys(obj).forEach(function(key){
+                    $.jnotify(obj[key].text+obj[key].param,obj[key].type)
+        });
+     }
+     this.event.status="";
+     
     }
      // funciton to handle error while parsing the Json answer
     loadError(ErrMsg){

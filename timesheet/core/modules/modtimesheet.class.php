@@ -57,7 +57,7 @@ class modTimesheet extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "TimesheetView";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '3.3.2';
+		$this->version = '4.0.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -113,21 +113,23 @@ class modTimesheet extends DolibarrModules
 		// );
                 $r=0;
 		$this->const = array();
+                //$this->const[$r] = array("TIMESHEET_ATTENDANCE","int",1,"layout mode of the timesheets"); // hours or days
+                //$r++;
                 $this->const[$r] = array("TIMESHEET_TIME_TYPE","chaine","hours","layout mode of the timesheets"); // hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_DAY_DURATION","chaine","8","number of hour per day (used for the layout per day)"); 
+                $this->const[$r] = array("TIMESHEET_DAY_DURATION","int",8,"number of hour per day (used for the layout per day)"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HIDE_DRAFT","chaine","0","option to mask to task belonging to draft project"); 
+                $this->const[$r] = array("TIMESHEET_HIDE_DRAFT","int",0,"option to mask to task belonging to draft project"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HIDE_ZEROS","chaine","0","option to hide the 00:00"); 
+                $this->const[$r] = array("TIMESHEET_HIDE_ZEROS","int",0,"option to hide the 00:00"); 
                 $r++;
                 $this->const[$r] = array("TIMESHEET_HEADERS","chaine","Tasks","list of headers to show inthe timesheets"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HIDE_REF","chaine","0","option to hide the ref in the timesheets"); 
+                $this->const[$r] = array("TIMESHEET_HIDE_REF","int",0,"option to hide the ref in the timesheets"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_WHITELIST_MODE","chaine","0","Option to change the behaviour of the whitelist:-whiteliste,1-blackliste,2-no impact "); 
+                $this->const[$r] = array("TIMESHEET_WHITELIST_MODE","int",0,"Option to change the behaviour of the whitelist:-whiteliste,1-blackliste,2-no impact "); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_WHITELIST","chaine","1","Activate the whitelist:"); 
+                $this->const[$r] = array("TIMESHEET_WHITELIST","int",1,"Activate the whitelist:"); 
                 $r++;
                 $this->const[$r] = array("TIMESHEET_COL_DRAFT","chaine","FFFFFF","color of draft"); 
                 $r++;
@@ -139,39 +141,41 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_COL_REJECTED","chaine","FF0000","color of rejected"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_DAY_MAX_DURATION","chaine","12","max working hours per days"); 
+                $this->const[$r] = array("TIMESHEET_DAY_MAX_DURATION","int",12,"max working hours per days"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_ADD_HOLIDAY_TIME","chaine","1","count the holiday in total or not"); 
+                $this->const[$r] = array("TIMESHEET_ADD_HOLIDAY_TIME","int",1,"count the holiday in total or not"); 
                 $r++;
                 $this->const[$r] = array("TIMESHEET_OPEN_DAYS","chaine","_1111100","normal day for time booking"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_APPROVAL_BY_WEEK","chaine","0","Approval by week instead of by user"); 
+                $this->const[$r] = array("TIMESHEET_APPROVAL_BY_WEEK","int",0,"Approval by week instead of by user"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_MAX_APPROVAL","chaine","5","Max TS per Approval page"); 
+                $this->const[$r] = array("TIMESHEET_MAX_APPROVAL","int",5,"Max TS per Approval page"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_ADD_DOCS","chaine","0","Allow to join files to timesheets"); 
+                $this->const[$r] = array("TIMESHEET_ADD_DOCS","int",0,"Allow to join files to timesheets"); 
                 $r++;
                 $this->const[$r] = array("TIMESHEET_APPROVAL_FLOWS","chaine","_00000","Approval flows "); 
                 $r++;
-                 $this->const[$r] = array("TIMESHEET_INVOICE_METHOD","chaine","0","Approval by week instead of by user"); 
+                 $this->const[$r] = array("TIMESHEET_INVOICE_METHOD","int",0,"Approval by week instead of by user"); 
                 $r++;
                 $this->const[$r] = array("TIMESHEET_INVOICE_TASKTIME","chaine","all","set the default task to include in the invoice item"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_INVOICE_SERVICE","chaine","0","set a default service for the invoice item"); 
+                $this->const[$r] = array("TIMESHEET_INVOICE_TIMETYPE","chaine","days","set the default task to include in the invoice item"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_TASK","chaine","1","Show task on the invoice item "); 
+                $this->const[$r] = array("TIMESHEET_INVOICE_SERVICE","int",0,"set a default service for the invoice item"); 
                 $r++;
-                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_USER","chaine","1","Show user on the invoice item "); 
+                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_TASK","int",1,"Show task on the invoice item "); 
+                $r++;
+                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_USER","int",1,"Show user on the invoice item "); 
                 $r++;
                 $this->const[$r] = array("TIMESHEET_TIME_SPAN","chaine","splitedWeek","timespan of the timesheets"); // hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER","chaine","0","enable to time spent entry for subordinates"); // hours or days
+                $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER","int",0,"enable to time spent entry for subordinates"); // hours or days
                 $r++;
                 $this->const[$r] = array("TIMESHEET_VERSION","chaine",$this->version,"save the timesheet verison"); // hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_SHOW_TIMESPENT_NOTE","chaine","1","show the note next to the time entry"); // hours or days
+                $this->const[$r] = array("TIMESHEET_SHOW_TIMESPENT_NOTE","int",1,"show the note next to the time entry"); // hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_PDF_NOTEISOTASK","chaine","0","save the timesheet verison"); // hours or days
+                $this->const[$r] = array("TIMESHEET_PDF_NOTEISOTASK","int",0,"save the timesheet verison"); // hours or days
                 $r++;
 
 
@@ -237,25 +241,45 @@ class modTimesheet extends DolibarrModules
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
+		 $this->rights[$r][0] = 86100200; 				// Permission id (must not be already used)
+		 $this->rights[$r][1] = 'TimesheetUser';	// Permission label
+		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][4] = 'user';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		 //$this->rights[$r][5] = 'team';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		 $r++;
+		//$r=0;
 		 $this->rights[$r][0] = 86100201; 				// Permission id (must not be already used)
-		 $this->rights[$r][1] = 'Approver';	// Permission label
+		 $this->rights[$r][1] = 'TeamApprover';	// Permission label
 		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'approval';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $this->rights[$r][5] = 'team';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $r++;
 		 $this->rights[$r][0] = 86100202; 				// Permission id (must not be already used)
-		 $this->rights[$r][1] = 'Admin';	// Permission label
+		 $this->rights[$r][1] = 'ApprovalAdmin';	// Permission label
 		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'approval';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $this->rights[$r][5] = 'admin';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		 $r++;		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
+		 
+                 $r++;		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		 $this->rights[$r][0] = 86100203; 				// Permission id (must not be already used)
-		 $this->rights[$r][1] = 'Read';	// Permission label
-		 $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][1] = 'ExportRead';	// Permission label
+		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 //$this->rights[$r][5] = 'admin';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $r++;		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
-		// Example:
+                 $this->rights[$r][0] = 86100205; 				// Permission id (must not be already used)
+		 $this->rights[$r][1] = 'AttendanceUser';	// Permission label
+		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][4] = 'attendance';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		 $this->rights[$r][5] = 'user';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		 $r++;
+                 $this->rights[$r][0] = 86100206; 				// Permission id (must not be already used)
+		 $this->rights[$r][1] = 'AttendanceAdmin';	// Permission label
+		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][4] = 'attendance';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		 $this->rights[$r][5] = 'admin';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		 $r++;
+// Example:
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
 		// $this->rights[$r][1] = 'Permision label';	// Permission label
 		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
@@ -271,12 +295,41 @@ class modTimesheet extends DolibarrModules
 		// Add here entries to declare new menus
 		//
 		// Example to declare a new Top Menu entry and its Left menu entry:
-		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
+		$this->menu[$r]=array(	'fk_menu'=>0,               // Put 0 if this is a top menu
 									'type'=>'top',			                // This is a Top menu entry
 									'titre'=>'Timesheet',
 									'mainmenu'=>'timesheet',
-									'leftmenu'=>'timesheet',
+                                                                        'leftmenu'=>'timesheet',
 									'url'=>'/timesheet/Timesheet.php',
+									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+									'position'=>100,
+									'enabled'=>'$user->rights->timesheet->user && !($user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE)',	// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+									'target'=>'',
+									'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+		 $r++;
+
+	
+                  $this->menu[$r]=array(	'fk_menu'=>0,		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+									'type'=>'top',			                // This is a Left menu entry
+									'titre'=>'Attendance',
+									'mainmenu'=>'timesheet',
+                                                                        'leftmenu'=>'attendance',
+									'url'=>'/timesheet/AttendanceClock.php',
+									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+									'position'=>200,
+									'enabled'=>'$user->rights->timesheet->user && $user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE',
+									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+									'target'=>'',
+									'user'=>2);
+                  $r++;
+
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',               // Put 0 if this is a top menu
+									'type'=>'left',			                // This is a Top menu entry
+									'titre'=>'Timesheet',
+									'mainmenu'=>'timesheet',
+                                                                        'leftmenu'=>'timesheet',
+									'url'=>'/timesheet/Timesheet.php?#',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
 									'enabled'=>'$conf->timesheet->enabled',	// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -284,40 +337,54 @@ class modTimesheet extends DolibarrModules
 									'target'=>'',
 									'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		 $r++;
-		//
-		// Example to declare a Left Menu entry into an existing Top menu entry:
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+
+	
+                  $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
-									'titre'=>'Timesheet',
+									'titre'=>'Attendance',
 									'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'Timesheet',
-									'url'=>'/timesheet/Timesheet.php?action=list',
+                                                                        'leftmenu'=>'attendance',
+									'url'=>'/timesheet/AttendanceClock.php?#',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
-									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'position'=>200,
+									'enabled'=>'$user->rights->timesheet->attendance->user',
 									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
                   $r++;
-                $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                 
+                  $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=attendance',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+									'type'=>'left',			                // This is a Left menu entry
+									'titre'=>'AttendanceAdmin',
+									'mainmenu'=>'timesheet',
+                                                                        'leftmenu'=>'attendance',
+									'url'=>'/timesheet/AttendanceEventAdmin.php',
+									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+									'position'=>210,
+									'enabled'=>'$user->rights->timesheet->attendance->admin',
+									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+									'target'=>'',
+									'user'=>2);
+                  $r++;
+                $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'userReport',
 									'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'timesheet',
 									'url'=>'/timesheet/TimesheetReportUser.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>120,
+									'position'=>130,
 									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
                
                   $r++;
-                $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'Timesheetwhitelist',
 									'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'Timesheetwhitelist',
+                                                                        'leftmenu'=>'Timesheet',
 									'url'=>'/timesheet/TimesheetFavouriteAdmin.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>110,
@@ -376,14 +443,27 @@ class modTimesheet extends DolibarrModules
 									'url'=>'/timesheet/TimesheetUserTasksAdmin.php?action=list&sortfield=t.date_start&sortorder=desc',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>131,
-									'enabled'=>'$user->rights->timesheet->approval',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'enabled'=>'$user->rights->timesheet->approval->admin',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'$user->rights->timesheet->approval->admin',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
                
                   $r++;
             
+// impoort
+/* 		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]="ImportDataset_Kimai";	// Translation key
+		$this->import_icon[$r]='project';
+		$this->import_entities_array[$r]=array('pt.fk_user'=>'user');		// We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r]=array('ptt'=>MAIN_DB_PREFIX.'project_task_time');
+		$this->import_fields_array[$r]=array('ptt.fk_task'=>"ThirdPartyName*",'ptt.fk_user'=>"User*");
 
+		$this->import_convertvalue_array[$r]=array(
+				'ptt.fk_task'=>array('rule'=>'fetchidfromref','classfile'=>'/timesheet/class/timesheet.class.php','class'=>'Timesheet','method'=>'fetch','element'=>'ThirdParty'),
+				'sr.fk_user'=>array('rule'=>'fetchidfromref','classfile'=>'/user/class/user.class.php','class'=>'User','method'=>'fetch','element'=>'User')
+		);
+		$this->import_examplevalues_array[$r]=array('sr.fk_soc'=>"MyBigCompany",'sr.fk_user'=>"login");*/
 		// Exports
 		//$r=1;
 
@@ -415,7 +495,7 @@ class modTimesheet extends DolibarrModules
                 global $db,$conf;
                 $result=$this->_load_tables('/timesheet/sql/');
 		$sql = array();
-                $sql[0] = 'DELETE IGNORE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
+                $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
                 $sql[0].= ' WHERE status IN (1,5)'; //'DRAFT','REJECTED'
                 $sql[1] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'rat' AND type='timesheetReport' AND entity = ".$conf->entity;
                 $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('rat','timesheetReport',".$conf->entity.")";
