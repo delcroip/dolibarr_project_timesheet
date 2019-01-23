@@ -85,12 +85,17 @@ if($action== 'submit'){
             if (!empty($_POST['approval']))
             {
                 $notes=$_POST['note'];
+                $notesTask=GETPOST('notesTask','array');
                 $approvals=$_POST['approval'];
                 foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser){
                     
                     $curTaskTimesheet= new TimesheetUserTasks($db);
                     $count++;
-                    if($approvals[$key]!=$tsUser)switch($approvals[$key]){
+                    $curTaskTimesheet->fetch($key);
+                    $arrayTTA=$curTaskTimesheet->fetchTaskTimesheet();
+                    $curTaskTimesheet->updateActuals($arrayTTA,$notesTask);
+                    //if($approvals[$key]!=$tsUser)
+                        switch($approvals[$key]){
                         case 'Approved':
                            $ret=$curTaskTimesheet->setStatus($user,(($appflowOn>0)?UNDERAPPROVAL:APPROVED),$key); 
                             if(ret<0)$errors++;
@@ -102,6 +107,8 @@ if($action== 'submit'){
                             else $tsRejected++;
                             break;
                         case 'Submitted':
+
+                            
                         default:
                             break;
                                 

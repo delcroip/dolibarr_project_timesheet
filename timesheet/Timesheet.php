@@ -142,7 +142,7 @@ switch($action){
                                             $task_timesheet->note=$notesTaskApproval[$key];
                                             $task_timesheet->update($user);
                                          }                                    
-                                         $ret=$task_timesheet->updateActuals($tasktab,$notesTask[$key]);
+                                         $ret=$task_timesheet->updateActuals($tasktab,$notesTask);
                                          
                                          
                                          if(GETPOSTISSET('submit') ){
@@ -153,24 +153,9 @@ switch($action){
 					 }else{
                                              $task_timesheet->setStatus($user,DRAFT);
                                          }       
-					 
 
                 		//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
-					 if(!empty($ret) || $update)
-					 {
-						 if(GETPOSTISSET('submit'))setEventMessage($langs->transnoentitiesnoconv("timesheetSubmitted"));
-						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendCreated'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendCreated").$_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']);
-						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendModified'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendModified").$_SESSION['task_timesheet'][$timestamp]['timeSpendModified']);
-						 if($_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted'])setEventMessage($langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted").$_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']);
-                                                 if($update || $_SESSION['task_timesheet'][$timestamp]['NoteUpdated'])setEventMessage($langs->transnoentitiesnoconv("NoteUpdated"));
-                                         }else
-					 {
-						 if($_SESSION['task_timesheet'][$timestamp]['updateError']){
-							 setEventMessage( $langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" Update failed").':'.$ret,'errors');
-						 }else {
-							 setEventMessage($langs->transnoentitiesnoconv("NothingChanged"),'warnings');
-						 }
-					 }
+                                          TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
 				 }
             }else if(GETPOSTISSET('recall')){
 				$task_timesheet->loadFromSession($timestamp,GETPOST('tsUserId','int')); /*FIXME to support multiple TS sent*/

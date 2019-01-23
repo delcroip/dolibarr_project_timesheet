@@ -63,17 +63,18 @@ if($action=='submit'){
         $errors=0;
         $count=0;
         //$task_timesheet->db=$db;
-        if (!empty($_POST['approval']))
+        if (!empty($_POST['approval']) || !empty($_POST['notesTask']))
         {
             $task_timesheet= new TimesheetTask($db);
             $approvals=GETPOST ('approval','array');
-            $notes=GETPOST ('note','array');
+            $notes=GETPOST ('notesTask','array');
             
             $update=false;
             foreach($_SESSION['task_timesheet'][$token] as $id => $role_row){
                 $count++;
                 $task_timesheet->fetch($id);
-                if($notes[$id]!=$task_timesheet->note){                   
+                if($notes[$id]!=$task_timesheet->note){ 
+                    var_dump($notes);
                     $task_timesheet->note=$notes[$id];
                     $update=true;
                 }
@@ -374,7 +375,7 @@ if($db->type!='pgsql'){
  //        $object->getTaskInfo();
          $object->getActuals();
          echo '<tr>';
-           echo $object->getFormLine( $key,$headers,0,'-1'); 
+           echo $object->getTimesheetLine( $key,$headers,0,'-1'); 
          echo "<tr>\n";
      }
  }
