@@ -1,6 +1,6 @@
 # Dolibarr language file - English - timesheet
 # Translators
-#  (6),  (389)
+#  (6),  (403)
 adddocs=attached documents
 adddocsDesc=Enable to add documents attached to the timesheets
 addForOther=register time spent for others.
@@ -20,6 +20,9 @@ approved=Approved
 approvedColorDesc=Color for the holiday & timesheet approved.
 approvedOnly=only approved
 ApproveRightsDesc=Right to approve timesheets
+Attendance=Chrono
+AttendanceAdmin=Chnonmeters administration
+AttendanceDesc=Chrono as default timesheet page
 blackWhiteList=Favourites
 blackWhiteListDesc=activate the favorites' filtering
 blackWhiteListMode=favorites' filtering
@@ -43,6 +46,7 @@ DateEndColDesc=Shows the end date of the task
 DateStartColDesc=Shows the start date of the task
 DefaultService=Default service for invoicing
 DeleteTimesheetwhitelist=Entry deleted
+DiplayOptions=display options
 draft=Draft
 draftColorDesc=Color for the draft holiday & timesheet
 dropdownAjax=Disable dropdown Ajax
@@ -56,7 +60,6 @@ Existing=Existing
 exportfriendly=Export friendly
 feebackDesc=If you are facing issue ( behaviour or translation), if  you have improvement idea or new features request, please contact me.
 Feedback=Feedback
-Fincode=Financial code
 generalInvoiceProjectParam=General parameters for the project's invoice
 GeneralOption=General options
 GeneralTabDesc=Setup of the display of the time spent under the Top menu \"Timesheet\" then Left menu \"Timesheet\"
@@ -92,6 +95,8 @@ invoiceShowUserDesc=Show the user name on the invoice when the mode of invoicing
 InvoiceTabDesc=Setup of invoicing
 invoiceTaskTime=timesheets
 invoiceTaskTimeDesc=invoice all timesheets or only the approved.
+invoiceTimeType=Unit of time spent on attendance sheet pdf
+invoiceTimeTypeDesc=Show the duration spent on the task per day or per hour on the attendance PDF sheet
 invoicingMethod=Invoicing method
 managerSignature=Signature of the Team Leader.
 Manual=Module's manual
@@ -183,6 +188,7 @@ timeSpan=time span
 timeSpanDesc=Time span for the timesheet entries.
 timeType=Unit of time spent
 timeTypeDesc=Show the duration spent on the task per day or per hour
+Token=Token
 TotalDesc=Show the total of the ligne displayed (actualised live wtih time entries)
 underapproval=Under approval
 unitDuration=Quantity per unit

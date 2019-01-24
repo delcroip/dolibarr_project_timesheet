@@ -55,7 +55,7 @@ class Attendanceevent extends CommonObject
     public $id;
     // BEGIN OF automatic var creation (from db)
     
-	public $datetime_event='';
+	public $date_time_event='';
 	public $event_location_ref;
 	public $event_type;
 	public $note;
@@ -75,7 +75,7 @@ class Attendanceevent extends CommonObject
 
     
     // END OF automatic var creation
-public $datetime_event_start;
+public $date_time_event_start;
 
     /**
      *  Constructor
@@ -110,7 +110,7 @@ public $datetime_event_start;
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-        $sql.= 'datetime_event,';
+        $sql.= 'date_time_event,';
         $sql.= 'event_location_ref,';
         $sql.= 'event_type,';
         $sql.= 'note,';
@@ -122,7 +122,7 @@ public $datetime_event_start;
         $sql.= 'status,';   
         $sql.= 'date_modification,fk_user_modification';
         $sql.= ") VALUES (";
-        $sql.=' '.(empty($this->datetime_event) || dol_strlen($this->datetime_event)==0?'NULL':"'".$this->db->idate($this->datetime_event)."'").',';
+        $sql.=' '.(empty($this->date_time_event) || dol_strlen($this->date_time_event)==0?'NULL':"'".$this->db->idate($this->date_time_event)."'").',';
         $sql.=' '.(empty($this->event_location_ref)?'NULL':"'".$this->db->escape($this->event_location_ref)."'").',';
         $sql.=' '.(empty($this->event_type)?'NULL':"'".$this->event_type."'").',';
         $sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").',';
@@ -194,7 +194,7 @@ public $datetime_event_start;
         }
         $sql = "SELECT";
         $sql.= " t.rowid,";
-        $sql.=' t.datetime_event,';
+        $sql.=' t.date_time_event,';
         $sql.=' t.event_location_ref,';
         $sql.=' t.event_type,';
         $sql.=' t.note,';
@@ -212,7 +212,7 @@ public $datetime_event_start;
         else if (!empty($user))$sql.=  " t.fk_userid = '".$user->id;
         else if (!empty($startToken))  $sql.= "  t.event_type='".$type."' AND t.token='".$startToken;
         else return -1;
-        $sql.= "' ORDER BY datetime_event DESC" ;
+        $sql.= "' ORDER BY date_time_event DESC" ;
         $this->db->plimit(1, 0);
     	dol_syslog(get_class($this)."::fetch");
         $resql=$this->db->query($sql);
@@ -224,7 +224,7 @@ public $datetime_event_start;
             {
                 
                 $this->id    = $obj->rowid; 
-                $this->datetime_event = $this->db->jdate($obj->datetime_event);
+                $this->date_time_event = $this->db->jdate($obj->date_time_event);
                 $this->event_location_ref = $obj->event_location_ref;
                 $this->event_type = $obj->event_type;
                 $this->note = $obj->note;
@@ -236,11 +236,11 @@ public $datetime_event_start;
                 $this->project = $obj->fk_project;
                 $this->token = $obj->token;
                 $this->status = $obj->status;
-                $this->datetime_event_start=$this->datetime_event;
+                $this->date_time_event_start=$this->date_time_event;
                 if($this->event_type!=EVENT_START ){
                     $staticAttendance= new Attendanceevent($this->db, $user->id);
                     if($staticAttendance->fetch('','',$obj->token,2)){
-                        $this->datetime_event_start=$staticAttendance->datetime_event;
+                        $this->date_time_event_start=$staticAttendance->date_time_event;
                     }
                 }
             }else{
@@ -550,8 +550,8 @@ public $datetime_event_start;
     function initAsSpecimen()
     {
         $this->id=0;
-        $this->datetime_event='';
-        $this->datetime_event_start='';
+        $this->date_time_event='';
+        $this->date_time_event_start='';
         $this->event_location_ref='';
         $this->event_type=0;
         $this->note='';
@@ -576,7 +576,7 @@ public $datetime_event_start;
      *	@return	void
      */       
     function cleanParam(){   
-        if (!empty($this->datetime_event)) $this->datetime_event=trim($this->datetime_event);
+        if (!empty($this->date_time_event)) $this->date_time_event=trim($this->date_time_event);
         if (!empty($this->event_location_ref)) $this->event_location_ref=trim($this->event_location_ref);
         if (!empty($this->event_type)) $this->event_type=trim($this->event_type);
         if (!empty($this->note)) $this->note=trim($this->note);
@@ -597,7 +597,7 @@ public $datetime_event_start;
      */    
     function setSQLfields($user){
         $sql='';
-        $sql.=' datetime_event='.(dol_strlen($this->datetime_event)!=0 ? "'".$this->db->idate($this->datetime_event)."'":'null').',';
+        $sql.=' date_time_event='.(dol_strlen($this->date_time_event)!=0 ? "'".$this->db->idate($this->date_time_event)."'":'null').',';
         $sql.=' event_location_ref='.(empty($this->event_location_ref)!=0 ? 'null':"'".$this->db->escape($this->event_location_ref)."'").',';
         $sql.=' event_type='.(empty($this->event_type)!=0 ? 'null':"'".$this->event_type."'").',';
         $sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").',';
@@ -647,8 +647,8 @@ public $datetime_event_start;
         if (!empty($customer)) $this->third_party=trim($customer);
         $this->token=  getToken();
         $this->event_type= EVENT_START;
-        $this->datetime_event=  mktime()+1;
-        $this->datetime_event_start=  $this->datetime_event;
+        $this->date_time_event=  mktime()+1;
+        $this->date_time_event_start=  $this->date_time_event;
         $this->event_location_ref=$location_ref;
         $this->create($user);
         
@@ -685,21 +685,28 @@ public $datetime_event_start;
         $tokenDb=$this->token;
         if(empty($tokenDb) ){  //00
             $this->status='{"text":"No active chrono found","type":errors","param:""}';
+            $retJson=$this->status;
         }else if($this->event_type==3){
             $this->status='{"text":"Chrono already stopped","type":errors","param:""}';
+            $retJson=$this->status;
         }else{// 11 && 10
             if(!empty($tokenJson)){ //11
                 $this->event_location_ref=$location_ref;
                 $this->note=$note;
             }
             $this->event_type=EVENT_STOP;
-            $this->datetime_event=  mktime();
-            $this->create($user);
+            $this->date_time_event=  mktime();
+            $ret=$this->create($user);
             
-        //if ($conf->global->ATTENDANCE_CREATE_TIMESPENT==true) 
-            $this->createTimeSpend($user,$tokenDb); //FIXME
-            $retJson=$this->serialize(2);
+            if ($ret) {
+                $this->createTimeSpend($user,$tokenDb); //FIXME
+                $retJson=$this->serialize(2);
+            }else{
+                $this->status='{"text":"Database error","type":errors","param:"'.$this->db->lasterror().'"}';
+                $retJson=$this->status;
+            }
         }
+            
         return $retJson ;
     }
     
@@ -736,7 +743,7 @@ public $datetime_event_start;
                 $this->getInfo();
             }
             // update the required fields
-                $this->datetime_event=  mktime();
+                $this->date_time_event=  mktime();
                 if($this->event_type!=EVENT_HEARTBEAT){ // create an heartbeat only if there is none
                     $this->event_type=EVENT_HEARTBEAT;
                     $this->create($user);
@@ -758,9 +765,9 @@ function createTimeSpend($user,$token=''){
     if(!empty($token)){
         $this->fetch('','',$token);
         if($this->event_type==EVENT_STOP && $this->task>0){
-            $start=  strtotime("midnight",(int)$this->datetime_event);
-            $end=  strtotime("tomorrow",(int)$this->datetime_event)-1;
-            $duration=$this->datetime_event -$this->datetime_event_start;
+            $start=  strtotime("midnight",(int)$this->date_time_event);
+            $end=  strtotime("tomorrow",(int)$this->date_time_event)-1;
+            $duration=$this->date_time_event -$this->date_time_event_start;
             $tta= new TimesheetTask($this->db,$this->task);
             $tta->getActuals($start, $end,$this->userid);
             //var_dump($tta->getTaskTab());
@@ -874,8 +881,8 @@ function createTimeSpend($user,$token=''){
     $ret='';
     $array= array();
         $array['id']= $this->id;
-	$array['datetime_event']= $this->datetime_event;
-        $array['datetime_event_start']= $this->datetime_event_start;
+	$array['date_time_event']= $this->date_time_event;
+        $array['date_time_event_start']= $this->date_time_event_start;
 	$array['event_location_ref']= $this->event_location_ref;
 	$array['event_type']= $this->event_type;
 	$array['note']= $this->note;

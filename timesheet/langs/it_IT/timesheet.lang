@@ -1,6 +1,6 @@
 # Dolibarr language file - Italian - timesheet
 # Translators
-#  (262)
+#  (269)
 adddocs=Allegati
 adddocsDesc=Permettono di aggiungere documenti allegati per le schede attività
 addForOther=registrare il tempo speso per gli altri.
@@ -20,6 +20,9 @@ approved=Approvato
 approvedColorDesc=Colore per la festa & scheda attività approvato
 approvedOnly=Solo approvati
 ApproveRightsDesc=Diritto di approvare le schede attività
+Attendance=Chrono
+AttendanceAdmin=Amministrazione di Chnonmeters
+AttendanceDesc=Chrono come pagina della scheda attività predefinita
 blackWhiteList=Preferiti
 blackWhiteListDesc=Attivare il filtraggio dei preferiti
 blackWhiteListMode=Filtri preferiti
@@ -43,6 +46,7 @@ DateEndColDesc=Indica la data di fine del compito
 DateStartColDesc=Contiene la data di inizio per l'attività
 DefaultService=Servizio predefinito per la fatturazione
 DeleteTimesheetwhitelist=L'iscrizione è stata cancellata
+DiplayOptions=opzioni di visualizzazione
 draft=Bozza
 draftColorDesc=Colore per il progetto di vacanze & scheda attività
 dropdownAjax=Disabilita discesa Ajax
@@ -56,7 +60,6 @@ Existing=Existing
 exportfriendly=esportazione Compatibile
 feebackDesc=Se sei di fronte a un problema (comportamento o traduzione), se hai idea di miglioramento o richiede nuove funzionalità, contattaci.
 Feedback=Feedback
-Fincode=codice finanziario
 generalInvoiceProjectParam=Parametri generali della fattura del progetto
 GeneralOption=Opzioni generali
 GeneralTabDesc=Installazione del display del tempo trascorso sotto il menu in alto \"Timesheet\" poi dal menu a sinistra \"Timesheet\"
@@ -92,6 +95,8 @@ invoiceShowUserDesc=Mostra il nome utente sulla fattura quando la modalità di f
 InvoiceTabDesc=Installazione di fatturazione
 invoiceTaskTime=Schede orarie
 invoiceTaskTimeDesc=fatturare tutte le schede o solo l'approvazione.
+invoiceTimeType=Unità di tempo speso sul foglio di presenza pdf
+invoiceTimeTypeDesc=Mostra la durata spesa per l&#39;attività al giorno o all&#39;ora sul foglio PDF di presenza
 invoicingMethod=Modalità di Fatturazione
 managerSignature=Firma del responsabile del team
 Manual=Manuale del modulo
@@ -183,6 +188,7 @@ timeSpan=Arco di tempo:
 timeSpanDesc=Intervallo di tempo per le voci dei tempi.
 timeType=Visualizzazione del tempo
 timeTypeDesc=Mostra il tempo in giorni o ore formato 00:00
+Token=Token
 TotalDesc=Mostra il totale della ligne visualizzata (voci effettive dal vivo con tempo)
 underapproval=In Approvazione
 unitDuration=Quantità per unità

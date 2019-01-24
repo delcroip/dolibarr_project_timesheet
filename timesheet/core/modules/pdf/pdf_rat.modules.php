@@ -301,7 +301,7 @@ function write_file($object,$outputlangs)
                 {
                     
                     $pdf->SetFont('', 'B', $default_font_size );
-                    $txtTotal= $tasktimearray['Total']." ".(($conf->global->TIMESHEET_TIME_TYPE=="days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));  
+                    $txtTotal= $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE=="days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));  
                     $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1,0,true,'L');
                     $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $txtTotal, 0, 1,0,true,'R');
                     $pdf->SetFont('','', $default_font_size - 1);
@@ -374,7 +374,7 @@ function write_file($object,$outputlangs)
         $userName=$line['userName'];
         $date=dol_print_date($line['date'],'day');
         //$duration=($tasktimearray[$i]['duration']>0)?convertSecondToTime((int) $tasktimearray[$i]['duration'],'allhourmin'):'';
-        $duration=formatTime($line['duration'],-1);
+        $duration=formatTime($line['duration'],-2);
         // Ref of task
         $pdf->SetXY($this->posxref, $curY);
         $pdf->MultiCell($this->posxdate-$this->posxref, 0, $outputlangs->convToOutputCharset($ref), 0, 'L');
@@ -454,7 +454,7 @@ function write_file($object,$outputlangs)
             $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $libelleline, 0, 'L');
             //duration title
             $pdf->SetXY($this->posxduration, $tab_top+1);
-            if ($conf->global->TIMESHEET_TIME_TYPE=="hours"){
+            if ($conf->global->TIMESHEET_INVOICE_TIMETYPE=="hours"){
                 $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, 'h:m', 0, 'R');             
             }else{
                 $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, $outputlangs->transnoentities("Days"), 0, 'R');

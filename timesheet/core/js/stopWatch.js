@@ -18,8 +18,8 @@
 class event{
      constructor(){
         this.id='';
-	this.datetime_event='';
-	this.datetime_event_start='';
+	this.date_time_event='';
+	this.date_time_event_start='';
 	this.event_location_ref="";
 	this.event_type='';
 	this.note='';
@@ -61,7 +61,7 @@ class Stopwatch {
         //var date_now.setTime(performance.now());
          this.timestampHeartbeart=performance.now();
          this.timestampClock=performance.now();
-         this.time =performance.now()+ (this.event.datetime_event_start-this.event.processedTime)*1000;
+         this.time =performance.now()+ (this.event.date_time_event_start-this.event.processedTime)*1000;
         
         if (this.event.event_type<3  ) { // launch the clock for heartbeat and 
              this.running = true;

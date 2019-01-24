@@ -1,6 +1,6 @@
 # Dolibarr language file - Deutch - timesheet
 # Translators
-#  (241)
+#  (249)
 adddocs=Beigefügte Dokumente
 adddocsDesc=Aktivieren Sie die Arbeitszeittabellen verknüpfte Dokumente hinzufügen
 addForOther=Registerzeit für andere.
@@ -20,6 +20,9 @@ approved=Akzeptiert
 approvedColorDesc=Farbe für den Urlaub & Arbeitszeitblatt genehmigt
 approvedOnly=Nur genehmigte
 ApproveRightsDesc=Recht auf Arbeitszeittabellen genehmigen
+Attendance=Chrono
+AttendanceAdmin=Chnonmeters Verwaltung
+AttendanceDesc=Chrono als Standardzeittabelle
 blackWhiteList=Favoriten
 blackWhiteListDesc=Aktiviere die Favoritenfilterung
 blackWhiteListMode=Favoriten Filterung
@@ -43,6 +46,7 @@ DateEndColDesc=Zeigt das Enddatum der Aufgabe an
 DateStartColDesc=Zeigt das Startdatum der Aufgabe an
 DefaultService=Standardservice für die Rechnungsstellung
 DeleteTimesheetwhitelist=Eintrag gelöscht
+DiplayOptions=Anzeigeoptionen
 draft=Feld-Gruppe Entwurf aktualisiert
 draftColorDesc=Farbe für den Entwurf Urlaub & Arbeitszeittabelle
 dropdownAjax=Drop-Down-Ajax deaktivieren
@@ -56,7 +60,6 @@ Existing=Bestehend
 exportfriendly=Export-freundlich
 feebackDesc=Wenn Sie vor Problem (Verhalten oder Übersetzung) stehen, wenn Sie Verbesserungsidee oder neue Features Anfrage haben, kontaktieren Sie mich bitte.
 Feedback=Bewertung
-Fincode=Finanzieller Code
 generalInvoiceProjectParam=Allgemeine Parameter für das Projekt Rechnung
 GeneralOption=Grundeinstellungen
 GeneralTabDesc=Einstellung der Anzeige der Zeit, die unter dem oberen Menü \"Arbeitszeittabelle\" und dann im linken Menü \"Arbeitszeittabelle\" verbracht wurde
@@ -92,6 +95,8 @@ invoiceShowUserDesc=Zeigen Sie den Benutzernamen auf der Rechnung an, wenn der M
 InvoiceTabDesc=Setup der Rechnungsstellung
 invoiceTaskTime=Stundenzetteln
 invoiceTaskTimeDesc=Rechnungen alle Stundenzettel oder nur die genehmigten.
+invoiceTimeType=Zeiteinheit für Anwesenheitsliste pdf
+invoiceTimeTypeDesc=Zeigen Sie die Dauer der Aufgabe pro Tag oder pro Stunde auf dem Anwesenheits-PDF-Blatt an
 invoicingMethod=Abrechnungsverfahren
 managerSignature=Unterschrift des Teamleiters.
 Manual=Modulhandbuch
@@ -183,6 +188,7 @@ timeSpan=Zeitspanne
 timeSpanDesc=Zeitspanne für die Zeiterfassungseinträge.
 timeType=Zeiteinheit verbracht
 timeTypeDesc=Zeigen / geben Sie die Dauer für die Aufgabe pro Tag oder pro Stunde ein
+Token=Token
 TotalDesc=Anzeige der Summe der angezeigten Lignes (aktualisierter Live-Zeiteintrag)
 underapproval=Unter Genehmigung
 unitDuration=Menge pro Einheit

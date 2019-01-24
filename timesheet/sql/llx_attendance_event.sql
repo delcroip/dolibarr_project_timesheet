@@ -21,7 +21,7 @@
 CREATE TABLE llx_attendance_event
 (
 rowid                   serial ,
-datetime_event          DATETIME        NOT NULL , -- start date of the period
+date_time_event          DATETIME        NOT NULL , -- start date of the period
 event_location_ref      VARCHAR(1024) DEFAULT NULL, -- IP or equipment of loggin
 event_type              integer default 1,-- (1-->'heartbeat','sign-in','sign-out) DEFAULT 'heartbeat',
 note                  VARCHAR(1024),

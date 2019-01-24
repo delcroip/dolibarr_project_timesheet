@@ -1,6 +1,6 @@
 # Dolibarr language file - Spanish - timesheet
 # Translators
-#  (230)
+#  (237)
 adddocs=Documentos Adjuntos
 adddocsDesc=Permiten para añadir documentos adjuntos a las hojas
 addForOther=registrar el tiempo pasado por otros.
@@ -20,6 +20,9 @@ approved=Aprobado
 approvedColorDesc=Color para el día festivo y hoja de tiempo aprobada
 approvedOnly=Sólo aprobadas
 ApproveRightsDesc=Derecho de aprobar horas
+Attendance=Chrono
+AttendanceAdmin=Administracion de medidores
+AttendanceDesc=Chrono como página de horas predeterminada
 blackWhiteList=Favoritos
 blackWhiteListDesc=Activar el filtro de favoritos
 blackWhiteListMode=Filtrado de favoritos
@@ -43,6 +46,7 @@ DateEndColDesc=Muestra la fecha de finalización de la tarea
 DateStartColDesc=Muestra la fecha de inicio de la tarea
 DefaultService=Servicio por defecto de facturación.
 DeleteTimesheetwhitelist=Entrada eliminada.
+DiplayOptions=Opciones de pantalla
 draft=Borrador
 draftColorDesc=Color para las vacaciones de proyecto y parte de horas
 dropdownAjax=Desactivar dropdown Ajax
@@ -56,7 +60,6 @@ Existing=Existente
 exportfriendly=Ambiente de exportación
 feebackDesc=Si se enfrenta a un problema (comportamiento o traducción), si tiene ideas de mejora o solicitud de nuevas características, póngase en contacto conmigo.
 Feedback=Sugerencias
-Fincode=código financiero
 generalInvoiceProjectParam=Parámetros generales para la factura del proyecto
 GeneralOption=Opciones generales
 GeneralTabDesc=Configuración de la visualización del tiempo pasado bajo el menú superior \"parte de horas\" y luego el menú izquierdo \"parte de horas\"
@@ -92,6 +95,8 @@ invoiceShowUserDesc=Mostrar el nombre de usuario en la factura cuando el modo de
 InvoiceTabDesc=Configuración de la factura
 invoiceTaskTime=Hojas de asistencia
 invoiceTaskTimeDesc=Facturar todas las hojas de tiempos o sólo las aprobadas.
+invoiceTimeType=Unidad de tiempo invertido en la hoja de asistencia pdf
+invoiceTimeTypeDesc=Muestre la duración de la tarea por día o por hora en la hoja de PDF de asistencia.
 invoicingMethod=2) Nuevo método de facturación
 managerSignature=Firma del Jefe de Equipo.
 Manual=Manual del módulo
@@ -183,6 +188,7 @@ timeSpan=Periodo de tiempo
 timeSpanDesc=Plazo de tiempo para las entradas de la hoja de tiempo.
 timeType=Unidad de tiempo dedicada
 timeTypeDesc=Mostrar / ingresar la duración de la tarea por día o por hora
+Token=Token
 TotalDesc=Mostrar el total del ligne visualizado (actualizado en vivo con las entradas de tiempo)
 underapproval=bajo revisión
 unitDuration=Cantidad por unidad

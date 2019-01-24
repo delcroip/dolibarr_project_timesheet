@@ -80,8 +80,8 @@ $removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )		// Both test must be present to be compatible with all browsers
 {
-    $ls_datetime_event_month= GETPOST('ls_datetime_event_month','int');
-    $ls_datetime_event_year= GETPOST('ls_datetime_event_year','int');
+    $ls_date_time_event_month= GETPOST('ls_date_time_event_month','int');
+    $ls_date_time_event_year= GETPOST('ls_date_time_event_year','int');
     $ls_event_location_ref= GETPOST('ls_event_location_ref','alpha');
     $ls_event_type= GETPOST('ls_event_type','int');
     $ls_note= GETPOST('ls_note','alpha');
@@ -168,7 +168,7 @@ $form= new Form($db);
         }
     //retrive the data
         $time=explode(':',GETPOST('DatetimeeventHour'));
-        $object->datetime_event=dol_mktime( $time[0], $time[1],0,GETPOST('Datetimeeventmonth'),GETPOST('Datetimeeventday'),GETPOST('Datetimeeventyear'));
+        $object->date_time_event=dol_mktime( $time[0], $time[1],0,GETPOST('Datetimeeventmonth'),GETPOST('Datetimeeventday'),GETPOST('Datetimeeventyear'));
         $object->event_location_ref=GETPOST('Eventlocationref');
         $object->event_type=GETPOST('Eventtype');
         $object->note=GETPOST('Note');
@@ -248,7 +248,7 @@ jQuery(document).ready(function() {
 
     $sql = 'SELECT';
     $sql.= ' t.rowid,';
-    $sql.=' t.datetime_event,';
+    $sql.=' t.date_time_event,';
     $sql.=' t.event_location_ref,';
     $sql.=' t.event_type,';
     $sql.=' t.note,';
@@ -274,8 +274,8 @@ jQuery(document).ready(function() {
             }
     }
     //pass the search criteria
-    	if($ls_datetime_event_month)$sqlwhere .= ' AND MONTH(t.datetime_event)="'.$ls_datetime_event_month."'";
-	if($ls_datetime_event_year)$sqlwhere .= ' AND YEAR(t.datetime_event)="'.$ls_datetime_event_year."'";
+    	if($ls_date_time_event_month)$sqlwhere .= ' AND MONTH(t.date_time_event)="'.$ls_date_time_event_month."'";
+	if($ls_date_time_event_year)$sqlwhere .= ' AND YEAR(t.date_time_event)="'.$ls_date_time_event_year."'";
 	if($ls_event_location_ref) $sqlwhere .= natural_search('t.event_location_ref', $ls_event_location_ref);
 	if($ls_event_type) $sqlwhere .= natural_search(array('t.event_type'), $ls_event_type);
 	if($ls_note) $sqlwhere .= natural_search('t.note', $ls_note);
@@ -304,7 +304,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     if(!empty($sortfield))
         {$sql.= $db->order($sortfield,$sortorder);
     }else{ 
-       $sql.=' ORDER BY t.datetime_event DESC';
+       $sql.=' ORDER BY t.date_time_event DESC';
 
     }
     
@@ -322,8 +322,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $param='';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-        	if (!empty($ls_datetime_event_month))	$param.='&ls_datetime_event_month='.urlencode($ls_datetime_event_month);
-	if (!empty($ls_datetime_event_year))	$param.='&ls_datetime_event_year='.urlencode($ls_datetime_event_year);
+        	if (!empty($ls_date_time_event_month))	$param.='&ls_date_time_event_month='.urlencode($ls_date_time_event_month);
+	if (!empty($ls_date_time_event_year))	$param.='&ls_date_time_event_year='.urlencode($ls_date_time_event_year);
 	if (!empty($ls_event_location_ref))	$param.='&ls_event_location_ref='.urlencode($ls_event_location_ref);
 	if (!empty($ls_event_type))	$param.='&ls_event_type='.urlencode($ls_event_type);
 	if (!empty($ls_note))	$param.='&ls_note='.urlencode($ls_note);
@@ -347,7 +347,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<table class="liste" width="100%">'."\n";
         //TITLE ADD
         print '<tr class="liste_titre">';
-        	print_liste_field_titre($langs->trans('Date'),$PHP_SELF,'t.datetime_event','',$param,'',$sortfield,$sortorder);
+        	print_liste_field_titre($langs->trans('Date'),$PHP_SELF,'t.date_time_event','',$param,'',$sortfield,$sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans('Eventlocationref'),$PHP_SELF,'t.event_location_ref','',$param,'',$sortfield,$sortorder);
 	print "\n";
@@ -410,7 +410,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<table class="liste" width="100%">'."\n";
                 //TITLE
         print '<tr class="liste_titre">';
-        	print_liste_field_titre($langs->trans('Date'),$PHP_SELF,'t.datetime_event','',$param,'',$sortfield,$sortorder);
+        	print_liste_field_titre($langs->trans('Date'),$PHP_SELF,'t.date_time_event','',$param,'',$sortfield,$sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans('Eventlocationref'),$PHP_SELF,'t.event_location_ref','',$param,'',$sortfield,$sortorder);
 	print "\n";
@@ -435,11 +435,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '</tr>';
         //SEARCH FIELDS
         print '<tr class="liste_titre">'; 
-        //Search field fordatetime_event
+        //Search field fordate_time_event
 	print '<td class="liste_titre" colspan="1" >';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="datetime_event_month" value="'.$ls_datetime_event_month.'">';
-	$syear = $ls_datetime_event_year;
-	$formother->select_year($syear?$syear:-1,'ls_datetime_event_year',1, 20, 5);
+	print '<input class="flat" type="text" size="1" maxlength="2" name="date_time_event_month" value="'.$ls_date_time_event_month.'">';
+	$syear = $ls_date_time_event_year;
+	$formother->select_year($syear?$syear:-1,'ls_date_time_event_year',1, 20, 5);
 	print '</td>';
 //Search field forevent_location_ref
 	print '<td class="liste_titre" colspan="1" >';
@@ -498,7 +498,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             {
                 // You can use here results
                 print "<tr class=\"oddeven\"  >";
-		print "<td>".dol_print_date($db->jdate($obj->datetime_event),'dayhour')."</td>";
+		print "<td>".dol_print_date($db->jdate($obj->date_time_event),'dayhour')."</td>";
 		print "<td>".$obj->event_location_ref."</td>";
 		print "<td>".$eventtypeArray[$obj->event_type]."</td>";
 		print "<td>".$obj->note."</td>";
