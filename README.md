@@ -6,6 +6,7 @@
 
 # dolibarr_project_timesheet
 Module to increase time registration efficiency for Dolibarr, well suited for counsulting firm but not only.
+DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, also it keep changing (it's a dev respo) and it might not work at all.
 
 ## Useful links
 * Manual (English): https://cloud.pmpd.eu/index.php/s/MArFKsQxCcTGxKM
