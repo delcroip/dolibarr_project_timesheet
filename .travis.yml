@@ -110,6 +110,12 @@ before_install:
   fi
 install:
 - |
+    echo "downloading dolibarr"
+    wget https://sourceforge.net/projects/dolibarr/files/Dolibarr%20ERP-CRM/8.0.4/dolibarr-8.0.4.tgz/download
+    tar -xf dolibarr-8.0.4.tgz
+    vm dolibarr-8.0.4/*(D) $TRAVIS_BUILD_DIR/ -R
+    echo
+- |
   echo "Updating Composer"
   rm $TRAVIS_BUILD_DIR/composer.json
   rm $TRAVIS_BUILD_DIR/composer.lock
@@ -138,12 +144,6 @@ install:
   echo "Installing PHP CodeSniffer"
   composer -n require squizlabs/php_codesniffer ^3
   echo
-- |
-    echo "downloading dolibarr"
-    wget https://sourceforge.net/projects/dolibarr/files/Dolibarr%20ERP-CRM/8.0.4/dolibarr-8.0.4.tgz/download
-    tar -xf dolibarr-8.0.4.tgz
-    vm dolibarr-8.0.4/*(D) $TRAVIS_BUILD_DIR/ -R
-    echo
 - |
   echo "Adding path of binaries tools installed by composer to the PATH"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
