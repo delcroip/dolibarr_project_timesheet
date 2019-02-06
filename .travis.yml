@@ -103,7 +103,7 @@ before_install:
   phpenv config-rm xdebug.ini
   echo
 - |
-  if [ "$DB" = 'postgresql' ]; then
+  if [ "$DBcd 8" = 'postgresql' ]; then
     echo "Check pgloader version"
     pgloader --version
     echo
@@ -111,9 +111,9 @@ before_install:
 install:
 - |
     echo "downloading dolibarr"
-    wget https://sourceforge.net/projects/dolibarr/files/Dolibarr%20ERP-CRM/8.0.4/dolibarr-8.0.4.tgz/download
+    wget -O dolibarr-8.0.4.tgz https://sourceforge.net/projects/dolibarr/files/Dolibarr%20ERP-CRM/8.0.4/dolibarr-8.0.4.tgz/download
     tar -xf dolibarr-8.0.4.tgz
-    vm dolibarr-8.0.4/*(D) $TRAVIS_BUILD_DIR/ -R
+    mv dolibarr-8.0.4/*(D) $TRAVIS_BUILD_DIR/ -R
     echo
 - |
   echo "Updating Composer"
