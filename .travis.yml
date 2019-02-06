@@ -113,9 +113,7 @@ install:
     echo "Downloading dolibarr"
     #wget -O dolibarr.tgz https://github.com/Dolibarr/dolibarr/archive/develop.zip
     git clone --depth 1 -b develop https://github.com/Dolibarr/dolibarr.git
-    tar xf dolibarr.zip
-    shopt -s dotglob nullglob
-    rsync -r dolibarr-8.0.4/ $TRAVIS_BUILD_DIR 
+    rsync -r dolibarr/ $TRAVIS_BUILD_DIR 
     echo
 - |
   echo "Updating Composer"
