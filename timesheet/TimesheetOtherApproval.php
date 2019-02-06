@@ -34,7 +34,7 @@ $userId=  is_object($user)?$user->id:$user;
 $role         = GETPOST('role','alpha');
 $role_key='';
 if(!$role){
-    $role_key=array_search('1',array_slice ($apflows,2)); // search other than team
+    $role_key=array_search('1',array_slice ($apflows,2))+1; // search other than team
     if($role_key===false){
         header("location:TimesheetTeamApproval.php");
     }else{
@@ -124,6 +124,7 @@ if($action=='submit'){
 *
 * Put here all code to build page
 ****************************************************/
+    var_dump($role_key);
 $subId=($user->admin)?'all':getSubordinates($db,$userId, 1,array($userId),$role_key); //FIx ME for other role
 $tasks=implode(',', array_keys(getTasks($db, $userId)));
 if($tasks=="")$tasks=0;
