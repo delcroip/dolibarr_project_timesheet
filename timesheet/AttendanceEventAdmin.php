@@ -376,8 +376,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '</td><td>';
         print '<input type="text" value="'.$object->event_location_ref.'" name="Eventlocationref">';
 	print '</td><td>';
-        $eventtypeArray=array('1'=>$langs->trans('Heartbeat'), '2'=>$langs->trans('Checkin'),'3'=>$langs->trans('Checkout'));
-        print $form->selectarray('Eventtype', $eventtypeArray, 2);
+        print $form->selectarray('Eventtype', $attendanceeventStatusArray, 2);
         //print '<input type="text" value="1" name="Eventtype">'; // FIXME ARRAY SELECT
 	print '</td><td>';
         print '<input type="text" value="'.$object->note.'" name="Note">';
@@ -479,7 +478,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	//print '</td>';
 //Search field forstatus
 	print '<td class="liste_titre" colspan="1" >';
-	print '<input class="flat" size="16" type="text" name="ls_status" value="'.$ls_status.'">';
+	print '<input class="flat" size="16" type="text" name="ls_status" value="'.$ls_status.'">'; //FIXME Array
 	print '</td>';
 
         
@@ -500,7 +499,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 print "<tr class=\"oddeven\"  >";
 		print "<td>".dol_print_date($db->jdate($obj->date_time_event),'dayhour')."</td>";
 		print "<td>".$obj->event_location_ref."</td>";
-		print "<td>".$eventtypeArray[$obj->event_type]."</td>";
+		print "<td>".Attendanceevent::LibStatut($obj->event_type)."</td>";
 		print "<td>".$obj->note."</td>";
                
                 print "<td>";

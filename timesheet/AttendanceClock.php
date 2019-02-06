@@ -31,7 +31,6 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetAttendanceEvent.class.php';
 require_once 'class/TimesheetTask.class.php';
-
 if (!$user->rights->timesheet->attendance->user) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");           
 }

@@ -44,6 +44,7 @@ define('TIMESHEET_BC_VALUE','f0fff0');
 // number of second in a day, used to make the code readable
 define('SECINDAY',86400);
 // for display trads
+global $langs;
 $roles=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
 $statusA=array(0=> $langs->trans('null'),1 =>$langs->trans('draft'),2=>$langs->trans('submitted'),3=>$langs->trans('approved'),4=>$langs->trans('cancelled'),5=>$langs->trans('rejected'),6=>$langs->trans('challenged'),7=>$langs->trans('invoiced'),8=>$langs->trans('underapproval'),9=>$langs->trans('planned'));
 $apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
@@ -77,7 +78,7 @@ Define( "TIMESPENT",4);
 
 
 //global $db;     
-global $langs;
+
 // to get the whitlist object
 //require_once 'class/TimesheetFavourite.class.php';
 //require_once 'class/TimesheetUserTasks.class.php';
