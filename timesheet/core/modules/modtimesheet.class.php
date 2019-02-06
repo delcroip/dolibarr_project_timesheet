@@ -177,7 +177,10 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_PDF_NOTEISOTASK","int",0,"save the timesheet verison"); // hours or days
                 $r++;
-
+                $this->const[$r] = array("TIMESHEET_EVENT_MAX_DURATION","int",0,"max evebt duration"); // hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_EVENT_DEFAULT_DURATION","int",0,"max evebt duration"); // hours or days
+                $r++;
 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
