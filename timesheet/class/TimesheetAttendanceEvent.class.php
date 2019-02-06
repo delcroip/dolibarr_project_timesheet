@@ -32,12 +32,13 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once 'class/TimesheetTask.class.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-
+define(EVENT_AUTO_START,-2);
 DEFINE(EVENT_HEARTBEAT, 1);
 define(EVENT_START,2);
 define(EVENT_STOP,3);
-$attendanceeventStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
-$attendanceeventStatusArray=array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 =>'Payed');
+define(EVENT_AUTO_STOP,4);
+$attendanceeventStatusPictoArray=array(-2=> 'status7', 3=> 'statut3',1=>'statut3',2=>'statut3',4=>'statut7');
+$attendanceeventStatusArray=array(-2=> $langs->trans('AutoCheckin'),1=>$langs->trans('Heartbeat'), 2=>$langs->trans('Checkin'),3=>$langs->trans('Checkout'),4=>$langs->trans('AutoCheckout'));
 /**
  *	Put here description of your class
  */
@@ -184,14 +185,9 @@ public $date_time_event_start;
      *  @param	string          $startToken	token used to find the start event
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$user=null,$startToken='',$type=3)
+    function fetch($id,$user=null,$startToken='')
     {
     	global $langs;
-
-        if (empty($id) && empty($user) && empty($startToken)){
-            return -1;
-            dol_syslog(get_class($this)."::fetch",'errors');
-        }
         $sql = "SELECT";
         $sql.= " t.rowid,";
         $sql.=' t.date_time_event,';
@@ -205,13 +201,18 @@ public $date_time_event_start;
         $sql.=' t.fk_task,';
         $sql.=' t.fk_project,';
         $sql.=' t.token,';
-        $sql.=' t.status';
+        $sql.=' t.status,';
+        $sql.='  st.date_time_event  as date_time_event_start ';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element." as st ON t.token=st.token AND ABS(st.event_type=2)";
         $sql.= " WHERE ";
         if (!empty($id))$sql.= "t.rowid = '".$id;
         else if (!empty($user))$sql.=  " t.fk_userid = '".$user->id;
-        else if (!empty($startToken))  $sql.= "  t.event_type='".$type."' AND t.token='".$startToken;
-        else return -1;
+        else if (!empty($startToken))  $sql.= "  t.token='".$startToken;
+        else{
+            dol_syslog(get_class($this)."::fetch: no param",LOG_DEBUG);
+            return -1;
+        }
         $sql.= "' ORDER BY date_time_event DESC" ;
         $this->db->plimit(1, 0);
     	dol_syslog(get_class($this)."::fetch");
@@ -220,33 +221,20 @@ public $date_time_event_start;
         {
             $obj = $this->db->fetch_object($resql);
             // load the object only if  not an stop event while using the user
-            if (!($obj->event_type==EVENT_STOP  && !empty($user->id)))
-            {
-                
-                $this->id    = $obj->rowid; 
-                $this->date_time_event = $this->db->jdate($obj->date_time_event);
-                $this->event_location_ref = $obj->event_location_ref;
-                $this->event_type = $obj->event_type;
-                $this->note = $obj->note;
-                $this->date_modification = $this->db->jdate($obj->date_modification);
-                $this->userid = $obj->fk_userid;
-                $this->user_modification = $obj->fk_user_modification;
-                $this->third_party = $obj->fk_third_party;
-                $this->task = $obj->fk_task;
-                $this->project = $obj->fk_project;
-                $this->token = $obj->token;
-                $this->status = $obj->status;
-                $this->date_time_event_start=$this->date_time_event;
-                if($this->event_type!=EVENT_START ){
-                    $staticAttendance= new Attendanceevent($this->db, $user->id);
-                    if($staticAttendance->fetch('','',$obj->token,2)){
-                        $this->date_time_event_start=$staticAttendance->date_time_event;
-                    }
-                }
-            }else{
-                $this->initAsSpecimen();
-                $this->userid=$user->id;
-            }
+            $this->id    = $obj->rowid; 
+            $this->date_time_event = $this->db->jdate($obj->date_time_event);
+            $this->event_location_ref = $obj->event_location_ref;
+            $this->event_type = $obj->event_type;
+            $this->note = $obj->note;
+            $this->date_modification = $this->db->jdate($obj->date_modification);
+            $this->userid = $obj->fk_userid;
+            $this->user_modification = $obj->fk_user_modification;
+            $this->third_party = $obj->fk_third_party;
+            $this->task = $obj->fk_task;
+            $this->project = $obj->fk_project;
+            $this->token = $obj->token;
+            $this->status = $obj->status;
+            $this->date_time_event_start=$this->db->jdate($obj->date_time_event_start);
             $this->db->free($resql);
             $this->getInfo();
             return 1;
@@ -630,7 +618,7 @@ public $date_time_event_start;
             //save the location ref 
             $location_ref=$this->event_location_ref;
             //close the most recent one if any 
-            $this->ajaxStop($user,$json);
+            $this->ajaxStop($user,$json,true);
             //$this->status=
         }        
 //erase the data
@@ -665,9 +653,9 @@ public $date_time_event_start;
      *  @param  string		$json	 json of the request
      *  @return	int					 <0 if KO, >0 if OK
      */    
-    function ajaxStop($user,$json=''){
-        global $conf;   
-                $location_ref='';
+    function ajaxStop($user,$json='',$auto=false){
+        global $conf,$langs;   
+        $location_ref='';
         $note='';
         $tokenJson='';
         $retJson='';
@@ -681,33 +669,58 @@ public $date_time_event_start;
         }  else {
              $this->fetch('',$user);   
         }
-        
+        $ret=0;
         $tokenDb=$this->token;
-        if(empty($tokenDb) ){  //00
-            $this->status='{"text":"No active chrono found","type":errors","param:""}';
-            $retJson=$this->status;
-        }else if($this->event_type==3){
-            $this->status='{"text":"Chrono already stopped","type":errors","param:""}';
-            $retJson=$this->status;
-        }else{// 11 && 10
+        if(empty($tokenDb) ){  // 00 01 no db record found by token or user
+            $this->initAsSpecimen();
+            $this->status= json_encode(array(
+                   'text'=>$langs->trans('NoActiveEvent'),
+                   'type'=>'errors',
+                   'param'=>''));
+
+            // AUTO START ?
+        }else if($this->event_type>=EVENT_STOP){ // found but already stopped
+            $this->initAsSpecimen();
+            $this->status=json_encode(array(
+                   'text'=>$langs->trans('EventNotActive'),
+                   'type'=>'errors',
+                   'param'=>''));
+            
+        }else{// 11 && 10 found and active
             if(!empty($tokenJson)){ //11
                 $this->event_location_ref=$location_ref;
                 $this->note=$note;
             }
             $this->event_type=EVENT_STOP;
             $this->date_time_event=  mktime();
+            //if the max time is breach
+            if(($conf->global->TIMESHEET_EVENT_MAX_DURATION>0 &&
+                $this->date_time_event-$this->date_time_event_start>$conf->global->TIMESHEET_EVENT_MAX_DURATION*3600)){
+                // put the max time per default
+                    $this->date_time_event=$conf->global->TIMESHEET_EVENT_DEFAULT_DURATION*3600+$this->date_time_event_start;
+                    if (empty($tokenJson) && $auto){ // if it's auto close but without json sent
+                        $this->event_type=EVENT_AUTO_STOP;
+                    }
+            }else { //there is a start time and it's in the acceptable limit
+                
+                $this->event_type=EVENT_STOP;
+            }
+                  
             $ret=$this->create($user);
-            
-            if ($ret) {
+            if ($ret>0) {
                 $this->createTimeSpend($user,$tokenDb); //FIXME
-                $retJson=$this->serialize(2);
+    
             }else{
-                $this->status='{"text":"Database error","type":errors","param:"'.$this->db->lasterror().'"}';
-                $retJson=$this->status;
+                $this->initAsSpecimen();
+                
+                $this->status=json_encode(array(
+                   'text'=>$langs->trans('DBError'),
+                   'type'=>'errors',
+                   'param'=>''));    
             }
         }
             
-        return $retJson ;
+        return $this->serialize(2); ;
     }
     
     /**
@@ -719,6 +732,7 @@ public $date_time_event_start;
      *  @return	int					 <0 if KO, >0 if OK
      */    
     function ajaxHeartbeat($user,$json){
+        global $conf,$langs;
         $location_ref='';
         $note='';
         $tokenJson='';
@@ -730,11 +744,21 @@ public $date_time_event_start;
             $tokenJson=$this->token;
         }
         $this->fetch('',$user);
+        //var_dump($this->event_type);
         $tokenDb=$this->token;
-        if(empty($tokenDb) && empty($tokenJson)){  //00
-            $retJson='{"errorType":"loadError","error":"no event active"}';
+        if( (empty($tokenJson) && empty($tokenDb) )|| 
+                (!empty($tokenDb) && $this->event_type>=EVENT_STOP)){  //00
+            $this->initAsSpecimen();
+            $this->status=json_encode(array(
+                   'text'=>$langs->trans('NoActiveEvent'),
+                   'type'=>'warning',
+                   'param'=>''));
+
         }else if (empty($tokenDb) && !empty($tokenJson)){ // json recieved with token //01
-            $retJson='{"errorType":"heartbeatError","error":"event not active"}';
+            $this->status=json_encode(array(
+                   'text'=>$langs->trans('EventNotActive'),
+                   'type'=>'errors',
+                   'param'=>''));
         }else if(!empty($tokenDb)){// 11 && 10
             if(!empty($tokenJson)){ //11
                 $this->event_location_ref=$location_ref;
@@ -743,17 +767,19 @@ public $date_time_event_start;
                 $this->getInfo();
             }
             // update the required fields
-                $this->date_time_event=  mktime();
-                if($this->event_type!=EVENT_HEARTBEAT){ // create an heartbeat only if there is none
-                    $this->event_type=EVENT_HEARTBEAT;
-                    $this->create($user);
-                }else{
-                    $this->update($user);
-                }
+
+            $this->date_time_event=  mktime();
+            if($this->event_type!=EVENT_HEARTBEAT){ // create an heartbeat only if there is none
+                $this->event_type=EVENT_HEARTBEAT;
+                $this->create($user);
+            }else{
+                $this->update($user);
+            }
+
             
-            $retJson=$this->serialize(2);
+            
         }// 
-        return $retJson;
+        return $this->serialize(2);
         
     }
  /** create timespend on the user
