@@ -18,21 +18,19 @@
 -- TS Revision 4.0.0
 
 
-CREATE TABLE llx_attendance_event
+CREATE TABLE llx_attendance_system
 (
-rowid                   serial ,
-date_time_event          DATETIME        NOT NULL , -- start date of the period
-event_location_ref      VARCHAR(1024) DEFAULT NULL, -- IP or equipment of loggin
-event_type              integer default 1,-- (1-->'heartbeat','sign-in','sign-out) DEFAULT 'heartbeat',
+rowid                 SERIAL ,
+label                 varchar(64) NOT NULL,  -- to link with the card system
+ip                    varchar(64) NOT NULL,
+port                  INTEGER DEFAULT '4370',
 note                  VARCHAR(1024),
-date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
-fk_userid             integer  NOT NULL,          -- timesheet user (redondant)
-fk_user_modification  integer  default NULL,
 fk_third_party        integer DEFAULT NULL, -- null means time for the company
 fk_task               integer DEFAULT NULL,
 fk_project            integer DEFAULT NULL,
-token                   varchar(64) DEFAULT NULL,  -- to assign time on a finacial code (future proof) or token
 status               integer DEFAULT NULL,  
+date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,       -- timesheet user (redondant)
+fk_user_modification  integer  DEFAULT NULL,
 PRIMARY KEY (rowid)
 ) 
 ENGINE=innodb;
