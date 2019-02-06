@@ -63,11 +63,11 @@ class Stopwatch {
          this.timestampClock=performance.now();
          this.time =performance.now()+ (this.event.date_time_event_start-this.event.processedTime)*1000;
         
-        if (this.event.event_type<3  ) { // launch the clock for heartbeat and 
+        if (this.event.event_type<3  && this.event.event_type!=0 ) { // launch the clock for heartbeat and 
              this.running = true;
              this.updatePlayStopIcon(this.running,this.event.task);  
              this.animationframeID=requestAnimationFrame(this.step.bind(this));
-         }else if (this.event.event_type==3 || this.event.event_type==0){ // stop the clock 
+         }else if (this.event.event_type>=3 || this.event.event_type==0){ // stop the clock 
 
              this.running = false;
              this.reset();
@@ -177,6 +177,7 @@ class Stopwatch {
  //       this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
         var Url="AttendanceClock.php?action=stop"
         Url+="&eventToken="+this.event.token;
+        this.event_type=3;
         $.ajax({
             type: "POST",
             url: Url,
