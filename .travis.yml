@@ -111,11 +111,11 @@ before_install:
 install:
 - |
     echo "Downloading dolibarr"
-    wget -O dolibarr-8.0.4.tgz https://sourceforge.net/projects/dolibarr/files/Dolibarr%20ERP-CRM/8.0.4/dolibarr-8.0.4.tgz/download
-    tar xf dolibarr-8.0.4.tgz
+    #wget -O dolibarr.tgz https://github.com/Dolibarr/dolibarr/archive/develop.zip
+    git clone --depth 1 -b develop https://github.com/Dolibarr/dolibarr.git
+    tar xf dolibarr.zip
     shopt -s dotglob nullglob
     rsync -r dolibarr-8.0.4/ $TRAVIS_BUILD_DIR 
-    ls $TRAVIS_BUILD_DIR/htdocs
     echo
 - |
   echo "Updating Composer"
@@ -203,8 +203,7 @@ before_script:
       mysql -e 'CREATE DATABASE IF NOT EXISTS travis;'
       mysql -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
       mysql -e 'FLUSH PRIVILEGES;'
-      wget https://raw.githubusercontent.com/Dolibarr/dolibarr/develop/dev/initdemo/mysqldump_dolibarr_8.0.0.sql
-      mysql -D travis < mysqldump_dolibarr_8.0.0.sql
+      mysql -D travis < dev/initdemo/mysqldump_dolibarr_8.0.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
       #pgloader mysql://root:pass@127.0.0.1/dolibarr_9 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
