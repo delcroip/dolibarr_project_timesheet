@@ -3,13 +3,13 @@
 /* 
  * Copyright (C) 2018 Patric Delcroix <pmpdelcroix@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -27,7 +27,7 @@ if(!isset($_SESSION['ajaxQuerry'][$token]))exit();
 
 $sqlarray=$_SESSION['ajaxQuerry'][$token]['sql'];
 $fields=$_SESSION['ajaxQuerry'][$token]['fields'];
-$htmlarray=$_SESSION['ajaxQuerry'][$token]['html']; 
+$htmlarray=$_SESSION['ajaxQuerry'][$token]['html'];
 $addtionnalChoices=$_SESSION['ajaxQuerry'][$token]['option'];
 $separator=isset($htmlarray['separator'])?$htmlarray['separator']:' ';
 
@@ -55,7 +55,7 @@ if($posBs>0){
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))
             $sql.=' WHERE '.$sqlarray['where'];
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
-            $sql.=' '.$sqlarray['tail'];      
+            $sql.=' '.$sqlarray['tail'];
     dol_syslog('form::ajax_select_generic ', LOG_DEBUG);
     $return_arr = array();
     $resql=$db->query($sql);

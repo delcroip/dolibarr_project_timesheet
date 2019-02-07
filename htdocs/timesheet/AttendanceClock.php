@@ -2,13 +2,13 @@
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 delcroip <patrick@pmpd.eu>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -32,7 +32,7 @@ require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetAttendanceEvent.class.php';
 require_once 'class/TimesheetTask.class.php';
 if (!$user->rights->timesheet->attendance->user) {
-    $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");           
+    $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");
 }
 $tms=GETPOST('tms','alpha');
 $action=GETPOST('action','alpha');
@@ -63,21 +63,21 @@ switch($action){
     case 'start':
             $json=$timesheet_attendance->ajaxStart($user,$json,$customer,$project,$task);
            // ob_clean();
-            header("Content-type: text/json; charset=utf-8");
+            header("Content-type: text/json;charset=utf-8");
             echo $json;
             exit;
 
     case 'stop':
             $json=$timesheet_attendance->ajaxStop($user,$json);
            // ob_clean();
-            header("Content-type: text/json; charset=utf-8");
+            header("Content-type: text/json;charset=utf-8");
             echo $json;
             exit;
             
     case 'heartbeat':
             $json=$timesheet_attendance->ajaxheartbeat($user,$json);
            // ob_clean();
-            header("Content-type: text/json; charset=utf-8");
+            header("Content-type: text/json;charset=utf-8");
             echo $json;
             exit;
 
@@ -94,7 +94,7 @@ if(!empty($tms)){
        unset($_SESSION['timesheet_attendance'][$tms]);
 }
 
-//$timesheet_attendance->fetchAll($today); //FIXME: fetcht the list project/task 
+//$timesheet_attendance->fetchAll($today);//FIXME: fetcht the list project/task 
 
 
 /***************************************************

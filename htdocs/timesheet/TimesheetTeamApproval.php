@@ -1,13 +1,13 @@
 <?php
 /* Copyright (C) 2016 delcroip <patrick@pmpd.eu>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -26,26 +26,26 @@ include 'core/lib/includeMain.lib.php';
 $role_key=array_search('1',array_slice ($apflows,1));
 if($apflows[1]==0 && $role_key!==false){ // redirect to the correct page
     $role_key++;
-    header("location:TimesheetOtherApproval.php?role=".$roles[$role_key]); //TOBETESTED
+    header("location:TimesheetOtherApproval.php?role=".$roles[$role_key]);//TOBETESTED
 }
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 if(!$user->rights->timesheet->approval){
-        $accessforbidden = accessforbidden("you need to have the approver rights");           
+        $accessforbidden = accessforbidden("you need to have the approver rights");
 }
 
 
-//$userId            = GETPOST('userid');
+//$userId          = GETPOST('userid');
 $userId=  is_object($user)?$user->id:$user;
-$action             = GETPOST('action','alpha');
+$action           = GETPOST('action','alpha');
 //should return the XMLDoc
-$ajax               = GETPOST('ajax','int');
-$xml               = GETPOST('xml','int');
+$ajax             = GETPOST('ajax','int');
+$xml             = GETPOST('xml','int');
 if(!is_numeric($offset))$offset=0;
 $print=(GETPOST('optioncss','alpha')=='print')?true:false;
 $current=GETPOST('target','int');
-//$toDate                 = GETPOST('toDate');
+//$toDate               = GETPOST('toDate');
 
 $timestamp=GETPOST('timestamp','alpha');
 
@@ -97,7 +97,7 @@ if($action== 'submit'){
                     //if($approvals[$key]!=$tsUser)
                         switch($approvals[$key]){
                         case 'Approved':
-                           $ret=$curTaskTimesheet->setStatus($user,(($appflowOn>0)?UNDERAPPROVAL:APPROVED),$key); 
+                           $ret=$curTaskTimesheet->setStatus($user,(($appflowOn>0)?UNDERAPPROVAL:APPROVED),$key);
                             if(ret<0)$errors++;
                             else $tsApproved++;
                             break;
@@ -115,14 +115,14 @@ if($action== 'submit'){
                     }
                     if($curTaskTimesheet->note!=$notes[$curTaskTimesheet->appId]){
                         $curTaskTimesheet->note=$notes[$curTaskTimesheet->appId];
-                        $curTaskTimesheet->update(user);                               
+                        $curTaskTimesheet->update(user);
                     }
                     
                 }
                 if(($tsRejected+$tsApproved)>0){
                     $current--;
                 }
-               // $offset-=($tsApproved+$tsRejected);       
+               // $offset-=($tsApproved+$tsRejected);
 
 				//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
                     if($ret>=0)
@@ -187,8 +187,8 @@ $i=0;
 if($xml){
     //renew timestqmp
     ob_clean();
-   header("Content-type: text/xml; charset=utf-8");
-  //  echo $task_timesheet->GetTimeSheetXML($userId,5); //fixme
+   header("Content-type: text/xml;charset=utf-8");
+  //  echo $task_timesheet->GetTimeSheetXML($userId,5);//fixme
     exit;
 }*/
 
@@ -208,9 +208,9 @@ if(is_object($firstTimesheetUser)){
             
         if($i<$level){
             $task_timesheet->fetchTaskTimesheet();
-    //$ret+=$this->getTaskTimeIds(); 
+    //$ret+=$this->getTaskTimeIds();
     //FIXME module holiday should be activated ?
-            $task_timesheet->fetchUserHoliday(); 
+            $task_timesheet->fetchUserHoliday();
             $Form .=$task_timesheet->userName." - ".dol_print_date($task_timesheet->date_start,'day');
              $Form .=$task_timesheet->getHTML(false,TRUE);
             $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id]=$task_timesheet->status;
@@ -293,10 +293,10 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
             if($db->type!='pgsql'){
                 $sql.=",CONCAT( MONTH(date_start),'/',YEAR(date_start), '#' ,fk_userid) as usermonth";
             }else{
-                $sql.=",CONCAT( date_part('month',date_start),'/',date_part('year',date_start), '#' ,fk_userid) as usermonth";                
+                $sql.=",CONCAT( date_part('month',date_start),'/',date_part('year',date_start), '#' ,fk_userid) as usermonth";
             }
         }
-        $sql.=" FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts"; 
+        $sql.=" FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts";
         $sql.=' WHERE (ts.status='.SUBMITTED.' OR ts.status='.CHALLENGED.') ';
 
         switch($role){
@@ -317,7 +317,7 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
             if($db->type!='pgsql'){
                 $sql.=' ORDER BY YEAR(date_start) DESC, MONTH(date_start) DESC, fk_userid DESC';
             }else{
-                $sql.=' ORDER BY date_part(\'year\',date_start) DESC, ate_part(\'month\',date_start) DESC, fk_userid DESC';                
+                $sql.=' ORDER BY date_part(\'year\',date_start) DESC, ate_part(\'month\',date_start) DESC, fk_userid DESC';
             }
         }
         $sql.=' LIMIT '.$level;
@@ -338,7 +338,7 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
                     $obj = $db->fetch_object($resql);
                    
                     $tmpTs = NEW TimesheetUserTasks($db,$obj->fk_userid);
-                    $tmpTs->id    = $obj->rowid;
+                    $tmpTs->id  = $obj->rowid;
                     //$tmpTs->userId = $obj->fk_userid;
                     $tmpTs->date_start = $tmpTs->db->jdate($obj->date_start);
                     $tmpTs->date_start_end = $tmpTs->db->jdate($obj->date_start);
@@ -348,8 +348,8 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
                     $tmpTs->date_creation = $tmpTs->db->jdate($obj->date_creation);
                     $tmpTs->date_modification = $tmpTs->db->jdate($obj->date_modification);
                     $tmpTs->user_creation = $obj->fk_user_creation;
-                    $tmpTs->user_modification = $obj->fk_user_modification;            
-                    $tmpTs->whitelistmode=2; // no impact
+                    $tmpTs->user_modification = $obj->fk_user_modification;
+                    $tmpTs->whitelistmode=2;// no impact
                     $tmpTs->date_end= $tmpTs->db->jdate($obj->date_end);
                     //}
                     $i++;
@@ -384,14 +384,14 @@ function getHTMLNavigation($optioncss, $selectList,$current=0){
             $htmlSelect.=' <option value="'.$key.'" '.(($current==$key)?'selected':'').'>'.$element['label'].'</option>';
         }
             
-        $htmlSelect.='</select>';    
+        $htmlSelect.='</select>';
         
         $form= new Form($db);
         $Nav=  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
         if($current!=0){
-            $Nav.= '<a href="?action=goTo&target='.($current-1).'"';   
+            $Nav.= '<a href="?action=goTo&target='.($current-1).'"';
             if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
-            $Nav.=  '">  &lt;&lt; '.$langs->trans("Previous").' </a>'."\n\t\t";
+            $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
         }
         $Nav.="</th>\n\t\t<th>\n\t\t\t";
 	$Nav.=  '<form name="goTo" action="?action=goTo" method="POST" >'."\n\t\t\t";
@@ -400,7 +400,7 @@ function getHTMLNavigation($optioncss, $selectList,$current=0){
 	if($current<count($selectList)){
             $Nav.=  '<a href="?action=goTo&target='.($current+1);
             if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
-            $Nav.=  '">'.$langs->trans("Next").' &gt;&gt; </a>';
+            $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
         }
         $Nav.="\n\t\t</th>\n\t</tr>\n </table>\n";
         return $Nav;
@@ -422,18 +422,18 @@ function getSelectAps($subId){
     if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.date_start) as nb,ts.date_start as id,';
         $sql.=" DATE_FORMAT(ts.date_start,'".$langs->trans('Week')." %u (%m/%Y)') as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts';
         $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
         $sql.=$sqlWhere;
-        $sql.=' group by ts.date_start ORDER BY ts.date_start DESC'; 
+        $sql.=' group by ts.date_start ORDER BY ts.date_start DESC';
 
     }else if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==0){
         $sql='SELECT COUNT(ts.rowid) as nb,ts.fk_userid as id,';
         $sql.=" MAX(CONCAT(usr.firstname,' ',usr.lastname)) as label";
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
-        $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid '; 
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts';
+        $sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
         $sql.=$sqlWhere;
-        $sql.=' group by ts.fk_userid ORDER BY ts.fk_userid DESC'; 
+        $sql.=' group by ts.fk_userid ORDER BY ts.fk_userid DESC';
 
     }else{
 
@@ -441,10 +441,10 @@ function getSelectAps($subId){
         $sql.=' month as label';
         $sql.=' FROM (SELECT DATE_FORMAT(ts.date_start,\' %m/%Y\') as month,';
         $sql.=' ts.rowid as rowid';
-        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts'; 
-        //$sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';   
+        $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts';
+        //$sql.=' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid= usr.rowid ';
         $sql.=$sqlWhere.') AS T';
-        $sql.=' group by month ORDER BY  RIGHT(month,4) DESC, month DESC';        
+        $sql.=' group by month ORDER BY  RIGHT(month,4) DESC, month DESC';
     }
     
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);

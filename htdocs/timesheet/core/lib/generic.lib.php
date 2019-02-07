@@ -3,20 +3,20 @@
 /*
  * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-//global $db;     
+//global $db;
 global $langs;
 
 
@@ -88,7 +88,7 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
             $ajaxUrl=dol_buildpath('/timesheet/core/ajaxGenericSelectHandler.php',1);
             $_SESSION['ajaxQuerry'][$token]['sql']=$sqlarray;
             $_SESSION['ajaxQuerry'][$token]['fields']=$fields;
-            $_SESSION['ajaxQuerry'][$token]['html']=$htmlarray; 
+            $_SESSION['ajaxQuerry'][$token]['html']=$htmlarray;
             $_SESSION['ajaxQuerry'][$token]['option']=$addtionnalChoices;
             
                     //array('table'=>$table, 'fieldValue'=>$fieldValue,'htmlName'=> $htmlName,'fieldToShow1'=>$fieldToShow1,'fieldToShow2'=>$fieldToShow2,'separator'=> $separator,'sqlTailTable'=>$sqlTailTable,'sqlTailWhere'=>$sqlTailWhere,'addtionnalChoices'=>$addtionnalChoices);
@@ -97,7 +97,7 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
             // put \\ before barket so the js will work for Htmlname before it is change to seatch HTMLname
             $htmlid=str_replace('[','\\\\[',str_replace(']','\\\\]',$htmlName));
             $comboenhancement=str_replace('#'.$htmlName, '#'.$htmlid,$comboenhancement);
-            $comboenhancement=str_replace($htmlName.':', '"'.$htmlName.'":',$comboenhancement); // #htmlname doesn't cover everything
+            $comboenhancement=str_replace($htmlName.':', '"'.$htmlName.'":',$comboenhancement);// #htmlname doesn't cover everything
             $htmlName='search_'.$htmlName;
         }else{
             $comboenhancement = ajax_combobox($htmlName);
@@ -124,7 +124,7 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))
             $sql.=' WHERE '.$sqlarray['where'];
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
-            $sql.=' '.$sqlarray['tail'];      
+            $sql.=' '.$sqlarray['tail'];
     dol_syslog('form::select_sellist ', LOG_DEBUG);
     // remove the 't." if any
     $startkey=strpos($sqlarray['keyfield'],'.');
@@ -159,7 +159,7 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
                      $selectOptions.='selected=\"selected\"';
                      $selectedValue=$fieldtoshow;
                  }
-                 $selectOptions.=">";                    
+                 $selectOptions.=">";
                  $selectOptions.=$fieldtoshow;
 
                  $selectOptions.="</option>\n";
@@ -223,7 +223,7 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))
             $sql.=' AND '.$sqlarray['where'];
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
-            $sql.=' '.$sqlarray['tail'];      
+            $sql.=' '.$sqlarray['tail'];
     dol_syslog('form::print_sellist ', LOG_DEBUG);
     $startkey=strpos($sqlarray['keyfield'],'.');
     $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
@@ -308,7 +308,7 @@ function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2
      $numberOfBits=count($labels);
      if(is_array($labels) && count_chars(bitstring)!=($numberOfBits+1)){
           $htmlValue='';
-          $html='<table class="noborder" width="100%"><tr class="titre">';  
+          $html='<table class="noborder" width="100%"><tr class="titre">';
 
            for($i=0;$i<$numberOfBits;$i++){
                // labels
@@ -334,14 +334,14 @@ function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2
  
  function crypto_rand_secure($min, $max) {
         $range = $max - $min;
-        if ($range < 0) return $min; // not so random...
+        if ($range < 0) return $min;// not so random...
         $log = log($range, 2);
-        $bytes = (int) ($log / 8) + 1; // length in bytes
-        $bits = (int) $log + 1; // length in bits
-        $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
+        $bytes = (int) ($log / 8) + 1;// length in bytes
+        $bits = (int) $log + 1;// length in bits
+        $filter = (int) (1 << $bits) - 1;// set all lower bits to 1
         do {
             $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
-            $rnd = $rnd & $filter; // discard irrelevant bits
+            $rnd = $rnd & $filter;// discard irrelevant bits
         } while ($rnd >= $range);
         return $min + $rnd;
 }

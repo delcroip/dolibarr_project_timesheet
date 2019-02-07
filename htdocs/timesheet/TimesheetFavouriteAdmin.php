@@ -3,13 +3,13 @@
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) Patrick Delcroix <patrick@pmpd.eu>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -41,7 +41,7 @@ include 'core/lib/includeMain.lib.php';;
 // Change this following line to use the correct relative path from htdocs
 require_once 'class/TimesheetFavourite.class.php';
 require_once 'core/lib/timesheet.lib.php';
-require_once 'core/lib/generic.lib.php'; 
+require_once 'core/lib/generic.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 //document handling
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -59,7 +59,7 @@ $langs->load("Timesheet");
 
 // Get parameter
 $id			= GETPOST('id','int');
-$ref                    = GETPOST('ref','alpha');
+$ref                  = GETPOST('ref','alpha');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage','aplha');
 $cancel=GETPOST('cancel','aplha');
@@ -67,7 +67,7 @@ $confirm=GETPOST('confirm','aplha');
 $tms= GETPOST('tms','alpha');
 $ajax	= GETPOST('ajax','int');
 //// Get parameters
-$sortfield = GETPOST('sortfield','alpha'); 
+$sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
 $removefilter=GETPOSTISSET("removefilter_x") || GETPOSTISSET("removefilter");
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
@@ -89,25 +89,25 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 
 
-$page = GETPOST('page','int'); //FIXME, need to use for all the list
-if ($page == -1) { $page = 0; }
+$page = GETPOST('page','int');//FIXME, need to use for all the list
+if ($page == -1) { $page = 0;}
 $limit=$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$userId=is_object($user)?$user->id:$user; // 3.5 compatibility
+$userId=is_object($user)?$user->id:$user;// 3.5 compatibility
 
 
 // create object and set id or ref if provided as parameter
 $object=new TimesheetFavourite($db);
 if($id>0)
 {
-    $object->id=$id; 
+    $object->id=$id;
 }
 if(!empty($ref))
 {
-    $object->ref=$ref; 
+    $object->ref=$ref;
 }
 
 
@@ -180,7 +180,7 @@ if ($cancel){
                                 // Creation OK
                                 unset($_SESSION['timesheetFavourite'.$tms]);
                                     setEventMessage('RecordUpdated', 'mesgs');
-                                    reloadpage($backtopage,$object->id,$ref); 
+                                    reloadpage($backtopage,$object->id,$ref);
                             }
                             else
                             {
@@ -219,12 +219,12 @@ if ($cancel){
                             }
                             break;
                     case 'add':
-                            $result=$object->create();                        
+                            $result=$object->create();
                             if ($result > 0)
                             {
                                     // Creation OK
                                 // remove the tms
-                                   unset($_SESSION['timesheetFavourite'.$tms]);                                   
+                                   unset($_SESSION['timesheetFavourite'.$tms]);
                                    if ($ajax==1){
                                            echo json_encode(array('id'=> $result));
                                            exit;
@@ -307,7 +307,7 @@ var param_array = window.location.href.split(\'?\')[1].split(\'&\');
 var index;
 var id="";
 var action="create";
-for(index = 0; index < param_array.length; ++index){
+for(index = 0;index < param_array.length;++index){
     x = param_array[index].split(\'=\');
     if(x[0]=="action"){
         action= x[1];
@@ -359,7 +359,7 @@ switch ($action) {
         // tabs
         if($edit==0 && $new==0){ //show tabs
             $head=timesheetFavourite_prepare_head($object);
-            dol_fiche_head($head,'card',$langs->trans('Timesheetwhitelist'),0,'timesheet@timesheet');            
+            dol_fiche_head($head,'card',$langs->trans('Timesheetwhitelist'),0,'timesheet@timesheet');
         }else{
             print_fiche_titre($langs->trans('Timesheetwhitelist'));
         }
@@ -528,11 +528,11 @@ switch ($action) {
             }else{
                 print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="butAction">';
             }
-            print ' &nbsp; <input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
+            print ' &nbsp;<input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
             print '</form>';
         }else{
             $parameters=array();
-            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);// Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
             $userId= (is_object($user)?$user->id:$user);
             if (empty($reshook) && ($user->admin || $userId == $object->user))
@@ -607,15 +607,15 @@ switch ($action) {
 	if($ls_project_task) $sqlwhere .= natural_search(array('t.fk_project_task'), $ls_project_task);
 	if($ls_subtask) $sqlwhere .= natural_search(array('t.subtask'), $ls_subtask);
         if($db->type!='pgsql'){
-            if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start)=\''.$ls_date_start_month.'\''; 
+            if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start)=\''.$ls_date_start_month.'\'';
             if($ls_date_start_year)$sqlwhere .= ' AND YEAR(t.date_start)=\''.$ls_date_start_year.'\'';
             if($ls_date_end_month)$sqlwhere .= ' AND MONTH(t.date_end)=\''.$ls_date_end_month.'\'';
             if($ls_date_end_year)$sqlwhere .= ' AND YEAR(t.date_end)=\''.$ls_date_end_year.'\'';
         }else{
-            if($ls_date_start_month)$sqlwhere .= ' AND date_part(\'month\',t.date_start)=\''.$ls_date_start_month.'\''; //FIXME PGSQL
+            if($ls_date_start_month)$sqlwhere .= ' AND date_part(\'month\',t.date_start)=\''.$ls_date_start_month.'\'';//FIXME PGSQL
             if($ls_date_start_year)$sqlwhere .= ' AND date_part(\'year\',t.date_start)=\''.$ls_date_start_year.'\'';
             if($ls_date_end_month)$sqlwhere .= ' AND date_part(\'month\',t.date_end)=\''.$ls_date_end_month.'\'';
-            if($ls_date_end_year)$sqlwhere .= ' AND date_part(\'year\',t.date_end)=\''.$ls_date_end_year.'\'';            
+            if($ls_date_end_year)$sqlwhere .= ' AND date_part(\'year\',t.date_end)=\''.$ls_date_end_year.'\'';
         }
     
     //list limit
@@ -637,7 +637,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     
     if (!empty($limit))
     {
-            $sql.= $db->plimit($limit+1, $offset); 
+            $sql.= $db->plimit($limit+1, $offset);
     }
     
 
@@ -681,7 +681,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         
         print '</tr>';
         //SEARCH FIELDS
-        print '<tr class="liste_titre">'; 
+        print '<tr class="liste_titre">';
         //Search field foruser
 	if($user->admin){
             print '<td class="liste_titre" colspan="1" >';
@@ -728,7 +728,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
         print '</td>';
-        print '</tr>'."\n"; 
+        print '</tr>'."\n";
         $i=0;
         $basedurltab=explode("?", $PHP_SELF);
         $basedurl=$basedurltab[0].'?action=view&id=';
@@ -776,7 +776,7 @@ dol_fiche_end();
 
 function reloadpage($backtopage,$id,$ref){
         if (!empty($backtopage)){
-            header("Location: ".$backtopage);            
+            header("Location: ".$backtopage);
         }else if (!empty($ref) ){
             header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$id);
         }else if ($id>0)
@@ -801,8 +801,8 @@ function timesheetFavourite_prepare_head($object)
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__');to add new tab
+    // $this->tabs = array('entity:-tabname);												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'timesheet');
     complete_head_from_modules($conf,$langs,$object,$head,$h,'timesheet','remove');
     /*

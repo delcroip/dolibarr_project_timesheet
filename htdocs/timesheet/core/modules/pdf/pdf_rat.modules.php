@@ -2,13 +2,13 @@
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
  * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -68,13 +68,13 @@ class pdf_rat extends ModelPDFTimesheetReport
             $this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
             $this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-            $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
-            $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-            $this->option_codeproduitservice = 1;      // Affiche code produit-service
+            $this->option_logo = 1;// Affiche logo FAC_PDF_LOGO
+            $this->option_tva = 1;// Gere option tva FACTURE_TVAOPTION
+            $this->option_codeproduitservice = 1;// Affiche code produit-service
 
             // Recupere emmetteur
             $this->emetteur=$mysoc;
-            if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
+            if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);// By default if not defined
 
             // Defini position des colonnes
             $this->posxref=$this->marge_gauche+1;
@@ -160,7 +160,7 @@ function write_file($object,$outputlangs)
             $hookmanager->initHooks(array('pdfgeneration'));
             $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
             global $action;
-            $reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+            $reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);// Note that $action and $object may have been modified by some hooks
             // Create pdf instance
             $pdf=pdf_getInstance($this->format);
             $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -200,7 +200,7 @@ function write_file($object,$outputlangs)
             $pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
             $pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref));
             if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
-            $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+            $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);// Left, Top, Right
             //generate pages per userid
             foreach ($userTaskArray as $userid => $tasktimearray)
             {
@@ -219,12 +219,12 @@ function write_file($object,$outputlangs)
                 $nexY = $tab_top + $heightoftitleline + 1;
                 $nblignes=count($tasktimearray['lines']);
                 // Loop on each lines but total
-                for ($i = 0 ; $i < $nblignes ; $i++)
+                for ($i = 0 ;$i < $nblignes ;$i++)
                 {
                     // move the cusor to add space between records
                     $curY = ($i == 0)? $nexY:$nexY+2;
                     $pageposbefore=$pdf->getPage();
-                    $posybefore=$curY;    
+                    $posybefore=$curY;
                     //try to write line
                     $tasktimearray['lines'][$i]['ref']=$i;
                     $pdf->startTransaction();
@@ -248,7 +248,7 @@ function write_file($object,$outputlangs)
                     }
                    // action when a page break is required : rollback and write on the next page
                     if($addpagebreak==true){
-                        $cur_tab_height=$tab_height_newpage; 
+                        $cur_tab_height=$tab_height_newpage;
                         $pdf->rollbackTransaction(true);
                         // new page
                         $pageposafter=$pageposbefore+1;
@@ -257,9 +257,9 @@ function write_file($object,$outputlangs)
                         if (! empty($tplidx)) $pdf->useTemplate($tplidx);
                         $pdf->setPage($pageposafter);
                         if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 1, $outputlangs,$tasktimearray['lines'][0]['userName']);
-                        $pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
+                        $pdf->SetFont('','', $default_font_size - 1);// On repositionne la police par defaut
                         $pdf->MultiCell(0, 3, '');		// Set interline to 3
-                        $pdf->SetTextColor(0,0,0);  
+                        $pdf->SetTextColor(0,0,0);
                         $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
                         //write on the next page
                         $curY = $tab_top_newpage + $heightoftitleline + 1;
@@ -301,7 +301,7 @@ function write_file($object,$outputlangs)
                 {
                     
                     $pdf->SetFont('', 'B', $default_font_size );
-                    $txtTotal= $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE=="days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));  
+                    $txtTotal= $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE=="days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
                     $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1,0,true,'L');
                     $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $txtTotal, 0, 1,0,true,'R');
                     $pdf->SetFont('','', $default_font_size - 1);
@@ -331,13 +331,13 @@ function write_file($object,$outputlangs)
             $hookmanager->initHooks(array('pdfgeneration'));
             $parameters=array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
             global $action;
-            $reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+            $reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);// Note that $action and $object may have been modified by some hooks
 
             if (! empty($conf->global->MAIN_UMASK))
                     @chmod($file, octdec($conf->global->MAIN_UMASK));
 
             $this->result = array('fullpath'=>$file);
-            return 1;   // Pas d'erreur
+            return 1;// Pas d'erreur
         }
     }
     else
@@ -455,7 +455,7 @@ function write_file($object,$outputlangs)
             //duration title
             $pdf->SetXY($this->posxduration, $tab_top+1);
             if ($conf->global->TIMESHEET_INVOICE_TIMETYPE=="hours"){
-                $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, 'h:m', 0, 'R');             
+                $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, 'h:m', 0, 'R');
             }else{
                 $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, $outputlangs->transnoentities("Days"), 0, 'R');
             }

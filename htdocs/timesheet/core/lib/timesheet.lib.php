@@ -2,13 +2,13 @@
 /*
  * Copyright (C) 2014	   Patrick DELCROIX     <patrick@pmpd.eu>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -77,7 +77,7 @@ Define( "TIMESPENT",4);
 */
 
 
-//global $db;     
+//global $db;
 
 // to get the whitlist object
 //require_once 'class/TimesheetFavourite.class.php';
@@ -106,7 +106,7 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM
     $sql[PROJECT][0] .= ' WHERE element_id in (SELECT element_id';
     $sql[PROJECT][0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
     $sql[PROJECT][0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql[PROJECT][0] .= ' WHERE ctc.active=\'1\' AND ctc.element in (\'project\',\'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\'  )'; 
+    $sql[PROJECT][0] .= ' WHERE ctc.active=\'1\' AND ctc.element in (\'project\',\'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\'  )';
     $sql[PROJECT][0] .= ' AND fk_socpeople in (';
     $sql[PROJECT][2] = ')) AND fk_socpeople not in (';
     $sql[PROJECT][4] = ')';
@@ -146,7 +146,7 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM
             
             if ($obj)
             {
-                $list[]=$obj->userid;        
+                $list[]=$obj->userid;
             }
             $i++;
         }
@@ -194,14 +194,14 @@ function getTasks($db,$userid,$role='project'){
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON  tk.fk_projet= ec.element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql.=' WHERE ctc.element in (\'project\') AND ctc.active=\'1\' AND ctc.code LIKE \'%LEADER%\' '; 
+    $sql.=' WHERE ctc.element in (\'project\') AND ctc.active=\'1\' AND ctc.code LIKE \'%LEADER%\' ';
     $sql.=' AND fk_socpeople=\''.$userid.'\'';
     $sql.=' UNION ';
     $sql.=' SELECT tk.fk_projet as project ,tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on (tk.rowid= element_id )';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql.=' WHERE ctc.element in (\'project_task\') AND ctc.active=\'1\' AND ctc.code LIKE \'%EXECUTIVE%\' '; 
+    $sql.=' WHERE ctc.element in (\'project_task\') AND ctc.active=\'1\' AND ctc.code LIKE \'%EXECUTIVE%\' ';
     $sql.=' AND ec.fk_socpeople=\''.$userid.'\'';
 
 
@@ -253,7 +253,7 @@ if(is_array($userids)){
 	/*
         $nbIds=(is_array($userids))?count($userids)-1:0;
 	
-        for($i=0; $i<$nbIds-1 ; $i++)
+        for($i=0;$i<$nbIds-1 ;$i++)
 	{
 		$sql."'".$userids[$i]."',";
 	}
@@ -275,7 +275,7 @@ if(is_array($userids)){
             
             if ($obj)
             {
-                $list[$obj->rowid]=$obj->username;        
+                $list[$obj->rowid]=$obj->username;
             }
             $i++;
         }
@@ -402,46 +402,46 @@ function getStartDate($datetime,$prevNext=0){
      switch($conf->global->TIMESHEET_TIME_SPAN){
 
         case 'month': //by Month   
-        //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
+        //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  );
         //     break;
                 if($prevNext==1){
-                    $startDate=  strtotime('first day of next month midnight',$datetime  ); 
+                    $startDate=  strtotime('first day of next month midnight',$datetime  );
                 }else if($prevNext==0){
-                    $startDate=  strtotime('first day of this month midnight',$datetime  ); 
+                    $startDate=  strtotime('first day of this month midnight',$datetime  );
                 }else if($prevNext==-1){
-                    $startDate=  strtotime('first day of previous month midnight',$datetime  ); 
+                    $startDate=  strtotime('first day of previous month midnight',$datetime  );
                 }
-            break;            
+            break;
         case 'week': //by user   
-                    //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  ); 
+                    //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  );
         //     break;
                 if($prevNext==1){
-                    $startDate=  strtotime('monday next week midnight',$datetime  ); 
+                    $startDate=  strtotime('monday next week midnight',$datetime  );
                 }else if($prevNext==0){
-                    $startDate=  strtotime('monday this week midnight',$datetime  ); 
+                    $startDate=  strtotime('monday this week midnight',$datetime  );
                 }else if($prevNext==-1){
-                    $startDate=  strtotime('monday previous week midnight',$datetime  ); 
+                    $startDate=  strtotime('monday previous week midnight',$datetime  );
                 }
-            break;  
+            break;
         case 'splitedWeek': //by week
         default:
 
                 if($prevNext==1){
-                    $startDateMonth=  strtotime('first day of next month  midnight',$datetime  ); 
-                    $startDateWeek=  strtotime('monday next week midnight',$datetime  ); 
+                    $startDateMonth=  strtotime('first day of next month  midnight',$datetime  );
+                    $startDateWeek=  strtotime('monday next week midnight',$datetime  );
                     $startDate=MIN( $startDateMonth, $startDateWeek);
                 }else if($prevNext==0){
-                    $startDateMonth=  strtotime('first day of this month midnight',$datetime  ); 
-                    $startDateWeek=  strtotime('monday this week  midnight',$datetime  ); 
+                    $startDateMonth=  strtotime('first day of this month midnight',$datetime  );
+                    $startDateWeek=  strtotime('monday this week  midnight',$datetime  );
                     $startDate=MAX( $startDateMonth, $startDateWeek);
                 }else if($prevNext==-1){
-                    $startDateMonth=  strtotime('first day of this month  midnight',$datetime  ); 
-                    $startDateWeek=  strtotime('monday this week  midnight',$datetime  ); 
-                    $startDatePrevWeek=  strtotime('monday previous week  midnight',$datetime  ); 
+                    $startDateMonth=  strtotime('first day of this month  midnight',$datetime  );
+                    $startDateWeek=  strtotime('monday this week  midnight',$datetime  );
+                    $startDatePrevWeek=  strtotime('monday previous week  midnight',$datetime  );
                     if($startDateMonth>$startDateWeek ){
                         $startDate=$startDateWeek;
                     }else{
-                        $startDate=( $startDateMonth<$startDatePrevWeek)?$startDatePrevWeek:$startDateMonth;                 
+                        $startDate=( $startDateMonth<$startDatePrevWeek)?$startDatePrevWeek:$startDateMonth;
                     }
                 }
             break;
@@ -465,10 +465,10 @@ function getEndDate($datetime){
     switch($conf->global->TIMESHEET_TIME_SPAN){
 
         case 'month': 
-            $endDate=strtotime('first day of next month midnight',$datetime); 
+            $endDate=strtotime('first day of next month midnight',$datetime);
             break;
         case 'week':  
-            $endDate=strtotime('monday next week midnight',$datetime); 
+            $endDate=strtotime('monday next week midnight',$datetime);
             break;
         case 'splitedWeek': 
         default:
@@ -476,9 +476,9 @@ function getEndDate($datetime){
             $dayOfWeek=date('N',$datetime);
             $dayInMonth=date('t',$datetime);
             if ($dayInMonth<$day+(7-$dayOfWeek) ){
-                $endDate=strtotime('first day of next month midnight',$datetime); 
+                $endDate=strtotime('first day of next month midnight',$datetime);
             }else{
-                $endDate=strtotime('monday next week midnight',$datetime); 
+                $endDate=strtotime('monday next week midnight',$datetime);
             }
         
             break;
@@ -498,7 +498,7 @@ function getEndDate($datetime){
  *  @return     string                                   
  */
 function parseDate($day=0,$month=0,$year=0,$date=0){  
-    $datetime=time(); 
+    $datetime=time();
     $splitWeek=0;
     if ($day!=0 && $month!=0 && $year!= 0)
     {
@@ -568,9 +568,9 @@ function formatTime($duration,$hoursperdays=-1)
     {
         global $conf;
         if($hoursperdays==-1){
-            $hoursperdays=($conf->global->TIMESHEET_TIME_TYPE=="days")?$conf->global->TIMESHEET_DAY_DURATION:0;           
+            $hoursperdays=($conf->global->TIMESHEET_TIME_TYPE=="days")?$conf->global->TIMESHEET_DAY_DURATION:0;
         }else if($hoursperdays==-2){
-            $hoursperdays=($conf->global->TIMESHEET_INVOICE_TIMETYPE=="days")?$conf->global->TIMESHEET_DAY_DURATION:0;           
+            $hoursperdays=($conf->global->TIMESHEET_INVOICE_TIMETYPE=="days")?$conf->global->TIMESHEET_DAY_DURATION:0;
         }
         
         if($hoursperdays==0)
@@ -637,7 +637,7 @@ function formatTime($duration,$hoursperdays=-1)
                         .':'.$arraymessage['timeSpendDeleted']);
             if($arraymessage['NoteUpdated']>0) 
                 setEventMessage( $langs->transnoentitiesnoconv("NoteUpdated")
-                        .':'.$arraymessage['NoteUpdated']);            
+                        .':'.$arraymessage['NoteUpdated']);
             if($arraymessage['updateError']>0) 
                 setEventMessage( $langs->transnoentitiesnoconv("InternalError")
                         .$langs->transnoentitiesnoconv(" Update failed")

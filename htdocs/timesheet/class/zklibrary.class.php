@@ -1,13 +1,13 @@
 <?php 
 /* Copyright (C) 2016-2018 Kamshory  <kamshory@yahoo.com>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -60,10 +60,10 @@ define('CMD_SET_TIME', 202);
 
 define('USHRT_MAX', 65535);
 
-define('LEVEL_USER', 0);          // 0000 0000
-define('LEVEL_ENROLLER', 2);       // 0000 0010
-define('LEVEL_MANAGER', 12);      // 0000 1100
-define('LEVEL_SUPERMANAGER', 14); // 0000 1110
+define('LEVEL_USER', 0);// 0000 0000
+define('LEVEL_ENROLLER', 2);// 0000 0010
+define('LEVEL_MANAGER', 12);// 0000 1100
+define('LEVEL_SUPERMANAGER', 14);// 0000 1110
 
 
 class ZKLibrary {
@@ -183,20 +183,20 @@ class ZKLibrary {
 	}
 	public function ping($timeout = 1)
 	{
-		$time1 = microtime(true); 
-		$pfile = fsockopen($this->ip, $this->port, $errno, $errstr, $timeout); 
+		$time1 = microtime(true);
+		$pfile = fsockopen($this->ip, $this->port, $errno, $errstr, $timeout);
 		if(!$pfile)
 		{
-			return 'down'; 
+			return 'down';
 		} 
-		$time2 = microtime(true); 
+		$time2 = microtime(true);
 		fclose($pfile);
-		return round((($time2 - $time1) * 1000), 0); 
+		return round((($time2 - $time1) * 1000), 0);
 	}
 	private function reverseHex($input)
 	{
 		$output = '';
-		for($i=strlen($input); $i>=0; $i--)
+		for($i=strlen($input);$i>=0;$i--)
 		{
 			$output .= substr($input, $i, 2);
 			$i--;
@@ -335,7 +335,7 @@ class ZKLibrary {
 	}
 	private function getSizeUser()
 	{
-		$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8)); 
+		$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
 		$command = hexdec($u['h2'].$u['h1']);
 		if($command == CMD_PREPARE_DATA)
 		{
@@ -350,7 +350,7 @@ class ZKLibrary {
 	}
 	private function getSizeAttendance()
 	{
-		$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8)); 
+		$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
 		$command = hexdec($u['h2'].$u['h1'] );
 		if($command == CMD_PREPARE_DATA)
 		{
@@ -365,7 +365,7 @@ class ZKLibrary {
 	}
 	private function getSizeTemplate()
 	{
-		$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8)); 
+		$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
 		$command = hexdec($u['h2'].$u['h1'] );
 		if($command == CMD_PREPARE_DATA)
 		{
@@ -695,7 +695,7 @@ class ZKLibrary {
 			$users = array();
 			if(count($this->user_data) > 0)
 			{
-				for($x=0; $x<count($this->user_data); $x++)
+				for($x=0;$x<count($this->user_data);$x++)
 				{
 					if ($x > 0)
 					{
@@ -709,17 +709,17 @@ class ZKLibrary {
 					$u = unpack('H144', substr($user_data, 0, 72));
 					$u1 = hexdec(substr($u[1], 2, 2));
 					$u2 = hexdec(substr($u[1], 4, 2));
-					$uid = $u1+($u2*256);                               // 2 byte
-					$role = hexdec(substr($u[1], 6, 2)).' ';            // 1 byte
-					$password = hex2bin(substr( $u[1], 8, 16 )).' ';    // 8 byte
-					$name = hex2bin(substr($u[1], 24, 74 )). ' ';      // 37 byte
-					$userid = hex2bin(substr($u[1], 98, 72)).' ';      // 36 byte
-					$passwordArr = explode(chr(0), $password, 2);       // explode to array
-					$password = $passwordArr[0];                        // get password
-					$useridArr = explode(chr(0), $userid, 2);           // explode to array
-					$userid = $useridArr[0];                            // get user ID
-					$nameArr = explode(chr(0), $name, 3);               // explode to array
-					$name = $nameArr[0];                                // get name
+					$uid = $u1+($u2*256);// 2 byte
+					$role = hexdec(substr($u[1], 6, 2)).' ';// 1 byte
+					$password = hex2bin(substr( $u[1], 8, 16 )).' ';// 8 byte
+					$name = hex2bin(substr($u[1], 24, 74 )). ' ';// 37 byte
+					$userid = hex2bin(substr($u[1], 98, 72)).' ';// 36 byte
+					$passwordArr = explode(chr(0), $password, 2);// explode to array
+					$password = $passwordArr[0];// get password
+					$useridArr = explode(chr(0), $userid, 2);// explode to array
+					$userid = $useridArr[0];// get user ID
+					$nameArr = explode(chr(0), $name, 3);// explode to array
+					$name = $nameArr[0];// get name
 					if($name == "")
 					{
 						$name = $uid;
@@ -743,15 +743,15 @@ class ZKLibrary {
 	{
 		$template = array();
 		$j = 0;
-		for($i = 5; $i<10; $i++, $j++)
+		for($i = 5;$i<10;$i++, $j++)
 		{
 			$template[$j] = $this->getUserTemplate($uid, $i);
 		}
-		for($i = 4; $i>=0; $i--, $j++)
+		for($i = 4;$i>=0;$i--, $j++)
 		{
 			$template[$j] = $this->getUserTemplate($uid, $i);
 		}
-		return $template; 
+		return $template;
 	}
 	public function getUserTemplate($uid, $finger)
 	{
@@ -786,7 +786,7 @@ class ZKLibrary {
 			$template_data = array();
 			if(count($this->user_data) > 0)
 			{
-				for($x=0; $x<count($this->user_data); $x++)
+				for($x=0;$x<count($this->user_data);$x++)
 				{
 					if ($x == 0)
 					{
@@ -849,7 +849,7 @@ class ZKLibrary {
 			$retdata = "";
 			if(count($this->user_data) > 0)
 			{
-				for($x=0; $x<count($this->user_data); $x++)
+				for($x=0;$x<count($this->user_data);$x++)
 				{
 					if ($x > 0)
 					{
@@ -1008,10 +1008,10 @@ class ZKLibrary {
 				$this->session_id = hexdec($u['h6'].$u['h5']);
 				socket_recvfrom($this->socket, $received_data, 1024, 0, $this->ip, $this->port);
 			}
-			$attendance = array();  
+			$attendance = array();
 			if(count($this->attendance_data) > 0)
 			{
-				for($x=0; $x<count($this->attendance_data); $x++)
+				for($x=0;$x<count($this->attendance_data);$x++)
 				{
 					if($x > 0)
 					{
@@ -1028,7 +1028,7 @@ class ZKLibrary {
 					$uid = $u1+($u2*256);
 					$id = str_replace("\0", '', hex2bin(substr($u[1], 8, 16)));
 					$state = hexdec(substr( $u[1], 56, 2 ) );
-					$timestamp = $this->decodeTime(hexdec($this->reverseHex(substr($u[1], 58, 8)))); 
+					$timestamp = $this->decodeTime(hexdec($this->reverseHex(substr($u[1], 58, 8))));
 					array_push($attendance, array($uid, $id, $state, $timestamp));
 					$attendance_data = substr($attendance_data, 40 );
 				}

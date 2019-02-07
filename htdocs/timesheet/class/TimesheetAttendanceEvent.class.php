@@ -4,13 +4,13 @@
  * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -67,12 +67,12 @@ class Attendanceevent extends CommonObject
 	public $task;
 	public $project;
 	public $token;
-	public $status;       
+	public $status;
         // working var
         public $taskLabel;
         public $projectLabel;
         public $third_partyLabel;
-       // private $tasks; // aarray of tasktimesheet
+       // private $tasks;// aarray of tasktimesheet
 
     
     // END OF automatic var creation
@@ -120,7 +120,7 @@ public $date_time_event_start;
         $sql.= 'fk_task,';
         $sql.= 'fk_project,';
         $sql.= 'token,';
-        $sql.= 'status,';   
+        $sql.= 'status,';
         $sql.= 'date_modification,fk_user_modification';
         $sql.= ") VALUES (";
         $sql.=' '.(empty($this->date_time_event) || dol_strlen($this->date_time_event)==0?'NULL':"'".$this->db->idate($this->date_time_event)."'").',';
@@ -132,15 +132,15 @@ public $date_time_event_start;
         $sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").',';
         $sql.=' '.(empty($this->project)?'NULL':"'".$this->project."'").',';
         $sql.=' '.(empty($this->token)?'NULL':"'".$this->token."'").',';
-        $sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").'';   
-        $sql.=' , NOW(),\''.$user->id.'\'';   
+        $sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
+        $sql.=' , NOW(),\''.$user->id.'\'';
         $sql.= ")";
 
         $this->db->begin();
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
 
         if (! $error)
         {
@@ -153,7 +153,7 @@ public $date_time_event_start;
 
             //// Call triggers
             //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+            //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
         }
@@ -221,7 +221,7 @@ public $date_time_event_start;
         {
             $obj = $this->db->fetch_object($resql);
             // load the object only if  not an stop event while using the user
-            $this->id    = $obj->rowid; 
+            $this->id  = $obj->rowid;
             $this->date_time_event = $this->db->jdate($obj->date_time_event);
             $this->event_location_ref = $obj->event_location_ref;
             $this->event_type = $obj->event_type;
@@ -268,7 +268,7 @@ public $date_time_event_start;
 	$this->db->begin();
 	dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
             if (! $error)
             {
                 if (! $notrigger)
@@ -278,7 +278,7 @@ public $date_time_event_start;
 
             //// Call triggers
             //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+            //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
             }
@@ -316,7 +316,7 @@ public $date_time_event_start;
 	global $conf, $langs;
 
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;// Force disable tooltips
     	$result='';
         if(empty($ref) && $id==0){
             if(isset($this->id))  {
@@ -450,7 +450,7 @@ public $date_time_event_start;
         // want this action calls a trigger.
         //// Call triggers
         //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-        //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
         //// End call triggers
             }
         }
@@ -461,8 +461,8 @@ public $date_time_event_start;
 
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-        else if ($this->db->affected_rows($resql)==0){$error++;$this->errors[]="Item no found in database"; }
+        if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
+        else if ($this->db->affected_rows($resql)==0){$error++;$this->errors[]="Item no found in database";}
 
         }
 
@@ -654,7 +654,7 @@ public $date_time_event_start;
      *  @return	int					 <0 if KO, >0 if OK
      */    
     function ajaxStop($user,$json='',$auto=false){
-        global $conf,$langs;   
+        global $conf,$langs;
         $location_ref='';
         $note='';
         $tokenJson='';
@@ -667,7 +667,7 @@ public $date_time_event_start;
             $tokenJson=$this->token;
             $this->fetch('','',$tokenJson);
         }  else {
-             $this->fetch('',$user);   
+             $this->fetch('',$user);
         }
         $ret=0;
         $tokenDb=$this->token;
@@ -708,7 +708,7 @@ public $date_time_event_start;
                   
             $ret=$this->create($user);
             if ($ret>0) {
-                $this->createTimeSpend($user,$tokenDb); //FIXME
+                $this->createTimeSpend($user,$tokenDb);//FIXME
     
             }else{
                 $this->initAsSpecimen();
@@ -716,11 +716,11 @@ public $date_time_event_start;
                 $this->status=json_encode(array(
                    'text'=>$langs->trans('DBError'),
                    'type'=>'errors',
-                   'param'=>''));    
+                   'param'=>''));
             }
         }
             
-        return $this->serialize(2); ;
+        return $this->serialize(2);;
     }
     
     /**
@@ -825,17 +825,17 @@ function createTimeSpend($user,$token=''){
             print '<div style="width:50px%;height:60px;float:left;vertical-align:middle" >';
                 print '<img height="64px" id = "mainPlayStop" src="img/'.(($this->id==0)?'play-arrow':'stop-square');
                 print '.png" onClick=startStop(event,'.$this->userid.',null) style="cursor:pointer;vertical-align:middle">  ';
-            print '</div>';          
+            print '</div>';
             print '<div style="width:40%;height:60px;float:left" >';
                 print '<textarea name="eventNote" id="eventNote" style="width:80%;height:100%"></textarea>';
-            print '</div>';       
-            print '<div style="width:40%;float:left">';       
+            print '</div>';
+            print '<div style="width:40%;float:left">';
                 print '<span id="stopwatch"></span>';
                 print '<div>'.$langs->trans('Customer').': <span id="customer">&nbsp;</span></div>';
                 print '<div>'.$langs->trans('Project').': <span  id="project">&nbsp;</span></div>';
                 print '<div>'.$langs->trans('Task').': <span  id="task">&nbsp;</span></div>';
-            print '</div>';   
-        print '</div>';  
+            print '</div>';
+        print '</div>';
 
     }
 
@@ -854,14 +854,14 @@ function createTimeSpend($user,$token=''){
     $this->userid=$userid;
     $datestart=strtotime('yesterday midnight',$date);
     $datestop= strtotime('today midnight',$date);
-     $tasksList=array();   
+     $tasksList=array();
     $sql ='SELECT DISTINCT element_id as taskid,prj.fk_soc,prj.ref,tsk.ref';
-    $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec"; 
+    $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec";
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid=ec.fk_c_type_contact  AND ctc.active=\'1\') ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=ec.element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
     $sql.=" WHERE ec.fk_socpeople='".$userid."' AND ctc.element='project_task' ";
-    if($conf->global->TIMESHEET_HIDE_DRAFT=='1'){$sql.=' AND prj.fk_statut>\'0\' '; }
+    if($conf->global->TIMESHEET_HIDE_DRAFT=='1'){$sql.=' AND prj.fk_statut>\'0\' ';}
     $sql.=' AND (prj.datee>=\''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
     $sql.=' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
     $sql.=' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
@@ -882,10 +882,10 @@ function createTimeSpend($user,$token=''){
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
                     $tasksList[$i] = new TimesheetTask($this->db);
-                    $tasksList[$i]->id= $obj->taskid;    
+                    $tasksList[$i]->id= $obj->taskid;
                     $tasksList[$i]->userId= $this->userid;
                     $tasksList[$i]->getTaskInfo();
-                      $i++;         
+                      $i++;
             }
             $this->db->free($resql);
              $i = 0;
@@ -925,7 +925,7 @@ function createTimeSpend($user,$token=''){
 	$array['status']= $this->status;
         $array['processedTime']= mktime();
         // working var
-        //$array['']= $this->tasks; // aarray of tasktimesheet
+        //$array['']= $this->tasks;// aarray of tasktimesheet
      switch($mode)
      {
          default:
@@ -987,7 +987,7 @@ function createTimeSpend($user,$token=''){
             $this->taskLabel= $staticTask->description;
             $this->projectLabel=$staticTask->ProjectTitle;
             $this->third_party=$staticTask->companyId;
-            $this->third_partyLabel=$staticTask->companyName;     
+            $this->third_partyLabel=$staticTask->companyName;
         }else{
             if(!empty($this->project) && empty($this->projectLabel) ){
                 $this->projectLabel=print_sellist(array('table'=>"projet",'keyfield'=> 'rowid','fields'=>'title'),$this->project);

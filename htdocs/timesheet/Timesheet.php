@@ -2,13 +2,13 @@
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014 delcroip <patrick@pmpd.eu>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -32,21 +32,21 @@ require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 
 
-$action             = GETPOST('action','alpha');
-$datestart          = GETPOST('dateStart','alpha');
+$action           = GETPOST('action','alpha');
+$datestart        = GETPOST('dateStart','alpha');
 
 //should return the XMLDoc
-$ajax               = GETPOST('ajax','int');
-$xml               = GETPOST('xml','int');
+$ajax             = GETPOST('ajax','int');
+$xml             = GETPOST('xml','int');
 $optioncss = GETPOST('optioncss','alpha');
 
 $id=GETPOST('id','int');
-//$toDate                 = GETPOST('toDate');
-$toDate                 = GETPOST('toDate','alpha');
+//$toDate               = GETPOST('toDate');
+$toDate               = GETPOST('toDate','alpha');
 if(!empty($toDate) && $action=='goToDate'){
-$toDateday                  =GETPOST('toDateday','int'); // to not look for the date if action not goTodate
-$toDatemonth                 = GETPOST('toDatemonth','int');
-$toDateyear                 = GETPOST('toDateyear','int');
+$toDateday                  =GETPOST('toDateday','int');// to not look for the date if action not goTodate
+$toDatemonth               = GETPOST('toDatemonth','int');
+$toDateyear               = GETPOST('toDateyear','int');
 }
 
 $timestamp=GETPOST('timestamp','alpha');
@@ -66,7 +66,7 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
     $SubordiateIds[]=$userid;
     if (in_array($newuserid, $SubordiateIds) || $user->admin){
         $SubordiateIds[]=$userid;
-        $userid=$newuserid;    
+        $userid=$newuserid;
     }else if($action=='getOtherTs'){
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"),'errors');
         unset($action);
@@ -136,7 +136,7 @@ switch($action){
                                  $notesTaskApproval=GETPOST('noteTaskApproval','array');
                                  $tasks=GETPOST('task','array');
 				 foreach($tasks as $key => $tasktab){
-					 $task_timesheet->loadFromSession($timestamp,$key);  
+					 $task_timesheet->loadFromSession($timestamp,$key);
                                          if($task_timesheet->note!=$notesTaskApproval[$key]){
                                             $update=true;
                                             $task_timesheet->note=$notesTaskApproval[$key];
@@ -152,13 +152,12 @@ switch($action){
 						
 					 }else{
                                              $task_timesheet->setStatus($user,DRAFT);
-                                         }       
-
+                                         }
                 		//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
                                           TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
 				 }
             }else if(GETPOSTISSET('recall')){
-				$task_timesheet->loadFromSession($timestamp,GETPOST('tsUserId','int')); /*FIXME to support multiple TS sent*/
+				$task_timesheet->loadFromSession($timestamp,GETPOST('tsUserId','int'));/*FIXME to support multiple TS sent*/
                                 //$task_timesheet->status="DRAFT";
                                 $ret=$task_timesheet->setStatus($user,DRAFT);
                 if($ret>0)setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
@@ -171,7 +170,7 @@ switch($action){
 
         break;
     case 'deletefile':
-        $action='delete'; // to trigger the delete action in the linkedfiles.inc.php
+        $action='delete';// to trigger the delete action in the linkedfiles.inc.php
         break;
 
     default:
@@ -212,7 +211,7 @@ if($conf->global->TIMESHEET_ADD_DOCS){
 if($xml){
     //renew timestqmp
     ob_clean();
-   header("Content-type: text/xml; charset=utf-8");
+   header("Content-type: text/xml;charset=utf-8");
     echo $task_timesheet->GetTimeSheetXML();
     exit;
 }

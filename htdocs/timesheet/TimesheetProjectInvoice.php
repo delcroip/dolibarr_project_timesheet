@@ -1,13 +1,13 @@
 <?php
  /* Copyright (C) 2017 delcroip <patrick@pmpd.eu>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -44,16 +44,16 @@ $userid=  is_object($user)?$user->id:$user;
 //init handling object
 $form = new Form($db);
 
-$dateStart                 = strtotime(GETPOST('dateStart', 'alpha'));
-$dateStartday =GETPOST('dateStartday', 'int'); // to not look for the date if action not goTodate
-$dateStartmonth                 = GETPOST('dateStartmonth', 'int');
-$dateStartyear                 = GETPOST('dateStartyear', 'int');
+$dateStart               = strtotime(GETPOST('dateStart', 'alpha'));
+$dateStartday =GETPOST('dateStartday', 'int');// to not look for the date if action not goTodate
+$dateStartmonth               = GETPOST('dateStartmonth', 'int');
+$dateStartyear               = GETPOST('dateStartyear', 'int');
 $dateStart=parseDate($dateStartday,$dateStartmonth,$dateStartyear,$dateStart);
 
-$dateEnd                 = strtotime(GETPOST('dateEnd', 'alpha'));
-$dateEndday =GETPOST('dateEndday', 'int'); // to not look for the date if action not goTodate
-$dateEndmonth                 = GETPOST('dateEndmonth', 'int');
-$dateEndyear                 = GETPOST('dateEndyear', 'int');
+$dateEnd               = strtotime(GETPOST('dateEnd', 'alpha'));
+$dateEndday =GETPOST('dateEndday', 'int');// to not look for the date if action not goTodate
+$dateEndmonth               = GETPOST('dateEndmonth', 'int');
+$dateEndyear               = GETPOST('dateEndyear', 'int');
 $dateEnd=parseDate($dateEndday,$dateEndmonth,$dateEndyear,$dateEnd);
 $invoicabletaskOnly=GETPOST('invoicabletaskOnly', 'int');
 
@@ -61,7 +61,7 @@ $invoicabletaskOnly=GETPOST('invoicabletaskOnly', 'int');
 if ($user->rights->facture->creer && hasProjectRight($userid,$projectId))
 {
     if($projectId>0)$staticProject->fetch($projectId);
-    if($socid==0 || !is_numeric($socid))$socid=$staticProject->socid; //FIXME check must be in place to ensure the user hqs the right to see the project details
+    if($socid==0 || !is_numeric($socid))$socid=$staticProject->socid;//FIXME check must be in place to ensure the user hqs the right to see the project details
 $edit=1;
 // avoid SQL issue
 if(empty($dateStart) || empty($dateEnd) ||$dateStart==$dateEnd ){
@@ -76,7 +76,7 @@ $langs->load('timesheet@timesheet');
     switch ($step)
     { 
         case 2:{
-           $fields=($mode=='user')?'fk_user':(($mode=='taskUser')?'fk_user,fk_task':'fk_task'); 
+           $fields=($mode=='user')?'fk_user':(($mode=='taskUser')?'fk_user,fk_task':'fk_task');
             $sql= 'SELECT  '.$fields.', SUM(tt.task_duration) as duration, ';
             if($db->type!='pgsql'){
                 $sql.=" GROUP_CONCAT(tt.rowid  SEPARATOR ',') as task_time_list";
@@ -94,20 +94,20 @@ $langs->load('timesheet@timesheet');
 
             if($ts2Invoice!='all'){
                 /*$sql.=' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_s SEPARATOR ", ")';
-                $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval';  
-                $sql.=' WHERE status= "APPROVED" AND MONTH(date_start)='.$month;  
-                $sql.=' AND YEAR(date_start)="'.$year.'")'; 
-                $sql.=' AND YEAR(date_start)="'.$year.'")'; */
-                $sql.=' AND tt.status = '.APPROVED; 
+                $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval';
+                $sql.=' WHERE status= "APPROVED" AND MONTH(date_start)='.$month;
+                $sql.=' AND YEAR(date_start)="'.$year.'")';
+                $sql.=' AND YEAR(date_start)="'.$year.'")';*/
+                $sql.=' AND tt.status = '.APPROVED;
             }
             if($tsNotInvoiced==1){
-                $sql.=' AND tt.invoice_id IS NULL'; 
+                $sql.=' AND tt.invoice_id IS NULL';
             }
             $sql.=' GROUP BY '.$fields;
-            dol_syslog('timesheet::timesheetProjectInvoice step2', LOG_DEBUG);    
+            dol_syslog('timesheet::timesheetProjectInvoice step2', LOG_DEBUG);
 
             
-            $Form ='<form name="settings" action="?step=3" method="POST" >'."\n\t"; 
+            $Form ='<form name="settings" action="?step=3" method="POST" >'."\n\t";
             $Form .='<input type="hidden" name="projectid" value ="'.$projectId.'">';
             $Form .='<input type="hidden" name="dateStart" value ="'.dol_print_date($dateStart,'dayxcard').'">';
             $Form .='<input type="hidden" name="dateEnd" value ="'.dol_print_date($dateEnd,'dayxcard').'">';
@@ -145,7 +145,7 @@ $langs->load('timesheet@timesheet');
                               break;
                          }
                            
-                        $i++;                           
+                        $i++;
                     }
                     $db->free($resql);
             }else
@@ -197,7 +197,7 @@ $langs->load('timesheet@timesheet');
                         //$userTaskService[$user][$task]=array('duration', 'VAT','Desc','PriceHT','Service','unit_duration','unit_duration_unit');
                         if(is_array($userTaskService ))foreach($userTaskService as  $tId => $service){
                             $durationTab=explode (':',$service['duration']);
-                            $duration=$durationTab[1]*60+$durationTab[0]*3600;   
+                            $duration=$durationTab[1]*60+$durationTab[0]*3600;
                             //$startday = dol_mktime(12, 0, 0, $month, 1, $year);
                             //$endday = dol_mktime(12, 0, 0, $month, date('t',$startday), $year);
 
@@ -267,12 +267,12 @@ $edit=0;
         if(!$user->admin){    
             $sqlTailJoin=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON t.rowid= element_id ';
             $sqlTailJoin.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-            $sqlTailWhere=' ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active=\'1\'  '; 
-            $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' and t.fk_statut = \'1\'';  
+            $sqlTailWhere=' ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active=\'1\'  ';
+            $sqlTailWhere.=' AND fk_socpeople=\''.$userid.'\' and t.fk_statut = \'1\'';
         }
             $Form ='<form name="settings" action="?step=2" method="POST" >'."\n\t";
             $Form .='<table class="noborder" width="100%">'."\n\t\t";
-            $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans('generalInvoiceProjectParam').'</th></tr>';    
+            $Form .='<tr class="liste_titre" width="100%" ><th colspan="2">'.$langs->trans('generalInvoiceProjectParam').'</th></tr>';
             $invoicingMethod=$conf->global->TIMESHEET_INVOICE_METHOD;
             $Form .='<tr class="oddeven"><th align="left" width="80%">'.$langs->trans('Project').'</th><th align="left" width="80%" >';
             //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
@@ -319,7 +319,7 @@ $edit=0;
             break;
     }
 }else{
-    $accessforbidden = accessforbidden("you don't have enough rights to see this page");   
+    $accessforbidden = accessforbidden("you don't have enough rights to see this page");
 }
 
 /***************************************************
@@ -413,9 +413,9 @@ function hasProjectRight($userid,$projectid){
         $res=false;
         $sql=' SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec ';
         $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-        $sql.=' WHERE element_id=\''.$projectid; 
-        $sql.='\' AND (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\') AND ctc.active=\'1\'  '; 
-        $sql.=' AND fk_socpeople=\''.$userid.'\' ';  
+        $sql.=' WHERE element_id=\''.$projectid;
+        $sql.='\' AND (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\') AND ctc.active=\'1\'  ';
+        $sql.=' AND fk_socpeople=\''.$userid.'\' ';
         dol_syslog("ProjectInvoice::hasProjectRight", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($db->num_rows($resql))$res=true;

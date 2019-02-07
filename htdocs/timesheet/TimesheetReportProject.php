@@ -8,7 +8,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -50,16 +50,16 @@ $langs->load('timesheet@timesheet');
 
 //find the right week
 //find the right week
-$dateStart                 = strtotime(GETPOST('dateStart', 'alpha'));
-$dateStartday =GETPOST('dateStartday', 'int'); // to not look for the date if action not goTodate
-$dateStartmonth                 = GETPOST('dateStartmonth', 'int');
-$dateStartyear                 = GETPOST('dateStartyear', 'int');
+$dateStart               = strtotime(GETPOST('dateStart', 'alpha'));
+$dateStartday =GETPOST('dateStartday', 'int');// to not look for the date if action not goTodate
+$dateStartmonth               = GETPOST('dateStartmonth', 'int');
+$dateStartyear               = GETPOST('dateStartyear', 'int');
 $dateStart=parseDate($dateStartday, $dateStartmonth, $dateStartyear, $dateStart);
 
-$dateEnd                 = strtotime(GETPOST('dateEnd', 'alpha'));
-$dateEndday = GETPOST('dateEndday', 'int'); // to not look for the date if action not goTodate
-$dateEndmonth                 = GETPOST('dateEndmonth', 'int');
-$dateEndyear                 = GETPOST('dateEndyear', 'int');
+$dateEnd               = strtotime(GETPOST('dateEnd', 'alpha'));
+$dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goTodate
+$dateEndmonth               = GETPOST('dateEndmonth', 'int');
+$dateEndyear               = GETPOST('dateEndyear', 'int');
 $dateEnd=parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly=GETPOST('invoicabletaskOnly', 'int');
 
@@ -91,16 +91,16 @@ $userid=  is_object($user)?$user->id:$user;
 
 
 
-//querry to get the project where the user have priviledge; either project responsible or admin
+//querry to get the project where the user have priviledge;either project responsible or admin
 
 $sql='SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
-if(!$user->admin){    
+if(!$user->admin){
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid= element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql.=' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active=\'1\'  '; 
+    $sql.=' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active=\'1\'  ';
     $sql.=' AND fk_socpeople=\''.$userid.'\' and fk_statut = \'1\'';
 }else{
-    $sql.=' WHERE fk_statut = \'1\' '; 
+    $sql.=' WHERE fk_statut = \'1\' ';
 }
 
 dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
@@ -202,7 +202,7 @@ $Form.='> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->tran
 if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0 ))$Form.='<a class="butAction" href="TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 
 if(!empty($querryRes))$Form.='<a class="butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
- $Form.='</form>';      
+ $Form.='</form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 
 
@@ -213,4 +213,3 @@ echo $querryRes;
 
 llxFooter();
 $db->close();
-?>

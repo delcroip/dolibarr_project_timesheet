@@ -1,13 +1,13 @@
 <?php
 /* Copyright (C) 2017 delcroip <patrick@pmpd.eu>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -31,10 +31,10 @@ require_once 'class/TimesheetTask.class.php';
 $userId=  is_object($user)?$user->id:$user;
 
 // find the Role //FIX ME SHOW ONLY if he has right
-$role         = GETPOST('role','alpha');
+$role       = GETPOST('role','alpha');
 $role_key='';
 if(!$role){
-    $role_key=array_search('1',array_slice ($apflows,2))+1; // search other than team
+    $role_key=array_search('1',array_slice ($apflows,2))+1;// search other than team
     if($role_key===false){
         header("location:TimesheetTeamApproval.php");
     }else{
@@ -46,7 +46,7 @@ if(!$role){
 }
 // end find the role
 // get other param
-$action             = GETPOST('action','alpha');
+$action           = GETPOST('action','alpha');
 if(!is_numeric($offset))$offset=0;
 $print=(GETPOST('optioncss','alpha')=='print')?true:false;
 $current=  GETPOST('target','int');
@@ -80,7 +80,7 @@ if($action=='submit'){
                 }
                 switch(uniordHex($approvals[$id])){
                     case '2705'://Approved':
-                       $ret=$task_timesheet->Approved($user,array_search($role_row , $roles) ); 
+                       $ret=$task_timesheet->Approved($user,array_search($role_row , $roles) );
                         if($ret<0)$errors++;
                         else $tsApproved++;
                         break;
@@ -100,7 +100,7 @@ if($action=='submit'){
             if(($tsRejected+$tsApproved)>0){
                $current--;
             }
-          // $offset-=($tsApproved+$tsRejected);       
+          // $offset-=($tsApproved+$tsRejected);
 
                            //$ret =postActuals($db,$user,$_POST['task'],$token);
  
@@ -125,7 +125,7 @@ if($action=='submit'){
 * Put here all code to build page
 ****************************************************/
     var_dump($role_key);
-$subId=($user->admin)?'all':getSubordinates($db,$userId, 1,array($userId),$role_key); //FIx ME for other role
+$subId=($user->admin)?'all':getSubordinates($db,$userId, 1,array($userId),$role_key);//FIx ME for other role
 $tasks=implode(',', array_keys(getTasks($db, $userId)));
 if($tasks=="")$tasks=0;
 $selectList=getSelectAps($subId,$tasks,$role_key);
@@ -216,15 +216,15 @@ function getHTMLNavigation($role,$optioncss, $selectList,$current=0){
             $htmlSelect.=' <option value="'.$key.'" '.(($current==$key)?'selected':'').'>'.$element['label'].'</option>';
         }
             
-        $htmlSelect.='</select>';    
+        $htmlSelect.='</select>';
         
         $form= new Form($db);
         $Nav=  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
         if($current!=0){
-            $Nav.= '<a href="?action=goTo&target='.($current-1); 
+            $Nav.= '<a href="?action=goTo&target='.($current-1);
             $Nav.=  '&role='.($role);
             if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
-            $Nav.=  '">  &lt;&lt; '.$langs->trans("Previous").' </a>'."\n\t\t";
+            $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
         }
         $Nav.="</th>\n\t\t<th>\n\t\t\t";
 	$Nav.=  '<form name="goTo" action="?action=goTo&role='.$role.'" method="POST" >'."\n\t\t\t";
@@ -234,7 +234,7 @@ function getHTMLNavigation($role,$optioncss, $selectList,$current=0){
             $Nav.=  '<a href="?action=goTo&target='.($current+1);
             $Nav.=  '&role='.($role);
             if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
-            $Nav.=  '">'.$langs->trans("Next").' &gt;&gt; </a>';
+            $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
         }
         $Nav.="\n\t\t</th>\n\t</tr>\n </table>\n";
         return $Nav;
@@ -295,10 +295,10 @@ if($db->type!='pgsql'){
 }else{
     $sql.=" STRING_AGG(to_char(ts.rowid,'9999999999999999'), ',') as idlist";
 }
-    $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts'; 
+    $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk on ts.fk_projet_task= tsk.rowid ';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as pjt on tsk.fk_projet=pjt.rowid ';
-    $sql.=' WHERE ts.status in ('.SUBMITTED.','.UNDERAPPROVAL.','.CHALLENGED.' )'; 
+    $sql.=' WHERE ts.status in ('.SUBMITTED.','.UNDERAPPROVAL.','.CHALLENGED.' )';
     $sql.=' AND recipient='.$role_key;
     if($subId!='all'){
         $sql.=' AND ts.fk_userid in ('.implode(',',$subId).')';
@@ -306,7 +306,7 @@ if($db->type!='pgsql'){
             $sql.=' AND tsk.rowid in ('.$tasks.') ';
         }
     }
-    $sql.=' group by ts.date_start,pjt.ref,pjt.title ORDER BY id DESC,pjt.title, ts.date_start '; 
+    $sql.=' group by ts.date_start,pjt.ref,pjt.title ORDER BY id DESC,pjt.title, ts.date_start ';
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
@@ -360,10 +360,10 @@ if($db->type!='pgsql'){
     echo '<th>'.$langs->trans('Task').'</th>';
     echo '<th>'.$langs->trans('User').'</th>';
     $weeklength=getDayInterval($objectArray[0]->date_start_approval,$objectArray[0]->date_end_approval);
-    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);       
+    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
     if($conf->global->TIMESHEET_TIME_SPAN=="month"){
         //remove Year
-        $format=str_replace('Y','',str_replace('%Y','',str_replace('Y/','',str_replace('/%Y','',$format))));    
+        $format=str_replace('Y','',str_replace('%Y','',str_replace('Y/','',str_replace('/%Y','',$format))));
     }
     for ($i=0;$i<$weeklength;$i++)
     {
@@ -371,12 +371,12 @@ if($db->type!='pgsql'){
         $htmlDay=($conf->global->TIMESHEET_TIME_SPAN=="month")?substr($langs->trans(date('l',$curDay)),0,3):$langs->trans(date('l',$curDay));
         echo"\t".'<th width="60px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay,$format)."</th>\n";
     }
-    echo "<tr>\n";    
+    echo "<tr>\n";
      foreach($objectArray as $key=> $object){
  //        $object->getTaskInfo();
          $object->getActuals();
          echo '<tr>';
-           echo $object->getTimesheetLine( $key,$headers,0,'-1'); 
+           echo $object->getTimesheetLine( $key,$headers,0,'-1');
          echo "<tr>\n";
      }
  }

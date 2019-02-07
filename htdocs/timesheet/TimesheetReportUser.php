@@ -8,7 +8,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -29,7 +29,7 @@ $userid=  is_object($user)?$user->id:$user;
 $id		= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
 $dateStart	= GETPOST('dateStart', 'alpha');
-$userIdSelected   = GETPOST('userSelected', 'int');
+$userIdSelected = GETPOST('userSelected', 'int');
 $exportFriendly = GETPOST('exportFriendly', 'alpha');
 if(empty($userIdSelected))$userIdSelected=$userid;
 $exportfriendly=GETPOST('exportfriendly', 'alpha');
@@ -45,10 +45,10 @@ $langs->load('timesheet@timesheet');
 
 
 //find the right week
-$toDate                 = GETPOST('toDate', 'alpha');
-$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday', 'int'):0; // to not look for the date if action not goTodate
-$toDatemonth                 = GETPOST('toDatemonth', 'int');
-$toDateyear                 = GETPOST('toDateyear', 'int');
+$toDate               = GETPOST('toDate', 'alpha');
+$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday', 'int'):0;// to not look for the date if action not goTodate
+$toDatemonth               = GETPOST('toDatemonth', 'int');
+$toDateyear               = GETPOST('toDateyear', 'int');
 if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=$_SESSION["dateStart"];
 }else {
@@ -59,16 +59,16 @@ if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $short=GETPOST('short', 'int');;
     $userSelected=$userList[$userIdSelected];
     $year=GETPOST('year', 'int');;
-    $month=GETPOST('month', 'int');;//strtotime(str_replace('/', '-', $_POST['Date'])); 
+    $month=GETPOST('month', 'int');;//strtotime(str_replace('/', '-', $_POST['Date']));
     $firstDay= ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
 $lastDay=  ($month)?strtotime('last day of this month', $firstDay):strtotime('last day of previous month');
 $_SESSION["dateStart"]=$dateStart ;
 
 llxHeader('', $langs->trans('userReport'), '');
 
-//querry to get the project where the user have priviledge; either project responsible or admin
+//querry to get the project where the user have priviledge;either project responsible or admin
 $sql='SELECT DISTINCT usr.rowid as userid, usr.lastname , usr.firstname '
-     .'FROM '.MAIN_DB_PREFIX.'user as usr ';      
+     .'FROM '.MAIN_DB_PREFIX.'user as usr ';
 $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
      .' ON ec.fk_socpeople=usr.rowid '
      .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact'
@@ -77,7 +77,7 @@ if(!$user->admin)
 {
     $list=getSubordinates($db, $userid, 3);
     $list[]=$userid;
-    $sql.=' AND (usr.rowid in ('.implode(', ', $list).'))';  
+    $sql.=' AND (usr.rowid in ('.implode(', ', $list).'))';
 }
     
 

@@ -1,16 +1,16 @@
 <?php
-/* 
+/*
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 delcroip <patrick@pmpd.eu>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -58,15 +58,15 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 $langs->load("AttendanceSystem@timesheet");
 
 // Get parameter
-$id			= GETPOST('id','int');
-$ref                    = GETPOST('ref','alpha');
-$action		= GETPOST('action','alpha');
+$id = GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
+$action = GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
-$cancel=GETPOST('cancel');
-$confirm=GETPOST('confirm');
-$tms= GETPOST('tms','alpha');
+$cancel = GETPOST('cancel');
+$confirm = GETPOST('confirm');
+$tms = GETPOST('tms','alpha');
 //// Get parameters
-$sortfield = GETPOST('sortfield','alpha'); 
+$sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
 $removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
@@ -85,8 +85,8 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 
 
-$page = GETPOST('page','int'); 
-if ($page == -1) { $page = 0; }
+$page = GETPOST('page','int');
+if ($page == -1) { $page = 0;}
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -106,7 +106,7 @@ $pagenext = $page + 1;
 
 // Right Management
  /*
-if ($user->societe_id > 0 || 
+if ($user->societe_id > 0 ||
        (!$user->rights->timesheet->add && ($action=='add' || $action='create')) ||
        (!$user->rights->timesheet->view && ($action=='list' || $action='view')) ||
        (!$user->rights->timesheet->delete && ($action=='confirm_delete')) ||
@@ -120,14 +120,14 @@ if ($user->societe_id > 0 ||
 $object=new AttendanceSystem($db);
 if($id>0)
 {
-    $object->id=$id; 
+    $object->id=$id;
     $object->fetch($id);
     $ref=dol_sanitizeFileName($object->ref);
 }
 if(!empty($ref))
 {
-    $object->ref=$ref; 
-    $object->id=$id; 
+    $object->ref=$ref;
+    $object->id=$id;
     $object->fetch($id,$ref);
     $ref=dol_sanitizeFileName($object->ref);
     
@@ -252,7 +252,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     
     if (!empty($limit))
     {
-            $sql.= $db->plimit($limit+1, $offset); 
+            $sql.= $db->plimit($limit+1, $offset);
     }
     
 
@@ -305,7 +305,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         
         print '</tr>';
         //SEARCH FIELDS
-        print '<tr class="liste_titre">'; 
+        print '<tr class="liste_titre">';
         //Search field forlabel
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" size="16" type="text" name="ls_label" value="'.$ls_label.'">';
@@ -352,7 +352,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
         print '</td>';
-        print '</tr>'."\n"; 
+        print '</tr>'."\n";
         $i=0;
         $basedurl=dirname($PHP_SELF).'/AttendanceSystemCard.php?action=view&id=';
         while ($i < $num && $i<$limit)

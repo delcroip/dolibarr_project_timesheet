@@ -9,7 +9,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -22,9 +22,9 @@ $langs->load('timesheet@timesheet');
 //define('$conf->global->TIMESHEET_DAY_MAX_DURATION','12');
 header('Content-Type: text/javascript');
 
-echo 'var day_max_hours ='.$conf->global->TIMESHEET_DAY_MAX_DURATION.";\n"; 
+echo 'var day_max_hours ='.$conf->global->TIMESHEET_DAY_MAX_DURATION.";\n";
 echo 'var day_hours ='.$conf->global->TIMESHEET_DAY_DURATION.";\n";
 echo 'var time_type ="'.$conf->global->TIMESHEET_TIME_TYPE."\";\n";
 echo 'var hide_zero ='.$conf->global->TIMESHEET_HIDE_ZEROS.";\n";
-echo 'var err_msg_max_hours_exceded ="'.rtrim($langs->transnoentitiesnoconv('errMsgMaxHoursExceded'))."\";\n"; //FIXTRAD 
-echo 'var wng_msg_hours_exceded ="'.rtrim($langs->transnoentitiesnoconv('wngMsgHoursExceded'))."\";\n"; //FIXTRAD 
+echo 'var err_msg_max_hours_exceded ="'.rtrim($langs->transnoentitiesnoconv('errMsgMaxHoursExceded'))."\";\n";//FIXTRAD 
+echo 'var wng_msg_hours_exceded ="'.rtrim($langs->transnoentitiesnoconv('wngMsgHoursExceded'))."\";\n";//FIXTRAD 

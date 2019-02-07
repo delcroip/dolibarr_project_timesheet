@@ -4,13 +4,13 @@
  * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
  * * Copyright (C) ---Put here your own copyright and developer email---
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -60,7 +60,7 @@ $langs->load("AttendanceSystem@timesheet");
 
 // Get parameter
 $id			= GETPOST('id','int');
-$ref                    = GETPOST('ref','alpha');
+$ref                  = GETPOST('ref','alpha');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
 $cancel=GETPOST('cancel');
@@ -68,7 +68,7 @@ $confirm=GETPOST('confirm');
 $tms= GETPOST('tms','alpha');
 //// Get parameters
 /*
-$sortfield = GETPOST('sortfield','alpha'); 
+$sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
 $removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
@@ -118,15 +118,15 @@ if ($user->societe_id > 0 ||
 $object=new AttendanceSystem($db);
 if($id>0)
 {
-    $object->id=$id; 
+    $object->id=$id;
     $object->fetch($id);
     $ref=dol_sanitizeFileName($object->ref);
    
 }
 if(!empty($ref))
 {
-    $object->ref=$ref; 
-    $object->id=$id; 
+    $object->ref=$ref;
+    $object->id=$id;
     $object->fetch($id,$ref);
     $ref=dol_sanitizeFileName($object->ref);
     
@@ -316,7 +316,7 @@ switch ($action) {
         // tabs
         if($edit==0 && $new==0){ //show tabs
             $head=AttendanceSystemPrepareHead($object);
-            dol_fiche_head($head,'card',$langs->trans('AttendanceSystem'),0,'timesheet@timesheet');            
+            dol_fiche_head($head,'card',$langs->trans('AttendanceSystem'),0,'timesheet@timesheet');
         }else{
             print_fiche_titre($langs->trans('AttendanceSystem'));
         }
@@ -480,11 +480,11 @@ switch ($action) {
             }else{
                 print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="butAction">';
             }
-            print ' &nbsp; <input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
+            print ' &nbsp;<input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
             print '</form>';
         }else{
             $parameters=array();
-            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);// Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
             if (empty($reshook))
@@ -514,7 +514,7 @@ switch ($action) {
         case 'viewinfo':
         print_fiche_titre($langs->trans('AttendanceSystem'));
         $head=AttendanceSystemPrepareHead($object);
-        dol_fiche_head($head,'info',$langs->trans("AttendanceSystem"),0,'timesheet@timesheet');            
+        dol_fiche_head($head,'info',$langs->trans("AttendanceSystem"),0,'timesheet@timesheet');
         print '<table width="100%"><tr><td>';
         dol_print_object_info($object);
         print '</td></tr></table>';

@@ -3,13 +3,13 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -113,80 +113,80 @@ class modTimesheet extends DolibarrModules
 		// );
                 $r=0;
 		$this->const = array();
-                //$this->const[$r] = array("TIMESHEET_ATTENDANCE","int",1,"layout mode of the timesheets"); // hours or days
+                //$this->const[$r] = array("TIMESHEET_ATTENDANCE","int",1,"layout mode of the timesheets");// hours or days
                 //$r++;
-                $this->const[$r] = array("TIMESHEET_TIME_TYPE","chaine","hours","layout mode of the timesheets"); // hours or days
+                $this->const[$r] = array("TIMESHEET_TIME_TYPE","chaine","hours","layout mode of the timesheets");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_DAY_DURATION","int",8,"number of hour per day (used for the layout per day)"); 
+                $this->const[$r] = array("TIMESHEET_DAY_DURATION","int",8,"number of hour per day (used for the layout per day)");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HIDE_DRAFT","int",0,"option to mask to task belonging to draft project"); 
+                $this->const[$r] = array("TIMESHEET_HIDE_DRAFT","int",0,"option to mask to task belonging to draft project");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HIDE_ZEROS","int",0,"option to hide the 00:00"); 
+                $this->const[$r] = array("TIMESHEET_HIDE_ZEROS","int",0,"option to hide the 00:00");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HEADERS","chaine","Tasks","list of headers to show inthe timesheets"); 
+                $this->const[$r] = array("TIMESHEET_HEADERS","chaine","Tasks","list of headers to show inthe timesheets");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HIDE_REF","int",0,"option to hide the ref in the timesheets"); 
+                $this->const[$r] = array("TIMESHEET_HIDE_REF","int",0,"option to hide the ref in the timesheets");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_WHITELIST_MODE","int",0,"Option to change the behaviour of the whitelist:-whiteliste,1-blackliste,2-no impact "); 
+                $this->const[$r] = array("TIMESHEET_WHITELIST_MODE","int",0,"Option to change the behaviour of the whitelist:-whiteliste,1-blackliste,2-no impact ");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_WHITELIST","int",1,"Activate the whitelist:"); 
+                $this->const[$r] = array("TIMESHEET_WHITELIST","int",1,"Activate the whitelist:");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_COL_DRAFT","chaine","FFFFFF","color of draft"); 
+                $this->const[$r] = array("TIMESHEET_COL_DRAFT","chaine","FFFFFF","color of draft");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_COL_SUBMITTED","chaine","00FFFF","color of submitted"); 
+                $this->const[$r] = array("TIMESHEET_COL_SUBMITTED","chaine","00FFFF","color of submitted");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_COL_APPROVED","chaine","00FF00","color of approved"); 
+                $this->const[$r] = array("TIMESHEET_COL_APPROVED","chaine","00FF00","color of approved");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_COL_CANCELLED","chaine","FFFF00","color of cancelled"); 
+                $this->const[$r] = array("TIMESHEET_COL_CANCELLED","chaine","FFFF00","color of cancelled");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_COL_REJECTED","chaine","FF0000","color of rejected"); 
+                $this->const[$r] = array("TIMESHEET_COL_REJECTED","chaine","FF0000","color of rejected");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_DAY_MAX_DURATION","int",12,"max working hours per days"); 
+                $this->const[$r] = array("TIMESHEET_DAY_MAX_DURATION","int",12,"max working hours per days");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_ADD_HOLIDAY_TIME","int",1,"count the holiday in total or not"); 
+                $this->const[$r] = array("TIMESHEET_ADD_HOLIDAY_TIME","int",1,"count the holiday in total or not");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_OPEN_DAYS","chaine","_1111100","normal day for time booking"); 
+                $this->const[$r] = array("TIMESHEET_OPEN_DAYS","chaine","_1111100","normal day for time booking");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_APPROVAL_BY_WEEK","int",0,"Approval by week instead of by user"); 
+                $this->const[$r] = array("TIMESHEET_APPROVAL_BY_WEEK","int",0,"Approval by week instead of by user");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_MAX_APPROVAL","int",5,"Max TS per Approval page"); 
+                $this->const[$r] = array("TIMESHEET_MAX_APPROVAL","int",5,"Max TS per Approval page");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_ADD_DOCS","int",0,"Allow to join files to timesheets"); 
+                $this->const[$r] = array("TIMESHEET_ADD_DOCS","int",0,"Allow to join files to timesheets");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_APPROVAL_FLOWS","chaine","_00000","Approval flows "); 
+                $this->const[$r] = array("TIMESHEET_APPROVAL_FLOWS","chaine","_00000","Approval flows ");
                 $r++;
-                 $this->const[$r] = array("TIMESHEET_INVOICE_METHOD","int",0,"Approval by week instead of by user"); 
+                 $this->const[$r] = array("TIMESHEET_INVOICE_METHOD","int",0,"Approval by week instead of by user");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_INVOICE_TASKTIME","chaine","all","set the default task to include in the invoice item"); 
+                $this->const[$r] = array("TIMESHEET_INVOICE_TASKTIME","chaine","all","set the default task to include in the invoice item");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_INVOICE_TIMETYPE","chaine","days","set the default task to include in the invoice item"); 
+                $this->const[$r] = array("TIMESHEET_INVOICE_TIMETYPE","chaine","days","set the default task to include in the invoice item");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_INVOICE_SERVICE","int",0,"set a default service for the invoice item"); 
+                $this->const[$r] = array("TIMESHEET_INVOICE_SERVICE","int",0,"set a default service for the invoice item");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_TASK","int",1,"Show task on the invoice item "); 
+                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_TASK","int",1,"Show task on the invoice item ");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_USER","int",1,"Show user on the invoice item "); 
+                $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_USER","int",1,"Show user on the invoice item ");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_TIME_SPAN","chaine","splitedWeek","timespan of the timesheets"); // hours or days
+                $this->const[$r] = array("TIMESHEET_TIME_SPAN","chaine","splitedWeek","timespan of the timesheets");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER","int",0,"enable to time spent entry for subordinates"); // hours or days
+                $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER","int",0,"enable to time spent entry for subordinates");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_VERSION","chaine",$this->version,"save the timesheet verison"); // hours or days
+                $this->const[$r] = array("TIMESHEET_VERSION","chaine",$this->version,"save the timesheet verison");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_SHOW_TIMESPENT_NOTE","int",1,"show the note next to the time entry"); // hours or days
+                $this->const[$r] = array("TIMESHEET_SHOW_TIMESPENT_NOTE","int",1,"show the note next to the time entry");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_PDF_NOTEISOTASK","int",0,"save the timesheet verison"); // hours or days
+                $this->const[$r] = array("TIMESHEET_PDF_NOTEISOTASK","int",0,"save the timesheet verison");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_EVENT_MAX_DURATION","int",0,"max evebt duration"); // hours or days
+                $this->const[$r] = array("TIMESHEET_EVENT_MAX_DURATION","int",0,"max evebt duration");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_EVENT_DEFAULT_DURATION","int",0,"max evebt duration"); // hours or days
+                $this->const[$r] = array("TIMESHEET_EVENT_DEFAULT_DURATION","int",0,"max evebt duration");// hours or days
                 $r++;
 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__', 	// To add a new tab identified by code tabname1
         //                              'objecttype:+tabname2:Title2:mylangfile@mymodule:$user->rights->othermodule->read:/mymodule/mynewtab2.php?id=__ID__', 	// To add another new tab identified by code tabname2
-        //                              'objecttype:-tabname':NU:conditiontoremove);                                                     						// To remove an existing tab identified by code tabname
+        //                              'objecttype:-tabname':NU:conditiontoremove);// To remove an existing tab identified by code tabname
 		// where objecttype can be
 		// 'thirdparty'       to add a tab in third party view
 		// 'intervention'     to add a tab in intervention view
@@ -244,48 +244,48 @@ class modTimesheet extends DolibarrModules
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
-		 $this->rights[$r][0] = 86100200; 				// Permission id (must not be already used)
+		 $this->rights[$r][0] = 86100200;				// Permission id (must not be already used)
 		 $this->rights[$r][1] = 'TimesheetUser';	// Permission label
-		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][3] = 0;					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'user';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 //$this->rights[$r][5] = 'team';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $r++;
 		//$r=0;
-		 $this->rights[$r][0] = 86100201; 				// Permission id (must not be already used)
+		 $this->rights[$r][0] = 86100201;				// Permission id (must not be already used)
 		 $this->rights[$r][1] = 'TeamApprover';	// Permission label
-		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][3] = 0;					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'approval';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $this->rights[$r][5] = 'team';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $r++;
-		 $this->rights[$r][0] = 86100202; 				// Permission id (must not be already used)
+		 $this->rights[$r][0] = 86100202;				// Permission id (must not be already used)
 		 $this->rights[$r][1] = 'ApprovalAdmin';	// Permission label
-		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][3] = 0;					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'approval';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $this->rights[$r][5] = 'admin';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 
                  $r++;		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
-		 $this->rights[$r][0] = 86100203; 				// Permission id (must not be already used)
+		 $this->rights[$r][0] = 86100203;				// Permission id (must not be already used)
 		 $this->rights[$r][1] = 'ExportRead';	// Permission label
-		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][3] = 0;					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 //$this->rights[$r][5] = 'admin';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $r++;		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
-                 $this->rights[$r][0] = 86100205; 				// Permission id (must not be already used)
+                 $this->rights[$r][0] = 86100205;				// Permission id (must not be already used)
 		 $this->rights[$r][1] = 'AttendanceUser';	// Permission label
-		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][3] = 0;					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'attendance';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $this->rights[$r][5] = 'user';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $r++;
-                 $this->rights[$r][0] = 86100206; 				// Permission id (must not be already used)
+                 $this->rights[$r][0] = 86100206;				// Permission id (must not be already used)
 		 $this->rights[$r][1] = 'AttendanceAdmin';	// Permission label
-		 $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		 $this->rights[$r][3] = 0;					// Permission by default for new user (0/1)
 		 $this->rights[$r][4] = 'attendance';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $this->rights[$r][5] = 'admin';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		 $r++;
 // Example:
-		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
+		// $this->rights[$r][0] = 2000;				// Permission id (must not be already used)
 		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		// $this->rights[$r][3] = 1;					// Permission by default for new user (0/1)
 		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;
@@ -410,7 +410,7 @@ class modTimesheet extends DolibarrModules
 									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
-                   $r++; 
+                   $r++;
                   $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'projectInvoice',
@@ -422,7 +422,7 @@ class modTimesheet extends DolibarrModules
 									'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'$user->rights->facture->creer',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
-									'user'=>2);               
+									'user'=>2);
                   $r++;
                     $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
@@ -473,7 +473,7 @@ class modTimesheet extends DolibarrModules
 		// Example:
 		// $this->export_code[$r]=$this->rights_class.'_'.$r;
 		// $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-        // $this->export_enabled[$r]='1';                               // Condition to show export in list (ie: '$user->id==3'). Set to 1 to always show when module is enabled.
+        // $this->export_enabled[$r]='1';// Condition to show export in list (ie: '$user->id==3'). Set to 1 to always show when module is enabled.
 		// $this->export_permission[$r]=array(array("facture","facture","export"));
 		// $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','f.rowid'=>"InvoiceId",'f.facnumber'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",'f.datef'=>"DateInvoice",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus','f.note'=>"InvoiceNote",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.price'=>"LineUnitPrice",'fd.tva_tx'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.total_ht'=>"LineTotalHT",'fd.total_tva'=>"LineTotalTVA",'fd.total_ttc'=>"LineTotalTTC",'fd.date_start'=>"DateStart",'fd.date_end'=>"DateEnd",'fd.fk_product'=>'ProductId','p.ref'=>'ProductRef');
 		// $this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'fd.rowid'=>'invoice_line','fd.description'=>"invoice_line",'fd.price'=>"invoice_line",'fd.total_ht'=>"invoice_line",'fd.total_tva'=>"invoice_line",'fd.total_ttc'=>"invoice_line",'fd.tva_tx'=>"invoice_line",'fd.qty'=>"invoice_line",'fd.date_start'=>"invoice_line",'fd.date_end'=>"invoice_line",'fd.fk_product'=>'product','p.ref'=>'product');
@@ -499,7 +499,7 @@ class modTimesheet extends DolibarrModules
                 $result=$this->_load_tables('/timesheet/sql/');
 		$sql = array();
                 $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
-                $sql[0].= ' WHERE status IN (1,5)'; //'DRAFT','REJECTED'
+                $sql[0].= ' WHERE status IN (1,5)';//'DRAFT','REJECTED'
                 $sql[1] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'rat' AND type='timesheetReport' AND entity = ".$conf->entity;
                 $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('rat','timesheetReport',".$conf->entity.")";
                 dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);

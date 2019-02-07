@@ -1,16 +1,16 @@
 <?php
-/* 
+/*
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 delcroip <patrick@pmpd.eu>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -57,7 +57,7 @@ dol_include_once('/user/class/user.class.php');
 dol_include_once('/projet/class/project.class.php');
 dol_include_once('/core/class/html.formother.class.php');
 if (!$user->rights->timesheet->attendance->admin) {
-    $accessforbidden = accessforbidden("You don't have the attendance/chrono admin right");           
+    $accessforbidden = accessforbidden("You don't have the attendance/chrono admin right");
 }
 //dol_include_once('/projet/class/projet.class.php');
 $PHP_SELF=$_SERVER['PHP_SELF'];
@@ -67,14 +67,14 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 
 // Get parameter
 $id			= GETPOST('id','int');
-$ref                    = GETPOST('ref','alpha');
+$ref                  = GETPOST('ref','alpha');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
 $cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm');
 $tms= GETPOST('tms','alpha');
 //// Get parameters
-$sortfield = GETPOST('sortfield','alpha'); 
+$sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
 $removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
@@ -95,8 +95,8 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 
 
-$page = GETPOST('page','int'); 
-if ($page == -1) { $page = 0; }
+$page = GETPOST('page','int');
+if ($page == -1) { $page = 0;}
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -117,7 +117,7 @@ $pagenext = $page + 1;
 
 // Right Management
  /*
-if ($user->societe_id > 0 || 
+if ($user->societe_id > 0 ||
        (!$user->rights->timesheet->add && ($action=='add' || $action='create')) ||
        (!$user->rights->timesheet->view && ($action=='list' || $action='view')) ||
        (!$user->rights->timesheet->delete && ($action=='confirm_delete')) ||
@@ -131,7 +131,7 @@ if ($user->societe_id > 0 ||
 $object=new Attendanceevent($db,$user);
 if($id>0)
 {
-    $object->id=$id; 
+    $object->id=$id;
     $object->fetch($id);
     $ref=dol_sanitizeFileName($object->ref);
 }
@@ -146,7 +146,7 @@ $form= new Form($db);
          
 // Action to remove record
  switch($action){
-    case 'confirm_delete':	
+    case 'confirm_delete':
        $result=($confirm=='yes')?$object->delete($user):0;
        if ($result > 0)
        {
@@ -184,13 +184,12 @@ $form= new Form($db);
                 // Creation OK
             // remove the tms
                if($ajax==1){
-                    exit(); // don't remove the tms. don't continue with the 
+                    exit();// don't remove the tms. don't continue with the
                }
                    unset($_SESSION['Attendanceevent'][$tms]);
                
                setEventMessage('RecordSucessfullyCreated', 'mesgs');
                //AttendanceeventReloadPage($backtopage,$result,'');
-
         }else
         {
                 // Creation KO
@@ -199,8 +198,7 @@ $form= new Form($db);
                 $action='create';
         }
         break;
-    } 
-
+    }
     //Removing the tms array so the order can't be submitted two times
 if(isset( $_SESSION['Attendanceevent'][$tms]))
 {
@@ -303,17 +301,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
     if(!empty($sortfield))
         {$sql.= $db->order($sortfield,$sortorder);
-    }else{ 
+    }else{
        $sql.=' ORDER BY t.date_time_event DESC';
-
     }
     
     if (!empty($limit))
     {
-            $sql.= $db->plimit($limit+1, $offset); 
+            $sql.= $db->plimit($limit+1, $offset);
     }
-    
-
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
     $resql=$db->query($sql);
@@ -357,7 +352,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print "\n";
 	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userid','',$param,'',$sortfield,$sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('ThirdParty'),$PHP_SELF,'t.fk_third_party','',$param,'',$sortfield,$sortorder); // fix translation
+	print_liste_field_titre($langs->trans('ThirdParty'),$PHP_SELF,'t.fk_third_party','',$param,'',$sortfield,$sortorder);// fix translation
 	print "\n";
 	print_liste_field_titre($langs->trans('Task'),$PHP_SELF,'t.fk_task','',$param,'',$sortfield,$sortorder);
 	print "\n";
@@ -377,7 +372,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<input type="text" value="'.$object->event_location_ref.'" name="Eventlocationref">';
 	print '</td><td>';
         print $form->selectarray('Eventtype', $attendanceeventStatusArray, 2);
-        //print '<input type="text" value="1" name="Eventtype">'; // FIXME ARRAY SELECT
+        //print '<input type="text" value="1" name="Eventtype">';// FIXME ARRAY SELECT
 	print '</td><td>';
         print '<input type="text" value="'.$object->note.'" name="Note">';
 	print '</td><td>';
@@ -395,7 +390,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $addChoices_task=null;
         print select_sellist($sql_task,$html_task, $object->task,$addChoices_task );
         print '</td><td>';
-        $sql_project=array('table'=> 'projet','keyfield'=> 'rowid','fields'=>'ref,title', 'join' => '', 'where'=>'','tail'=>''); // fixme project open
+        $sql_project=array('table'=> 'projet','keyfield'=> 'rowid','fields'=>'ref,title', 'join' => '', 'where'=>'','tail'=>'');// fixme project open
         $html_project=array('name'=>'Project','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
         $addChoices_project=null;
         print select_sellist($sql_project,$html_project, $object->project,$addChoices_project );
@@ -433,7 +428,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         
         print '</tr>';
         //SEARCH FIELDS
-        print '<tr class="liste_titre">'; 
+        print '<tr class="liste_titre">';
         //Search field fordate_time_event
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="date_time_event_month" value="'.$ls_date_time_event_month.'">';
@@ -478,7 +473,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	//print '</td>';
 //Search field forstatus
 	print '<td class="liste_titre" colspan="1" >';
-	print '<input class="flat" size="16" type="text" name="ls_status" value="'.$ls_status.'">'; //FIXME Array
+	print '<input class="flat" size="16" type="text" name="ls_status" value="'.$ls_status.'">';//FIXME Array
 	print '</td>';
 
         
@@ -487,7 +482,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
         print '</td>';
-        print '</tr>'."\n"; 
+        print '</tr>'."\n";
         $i=0;
        // $basedurl=dirname($PHP_SELF).'/attendanceevent_card.php?action=view&id=';
         while ($i < $num && $i<$limit)
@@ -509,7 +504,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 print  $sUser->getNomUrl(1);
                 }
                 print "</td>";
-//		print "<td>".  print_sellist('third_party','rowid',$obj->fk_third_party,'rowid','description')."</td>";           
+//		print "<td>".  print_sellist('third_party','rowid',$obj->fk_third_party,'rowid','description')."</td>";
                 print "<td>";
                 if($obj->fk_third_party>0){
                 $sThirdParty = new Societe($db);
@@ -556,11 +551,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     // new button
    // print '<a href="attendanceevent_card.php?action=create" class="butAction" role="button">'.$langs->trans('New');
     print ' '.$langs->trans('Attendanceevent')."</a>\n";
-
-    
-
-
-
 
 // End of page
 llxFooter();

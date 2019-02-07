@@ -8,7 +8,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -48,12 +48,12 @@ class TimesheetUserTasks extends CommonObject
     public $date_creation='';
     public $date_modification='';
     public $user_creation;
-    public $user_modification;  
+    public $user_modification;
 
 //working variable
 
     public $duration;
-    public $ref; 
+    public $ref;
     public $user;
     public $holidays;
     public $taskTimesheet;
@@ -131,7 +131,7 @@ class TimesheetUserTasks extends CommonObject
 		$sql.=' '.(! isset($this->status)?DRAFT:$this->status).',';
 		$sql.=' NOW() ,';
                 $sql.=' NOW() ,';
-		$sql.=' \''.$userId.'\','; //fixme 3.5
+		$sql.=' \''.$userId.'\',';//fixme 3.5
 		$sql.=' '.(! isset($this->note)?'NULL':'\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'');
         
 		$sql.= ")";
@@ -140,7 +140,7 @@ class TimesheetUserTasks extends CommonObject
 
 	   	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
 
 		if (! $error)
         {
@@ -153,7 +153,7 @@ class TimesheetUserTasks extends CommonObject
 
 	            //// Call triggers
 	            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
 			}
         }
@@ -212,7 +212,7 @@ class TimesheetUserTasks extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
+                $this->id  = $obj->rowid;
                 $this->userId = $obj->fk_userid;
                 $this->date_start = $this->db->jdate($obj->date_start);
                 $this->date_end = $this->db->jdate($obj->date_end);
@@ -273,7 +273,7 @@ class TimesheetUserTasks extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
+                $this->id  = $obj->rowid;
                 
                 $this->userId = $obj->fk_userid;
                 $this->date_start = $this->db->jdate($obj->date_start);
@@ -354,7 +354,7 @@ class TimesheetUserTasks extends CommonObject
 
 		dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
 
 		if (! $error)
 		{
@@ -365,7 +365,7 @@ class TimesheetUserTasks extends CommonObject
 
 	            //// Call triggers
 	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
 			 }
 		}
@@ -410,7 +410,7 @@ class TimesheetUserTasks extends CommonObject
 
                 //// Call triggers
                 //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+                //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
                 //// End call triggers
                     }
             }
@@ -422,7 +422,7 @@ class TimesheetUserTasks extends CommonObject
 
             dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
             }
 
     // Commit or rollback
@@ -511,15 +511,15 @@ class TimesheetUserTasks extends CommonObject
     function fetchAll($startdate,$whitelistmode=false){
         global $conf;
         $this->whitelistmode=(is_numeric($whitelistmode)&& !empty($whitelistmode) )?$whitelistmode:$conf->global->TIMESHEET_WHITELIST_MODE;
-        $this->date_start=  getStartDate($startdate);     
+        $this->date_start=  getStartDate($startdate);
         $this->ref=$this->date_start.'_'.$this->userId;
         $this->date_end= getEndDate($this->date_start);
         $this->timestamp=  getToken();
         $this->fetchByWeek();
         $this->fetchTaskTimesheet();
-        //$ret+=$this->getTaskTimeIds(); 
+        //$ret+=$this->getTaskTimeIds();
         //FIXME module holiday should be activated ?
-        $this->fetchUserHoliday(); 
+        $this->fetchUserHoliday();
         $this->saveInSession();
     }        
     
@@ -589,7 +589,7 @@ function saveInSession(){
     $sql ='SELECT DISTINCT element_id as taskid,prj.fk_soc,tsk.fk_projet,';
     $sql.='tsk.fk_task_parent,tsk.rowid,app.rowid as appid,prj.ref as prjRef, tsk.ref as tskRef';
     $sql.=$sqlwhiteList;
-    $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec"; 
+    $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec";
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid=ec.fk_c_type_contact  AND ctc.active=\'1\') ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=ec.element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
@@ -600,10 +600,10 @@ function saveInSession(){
     }else{ // take only the ones with a task_time linked
         $sql.='JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
     }
-    $sql.=' ON tsk.rowid= app.fk_projet_task AND app.fk_userid=fk_socpeople'; 
+    $sql.=' ON tsk.rowid= app.fk_projet_task AND app.fk_userid=fk_socpeople';
 
-    $sql.=' AND app.date_start=\''.$this->db->idate($datestart).'\'';    
-    $sql.=' AND app.date_end=\''.$this->db->idate($datestop).'\'';    
+    $sql.=' AND app.date_start=\''.$this->db->idate($datestart).'\'';
+    $sql.=' AND app.date_end=\''.$this->db->idate($datestop).'\'';
 
     //end approval
     $sql.=" WHERE ec.fk_socpeople='".$userid."' AND ctc.element='project_task' ";
@@ -630,7 +630,7 @@ function saveInSession(){
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
                     $tasksList[$i] = NEW TimesheetTask($this->db,$obj->taskid);
-                    //$tasksList[$i]->id= $obj->taskid;                     
+                    //$tasksList[$i]->id= $obj->taskid;
                     if($obj->appid){
                         $tasksList[$i]->fetch($obj->appid);
                     }              
@@ -651,9 +651,9 @@ function saveInSession(){
              foreach($tasksList as $row)
             {
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
-                $row->getTaskInfo(); // get task info include in fetch    
-                $row->getActuals($datestart,$datestop,$userid); 
-                $this->taskTimesheet[]=  $row->serialize();                   
+                $row->getTaskInfo();// get task info include in fetch    
+                $row->getActuals($datestart,$datestop,$userid);
+                $this->taskTimesheet[]=  $row->serialize();
             }
             return $ret;
 
@@ -675,7 +675,7 @@ function saveInSession(){
      //FIXME, tta should be creted
     if($this->status==APPROVED)
         return -1;
-    dol_syslog('Entering in Timesheet::task_timesheet.php::updateActuals()');     
+    dol_syslog('Entering in Timesheet::task_timesheet.php::updateActuals()');
     $ret=0;
    // $tmpRet=0;
     //$_SESSION['task_timesheet'][$this->timestamp]['timeSpendCreated']=0;
@@ -687,7 +687,7 @@ function saveInSession(){
          */
         foreach ($this->taskTimesheet as $key  => $row) {
             $tasktime= new TimesheetTask($this->db);
-            $tasktime->unserialize($row);     
+            $tasktime->unserialize($row);
             $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id],$this->userId,$this->user, $this->timestamp, $this->status,$notes[$tasktime->appId]);
 
             $this->taskTimesheet[$key]=$tasktime->serialize();
@@ -729,7 +729,7 @@ function getUserName(){
             
             if ($obj)
             {
-                $this->userName=$obj->username;        
+                $this->userName=$obj->username;
             }else{
                 return -1;
             }
@@ -756,7 +756,7 @@ function updateStatus($user,$status=0){
     if($this->id<=0)return -1;
     
     if ($status!=''){
-        if($status<0 || $status> STATUSMAX)return -1; // status not valid
+        if($status<0 || $status> STATUSMAX)return -1;// status not valid
         $updatedStatus=  $status;
     }else if(!empty($this->status)){
          $updatedStatus=  $this->status;
@@ -785,7 +785,7 @@ function updateStatus($user,$status=0){
         $tta->unserialize($row);
         if($tta->appId>0){ // tta already created
             $tta->fetch($tta->appId);
-            $statusPriorityCur=  $tta->status; 
+            $statusPriorityCur=  $tta->status;
             $updatedStatus=($Priority[$updatedStatus]>$Priority[$statusPriorityCur])?$updatedStatus:$statusPriorityCur;
         }// no else as the tta should be created upon submission of the TS not status update
         
@@ -826,7 +826,7 @@ Public function setStatus($user,$status,$id=0){ //role ?
                     if(count($this->taskTimesheet)<1 ){
                         $this->fetch($id);
                     }
-                        $this->status=DRAFT; // SET THE STATUS TO DRAFT TO GET ALL
+                        $this->status=DRAFT;// SET THE STATUS TO DRAFT TO GET ALL
                         $this->fetchTaskTimesheet();
                         $this->status=$status;
                   
@@ -873,9 +873,9 @@ function getHTML($ajax=false,$Approval=false){
     $Form .=$this->getHTMLHolidayLines($ajax);
 
     if(!$Approval)$Form .=$this->getHTMLTotal();
-    //$Form .='<tbody style="overflow:auto;">'; //FIXME, max height should be defined
+    //$Form .='<tbody style="overflow:auto;">';//FIXME, max height should be defined
     $Form .=$this->getHTMLtaskLines($ajax);
-    //$Form .= '</tbody>'; // overflow div
+    //$Form .= '</tbody>';// overflow div
     $Form .=$this->getHTMLTotal();
     $Form .= '</table>';
     $Form .=$this->getHTMLNote($ajax);
@@ -899,15 +899,15 @@ function getHTMLHeader($ajax=false,$week=0){
      
     $weeklength=  getDayInterval($this->date_start, $this->date_end);
     $maxColSpan=$weeklength+count($this->headers);
-    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);  
+    $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
         $html = '<input type="hidden" name="timestamp" value="'.$this->timestamp."\"/>\n";
-    $html .= '<input type="hidden" name="startDate" value="'.$this->date_start.'" />';  
-     $html .= '<input type="hidden" name="tsUserId" value="'.$this->id.'" />'; 
+    $html .= '<input type="hidden" name="startDate" value="'.$this->date_start.'" />';
+     $html .= '<input type="hidden" name="tsUserId" value="'.$this->id.'" />';
     $html.="\n<table id=\"timesheetTable_{$this->id}\" class=\"noborder\" width=\"100%\">\n";
      ///Whitelist tab
         if($conf->global->TIMESHEET_TIME_SPAN=="month"){
         //remove Year
-        //$format=str_replace('Y','',str_replace('%Y','',str_replace('Y/','',str_replace('/%Y','',$format))));    
+        //$format=str_replace('Y','',str_replace('%Y','',str_replace('Y/','',str_replace('/%Y','',$format))));
         $format="%d";
         $html.='<tr class="liste_titre" id="">'."\n";
         $html.='<td colspan="'.$maxColSpan.'" align="center"><a >'.$langs->trans(date('F',$this->date_start)).' '.date('Y',$this->date_start).'</a></td>';
@@ -934,7 +934,7 @@ function getHTMLHeader($ajax=false,$week=0){
         $curDay=$this->date_start+ SECINDAY*$i+SECINDAY/4;
 //        $html.="\t".'<th width="60px"  >'.$langs->trans(date('l',$curDay)).'<br>'.dol_mktime($curDay)."</th>\n";
         $htmlDay=($conf->global->TIMESHEET_TIME_SPAN=="month")?substr($langs->trans(date('l',$curDay)),0,3):$langs->trans(date('l',$curDay));
-        $html.="\t".'<th class="days_'.$this->id.'" id="'.$this->id.'_'.$i.'" width="35px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay,$format)."</th>\n"; //FIXME : should remove Y/,/Y and Y from the regex
+        $html.="\t".'<th class="days_'.$this->id.'" id="'.$this->id.'_'.$i.'" width="35px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay,$format)."</th>\n";//FIXME : should remove Y/,/Y and Y from the regex
     }
     // $html.="</tr>\n";
      //$html.='<tr id="hiddenParam" style="display:none;">';
@@ -954,7 +954,7 @@ function getHTMLHeader($ajax=false,$week=0){
  function getHTMLFormHeader($ajax=false){
      global $langs;
     $html ='<form id="timesheetForm" name="timesheet" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method="POST"';
-    if($ajax)$html .=' onsubmit=" return submitTimesheet(0);"'; 
+    if($ajax)$html .=' onsubmit=" return submitTimesheet(0);"';
     $html .='>';
      return $html;
      
@@ -969,7 +969,7 @@ function getHTMLHeader($ajax=false,$week=0){
     $html .="<tr class='liste_titre'>\n";
     $html .='<th colspan="'.(count($this->headers)-1).'" align="right" > TOTAL </th>';
     $length=  getDayInterval($this->date_start,$this->date_end);
-    $html .="<th><div class=\"TotalUser_{$this->id}\">&nbsp;</div></th>\n"; 
+    $html .="<th><div class=\"TotalUser_{$this->id}\">&nbsp;</div></th>\n";
     for ($i=0;$i<$length;$i++)
     {
        $html .="<th><div class=\"TotalColumn_{$this->id} TotalColumn_{$this->id}_{$i}\">&nbsp;</div></th>\n";
@@ -1051,7 +1051,7 @@ function getHTMLHeader($ajax=false,$week=0){
         $nbline=count($this->taskTimesheet);
         if(!$ajax & is_array($this->taskTimesheet)){
             foreach ($this->taskTimesheet as $timesheet) {          
-                $row=new TimesheetTask($this->db);            
+                $row=new TimesheetTask($this->db);
                  $row->unserialize($timesheet);
                 //$row->db=$this->db;
                 if(in_array($this->status, array(REJECTED, DRAFT,PLANNED,CANCELLED ))){
@@ -1063,7 +1063,7 @@ function getHTMLHeader($ajax=false,$week=0){
                 }
                         
             
-                $Lines.=$row->getTimesheetLine( $i,$this->headers,$this->id,$openOveride); 
+                $Lines.=$row->getTimesheetLine( $i,$this->headers,$this->id,$openOveride);
                 if( $i%10==0 &&  $nbline-$i >5) $Lines.=$this->getHTMLTotal ();
 		$i++;
             }
@@ -1091,7 +1091,7 @@ function getHTMLHeader($ajax=false,$week=0){
         $html="";
     }
     
-    return $html;  
+    return $html;
  }
         /*
  * function to genegate the timesheet list
@@ -1126,10 +1126,10 @@ function getHTMLNavigation($optioncss, $ajax=false){
 	//if($ajax){
        //     $Nav.=  '<a id="navPrev" onClick="loadXMLTimesheet(\''.getStartDate($this->date_start,-1).'\',0);';
         //}else{
-            $Nav.=  '<a href="?dateStart='.getStartDate($this->date_start,-1).$tail;   
+            $Nav.=  '<a href="?dateStart='.getStartDate($this->date_start,-1).$tail;
         //}
         if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
-	$Nav.=  '">  &lt;&lt; '.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+	$Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	//if($ajax){
         //    $Nav.=  '<form name="goToDate" onsubmit="return toDateHandler();" action="?action=goToDate&wlm='.$this->whitelistmode.'" method="POST">'."\n\t\t\t";
         //}else{
@@ -1144,7 +1144,7 @@ function getHTMLNavigation($optioncss, $ajax=false){
             
         //}
         if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
-        $Nav.=  '">'.$langs->trans("Next").' &gt;&gt; </a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
+        $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
         return $Nav;
 }
 
@@ -1211,13 +1211,13 @@ function getHTMLNavigation($optioncss, $ajax=false){
 function getHTMLGetOtherUserTs($idsList,$selected,$admin){
     global $langs;
     $form=new Form($this->db);
-    $HTML='<form id="timesheetForm" name="OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method="POST">'; 
+    $HTML='<form id="timesheetForm" name="OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method="POST">';
 
     if(!$admin){
         //$HTML.='<select name="userid"> ';
         //$Names=getUsersName($idsList);
         //foreach ($Names as $subordiateId => $subordiateName){
-        //    $HTML.='<option  value="'.$subordiateId.'" '.(($selected==$subordiateId)?'selected':'').'> '.$subordiateName.'</option>';    
+        //    $HTML.='<option  value="'.$subordiateId.'" '.(($selected==$subordiateId)?'selected':'').'> '.$subordiateName.'</option>';
        // }
        // $HTML.='</select> ';
 //if(version_compare(DOL_VERSION,"5.0")>=0){
@@ -1286,7 +1286,7 @@ function GetTimeSheetXML()
     $xml.=getEventMessagesXML();
     //header
     $i=0;
-    $xmlheaders=''; 
+    $xmlheaders='';
     foreach($this->headers as $header){
         if ($header=='Project'){
             $link=' link="'.DOL_URL_ROOT.'/projet/card.php?id="';

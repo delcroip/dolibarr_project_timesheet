@@ -4,13 +4,13 @@
  * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -125,7 +125,7 @@ class AttendanceSystem extends CommonObject
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
 
         if (! $error)
         {
@@ -138,7 +138,7 @@ class AttendanceSystem extends CommonObject
 
             //// Call triggers
             //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+            //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
         }
@@ -197,7 +197,7 @@ class AttendanceSystem extends CommonObject
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-                $this->id    = $obj->rowid;
+                $this->id  = $obj->rowid;
                 
 		$this->label = $obj->label;
 		$this->ip = $obj->ip;
@@ -245,7 +245,7 @@ class AttendanceSystem extends CommonObject
 	$this->db->begin();
 	dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
             if (! $error)
             {
                 if (! $notrigger)
@@ -255,7 +255,7 @@ class AttendanceSystem extends CommonObject
 
             //// Call triggers
             //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+            //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
             }
@@ -293,7 +293,7 @@ class AttendanceSystem extends CommonObject
 	global $conf, $langs;
 
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;// Force disable tooltips
     	$result='';
         if(empty($ref) && $id==0){
             if(isset($this->id))  {
@@ -427,7 +427,7 @@ class AttendanceSystem extends CommonObject
         // want this action calls a trigger.
         //// Call triggers
         //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-        //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
         //// End call triggers
             }
         }
@@ -438,8 +438,8 @@ class AttendanceSystem extends CommonObject
 
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-        else if ($this->db->affected_rows($resql)==0){$error++;$this->errors[]="Item no found in database"; }
+        if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
+        else if ($this->db->affected_rows($resql)==0){$error++;$this->errors[]="Item no found in database";}
 
         }
 

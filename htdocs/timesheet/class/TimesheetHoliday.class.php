@@ -8,7 +8,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -84,7 +84,7 @@ class TimesheetHoliday extends Holiday
                           case 1: //Holiday start the morning and end the morning    +++-
                              $am=true;
                              $pm=$next;
-                             break;                    
+                             break;
                          case 2: //Holiday start the afternoon and end the morning  -++-
                              $am=$prev;
                              $pm=$next;
@@ -93,7 +93,7 @@ class TimesheetHoliday extends Holiday
                          default:
                              $am=true;
                              $pm=true;
-                             break;   
+                             break;
                      }  
                      // in case of 2 holiday present in the half day order 3,2,1,5,4
                      $oldSatus=$this->holidaylist[$day]['amStatus'];
@@ -112,7 +112,7 @@ class TimesheetHoliday extends Holiday
                          $this->holidaylist[$day]['pm']=true;
                          $this->holidaylist[$day]['pmId']=$record['rowid'];
                          $this->holidaylist[$day]['next']=$next;
-                         $this->holidaylist[$day]['pmStatus']=$record['statut'];                         
+                         $this->holidaylist[$day]['pmStatus']=$record['statut'];
                      }
                      
                      //$this->holidaylist[$dayOfWeek]=array('idam'=>$record['rowid'],'idpm'=>$record['rowid'],'prev'=>$prev,'am'=>$am,'pm'=>$pm,'next'=>$next,'status'=>$record['statut']);
@@ -145,7 +145,7 @@ class TimesheetHoliday extends Holiday
         $timetype=$conf->global->TIMESHEET_TIME_TYPE;
         $dayshours=$conf->global->TIMESHEET_DAY_DURATION;
         if(!is_array($this->holidaylist))
-           return '<tr>ERROR: wrong parameters for getFormLine'.empty($startDate).'|'.empty($stopDate).'|'.empty($headers).'</tr>';       
+           return '<tr>ERROR: wrong parameters for getFormLine'.empty($startDate).'|'.empty($stopDate).'|'.empty($headers).'</tr>';
         if(!$this->holidayPresent) // don't show the holiday line if nothing present
            return '';
         $html ="<tr id='holiday'>\n";
@@ -168,7 +168,7 @@ class TimesheetHoliday extends Holiday
                 $html .='<li id="holiday['.$i.'][0]" class="listItemHoliday" ><a ';
                 if($am){
                     $html .='href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
-                    $amColor=($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':''); 
+                    $amColor=($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
                     $amClass= ($holiday['prev'])?'':' noPrevHoliday';
                     $amClass.= ($pm && $pmId==$amId )?'':' noNextHoliday';
                     $html .=' class="holiday'.$amClass.'" style="'.$amColor.'">&nbsp;</a></li>';
@@ -178,7 +178,7 @@ class TimesheetHoliday extends Holiday
                 $html .='<li id="holiday['.$i.'][1]" class="listItemHoliday" ><a ';
                 if($pm){
                     $html .='href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
-                    $pmColor=($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':''); 
+                    $pmColor=($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
                     $pmClass= ($am && $pmId==$amId)?'':' noPrevHoliday';
                     $pmClass.= ($holiday['next'])?'':' noNextHoliday';
                     $html .=' class="holiday'.$pmClass.'" style="'.$pmColor.'">&nbsp;</a></li>';

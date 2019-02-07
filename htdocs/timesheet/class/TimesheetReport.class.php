@@ -8,7 +8,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -56,7 +56,7 @@ class TimesheetReport
         $first=false;
         $this->invoiceableOnly=$invoiceableOnly;
         $this->taskarray=$taskarray;
-            $this->projectid =$projectid; // coul
+            $this->projectid =$projectid;// coul
             if($projectid){
                 $this->project=new Project($this->db);
                 $this->project->fetch($projectid);
@@ -66,7 +66,7 @@ class TimesheetReport
                 $this->thirdparty->fetch($this->project->socid);
                 
             }
-            $this->userid =$userid; // coul
+            $this->userid =$userid;// coul
             if($userid){
                 $this->user=new User($this->db);
                 $this->user->fetch($userid);
@@ -77,7 +77,7 @@ class TimesheetReport
             $this->stopDate=$stopDate;
             $this->mode=$mode;
 
-             $this->name =($name!="")?$name:$this->ref; // coul
+             $this->name =($name!="")?$name:$this->ref;// coul
               $this->ref.='_'.str_replace('/','-',dol_print_date($startDate,'day')).'_'.str_replace('/','-',dol_print_date($stopDate,'day'));
              //$this->ref.='_'.$startDate.'_'.$stopDate;
         switch ($mode) {
@@ -170,7 +170,7 @@ class TimesheetReport
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=fk_task ';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object=tsk.rowid ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
-        $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';   
+        $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';
         $sql.= ' WHERE ';
         if(!empty($this->userid)){
             $sql.=' ptt.fk_user=\''.$this->userid.'\' ';
@@ -358,7 +358,7 @@ class TimesheetReport
                     //addlvl 2 total to lvl1
                     $lvl1Total+=$lvl2Total;
                     //empty lvl 3 total tyo start anew
-                    $lvl2Total=0;   
+                    $lvl2Total=0;
                     // save the new lvl1 ref
                     $Curlvl1=$key;
                 }
@@ -369,7 +369,7 @@ class TimesheetReport
                 $lvl3HTML.='<tr class="oddeven" align="left"><th></th><th></th><th>'
                     .$resArray[$key][$this->lvl3Title].'</th><th>';
                 $lvl3HTML.=formatTime($item['duration'],0).'</th><th>';
-                $lvl3HTML.=formatTime($item['duration'],$hoursperdays).'</th><th>';  
+                $lvl3HTML.=formatTime($item['duration'],$hoursperdays).'</th><th>';
                 $lvl3HTML.=$resArray[$key]['note'];
                 $lvl3HTML.='</th></tr>';
                /*

@@ -4,13 +4,13 @@
  * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
  *  * Copyright (C) ---Put here your own copyright and developer email---
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -27,7 +27,7 @@
 
 function AttendanceSystemReloadPage($backtopage,$id,$ref){
         if (!empty($backtopage)){
-            header("Location: ".$backtopage);            
+            header("Location: ".$backtopage);
         }else if (!empty($ref) ){
             header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?ref='.$ref);
         }else if ($id>0)
@@ -91,10 +91,10 @@ function AttendanceSystemPrepareHead($object)
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
 	//	'entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__'
-	//); // to add new tab
+	//);// to add new tab
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__'
-	//); // to remove a tab
+	//);// to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'AttendanceSystem@timesheet');
 
 	return $head;

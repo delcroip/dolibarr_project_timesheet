@@ -3,13 +3,13 @@
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) Patrick Delcroix <patrick@pmpd.eu>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -41,7 +41,7 @@ class TimesheetFavourite extends CommonObject
 	public $element='timesheetFavourite';			//!< Id that identify managed objects
 	public $table_element='timesheet_whitelist';		//!< Name of table without prefix where object is stored
 
-        public $id;   
+        public $id;
 	public $user;
 	public $project;
 	public $project_task;
@@ -91,25 +91,25 @@ class TimesheetFavourite extends CommonObject
         $sql.= 'subtask,';
         $sql.= 'date_start,';
         $sql.= 'date_end';		
-        $sql.= ") VALUES (";      
+        $sql.= ") VALUES (";
         $sql.=' \''.$this->user.'\',';
         $sql.=' \''.$this->project.'\',';
         $sql.=' '.(empty($this->project_task)?'NULL':'\''.$this->project_task.'\'').',';
         $sql.=' '.(($this->subtask) ? 'TRUE':'FALSE').',';
         $sql.=' '.(empty($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'\''.$this->db->idate($this->date_start).'\'').',';
-        $sql.=' '.(empty($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'\''.$this->db->idate($this->date_end).'\'').'';    
+        $sql.=' '.(empty($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'\''.$this->db->idate($this->date_end).'\'').'';
         $sql.= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
             if (! $notrigger)
             {
-   //// Call triggers :$result=$this->call_trigger('MYOBJECT_CREATE',$user);if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+   //// Call triggers :$result=$this->call_trigger('MYOBJECT_CREATE',$user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             }
         }
         // Commit or rollback
@@ -172,7 +172,7 @@ class TimesheetFavourite extends CommonObject
                 
                 $obj = $this->db->fetch_object($resql);
                 $List[$i]=new TimesheetFavourite($this->db);
-                $List[$i]->id    = $obj->rowid;          
+                $List[$i]->id  = $obj->rowid;
                 $List[$i]->user = $obj->fk_user;
                 $List[$i]->project = $obj->fk_project;
                 $List[$i]->project_task = $obj->fk_project_task;
@@ -213,8 +213,8 @@ class TimesheetFavourite extends CommonObject
 	$sql.= " t.rowid";		
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
          if($this->project_task && $this->subtask){
-             $sql.= '  WHERE  (t.rowid=\''.$this->project_task.'\'';  
-             $sql.= '  OR  t.fk_task_parent=\''.$this->project_task.'\')';               
+             $sql.= '  WHERE  (t.rowid=\''.$this->project_task.'\'';
+             $sql.= '  OR  t.fk_task_parent=\''.$this->project_task.'\')';
          }else if($this->project_task ){
             $sql.= '  WHERE t.rowid=\''.$this->project_task.'\'';
          }else{
@@ -232,7 +232,7 @@ class TimesheetFavourite extends CommonObject
             while($i<$num)
             {
                 $obj = $this->db->fetch_object($resql);
-                $Listtask[$obj->rowid]    = $this->id;
+                $Listtask[$obj->rowid]  = $this->id;
                 $i++;
             }
             $this->db->free($resql);
@@ -275,13 +275,13 @@ class TimesheetFavourite extends CommonObject
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-                $this->id    = $obj->rowid;
+                $this->id  = $obj->rowid;
                 $this->user = $obj->fk_user;
                 $this->project = $obj->fk_project;
                 $this->project_task = $obj->fk_project_task;
                 $this->subtask = $obj->subtask;
                 $this->date_start = $this->db->jdate($obj->date_start);
-                $this->date_end = $this->db->jdate($obj->date_end); 
+                $this->date_end = $this->db->jdate($obj->date_end);
             }
             $this->db->free($resql);
             return 1;
@@ -314,7 +314,7 @@ class TimesheetFavourite extends CommonObject
         // Check parameters
         // Put here code to add a control on parameters values
     // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";      
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'\''.$this->user.'\'').',';
         $sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'\''.$this->project.'\'').',';
         $sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'\''.$this->project_task.'\'').',';
@@ -325,13 +325,13 @@ class TimesheetFavourite extends CommonObject
         $this->db->begin();
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
 
             if (! $error)
             {
                     if (! $notrigger)
                     {
-   //// Call triggers :$result=$this->call_trigger('MYOBJECT_UPDATE',$user);if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+   //// Call triggers :$result=$this->call_trigger('MYOBJECT_UPDATE',$user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             
                      }
             }
@@ -415,7 +415,7 @@ class TimesheetFavourite extends CommonObject
             {
                     if (! $notrigger)
                     {
-                //// Call triggers :$result=$this->call_trigger('MYOBJECT_DELETE',$user);if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+                //// Call triggers :$result=$this->call_trigger('MYOBJECT_DELETE',$user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
                     }
             }
 
@@ -426,7 +426,7 @@ class TimesheetFavourite extends CommonObject
 
                 dol_syslog(__METHOD__);
                 $resql = $this->db->query($sql);
-                if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+                if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
             }
     // Commit or rollback
             if ($error)

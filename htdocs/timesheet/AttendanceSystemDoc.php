@@ -3,13 +3,13 @@
  * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
  *  * Copyright (C) ---Put here your own copyright and developer email---
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -45,8 +45,8 @@ $ref = GETPOST('ref', 'alpha');
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'timesheet', $id);
 
-$page = GETPOST('page','int'); 
-if ($page == -1) { $page = 0; }
+$page = GETPOST('page','int');
+if ($page == -1) { $page = 0;}
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -56,12 +56,12 @@ $pagenext = $page + 1;
 $object=new AttendanceSystem_class($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->timesheet->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('AttendanceSystemdocument'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('AttendanceSystemdocument'));// Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('AttendanceSystem');
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';// Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 //if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->id);
 if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->ref);

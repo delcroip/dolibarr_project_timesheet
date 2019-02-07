@@ -3,13 +3,13 @@
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) Patrick Delcroix <patrick@pmpd.eu>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -39,7 +39,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
  if(!$user->rights->timesheet->approval->admin){
-        $accessforbidden = accessforbidden("you need to have the approver admin rights");           
+        $accessforbidden = accessforbidden("you need to have the approver admin rights");
 }   
 
 require_once 'core/lib/generic.lib.php';
@@ -62,14 +62,14 @@ $langs->load("timesheet@timesheet");
                 
 // Get parameter
 $id			= GETPOST('id','int');
-$ref        = GETPOST('ref','alpha');
+$ref      = GETPOST('ref','alpha');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm','alpha');
 $tms= GETPOST('tms','alpha');
 //// Get parameters
-$sortfield = GETPOST('sortfield','alpha'); 
+$sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
 $removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
@@ -91,12 +91,12 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
         $ls_task= GETPOST('ls_task','int');
 	if($ls_task==-1)$ls_task='';
         $ls_note= GETPOST('ls_note','alpha');
-	if($ls_note==-1)$ls_note='';  
+	if($ls_note==-1)$ls_note='';
 }
 
 
-$page = GETPOST('page','int'); //FIXME, need to use for all the list
-if ($page == -1) { $page = 0; }
+$page = GETPOST('page','int');//FIXME, need to use for all the list
+if ($page == -1) { $page = 0;}
 $limit=$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -140,7 +140,7 @@ if($id>0)
 }
 if(!empty($ref))
 {
-    $object->ref=$ref; 
+    $object->ref=$ref;
 }
 
 
@@ -196,7 +196,7 @@ if ($cancel){
                                 // Creation OK
                                 unset($_SESSION['Timesheetuser_'.$tms]);
                                     setEventMessage('RecordUpdated','mesgs');
-                                   // reloadpage($backtopage,$object->id,$ref); 
+                                   // reloadpage($backtopage,$object->id,$ref);
                                     $action='view';
                             }
                             else
@@ -219,7 +219,7 @@ if ($cancel){
                                     //$result=$object->fetch($id,$ref);
                                     
                                     if($result > 0)$result=$object->fetchTaskTimesheet();
-                                    if($result > 0)$result=$object->fetchUserHoliday(); 
+                                    if($result > 0)$result=$object->fetchUserHoliday();
                                     if ($result < 0){ 
                                         dol_print_error($db);
                                     }else { // fill the id & ref
@@ -348,7 +348,7 @@ switch ($action) {
         // tabs
         if($edit==0 && $new==0){ //show tabs
             $head=Timesheetuser_prepare_head($object);
-            dol_fiche_head($head,'card',$langs->trans('Timesheetuser'),0,'timesheet@timesheet');            
+            dol_fiche_head($head,'card',$langs->trans('Timesheetuser'),0,'timesheet@timesheet');
         }else{
             print_fiche_titre($langs->trans('Timesheetuser'));
         }
@@ -478,11 +478,11 @@ switch ($action) {
             }else{
                 print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="butAction">';
             }
-            print ' &nbsp; <input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
+            print ' &nbsp;<input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
             print '</form>';
         }else{
             $parameters=array();
-            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);// Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
             if (empty($reshook))
@@ -512,7 +512,7 @@ switch ($action) {
         case 'viewinfo':
         print_fiche_titre($langs->trans('Timesheetuser'));
         $head=Timesheetuser_prepare_head($object);
-        dol_fiche_head($head,'info',$langs->trans("Timesheetuser"),0,'timesheet@timesheet');            
+        dol_fiche_head($head,'info',$langs->trans("Timesheetuser"),0,'timesheet@timesheet');
         print '<table width="100%"><tr><td>';
         dol_print_object_info($object);
         print '</td></tr></table>';
@@ -526,7 +526,7 @@ switch ($action) {
 	$object->fetch_thirdparty();
 
         $head=Timesheetuser_prepare_head($object);
-        dol_fiche_head($head,'documents',$langs->trans("Timesheetuser"),0,'timesheet@timesheet');            
+        dol_fiche_head($head,'documents',$langs->trans("Timesheetuser"),0,'timesheet@timesheet');
         
         $filearray=dol_dir_list($upload_dir,'files',0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
@@ -618,7 +618,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     
     if (!empty($limit))
     {
-            $sql.= $db->plimit($limit+1, $offset); 
+            $sql.= $db->plimit($limit+1, $offset);
     }
     
 
@@ -656,7 +656,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print '<td class="liste_titre" colspan="1" >';
 		print '</tr>';
 		//SEARCH FIELDS
-		print '<tr class="liste_titre">'; 
+		print '<tr class="liste_titre">';
 		//Search field foruserId
 		print '<td class="liste_titre" colspan="1" >';
        	//select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl=''){
@@ -691,7 +691,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 		print '</td>';
-		print '</tr>'."\n"; 
+		print '</tr>'."\n";
 		$i=0;
 		$basedurltab=explode("?", $PHP_SELF);
 		$basedurl=$basedurltab[0].'?action=view&id=';
@@ -736,7 +736,7 @@ dol_fiche_end();
 
 function reloadpage($backtopage,$id,$ref){
         if (!empty($backtopage)){
-            header("Location: ".$backtopage);            
+            header("Location: ".$backtopage);
         //}else if (!empty($ref) ){
         //    header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$ref);
         }else if ($id>0)
@@ -761,8 +761,8 @@ function Timesheetuser_prepare_head($object)
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__');to add new tab
+    // $this->tabs = array('entity:-tabname);												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'timesheet');
     complete_head_from_modules($conf,$langs,$object,$head,$h,'timesheet','remove');
     $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewdoc&id='.$object->id;
