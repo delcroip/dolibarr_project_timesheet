@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -282,10 +282,10 @@ class AttendanceSystem extends CommonObject
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
         if($id)
 {
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'id='.$id.'&action = view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'id='.$id.'&action=view"'.$linkclose.'>';
         }elseif(!empty($ref))
 {
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?ref='.$ref.'&action = view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
             $lien = "";
         }

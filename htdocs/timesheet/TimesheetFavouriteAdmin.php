@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -81,7 +81,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 $page = GETPOST('page', 'int');//FIXME, need to use for all the list
 if ($page == -1)
-{ 
+{
     $page = 0;
 }
 $limit = $conf->liste_limit;
@@ -177,79 +177,79 @@ if ($cancel)
                     case 'viewinfo':
                     case 'viewdoc':
                     case 'edit':
-                            // fetch the object data if possible
-                            if ($id > 0 || !empty($ref) )
+                        // fetch the object data if possible
+                        if ($id > 0 || !empty($ref) )
+                        {
+                            $result = $object->fetch($id, $ref);
+                            // only admin can check the whitelist of other
+                            if(!$user->admin && $user->id != $object->user)
                             {
-                                    $result = $object->fetch($id, $ref);
-                                    // only admin can check the whitelist of other
-                                    if(!$user->admin && $user->id != $object->user)
-{
-                                        setEventMessage( $langs->trans('notYourWhitelist').' id:'.$id, 'errors');
-                                        reloadpage();
-                                    }
-                                    if ($result < 0)
-{
-                                        dol_print_error($db);
-                                    }else 
-                                    { 
-                                        // fill the id & ref
-                                        if(isset($object->id))$id = $object->id;
-                                        if(isset($object->rowid))$id = $object->rowid;
-                                        if(isset($object->ref))$ref = $object->ref;
-                                    }
+                                setEventMessage( $langs->trans('notYourWhitelist').' id:'.$id, 'errors');
+                                reloadpage();
+                            }
+                            if ($result < 0)
+                            {
+                                dol_print_error($db);
                             }else
                             {
-                                    setEventMessage( $langs->trans('noIdPresent').' id:'.$id, 'errors');
-                                    reloadpage(null, $id, $ref);
+                                // fill the id & ref
+                                if(isset($object->id))$id = $object->id;
+                                if(isset($object->rowid))$id = $object->rowid;
+                                if(isset($object->ref))$ref = $object->ref;
                             }
-                            break;
+                        }else
+                        {
+                                setEventMessage( $langs->trans('noIdPresent').' id:'.$id, 'errors');
+                                reloadpage(null, $id, $ref);
+                        }
+                        break;
                     case 'add':
-                            $result = $object->create();
-                            if ($result > 0)
-                            {
-                                    // Creation OK
-                                // remove the tms
-                                   unset($_SESSION['timesheetFavourite'.$tms]);
-                                   if ($ajax == 1)
-{
-                                           echo json_encode(array('id'=> $result));
-                                           ob_end_flush();
-exit();
-                                   }else{
-                                       setEventMessage('RecordSucessfullyCreated', 'mesgs');
-                                       reloadpage($backtopage, $result, $ref);
-                                   }
-                            }else
-                            {
-                                    // Creation KO
-                                    if (! empty($object->errors)) setEventMessage( $object->errors, 'errors');
-                                    else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
-                                    $action = 'create';
-                            }
-                            break;
+                        $result = $object->create();
+                        if ($result > 0)
+                        {
+                                // Creation OK
+                            // remove the tms
+                               unset($_SESSION['timesheetFavourite'.$tms]);
+                               if ($ajax == 1)
+                               {
+                                       echo json_encode(array('id'=> $result));
+                                       ob_end_flush();
+                                        exit();
+                               }else{
+                                   setEventMessage('RecordSucessfullyCreated', 'mesgs');
+                                   reloadpage($backtopage, $result, $ref);
+                               }
+                        }else
+                        {
+                                // Creation KO
+                                if (! empty($object->errors)) setEventMessage( $object->errors, 'errors');
+                                else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
+                                $action = 'create';
+                        }
+                        break;
                      case 'confirm_delete':
-                            $result = ($confirm == 'yes')?$object->delete():0;
-                            if ($result > 0)
-                            {
-                                    // Delete OK
-                                if ($ajax == 1)
+                        $result = ($confirm == 'yes')?$object->delete():0;
+                        if ($result > 0)
+                        {
+                                // Delete OK
+                            if ($ajax == 1)
 {
-                                           echo json_encode(array('id'=> '0'));
-                                           ob_end_flush();
-exit();
-                                }else{
-                                    setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
-                                    reloadpage();
-                                }
+                                echo json_encode(array('id'=> '0'));
+                                ob_end_flush();
+                                exit();
+                            }else{
+                                setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
+                                reloadpage();
                             }
-                            else
-                            {
-                                    // Delete NOK
-                                    if (! empty($object->errors)) setEventMessage($object->errors, 'errors');
-                                    else setEventMessage('RecordNotDeleted', 'errors');
-                                    reloadpage(null, $id, $ref);
-                            }
-                         break;
+                        }
+                        else
+                        {
+                                // Delete NOK
+                                if (! empty($object->errors)) setEventMessage($object->errors, 'errors');
+                                else setEventMessage('RecordNotDeleted', 'errors');
+                                reloadpage(null, $id, $ref);
+                        }
+                     break;
                     case 'list':
                     case 'create':
                     default:
@@ -297,17 +297,17 @@ for(index = 0;index < param_array.length;++index)
 {
     x = param_array[index].split(\' = \');
     if(x[0] == "action")
-{
-        action = x[1];
+    {
+        action=x[1];
     }
     if(x[0] == "id")
-{
-        id = "&id = "+x[1];
+    {
+        id = "&id="+x[1];
     }
 }
 var pjt = document.getElementById("Project").value;
 var usr = document.getElementById("User").value;
-self.location = "'.$PHP_SELF.'?&action = " + action + id +"&tms='.$tms.'&User = " +usr+ "&Project = " + pjt ;
+self.location = "'.$PHP_SELF.'?&action=" + action + id +"&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
 }
 </script>';
 // Example : Adding jquery code
@@ -336,7 +336,7 @@ switch ($action)
    case 'delete';
         if( $action == 'delete' && ($id>0 || $ref!=""))
 {
-         $ret = $form->form_confirm($PHP_SELF.'?action = confirm_delete&id='.$id, $langs->trans('DeleteTimesheetwhitelist'), $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteTimesheetwhitelist'), $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -347,7 +347,7 @@ switch ($action)
  //
         // tabs
         if($edit == 0 && $new == 0)
-        { 
+        {
             //show tabs
             $head = timesheetFavourite_prepare_head($object);
             dol_fiche_head($head, 'card', $langs->trans('Timesheetwhitelist'), 0, 'timesheet@timesheet');
@@ -359,17 +359,17 @@ switch ($action)
 {
             if($new == 1)
 {
-                print '<form method = "POST" action = "'.$PHP_SELF.'?action = add">';
+                print '<form method = "POST" action = "'.$PHP_SELF.'?action=add">';
             }else{
-                print '<form method = "POST" action = "'.$PHP_SELF.'?action = update&id='.$id.'">';
+                print '<form method = "POST" action = "'.$PHP_SELF.'?action=update&id='.$id.'">';
             }
             print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
-        }else 
+        }else
         {
             // show the nav bar
             $basedurltab = explode("?", $PHP_SELF);
-            $basedurl = $basedurltab[0].'?action = list';
+            $basedurl = $basedurltab[0].'?action=list';
             $linkback = '<a href = "'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
             if(!isset($object->ref))//save ref if any
                 $object->ref = $object->id;
@@ -411,7 +411,7 @@ switch ($action)
             $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);
                 //print select_generic('projet', 'rowid', 'Project', 'ref', 'title', $object->project, ' - ', $formUserWhere, '', NULL, $formUserJoin);
-	
+
                 if($ajaxNbChar>=0) print "\n<script type = 'text/javascript'>\n$('input#Project').change(function()
 {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
   //FIXME best to feed additionnal param to the search generic
@@ -513,11 +513,11 @@ switch ($action)
                 // Boutons d'actions
                 //if($user->rights->timesheetFavourite->edit)
                 //{
-                    print '<a href = "'.$PHP_SELF.'?id='.$id.'&action = edit" class = "butAction">'.$langs->trans('Update').'</a>';
+                    print '<a href = "'.$PHP_SELF.'?id='.$id.'&action=edit" class = "butAction">'.$langs->trans('Update').'</a>';
                 //}
                 //if ($user->rights->timesheetFavourite->delete)
                 //{
-                    print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action = delete">'.$langs->trans('Delete').'</a>';
+                    print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action=delete">'.$langs->trans('Delete').'</a>';
                 //}
                 //else
                 //{
@@ -532,7 +532,7 @@ switch ($action)
     case 'delete':
         if( ($id>0 || $ref!=''))
 {
-         $ret = $form->form_confirm($PHP_SELF.'?action = confirm_delete&id='.$id, $langs->trans('DeleteTimesheetwhitelist'), $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm('?action=confirm_delete&id='.$id, $langs->trans('DeleteTimesheetwhitelist'), $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background
         }
@@ -601,7 +601,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     {
         $sql.= $db->order($sortfield, $sortorder);
     }else
-    { 
+    {
         $sortorder = 'ASC';
     }
     if (!empty($limit))
@@ -691,14 +691,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '</tr>'."\n";
         $i = 0;
         $basedurltab = explode("?", $PHP_SELF);
-        $basedurl = $basedurltab[0].'?action = view&id = ';
+        $basedurl = $basedurltab[0].'?action=view&id=';
         while ($i < $num && $i<$limit)
         {
             $obj = $db->fetch_object($resql);
             if ($obj)
             {
                 // You can use here results
-                		print "<tr class = \"oddeven\"  onclick = \"location.href = '";
+                		print "<tr class = \"oddeven\"  onclick = \"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
 		if($user->admin)print "<td>".print_generic('user', 'rowid', $obj->fk_user, 'lastname', 'firstname', ' ')."</td>";
 		print "<td>".print_generic('projet', 'rowid', $obj->fk_project, 'ref', 'title', ' - ')."</td>";
@@ -706,7 +706,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print "<td>".$obj->subtask."</td>";
 		print "<td>".dol_print_date($obj->date_start, 'day')."</td>";
 		print "<td>".dol_print_date($obj->date_end, 'day')."</td>";
-                print '<td><a href = "'.$PHP_SELF.'?action = delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+                print '<td><a href = "?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 		print "</tr>";
             }
             $i++;
@@ -720,7 +720,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '</table>'."\n";
     print '</from>'."\n";
     // new button
-        print '<a href="?action = create" class = "butAction" role = "button">'.$langs->trans('New');
+        print '<a href="?action=create" class = "butAction" role = "button">'.$langs->trans('New');
     print ' '.$langs->trans('Timesheetwhitelist')."</a>\n";
     }
         break;
@@ -740,12 +740,12 @@ function reloadpage($backtopage, $id, $ref)
             header("Location: ".$backtopage);
         }elseif(!empty($ref) )
         {
-            header("Location: ".$_SERVER["PHP_SELF"].'?action = view&ref='.$id);
+            header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$id);
         }elseif($id>0)
         {
-            header("Location: ".$_SERVER["PHP_SELF"].'?action = view&id='.$id);
+            header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);
         }else{
-            header("Location: ".$_SERVER["PHP_SELF"].'?action = list');
+            header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
         }
 ob_end_flush();
 exit();
@@ -763,22 +763,22 @@ function timesheetFavourite_prepare_head($object)
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action = view&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=view&id='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id = __ID__');to add new tab
+    // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__');to add new tab
     // $this->tabs = array('entity:-tabname);												to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet');
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet', 'remove');
     /*
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action = viewdoc&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewdoc&id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
     $head[$h][2] = 'documents';
     $h++;
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action = viewinfo&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewinfo&id='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;

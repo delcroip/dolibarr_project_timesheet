@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -150,7 +150,7 @@ class TimesheetTask extends Task
         $sql.= 'fk_projet_task, ';
         $sql.= 'fk_project_task_timesheet, ';
         $sql.= 'note';
-	
+
         $sql.= ") VALUES (";
         $sql .= ' '.(empty($this->userId)?'NULL':'\''.$this->userId.'\'').', ';
         $sql .= ' '.(empty($this->date_start_approval) || dol_strlen($this->date_start_approval) == 0?'NULL':'\''.$this->db->idate($this->date_start_approval).'\'').', ';
@@ -221,7 +221,7 @@ class TimesheetTask extends Task
         global $langs;
         $sql = "SELECT";
         $sql.= " t.rowid, ";
-	
+
         $sql .= ' t.fk_userid, ';
         $sql .= ' t.date_start, ';
         $sql .= ' t.date_end, ';
@@ -241,7 +241,7 @@ class TimesheetTask extends Task
         $sql .= ' t.fk_projet_task, ';
         $sql .= ' t.fk_project_task_timesheet, ';
         $sql .= ' t.note';
-	
+
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.rowid = ".$id;
     	dol_syslog(__METHOD__);
@@ -313,7 +313,7 @@ class TimesheetTask extends Task
         $sql .= ' t.fk_projet_task, ';
         $sql .= ' t.fk_project_task_timesheet, ';
         $sql .= ' t.note';
-	
+
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.date_start = '".$this->db->idate($this->date_start_approval)."'";
         $sql.= " AND t.fk_userid = '".$this->userId."'";
@@ -835,7 +835,7 @@ class TimesheetTask extends Task
                 $html .= ' name = "task['.$this->userId.']['.$this->id.']['.$dayCur.'][0]" ';
                 $html .= ' value = "'.((($hidezeros == 1) && ($dayWorkLoadSec == 0))?"":$dayWorkLoad);
                 $html .= '" maxlength = "5" size = "2" style = "'.$bkcolor.'" ';
-                $html .= 'onkeypress = "return regexEvent(this, event, \'timeChar\')" ';
+                $html .= 'onkeypress = "return regexEvent(this,event,\'timeChar\')" ';
                 $html .= 'onblur = "validateTime(this, \''.$this->userId.'_'.$dayCur.'\')" /></div>';
                  //end note code
                 $html .= "</td>\n";
@@ -872,17 +872,17 @@ class TimesheetTask extends Task
                 case 'Project':
                     if(version_compare(DOL_VERSION, "3.7")>=0)
                     {
-                        $html .= '<a href = "'.DOL_URL_ROOT.'/projet/card.php?mainmenu = project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
+                        $html .= '<a href = "'.DOL_URL_ROOT.'/projet/card.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
                     } else {
-                        $html .= '<a href = "'.DOL_URL_ROOT.'/projet/fiche.php?mainmenu = project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
+                        $html .= '<a href = "'.DOL_URL_ROOT.'/projet/fiche.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
                     }
                     break;
                 case 'TaskParent':
-                    $html .= '<a href = "'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu = project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
+                    $html .= '<a href = "'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
                     break;
                 case 'Tasks':
-                    if( $conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'.$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick = favOnOff(event, '.$this->fk_project.', '.$this->id.') style = "cursor:pointer;">  ';
-                    $html .= '<a href = "'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu = project&id='.$this->id.'&withproject='.$this->fk_project.'"> '.$this->description.'</a>';
+                    if( $conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'.$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick = favOnOff(event,'.$this->fk_project.','.$this->id.') style = "cursor:pointer;">  ';
+                    $html .= '<a href = "'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'"> '.$this->description.'</a>';
                     break;
                 case 'DateStart':
                     $html .= $this->date_start?dol_print_date($this->date_start, 'day'):'';
@@ -891,7 +891,7 @@ class TimesheetTask extends Task
                     $html .= $this->date_end?dol_print_date($this->date_end, 'day'):'';
                     break;
                 case 'Company':
-                    $html .= '<a href = "'.DOL_URL_ROOT.'/societe/soc.php?mainmenu = companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
+                    $html .= '<a href = "'.DOL_URL_ROOT.'/societe/soc.php?mainmenu=companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
                     break;
                 case 'Progress':
                     $html .= $this->parseTaskTime($this->duration_effective).'/';
@@ -964,7 +964,7 @@ class TimesheetTask extends Task
     {
         $html = '<td>';
         $html .= '<img height = "32px" class = "playStopButton" id = "playStop_'.$this->id.'" src = "img/'.(($start == false)?'play-arrow':'stop-square');
-        $html .= '.png" onClick = startStop(event, '.$this->userId.', '.$this->id.') style = "cursor:pointer;">  ';
+        $html .= '.png" onClick = startStop(event,'.$this->userId.','.$this->id.') style = "cursor:pointer;">  ';
         //if($start>0)$html.= dol_print_date($start, 'hour');
         $html .= '</td>';
         return $html;
@@ -1381,9 +1381,9 @@ class TimesheetTask extends Task
 {
                            require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
                            $mailfile = new CMailFile(
-	                        $subject, 
-	                        $sendto, 
-	                        $replyto, 
+	                        $subject,
+	                        $sendto,
+	                        $replyto,
 	                        $message
 	                    );
                            $mailfile->sendfile();

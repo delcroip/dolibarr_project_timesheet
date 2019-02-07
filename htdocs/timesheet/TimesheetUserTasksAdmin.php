@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -309,7 +309,7 @@ switch ($action)
     case 'delete';
         if( $action == 'delete' && ($id>0 || $ref!=""))
 {
-         $ret = $form->form_confirm($PHP_SELF.'?action = confirm_delete&id='.$id, $langs->trans('DeleteTimesheetuser'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteTimesheetuser'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
         if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -328,15 +328,15 @@ switch ($action)
 {
             if($new == 1)
 {
-                print '<form method = "POST" action = "'.$PHP_SELF.'?action = add">';
+                print '<form method = "POST" action = "'.$PHP_SELF.'?action=add">';
             }else{
-                print '<form method = "POST" action = "'.$PHP_SELF.'?action = update&id='.$id.'">';
+                print '<form method = "POST" action = "'.$PHP_SELF.'?action=update&id='.$id.'">';
             }
             print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
         }else {// show the nav bar
             $basedurltab = explode("?", $PHP_SELF);
-            $basedurl = $basedurltab[0].'?action = list';
+            $basedurl = $basedurltab[0].'?action=list';
             $linkback = '<a href = "'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
             if(!isset($object->ref))//save ref if any
                 $object->ref = $object->id;
@@ -447,11 +447,11 @@ switch ($action)
                 // Boutons d'actions
                 //if($user->rights->Timesheetuser->edit)
                 //{
-                    print '<a href = "'.$PHP_SELF.'?id='.$id.'&action = edit" class = "butAction">'.$langs->trans('Update').'</a>';
+                    print '<a href = "'.$PHP_SELF.'?id='.$id.'&action=edit" class = "butAction">'.$langs->trans('Update').'</a>';
                 //}
                 //if ($user->rights->Timesheetuser->delete)
                 //{
-                    print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action = delete">'.$langs->trans('Delete').'</a>';
+                    print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action=delete">'.$langs->trans('Delete').'</a>';
                 //}
                 //else
                 //{
@@ -505,7 +505,7 @@ switch ($action)
     case 'delete':
         if( ($id>0 || $ref!=''))
 {
-         $ret = $form->form_confirm($PHP_SELF.'?action = confirm_delete&id='.$id, $langs->trans('DeleteTimesheetuser'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteTimesheetuser'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background
         }
@@ -629,14 +629,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             print '</tr>'."\n";
             $i = 0;
             $basedurltab = explode("?", $PHP_SELF);
-            $basedurl = $basedurltab[0].'?action = view&id = ';
+            $basedurl = $basedurltab[0].'?action=view&id=';
             while ($i < $num && $i<$limit)
             {
                     $obj = $db->fetch_object($resql);
                     if ($obj)
                     {
                             // You can use here results
-                            print "<tr class = \"dblist oddeven\"  onclick = \"location.href = '";
+                            print "<tr class = \"dblist oddeven\"  onclick = \"location.href='";
                             print $basedurl.$obj->rowid."'\" >";
                             print "<td>".print_generic('user', 'rowid', $obj->fk_userid, 'lastname', 'firstname', ' ')."</td>";
                             print "<td>".dol_print_date($obj->date_start, 'day')."</td>";
@@ -645,7 +645,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                             //print "<td>".$langs->trans($obj->target)."</td>";
                             //print "<td>".$obj->fk_project_tasktime_list."</td>";
                             //print "<td>".print_generic('user', 'rowid', $obj->fk_user_approval, 'lastname', 'firstname', ' ')."</td>";
-                            print '<td><a href = "'.$PHP_SELF.'?action = delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+                            print '<td><a href = "'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
                             print "</tr>";
                     }
                     $i++;
@@ -659,7 +659,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '</table>'."\n";
     print '</from>'."\n";
     // new button
-    //print '<a href="?action = create" class = "button" role = "button">'.$langs->trans('New');
+    //print '<a href="?action=create" class = "button" role = "button">'.$langs->trans('New');
     //print ' '.$langs->trans('Timesheetuser')."</a>\n";
 }
     break;
@@ -676,12 +676,12 @@ function reloadpage($backtopage, $id, $ref)
         if (!empty($backtopage))
         {
             header("Location: ".$backtopage);
-        //    header("Location: ".$_SERVER["PHP_SELF"].'?action = view&ref='.$ref);
+        //    header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$ref);
         }elseif($id>0)
         {
-            header("Location: ".$_SERVER["PHP_SELF"].'?action = view&id='.$id);
+            header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);
         }else{
-            header("Location: ".$_SERVER["PHP_SELF"].'?action = list');
+            header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
         }
     ob_end_flush();
 exit();
@@ -699,21 +699,21 @@ function Timesheetuser_prepare_head($object)
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action = view&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=view&id='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id = __ID__');to add new tab
+    // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__');to add new tab
     // $this->tabs = array('entity:-tabname);												to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet');
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet', 'remove');
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action = viewdoc&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewdoc&id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
     $head[$h][2] = 'documents';
     $h++;
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action = viewinfo&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewinfo&id='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;

@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -65,9 +65,9 @@ if($action == 'getpdf')
     $report->initBasic($projectSelectedId, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
-    if( $pdf->write_file($report, $langs)>0)
+    if( $pdf->writeFile($report, $langs)>0)
 {
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart = timesheet&file = reports/".$report->ref.".pdf");
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$report->ref.".pdf");
     	return;
     }
     ob_end_flush();
@@ -118,13 +118,13 @@ if ($projectSelectedId   &&!empty($dateStart))
 {
         foreach($projectList as $project)
 {
-        $querryRes .= $project->getHTMLreport($short, 
-           dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'), 
+        $querryRes .= $project->getHTMLreport($short,
+           dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
     }else{
-    $querryRes = $projectSelected->getHTMLreport($short, 
-            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'), 
+    $querryRes = $projectSelected->getHTMLreport($short,
+            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
 }else
@@ -132,7 +132,7 @@ if ($projectSelectedId   &&!empty($dateStart))
     $year = date('Y', $dateStart);
     $month = date('m', $dateStart);
 }
-$Form = '<form action="?action = reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
+$Form = '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
         <table class = "noborder"  width = "100%">
         <tr>
         <td>'.$langs->trans('Project').'</td>
@@ -180,8 +180,8 @@ $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->tr
  $Form .= '</td></tr></table>';
  //submit
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
-if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0 ))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step = 0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
-if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action = getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode = DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
+if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0 ))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
+if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
  $Form .= '</form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 echo $querryRes;

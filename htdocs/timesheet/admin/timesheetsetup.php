@@ -5,7 +5,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -38,6 +38,8 @@ $timetype = $conf->global->TIMESHEET_TIME_TYPE;
 $timeSpan = $conf->global->TIMESHEET_TIME_SPAN;
 $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
 $maxhoursperday = $conf->global->TIMESHEET_DAY_MAX_DURATION;
+$maxhoursperevent = $conf->global->TIMESHEET_EVENT_MAX_DURATION;
+$defaulthoursperevent = $conf->global->TIMESHEET_EVENT_DEFAULT_DURATION;
 $maxApproval = $conf->global->TIMESHEET_MAX_APPROVAL;
 $hidedraft = $conf->global->TIMESHEET_HIDE_DRAFT;
 $hideref = $conf->global->TIMESHEET_HIDE_REF;
@@ -71,7 +73,7 @@ $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 if(count($apflows)!=6)$apflows = array('_', '0', '0', '0', '0', '0');
 $error = 0;
 /** make sure that there is a 0 iso null
- * 
+ *
  * @param mixed $var var can be an int of empty string
  * @param type $int defautl value is var is null
  * @return int
@@ -255,10 +257,10 @@ echo '<div class = "fiche"><br><br>';
  * TABS
  */
 echo '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
-echo '  <div id = "defaultOpen"  class = "inline-block tabsElem" onclick = "openTab(event, \'General\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('General').'</a></div>';
-echo '  <div class = "inline-block tabsElem" onclick = "openTab(event, \'Advanced\')"><a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Advanced').'</a></div>';
-echo '  <div class = "inline-block tabsElem"  onclick = "openTab(event, \'Invoice\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Invoice').'</a></div>';
-echo '  <div class = "inline-block tabsElem"   onclick = "openTab(event, \'Other\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Other').'</a></div>';
+echo '  <div id = "defaultOpen"  class = "inline-block tabsElem" onclick = "openTab(event,\'General\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('General').'</a></div>';
+echo '  <div class = "inline-block tabsElem" onclick = "openTab(event,\'Advanced\')"><a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Advanced').'</a></div>';
+echo '  <div class = "inline-block tabsElem"  onclick = "openTab(event,\'Invoice\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Invoice').'</a></div>';
+echo '  <div class = "inline-block tabsElem"   onclick = "openTab(event,\'Other\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Other').'</a></div>';
 echo '</div>';
 /*
  * General
@@ -266,7 +268,7 @@ echo '</div>';
 echo '<div id = "General" class = "tabBar">';
 print '<a>'.$langs->trans("GeneralTabDesc").'</a>';
 print_titre($langs->trans("GeneralOption"));
-echo '<form name = "settings" action="?action = save" method = "POST" >'."\n\t";
+echo '<form name = "settings" action="?action=save" method = "POST" >'."\n\t";
 echo '<table class = "noborder" width = "100%">'."\n\t\t";
 echo '<tr class = "liste_titre" width = "100%" ><th width = "200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th width = "100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
@@ -460,6 +462,23 @@ echo '<tr style = "display:none"><td>'.$langs->trans("Other").'</td><td>'.$langs
 echo (($apflows[5] == '1')?'checked':'').'></td><tr>';
 */
 echo "</tr>\n\t</table><br>\n";
+print_titre($langs->trans("Attendance"));
+echo '<table class = "noborder" width = "100%">'."\n\t\t";
+echo '<tr class = "liste_titre" width = "100%" ><th width = "200px">'.$langs->trans("Name").'</th><th>';
+echo $langs->trans("Description").'</th><th width = "100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+
+//max hours per event
+echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("maxHoursPerEvent");//FIXTRAD
+echo '</td><td align = "left">'.$langs->trans("maxHoursPerEventDesc").'</td>';// FIXTRAD
+echo '<td align = "left"><input type = "text" name = "maxhoursperevent" value = "'.$maxhoursperevent;
+echo "\" size = \"4\" ></td></tr>\n\t\t";
+//default hours per event
+echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("defaultHoursPerEvent");//FIXTRAD
+echo '</td><td align = "left">'.$langs->trans("defaultHoursPerEventDesc").'</td>';// FIXTRAD
+echo '<td align = "left"><input type = "text" name = "defaulthoursperevent" value = "'.$defaulthoursperevent;
+echo "\" size = \"4\" ></td></tr>\n\t\t";
+
+echo "</table><br>\n";
 //Color
 print_titre($langs->trans("Color"));
 echo '<table class = "noborder" width = "100%">'."\n\t\t";
@@ -598,7 +617,7 @@ print_titre($langs->trans("Manual"));
 echo '<a href="../doc/Module_timesheet.pdf">  PDF </a><br>'."\n\t\t";
 echo '<a href="../doc/Module_timesheet.docx">  DOCX </a><br><br>'."\n\t\t";
 print_titre($langs->trans("Feedback"));
-echo $langs->trans('feebackDesc').' : <a href = "mailto:patrick@pmpd.eu?subject = TimesheetFeedback"> Patrick Delcroix</a><br><br>';
+echo $langs->trans('feebackDesc').' : <a href = "mailto:patrick@pmpd.eu?subject=TimesheetFeedback"> Patrick Delcroix</a><br><br>';
 print_titre($langs->trans("Reminder"));
 print '<br><div>'.$langs->trans('reminderEmailProcess').'</div>';
 echo '</div>';

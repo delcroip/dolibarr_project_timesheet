@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -40,7 +40,7 @@ $ref = GETPOST('ref', 'alpha');
 //$result = restrictedArea($user, 'timesheet', $id);
 $page = GETPOST('page', 'int');
 if ($page == -1)
-{ 
+{
     $page = 0;
 }
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -87,7 +87,7 @@ if ($object->id)
 	}
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href = "' .dol_buildpath('/timesheet/AttendanceSystemAdmin.php', 1) . '?restore_lastsearch_values = 1' . (! empty($socid) ? '&socid = ' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href = "' .dol_buildpath('/timesheet/AttendanceSystemAdmin.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
     print '<div class = "fichecenter">';
     print '<div class = "underbanner clearboth"></div>';
@@ -104,7 +104,7 @@ if ($object->id)
 	$permission = 1;
 	//$permtoedit = $user->rights->timesheet->create;
 	$permtoedit = 1;
-	$param = '&id = ' . $object->id;
+	$param = '&id= ' . $object->id;
 	//$relativepathwithnofile = 'AttendanceSystem/' . dol_sanitizeFileName($object->id).'/';
 	$relativepathwithnofile = 'AttendanceSystem/' . dol_sanitizeFileName($object->ref).'/';
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';

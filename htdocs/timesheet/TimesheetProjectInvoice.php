@@ -6,7 +6,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -101,7 +101,7 @@ $langs->load('timesheet@timesheet');
             }
             $sql .= ' GROUP BY '.$fields;
             dol_syslog('timesheet::timesheetProjectInvoice step2', LOG_DEBUG);
-            $Form = '<form name = "settings" action="?step = 3" method = "POST" >'."\n\t";
+            $Form = '<form name = "settings" action="?step=3" method = "POST" >'."\n\t";
             $Form .= '<input type = "hidden" name = "projectid" value = "'.$projectId.'">';
             $Form .= '<input type = "hidden" name = "dateStart" value = "'.dol_print_date($dateStart, 'dayxcard').'">';
             $Form .= '<input type = "hidden" name = "dateEnd" value = "'.dol_print_date($dateEnd, 'dayxcard').'">';
@@ -115,7 +115,7 @@ $langs->load('timesheet@timesheet');
             {
                     $num = $db->num_rows($resql);
                     $i = 0;
-                    // Loop on each record found, 
+                    // Loop on each record found,
                     while ($i < $num)
                     {
                         $error = 0;
@@ -233,7 +233,7 @@ exit();
 		else
 		{
 			$db->rollback();
-			//header('Location: ' . $_SERVER["PHP_SELF"] . '?step = 0');
+			//header('Location: ' . $_SERVER["PHP_SELF"] . '?step=0');
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
             break;
@@ -251,7 +251,7 @@ $edit = 0;
             $sqlTailWhere = ' ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active = \'1\'  ';
             $sqlTailWhere .= ' AND fk_socpeople = \''.$userid.'\' and t.fk_statut = \'1\'';
         }
-            $Form = '<form name = "settings" action="?step = 2" method = "POST" >'."\n\t";
+            $Form = '<form name = "settings" action="?step=2" method = "POST" >'."\n\t";
             $Form .= '<table class = "noborder" width = "100%">'."\n\t\t";
             $Form .= '<tr class = "liste_titre" width = "100%" ><th colspan = "2">'.$langs->trans('generalInvoiceProjectParam').'</th></tr>';
             $invoicingMethod = $conf->global->TIMESHEET_INVOICE_METHOD;
@@ -292,7 +292,7 @@ $edit = 0;
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('InvoicableOnly');
             $Form .= '</th><th align = "left"><input type = "checkbox" name = "invoicabletaskOnly" value = "1" '.(($invoicabletaskOnly == 1)?'checked':'').' ></th></tr>';
             $Form .= '</table>';
-            $Form .= '<input type = "submit" onclick = "return checkEmptyFormFields(event, \'settings\', \'';
+            $Form .= '<input type = "submit" onclick = "return checkEmptyFormFields(event,\'settings\',\'';
             $Form .= $langs->trans("pleaseFillAll").'\')" class = "butAction" value = "'.$langs->trans('Next')."\">\n</from>";
             if($ajaxNbChar>=0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function()
 {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
@@ -315,7 +315,7 @@ print '
 function reload(form)
 {
 var pjt = document.getElementById("projectid").value;
-self.location="?projectid = " + pjt ;
+self.location="?projectid=" + pjt ;
 }
 </script>';
 llxFooter();

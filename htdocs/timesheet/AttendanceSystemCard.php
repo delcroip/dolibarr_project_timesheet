@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -182,8 +182,8 @@ if ($cancel)
             if ($result < 0)
             {
                 dol_print_error($db);
-            }else 
-            { 
+            }else
+            {
             // fill the id & ref
                 if(isset($object->id))$id = $object->id;
                 if(isset($object->rowid))$id = $object->rowid;
@@ -277,7 +277,7 @@ switch ($action)
    case 'delete';
         if( $action == 'delete' && ($id>0 || $ref!=""))
 {
-         $ret = $form->form_confirm($PHP_SELF.'?action = confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -285,7 +285,7 @@ switch ($action)
     {
         // tabs
         if($edit == 0 && $new == 0)
-        { 
+        {
             //show tabs
             $head = AttendanceSystemPrepareHead($object);
             dol_fiche_head($head, 'card', $langs->trans('AttendanceSystem'), 0, 'timesheet@timesheet');
@@ -297,13 +297,13 @@ switch ($action)
 {
             if($new == 1)
 {
-                print '<form method = "POST" action = "'.$PHP_SELF.'?action = add">';
+                print '<form method = "POST" action = "'.$PHP_SELF.'?action=add">';
             }else{
-                print '<form method = "POST" action = "'.$PHP_SELF.'?action = update&id='.$id.'">';
+                print '<form method = "POST" action = "'.$PHP_SELF.'?action=update&id='.$id.'">';
             }
             print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
-        }else 
+        }else
         {
             // show the nav bar
             $basedurl = dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1);
@@ -454,11 +454,11 @@ switch ($action)
                 // Boutons d'actions
                 //if($user->rights->AttendanceSystem->edit)
                 //{
-                    print '<a href = "'.$PHP_SELF.'?id='.$id.'&action = edit" class = "butAction">'.$langs->trans('Update').'</a>';
+                    print '<a href = "'.$PHP_SELF.'?id='.$id.'&action=edit" class = "butAction">'.$langs->trans('Update').'</a>';
                 //}
                 //if ($user->rights->AttendanceSystem->delete)
                 //{
-                    print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action = delete">'.$langs->trans('Delete').'</a>';
+                    print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action=delete">'.$langs->trans('Delete').'</a>';
                 //}
                 //else
                 //{
@@ -481,7 +481,7 @@ switch ($action)
     case 'delete':
         if( ($id>0 || $ref!=''))
 {
-         $ret = $form->form_confirm($PHP_SELF.'?action = confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background
         }

@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -79,7 +79,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 $page = GETPOST('page', 'int');
 if ($page == -1)
-{ 
+{
     $page = 0;
 }
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -143,7 +143,7 @@ if(!empty($ref))
     case 'delete':
         if( $action == 'delete' && ($id>0 || $ref!=""))
 {
-         $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?action = confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -224,7 +224,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     if(!empty($sortfield))
     {
         $sql.= $db->order($sortfield, $sortorder);
-    }else{ 
+    }else{
         $sortorder = 'ASC';
     }
     if (!empty($limit))
@@ -320,14 +320,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '</td>';
         print '</tr>'."\n";
         $i = 0;
-        $basedurl = dirname($PHP_SELF).'/AttendanceSystemCard.php?action = view&id = ';
+        $basedurl = dirname($PHP_SELF).'/AttendanceSystemCard.php?action=view&id=';
         while ($i < $num && $i<$limit)
         {
             $obj = $db->fetch_object($resql);
             if ($obj)
             {
                 // You can use here results
-                	print "<tr class = \"oddeven\"  onclick = \"location.href = '";
+                	print "<tr class = \"oddeven\"  onclick = \"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
 	print "<td>".$obj->label."</td>";
 	print "<td>".$obj->ip."</td>";
@@ -355,7 +355,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print print_sellist($sql_project, $obj->fk_project);
 	}
 	print "<td>".$obj->status."</td>";
-	print '<td><a href = "AttendanceSystemCard.php?action = delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+	print '<td><a href = "AttendanceSystemCard.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 	print "</tr>";
             }
             $i++;
@@ -369,7 +369,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '</table>'."\n";
     print '</form>'."\n";
     // new button
-    print '<a href = "AttendanceSystemCard.php?action = create" class = "butAction" role = "button">'.$langs->trans('New');
+    print '<a href = "AttendanceSystemCard.php?action=create" class = "butAction" role = "button">'.$langs->trans('New');
     print ' '.$langs->trans('AttendanceSystem')."</a>\n";
 // End of page
 llxFooter();

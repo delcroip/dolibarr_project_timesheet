@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -42,9 +42,9 @@ global $langs;
  //$conf->global->RESOURCE_USE_SEARCH_TO_SELECT
 //$conf->global->BARCODE_USE_SEARCH_TO_SELECT
 //$conf->global->CONTACT_USE_SEARCH_TO_SELECT
-function select_sellist($sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''), 
-                        $htmlarray = array('name'=> 'HTMLSellist', 'class'=>'', 'otherparam'=>'', '$ajaxNbChar'=>'', 'separator'=> ' ', 'noajax'=>0), 
-                        $selected = '', 
+function select_sellist($sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
+                        $htmlarray = array('name'=> 'HTMLSellist', 'class'=>'', 'otherparam'=>'', '$ajaxNbChar'=>'', 'separator'=> ' ', 'noajax'=>0),
+                        $selected = '',
                         $addtionnalChoices = array('NULL'=>'NULL'))
 {
         global $conf, $langs, $db;
@@ -182,12 +182,12 @@ function select_sellist($sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid'
 }
 function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL'=>'NULL'), $sqlTailTable = '', $ajaxNbChar = '')
 {
-    return select_sellist($sqlarray = array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => '', 'where'=>$sqlTailWhere, 'tail'=>$sqlTailTable), 
-                        $htmlarray = array('name'=>$htmlName, 'class'=>'', 'otherparam'=>$selectparam, 'ajaxNbChar'=>$ajaxNbChar, 'separator'=> $separator), 
-                        $selected, 
+    return select_sellist($sqlarray = array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => '', 'where'=>$sqlTailWhere, 'tail'=>$sqlTailTable),
+                        $htmlarray = array('name'=>$htmlName, 'class'=>'', 'otherparam'=>$selectparam, 'ajaxNbChar'=>$ajaxNbChar, 'separator'=> $separator),
+                        $selected,
                         $addtionnalChoices);
  }
- function print_sellist($sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''), 
+ function print_sellist($sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
                         $selected, $separator = ' ', $url = '')
 {
     global $conf, $langs, $db;
@@ -275,7 +275,7 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
 function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2 = "", $separator = ' - ', $sqltail = "", $sqljoin = "")
 {
    //return $table.$db.$field;
- return  print_sellist($sqlarray = array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail), 
+ return  print_sellist($sqlarray = array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail),
                         $selected, $separator);
  }
  /*

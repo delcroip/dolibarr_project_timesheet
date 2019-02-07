@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -90,7 +90,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 $page = GETPOST('page', 'int');
 if ($page == -1)
-{ 
+{
     $page = 0;
 }
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -207,7 +207,7 @@ $formother = new FormOther($db);
 $fuser = new User($db);
         if( $action == 'delete' && ($id>0))
 {
-         print $form->form_confirm(dol_buildpath('/timesheet/AttendanceEventAdmin.php', 1).'?action = confirm_delete&id='.$id, $langs->trans('DeleteAttendanceevent'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+         print $form->form_confirm(dol_buildpath('/timesheet/AttendanceEventAdmin.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceevent'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          //if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -312,7 +312,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
         print_barre_liste($langs->trans("Attendance"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
         // QUICK FOR TO ADD A LINE
-        print '<form method = "POST" action="?action = add">';
+        print '<form method = "POST" action="?action=add">';
         print '<table class = "liste" width = "100%">'."\n";
         //TITLE ADD
         print '<tr class = "liste_titre">';
@@ -341,7 +341,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<tr><td>';
         print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
         print $form->select_date(time(), 'Datetimeevent');
-        print '<input type = "text" maxlength = "5" onkeypress = "return regexEvent(this, event, \'timeChar\')" name = "DatetimeeventHour" value = "'.date('H:m').'"/>';
+        print '<input type = "text" maxlength = "5" onkeypress = "return regexEvent(this,event,\'timeChar\')" name = "DatetimeeventHour" value = "'.date('H:m').'"/>';
         print '</td><td>';
         print '<input type = "text" value = "'.$object->event_location_ref.'" name = "Eventlocationref">';
 	print '</td><td>';
@@ -451,7 +451,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '</td>';
         print '</tr>'."\n";
         $i = 0;
-       // $basedurl = dirname($PHP_SELF).'/attendanceevent_card.php?action = view&id = ';
+       // $basedurl = dirname($PHP_SELF).'/attendanceevent_card.php?action=view&id=';
         while ($i < $num && $i<$limit)
         {
             $obj = $db->fetch_object($resql);
@@ -501,7 +501,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		//print "<td>".print_generic('projet', 'rowid', $obj->fk_project, 'ref', 'title')."</td>";
 		print "<td>".$obj->token."</td>";
 		print "<td>".$obj->status."</td>";
-		print '<td><a href = "AttendanceEventAdmin.php?action = delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+		print '<td><a href = "AttendanceEventAdmin.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 		print "</tr>";
             }
             $i++;
@@ -515,7 +515,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '</table>'."\n";
     print '</form>'."\n";
     // new button
-   // print '<a href = "attendanceevent_card.php?action = create" class = "butAction" role = "button">'.$langs->trans('New');
+   // print '<a href = "attendanceevent_card.php?action=create" class="butAction"role="button">'.$langs->trans('New');
     print ' '.$langs->trans('Attendanceevent')."</a>\n";
 // End of page
 llxFooter();

@@ -6,7 +6,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -364,17 +364,17 @@ function getHTMLNavigation($optioncss, $selectList, $current = 0)
         $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
         if($current!=0)
 {
-            $Nav.= '<a href="?action = goTo&target='.($current-1).'"';
+            $Nav.= '<a href="?action=goTo&target='.($current-1).'"';
             if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
             $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
         }
         $Nav .= "</th>\n\t\t<th>\n\t\t\t";
-	$Nav.=  '<form name = "goTo" action="?action = goTo" method = "POST" >'."\n\t\t\t";
+	$Nav.=  '<form name = "goTo" action="?action=goTo" method = "POST" >'."\n\t\t\t";
         $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
 	$Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	if($current<count($selectList))
 {
-            $Nav.=  '<a href="?action = goTo&target='.($current+1);
+            $Nav.=  '<a href="?action=goTo&target='.($current+1);
             if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
             $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
         }

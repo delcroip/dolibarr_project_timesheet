@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -54,7 +54,7 @@ $postUserId= GETPOST('userid', 'int');
 if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1  )
 {
     if(!empty($postUserId))
-    { 
+    {
             $newuserid = $postUserId;
     }
     $SubordiateIds = getSubordinates($db, $userid, 2, array(), TEAM, $entity = '1');
@@ -207,9 +207,9 @@ $Form .= $task_timesheet->getHTMLFormHeader($ajax);
      If($conf->global->TIMESHEET_WHITELIST == 1)
 {
         $Form.= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
-        $Form.= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event, \'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
-        $Form .= '  <div '.(($task_timesheet->whitelistmode == 0)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event, \'whitelist\')"><a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('blackWhiteList').'</a></div>';
-        $Form.= '  <div '.(($task_timesheet->whitelistmode == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event, \'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
+        $Form.= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
+        $Form .= '  <div '.(($task_timesheet->whitelistmode == 0)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'whitelist\')"><a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('blackWhiteList').'</a></div>';
+        $Form.= '  <div '.(($task_timesheet->whitelistmode == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
         $Form.= '</div>';
      }
 $Form .= $task_timesheet->getHTML($ajax);

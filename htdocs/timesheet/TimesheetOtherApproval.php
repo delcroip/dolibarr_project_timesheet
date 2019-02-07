@@ -6,7 +6,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -165,7 +165,7 @@ echo '<div id = "'.$role.'" class = "tabBar">';
 //FIXME Approve/reject/leave all buton
     if(!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $current);
     // form header
-    echo '<form action="?action = submit" method = "POST" name = "OtherAp" id = "OtherAp">';
+    echo '<form action="?action=submit" method = "POST" name = "OtherAp" id = "OtherAp">';
     echo '<input type = "hidden" name = "token" value = "'.$token.'"/>';
     echo '<input type = "hidden" name = "role" value = "'.$role.'"/>';
     echo '<input type = "hidden" name = "target" value = "'.($current+1)."\"/>\n";
@@ -210,18 +210,18 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
         $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
         if($current!=0)
         {
-            $Nav.= '<a href="?action = goTo&target='.($current-1);
+            $Nav.= '<a href="?action=goTo&target='.($current-1);
             $Nav.=  '&role='.($role);
             if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
             $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
         }
         $Nav .= "</th>\n\t\t<th>\n\t\t\t";
-	$Nav.=  '<form name = "goTo" action="?action = goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
+	$Nav.=  '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
         $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
 	$Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	if($current<count($selectList))
         {
-            $Nav.=  '<a href="?action = goTo&target='.($current+1);
+            $Nav.=  '<a href="?action=goTo&target='.($current+1);
             $Nav.=  '&role='.($role);
             if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
             $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
@@ -342,9 +342,9 @@ if($db->type!='pgsql')
       //$select .= "\n";
       return $list;
  }
- 
+
  /** get the rows to display
-  * 
+  *
   * @global object $langs lang object
   * @global object $conf    conf object
   * @param array $objectArray   item to display
@@ -384,7 +384,7 @@ if($db->type!='pgsql')
      }
  }
  /** function that provide the code of a character
-  * 
+  *
   * @param char $u char to convert
   * @return int Unide number
   */

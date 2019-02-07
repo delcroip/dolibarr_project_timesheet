@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -86,10 +86,10 @@ function AttendanceSystemPrepareHead($object)
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
-	//	'entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id = __ID__'
+	//	'entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__'
 	//);// to add new tab
 	//$this->tabs = array(
-	//	'entity:-tabname:Title:@timesheet:/timesheet/mypage.php?id = __ID__'
+	//	'entity:-tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__'
 	//);// to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'AttendanceSystem@timesheet');
 	return $head;
