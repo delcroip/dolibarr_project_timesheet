@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -150,7 +150,7 @@ class TimesheetTask extends Task
         $sql.= 'fk_projet_task, ';
         $sql.= 'fk_project_task_timesheet, ';
         $sql.= 'note';
-		
+	
         $sql.= ") VALUES (";
         $sql .= ' '.(empty($this->userId)?'NULL':'\''.$this->userId.'\'').', ';
         $sql .= ' '.(empty($this->date_start_approval) || dol_strlen($this->date_start_approval) == 0?'NULL':'\''.$this->db->idate($this->date_start_approval).'\'').', ';
@@ -175,7 +175,7 @@ class TimesheetTask extends Task
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql)
-        { 
+        {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
 		if (! $error)
@@ -221,7 +221,7 @@ class TimesheetTask extends Task
         global $langs;
         $sql = "SELECT";
         $sql.= " t.rowid, ";
-		
+	
         $sql .= ' t.fk_userid, ';
         $sql .= ' t.date_start, ';
         $sql .= ' t.date_end, ';
@@ -241,7 +241,7 @@ class TimesheetTask extends Task
         $sql .= ' t.fk_projet_task, ';
         $sql .= ' t.fk_project_task_timesheet, ';
         $sql .= ' t.note';
-		
+	
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.rowid = ".$id;
     	dol_syslog(__METHOD__);
@@ -313,7 +313,7 @@ class TimesheetTask extends Task
         $sql .= ' t.fk_projet_task, ';
         $sql .= ' t.fk_project_task_timesheet, ';
         $sql .= ' t.note';
-		
+	
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.date_start = '".$this->db->idate($this->date_start_approval)."'";
         $sql.= " AND t.fk_userid = '".$this->userId."'";
@@ -439,7 +439,7 @@ class TimesheetTask extends Task
 		dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
     	if (! $resql)
-        { 
+        {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
 		if (! $error)
@@ -502,7 +502,7 @@ class TimesheetTask extends Task
                 dol_syslog(__METHOD__);
                 $resql = $this->db->query($sql);
                 if (! $resql)
-                { 
+                {
                     $error++;$this->errors[] = "Error ".$this->db->lasterror();
 
                 }
@@ -1164,7 +1164,7 @@ class TimesheetTask extends Task
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
     Public function setStatus($user, $status, $updateTS = true)
-    { 
+    {
         $error = 0;
         $ret = 0;
         //if the satus is not an ENUM status
@@ -1381,9 +1381,9 @@ class TimesheetTask extends Task
 {
                            require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
                            $mailfile = new CMailFile(
-	                        $subject, 
-	                        $sendto, 
-	                        $replyto, 
+	                        $subject,
+	                        $sendto,
+	                        $replyto,
 	                        $message
 	                    );
                            $mailfile->sendfile();

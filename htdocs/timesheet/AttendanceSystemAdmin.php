@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -79,7 +79,9 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 $page = GETPOST('page', 'int');
 if ($page == -1)
-{ $page = 0;}
+{ 
+    $page = 0;
+}
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -220,8 +222,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
     if(!empty($sortfield))
-{$sql.= $db->order($sortfield, $sortorder);
-    }else{ $sortorder = 'ASC';}
+    {
+        $sql.= $db->order($sortfield, $sortorder);
+    }else{ 
+        $sortorder = 'ASC';
+    }
     if (!empty($limit))
     {
             $sql.= $db->plimit($limit+1, $offset);

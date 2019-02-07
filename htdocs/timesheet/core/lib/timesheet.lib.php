@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -47,14 +47,14 @@ $roles = array(0=> 'user', 1=> 'team', 2=> 'project', 3=>'customer', 4=>'supplie
 $statusA = array(0=> $langs->trans('null'), 1 =>$langs->trans('draft'), 2=>$langs->trans('submitted'), 3=>$langs->trans('approved'), 4=>$langs->trans('cancelled'), 5=>$langs->trans('rejected'), 6=>$langs->trans('challenged'), 7=>$langs->trans('invoiced'), 8=>$langs->trans('underapproval'), 9=>$langs->trans('planned'));
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 $statusColor = array(
-    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT, 
-    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED, 
-    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED, 
-    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED, 
-    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED, 
-    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED, 
-    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED, 
-    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED, 
+    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
+    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,
+    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,
+    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,
+    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED,
+    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED,
+    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED,
+    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,
     PLANNED=>$conf->global->TIMESHEET_COL_DRAFT);
 //const REDUNDANCY = [
 /*Define( "NULL", 0);
@@ -241,7 +241,7 @@ if(is_array($userids))
 }
 	/*
         $nbIds = (is_array($userids))?count($userids)-1:0;
-	
+
         for($i = 0;$i<$nbIds-1 ;$i++)
 	{
 		$sql."'".$userids[$i]."', ";

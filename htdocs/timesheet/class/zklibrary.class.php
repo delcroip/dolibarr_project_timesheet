@@ -6,7 +6,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -67,7 +67,7 @@ class ZKLibrary {
 	public $attendance_data = array();
 	public $timeout_sec = 5;
 	public $timeout_usec = 5000000;
-	
+
 	public function __construct($ip = null, $port = null)
 	{
 		if($ip != null)
@@ -225,7 +225,7 @@ class ZKLibrary {
 	}
 	private function checkSum($p)
 	{
-		/* This function calculates the chksum of the packet to be sent to the time clock */		
+		/* This function calculates the chksum of the packet to be sent to the time clock */	
 		$l = count($p);
 		$chksum = 0;
 		$i = $l;
@@ -1035,6 +1035,6 @@ class ZKLibrary {
 		$command = CMD_CLEAR_ATTLOG;
 		return $this->execCommand($command);
 	}
-	
+
 }
 ?>

@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -89,7 +89,7 @@ if(!empty($tms))
 *
 * Put here all code to build page
 ****************************************************/
-$morejs = array("/timesheet/core/js/stopWatch.js", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
+$morejs = array("/timesheet/core/js/stopWatch.js?".$conf->global->TIMESHEET_VERSION, "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 $morecss = array("/timesheet/core/css/stopWatch.css");
 llxHeader('', $langs->trans('Attendance'), '', '', '', "", $morejs, $morecss);
 //calculate the week days
@@ -135,4 +135,3 @@ print $html;
 // End of page
 llxFooter();
 $db->close();
-?>

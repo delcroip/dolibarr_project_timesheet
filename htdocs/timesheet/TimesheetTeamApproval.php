@@ -6,7 +6,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -20,7 +20,8 @@
 include 'core/lib/includeMain.lib.php';
 $role_key = array_search('1', array_slice ($apflows, 1));
 if($apflows[1] == 0 && $role_key!== false)
-{ // redirect to the correct page
+{
+    // redirect to the correct page
     $role_key++;
     header("location:TimesheetOtherApproval.php?role=".$roles[$role_key]);//TOBETESTED
 }
@@ -122,12 +123,13 @@ if($action== 'submit')
                         }
                     }
             }else
+            {
                     setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
+            }
         }else
+        {
                 setEventMessage( $langs->transnoentitiesnoconv("InternalError"), 'errors');
-	
-}elseif($action== 'goTo')
-{
+        }
 }
 if(!empty($timestamp))
 {
@@ -174,7 +176,7 @@ exit();
 }*/
 $task_timesheet = new TimesheetUserTasks($db);
 $head = ($print)?'<style type = "text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
-$morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?v2.4");
+$morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 showTimesheetApTabs(TEAM);
@@ -185,7 +187,7 @@ if(is_object($firstTimesheetUser))
     if(!$print) echo getHTMLNavigation($optioncss, $selectList, $current);
     $Form .= $firstTimesheetUser->getHTMLFormHeader($ajax);
     foreach($objectArray as $key=> $task_timesheet)
-{
+    {
 
         if($i<$level)
         {
@@ -194,12 +196,12 @@ if(is_object($firstTimesheetUser))
     //FIXME module holiday should be activated ?
             $task_timesheet->fetchUserHoliday();
             $Form .= $task_timesheet->userName." - ".dol_print_date($task_timesheet->date_start, 'day');
-             $Form .= $task_timesheet->getHTML(false, TRUE);
+             $Form .= $task_timesheet->getHTML(false, true);
             $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id] = $task_timesheet->status;
             if(!$print)
-{
+            {
                 if($conf->global->TIMESHEET_ADD_DOCS == 1)
-{
+                {
                     dol_include_once('/core/class/html.formfile.class.php');
                     dol_include_once('/core/lib/files.lib.php');
                     $formfile = new FormFile($db);
@@ -230,7 +232,7 @@ if(is_object($firstTimesheetUser))
     }
    // $offset+=$i;
     if(!$print)
-{
+    {
         $Form .= $firstTimesheetUser->getHTMLFooterAp($current, $timestamp);
     }else{
         $Form .= '<table width = "100%"><tr><td align = "center">'.$langs->trans('customerSignature').'</td><td align = "center">'.$langs->trans('managerSignature').'</td><td align = "center">'.$langs->trans('employeeSignature').'</td></tr></table>';
@@ -252,15 +254,16 @@ echo '</div>';
 // End of page
 llxFooter();
 $db->close();
-    /* Funciton to fect timesheet to be approuved.
-    *  @param    int              	$level            number of ts to fetch
-    *  @param    int              	$offset           number of ts to skip
-    *  @param    int              	$role             team, project, customer ...
-    *  @param    array(int)             $role             if team, array fo subordinate_id, array of task_id for other
-    *  @return   array(task_timesheet)                     result
-    */
+/* Funciton to fect timesheet to be approuved.
+*  @param    int              	$level            number of ts to fetch
+*  @param    int              	$offset           number of ts to skip
+*  @param    int              	$role             team, project, customer ...
+*  @param    array(int)             $role             if team, array fo subordinate_id, array of task_id for other
+*  @return   array(task_timesheet)                     result
+*/
 function getTStobeApproved($level, $offset, $role, $subId)
-{ // FIXME LEVEL ISSUE
+{
+// FIXME LEVEL ISSUE
 global $db, $conf;
 if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
 //$byWeek = ($conf->global->TIMESHEET_APPROVAL_BY_WEEK == 1)?true:false;
@@ -381,9 +384,9 @@ function getHTMLNavigation($optioncss, $selectList, $current = 0)
  /*
  * function to get the Approval elible for this user
  *
-  *  @param    object           	$db             database objet
+ *  @param    object           	$db             database objet
  *  @param    array(int)/int        $userids    	array of manager id
-  *  @return  array (int => String)  				array( ID => userName)
+ *  @return  array (int => String)  				array( ID => userName)
  */
 function getSelectAps($subId)
 {
@@ -452,7 +455,5 @@ function getSelectAps($subId)
         dol_print_error($db);
         $list = array();
     }
-      //$select .= "\n";
       return $list;
  }
-?>

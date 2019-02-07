@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -91,7 +91,7 @@ class TimesheetFavourite extends CommonObject
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql)
-        { 
+        {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
         if (! $error)
@@ -125,7 +125,7 @@ class TimesheetFavourite extends CommonObject
      *  @param	int      $userid   	Id object
     *  @param	date	$datestart	start date
     *  @param	date	$datestop	stopdate
-     *  @return             array)timesheetFavourite          return the list of the user whiteliste	
+     *  @return             array)timesheetFavourite          return the list of the user whiteliste
      */
     function fetchUserList($userid, $datestart, $datestop)
     {
@@ -133,14 +133,14 @@ class TimesheetFavourite extends CommonObject
       $Listtask = array();
        $sql = "SELECT";
 		$sql.= " t.rowid, ";
-		
+	
 		$sql .= ' t.fk_user, ';
 		$sql .= ' t.fk_project, ';
 		$sql .= ' t.fk_project_task, ';
 		$sql .= ' t.subtask, ';
 		$sql .= ' t.date_start, ';
 		$sql .= ' t.date_end';
-		
+	
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.fk_user = ".$userid;
         if($datestart)
@@ -304,7 +304,7 @@ class TimesheetFavourite extends CommonObject
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
     	if (! $resql)
-        { 
+        {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
             if (! $error)
@@ -411,7 +411,7 @@ class TimesheetFavourite extends CommonObject
                 dol_syslog(__METHOD__);
                 $resql = $this->db->query($sql);
                 if (! $resql)
-                { 
+                {
                     $error++;$this->errors[] = "Error ".$this->db->lasterror();
                 }
             }
@@ -482,13 +482,13 @@ class TimesheetFavourite extends CommonObject
 	function initAsSpecimen()
 	{
 		$this->id = 0;
-		
+	
 		$this->user = '';
 		$this->project = '';
 		$this->project_task = '';
 		$this->subtask = '';
 		$this->date_start = '';
 		$this->date_end = '';
-		
+	
 	}
 }

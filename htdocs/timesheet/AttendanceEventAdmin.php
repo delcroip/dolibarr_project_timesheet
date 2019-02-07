@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -90,7 +90,9 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 $page = GETPOST('page', 'int');
 if ($page == -1)
-{ $page = 0;}
+{ 
+    $page = 0;
+}
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -170,7 +172,7 @@ $form = new Form($db);
 {
                    $object->serialize(2); //return JSON
                     ob_end_flush();
-exit();// don't remove the tms. don't continue with the
+                    exit();// don't remove the tms. don't continue with the
                }
                    unset($_SESSION['Attendanceevent'][$tms]);
                setEventMessage('RecordSucessfullyCreated', 'mesgs');
@@ -277,7 +279,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
     if(!empty($sortfield))
-        {$sql.= $db->order($sortfield, $sortorder);
+    {
+        $sql.= $db->order($sortfield, $sortorder);
     }else{
        $sql .= ' ORDER BY t.date_time_event DESC';
     }

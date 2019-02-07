@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -99,7 +99,7 @@ class TimesheetUserTasks extends CommonObject
 		// Put here code to add control on parameters values
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-		
+	
 		$sql.= 'fk_userid, ';
 		$sql.= 'date_start, ';
                 $sql.= 'date_end, ';
@@ -108,7 +108,7 @@ class TimesheetUserTasks extends CommonObject
                 $sql.= 'date_modification, ';
                 $sql.= 'fk_user_modification, ';
                 $sql.= 'note';
-		
+	
         $sql.= ") VALUES (";
 		$sql .= ' '.(! isset($this->userId)?'NULL':'\''.$this->userId.'\'').', ';
 		$sql .= ' '.(! isset($this->date_start) || dol_strlen($this->date_start) == 0?'NULL':'\''.$this->db->idate($this->date_start).'\'').', ';
@@ -123,7 +123,7 @@ class TimesheetUserTasks extends CommonObject
 	   	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql)
-        { 
+        {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
 	if (! $error)
@@ -168,7 +168,7 @@ class TimesheetUserTasks extends CommonObject
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid, ";
-		
+	
 		$sql .= ' t.fk_userid, ';
 		$sql .= ' t.date_start, ';
 		$sql .= ' t.date_end, ';
@@ -177,7 +177,7 @@ class TimesheetUserTasks extends CommonObject
 		$sql .= ' t.date_modification, ';
 		$sql .= ' t.fk_user_modification, ';
 		$sql .= ' t.note';
-		
+	
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
         else $sql.= " WHERE t.rowid = ".$id;
@@ -218,7 +218,7 @@ class TimesheetUserTasks extends CommonObject
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid, ";
-		
+	
 		$sql .= ' t.fk_userid, ';
 		$sql .= ' t.date_start, ';
 		$sql .= ' t.date_end, ';
@@ -228,7 +228,7 @@ class TimesheetUserTasks extends CommonObject
 		$sql .= ' t.fk_user_modification, ';
 		//$sql .= ' t.fk_task, ';
 		$sql .= ' t.note';
-		
+	
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.date_start = '".$this->db->idate($this->date_start)."'";
 	$sql.= " AND t.fk_userid = '".$this->userId."'";
@@ -305,7 +305,7 @@ class TimesheetUserTasks extends CommonObject
 		dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
     	if (! $resql)
-        { 
+        {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
 		if (! $error)
@@ -368,7 +368,7 @@ class TimesheetUserTasks extends CommonObject
             dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
             if (! $resql)
-            { 
+            {
                 $error++;$this->errors[] = "Error ".$this->db->lasterror();
             }
             }
@@ -465,7 +465,7 @@ class TimesheetUserTasks extends CommonObject
     }
 
     /** function to load from session [//FIXME: to be removed not REST appraoch]
-     * 
+     *
      * @param string $timestamp ref to load
      * @param int $id   object id
      */
@@ -686,14 +686,14 @@ function updateStatus($user, $status = 0)
         return 1;
     }
     $Priority = array(
-    DRAFT=>0, 
-    SUBMITTED=>1, 
-    APPROVED=>2, 
-    CANCELLED=>4, 
-    REJECTED=>5, 
-    CHALLENGED=>6, 
-    INVOICED=>7, 
-    UNDERAPPROVAL=>3, 
+    DRAFT=>0,
+    SUBMITTED=>1,
+    APPROVED=>2,
+    CANCELLED=>4,
+    REJECTED=>5,
+    CHALLENGED=>6,
+    INVOICED=>7,
+    UNDERAPPROVAL=>3,
     PLANNED=>9);
     //look for the status to apply to the TS  from the TTA
     foreach($this->taskTimesheet as $row)
@@ -1245,15 +1245,15 @@ function sendApprovalReminders()
 {
                            require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
                            $mailfile = new CMailFile(
-	                        $subject, 
-	                        $sendto, 
-	                        $replyto, 
-	                        $message, 
-                                $filename_list = array(), 
-                                $mimetype_list = array(), 
-                                $mimefilename_list = array(), 
-                                $addr_cc, $addr_bcc = 0, 
-                                $deliveryreceipt = 0, 
+	                        $subject,
+	                        $sendto,
+	                        $replyto,
+	                        $message,
+                                $filename_list = array(),
+                                $mimetype_list = array(),
+                                $mimefilename_list = array(),
+                                $addr_cc, $addr_bcc = 0,
+                                $deliveryreceipt = 0,
                                 $msgishtml = 1
 	                    );
                            $mailfile->sendfile();
@@ -1293,15 +1293,15 @@ function sendApprovalReminders()
           {
              require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
              $mailfile = new CMailFile(
-                  $subject, 
-                  $sendto, 
-                  $replyto, 
-                  $message, 
-                  $filename_list = array(), 
-                  $mimetype_list = array(), 
-                  $mimefilename_list = array(), 
-                  $addr_cc, $addr_bcc = 0, 
-                  $deliveryreceipt = 0, 
+                  $subject,
+                  $sendto,
+                  $replyto,
+                  $message,
+                  $filename_list = array(),
+                  $mimetype_list = array(),
+                  $mimefilename_list = array(),
+                  $addr_cc, $addr_bcc = 0,
+                  $deliveryreceipt = 0,
                   $msgishtml = 1
               );
              $mailfile->sendfile();

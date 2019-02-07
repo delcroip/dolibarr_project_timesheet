@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -49,13 +49,13 @@ if($whitelistmode == '')
     $whitelistmode = $conf->global->TIMESHEET_WHITELIST_MODE;
 }
 $userid = is_object($user)?$user->id:$user;
-$postUserId= GETPOST('userid','int');
+$postUserId= GETPOST('userid', 'int');
 // if the user can enter ts for other the user id is diferent
 if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1  )
 {
     if(!empty($postUserId))
-{ //FIXME unsecured
-        $newuserid = $postUserId;
+    { 
+            $newuserid = $postUserId;
     }
     $SubordiateIds = getSubordinates($db, $userid, 2, array(), TEAM, $entity = '1');
     $SubordiateIds[] = $userid;

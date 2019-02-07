@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -180,9 +180,11 @@ if ($cancel)
         {
             $result = $object->fetch($id, $ref);
             if ($result < 0)
-{
+            {
                 dol_print_error($db);
-            }else { // fill the id & ref
+            }else 
+            { 
+            // fill the id & ref
                 if(isset($object->id))$id = $object->id;
                 if(isset($object->rowid))$id = $object->rowid;
                 if(isset($object->ref))$ref = $object->ref;
@@ -283,7 +285,8 @@ switch ($action)
     {
         // tabs
         if($edit == 0 && $new == 0)
-{ //show tabs
+        { 
+            //show tabs
             $head = AttendanceSystemPrepareHead($object);
             dol_fiche_head($head, 'card', $langs->trans('AttendanceSystem'), 0, 'timesheet@timesheet');
         }else{
@@ -300,7 +303,9 @@ switch ($action)
             }
             print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
-        }else {// show the nav bar
+        }else 
+        {
+            // show the nav bar
             $basedurl = dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1);
             $linkback = '<a href = "'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
             if(!isset($object->ref))//save ref if any

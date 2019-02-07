@@ -6,7 +6,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -157,7 +157,7 @@ if(is_array($objectArray))
 ****************************************************/
 $head = ($print)?'<style type = "text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
 $morejs = array();
-$morejs = array("/timesheet/core/js/timesheet.js?v2.0");
+$morejs = array("/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 showTimesheetApTabs($role_key);
@@ -202,14 +202,14 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
 	global $langs, $db;
         $htmlSelect = '<select name = "target">';
         foreach($selectList as $key => $element)
-{
+        {
             $htmlSelect .= ' <option value = "'.$key.'" '.(($current == $key)?'selected':'').'>'.$element['label'].'</option>';
         }
         $htmlSelect .= '</select>';
         $form = new Form($db);
         $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
         if($current!=0)
-{
+        {
             $Nav.= '<a href="?action = goTo&target='.($current-1);
             $Nav.=  '&role='.($role);
             if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
@@ -220,7 +220,7 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
         $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
 	$Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 	if($current<count($selectList))
-{
+        {
             $Nav.=  '<a href="?action = goTo&target='.($current+1);
             $Nav.=  '&role='.($role);
             if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
@@ -235,12 +235,12 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
     *  @return   array(task_timesheet)                     result
     */
 function getTStobeApproved($current, $selectList)
-{ // FIXME use the list tab as input and tta->fetch()
+{
     global $db;
     if((!is_array($selectList) || !is_array($selectList[$current]['idList'])))return array();
     $listTTA = array();
     foreach($selectList[$current]['idList'] as $idTTA)
-{
+    {
         $TTA = new TimesheetTask($db);
         $TTA->fetch($idTTA);
         $listTTA[] = $TTA;
@@ -342,6 +342,14 @@ if($db->type!='pgsql')
       //$select .= "\n";
       return $list;
  }
+ 
+ /** get the rows to display
+  * 
+  * @global object $langs lang object
+  * @global object $conf    conf object
+  * @param array $objectArray   item to display
+  * @return string      html code
+  */
  function  getHTMLRows($objectArray)
 {
      global $langs, $conf;
@@ -355,7 +363,7 @@ if($db->type!='pgsql')
     $weeklength = getDayInterval($objectArray[0]->date_start_approval, $objectArray[0]->date_end_approval);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
     if($conf->global->TIMESHEET_TIME_SPAN == "month")
-{
+    {
         //remove Year
         $format = str_replace('Y', '', str_replace('%Y', '', str_replace('Y/', '', str_replace('/%Y', '', $format))));
     }
@@ -367,7 +375,7 @@ if($db->type!='pgsql')
     }
     echo "<tr>\n";
      foreach($objectArray as $key=> $object)
-{
+    {
  //        $object->getTaskInfo();
          $object->getActuals();
          echo '<tr>';
@@ -375,12 +383,12 @@ if($db->type!='pgsql')
          echo "<tr>\n";
      }
  }
+ /** function that provide the code of a character
+  * 
+  * @param char $u char to convert
+  * @return int Unide number
+  */
  function uniordHex($u)
 {
     return strtoupper(bin2hex(iconv('UTF-8', 'UCS-2BE', $u)));
-     /*
-    $k = mb_convert_encoding($u, 'UCS-2LE', 'UTF-8');
-    $k1 = ord(substr($k, 0, 1));
-    $k2 = ord(substr($k, 1, 1));
-    return dechex($k2 ).dechex($k1);*/
 }

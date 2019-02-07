@@ -6,7 +6,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -115,7 +115,7 @@ $langs->load('timesheet@timesheet');
             {
                     $num = $db->num_rows($resql);
                     $i = 0;
-                    // Loop on each record found, 
+                    // Loop on each record found,
                     while ($i < $num)
                     {
                         $error = 0;
@@ -306,7 +306,7 @@ $edit = 0;
 *
 * Put here all code to build page
 ****************************************************/
-$morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js");
+$morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader('', $langs->trans('TimesheetToInvoice'), '', '', '', '', $morejs);
 print $Form;
 //javascript to reload the page with the poject selected
@@ -326,7 +326,7 @@ $db->close();
 * Put here all code of the functions
 ****************************************************/
 /** Function to print the line to chose between a predefined service or an ad-hoc one
- * 
+ *
  * @global object $form form object
  * @global objec $langs lang object
  * @global object $conf  conf object
@@ -382,7 +382,7 @@ function getDefaultService($userid, $taskid)
     return ($res>0)?$res:$conf->global->TIMESHEET_INVOICE_SERVICE;
 }
 /** to check who has the rights
- * 
+ *
  * @global object $db database object
  * @global object $user current user connected
  * @param object $userid    user to check
@@ -408,7 +408,7 @@ function hasProjectRight($userid, $projectid)
     return $res;
 }
 /**
- * 
+ *
  * @global type $db
  * @param type $idInvoice
  * @param type $idLine

@@ -5,7 +5,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -66,14 +66,21 @@ $invoiceservice = $conf->global->TIMESHEET_INVOICE_SERVICE;
 $invoiceshowtask = $conf->global->TIMESHEET_INVOICE_SHOW_TASK;
 $invoiceshowuser = $conf->global->TIMESHEET_INVOICE_SHOW_USER;
 $searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
-if(sizeof($opendays)!=8)$opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
+if(count($opendays)!=8)$opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
-if(sizeof($apflows)!=6)$apflows = array('_', '0', '0', '0', '0', '0');
+if(count($apflows)!=6)$apflows = array('_', '0', '0', '0', '0', '0');
 $error = 0;
+/** make sure that there is a 0 iso null
+ * 
+ * @param mixed $var var can be an int of empty string
+ * @param type $int defautl value is var is null
+ * @return int
+ */
 function null2int($var, $int = 0)
 {
-    return ($var == '')?$int:$var;
+    return ($var == '' || !is_numeric($var))?$int:$var;
 }
+
 switch($action)
 {
     case "save":
@@ -541,7 +548,7 @@ $htmlProductArray = array('name'=>'invoiceService', 'ajaxNbChar'=>$ajaxNbChar);
 $sqlProductArray = array('table'=>'product', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'where'=>'tosell = 1 AND fk_product_type = 1', 'separator' => ' - ');
 print select_sellist($sqlProductArray, $htmlProductArray, $invoiceservice, $addchoices);
 echo "</td></tr>\n\t\t";
-//line tasktime == 
+//line tasktime ==
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("invoiceTaskTime");
 echo '</td><td align = "left">'.$langs->trans("invoiceTaskTimeDesc").'</td>';
 echo  '<td align = "left"><input type = "radio" name = "invoiceTaskTime" value = "all" ';

@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -81,7 +81,9 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 $page = GETPOST('page', 'int');//FIXME, need to use for all the list
 if ($page == -1)
-{ $page = 0;}
+{ 
+    $page = 0;
+}
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -188,7 +190,9 @@ if ($cancel)
                                     if ($result < 0)
 {
                                         dol_print_error($db);
-                                    }else { // fill the id & ref
+                                    }else 
+                                    { 
+                                        // fill the id & ref
                                         if(isset($object->id))$id = $object->id;
                                         if(isset($object->rowid))$id = $object->rowid;
                                         if(isset($object->ref))$ref = $object->ref;
@@ -343,7 +347,8 @@ switch ($action)
  //
         // tabs
         if($edit == 0 && $new == 0)
-{ //show tabs
+        { 
+            //show tabs
             $head = timesheetFavourite_prepare_head($object);
             dol_fiche_head($head, 'card', $langs->trans('Timesheetwhitelist'), 0, 'timesheet@timesheet');
         }else{
@@ -360,7 +365,9 @@ switch ($action)
             }
             print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
-        }else {// show the nav bar
+        }else 
+        {
+            // show the nav bar
             $basedurltab = explode("?", $PHP_SELF);
             $basedurl = $basedurltab[0].'?action = list';
             $linkback = '<a href = "'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -404,7 +411,7 @@ switch ($action)
             $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);
                 //print select_generic('projet', 'rowid', 'Project', 'ref', 'title', $object->project, ' - ', $formUserWhere, '', NULL, $formUserJoin);
-		
+	
                 if($ajaxNbChar>=0) print "\n<script type = 'text/javascript'>\n$('input#Project').change(function()
 {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
   //FIXME best to feed additionnal param to the search generic
@@ -591,8 +598,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
     if(!empty($sortfield))
-{$sql.= $db->order($sortfield, $sortorder);
-    }else{ $sortorder = 'ASC';}
+    {
+        $sql.= $db->order($sortfield, $sortorder);
+    }else
+    { 
+        $sortorder = 'ASC';
+    }
     if (!empty($limit))
     {
             $sql.= $db->plimit($limit+1, $offset);
@@ -716,10 +727,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 dol_fiche_end();
 /** function to reload page
- * 
+ *
  * @param string $backtopage    url source
  * @param int $id               id of the object
- * @param string $ref             ref of the object
+ * @param string $ref             ref of the object}
+ * @return void
  */
 function reloadpage($backtopage, $id, $ref)
 {
@@ -739,7 +751,7 @@ ob_end_flush();
 exit();
 }
 /** function to prepare hear
- * 
+ *
  * @global object $langs    lang object
  * @global object $conf     conf object
  * @global object $user     current user

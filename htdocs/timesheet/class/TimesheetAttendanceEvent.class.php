@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -351,7 +351,7 @@ public $date_time_event_start;
      /**
 	 *  Retourne select libelle du status (actif, inactif)
 	 *
-	 *  @param	object 		$form          form object that should be created	
+	 *  @param	object 		$form          form object that should be created
       *  *  @return	string 			       html code to select status
 	 */
 	function selectLibStatut($form, $htmlname = 'Status')
@@ -530,7 +530,7 @@ public $date_time_event_start;
     }
     /**
      *	will clean the parameters
-     *	
+     *
      *
      *	@return	void
      */
@@ -551,7 +551,7 @@ public $date_time_event_start;
     }
      /**
      *	will create the sql part to update the parameters
-     *	
+     *
      *
      *	@return	void
      */
@@ -592,7 +592,7 @@ public $date_time_event_start;
             $location_ref = $this->event_location_ref;
             //close the most recent one if any
             $this->ajaxStop($user, $json, true);
-            //$this->status = 
+            //$this->status =
         }
 //erase the data
         $status = $this->status;
@@ -646,16 +646,16 @@ public $date_time_event_start;
 {  // 00 01 no db record found by token or user
             $this->initAsSpecimen();
             $this->status = array(
-                   'text'=>$langs->trans('NoActiveEvent'), 
-                   'type'=>'errors', 
+                   'text'=>$langs->trans('NoActiveEvent'),
+                   'type'=>'errors',
                    'param'=>'');
             // AUTO START ?
         }elseif($this->event_type>=EVENT_STOP)
 { // found but already stopped
             $this->initAsSpecimen();
             $this->status = array(
-                   'text'=>$langs->trans('EventNotActive'), 
-                   'type'=>'errors', 
+                   'text'=>$langs->trans('EventNotActive'),
+                   'type'=>'errors',
                    'param'=>'');
         }else{// 11 && 10 found and active
             if(!empty($tokenJson))
@@ -685,8 +685,8 @@ public $date_time_event_start;
             }else{
                 $this->initAsSpecimen();
                 $this->status = array(
-                   'text'=>$langs->trans('DBError'), 
-                   'type'=>'errors', 
+                   'text'=>$langs->trans('DBError'),
+                   'type'=>'errors',
                    'param'=>'');
             }
         }
@@ -722,14 +722,14 @@ public $date_time_event_start;
 {  //00
             $this->initAsSpecimen();
             $this->status = array(
-                   'text'=>$langs->trans('NoActiveEvent'), 
-                   'type'=>'warning', 
+                   'text'=>$langs->trans('NoActiveEvent'),
+                   'type'=>'warning',
                    'param'=>'');
         }elseif(empty($tokenDb) && !empty($tokenJson))
 { // json recieved with token //01
             $this->status = array(
-                   'text'=>$langs->trans('EventNotActive'), 
-                   'type'=>'errors', 
+                   'text'=>$langs->trans('EventNotActive'),
+                   'type'=>'errors',
                    'param'=>'');
         }elseif(!empty($tokenDb))
 {// 11 && 10

@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -104,7 +104,7 @@ class AttendanceSystem extends CommonObject
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql)
-        { 
+        {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
         if (! $error)
@@ -314,7 +314,7 @@ class AttendanceSystem extends CommonObject
      /**
 	 *  Retourne select libelle du status (actif, inactif)
 	 *
-	 *  @param	object 		$form          form object that should be created	
+	 *  @param	object 		$form          form object that should be created
       *  *  @return	string 			       html code to select status
 	 */
 	function selectLibStatut($form, $htmlname = 'Status')
@@ -487,7 +487,7 @@ class AttendanceSystem extends CommonObject
     }
     /**
      *	will clean the parameters
-     *	
+     *
      *
      *	@return	void
      */
@@ -506,7 +506,7 @@ class AttendanceSystem extends CommonObject
     }
      /**
      *	will create the sql part to update the parameters
-     *	
+     *
      *
      *	@return	void
      */

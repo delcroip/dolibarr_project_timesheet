@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -277,7 +277,7 @@ if(isset( $_SESSION['Timesheetuser_'.$tms]))
 *
 * Put here all code to build page
 ****************************************************/
-$morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js");
+$morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader('', $langs->trans('TimesheetUser'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
 $form = new Form($db);
@@ -666,7 +666,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 dol_fiche_end();
 /** function to reload page
- * 
+ *
  * @param string $backtopage    url source
  * @param int $id               id of the object
  * @param type $ref             ref of the object
@@ -687,7 +687,7 @@ function reloadpage($backtopage, $id, $ref)
 exit();
 }
 /** function to prepare hear
- * 
+ *
  * @global object $langs    lang object
  * @global object $conf     conf object
  * @global object $user     current user
