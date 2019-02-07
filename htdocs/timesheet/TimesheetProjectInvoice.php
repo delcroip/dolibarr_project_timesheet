@@ -253,9 +253,9 @@ $edit = 0;
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('DateEnd').'</th>';
             $Form.=   '<th align = "left" width = "80%">'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('invoicingMethod').'</th><th align = "left"><input type = "radio" name = "invoicingMethod" value = "task" ';
-            $Form .= ($invoicingMethod == "task"?"checked":"").'> '.$langs->trans("Tasks").'</br> ';
+            $Form .= ($invoicingMethod == "task"?"checked":"").'> '.$langs->trans("Tasks").'<br> ';
             $Form .= '<input type = "radio" name = "invoicingMethod" value = "user" ';
-            $Form .= ($invoicingMethod == "user"?"checked":"").'> '.$langs->trans("User")."</br> ";
+            $Form .= ($invoicingMethod == "user"?"checked":"").'> '.$langs->trans("User")."<br> ";
             $Form .= '<input type = "radio" name = "invoicingMethod" value = "taskUser" ';
             $Form .= ($invoicingMethod == "taskUser"?"checked":"").'> '.$langs->trans("Tasks").' & '.$langs->trans("User")."</th></tr>\n\t\t";
 //cust list
@@ -263,7 +263,7 @@ $edit = 0;
 //all ts or only approved
            $ts2Invoice = $conf->global->TIMESHEET_INVOICE_TASKTIME;
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('TimesheetToInvoice').'</th><th align = "left"><input type = "radio" name = "ts2Invoice" value = "approved" ';
-            $Form .= ($ts2Invoice == "approved"?"checked":"").'> '.$langs->trans("approvedOnly").' </br>';
+            $Form .= ($ts2Invoice == "approved"?"checked":"").'> '.$langs->trans("approvedOnly").' <br>';
             $Form .= '<input type = "radio" name = "ts2Invoice" value = "all" ';
             $Form .= ($ts2Invoice == "all"?"checked":"").'> '.$langs->trans("All")."</th></tr>";
 // not alreqdy invoice
@@ -333,8 +333,8 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     //$html .= '<th><input type = "text" size = "6" name = "userTask['.$user.']['.$task.']["VAT"]" ></th>';
     $html .= '<th>'.$form->load_tva('userTask['.$user.']['.$task.'][VAT]', -1, $seller, $buyer, 0, 0, '', false, 1).'</th>';
     $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['.$user.']['.$task.'][unit_duration]" value = "1" >';
-    $html .= '</br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "h" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'':'checked').'>'.$langs->trans('Hour');
-    $html .= '</br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "d" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'checked':'').'>'.$langs->trans('Days').'</th>';
+    $html .= '<br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "h" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'':'checked').'>'.$langs->trans('Hour');
+    $html .= '<br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "d" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'checked':'').'>'.$langs->trans('Days').'</th>';
     $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['.$user.']['.$task.'][duration]" value = "'.$duration.'" >';
     $html .= '</th</tr>';
     return $html;

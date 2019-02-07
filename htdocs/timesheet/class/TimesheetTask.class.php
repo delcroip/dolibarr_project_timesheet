@@ -801,9 +801,9 @@ class TimesheetTask extends Task
                 $html .= '<div class = "modal" id = "note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';
                 $html .= '<div class = "modal-content">';
                 $html .= '<span class = "close " onclick = "closeNotes()">&times;</span>';
-                $html .= '<a>'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.', '.dol_print_date($today, 'day').")".'</a></br>';
+                $html .= '<a>'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.', '.dol_print_date($today, 'day').")".'</a><br>';
                 $html.= '<textarea class = "flat"  rows = "3" style = "width:350px;top:10px"';
-                $html.= 'name = "task['.$this->userId.']['.$this->id.']['.$dayCur.'][1]" ';
+                $html.= ' name = "task['.$this->userId.']['.$this->id.']['.$dayCur.'][1]" ';
                 $html .= '>'.$this->tasklist[$dayCur]['note'].'</textarea>';
                 $html .= '</div></div>';
                 }
@@ -900,9 +900,9 @@ class TimesheetTask extends Task
                     $html .= '<div class = "modal" id = "noteTask_'.$this->userId.'_'.$this->id.'" >';
                     $html .= '<div class = "modal-content">';
                     $html .= '<span class = "close " onclick = "closeNotes()">&times;</span>';
-                    $html .= '<a align = "left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.")".'</a></br>';
+                    $html .= '<a align = "left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.")".'</a><br>';
                     $html.= '<textarea class = "flat"  rows = "3" style = "width:350px;top:10px"';
-                    $html.= 'name = "notesTask['.$this->appId.']" ';
+                    $html.= ' name = "notesTask['.$this->appId.']" ';
                     $html .= '>'.$this->note.'</textarea>';
                     $html .= '</div></div>';
                /*

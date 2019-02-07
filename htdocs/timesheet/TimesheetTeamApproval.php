@@ -194,13 +194,13 @@ if(is_object($firstTimesheetUser)){
                     $filearray = dol_dir_list($upload_dir, 'files', 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc'?SORT_DESC:SORT_ASC), 1);
                     ob_start();
                     $formfile->list_of_documents($filearray, $object, $modulepart, $param, 0, $relativepathwithnofile, $permission);
-                    $Form .= ob_get_contents().'</br>'."\n";
+                    $Form .= ob_get_contents().'<br>'."\n";
                     ob_end_clean();
                 }
                 $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Approved" ><span>'.$langs->trans('approved').'</span></label>'."\n";/*FIXME*/
                 $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Rejected" ><span>'.$langs->trans('rejected').'</span></label>'."\n";/*FIXME*/
                 $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Submitted" checked ><span>'.$langs->trans('submitted').'</span></label>'."\n";/*FIXME*/
-                $Form .= '</br></br></br>'."\n";
+                $Form .= '<br><br><br>'."\n";
             }
             $i++;//use for the offset
         }

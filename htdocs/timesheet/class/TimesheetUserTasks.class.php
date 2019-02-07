@@ -759,7 +759,7 @@ function getHTML($ajax = false, $Approval = false){
     if(!$Approval){
         $Form .= $this->getHTMLFooter($ajax);
     }
-    $Form .= '</br>'."\n";
+    $Form .= '<br>'."\n";
     return $Form;
 }
 /* function to genegate the timesheet table header

@@ -353,7 +353,7 @@ class TimesheetReport
                 }*/
             }elseif(!empty ($resArray[$key]['note']))
             {
-                $lvl3Notes .= "</br>".$resArray[$key]['note'];
+                $lvl3Notes .= "<br>".$resArray[$key]['note'];
             }
             $lvl3Total+=$resArray[$key]['duration'];
         }
