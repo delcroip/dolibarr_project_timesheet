@@ -88,7 +88,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 function getSubordinates($db, $userid, $depth=5, $ecludeduserid=array(), $role=TEAM, $entity='1'){
     //FIX ME handle multicompany
-    if($userid=="")
+    if($userid == "")
     {
         return array();
     }
@@ -101,7 +101,7 @@ function getSubordinates($db, $userid, $depth=5, $ecludeduserid=array(), $role=T
     $sql[PROJECT][2] = ')) AND fk_socpeople not in (';
     $sql[PROJECT][4] = ')';
     $sql[TEAM][0]='SELECT usr.rowid as userid FROM '.MAIN_DB_PREFIX.'user AS usr WHERE';
-    $sql[TEAM][0].=' usr.fk_user in (';
+    $sql[TEAM][0] .= ' usr.fk_user in (';
     $sql[TEAM][2]=') AND usr.rowid not in (';
     $sql[TEAM][4] = ')';
     $idlist='';
@@ -160,7 +160,7 @@ function getSubordinates($db, $userid, $depth=5, $ecludeduserid=array(), $role=T
         dol_print_error($db);
         $list= array();
     }
-      //$select.="\n";
+      //$select .= "\n";
       return array_unique($list);
  }
   /*
@@ -177,17 +177,17 @@ function getSubordinates($db, $userid, $depth=5, $ecludeduserid=array(), $role=T
 function getTasks($db, $userid, $role='project'){
     $sql='SELECT tk.fk_projet as project, tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
-    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON  tk.fk_projet= ec.element_id ';
-    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql.=' WHERE ctc.element in (\'project\') AND ctc.active=\'1\' AND ctc.code LIKE \'%LEADER%\' ';
-    $sql.=' AND fk_socpeople=\''.$userid.'\'';
-    $sql.=' UNION ';
-    $sql.=' SELECT tk.fk_projet as project, tk.rowid as task';
+    $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON  tk.fk_projet= ec.element_id ';
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
+    $sql .= ' WHERE ctc.element in (\'project\') AND ctc.active=\'1\' AND ctc.code LIKE \'%LEADER%\' ';
+    $sql .= ' AND fk_socpeople=\''.$userid.'\'';
+    $sql .= ' UNION ';
+    $sql .= ' SELECT tk.fk_projet as project, tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
-    $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on (tk.rowid= element_id )';
-    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql.=' WHERE ctc.element in (\'project_task\') AND ctc.active=\'1\' AND ctc.code LIKE \'%EXECUTIVE%\' ';
-    $sql.=' AND ec.fk_socpeople=\''.$userid.'\'';
+    $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on (tk.rowid= element_id )';
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
+    $sql .= ' WHERE ctc.element in (\'project_task\') AND ctc.active=\'1\' AND ctc.code LIKE \'%EXECUTIVE%\' ';
+    $sql .= ' AND ec.fk_socpeople=\''.$userid.'\'';
    dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
    //launch the sql querry
    $resql=$db->query($sql);
@@ -221,15 +221,15 @@ function getTasks($db, $userid, $role='project'){
  */
 function getUsersName($userids){
     global $db;
-	if($userids=="")
+	if($userids == "")
     {
         return array();
     }
     $sql="SELECT usr.rowid, CONCAT(usr.firstname, ' ', usr.lastname) as username, usr.lastname FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
 if(is_array($userids)){
-	$sql.=' usr.rowid in ('.implode(',', $userids).')';
+	$sql .= ' usr.rowid in ('.implode(',', $userids).')';
 }else{
-    $sql.=' usr.rowid ='.$userids;
+    $sql .= ' usr.rowid ='.$userids;
 }
 	/*
         $nbIds=(is_array($userids))?count($userids)-1:0;
@@ -238,9 +238,9 @@ if(is_array($userids)){
 	{
 		$sql."'".$userids[$i]."', ";
 	}
-	$sql.=((is_array($userids))?("'".$userids[$nbIds-1]."'"):('"'.$userids.'"')).')';
+	$sql .= ((is_array($userids))?("'".$userids[$nbIds-1]."'"):('"'.$userids.'"')).')';
         */
-        $sql.=' ORDER BY usr.lastname ASC';
+        $sql .= ' ORDER BY usr.lastname ASC';
     dol_syslog('form::get_userName '.$sql, LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
@@ -264,7 +264,7 @@ if(is_array($userids)){
         dol_print_error($db);
         $list= array();
     }
-      //$select.="\n";
+      //$select .= "\n";
       return $list;
  }
 if (!is_callable( GETPOSTISSET)){
@@ -301,17 +301,17 @@ function getEventMessagesXML(){
     $xml='';
        // Show mesgs
    if (isset($_SESSION['dol_events']['mesgs'])) {
-     $xml.=getEventMessageXML( $_SESSION['dol_events']['mesgs']);
+     $xml .= getEventMessageXML( $_SESSION['dol_events']['mesgs']);
      unset($_SESSION['dol_events']['mesgs']);
    }
    // Show errors
    if (isset($_SESSION['dol_events']['errors'])) {
-     $xml.=getEventMessageXML(  $_SESSION['dol_events']['errors'], 'error');
+     $xml .= getEventMessageXML(  $_SESSION['dol_events']['errors'], 'error');
      unset($_SESSION['dol_events']['errors']);
    }
    // Show warnings
    if (isset($_SESSION['dol_events']['warnings'])) {
-     $xml.=getEventMessageXML(  $_SESSION['dol_events']['warnings'], 'warning');
+     $xml .= getEventMessageXML(  $_SESSION['dol_events']['warnings'], 'warning');
      unset($_SESSION['dol_events']['warnings']);
    }
    return $xml;
@@ -328,8 +328,8 @@ function getEventMessageXML($messages, $style='ok'){
     if(is_array($messages)){
         $count=count($messages);
         foreach ($messages as $message){
-            $msg.=$message;
-            if($count>1)$msg.="<br/>";
+            $msg .= $message;
+            if($count>1)$msg .= "<br/>";
             $count--;
         }
     }else
@@ -357,9 +357,9 @@ function getStartDate($datetime, $prevNext=0){
      $startDate=null;
         // split week of the current week
   /* $prefix='this';
-   if($prevNext==1){
+   if($prevNext == 1){
         $prefix='next';
-   }elseif($prevNext==-1){
+   }elseif($prevNext == -1){
        $prefix='previous';
    }
  */
@@ -370,36 +370,36 @@ function getStartDate($datetime, $prevNext=0){
         case 'month': //by Month
         //     $startDate=  strtotime('first day of '.$prefix.' month midnight', $datetime  );
         //     break;
-                if($prevNext==1){
+                if($prevNext == 1){
                     $startDate=  strtotime('first day of next month midnight', $datetime  );
-                }elseif($prevNext==0){
+                }elseif($prevNext == 0){
                     $startDate=  strtotime('first day of this month midnight', $datetime  );
-                }elseif($prevNext==-1){
+                }elseif($prevNext == -1){
                     $startDate=  strtotime('first day of previous month midnight', $datetime  );
                 }
             break;
         case 'week': //by user
                     //     $startDate=  strtotime('first day of '.$prefix.' month midnight', $datetime  );
         //     break;
-                if($prevNext==1){
+                if($prevNext == 1){
                     $startDate=  strtotime('monday next week midnight', $datetime  );
-                }elseif($prevNext==0){
+                }elseif($prevNext == 0){
                     $startDate=  strtotime('monday this week midnight', $datetime  );
-                }elseif($prevNext==-1){
+                }elseif($prevNext == -1){
                     $startDate=  strtotime('monday previous week midnight', $datetime  );
                 }
             break;
         case 'splitedWeek': //by week
         default:
-                if($prevNext==1){
+                if($prevNext == 1){
                     $startDateMonth=  strtotime('first day of next month  midnight', $datetime  );
                     $startDateWeek=  strtotime('monday next week midnight', $datetime  );
                     $startDate=MIN( $startDateMonth, $startDateWeek);
-                }elseif($prevNext==0){
+                }elseif($prevNext == 0){
                     $startDateMonth=  strtotime('first day of this month midnight', $datetime  );
                     $startDateWeek=  strtotime('monday this week  midnight', $datetime  );
                     $startDate=MAX( $startDateMonth, $startDateWeek);
-                }elseif($prevNext==-1){
+                }elseif($prevNext == -1){
                     $startDateMonth=  strtotime('first day of this month  midnight', $datetime  );
                     $startDateWeek=  strtotime('monday this week  midnight', $datetime  );
                     $startDatePrevWeek=  strtotime('monday previous week  midnight', $datetime  );
@@ -467,8 +467,8 @@ function parseDate($day=0, $month=0, $year=0, $date=0){
         $datetime=$date;
     }elseif(is_string($date)&& $date!=""){  // if date is a string
         //foolproof: incase the yearweek in passed in date
-        if( strlen($date)>3 && substr($date, -3, 2)=="_H"){
-              if(substr($date, -1, 1)==1){
+        if( strlen($date)>3 && substr($date, -3, 2) == "_H"){
+              if(substr($date, -1, 1) == 1){
                   $date=substr($date, 0, 7);
                   $splitWeek=1;
               }else{
@@ -492,9 +492,9 @@ global $conf;
 //$roles=array(0=> 'team', 1=> 'project', 2=>'customer', 3=>'supplier', 4=>'other');
 $rolesUrl=array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOtherApproval.php?role=project', 3=>'TimesheetOtherApproval.php?role=customer', 4=>'TimesheetOtherApproval.php?role=supplier', 5=>'TimesheetOtherApproval.php?role=other');
     foreach($apflows as $key=> $value){
-        if($value==1){
+        if($value == 1){
             echo '  <div class="inline-block tabsElem"><a  href="'.$rolesUrl[$key].'&leftmenu=timesheet" class="';
-            echo    ($role_key==$key)?'tabactive':'tabunactive';
+            echo    ($role_key == $key)?'tabactive':'tabunactive';
             echo   ' tab inline-block" data-role="button">'.$langs->trans($roles[$key])."</a></div>\n";
         }
     }
@@ -518,12 +518,12 @@ function getDayInterval($dateStart, $dateEnd){
 function formatTime($duration, $hoursperdays=-1)
     {
         global $conf;
-        if($hoursperdays==-1){
-            $hoursperdays=($conf->global->TIMESHEET_TIME_TYPE=="days")?$conf->global->TIMESHEET_DAY_DURATION:0;
-        }elseif($hoursperdays==-2){
-            $hoursperdays=($conf->global->TIMESHEET_INVOICE_TIMETYPE=="days")?$conf->global->TIMESHEET_DAY_DURATION:0;
+        if($hoursperdays == -1){
+            $hoursperdays=($conf->global->TIMESHEET_TIME_TYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
+        }elseif($hoursperdays == -2){
+            $hoursperdays=($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
         }
-        if($hoursperdays==0)
+        if($hoursperdays == 0)
         {
             $TotalSec=$duration%60;
             $TotalMin=(($duration-$TotalSec)/60)%60;
@@ -554,23 +554,23 @@ function formatTime($duration, $hoursperdays=-1)
         $nbr=0;
         foreach($messages as $key=> $message){
             if($message['param']>0 ){
-                if($returnstring==false)setEventMessage($langs->transnoentitiesnoconv($message['text']).$message['param'], $message['type']);
+                if($returnstring == false)setEventMessage($langs->transnoentitiesnoconv($message['text']).$message['param'], $message['type']);
                 else $messages[$key]['text']=$langs->trans($message['text']);
                 $nbr++;
             }else{
                 unset($messages[$key]);
             }
         }
-        if($nbr==0) setEventMessage($langs->transnoentitiesnoconv(
+        if($nbr == 0) setEventMessage($langs->transnoentitiesnoconv(
                     $default['text']), $default['type']);
         /*
-        if (array_sum($arraymessage)==0){
+        if (array_sum($arraymessage) == 0){
             setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warnings');
         }else{
             if($arraymessage['timeSpendCreated']>0)
                 $str=$langs->transnoentitiesnoconv("NumberOfTimeSpendCreated")
                         .':'.$arraymessage['timeSpendCreated'];
-                if($returnstring==true)setEventMessage($str);
+                if($returnstring == true)setEventMessage($str);
                 $retStr+=$str;
             if($arraymessage['timeSpendModified']>0)
                 setEventMessage( $langs->transnoentitiesnoconv("NumberOfTimeSpendModified")
@@ -586,5 +586,5 @@ function formatTime($duration, $hoursperdays=-1)
                         .$langs->transnoentitiesnoconv(" Update failed")
                         .':'.$arraymessage['updateError'], 'errors');
         }*/
-        if($returnstring==true)return json_encode($messages);
+        if($returnstring == true)return json_encode($messages);
     }

@@ -85,7 +85,7 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
             $_SESSION['ajaxQuerry'][$token]['option']=$addtionnalChoices;
                     //array('table'=>$table, 'fieldValue'=>$fieldValue, 'htmlName'=> $htmlName, 'fieldToShow1'=>$fieldToShow1, 'fieldToShow2'=>$fieldToShow2, 'separator'=> $separator, 'sqlTailTable'=>$sqlTailTable, 'sqlTailWhere'=>$sqlTailWhere, 'addtionnalChoices'=>$addtionnalChoices);
             $comboenhancement = ajax_autocompleter($selected, $htmlName, $ajaxUrl, $urloption, $ajaxNbChar);
-            $sqlTail.=" LIMIT 5";
+            $sqlTail .= " LIMIT 5";
             // put \\ before barket so the js will work for Htmlname before it is change to seatch HTMLname
             $htmlid=str_replace('[', '\\\\[', str_replace(']', '\\\\]', $htmlName));
             $comboenhancement=str_replace('#'.$htmlName, '#'.$htmlid, $comboenhancement);
@@ -98,22 +98,22 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
         $htmlid='#'.str_replace('[', '\\\\[', str_replace(']', '\\\\]', $htmlName));
         $comboenhancement=str_replace('#'.$htmlName, $htmlid, $comboenhancement);
         //incluse js code in the html response
-        $select.=$comboenhancement;
+        $select .= $comboenhancement;
         $nodatarole=($comboenhancement?' data-role="none"':'');
     }
     //dBQuerry
     $SelectOptions='';
     $selectedValue='';
     $sql='SELECT DISTINCT ';
-    $sql.=$sqlarray['keyfield'];
-    $sql.=', '.$sqlarray['fields'];
+    $sql .= $sqlarray['keyfield'];
+    $sql .= ', '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
-            $sql.=' '.$sqlarray['join'];
+            $sql .= ' '.$sqlarray['join'];
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))
-            $sql.=' WHERE '.$sqlarray['where'];
+            $sql .= ' WHERE '.$sqlarray['where'];
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
-            $sql.=' '.$sqlarray['tail'];
+            $sql .= ' '.$sqlarray['tail'];
     dol_syslog('form::select_sellist ', LOG_DEBUG);
     // remove the 't." if any
     $startkey=strpos($sqlarray['keyfield'], '.');
@@ -133,22 +133,22 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
             {
                 $fieldtoshow='';
                 foreach($fields as $item){
-                    if(!empty($fieldtoshow))$fieldtoshow.=$separator;
-                    $fieldtoshow.=$obj->{$item['label']};
+                    if(!empty($fieldtoshow))$fieldtoshow .= $separator;
+                    $fieldtoshow .= $obj->{$item['label']};
                 }
                 $selectOptions.= "<option value=\"".$obj->{$labelKey}."\" ";
-                if($obj->{$labelKey}==$selected){
-                     $selectOptions.='selected=\"selected\"';
+                if($obj->{$labelKey} == $selected){
+                     $selectOptions .= 'selected=\"selected\"';
                      $selectedValue=$fieldtoshow;
                  }
-                 $selectOptions.=">";
-                 $selectOptions.=$fieldtoshow;
-                 $selectOptions.="</option>\n";
+                 $selectOptions .= ">";
+                 $selectOptions .= $fieldtoshow;
+                 $selectOptions .= "</option>\n";
             }
             $i++;
         }
         if($addtionnalChoices)foreach($addtionnalChoices as $value => $choice){
-            $selectOptions.= '<option value="'.$value.'" '.(($selected==$value)?'selected':'').">{$choice}</option>\n";
+            $selectOptions.= '<option value="'.$value.'" '.(($selected == $value)?'selected':'').">{$choice}</option>\n";
         }
     }
     else
@@ -158,14 +158,14 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
        $select.= "<option value=\"-1\" selected=\"selected\">ERROR</option>\n";
     }
     if($ajaxNbChar && $ajax){
-        if ($selectedValue=='' && is_array($addtionnalChoices)){
+        if ($selectedValue == '' && is_array($addtionnalChoices)){
             $selectedValue=$addtionnalChoices[$selected];
         }
-        $select.='<input type="text" class="minwidth200 '.(isset($htmlarray['class'])?$htmlarray['class']:'').'" name="'.$htmlName.'" id="'.(isset($htmlarray['id'])?$htmlarray['id']:$htmlName).'" value="'.$selectedValue.'"'.$htmlarray['otherparam'].' />';
+        $select .= '<input type="text" class="minwidth200 '.(isset($htmlarray['class'])?$htmlarray['class']:'').'" name="'.$htmlName.'" id="'.(isset($htmlarray['id'])?$htmlarray['id']:$htmlName).'" value="'.$selectedValue.'"'.$htmlarray['otherparam'].' />';
     }else{
-        $select.='<select class="flat minwidth200 '.(isset($htmlarray['class'])?$htmlarray['class']:'').'" id="'.(isset($htmlarray['id'])?$htmlarray['id']:$htmlName).'" name="'.$htmlName.'"'.$nodatarole.' '.$htmlarray['otherparam'].'>';
-        $select.=$selectOptions;
-        $select.="</select>\n";
+        $select .= '<select class="flat minwidth200 '.(isset($htmlarray['class'])?$htmlarray['class']:'').'" id="'.(isset($htmlarray['id'])?$htmlarray['id']:$htmlName).'" name="'.$htmlName.'"'.$nodatarole.' '.$htmlarray['otherparam'].'>';
+        $select .= $selectOptions;
+        $select .= "</select>\n";
     }
    // }
       return $select;
@@ -186,16 +186,16 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
         return "NuLL";
     }
     $sql='SELECT DISTINCT ';
-    $sql.=$sqlarray['keyfield'];
-    $sql.=', '.$sqlarray['fields'];
+    $sql .= $sqlarray['keyfield'];
+    $sql .= ', '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
-            $sql.=' '.$sqlarray['join'];
+            $sql .= ' '.$sqlarray['join'];
     $sql.= ' WHERE '.$sqlarray['keyfield'].'=\''.$selected.'\'';
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))
-            $sql.=' AND '.$sqlarray['where'];
+            $sql .= ' AND '.$sqlarray['where'];
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
-            $sql.=' '.$sqlarray['tail'];
+            $sql .= ' '.$sqlarray['tail'];
     dol_syslog('form::print_sellist ', LOG_DEBUG);
     $startkey=strpos($sqlarray['keyfield'], '.');
     $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
@@ -223,8 +223,8 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
             {
                 $select='';
                 foreach($fields as $item){
-                    if(!empty($select))$select.=$separator;
-                    $select.=$obj->{$item['label']};
+                    if(!empty($select))$select .= $separator;
+                    $select .= $obj->{$item['label']};
                 }
                      if(!empty($url))$select='<a href="'.$url.$obj->{$sqlarray['keyfield']}.'">'.$select.'</a>';
             }else{
@@ -240,7 +240,7 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
         dol_print_error($db);
        $select.= "ERROR";
     }
-      //$select.="\n";
+      //$select .= "\n";
       return $select;
  }
 /*
@@ -278,10 +278,10 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
           $html='<table class="noborder" width="100%"><tr class="titre">';
            for($i=0;$i<$numberOfBits;$i++){
                // labels
-               $html.='<td width="'.floor(100/$numberOfBits).'%">'.$labels[$i].'<td>';
-               $htmlValue.='<td><input type="checkbox" name="'.$names[$i].'"'.((substr($bitstring, $i+1, 1))?' checked':'').(($edit)?'':' readonly').' ><td>';
+               $html .= '<td width="'.floor(100/$numberOfBits).'%">'.$labels[$i].'<td>';
+               $htmlValue .= '<td><input type="checkbox" name="'.$names[$i].'"'.((substr($bitstring, $i+1, 1))?' checked':'').(($edit)?'':' readonly').' ><td>';
            }
-           $html.='</tr><tr>'.$htmlValue.'</tr></table>';
+           $html .= '</tr><tr>'.$htmlValue.'</tr></table>';
      }
      return $html;
  }

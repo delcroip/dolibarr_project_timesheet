@@ -37,10 +37,10 @@ $langs->load("projects");
 $langs->load('timesheet@timesheet');
 //find the right week
 $toDate               = GETPOST('toDate', 'alpha');
-$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday', 'int'):0;// to not look for the date if action not goTodate
+$toDateday =(!empty($toDate) && $action == 'goToDate')? GETPOST('toDateday', 'int'):0;// to not look for the date if action not goTodate
 $toDatemonth               = GETPOST('toDatemonth', 'int');
 $toDateyear               = GETPOST('toDateyear', 'int');
-if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
+if($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $dateStart=$_SESSION["dateStart"];
 }else {
     $dateStart=parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
@@ -58,7 +58,7 @@ llxHeader('', $langs->trans('userReport'), '');
 //querry to get the project where the user have priviledge;either project responsible or admin
 $sql='SELECT DISTINCT usr.rowid as userid, usr.lastname, usr.firstname '
      .'FROM '.MAIN_DB_PREFIX.'user as usr ';
-$sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
+$sql .= 'JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
      .' ON ec.fk_socpeople=usr.rowid '
      .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact'
      .' WHERE ctc.element in (\'project_task\', \'project\') AND ctc.active=\'1\' ';
@@ -66,7 +66,7 @@ if(!$user->admin)
 {
     $list=getSubordinates($db, $userid, 3);
     $list[]=$userid;
-    $sql.=' AND (usr.rowid in ('.implode(',', $list).'))';
+    $sql .= ' AND (usr.rowid in ('.implode(',', $list).'))';
 }
 dol_syslog("timesheet::reportuser::userList", LOG_DEBUG);
 //launch the sql querry
@@ -102,18 +102,18 @@ $Form='<form action="?action=reportuser'.(($optioncss != '')?'&amp;optioncss='.$
         <td><select  name="userSelected">
         ';
 foreach($userList as $usr){
-   // $Form.='<option value="'.$usr->id.'">'.$usr->name.'</option> ';
-    $Form.='<option value="'.$usr->userid.'" '.(($userIdSelected==$usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
+   // $Form .= '<option value="'.$usr->id.'">'.$usr->name.'</option> ';
+    $Form .= '<option value="'.$usr->userid.'" '.(($userIdSelected == $usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
 }
-    $Form.='<option value="-999" '.(($userIdSelected=="-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+    $Form .= '<option value="-999" '.(($userIdSelected == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
 //$mode='PTD';
 $querryRes='';
 if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         &&!empty($_POST['month']))
 {
-    if($userIdSelected=='-999'){
+    if($userIdSelected == '-999'){
         foreach($userList as $userSt){
-        $querryRes.=$userSt->getHTMLreport($short,
+        $querryRes .= $userSt->getHTMLreport($short,
             $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
@@ -127,17 +127,17 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
     $year=date('Y', $dateStart);
     $month=date('m', $dateStart);
 }
-$Form.='</select></td>'
+$Form .= '</select></td>'
         .'<td>'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year, 'year', 0, 10, 3).' </td>'
         .'<td><input type="checkbox" name="short" value="1" '
-        .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
+        .(($short == 1)?'checked>':'>').$langs->trans('short').'</td>'
         .'<td><input type="checkbox" name="exportfriendly" value="1" '
-        .(($exportfriendly==1)?'checked>':'>').$langs->trans('exportfriendly').'</td>'
-        . '<td><input type="radio" name="mode" value="PTD" '.($mode=='PTD'?'checked':'')
+        .(($exportfriendly == 1)?'checked>':'>').$langs->trans('exportfriendly').'</td>'
+        . '<td><input type="radio" name="mode" value="PTD" '.($mode == 'PTD'?'checked':'')
         .'> '.$langs->trans('Project').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>'
-        . '<input type="radio" name="mode" value="PDT" '.($mode=='PDT'?'checked':'')
+        . '<input type="radio" name="mode" value="PDT" '.($mode == 'PDT'?'checked':'')
         .'> '.$langs->trans('Project').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>'
-        . '<input type="radio" name="mode" value="DPT" '.($mode=='DPT'?'checked':'')
+        . '<input type="radio" name="mode" value="DPT" '.($mode == 'DPT'?'checked':'')
         .'> '.$langs->trans('Date').' / '.$langs->trans('Project').' / '.$langs->trans('Task').'<br>'
         .'<td><input type="submit" value="'.$langs->trans('getReport').'"></td>
         </tr>

@@ -112,17 +112,17 @@ public $date_time_event_start;
         $sql.= 'status, ';
         $sql.= 'date_modification, fk_user_modification';
         $sql.= ") VALUES (";
-        $sql.=' '.(empty($this->date_time_event) || dol_strlen($this->date_time_event)==0?'NULL':"'".$this->db->idate($this->date_time_event)."'").', ';
-        $sql.=' '.(empty($this->event_location_ref)?'NULL':"'".$this->db->escape($this->event_location_ref)."'").', ';
-        $sql.=' '.(empty($this->event_type)?'NULL':"'".$this->event_type."'").', ';
-        $sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").', ';
-        $sql.=' '.(empty($this->userid)?'NULL':"'".$this->userid."'").', ';
-        $sql.=' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").', ';
-        $sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").', ';
-        $sql.=' '.(empty($this->project)?'NULL':"'".$this->project."'").', ';
-        $sql.=' '.(empty($this->token)?'NULL':"'".$this->token."'").', ';
-        $sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
-        $sql.=', NOW(), \''.$user->id.'\'';
+        $sql .= ' '.(empty($this->date_time_event) || dol_strlen($this->date_time_event) == 0?'NULL':"'".$this->db->idate($this->date_time_event)."'").', ';
+        $sql .= ' '.(empty($this->event_location_ref)?'NULL':"'".$this->db->escape($this->event_location_ref)."'").', ';
+        $sql .= ' '.(empty($this->event_type)?'NULL':"'".$this->event_type."'").', ';
+        $sql .= ' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").', ';
+        $sql .= ' '.(empty($this->userid)?'NULL':"'".$this->userid."'").', ';
+        $sql .= ' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").', ';
+        $sql .= ' '.(empty($this->task)?'NULL':"'".$this->task."'").', ';
+        $sql .= ' '.(empty($this->project)?'NULL':"'".$this->project."'").', ';
+        $sql .= ' '.(empty($this->token)?'NULL':"'".$this->token."'").', ';
+        $sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
+        $sql .= ', NOW(), \''.$user->id.'\'';
         $sql.= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -147,7 +147,7 @@ public $date_time_event_start;
             foreach($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
@@ -171,19 +171,19 @@ public $date_time_event_start;
     	global $langs;
         $sql = "SELECT";
         $sql.= " t.rowid, ";
-        $sql.=' t.date_time_event, ';
-        $sql.=' t.event_location_ref, ';
-        $sql.=' t.event_type, ';
-        $sql.=' t.note, ';
-        $sql.=' t.date_modification, ';
-        $sql.=' t.fk_userid, ';
-        $sql.=' t.fk_user_modification, ';
-        $sql.=' t.fk_third_party, ';
-        $sql.=' t.fk_task, ';
-        $sql.=' t.fk_project, ';
-        $sql.=' t.token, ';
-        $sql.=' t.status, ';
-        $sql.='  st.date_time_event  as date_time_event_start ';
+        $sql .= ' t.date_time_event, ';
+        $sql .= ' t.event_location_ref, ';
+        $sql .= ' t.event_type, ';
+        $sql .= ' t.note, ';
+        $sql .= ' t.date_modification, ';
+        $sql .= ' t.fk_userid, ';
+        $sql .= ' t.fk_user_modification, ';
+        $sql .= ' t.fk_third_party, ';
+        $sql .= ' t.fk_task, ';
+        $sql .= ' t.fk_project, ';
+        $sql .= ' t.token, ';
+        $sql .= ' t.status, ';
+        $sql .= '  st.date_time_event  as date_time_event_start ';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element." as st ON t.token=st.token AND ABS(st.event_type=2)";
         $sql.= " WHERE ";
@@ -266,7 +266,7 @@ public $date_time_event_start;
                 foreach($this->errors as $errmsg)
                 {
                     dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                    $this->error.=($this->error?', '.$errmsg:$errmsg);
+                    $this->error .= ($this->error?', '.$errmsg:$errmsg);
                 }
                 $this->db->rollback();
                 return -1*$error;
@@ -291,7 +291,7 @@ public $date_time_event_start;
 	global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;// Force disable tooltips
     	$result='';
-        if(empty($ref) && $id==0){
+        if(empty($ref) && $id == 0){
             if(isset($this->id))  {
                 $id=$this->id;
             }elseif(isset($this->rowid)){
@@ -306,10 +306,10 @@ public $date_time_event_start;
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
                 $label=$langs->trans("Showspread");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
         }else $linkclose = ($morecss?' class="'.$morecss.'"':'');
         if($id){
             $lien = '<a href="'.dol_buildpath('/timesheet/Attendanceevent_card.php', 1).'id='.$id.'&action=view"'.$linkclose.'>';
@@ -323,16 +323,16 @@ public $date_time_event_start;
         $label = '<u>' . $langs->trans("spread") . '</u>';
         $label.= '<br>';
         if($ref){
-            $label.=$langs->trans("Red").': '.$ref;
+            $label .= $langs->trans("Red").': '.$ref;
         }elseif($id){
-            $label.=$langs->trans("#").': '.$id;
+            $label .= $langs->trans("#").': '.$id;
         }
-    	if ($withpicto==1){
-            $result.=($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif($withpicto==2) {
-            $result.=$lien.img_object($label, $picto).$lienfin;
+    	if ($withpicto == 1){
+            $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
+        }elseif($withpicto == 2) {
+            $result .= $lien.img_object($label, $picto).$lienfin;
         }else{
-            $result.=$lien.$htmlcontent.$lienfin;
+            $result .= $lien.$htmlcontent.$lienfin;
         }
     	return $result;
     }
@@ -428,7 +428,7 @@ public $date_time_event_start;
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
-        elseif($this->db->affected_rows($resql)==0){$error++;$this->errors[]="Item no found in database";}
+        elseif($this->db->affected_rows($resql) == 0){$error++;$this->errors[]="Item no found in database";}
         }
 // Commit or rollback
         if ($error)
@@ -436,7 +436,7 @@ public $date_time_event_start;
             foreach($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
@@ -542,18 +542,18 @@ public $date_time_event_start;
      */
     function setSQLfields($user){
         $sql='';
-        $sql.=' date_time_event='.(dol_strlen($this->date_time_event)!=0 ? "'".$this->db->idate($this->date_time_event)."'":'null').', ';
-        $sql.=' event_location_ref='.(empty($this->event_location_ref)!=0 ? 'null':"'".$this->db->escape($this->event_location_ref)."'").', ';
-        $sql.=' event_type='.(empty($this->event_type)!=0 ? 'null':"'".$this->event_type."'").', ';
-        $sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").', ';
-        $sql.=' date_modification=NOW(), ';
-        $sql.=' fk_userid='.(empty($this->userid)!=0 ? 'null':"'".$this->userid."'").', ';
-        $sql.=' fk_user_modification="'.$user->id.'", ';
-        $sql.=' fk_third_party='.(empty($this->third_party)!=0 ? 'null':"'".$this->third_party."'").', ';
-        $sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").', ';
-        $sql.=' fk_project='.(empty($this->project)!=0 ? 'null':"'".$this->project."'").', ';
-        $sql.=' token='.(empty($this->token)!=0 ? 'null':"'".$this->token."'").', ';
-        $sql.=' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").'';
+        $sql .= ' date_time_event='.(dol_strlen($this->date_time_event)!=0 ? "'".$this->db->idate($this->date_time_event)."'":'null').', ';
+        $sql .= ' event_location_ref='.(empty($this->event_location_ref)!=0 ? 'null':"'".$this->db->escape($this->event_location_ref)."'").', ';
+        $sql .= ' event_type='.(empty($this->event_type)!=0 ? 'null':"'".$this->event_type."'").', ';
+        $sql .= ' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").', ';
+        $sql .= ' date_modification=NOW(), ';
+        $sql .= ' fk_userid='.(empty($this->userid)!=0 ? 'null':"'".$this->userid."'").', ';
+        $sql .= ' fk_user_modification="'.$user->id.'", ';
+        $sql .= ' fk_third_party='.(empty($this->third_party)!=0 ? 'null':"'".$this->third_party."'").', ';
+        $sql .= ' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").', ';
+        $sql .= ' fk_project='.(empty($this->project)!=0 ? 'null':"'".$this->project."'").', ';
+        $sql .= ' token='.(empty($this->token)!=0 ? 'null':"'".$this->token."'").', ';
+        $sql .= ' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").'';
         return $sql;
     }
     /**
@@ -726,7 +726,7 @@ function createTimeSpend($user, $token=''){
     //if(empty($token))$token=$this->token;
     if(!empty($token)){
         $this->fetch('', '', $token);
-        if($this->event_type==EVENT_STOP && $this->task>0){
+        if($this->event_type == EVENT_STOP && $this->task>0){
             $start=  strtotime("midnight", (int)$this->date_time_event);
             $end=  strtotime("tomorrow", (int)$this->date_time_event)-1;
             $duration=$this->date_time_event -$this->date_time_event_start;
@@ -747,7 +747,7 @@ function createTimeSpend($user, $token=''){
         $tasksList=$this->fetchTasks($userid);
         $html='';
         if(is_array($tasksList))foreach($tasksList as $task){
-            $html.=$task->getAttendanceLine($headers, ($task->id==$this->task));
+            $html .= $task->getAttendanceLine($headers, ($task->id == $this->task));
         }
         return $html;
     }
@@ -758,7 +758,7 @@ function createTimeSpend($user, $token=''){
         global $langs;
         print '<div>';
             print '<div style="width:50px%;height:60px;float:left;vertical-align:middle" >';
-                print '<img height="64px" id = "mainPlayStop" src="img/'.(($this->id==0)?'play-arrow':'stop-square');
+                print '<img height="64px" id = "mainPlayStop" src="img/'.(($this->id == 0)?'play-arrow':'stop-square');
                 print '.png" onClick=startStop(event,'.$this->userid.',null) style="cursor:pointer;vertical-align:middle">  ';
             print '</div>';
             print '<div style="width:40%;height:60px;float:left" >';
@@ -781,23 +781,23 @@ function createTimeSpend($user, $token=''){
  function fetchTasks($userid='', $date=''){
     global $conf;
     if(empty($date))$date=time();
-    if($userid==''){$userid=$this->userid;}
+    if($userid == ''){$userid=$this->userid;}
     $this->userid=$userid;
     $datestart=strtotime('yesterday midnight', $date);
     $datestop= strtotime('today midnight', $date);
      $tasksList=array();
     $sql ='SELECT DISTINCT element_id as taskid, prj.fk_soc, prj.ref, tsk.ref';
-    $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec";
-    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid=ec.fk_c_type_contact  AND ctc.active=\'1\') ';
-    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=ec.element_id ';
-    $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
-    $sql.=" WHERE ec.fk_socpeople='".$userid."' AND ctc.element='project_task' ";
-    if($conf->global->TIMESHEET_HIDE_DRAFT=='1'){$sql.=' AND prj.fk_statut>\'0\' ';}
-    $sql.=' AND (prj.datee>=\''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
-    $sql.=' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
-    $sql.=' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
-    $sql.=' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
-    $sql.='  ORDER BY prj.fk_soc, prj.ref, tsk.ref ';
+    $sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid=ec.fk_c_type_contact  AND ctc.active=\'1\') ';
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=ec.element_id ';
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid= tsk.fk_projet ';
+    $sql .= " WHERE ec.fk_socpeople='".$userid."' AND ctc.element='project_task' ";
+    if($conf->global->TIMESHEET_HIDE_DRAFT == '1'){$sql .= ' AND prj.fk_statut>\'0\' ';}
+    $sql .= ' AND (prj.datee>=\''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
+    $sql .= ' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
+    $sql .= ' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
+    $sql .= ' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
+    $sql .= '  ORDER BY prj.fk_soc, prj.ref, tsk.ref ';
      dol_syslog("timesheetEvent::fetchTask ", LOG_DEBUG);
     $resql=$this->db->query($sql);
     if ($resql)

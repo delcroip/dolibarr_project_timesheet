@@ -46,7 +46,7 @@ class TimesheetHoliday extends Holiday
         $SQLfilter=  " AND (cp.date_fin>='".$this->db->idate($datestart)."') ";
         $SQLfilter.= " AND (cp.date_debut<'".$this->db->idate($datestop)."')";
         $ret=$this->fetchByUser($userId, '', $SQLfilter);
-        $this->holidayPresent=($ret==1);
+        $this->holidayPresent=($ret == 1);
         $this->holidaylist=array();
         //fixme fill the holiday list
         /*
@@ -89,9 +89,9 @@ class TimesheetHoliday extends Holiday
                      }
                      // in case of 2 holiday present in the half day order 3, 2, 1, 5, 4
                      $oldSatus=$this->holidaylist[$day]['amStatus'];
-                     $amOverride=($this->holidaylist[$day]['amId']==0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
+                     $amOverride=($this->holidaylist[$day]['amId'] == 0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
                      $oldSatus=$this->holidaylist[$day]['amStatus'];
-                     $pmOverride=($this->holidaylist[$day]['pmId']==0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
+                     $pmOverride=($this->holidaylist[$day]['pmId'] == 0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
                      if($am && $amOverride){
                          $this->holidaylist[$day]['am']=true;
                          $this->holidaylist[$day]['amId']=$record['rowid'];
@@ -128,7 +128,7 @@ class TimesheetHoliday extends Holiday
         if(!$this->holidayPresent) // don't show the holiday line if nothing present
            return '';
         $html ="<tr id='holiday'>\n";
-        $html .='<th colspan="'.count($headers).'" align="right" > '.$langs->trans('Holiday').' </th>';
+        $html .= '<th colspan="'.count($headers).'" align="right" > '.$langs->trans('Holiday').' </th>';
         $i=0;
         foreach ($this->holidaylist as $holiday)
         {
@@ -136,37 +136,37 @@ class TimesheetHoliday extends Holiday
             $pm=$holiday['pm'];
             $amId=$holiday['amId'];
             $pmId=$holiday['pmId'];
-            $amValue=($holiday['amStatus']==3);
-            $pmValue=($holiday['pmStatus']==3);
-            $value=($timetype=="hours")?date('H:i', mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
-            $html .='<th style="margin: 0;padding: 0;">';
-            if($conf->global->TIMESHEET_ADD_HOLIDAY_TIME==1)$html .='<input type="hidden" class="time4day['.$tsUserId.']['.$i.']"  value="'.$value.'">';
-            $html .='<ul id="holiday['.$i.']" class="listHoliday" >';
-                $html .='<li id="holiday['.$i.'][0]" class="listItemHoliday" ><a ';
+            $amValue=($holiday['amStatus'] == 3);
+            $pmValue=($holiday['pmStatus'] == 3);
+            $value=($timetype == "hours")?date('H:i', mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
+            $html .= '<th style="margin: 0;padding: 0;">';
+            if($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1)$html .= '<input type="hidden" class="time4day['.$tsUserId.']['.$i.']"  value="'.$value.'">';
+            $html .= '<ul id="holiday['.$i.']" class="listHoliday" >';
+                $html .= '<li id="holiday['.$i.'][0]" class="listItemHoliday" ><a ';
                 if($am){
-                    $html .='href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
+                    $html .= 'href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
                     $amColor=($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
                     $amClass= ($holiday['prev'])?'':' noPrevHoliday';
-                    $amClass.= ($pm && $pmId==$amId )?'':' noNextHoliday';
-                    $html .=' class="holiday'.$amClass.'" style="'.$amColor.'">&nbsp;</a></li>';
+                    $amClass.= ($pm && $pmId == $amId )?'':' noNextHoliday';
+                    $html .= ' class="holiday'.$amClass.'" style="'.$amColor.'">&nbsp;</a></li>';
                 }else{
-                    $html .=' class="holiday" >&nbsp;</a></li>';
+                    $html .= ' class="holiday" >&nbsp;</a></li>';
                 }
-                $html .='<li id="holiday['.$i.'][1]" class="listItemHoliday" ><a ';
+                $html .= '<li id="holiday['.$i.'][1]" class="listItemHoliday" ><a ';
                 if($pm){
-                    $html .='href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
+                    $html .= 'href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
                     $pmColor=($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
-                    $pmClass= ($am && $pmId==$amId)?'':' noPrevHoliday';
+                    $pmClass= ($am && $pmId == $amId)?'':' noPrevHoliday';
                     $pmClass.= ($holiday['next'])?'':' noNextHoliday';
-                    $html .=' class="holiday'.$pmClass.'" style="'.$pmColor.'">&nbsp;</a></li>';
+                    $html .= ' class="holiday'.$pmClass.'" style="'.$pmColor.'">&nbsp;</a></li>';
                 }else{
-                    $html .=' class="holiday" >&nbsp;</a></li>';
+                    $html .= ' class="holiday" >&nbsp;</a></li>';
                 }
            // }
-            $html .="</ul></th>\n";
+            $html .= "</ul></th>\n";
             $i++;
         }
-        $html .='</tr>';
+        $html .= '</tr>';
         return $html;
     }	
 /*

@@ -80,7 +80,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
     $ls_event_type= GETPOST('ls_event_type', 'int');
     $ls_note= GETPOST('ls_note', 'alpha');
     $ls_userid= GETPOST('ls_userid', 'int');
-    if($ls_userid==-1)$ls_userid='';
+    if($ls_userid == -1)$ls_userid='';
     $ls_third_party= GETPOST('ls_third_party', 'int');
     $ls_task= GETPOST('ls_task', 'int');
     $ls_project= GETPOST('ls_project', 'int');
@@ -102,10 +102,10 @@ $pagenext = $page + 1;
 // Right Management
  /*
 if ($user->societe_id > 0 ||
-       (!$user->rights->timesheet->add && ($action=='add' || $action='create')) ||
-       (!$user->rights->timesheet->view && ($action=='list' || $action='view')) ||
-       (!$user->rights->timesheet->delete && ($action=='confirm_delete')) ||
-       (!$user->rights->timesheet->edit && ($action=='edit' || $action='update')))
+       (!$user->rights->timesheet->add && ($action == 'add' || $action='create')) ||
+       (!$user->rights->timesheet->view && ($action == 'list' || $action='view')) ||
+       (!$user->rights->timesheet->delete && ($action == 'confirm_delete')) ||
+       (!$user->rights->timesheet->edit && ($action == 'edit' || $action='update')))
 {
 	accessforbidden();
 }
@@ -127,7 +127,7 @@ $form= new Form($db);
 // Action to remove record
  switch($action){
     case 'confirm_delete':
-       $result=($confirm=='yes')?$object->delete($user):0;
+       $result=($confirm == 'yes')?$object->delete($user):0;
        if ($result > 0)
        {
                // Delete OK
@@ -162,7 +162,7 @@ $form= new Form($db);
         {
                 // Creation OK
             // remove the tms
-               if($ajax==1){
+               if($ajax == 1){
                    $object->serialize(2); //return JSON
                     ob_end_flush();
 exit();// don't remove the tms. don't continue with the
@@ -198,7 +198,7 @@ print "<div> <!-- module body-->";
 $form=new Form($db);
 $formother=new FormOther($db);
 $fuser=new User($db);
-        if( $action=='delete' && ($id>0)){
+        if( $action == 'delete' && ($id>0)){
          print $form->form_confirm(dol_buildpath('/timesheet/AttendanceEventAdmin.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceevent'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          //if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
@@ -220,16 +220,16 @@ jQuery(document).ready(function() {
 </script>';*/
     $sql = 'SELECT';
     $sql.= ' t.rowid, ';
-    $sql.=' t.date_time_event, ';
-    $sql.=' t.event_location_ref, ';
-    $sql.=' t.event_type, ';
-    $sql.=' t.note, ';
-    $sql.=' t.fk_userid, ';
-    $sql.=' t.fk_third_party, ';
-    $sql.=' t.fk_task, ';
-    $sql.=' t.fk_project, ';
-    $sql.=' t.token, ';
-    $sql.=' t.status';
+    $sql .= ' t.date_time_event, ';
+    $sql .= ' t.event_location_ref, ';
+    $sql .= ' t.event_type, ';
+    $sql .= ' t.note, ';
+    $sql .= ' t.fk_userid, ';
+    $sql .= ' t.fk_third_party, ';
+    $sql .= ' t.fk_task, ';
+    $sql .= ' t.fk_project, ';
+    $sql .= ' t.token, ';
+    $sql .= ' t.status';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_event as t';
     $sqlwhere='';
     if(isset($object->entity))
@@ -257,21 +257,21 @@ jQuery(document).ready(function() {
 	if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
     //list limit
     if(!empty($sqlwhere))
-        $sql.=' WHERE '.substr ($sqlwhere, 5);
+        $sql .= ' WHERE '.substr ($sqlwhere, 5);
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
         $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'attendance_event as t';
         if(!empty($sqlwhere))
-            $sqlcount.=' WHERE '.substr ($sqlwhere, 5);
+            $sqlcount .= ' WHERE '.substr ($sqlwhere, 5);
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
     if(!empty($sortfield))
         {$sql.= $db->order($sortfield, $sortorder);
     }else{
-       $sql.=' ORDER BY t.date_time_event DESC';
+       $sql .= ' ORDER BY t.date_time_event DESC';
     }
     if (!empty($limit))
     {
@@ -283,20 +283,20 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     if ($resql)
     {
         $param='';
-        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-        	if (!empty($ls_date_time_event_month))	$param.='&ls_date_time_event_month='.urlencode($ls_date_time_event_month);
-	if (!empty($ls_date_time_event_year))	$param.='&ls_date_time_event_year='.urlencode($ls_date_time_event_year);
-	if (!empty($ls_event_location_ref))	$param.='&ls_event_location_ref='.urlencode($ls_event_location_ref);
-	if (!empty($ls_event_type))	$param.='&ls_event_type='.urlencode($ls_event_type);
-	if (!empty($ls_note))	$param.='&ls_note='.urlencode($ls_note);
-	if (!empty($ls_userid))	$param.='&ls_userid='.urlencode($ls_userid);
-	if (!empty($ls_third_party))	$param.='&ls_third_party='.urlencode($ls_third_party);
-	if (!empty($ls_task))	$param.='&ls_task='.urlencode($ls_task);
-	if (!empty($ls_project))	$param.='&ls_project='.urlencode($ls_project);
-	if (!empty($ls_token))	$param.='&ls_token='.urlencode($ls_token);
-	if (!empty($ls_status))	$param.='&ls_status='.urlencode($ls_status);
-        if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+        if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+        	if (!empty($ls_date_time_event_month))	$param .= '&ls_date_time_event_month='.urlencode($ls_date_time_event_month);
+	if (!empty($ls_date_time_event_year))	$param .= '&ls_date_time_event_year='.urlencode($ls_date_time_event_year);
+	if (!empty($ls_event_location_ref))	$param .= '&ls_event_location_ref='.urlencode($ls_event_location_ref);
+	if (!empty($ls_event_type))	$param .= '&ls_event_type='.urlencode($ls_event_type);
+	if (!empty($ls_note))	$param .= '&ls_note='.urlencode($ls_note);
+	if (!empty($ls_userid))	$param .= '&ls_userid='.urlencode($ls_userid);
+	if (!empty($ls_third_party))	$param .= '&ls_third_party='.urlencode($ls_third_party);
+	if (!empty($ls_task))	$param .= '&ls_task='.urlencode($ls_task);
+	if (!empty($ls_project))	$param .= '&ls_project='.urlencode($ls_project);
+	if (!empty($ls_token))	$param .= '&ls_token='.urlencode($ls_token);
+	if (!empty($ls_status))	$param .= '&ls_status='.urlencode($ls_status);
+        if ($filter && $filter != -1) $param .= '&filtre='.urlencode($filter);
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
         print_barre_liste($langs->trans("Attendance"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);

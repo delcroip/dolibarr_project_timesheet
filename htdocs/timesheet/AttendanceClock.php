@@ -95,7 +95,7 @@ $timesheet_attendance->fetch('', $user);
 $timesheet_attendance->printHTMLClock();
 //tmstp=time();
 //fetch ts for others
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER==1 && (count($SubordiateIds)>1 || $user->admin)){
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin)){
     //print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 $headers=explode('||', $conf->global->TIMESHEET_HEADERS);
@@ -105,25 +105,25 @@ $ajax=false;
 $html .= "<table class=\"noborder\" width=\"100%\">";
 $html .= "<tr>";
  foreach ($headers as $key => $value){
-         $html.="\t<th ";
-         if (count($headers)==1){
-                $html.='colspan="2" ';
+         $html .= "\t<th ";
+         if (count($headers) == 1){
+                $html .= 'colspan="2" ';
          }
-         $html.=">".$langs->trans($value)."</th>\n";
+         $html .= ">".$langs->trans($value)."</th>\n";
      }
 $html .= "<th>".$langs->trans("Action")."</th></tr>";
 // show the filter
-    $html .='<tr class="timesheet_line" id="searchline">';
-    $html .='<td><a>'.$langs->trans("Search").'</a></td>';
-    $html .='<td span="0"><input type="texte" name="taskSearch" onkeyup="searchTask(this)"></td></tr>';
+    $html .= '<tr class="timesheet_line" id="searchline">';
+    $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
+    $html .= '<td span="0"><input type="texte" name="taskSearch" onkeyup="searchTask(this)"></td></tr>';
 $html .= $timesheet_attendance->printHTMLTaskList($headers, $user->id);
 $html .= "</table>";
 //Javascript
 //$Form .= ' <script type="text/javascript" src="core/js/timesheet.js"></script>'."\n";
 $html .= '<script type="text/javascript">'."\n\t";
-$html .="let stopwatch = new Stopwatch(document.getElementById('stopwatch'));stopwatch.load();";
+$html .= "let stopwatch = new Stopwatch(document.getElementById('stopwatch'));stopwatch.load();";
 $html .= "\n\t".'</script>'."\n";
-// $Form .='</div>';//TimesheetPage
+// $Form .= '</div>';//TimesheetPage
 print $html;
 //add attachement
 // End of page

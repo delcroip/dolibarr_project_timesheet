@@ -32,7 +32,7 @@ $role       = GETPOST('role', 'alpha');
 $role_key='';
 if(!$role){
     $role_key=array_search('1', array_slice ($apflows, 2))+1;// search other than team
-    if($role_key===false){
+    if($role_key == false){
         header("location:TimesheetTeamApproval.php");
     }else{
         $role_key++;
@@ -45,12 +45,12 @@ if(!$role){
 // get other param
 $action           = GETPOST('action', 'alpha');
 if(!is_numeric($offset))$offset=0;
-$print=(GETPOST('optioncss', 'alpha')=='print')?true:false;
+$print=(GETPOST('optioncss', 'alpha') == 'print')?true:false;
 $current=  GETPOST('target', 'int');
 $token=  GETPOST('token', 'alpha');
-if($current==null)$current='0';
+if($current == null)$current='0';
 //handle submission
-if($action=='submit'){
+if($action == 'submit'){
     if (isset($_SESSION['task_timesheet'][$token]))
     {
         // $_SESSION['timesheetAp'][$token]['tsUser']
@@ -98,7 +98,7 @@ if($action=='submit'){
                 if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").' '.$tsApproved);
                 if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").' '.$tsRejected);
                 if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").' '.$errors, 'errors');
-                if($errors==0 && $tsApproved==0 && $tsRejected==0){
+                if($errors == 0 && $tsApproved == 0 && $tsRejected == 0){
                     setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
                 }
             }
@@ -113,7 +113,7 @@ if($action=='submit'){
 ****************************************************/
 $subId=($user->admin)?'all':getSubordinates($db, $userId, 1, array($userId), $role_key);//FIx ME for other role
 $tasks=implode(',', array_keys(getTasks($db, $userId)));
-if($tasks=="")$tasks=0;
+if($tasks == "")$tasks=0;
 $selectList=getSelectAps($subId, $tasks, $role_key);
 if($current>=count($selectList))$current=0;
 // number of TS to show
@@ -189,9 +189,9 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current=0){
 	global $langs, $db;
         $htmlSelect='<select name="target">';
         foreach($selectList as $key => $element){
-            $htmlSelect.=' <option value="'.$key.'" '.(($current==$key)?'selected':'').'>'.$element['label'].'</option>';
+            $htmlSelect .= ' <option value="'.$key.'" '.(($current == $key)?'selected':'').'>'.$element['label'].'</option>';
         }
-        $htmlSelect.='</select>';
+        $htmlSelect .= '</select>';
         $form= new Form($db);
         $Nav=  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
         if($current!=0){
@@ -200,7 +200,7 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current=0){
             if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
             $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
         }
-        $Nav.="</th>\n\t\t<th>\n\t\t\t";
+        $Nav .= "</th>\n\t\t<th>\n\t\t\t";
 	$Nav.=  '<form name="goTo" action="?action=goTo&role='.$role.'" method="POST" >'."\n\t\t\t";
         $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
 	$Nav.=  '<input type="submit" value="Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
@@ -210,7 +210,7 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current=0){
             if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
             $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
         }
-        $Nav.="\n\t\t</th>\n\t</tr>\n </table>\n";
+        $Nav .= "\n\t\t</th>\n\t</tr>\n </table>\n";
         return $Nav;
 }
 /* Funciton to fect timesheet to be approuved.
@@ -242,41 +242,41 @@ function getSelectAps($subId, $tasks, $role_key){
     $sql="SELECT COUNT(ts.rowid) as nb, ";
 switch($conf->global->TIMESHEET_TIME_SPAN){
         case 'month':
-            $sql.=" CONCAT(DATE_FORMAT(ts.date_start, '%m/%Y'), '-', pjt.ref) as id, ";
+            $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%m/%Y'), '-', pjt.ref) as id, ";
              if($db->type!='pgsql'){
-                $sql.=" CONCAT(pjt.title, ' (', MONTH(date_start), '/', YEAR(date_start), ' )#' ) as label, ";
+                $sql .= " CONCAT(pjt.title, ' (', MONTH(date_start), '/', YEAR(date_start), ' )#' ) as label, ";
              }else{
-                $sql.=" CONCAT(pjt.title, ' (', date_part('month', date_start), '/', date_part('year', date_start), ' )#' ) as label, ";
+                $sql .= " CONCAT(pjt.title, ' (', date_part('month', date_start), '/', date_part('year', date_start), ' )#' ) as label, ";
              }
             break;
         case 'week':
         case 'splitedWeek':
         default:
-            $sql.=" CONCAT(DATE_FORMAT(ts.date_start, '%v/%Y'), '-', pjt.ref) as id, ";
+            $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%v/%Y'), '-', pjt.ref) as id, ";
            if($db->type!='pgsql'){
-               $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ' )#' ) as label, ";
+               $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ' )#' ) as label, ";
            }else  {
-               $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week', ts.date_start), '/', date_part('year', ts.date_start), ' )#' ) as label, ";
+               $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week', ts.date_start), '/', date_part('year', ts.date_start), ' )#' ) as label, ";
            }
            break;
 }
 if($db->type!='pgsql'){
-    $sql.=" GROUP_CONCAT(ts.rowid  SEPARATOR ', ') as idlist";
+    $sql .= " GROUP_CONCAT(ts.rowid  SEPARATOR ', ') as idlist";
 }else{
-    $sql.=" STRING_AGG(to_char(ts.rowid, '9999999999999999'), ', ') as idlist";
+    $sql .= " STRING_AGG(to_char(ts.rowid, '9999999999999999'), ', ') as idlist";
 }
-    $sql.=' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts';
-    $sql.=' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk on ts.fk_projet_task= tsk.rowid ';
-    $sql.=' JOIN '.MAIN_DB_PREFIX.'projet as pjt on tsk.fk_projet=pjt.rowid ';
-    $sql.=' WHERE ts.status in ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.' )';
-    $sql.=' AND recipient='.$role_key;
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts';
+    $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk on ts.fk_projet_task= tsk.rowid ';
+    $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet as pjt on tsk.fk_projet=pjt.rowid ';
+    $sql .= ' WHERE ts.status in ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.' )';
+    $sql .= ' AND recipient='.$role_key;
     if($subId!='all'){
-        $sql.=' AND ts.fk_userid in ('.implode(',', $subId).')';
-        if($role_key==PROJECT){
-            $sql.=' AND tsk.rowid in ('.$tasks.') ';
+        $sql .= ' AND ts.fk_userid in ('.implode(',', $subId).')';
+        if($role_key == PROJECT){
+            $sql .= ' AND tsk.rowid in ('.$tasks.') ';
         }
     }
-    $sql.=' group by ts.date_start, pjt.ref, pjt.title ORDER BY id DESC, pjt.title, ts.date_start ';
+    $sql .= ' group by ts.date_start, pjt.ref, pjt.title ORDER BY id DESC, pjt.title, ts.date_start ';
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
@@ -313,7 +313,7 @@ if($db->type!='pgsql'){
         dol_print_error($db);
         $list= array();
     }
-      //$select.="\n";
+      //$select .= "\n";
       return $list;
  }
  function  getHTMLRows($objectArray){
@@ -327,14 +327,14 @@ if($db->type!='pgsql'){
     echo '<th>'.$langs->trans('User').'</th>';
     $weeklength=getDayInterval($objectArray[0]->date_start_approval, $objectArray[0]->date_end_approval);
     $format=($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
-    if($conf->global->TIMESHEET_TIME_SPAN=="month"){
+    if($conf->global->TIMESHEET_TIME_SPAN == "month"){
         //remove Year
         $format=str_replace('Y', '', str_replace('%Y', '', str_replace('Y/', '', str_replace('/%Y', '', $format))));
     }
     for ($i=0;$i<$weeklength;$i++)
     {
         $curDay=$objectArray[0]->date_start_approval+ SECINDAY*$i+SECINDAY/4;
-        $htmlDay=($conf->global->TIMESHEET_TIME_SPAN=="month")?substr($langs->trans(date('l', $curDay)), 0, 3):$langs->trans(date('l', $curDay));
+        $htmlDay=($conf->global->TIMESHEET_TIME_SPAN == "month")?substr($langs->trans(date('l', $curDay)), 0, 3):$langs->trans(date('l', $curDay));
         echo"\t".'<th width="60px" style="text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
     }
     echo "<tr>\n";

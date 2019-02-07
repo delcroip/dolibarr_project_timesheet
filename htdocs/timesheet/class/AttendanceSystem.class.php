@@ -91,14 +91,14 @@ class AttendanceSystem extends CommonObject
 	$sql.= 'fk_project, ';
 	$sql.= 'status';
         $sql.= ") VALUES (";
-	$sql.=' '.(empty($this->label)?'NULL':"'".$this->db->escape($this->label)."'").', ';
-	$sql.=' '.(empty($this->ip)?'NULL':"'".$this->db->escape($this->ip)."'").', ';
-	$sql.=' '.(empty($this->port)?'NULL':"'".$this->port."'").', ';
-	$sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").', ';
-	$sql.=' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").', ';
-	$sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").', ';
-	$sql.=' '.(empty($this->project)?'NULL':"'".$this->project."'").', ';
-	$sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
+	$sql .= ' '.(empty($this->label)?'NULL':"'".$this->db->escape($this->label)."'").', ';
+	$sql .= ' '.(empty($this->ip)?'NULL':"'".$this->db->escape($this->ip)."'").', ';
+	$sql .= ' '.(empty($this->port)?'NULL':"'".$this->port."'").', ';
+	$sql .= ' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").', ';
+	$sql .= ' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").', ';
+	$sql .= ' '.(empty($this->task)?'NULL':"'".$this->task."'").', ';
+	$sql .= ' '.(empty($this->project)?'NULL':"'".$this->project."'").', ';
+	$sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
         $sql.= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -123,7 +123,7 @@ class AttendanceSystem extends CommonObject
             foreach($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
@@ -146,16 +146,16 @@ class AttendanceSystem extends CommonObject
     	global $langs;
         $sql = "SELECT";
         $sql.= " t.rowid, ";
-	$sql.=' t.label, ';
-	$sql.=' t.ip, ';
-	$sql.=' t.port, ';
-	$sql.=' t.note, ';
-	$sql.=' t.fk_third_party, ';
-	$sql.=' t.fk_task, ';
-	$sql.=' t.fk_project, ';
-	$sql.=' t.status, ';
-	$sql.=' t.date_modification, ';
-	$sql.=' t.fk_user_modification';
+	$sql .= ' t.label, ';
+	$sql .= ' t.ip, ';
+	$sql .= ' t.port, ';
+	$sql .= ' t.note, ';
+	$sql .= ' t.fk_third_party, ';
+	$sql .= ' t.fk_task, ';
+	$sql .= ' t.fk_project, ';
+	$sql .= ' t.status, ';
+	$sql .= ' t.date_modification, ';
+	$sql .= ' t.fk_user_modification';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
         else $sql.= " WHERE t.rowid = ".$id;
@@ -227,7 +227,7 @@ class AttendanceSystem extends CommonObject
                 foreach($this->errors as $errmsg)
                 {
                     dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                    $this->error.=($this->error?', '.$errmsg:$errmsg);
+                    $this->error .= ($this->error?', '.$errmsg:$errmsg);
                 }
                 $this->db->rollback();
                 return -1*$error;
@@ -252,7 +252,7 @@ class AttendanceSystem extends CommonObject
 	global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;// Force disable tooltips
     	$result='';
-        if(empty($ref) && $id==0){
+        if(empty($ref) && $id == 0){
             if(isset($this->id))  {
                 $id=$this->id;
             }elseif(isset($this->rowid)){
@@ -267,10 +267,10 @@ class AttendanceSystem extends CommonObject
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
                 $label=$langs->trans("Showspread");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
         }else $linkclose = ($morecss?' class="'.$morecss.'"':'');
         if($id){
             $lien = '<a href="'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'id='.$id.'&action=view"'.$linkclose.'>';
@@ -284,16 +284,16 @@ class AttendanceSystem extends CommonObject
         $label = '<u>' . $langs->trans("spread") . '</u>';
         $label.= '<br>';
         if($ref){
-            $label.=$langs->trans("Red").': '.$ref;
+            $label .= $langs->trans("Red").': '.$ref;
         }elseif($id){
-            $label.=$langs->trans("#").': '.$id;
+            $label .= $langs->trans("#").': '.$id;
         }
-    	if ($withpicto==1){
-            $result.=($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif($withpicto==2) {
-            $result.=$lien.img_object($label, $picto).$lienfin;
+    	if ($withpicto == 1){
+            $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
+        }elseif($withpicto == 2) {
+            $result .= $lien.img_object($label, $picto).$lienfin;
         }else{
-            $result.=$lien.$htmlcontent.$lienfin;
+            $result .= $lien.$htmlcontent.$lienfin;
         }
     	return $result;
     }
@@ -389,7 +389,7 @@ class AttendanceSystem extends CommonObject
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
-        elseif($this->db->affected_rows($resql)==0){$error++;$this->errors[]="Item no found in database";}
+        elseif($this->db->affected_rows($resql) == 0){$error++;$this->errors[]="Item no found in database";}
         }
 // Commit or rollback
         if ($error)
@@ -397,7 +397,7 @@ class AttendanceSystem extends CommonObject
             foreach($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
@@ -495,16 +495,16 @@ class AttendanceSystem extends CommonObject
      */
     function setSQLfields($user){
         $sql='';
-	$sql.=' label='.(empty($this->label)!=0 ? 'null':"'".$this->db->escape($this->label)."'").', ';
-	$sql.=' ip='.(empty($this->ip)!=0 ? 'null':"'".$this->db->escape($this->ip)."'").', ';
-	$sql.=' port='.(empty($this->port)!=0 ? 'null':"'".$this->port."'").', ';
-	$sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").', ';
-	$sql.=' fk_third_party='.(empty($this->third_party)!=0 ? 'null':"'".$this->third_party."'").', ';
-	$sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").', ';
-	$sql.=' fk_project='.(empty($this->project)!=0 ? 'null':"'".$this->project."'").', ';
-	$sql.=' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").', ';
-	$sql.=' date_modification=NOW(), ';
-	$sql.=' fk_user_modification="'.$user->id.'"';
+	$sql .= ' label='.(empty($this->label)!=0 ? 'null':"'".$this->db->escape($this->label)."'").', ';
+	$sql .= ' ip='.(empty($this->ip)!=0 ? 'null':"'".$this->db->escape($this->ip)."'").', ';
+	$sql .= ' port='.(empty($this->port)!=0 ? 'null':"'".$this->port."'").', ';
+	$sql .= ' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").', ';
+	$sql .= ' fk_third_party='.(empty($this->third_party)!=0 ? 'null':"'".$this->third_party."'").', ';
+	$sql .= ' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").', ';
+	$sql .= ' fk_project='.(empty($this->project)!=0 ? 'null':"'".$this->project."'").', ';
+	$sql .= ' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").', ';
+	$sql .= ' date_modification=NOW(), ';
+	$sql .= ' fk_user_modification="'.$user->id.'"';
         return $sql;
     }
     /*

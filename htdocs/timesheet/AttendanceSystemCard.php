@@ -89,10 +89,10 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 // Right Management
  /*
 if ($user->societe_id > 0 ||
-       (!$user->rights->timesheet->add && ($action=='add' || $action='create')) ||
-       (!$user->rights->timesheet->view && ($action=='list' || $action='view')) ||
-       (!$user->rights->timesheet->delete && ($action=='confirm_delete')) ||
-       (!$user->rights->timesheet->edit && ($action=='edit' || $action='update')))
+       (!$user->rights->timesheet->add && ($action == 'add' || $action='create')) ||
+       (!$user->rights->timesheet->view && ($action == 'list' || $action='view')) ||
+       (!$user->rights->timesheet->delete && ($action == 'confirm_delete')) ||
+       (!$user->rights->timesheet->edit && ($action == 'edit' || $action='update')))
 {
 	accessforbidden();
 }
@@ -126,7 +126,7 @@ if ($cancel){
     //block resubmit
     if(empty($tms) || (!isset($_SESSION['AttendanceSystem'][$tms]))){
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
-            $action=($action=='add')?'create':'view';
+            $action=($action == 'add')?'create':'view';
     }
     //retrive the data
     	$object->label=GETPOST('Label');
@@ -139,7 +139,7 @@ if ($cancel){
 	$object->status=GETPOST('Status');
 // test here if the post data is valide
  /*
- if($object->prop1==0 || $object->prop2==0)
+ if($object->prop1 == 0 || $object->prop2 == 0)
  {
      if ($id>0 || $ref!='')
         $action='create';
@@ -147,7 +147,7 @@ if ($cancel){
         $action='edit';
  }
   */
- }elseif($id==0 && $ref=='' && $action!='create')
+ }elseif($id == 0 && $ref == '' && $action!='create')
  {
      $action='create';
  }
@@ -207,7 +207,7 @@ if ($cancel){
         }
         break;
      case 'confirm_delete':
-            $result=($confirm=='yes')?$object->delete($user):0;
+            $result=($confirm == 'yes')?$object->delete($user):0;
             if ($result > 0)
             {
                 // Delete OK
@@ -265,7 +265,7 @@ switch ($action) {
     case 'edit':
         $edit=1;
    case 'delete';
-        if( $action=='delete' && ($id>0 || $ref!="")){
+        if( $action == 'delete' && ($id>0 || $ref!="")){
          $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
@@ -273,15 +273,15 @@ switch ($action) {
     case 'view':
     {
         // tabs
-        if($edit==0 && $new==0){ //show tabs
+        if($edit == 0 && $new == 0){ //show tabs
             $head=AttendanceSystemPrepareHead($object);
             dol_fiche_head($head, 'card', $langs->trans('AttendanceSystem'), 0, 'timesheet@timesheet');
         }else{
             print_fiche_titre($langs->trans('AttendanceSystem'));
         }
 	print '<br>';
-        if($edit==1){
-            if($new==1){
+        if($edit == 1){
+            if($new == 1){
                 print '<form method="POST" action="'.$PHP_SELF.'?action=add">';
             }else{
                 print '<form method="POST" action="'.$PHP_SELF.'?action=update&id='.$id.'">';
@@ -300,7 +300,7 @@ switch ($action) {
 // show the field label
 	print "<tr>\n";
 	print '<td class="fieldrequired">'.$langs->trans('Label').' </td><td>';
-	if($edit==1){
+	if($edit == 1){
 		print '<input type="text" value="'.$object->label.'" name="Label">';
 	}else{
 		print $object->label;
@@ -310,7 +310,7 @@ switch ($action) {
 // show the field ip
 	print "<tr>\n";
 	print '<td class="fieldrequired">'.$langs->trans('Ip').' </td><td>';
-	if($edit==1){
+	if($edit == 1){
 		print '<input type="text" value="'.$object->ip.'" name="Ip">';
 	}else{
 		print $object->ip;
@@ -320,8 +320,8 @@ switch ($action) {
 // show the field port
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Port').' </td><td>';
-	if($edit==1){
-		if ($new==1)
+	if($edit == 1){
+		if ($new == 1)
 			print '<input type="text" value="4370" name="Port">';
 		else
 			print '<input type="text" value="'.$object->port.'" name="Port">';
@@ -333,7 +333,7 @@ switch ($action) {
 // show the field note
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Note').' </td><td>';
-	if($edit==1){
+	if($edit == 1){
 		print '<input type="text" value="'.$object->note.'" name="Note">';
 	}else{
 		print $object->note;
@@ -343,7 +343,7 @@ switch ($action) {
 // show the field third_party
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Thirdparty').' </td><td>';
-	if($edit==1){
+	if($edit == 1){
 		$selected=($new)?-1:$object->third_party;
 		$htmlname='Thirdparty';
 		print $form->select_company($selected, $htmlname, '', 1
@@ -361,7 +361,7 @@ switch ($action) {
 // show the field task
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Task').' </td><td>';
-	if($edit==1){
+	if($edit == 1){
 	$sql_task=array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
 	$html_task=array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
 	$addChoices_task=null;
@@ -379,7 +379,7 @@ switch ($action) {
 // show the field project
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Project').' </td><td>';
-	if($edit==1){
+	if($edit == 1){
 		$selected=$object->project;
 		$htmlname='Project';
 		$formproject->select_projects(-1, $selected, $htmlname);
@@ -396,7 +396,7 @@ switch ($action) {
 // show the field status
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Status').' </td><td>';
-	if($edit==1){
+	if($edit == 1){
 		print '<input type="text" value="'.$object->status.'" name="Status">';
 	}else{
 		print $object->status;
@@ -406,8 +406,8 @@ switch ($action) {
 	print '</table>'."\n";
 	print '<br>';
 	print '<div class="center">';
-        if($edit==1){
-        if($new==1){
+        if($edit == 1){
+        if($new == 1){
                 print '<input type="submit" class="butAction" name="add" value="'.$langs->trans('Add').'">';
             }else{
                 print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="butAction">';

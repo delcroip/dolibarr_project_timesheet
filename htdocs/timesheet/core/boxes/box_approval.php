@@ -56,11 +56,11 @@ class box_approval extends ModeleBoxes
         if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
            $subordinate=implode(',', getSubordinates($db, $userid, 2));
-           if($subordinate=='')$subordinate=0;
+           if($subordinate == '')$subordinate=0;
            $tasks=implode(',', array_keys(getTasks($db, $userid)));
-           if($tasks=='')$tasks=0;
-           // $sql.=' COUNT(t.rowid) as nb, ';
-            $sql.=' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
+           if($tasks == '')$tasks=0;
+           // $sql .= ' COUNT(t.rowid) as nb, ';
+            $sql .= ' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
             $sql.= ' WHERE t.status IN ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.') AND ((t.recipient='.TEAM;
             $sql.= ' AND t.fk_userid in ('.$subordinate.'))';//fixme should check subordinate and project
@@ -72,9 +72,9 @@ class box_approval extends ModeleBoxes
                 $num = $db->num_rows($result);
                 while ($num>0){
                     $obj = $db->fetch_object($result);
-                    if($obj->recipient=='project'){
+                    if($obj->recipient == 'project'){
                         $nbPrj=$obj->nbtsk;
-                    }elseif($obj->recipient=='team'){
+                    }elseif($obj->recipient == 'team'){
                         $nbTm=$obj->nbtm;
                     }
                     $num--;

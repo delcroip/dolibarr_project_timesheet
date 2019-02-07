@@ -42,15 +42,15 @@ if($posBs>0){
         $SelectOptions='';
     $selectedValue='';
     $sql='SELECT DISTINCT ';
-    $sql.=$sqlarray['keyfield'];
-    $sql.=', '.$sqlarray['fields'];
+    $sql .= $sqlarray['keyfield'];
+    $sql .= ', '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
-            $sql.=' '.$sqlarray['join'];
+            $sql .= ' '.$sqlarray['join'];
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))
-            $sql.=' WHERE '.$sqlarray['where'];
+            $sql .= ' WHERE '.$sqlarray['where'];
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
-            $sql.=' '.$sqlarray['tail'];
+            $sql .= ' '.$sqlarray['tail'];
     dol_syslog('form::ajax_select_generic ', LOG_DEBUG);
     $return_arr = array();
     $resql=$db->query($sql);
@@ -84,8 +84,8 @@ if($posBs>0){
             {
                 $label='';
                 foreach($fields as $item){
-                    if(!empty($label))$label.=$separator;
-                    $label.=$obj->{$item['label']};
+                    if(!empty($label))$label .= $separator;
+                    $label .= $obj->{$item['label']};
                 }
                 $row_array['label'] =  $label;
                 $value=$obj->{$labelKey};

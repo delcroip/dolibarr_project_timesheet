@@ -54,7 +54,7 @@ class TimesheetReport
             if($projectid){
                 $this->project=new Project($this->db);
                 $this->project->fetch($projectid);
-                $this->ref= (($conf->global->TIMESHEET_HIDE_REF==1)?'':$this->project->ref.' - ').$this->project->title;
+                $this->ref= (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project->ref.' - ').$this->project->title;
                 $first=true;
                 $this->thirdparty= new Societe($this->db);
                 $this->thirdparty->fetch($this->project->socid);
@@ -69,8 +69,8 @@ class TimesheetReport
             $this->stopDate=$stopDate;
             $this->mode=$mode;
              $this->name =($name!="")?$name:$this->ref;// coul
-              $this->ref.='_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
-             //$this->ref.='_'.$startDate.'_'.$stopDate;
+              $this->ref .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
+             //$this->ref .= '_'.$startDate.'_'.$stopDate;
         switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing
             $this->modeSQLOrder='ORDER BY prj.rowid, ptt.task_date, tsk.rowid ASC   ';
@@ -161,28 +161,28 @@ class TimesheetReport
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user= usr.rowid ';
         $sql.= ' WHERE ';
         if(!empty($this->userid)){
-            $sql.=' ptt.fk_user=\''.$this->userid.'\' ';
+            $sql .= ' ptt.fk_user=\''.$this->userid.'\' ';
             $first=false;
         }
         if(!empty($this->projectid)){
-            $sql.=($first?'':'AND ').'tsk.fk_projet=\''.$this->projectid.'\' ';
+            $sql .= ($first?'':'AND ').'tsk.fk_projet=\''.$this->projectid.'\' ';
             $first=false;
         }
         if(is_array($this->taskarray) && count($this->taskarray)>1){
-            $sql.=($first?'':'AND ').'tsk.rowid in ('.explode($taskarray, ', ').') ';
+            $sql .= ($first?'':'AND ').'tsk.rowid in ('.explode($taskarray, ', ').') ';
         }
-        if($this->invoiceableOnly==1){
-            $sql.=($first?'':'AND ').'tske.invoiceable= \'1\'';
+        if($this->invoiceableOnly == 1){
+            $sql .= ($first?'':'AND ').'tske.invoiceable= \'1\'';
         }
-         /*if(!empty($startDay))$sql.='AND task_date>=\''.$this->db->idate($startDay).'\'';
-          else */$sql.='AND task_date>=\''.$this->db->idate($this->startDate).'\'';
+         /*if(!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
+          else */$sql .= 'AND task_date>=\''.$this->db->idate($this->startDate).'\'';
           /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
           else */$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
-         $sql.=' GROUP BY usr.rowid, ptt.task_date, tsk.rowid, prj.rowid ';
+         $sql .= ' GROUP BY usr.rowid, ptt.task_date, tsk.rowid, prj.rowid ';
         /*if(!empty($sqltail)){
-            $sql.=$sqltail;
+            $sql .= $sqltail;
         }*/
-        $sql.=$this->modeSQLOrder;
+        $sql .= $this->modeSQLOrder;
         dol_syslog("timesheet::userreport::tasktimeList", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -195,9 +195,9 @@ class TimesheetReport
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
                     $resArray[$i]=array('projectId' =>$obj->projectid,
-                                'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF==1)?'':$obj->projectref.' - ').$obj->projecttitle,
+                                'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle,
                                 'taskId' =>$obj->taskid,
-                                'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF==1)?'':$obj->taskref.' - ').$obj->tasktitle,
+                                'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle,
                                 'date' =>$this->db->jdate($obj->task_date),
                                 'duration' =>$obj->duration,
                                 'userId' =>$obj->userid,
@@ -224,7 +224,7 @@ class TimesheetReport
     * @return string
       * mode layout PTD project/task /day, PDT, DPT
       * periodeTitle give a name to the report
-      * timemode show time using day or hours (==0)
+      * timemode show time using day or hours ( == 0)
       */
     public function getHTMLreport($short, $periodTitle, $hoursperdays, $reportfriendly=0){
     // HTML buffer
@@ -257,29 +257,29 @@ class TimesheetReport
            // current
         if($reportfriendly){
             //$HTMLRes='<br><div class="titre">'.$this->name.', '.$periodTitle.'</div>';
-            $HTMLRes.='<table class="noborder" width="100%">';
-            $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans('Name');
-            $HTMLRes.='</th><th>'.$langs->trans($title[$this->lvl1Title]).'</th><th>';
-            $HTMLRes.=$langs->trans($title[$this->lvl2Title]).'</th>';
-            $HTMLRes.='<th>'.$langs->trans($title[$this->lvl3Title]).'</th>';
-            $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
-            $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
+            $HTMLRes .= '<table class="noborder" width="100%">';
+            $HTMLRes .= '<tr class="liste_titre"><th>'.$langs->trans('Name');
+            $HTMLRes .= '</th><th>'.$langs->trans($title[$this->lvl1Title]).'</th><th>';
+            $HTMLRes .= $langs->trans($title[$this->lvl2Title]).'</th>';
+            $HTMLRes .= '<th>'.$langs->trans($title[$this->lvl3Title]).'</th>';
+            $HTMLRes .= '<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
+            $HTMLRes .= '<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
             foreach($resArray as $key => $item)
             {
                $item['date']=dol_print_date($item['date'], 'day');
                $HTMLRes.= '<tr class="oddeven" align="left"><th width="200px">'.$this->name.'</th>';
                $HTMLRes.= '<th '.(isset($titleWidth[$this->lvl1Title])?'width="'.$titleWidth[$this->lvl1Title].'"':'' ).'>'.$item[$this->lvl1Title].'</th>';
-               $HTMLRes.='<th '.(isset($titleWidth[$this->lvl2Title])?'width="'.$titleWidth[$this->lvl2Title].'"':'' ).'>'.$item[$this->lvl2Title].'</th>';
-               $HTMLRes.='<th '.(isset($titleWidth[$this->lvl3Title])?'width="'.$titleWidth[$this->lvl3Title].'"':'' ).'>'.$item[$this->lvl3Title].'</th>';
-               $HTMLRes.='<th width="70px">'.formatTime($item['duration'], 0).'</th>';
-               $HTMLRes.='<th width="70px">'.formatTime($item['duration'], $hoursperdays).'</th></tr>';
+               $HTMLRes .= '<th '.(isset($titleWidth[$this->lvl2Title])?'width="'.$titleWidth[$this->lvl2Title].'"':'' ).'>'.$item[$this->lvl2Title].'</th>';
+               $HTMLRes .= '<th '.(isset($titleWidth[$this->lvl3Title])?'width="'.$titleWidth[$this->lvl3Title].'"':'' ).'>'.$item[$this->lvl3Title].'</th>';
+               $HTMLRes .= '<th width="70px">'.formatTime($item['duration'], 0).'</th>';
+               $HTMLRes .= '<th width="70px">'.formatTime($item['duration'], $hoursperdays).'</th></tr>';
             }
-            $HTMLRes.='</table>';
+            $HTMLRes .= '</table>';
         }else
         {
         foreach($resArray as $key => $item)
         {
-            if($Curlvl1==0){
+            if($Curlvl1 == 0){
                 $Curlvl1=$key;
                 $Curlvl2=$key;
             }
@@ -290,21 +290,21 @@ class TimesheetReport
                     ||($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key]))
             {
                 //creat the LVL 2 Title line
-                $lvl2HTML.='<tr class="oddeven" align="left"><th></th><th>'
+                $lvl2HTML .= '<tr class="oddeven" align="left"><th></th><th>'
                         .$resArray[$Curlvl2][$this->lvl2Title].'</th>';
                 // add an empty cell on row if short version (in none short mode there is an additionnal column
-                if(!$short)$lvl2HTML.='<th></th>';
+                if(!$short)$lvl2HTML .= '<th></th>';
                 // add the LVL 3 total hours on the LVL 2 title
-                $lvl2HTML.='<th>'.formatTime($lvl3Total, 0).'</th>';
+                $lvl2HTML .= '<th>'.formatTime($lvl3Total, 0).'</th>';
                 // add the LVL 3 total day on the LVL 2 title
-                $lvl2HTML.='<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
+                $lvl2HTML .= '<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
                 if($short){
-                    $lvl2HTML.=$lvl3Notes;
+                    $lvl2HTML .= $lvl3Notes;
                 }
                 $lvl3Notes='';
-                $lvl2HTML.='</th></tr>';
+                $lvl2HTML .= '</th></tr>';
                 //add the LVL 3 content (details)
-                $lvl2HTML.=$lvl3HTML;
+                $lvl2HTML .= $lvl3HTML;
                 //empty lvl 3 HTML to start anew
                 $lvl3HTML='';
                 //add the LVL 3 total to LVL3
@@ -317,14 +317,14 @@ class TimesheetReport
                 if(($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key]))
                 {
                      //creat the LVL 1 Title line
-                    $lvl1HTML.='<tr class="oddeven" align="left"><th >'
+                    $lvl1HTML .= '<tr class="oddeven" align="left"><th >'
                             .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
                     // add an empty cell on row if short version (in none short mode there is an additionnal column
-                    if(!$short)$lvl1HTML.='<th></th>';
-                    $lvl1HTML.='<th>'.formatTime($lvl2Total, 0).'</th>';
-                    $lvl1HTML.='<th>'.formatTime($lvl2Total, $hoursperdays).'</th></th><th></tr>';
+                    if(!$short)$lvl1HTML .= '<th></th>';
+                    $lvl1HTML .= '<th>'.formatTime($lvl2Total, 0).'</th>';
+                    $lvl1HTML .= '<th>'.formatTime($lvl2Total, $hoursperdays).'</th></th><th></tr>';
                     //add the LVL 3 HTML content in lvl1
-                    $lvl1HTML.=$lvl2HTML;
+                    $lvl1HTML .= $lvl2HTML;
                      //empty lvl 3 HTML to start anew
                     $lvl2HTML='';
                     //addlvl 2 total to lvl1
@@ -338,69 +338,69 @@ class TimesheetReport
             // show the LVL 3 only if not short
             if(!$short)
             {
-                $lvl3HTML.='<tr class="oddeven" align="left"><th></th><th></th><th>'
+                $lvl3HTML .= '<tr class="oddeven" align="left"><th></th><th></th><th>'
                     .$resArray[$key][$this->lvl3Title].'</th><th>';
-                $lvl3HTML.=formatTime($item['duration'], 0).'</th><th>';
-                $lvl3HTML.=formatTime($item['duration'], $hoursperdays).'</th><th>';
-                $lvl3HTML.=$resArray[$key]['note'];
-                $lvl3HTML.='</th></tr>';
+                $lvl3HTML .= formatTime($item['duration'], 0).'</th><th>';
+                $lvl3HTML .= formatTime($item['duration'], $hoursperdays).'</th><th>';
+                $lvl3HTML .= $resArray[$key]['note'];
+                $lvl3HTML .= '</th></tr>';
                /*
-                if($hoursperdays==0)
+                if($hoursperdays == 0)
                 {
-                    $lvl3HTML.=date('G:i', mktime(0, 0, $resArray[$key]['duration'])).'</th></tr>';
+                    $lvl3HTML .= date('G:i', mktime(0, 0, $resArray[$key]['duration'])).'</th></tr>';
                 }else{
-                    $lvl3HTML.=$resArray[$key]['duration']/3600/$hoursperdays.'</th></tr>';
+                    $lvl3HTML .= $resArray[$key]['duration']/3600/$hoursperdays.'</th></tr>';
                 }*/
             }elseif(!empty ($resArray[$key]['note']))
             {
-                $lvl3Notes.="</br>".$resArray[$key]['note'];
+                $lvl3Notes .= "</br>".$resArray[$key]['note'];
             }
             $lvl3Total+=$resArray[$key]['duration'];
         }
        //handle the last line : print LV1 & LVL 2 title
         //creat the LVL 2 Title line
-        $lvl2HTML.='<tr class="oddeven" align="left"><th></th><th>'
+        $lvl2HTML .= '<tr class="oddeven" align="left"><th></th><th>'
                 .$resArray[$Curlvl2][$this->lvl2Title].'</th>';
         // add an empty cell on row if short version (in none short mode there is an additionnal column
-        if(!$short)$lvl2HTML.='<th></th>';
+        if(!$short)$lvl2HTML .= '<th></th>';
         // add the LVL 3 total hours on the LVL 2 title
-        $lvl2HTML.='<th>'.formatTime($lvl3Total, 0).'</th>';
+        $lvl2HTML .= '<th>'.formatTime($lvl3Total, 0).'</th>';
         // add the LVL 3 total day on the LVL 2 title
-        $lvl2HTML.='<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
+        $lvl2HTML .= '<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
         if($short){
-            $lvl2HTML.=$lvl3Notes;
+            $lvl2HTML .= $lvl3Notes;
         }
-        $lvl2HTML.='</th></tr>';
+        $lvl2HTML .= '</th></tr>';
         //add the LVL 3 content (details)
-        $lvl2HTML.=$lvl3HTML;
+        $lvl2HTML .= $lvl3HTML;
         //add the LVL 3 total to LVL3
         $lvl2Total+=$lvl3Total;
         //creat the LVL 1 Title line
-        $lvl1HTML.='<tr class="oddeven" align="left"><th >'
+        $lvl1HTML .= '<tr class="oddeven" align="left"><th >'
               .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
         // add an empty cell on row if short version (in none short mode there is an additionnal column
-        if(!$short)$lvl1HTML.='<th></th>';
-        $lvl1HTML.='<th>'.formatTime($lvl2Total, 0).'</th>';
-        $lvl1HTML.='<th>'.formatTime($lvl2Total, $hoursperdays).'</th></tr>';
+        if(!$short)$lvl1HTML .= '<th></th>';
+        $lvl1HTML .= '<th>'.formatTime($lvl2Total, 0).'</th>';
+        $lvl1HTML .= '<th>'.formatTime($lvl2Total, $hoursperdays).'</th></tr>';
         //add the LVL 3 HTML content in lvl1
-        $lvl1HTML.=$lvl2HTML;
+        $lvl1HTML .= $lvl2HTML;
         //empty lvl 3 HTML to start anew
         $lvl2HTML='';
         //addlvl 2 total to lvl1
         $lvl1Total+=$lvl2Total;
         // make the whole result
          $HTMLRes='<br><div class="titre">'.$this->name.', '.$periodTitle.'</div>';
-         $HTMLRes.='<table class="noborder" width="100%">';
-         $HTMLRes.='<tr class="liste_titre"><th>'.$langs->trans($title[$this->lvl1Title]).'</th><th>'
+         $HTMLRes .= '<table class="noborder" width="100%">';
+         $HTMLRes .= '<tr class="liste_titre"><th>'.$langs->trans($title[$this->lvl1Title]).'</th><th>'
                 .$langs->trans($title[$this->lvl2Title]).'</th>';
-         $HTMLRes.=(!$short)?'<th>'.$langs->trans($title[$this->lvl3Title]).'</th>':'';
-         $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
-         $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th><th>'.$langs->trans('Note').'</th></tr>';
-         $HTMLRes.='<tr class="liste_titre">'.((!$short)?'<th></th>':'').'<th colspan=2> TOTAL</th>';
-         $HTMLRes.='<th>'.formatTime($lvl1Total, 0).'</th>';
-         $HTMLRes.='<th>'.formatTime($lvl1Total, $hoursperdays).'</th><th></th></tr>';
-        $HTMLRes.=$lvl1HTML;
-        $HTMLRes.='</table>';
+         $HTMLRes .= (!$short)?'<th>'.$langs->trans($title[$this->lvl3Title]).'</th>':'';
+         $HTMLRes .= '<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
+         $HTMLRes .= '<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th><th>'.$langs->trans('Note').'</th></tr>';
+         $HTMLRes .= '<tr class="liste_titre">'.((!$short)?'<th></th>':'').'<th colspan=2> TOTAL</th>';
+         $HTMLRes .= '<th>'.formatTime($lvl1Total, 0).'</th>';
+         $HTMLRes .= '<th>'.formatTime($lvl1Total, $hoursperdays).'</th><th></th></tr>';
+        $HTMLRes .= $lvl1HTML;
+        $HTMLRes .= '</table>';
         } // end else reportfiendly
       } // end is numtasktime
     return $HTMLRes;

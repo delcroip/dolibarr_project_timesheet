@@ -80,12 +80,12 @@ class TimesheetFavourite extends CommonObject
         $sql.= 'date_start, ';
         $sql.= 'date_end';
         $sql.= ") VALUES (";
-        $sql.=' \''.$this->user.'\', ';
-        $sql.=' \''.$this->project.'\', ';
-        $sql.=' '.(empty($this->project_task)?'NULL':'\''.$this->project_task.'\'').', ';
-        $sql.=' '.(($this->subtask) ? 'TRUE':'FALSE').', ';
-        $sql.=' '.(empty($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'\''.$this->db->idate($this->date_start).'\'').', ';
-        $sql.=' '.(empty($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'\''.$this->db->idate($this->date_end).'\'').'';
+        $sql .= ' \''.$this->user.'\', ';
+        $sql .= ' \''.$this->project.'\', ';
+        $sql .= ' '.(empty($this->project_task)?'NULL':'\''.$this->project_task.'\'').', ';
+        $sql .= ' '.(($this->subtask) ? 'TRUE':'FALSE').', ';
+        $sql .= ' '.(empty($this->date_start) || dol_strlen($this->date_start) == 0?'NULL':'\''.$this->db->idate($this->date_start).'\'').', ';
+        $sql .= ' '.(empty($this->date_end) || dol_strlen($this->date_end) == 0?'NULL':'\''.$this->db->idate($this->date_end).'\'').'';
         $sql.= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -105,7 +105,7 @@ class TimesheetFavourite extends CommonObject
             foreach($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
@@ -131,12 +131,12 @@ class TimesheetFavourite extends CommonObject
        $sql = "SELECT";
 		$sql.= " t.rowid, ";
 		
-		$sql.=' t.fk_user, ';
-		$sql.=' t.fk_project, ';
-		$sql.=' t.fk_project_task, ';
-		$sql.=' t.subtask, ';
-		$sql.=' t.date_start, ';
-		$sql.=' t.date_end';
+		$sql .= ' t.fk_user, ';
+		$sql .= ' t.fk_project, ';
+		$sql .= ' t.fk_project_task, ';
+		$sql .= ' t.subtask, ';
+		$sql .= ' t.date_start, ';
+		$sql .= ' t.date_end';
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.fk_user = ".$userid;
@@ -232,12 +232,12 @@ class TimesheetFavourite extends CommonObject
     {
         $sql = "SELECT";
         $sql.= " t.rowid, ";
-        $sql.=' t.fk_user, ';
-        $sql.=' t.fk_project, ';
-        $sql.=' t.fk_project_task, ';
-        $sql.=' t.subtask, ';
-        $sql.=' t.date_start, ';
-        $sql.=' t.date_end';
+        $sql .= ' t.fk_user, ';
+        $sql .= ' t.fk_project, ';
+        $sql .= ' t.fk_project_task, ';
+        $sql .= ' t.subtask, ';
+        $sql .= ' t.date_start, ';
+        $sql .= ' t.date_end';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql.= ' WHERE t.ref = \''.$ref.'\'';
         else $sql.= " WHERE t.rowid = ".$id;
@@ -286,12 +286,12 @@ class TimesheetFavourite extends CommonObject
         // Put here code to add a control on parameters values
     // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'\''.$this->user.'\'').', ';
-        $sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'\''.$this->project.'\'').', ';
-        $sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'\''.$this->project_task.'\'').', ';
-        $sql.=' subtask='.(($this->subtask) ? 'TRUE':'FALSE').', ';
-        $sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').', ';
-        $sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').'';
+        $sql .= ' fk_user='.(empty($this->user)!=0 ? 'null':'\''.$this->user.'\'').', ';
+        $sql .= ' fk_project='.(empty($this->project)!=0 ? 'null':'\''.$this->project.'\'').', ';
+        $sql .= ' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'\''.$this->project_task.'\'').', ';
+        $sql .= ' subtask='.(($this->subtask) ? 'TRUE':'FALSE').', ';
+        $sql .= ' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').', ';
+        $sql .= ' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').'';
         $sql.= " WHERE rowid=".$this->id;
         $this->db->begin();
         dol_syslog(__METHOD__);
@@ -310,7 +310,7 @@ class TimesheetFavourite extends CommonObject
                 foreach($this->errors as $errmsg)
                 {
                     dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                    $this->error.=($this->error?', '.$errmsg:$errmsg);
+                    $this->error .= ($this->error?', '.$errmsg:$errmsg);
                 }
                 $this->db->rollback();
                 return -1*$error;
@@ -334,7 +334,7 @@ class TimesheetFavourite extends CommonObject
     {
     	global $langs;
     	$result='';
-        if(empty($ref) && $id==0){
+        if(empty($ref) && $id == 0){
             if(!empty($this->id))  {
                 $id=$this->id;
             }elseif(!empty($this->rowid)){
@@ -357,12 +357,12 @@ class TimesheetFavourite extends CommonObject
         }elseif($id){
             $label=$langs->trans("Show").': '.$id;
         }
-    	if ($withpicto==1){
-            $result.=($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif($withpicto==2) {
-            $result.=$lien.img_object($label, $picto).$lienfin;
+    	if ($withpicto == 1){
+            $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
+        }elseif($withpicto == 2) {
+            $result .= $lien.img_object($label, $picto).$lienfin;
         }else{
-            $result.=$lien.$htmlcontent.$lienfin;
+            $result .= $lien.$htmlcontent.$lienfin;
         }
     	return $result;
     }
@@ -398,7 +398,7 @@ class TimesheetFavourite extends CommonObject
                     foreach($this->errors as $errmsg)
                     {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error?', '.$errmsg:$errmsg);
                     }
                     $this->db->rollback();
                     return -1*$error;
