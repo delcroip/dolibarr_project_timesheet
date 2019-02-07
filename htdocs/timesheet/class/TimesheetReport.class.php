@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -199,20 +199,20 @@ class TimesheetReport
         {
                 $numTaskTime = $this->db->num_rows($resql);
                 $i = 0;
-                // Loop on each record found,
+                // Loop on each record found, 
                 while ($i < $numTaskTime)
                 {
                     $error = 0;
                     $obj = $this->db->fetch_object($resql);
-                    $resArray[$i] = array('projectId' =>$obj->projectid,
-                                'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle,
-                                'taskId' =>$obj->taskid,
-                                'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle,
-                                'date' =>$this->db->jdate($obj->task_date),
-                                'duration' =>$obj->duration,
-                                'userId' =>$obj->userid,
-                                'userName' =>trim($obj->username),
-                                'note'=>$this->db->escape($obj->note),
+                    $resArray[$i] = array('projectId' =>$obj->projectid, 
+                                'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle, 
+                                'taskId' =>$obj->taskid, 
+                                'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle, 
+                                'date' =>$this->db->jdate($obj->task_date), 
+                                'duration' =>$obj->duration, 
+                                'userId' =>$obj->userid, 
+                                'userName' =>trim($obj->username), 
+                                'note'=>$this->db->escape($obj->note), 
                                 'invoiceable'=>$obj->invoiceable );
                     $i++;
                 }

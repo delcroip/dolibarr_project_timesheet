@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -117,13 +117,13 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
 {
         foreach($userList as $userSt)
 {
-        $querryRes .= $userSt->getHTMLreport($short,
-            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
+        $querryRes .= $userSt->getHTMLreport($short, 
+            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))), 
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
     }else{
-        $querryRes = $userList[$userIdSelected]->getHTMLreport($short,
-            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
+        $querryRes = $userList[$userIdSelected]->getHTMLreport($short, 
+            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))), 
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
 }else

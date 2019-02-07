@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -118,13 +118,13 @@ if ($projectSelectedId   &&!empty($dateStart))
 {
         foreach($projectList as $project)
 {
-        $querryRes .= $project->getHTMLreport($short,
-           dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
+        $querryRes .= $project->getHTMLreport($short, 
+           dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'), 
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
     }else{
-    $querryRes = $projectSelected->getHTMLreport($short,
-            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
+    $querryRes = $projectSelected->getHTMLreport($short, 
+            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'), 
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
 }else

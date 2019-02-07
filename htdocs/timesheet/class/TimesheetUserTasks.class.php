@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -686,14 +686,14 @@ function updateStatus($user, $status = 0)
         return 1;
     }
     $Priority = array(
-    DRAFT=>0,
-    SUBMITTED=>1,
-    APPROVED=>2,
-    CANCELLED=>4,
-    REJECTED=>5,
-    CHALLENGED=>6,
-    INVOICED=>7,
-    UNDERAPPROVAL=>3,
+    DRAFT=>0, 
+    SUBMITTED=>1, 
+    APPROVED=>2, 
+    CANCELLED=>4, 
+    REJECTED=>5, 
+    CHALLENGED=>6, 
+    INVOICED=>7, 
+    UNDERAPPROVAL=>3, 
     PLANNED=>9);
     //look for the status to apply to the TS  from the TTA
     foreach($this->taskTimesheet as $row)
@@ -1245,15 +1245,15 @@ function sendApprovalReminders()
 {
                            require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
                            $mailfile = new CMailFile(
-	                        $subject,
-	                        $sendto,
-	                        $replyto,
-	                        $message,
-                                $filename_list = array(),
-                                $mimetype_list = array(),
-                                $mimefilename_list = array(),
-                                $addr_cc, $addr_bcc = 0,
-                                $deliveryreceipt = 0,
+	                        $subject, 
+	                        $sendto, 
+	                        $replyto, 
+	                        $message, 
+                                $filename_list = array(), 
+                                $mimetype_list = array(), 
+                                $mimefilename_list = array(), 
+                                $addr_cc, $addr_bcc = 0, 
+                                $deliveryreceipt = 0, 
                                 $msgishtml = 1
 	                    );
                            $mailfile->sendfile();
@@ -1293,15 +1293,15 @@ function sendApprovalReminders()
           {
              require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
              $mailfile = new CMailFile(
-                  $subject,
-                  $sendto,
-                  $replyto,
-                  $message,
-                  $filename_list = array(),
-                  $mimetype_list = array(),
-                  $mimefilename_list = array(),
-                  $addr_cc, $addr_bcc = 0,
-                  $deliveryreceipt = 0,
+                  $subject, 
+                  $sendto, 
+                  $replyto, 
+                  $message, 
+                  $filename_list = array(), 
+                  $mimetype_list = array(), 
+                  $mimefilename_list = array(), 
+                  $addr_cc, $addr_bcc = 0, 
+                  $deliveryreceipt = 0, 
                   $msgishtml = 1
               );
              $mailfile->sendfile();

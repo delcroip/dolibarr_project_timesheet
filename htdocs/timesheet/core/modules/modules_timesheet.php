@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -38,13 +38,13 @@ abstract class ModelPDFTimesheetReport extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db, $maxfilenamelength=0)
 	{
 		global $conf;
 		$type='timesheetReport';
 		$liste=array();
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 		return $liste;
 	}
 }
