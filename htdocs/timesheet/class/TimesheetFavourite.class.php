@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,20 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 /**
  *  \file       dev/timesheetFavourites/timesheetFavourite.class.php
  *  \ingroup    timesheet othermodule1 othermodule2
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
  *				Initialy built by build_class_from_table on 2015-08-01 08:59
  */
-
 // Put here all includes required by your class file
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-
-
 /**
  *	Put here description of your class
  */
@@ -40,7 +36,6 @@ class TimesheetFavourite extends CommonObject
 	public $errors=array();				//!< To return several error codes (or messages)
 	public $element='timesheetFavourite';			//!< Id that identify managed objects
 	public $table_element='timesheet_whitelist';		//!< Name of table without prefix where object is stored
-
         public $id;
 	public $user;
 	public $project;
@@ -48,10 +43,6 @@ class TimesheetFavourite extends CommonObject
 	public $subtask;
 	public $date_start='';
 	public $date_end='';
-
-    
-
-
     /**
      *  Constructor
      *
@@ -62,8 +53,6 @@ class TimesheetFavourite extends CommonObject
         $this->db = $db;
         return 1;
     }
-
-
     /**
      *  Create object into database
      *
@@ -73,7 +62,7 @@ class TimesheetFavourite extends CommonObject
     function create( $notrigger=0)
     {
         $error=0;
-        // Clean parameters        
+        // Clean parameters
         if (!empty($this->user)) $this->user=trim($this->user);
         if (!empty($this->project)) $this->project=trim($this->project);
         if (!empty($this->project_task)) $this->project_task=trim($this->project_task);
@@ -84,7 +73,6 @@ class TimesheetFavourite extends CommonObject
         // Put here code to add control on parameters values
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-
         $sql.= 'fk_user, ';
         $sql.= 'fk_project, ';
         $sql.= 'fk_project_task, ';
@@ -106,7 +94,6 @@ class TimesheetFavourite extends CommonObject
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-
             if (! $notrigger)
             {
    //// Call triggers :$result=$this->call_trigger('MYOBJECT_CREATE', $user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
@@ -129,7 +116,6 @@ class TimesheetFavourite extends CommonObject
             return $this->id;
         }
     }
-
         /**
      *  Load the list of the user whitelist open between those date
      *
@@ -151,7 +137,6 @@ class TimesheetFavourite extends CommonObject
 		$sql.=' t.subtask, ';
 		$sql.=' t.date_start, ';
 		$sql.=' t.date_end';
-
 		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.fk_user = ".$userid;
@@ -159,17 +144,14 @@ class TimesheetFavourite extends CommonObject
                 $sql.= ' AND (t.date_end >\''.$this->db->idate($datestart).'\' OR t.date_end IS NULL)';
         if($datestop)
                 $sql.= ' AND (t.date_start <\''.$this->db->idate($datestop).'\' OR t.date_start IS NULL)';
-
         dol_syslog(get_class($this)."::fetchUserList");
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $num=$this->db->num_rows($resql);
-            
             $i=0;
             while($i<$num)
             {
-                
                 $obj = $this->db->fetch_object($resql);
                 $List[$i]=new TimesheetFavourite($this->db);
                 $List[$i]->id  = $obj->rowid;
@@ -179,11 +161,9 @@ class TimesheetFavourite extends CommonObject
                 $List[$i]->subtask = $obj->subtask;
                 $List[$i]->date_start = $this->db->jdate($obj->date_start);
                 $List[$i]->date_end = $this->db->jdate($obj->date_end);
-
                 $i++;
             }
             $this->db->free($resql);
-            
             foreach($List as $row){
                 //$Listtask=array_merge($Listtask, $row->getTaskList());
                 $subListtask=$row->getTaskList();
@@ -201,7 +181,6 @@ class TimesheetFavourite extends CommonObject
         else
                         return  NULL;
     }
-
    /**
      *  get all the task open with this line
      *
@@ -215,19 +194,17 @@ class TimesheetFavourite extends CommonObject
          if($this->project_task && $this->subtask){
              $sql.= '  WHERE  (t.rowid=\''.$this->project_task.'\'';
              $sql.= '  OR  t.fk_task_parent=\''.$this->project_task.'\')';
-         }else if($this->project_task ){
+         }elseif($this->project_task ){
             $sql.= '  WHERE t.rowid=\''.$this->project_task.'\'';
          }else{
             $sql.= ' WHERE t.fk_projet=\''.$this->project.'\'';
         }
-        
     	dol_syslog(get_class($this)."::getTaskList");
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $Listtask=Array();
             $num=$this->db->num_rows($resql);
-            
             $i=0;
             while($i<$num)
             {
@@ -236,18 +213,14 @@ class TimesheetFavourite extends CommonObject
                 $i++;
             }
             $this->db->free($resql);
-
             return $Listtask;
-            
         }
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
             return NULL;
         }
-
-    }  
-
+    }
     /**
      *  Load object in memory from the database
      *
@@ -292,8 +265,6 @@ class TimesheetFavourite extends CommonObject
             return -1;
         }
     }
-
-
     /**
      *  Update object into database
      *
@@ -326,13 +297,11 @@ class TimesheetFavourite extends CommonObject
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
-
             if (! $error)
             {
                     if (! $notrigger)
                     {
    //// Call triggers :$result=$this->call_trigger('MYOBJECT_UPDATE', $user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
-            
                      }
             }
     // Commit or rollback
@@ -352,7 +321,6 @@ class TimesheetFavourite extends CommonObject
                 return 1;
             }
     }
-
      /**
      *	Return clickable name (with picto eventually)
      *
@@ -369,7 +337,7 @@ class TimesheetFavourite extends CommonObject
         if(empty($ref) && $id==0){
             if(!empty($this->id))  {
                 $id=$this->id;
-            }else if (!empty($this->rowid)){
+            }elseif(!empty($this->rowid)){
                 $id=$this->rowid;
             }if(!empty($this->ref)){
                 $ref=$this->ref;
@@ -377,29 +345,27 @@ class TimesheetFavourite extends CommonObject
         }
         if($id){
             $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?id='.$id.'&action=view">';
-        }else if (!empty($ref)){
+        }elseif(!empty($ref)){
             $lien = '<a href="'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?ref='.$ref.'&action=view">';
         }else{
             $lien =  "";
         }
         $lienfin=empty($lien)?'':'</a>';
-
     	$picto='timesheet@timesheet';
-        
         if($ref){
             $label=$langs->trans("Show").': '.$ref;
-        }else if($id){
+        }elseif($id){
             $label=$langs->trans("Show").': '.$id;
         }
-    	if ($withpicto==1){ 
+    	if ($withpicto==1){
             $result.=($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }else if ($withpicto==2) {
+        }elseif($withpicto==2) {
             $result.=$lien.img_object($label, $picto).$lienfin;
-        }else{  
+        }else{
             $result.=$lien.$htmlcontent.$lienfin;
         }
     	return $result;
-    }    
+    }
  	/**
 	 *  Delete object in database
 	 *
@@ -418,12 +384,10 @@ class TimesheetFavourite extends CommonObject
                 //// Call triggers :$result=$this->call_trigger('MYOBJECT_DELETE', $user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
                     }
             }
-
             if (! $error)
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
                 $sql.= " WHERE rowid=".$this->id;
-
                 dol_syslog(__METHOD__);
                 $resql = $this->db->query($sql);
                 if (! $resql) { $error++;$this->errors[]="Error ".$this->db->lasterror();}
@@ -445,9 +409,6 @@ class TimesheetFavourite extends CommonObject
                     return 1;
             }
 	}
-
-
-
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
@@ -457,37 +418,26 @@ class TimesheetFavourite extends CommonObject
 	function createFromClone($fromid)
 	{
 		global $user, $langs;
-
 		$error=0;
-
 		$object=new TimesheetFavourite($this->db);
-
 		$this->db->begin();
-
 		// Load source object
 		$object->fetch($fromid);
 		$object->id=0;
 		$object->statut=0;
-
 		// Clear fields
 		// ...
-
 		// Create clone
 		$result=$object->create();
-
 		// Other options
 		if ($result < 0)
 		{
 			$this->error=$object->error;
 			$error++;
 		}
-
 		if (! $error)
 		{
-
-
 		}
-
 		// End
 		if (! $error)
 		{
@@ -500,8 +450,6 @@ class TimesheetFavourite extends CommonObject
 			return -1;
 		}
 	}
-
-
 	/**
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
@@ -518,8 +466,6 @@ class TimesheetFavourite extends CommonObject
 		$this->subtask='';
 		$this->date_start='';
 		$this->date_end='';
-
 		
 	}
-
 }

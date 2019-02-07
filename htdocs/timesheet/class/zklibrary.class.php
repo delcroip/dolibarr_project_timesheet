@@ -1,4 +1,4 @@
-<?php 
+<?php
 /* Copyright (C) 2016-2018 Kamshory  <kamshory@yahoo.com>
  *
  * This program is free software;you can redistribute it and/or modify
@@ -6,7 +6,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -14,9 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 error_reporting(0);
-
 define('CMD_CONNECT', 1000);
 define('CMD_EXIT', 1001);
 define('CMD_ENABLEDEVICE', 1002);
@@ -29,13 +27,11 @@ define('CMD_TEST_TEMP', 1011);
 define('CMD_TESTVOICE', 1017);
 define('CMD_VERSION', 1100);
 define('CMD_CHANGE_SPEED', 1101);
-
 define('CMD_ACK_OK', 2000);
 define('CMD_ACK_ERROR', 2001);
 define('CMD_ACK_DATA', 2002);
 define('CMD_PREPARE_DATA', 1500);
 define('CMD_DATA', 1501);
-
 define('CMD_USER_WRQ', 8);
 define('CMD_USERTEMP_RRQ', 9);
 define('CMD_USERTEMP_WRQ', 10);
@@ -54,18 +50,13 @@ define('CMD_CANCELCAPTURE', 62);
 define('CMD_STATE_RRQ', 64);
 define('CMD_WRITE_LCD', 66);
 define('CMD_CLEAR_LCD', 67);
-
 define('CMD_GET_TIME', 201);
 define('CMD_SET_TIME', 202);
-
 define('USHRT_MAX', 65535);
-
 define('LEVEL_USER', 0);// 0000 0000
 define('LEVEL_ENROLLER', 2);// 0000 0010
 define('LEVEL_MANAGER', 12);// 0000 1100
 define('LEVEL_SUPERMANAGER', 14);// 0000 1110
-
-
 class ZKLibrary {
 	public $ip = null;
 	public $port = null;
@@ -125,7 +116,7 @@ class ZKLibrary {
 				$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8));
 				$this->session_id = hexdec($u['h6'].$u['h5']);
 				return $this->checkValid($this->received_data);
-			} 
+			}
 			else
 			{
 				return FALSE;
@@ -188,7 +179,7 @@ class ZKLibrary {
 		if(!$pfile)
 		{
 			return 'down';
-		} 
+		}
 		$time2 = microtime(true);
 		fclose($pfile);
 		return round((($time2 - $time1) * 1000), 0);
@@ -231,7 +222,6 @@ class ZKLibrary {
 		$year = floor( $data + 2000 );
 		$d = date("Y-m-d H:i:s", strtotime($year.'-'.$month.'-'.$day.' '.$hour.':'.$minute.':'.$second));
 		return $d;
-
 	}
 	private function checkSum($p)
 	{
@@ -323,7 +313,7 @@ class ZKLibrary {
 			$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr( $this->received_data, 0, 8 ) );
 			$this->session_id =  hexdec( $u['h6'].$u['h5'] );
 			return substr($this->received_data, $offset_data);
-		} 
+		}
 		catch(ErrorException $e)
 		{
 			return FALSE;
@@ -628,13 +618,13 @@ class ZKLibrary {
 		$command_string = '~DeviceName='.$deviceName;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getTime() 
+	public function getTime()
 	{
 		// resolution = 1 minute
 		$command = CMD_GET_TIME;
 		return $this->decodeTime(hexdec($this->reverseHex(bin2hex($this->execCommand($command)))));
 	}
-	public function setTime($t) 
+	public function setTime($t)
 	{
 		// resolution = 1 second
 		$command = CMD_SET_TIME;
@@ -729,12 +719,12 @@ class ZKLibrary {
 				}
 			}
 			return $users;
-		} 
-		catch(ErrorException $e) 
+		}
+		catch(ErrorException $e)
 		{
 			return FALSE;
-		} 
-		catch(exception $e) 
+		}
+		catch(exception $e)
 		{
 			return FALSE;
 		}
@@ -808,12 +798,12 @@ class ZKLibrary {
 				}
 			}
 			return $template_data;
-		} 
-		catch(ErrorException $e) 
+		}
+		catch(ErrorException $e)
 		{
 			return FALSE;
-		} 
-		catch(exception $e) 
+		}
+		catch(exception $e)
 		{
 			return FALSE;
 		}
@@ -866,12 +856,12 @@ class ZKLibrary {
 				}
 			}
 			return $retdata;
-		} 
-		catch(ErrorException $e) 
+		}
+		catch(ErrorException $e)
 		{
 			return FALSE;
-		} 
-		catch(exception $e) 
+		}
+		catch(exception $e)
 		{
 			return FALSE;
 		}
@@ -905,17 +895,17 @@ class ZKLibrary {
 		$reply_id = hexdec( $u['h8'].$u['h7'] );
 		$buf = $this->createHeader($command, $chksum, $session_id, $reply_id, $command_string);
 		socket_sendto($this->socket, $buf, strlen($buf), 0, $this->ip, $this->port);
-		try 
+		try
 		{
 			$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr( $this->received_data, 0, 8 ) );
 			$this->session_id = hexdec( $u['h6'].$u['h5'] );
 			return substr( $this->received_data, 8 );
-		} 
-		catch(ErrorException $e) 
+		}
+		catch(ErrorException $e)
 		{
 			return FALSE;
-		} 
-		catch(exception $e) 
+		}
+		catch(exception $e)
 		{
 			return FALSE;
 		}
@@ -983,7 +973,7 @@ class ZKLibrary {
 		$command = CMD_CANCELCAPTURE;
 		return $this->execCommand($command);
 	}
-	public function getAttendance() 
+	public function getAttendance()
 	{
 		$command = CMD_ATTLOG_RRQ;
 		$command_string = '';
@@ -993,13 +983,13 @@ class ZKLibrary {
 		$reply_id = hexdec($u['h8'].$u['h7']);
 		$buf = $this->createHeader($command, $chksum, $session_id, $reply_id, $command_string);
 		socket_sendto($this->socket, $buf, strlen($buf), 0, $this->ip, $this->port);
-		try 
+		try
 		{
 			socket_recvfrom($this->socket, $this->received_data, 1024, 0, $this->ip, $this->port);
 			$bytes = $this->getSizeAttendance();
-			if($bytes) 
+			if($bytes)
 			{
-				while($bytes > 0) 
+				while($bytes > 0)
 				{
 					socket_recvfrom($this->socket, $received_data, 1032, 0, $this->ip, $this->port);
 					array_push($this->attendance_data, $received_data);
@@ -1020,7 +1010,7 @@ class ZKLibrary {
 				}
 				$attendance_data = implode('', $this->attendance_data);
 				$attendance_data = substr($attendance_data, 10);
-				while(strlen($attendance_data) > 40) 
+				while(strlen($attendance_data) > 40)
 				{
 					$u = unpack('H78', substr($attendance_data, 0, 39));
 					$u1 = hexdec(substr($u[1], 4, 2));
@@ -1034,13 +1024,13 @@ class ZKLibrary {
 				}
 			}
 			return $attendance;
-		} 
-		catch(exception $e) 
+		}
+		catch(exception $e)
 		{
 			return false;
 		}
 	}
-	public function clearAttendance() 
+	public function clearAttendance()
 	{
 		$command = CMD_CLEAR_ATTLOG;
 		return $this->execCommand($command);

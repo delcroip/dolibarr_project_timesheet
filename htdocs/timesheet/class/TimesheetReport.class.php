@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2015 delcroip <patrick@pmpd.eu>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -7,23 +7,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
-
-
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once 'core/lib/timesheet.lib.php';
-
-class TimesheetReport 
+class TimesheetReport
 {
     public $db;
     public $ref;
@@ -42,14 +39,11 @@ class TimesheetReport
     public $thirdparty;
     public $project;
     public $user;
-    
-    
-    public function __construct($db) 
+    public function __construct($db)
 	{
             $this->db = $db;
 	}
-        
-    public function initBasic($projectid, $userid, $name, $startDate, $stopDate, $mode, $invoiceableOnly='0', $taskarray=NULL) 
+    public function initBasic($projectid, $userid, $name, $startDate, $stopDate, $mode, $invoiceableOnly='0', $taskarray=NULL)
 	{
         global $langs, $conf;
         $this->ref="";
@@ -64,24 +58,21 @@ class TimesheetReport
                 $first=true;
                 $this->thirdparty= new Societe($this->db);
                 $this->thirdparty->fetch($this->project->socid);
-                
             }
             $this->userid =$userid;// coul
             if($userid){
                 $this->user=new User($this->db);
                 $this->user->fetch($userid);
                 //$this->ref.= ($first?'':' - ').$this->user->lastname.' '.$this->user->firstname;
-            }            
-            
+            }
             $this->startDate=$startDate;
             $this->stopDate=$stopDate;
             $this->mode=$mode;
-
              $this->name =($name!="")?$name:$this->ref;// coul
               $this->ref.='_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
              //$this->ref.='_'.$startDate.'_'.$stopDate;
         switch ($mode) {
-        case 'PDT': //project  / task / Days //FIXME dayoff missing               
+        case 'PDT': //project  / task / Days //FIXME dayoff missing
             $this->modeSQLOrder='ORDER BY prj.rowid, ptt.task_date, tsk.rowid ASC   ';
             //title
             $this->lvl1Title='projectLabel';
@@ -112,7 +103,6 @@ class TimesheetReport
             $this->lvl2Key='taskId';
             break;
         case 'UDT': //project  / task / Days //FIXME dayoff missing
-                
             $this->modeSQLOrder='ORDER BY usr.rowid, ptt.task_date, tsk.rowid ASC   ';
             //title
             $this->lvl1Title='userName';
@@ -122,7 +112,6 @@ class TimesheetReport
             $this->lvl1Key='userId';
             $this->lvl2Key='date';
             break;
-        
         case 'DUT'://day /project /task
             $this->modeSQLOrder='ORDER BY ptt.task_date, usr.rowid, tsk.rowid ASC   ';
             //title
@@ -142,7 +131,6 @@ class TimesheetReport
             $this->lvl1Key='userId';
             $this->lvl2Key='taskId';
             break;
-
         default:
             break;
     }
@@ -152,7 +140,7 @@ class TimesheetReport
  * @param   array(int)   $taskarray   return the report only for those tasks
  * @param   string  $sqltail    sql tail after the where
  * @return array()
- */   
+ */
     public function getReportArray(){
         global $conf;
         $resArray=array();
@@ -177,7 +165,6 @@ class TimesheetReport
             $first=false;
         }
         if(!empty($this->projectid)){
-            
             $sql.=($first?'':'AND ').'tsk.fk_projet=\''.$this->projectid.'\' ';
             $first=false;
         }
@@ -187,7 +174,6 @@ class TimesheetReport
         if($this->invoiceableOnly==1){
             $sql.=($first?'':'AND ').'tske.invoiceable= \'1\'';
         }
-
          /*if(!empty($startDay))$sql.='AND task_date>=\''.$this->db->idate($startDay).'\'';
           else */$sql.='AND task_date>=\''.$this->db->idate($this->startDate).'\'';
           /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
@@ -203,26 +189,22 @@ class TimesheetReport
         {
                 $numTaskTime = $this->db->num_rows($resql);
                 $i = 0;
-
-                // Loop on each record found, 
+                // Loop on each record found,
                 while ($i < $numTaskTime)
                 {
-
                     $error=0;
                     $obj = $this->db->fetch_object($resql);
-                    $resArray[$i]=array('projectId' =>$obj->projectid, 
-                                'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF==1)?'':$obj->projectref.' - ').$obj->projecttitle, 
-                                'taskId' =>$obj->taskid, 
-                                'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF==1)?'':$obj->taskref.' - ').$obj->tasktitle, 
-                                'date' =>$this->db->jdate($obj->task_date), 
-                                'duration' =>$obj->duration, 
-                                'userId' =>$obj->userid, 
-                                'userName' =>trim($obj->username), 
-                                'note'=>$this->db->escape($obj->note), 
+                    $resArray[$i]=array('projectId' =>$obj->projectid,
+                                'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF==1)?'':$obj->projectref.' - ').$obj->projecttitle,
+                                'taskId' =>$obj->taskid,
+                                'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF==1)?'':$obj->taskref.' - ').$obj->tasktitle,
+                                'date' =>$this->db->jdate($obj->task_date),
+                                'duration' =>$obj->duration,
+                                'userId' =>$obj->userid,
+                                'userName' =>trim($obj->username),
+                                'note'=>$this->db->escape($obj->note),
                                 'invoiceable'=>$obj->invoiceable );
-
                     $i++;
-
                 }
                 $this->db->free($resql);
                 return $resArray;
@@ -231,19 +213,15 @@ class TimesheetReport
                 dol_print_error($this->db);
                 return array();
         }
-        
     }
-        
-        
     /*
     *  Function to generate HTML for the report
     * @param   date    $startDay   start date for the query
     * @param   date    $stopDay   start date for the query
     * @param   string   $mode       specify the query type
-    * @param   
+    * @param
     * @param   string  $sqltail    sql tail after the where
-    * @return string   
-
+    * @return string
       * mode layout PTD project/task /day , PDT, DPT
       * periodeTitle give a name to the report
       * timemode show time using day or hours (==0)
@@ -258,11 +236,9 @@ class TimesheetReport
     $lvl3Total=0;
     $lvl2Total=0;
     $lvl1Total=0;
-    
     $Curlvl1=0;
     $Curlvl2=0;
     $Curlvl3=0;
-    
     $lvl3Notes="";
     //mode 1, PER USER
     //get the list of user
@@ -270,19 +246,15 @@ class TimesheetReport
     //sum user
     //mode 2, PER TASK
     //list of task
-    //list of user per 
+    //list of user per
     $title=array('projectLabel'=>'Project', 'date'=>'Day', 'taskLabel'=>'Tasks', 'userName'=>'User');
     $titleWidth=array('4'=>'120', '7'=>'200');
     $sqltail='';
-
     $resArray=$this->getReportArray();
     $numTaskTime=count($resArray);
-    
-
-        if($numTaskTime>0) 
-        {       
+        if($numTaskTime>0)
+        {
            // current
-
         if($reportfriendly){
             //$HTMLRes='<br><div class="titre">'.$this->name.', '.$periodTitle.'</div>';
             $HTMLRes.='<table class="noborder" width="100%">';
@@ -301,9 +273,9 @@ class TimesheetReport
                $HTMLRes.='<th '.(isset($titleWidth[$this->lvl3Title])?'width="'.$titleWidth[$this->lvl3Title].'"':'' ).'>'.$item[$this->lvl3Title].'</th>';
                $HTMLRes.='<th width="70px">'.formatTime($item['duration'], 0).'</th>';
                $HTMLRes.='<th width="70px">'.formatTime($item['duration'], $hoursperdays).'</th></tr>';
-            } 
+            }
             $HTMLRes.='</table>';
-        }else   
+        }else
         {
         foreach($resArray as $key => $item)
         {
@@ -379,14 +351,11 @@ class TimesheetReport
                 }else{
                     $lvl3HTML.=$resArray[$key]['duration']/3600/$hoursperdays.'</th></tr>';
                 }*/
-            }else if (!empty ($resArray[$key]['note']))
+            }elseif(!empty ($resArray[$key]['note']))
             {
                 $lvl3Notes.="</br>".$resArray[$key]['note'];
             }
             $lvl3Total+=$resArray[$key]['duration'];
-           
-            
-
         }
        //handle the last line : print LV1 & LVL 2 title
         //creat the LVL 2 Title line
@@ -406,7 +375,6 @@ class TimesheetReport
         $lvl2HTML.=$lvl3HTML;
         //add the LVL 3 total to LVL3
         $lvl2Total+=$lvl3Total;
-
         //creat the LVL 1 Title line
         $lvl1HTML.='<tr class="oddeven" align="left"><th >'
               .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
@@ -428,7 +396,6 @@ class TimesheetReport
          $HTMLRes.=(!$short)?'<th>'.$langs->trans($title[$this->lvl3Title]).'</th>':'';
          $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
          $HTMLRes.='<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th><th>'.$langs->trans('Note').'</th></tr>';
-            
          $HTMLRes.='<tr class="liste_titre">'.((!$short)?'<th></th>':'').'<th colspan=2> TOTAL</th>';
          $HTMLRes.='<th>'.formatTime($lvl1Total, 0).'</th>';
          $HTMLRes.='<th>'.formatTime($lvl1Total, $hoursperdays).'</th><th></th></tr>';
@@ -436,13 +403,6 @@ class TimesheetReport
         $HTMLRes.='</table>';
         } // end else reportfiendly
       } // end is numtasktime
-
-
-
-
     return $HTMLRes;
-
     }
-    
-
- }   
+ }

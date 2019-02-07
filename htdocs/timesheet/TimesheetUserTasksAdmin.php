@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) Patrick Delcroix <patrick@pmpd.eu>
  *
@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 /**
  *   	\file       dev/skeletons/skeleton_page.php
  *		\ingroup    timesheet othermodule1 othermodule2
  *		\brief      This file is an example of a php page
  *					Initialy built by build_class_from_table on 2016-03-26 09:52
  */
-
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
 //if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
@@ -35,13 +33,11 @@
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');			// If we don't need to load the html.form.class.php
 //if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 //if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
-
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
  if(!$user->rights->timesheet->approval->admin){
         $accessforbidden = accessforbidden("you need to have the approver admin rights");
-}   
-
+}
 require_once 'core/lib/generic.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 require_once 'core/lib/timesheet.lib.php';
@@ -52,14 +48,12 @@ dol_include_once('/core/lib/files.lib.php');
 dol_include_once('/core/class/html.formfile.class.php');
 // include conditionnally of the dolibarr version
 //if((version_compare(DOL_VERSION, "3.8", "<"))){
-
 //}
 dol_include_once('/core/class/html.formother.class.php');
 $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("timesheet@timesheet");
-                
 // Get parameter
 $id			= GETPOST('id', 'int');
 $ref      = GETPOST('ref', 'alpha');
@@ -93,32 +87,22 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
         $ls_note= GETPOST('ls_note', 'alpha');
 	if($ls_note==-1)$ls_note='';
 }
-
-
 $page = GETPOST('page', 'int');//FIXME, need to use for all the list
 if ($page == -1) { $page = 0;}
 $limit=$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-
 //$upload_dir = $conf->timesheet->dir_output.'/Timesheetuser/'.dol_sanitizeFileName($object->ref);
-
-
  // uncomment to avoid resubmision
 //if(isset( $_SESSION['Timesheetuser_class'][$tms]))
 //{
-
  //   $cancel=TRUE;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
 //}
-
-
-
 // Right Management
  /*
-if ($user->societe_id > 0 || 
+if ($user->societe_id > 0 ||
        (!$user->rights->timesheet->add && ($action=='add' || $action='create')) ||
        (!$user->rights->timesheet->view && ($action=='list' || $action='view')) ||
        (!$user->rights->timesheet->delete && ($action=='confirm_delete')) ||
@@ -127,7 +111,6 @@ if ($user->societe_id > 0 ||
 	accessforbidden();
 }
 */
-
 // create object and set id or ref if provided as parameter
 $object=new TimesheetUserTasks($db);
 if($id>0)
@@ -142,19 +125,16 @@ if(!empty($ref))
 {
     $object->ref=$ref;
 }
-
-
 /*******************************************************************
 * ACTIONS
 *
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
-
 // Action to add record
 $error=0;
 if ($cancel){
     reloadpage($backtopage, $id, $ref);
-}else if (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
+}elseif(($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
         //block resubmit
         if(empty($tms) || (!isset($_SESSION['Timesheetuser_'.$tms]))){
@@ -167,13 +147,9 @@ if ($cancel){
 		$object->date_end=dol_mktime(0, 0, 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
                 $object->status=GETPOST('Status', 'alpha');
 		$object->note=GETPOST('Note', 'alpha');
-
-
-        
-        
 // test here if the post data is valide
  /*
- if($object->prop1==0 || $object->prop2==0) 
+ if($object->prop1==0 || $object->prop2==0)
  {
      if ($id>0 || $ref!='')
         $action='create';
@@ -181,13 +157,10 @@ if ($cancel){
         $action='edit';
  }
   */
-        
- }else if ($id==0 && $ref=='' && $action!='create') 
+ }elseif($id==0 && $ref=='' && $action!='create')
  {
      $action='list';
  }
- 
- 
   switch($action){		
                     case 'update':
                             $result=$object->update($user);
@@ -217,17 +190,15 @@ if ($cancel){
                             if ($id > 0 || !empty($ref) )
                             {
                                     //$result=$object->fetch($id, $ref);
-                                    
                                     if($result > 0)$result=$object->fetchTaskTimesheet();
                                     if($result > 0)$result=$object->fetchUserHoliday();
-                                    if ($result < 0){ 
+                                    if ($result < 0){
                                         dol_print_error($db);
                                     }else { // fill the id & ref
                                         if(isset($object->id))$id = $object->id;
                                         if(isset($object->rowid))$id = $object->rowid;
                                         if(isset($object->ref))$ref = $object->ref;
                                     }
-                               
                             }else
                             {
                                     setEventMessage( $langs->trans('noIdPresent').' id:'.$id, 'errors');
@@ -243,25 +214,21 @@ if ($cancel){
                                    unset($_SESSION['Timesheetuser_'.$tms]);
                                    setEventMessage('RecordSucessfullyCreated', 'mesgs');
                                    reloadpage($backtopage, $result, $ref);
-                                    
                             }else
                             {
                                     // Creation KO
                                     if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
                                     else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
                                     $action='create';
-                            }                            
+                            }
                             break;
-
                      case 'confirm_delete':
-                            
                             $result=($confirm=='yes')?$object->delete($user):0;
                             if ($result > 0)
                             {
                                     // Delete OK
                                     setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
                                     $action='list';
-                                    
                             }
                             else
                             {
@@ -276,8 +243,7 @@ if ($cancel){
                     default:
                         if(!empty($_FILES)) $action='viewdoc';
                             break;
-            }    
-            
+            }
         //document handling
         if($conf->global->TIMESHEET_ADD_DOCS && $id>0){
         $object->fetch($id);
@@ -287,7 +253,7 @@ if ($cancel){
            include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
         }else{
            include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-        }      
+        }
     }
 //Removing the tms array so the order can't be submitted two times
 if(isset( $_SESSION['Timesheetuser_'.$tms]))
@@ -298,24 +264,18 @@ if(isset( $_SESSION['Timesheetuser_'.$tms]))
     $tms=getToken();
     $_SESSION['Timesheetuser_'.$tms]=array();
     $_SESSION['Timesheetuser_'.$tms]['action']=$action;
-            
 }
-
-
 /***************************************************
 * VIEW
 *
 * Put here all code to build page
 ****************************************************/
-
 $morejs=array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js");
 llxHeader('', $langs->trans('TimesheetUser'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
 $form=new Form($db);
 $formother=new FormOther($db);
-
 // Put here content of your page
-
 // Example : Adding jquery code
 /*print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
@@ -330,7 +290,6 @@ jQuery(document).ready(function() {
 	});
 });
 </script>';*/
-
 $edit=$new=0;
 switch ($action) {
     case 'create':
@@ -352,7 +311,6 @@ switch ($action) {
         }else{
             print_fiche_titre($langs->trans('Timesheetuser'));
         }
-
 	print '<br>';
         if($edit==1){
             if($new==1){
@@ -360,10 +318,8 @@ switch ($action) {
             }else{
                 print '<form method="POST" action="'.$PHP_SELF.'?action=update&id='.$id.'">';
             }
-                        
             print '<input type="hidden" name="tms" value="'.$tms.'">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-
         }else {// show the nav bar
             $basedurltab=explode("?", $PHP_SELF);
             $basedurl=$basedurltab[0].'?action=list';
@@ -372,16 +328,10 @@ switch ($action) {
                 $object->ref=$object->id;
             print $form->showrefnav($object, 'action=view&id', $linkback, 1, 'rowid', 'ref', '');
             //reloqd the ref
-
         }
-
 	print '<table class="border centpercent">'."\n";
-
-            
 		print "<tr>\n";
-
 // show the field userId
-
 		print '<td class="fieldrequired">'.$langs->trans('User').' </td><td>';
 		if($edit==1){
 		print $form->select_dolusers($object->userId, 'Userid', 1, '', 0 );
@@ -391,9 +341,7 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
-
 // show the field date_start
-
 		print '<td class="fieldrequired">'.$langs->trans('DateStart').' </td><td>';
 		if($edit==1){
 		if($new==1){
@@ -408,7 +356,6 @@ switch ($action) {
 		print "\n</tr>\n";
 		print "<tr>\n";
 // show the field date_end
-
 		print '<td class="fieldrequired">'.$langs->trans('DateEnd').' </td><td>';
 		if($edit==1){
 		if($new==1){
@@ -422,9 +369,7 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
-
 // show the field status
-
 		print '<td>'.$langs->trans('Status').' </td><td>';
 		if($edit==1){
 		print  $form->selectarray('Status', $statusA, $object->status);
@@ -434,12 +379,7 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 		print "<tr>\n";
-
-
-
-
 // show the field note
-
 		print '<td>'.$langs->trans('Note').' </td><td>';
 		if($edit==1){
             print '<textarea class="flat"  name="Note" cols="40" rows="5" >'.$object->note.'</textarea>';
@@ -450,22 +390,15 @@ switch ($action) {
 		print "</td>";
 		print "\n</tr>\n";
 //		print "<tr>\n";
-
-
 	print '</table>'."\n";
 	print '<br>';
         if($object->status != DRAFT && $edit!=1){
             print $object->userName." - ".dol_print_date($object->date_start, 'day');
             print $object->getHTMLHeader(false);
-
             print $object->getHTMLHolidayLines(false);
-
             print $object->getHTMLTotal();
-
             print $object->getHTMLtaskLines(false);
-
             print $object->getHTMLTotal();
-
             print "</table>";
             print  '<script type="text/javascript">'."\n\t";
             print 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');';
@@ -484,17 +417,14 @@ switch ($action) {
             $parameters=array();
             $reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);// Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
             if (empty($reshook))
             {
                 print '<div class="tabsAction">';
-
                 // Boutons d'actions
                 //if($user->rights->Timesheetuser->edit)
                 //{
                     print '<a href="'.$PHP_SELF.'?id='.$id.'&action=edit" class="butAction">'.$langs->trans('Update').'</a>';
                 //}
-                
                 //if ($user->rights->Timesheetuser->delete)
                 //{
                     print '<a class="butActionDelete" href="'.$PHP_SELF.'?id='.$id.'&action=delete">'.$langs->trans('Delete').'</a>';
@@ -503,7 +433,6 @@ switch ($action) {
                 //{
                 //    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
                 //}
-                    
                 print '</div>';
             }
         }
@@ -524,10 +453,8 @@ switch ($action) {
         print_fiche_titre($langs->trans('Timesheetuser'));
         if (! $sortfield) $sortfield='name';
 	$object->fetch_thirdparty();
-
         $head=Timesheetuser_prepare_head($object);
         dol_fiche_head($head, 'documents', $langs->trans("Timesheetuser"), 0, 'timesheet@timesheet');
-        
         $filearray=dol_dir_list($upload_dir, 'files', 0, '', '\.meta$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -545,28 +472,23 @@ switch ($action) {
         print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
         print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
         print '</table>';
-
         print '</div>';
-
         $modulepart = 'timesheet';
         $permission = 1;//$user->rights->timesheet->add;
         $param = '&id='.$object->id;
         include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
-        
         break;
     case 'delete':
         if( ($id>0 || $ref!='')){
          $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteTimesheetuser'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
-         //to have the object to be deleted in the background        
+         //to have the object to be deleted in the background
         }
     case 'list':
     default:
         {
     $sql = 'SELECT';
     $sql.= ' t.rowid, ';
-    
 		$sql.=' t.fk_userid, ';
 		$sql.=' t.date_start, ';
                 $sql.=' t.date_end, ';
@@ -574,8 +496,6 @@ switch ($action) {
 		//$sql.=' t.target, ';
 		//$sql.=' t.fk_project_tasktime_list, ';
 		//$sql.=' t.fk_user_approval';
-
-    
     $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
     $sqlwhere='';
     if(isset($object->entity))
@@ -597,12 +517,9 @@ switch ($action) {
 	if($ls_target) $sqlwhere .= natural_search(array('t.target'), $ls_target);
 	if($ls_project_tasktime_list) $sqlwhere .= natural_search('t.fk_project_tasktime_list', $ls_project_tasktime_list);
 	if($ls_user_approval) $sqlwhere .= natural_search(array('t.fk_user_approval'), $ls_user_approval);
-
-    
     //list limit
     if(!empty($sqlwhere))
         $sql.=' WHERE '.substr ($sqlwhere, 5);
-    
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -615,13 +532,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 //    if(!empty($sortfield)){$sql.= $db->order($sortfield, $sortorder);
 //    }else{ $sortorder = 'ASC';}
-    
     if (!empty($limit))
     {
             $sql.= $db->plimit($limit+1, $offset);
     }
-    
-
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
     $resql=$db->query($sql);
@@ -634,7 +548,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		if (!empty($ls_target))	$param.='&ls_target='.urlencode($ls_target);
 		if (!empty($ls_project_tasktime_list))	$param.='&ls_project_tasktime_list='.urlencode($ls_project_tasktime_list);
 		if (!empty($ls_user_approval))	$param.='&ls_user_approval='.urlencode($ls_user_approval);
-	   
+	
 		if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
 		
 		$num = $db->num_rows($resql);
@@ -677,7 +591,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		//	print '<td class="liste_titre" colspan="1" >';
 		//		print select_enum('project_task_time_approval', 'target', 'ls_target', $ls_target);
 		//	print '</td>';
-
 		//Search field forproject_tasktime_list
 		//	print '<td class="liste_titre" colspan="1" >';
 		//		print '<input class="flat" size="16" type="text" name="ls_project_tasktime_list" value="'.$ls_project_tasktime_list.'"/>';
@@ -686,7 +599,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		//print '<td class="liste_titre" colspan="1" >';
 		//print select_generic('user', 'rowid', 'ls_user_approval', 'lastname', 'firstname', $ls_user_approval);
 		//print '</td>';
- 
 		print '<td width="15px">';
 		print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -721,30 +633,25 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $error++;
         dol_print_error($db);
     }
-
     print '</table>'."\n";
     print '</from>'."\n";
     // new button
     //print '<a href="?action=create" class="button" role="button">'.$langs->trans('New');
     //print ' '.$langs->trans('Timesheetuser')."</a>\n";
-
-    
 }
     break;
 }
 dol_fiche_end();
-
 function reloadpage($backtopage, $id, $ref){
         if (!empty($backtopage)){
             header("Location: ".$backtopage);
-        //}else if (!empty($ref) ){
+        //}elseif(!empty($ref) ){
         //    header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$ref);
-        }else if ($id>0)
+        }elseif($id>0)
         {
             header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);
         }else{
             header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
-
         }
     exit();
 }
@@ -753,12 +660,10 @@ function Timesheetuser_prepare_head($object)
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
-
     $head[$h][0] = $_SERVER["PHP_SELF"].'?action=view&id='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
-
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__');to add new tab
@@ -769,12 +674,10 @@ function Timesheetuser_prepare_head($object)
     $head[$h][1] = $langs->trans("Documents");
     $head[$h][2] = 'documents';
     $h++;
-    
     $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewinfo&id='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;
-
     return $head;
 }
 // End of page

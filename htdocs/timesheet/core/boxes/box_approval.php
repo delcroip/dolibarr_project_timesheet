@@ -5,7 +5,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -13,7 +13,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 /**
  *	\file       htdocs/core/boxes/box_approval.php
  *	\ingroup    factures
@@ -25,8 +24,6 @@ set_include_path($path);
 require_once 'core/lib/timesheet.lib.php';
 global $dolibarr_main_url_root_alt;
 $res=0;
-
-
 /**
  * Class to manage the box to show last invoices
  */
@@ -36,14 +33,10 @@ class box_approval extends ModeleBoxes
 	var $boximg="timesheet";
 	var $boxlabel="BoxApproval";
 	var $depends = array("timesheet");
-
 	var $db;
 	var $param;
-
 	var $info_box_head = array();
 	var $info_box_contents = array();
-
-
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
@@ -53,19 +46,13 @@ class box_approval extends ModeleBoxes
 	function loadBox($max=5)
 	{
 		global $conf, $user, $langs, $db;
-
 		$this->max=$max;
-
-
-
-
         $userid=  is_object($user)?$user->id:$user;
 		$text =$langs->trans('Timesheet');
 		$this->info_box_head = array(
-				'text' => $text, 
+				'text' => $text,
 				'limit'=> dol_strlen($text)
 		);
-                
         if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
            $subordinate=implode(', ', getSubordinates($db, $userid, 2));
@@ -87,54 +74,48 @@ class box_approval extends ModeleBoxes
                     $obj = $db->fetch_object($result);
                     if($obj->recipient=='project'){
                         $nbPrj=$obj->nbtsk;
-                    }else if($obj->recipient=='team'){
+                    }elseif($obj->recipient=='team'){
                         $nbTm=$obj->nbtm;
                     }
                     $num--;
                     }
-
                     $this->info_box_contents[0][] = array(
-                        'td' => 'align="left"', 
-                        'text' => $langs->trans('team').': ', 
-                        'text2'=> $langs->trans('nbTsToApprove'), 
-                        'asis' => 1, 
+                        'td' => 'align="left"',
+                        'text' => $langs->trans('team').': ',
+                        'text2'=> $langs->trans('nbTsToApprove'),
+                        'asis' => 1,
                     );
-
                     $this->info_box_contents[0][] = array(
-                        'td' => 'align="right"', 
-                        'text' => $nbTm, 
-                        'asis' => 1, 
+                        'td' => 'align="right"',
+                        'text' => $nbTm,
+                        'asis' => 1,
                     );
                     $this->info_box_contents[1][] = array(
-                        'td' => 'align="left"', 
-                        'text' => $langs->trans('project').': ', 
-                        'text2'=> $langs->trans('nbTsToApprove'), 
-                        'asis' => 1, 
+                        'td' => 'align="left"',
+                        'text' => $langs->trans('project').': ',
+                        'text2'=> $langs->trans('nbTsToApprove'),
+                        'asis' => 1,
                     );
-
                     $this->info_box_contents[1][] = array(
-                        'td' => 'align="right"', 
-                        'text' => $nbPrj, 
-                        'asis' => 1, 
+                        'td' => 'align="right"',
+                        'text' => $nbPrj,
+                        'asis' => 1,
                     );
-
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"', 
-                    'maxlength'=>500, 
-                    'text' => ($db->error().' sql='.$sql), 
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
                 );
             }
-
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"', 
-                'text' => $langs->trans("ReadPermissionNotAllowed"), 
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
             );
         }
     }
-
 	/**
 	 *  Method to show box
 	 *
@@ -146,5 +127,4 @@ class box_approval extends ModeleBoxes
 	{
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}
-
 }

@@ -1,6 +1,5 @@
 <?php
-
-/* 
+/*
  * Copyright (C) 2018 Patric Delcroix <pmpdelcroix@gmail.com>
  *
  * This program is free software;you can redistribute it and/or modify
@@ -8,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,22 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 include 'lib/includeMain.lib.php';
  global $conf, $langs, $db;
  top_httphead();
-//get the token, exit if 
+//get the token, exit if
 $token=GETPOST('token', 'apha');
-
 if(!isset($_SESSION['ajaxQuerry'][$token]))exit();
-
 $sqlarray=$_SESSION['ajaxQuerry'][$token]['sql'];
 $fields=$_SESSION['ajaxQuerry'][$token]['fields'];
 $htmlarray=$_SESSION['ajaxQuerry'][$token]['html'];
 $addtionnalChoices=$_SESSION['ajaxQuerry'][$token]['option'];
 $separator=isset($htmlarray['separator'])?$htmlarray['separator']:' ';
-
-
  $search=GETPOST($htmlName, 'alpha');
 //find if barckets
 $posBs=strpos($htmlName, '[');
@@ -42,8 +36,6 @@ if($posBs>0){
         $search=array_pop($search);
     }
 }
-
-
         $SelectOptions='';
     $selectedValue='';
     $sql='SELECT DISTINCT ';
@@ -62,8 +54,6 @@ if($posBs>0){
    //remove the 't. from key fields
     $startkey=strpos($sqlarray['keyfield'], '.');
     $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
-    
-    
     if ($resql)
     {
           // support AS in the fields ex $field1='CONTACT(u.firstname, ' ', u.lastname) AS fullname'
@@ -76,35 +66,31 @@ if($posBs>0){
         $label=$item;
         if($start){
             $label=substr($item, $start+4);
-        }else if($start2){
+        }elseif($start2){
             $label=substr($item, $start2+1);
         }
-        
         $fields[]=array('select' => $item, 'label'=>trim($label));
     }
-
         $i=0;
          //return $table."this->db".$field;
         $num = $db->num_rows($resql);
         while ($i < $num)
         {
-            
             $obj = $db->fetch_object($resql);
-            
             if ($obj)
             {
                 $label='';
                 foreach($fields as $item){
                     if(!empty($label))$label.=$separator;
                     $label.=$obj->{$item['label']};
-                }    
+                }
                 $row_array['label'] =  $label;
                 $value=$obj->{$labelKey};
 		//$row_array['value'] = $value;
                 $row_array['value'] =  $label;
 	        $row_array['key'] =$value;
                 array_push($return_arr, $row_array);
-            } 
+            }
             $i++;
         }
         if($addtionnalChoices)foreach($addtionnalChoices as $value => $label){
@@ -113,9 +99,5 @@ if($posBs>0){
 	        $row_array['key'] =$value;
             array_push($return_arr, $row_array);
         }
-
-        
     }
-
- 
       echo json_encode($return_arr);

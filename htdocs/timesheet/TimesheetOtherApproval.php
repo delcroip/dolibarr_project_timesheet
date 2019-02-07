@@ -6,7 +6,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -20,16 +20,13 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'class/TimesheetTask.class.php';
-
 /*******************************************************************
 * ACTIONS
 *
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 //FIXME: correct admin approval
-
 $userId=  is_object($user)?$user->id:$user;
-
 // find the Role //FIX ME SHOW ONLY if he has right
 $role       = GETPOST('role', 'alpha');
 $role_key='';
@@ -68,12 +65,11 @@ if($action=='submit'){
             $task_timesheet= new TimesheetTask($db);
             $approvals=GETPOST ('approval', 'array');
             $notes=GETPOST ('notesTask', 'array');
-            
             $update=false;
             foreach($_SESSION['task_timesheet'][$token] as $id => $role_row){
                 $count++;
                 $task_timesheet->fetch($id);
-                if($notes[$id]!=$task_timesheet->note){ 
+                if($notes[$id]!=$task_timesheet->note){
                     $task_timesheet->note=$notes[$id];
                     $update=true;
                 }
@@ -92,32 +88,24 @@ if($action=='submit'){
                         if($update)$task_timesheet->update($user);
                     default:
                         break;
-
                 }
-
             }
             if(($tsRejected+$tsApproved)>0){
                $current--;
             }
           // $offset-=($tsApproved+$tsRejected);
-
                            //$ret =postActuals($db, $user, $_POST['task'], $token);
- 
                 if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").' '.$tsApproved);
                 if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").' '.$tsRejected);
                 if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").' '.$errors, 'errors');
-
                 if($errors==0 && $tsApproved==0 && $tsRejected==0){
                     setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
                 }
-            }        
+            }
         }else{
             setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
         }
     }
-
-
-
 /***************************************************
 * PREP VIEW
 *
@@ -143,17 +131,13 @@ if( is_array($selectList)&& count($selectList)){
 }*/
 // get the TTA to show
 $objectArray=getTStobeApproved($current, $selectList);
-
 $token=  getToken();
-
-
 if(is_array($objectArray)){
     // SAVE THE ARRAY IN THE SESSION FOR CHECK UPON SUBMIT
     foreach($objectArray as $object){
         $_SESSION['task_timesheet'][$token][$object->appId]=$role;
     }
 }
-
 /***************************************************
 * VIEW
 *
@@ -167,9 +151,7 @@ llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
 showTimesheetApTabs($role_key);
 echo '<div id="'.$role.'" class="tabBar">';
 //FIXME Approve/reject/leave all buton
-
     if(!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $current);
- 
     // form header
     echo '<form action="?action=submit" method="POST" name="OtherAp" id="OtherAp">';
     echo '<input type="hidden" name="token" value="'.$token.'"/>';
@@ -186,11 +168,8 @@ echo '<div id="'.$role.'" class="tabBar">';
     //form footer
     echo '</div>';
     echo "\n</form>";
-
 echo '</div>';
 llxFooter();
-
-
 /***************************************************
 * FUNCTIONS
 *
@@ -198,24 +177,21 @@ llxFooter();
 ****************************************************/
 /*
  * function to print the timesheet navigation header
- * 
+ *
  *  @param    string              	$role                  the role of the user
  *  @param     string            	$optioncss             optioncss for the print mode
  *  @param     array             	$selectList       	list of pages
  *  @param     int                      $current                current page
- * 
+ *
  *  @return     string                                         HTML
  */
 function getHTMLNavigation($role, $optioncss, $selectList, $current=0){
 	global $langs, $db;
-        
         $htmlSelect='<select name="target">';
         foreach($selectList as $key => $element){
             $htmlSelect.=' <option value="'.$key.'" '.(($current==$key)?'selected':'').'>'.$element['label'].'</option>';
         }
-            
         $htmlSelect.='</select>';
-        
         $form= new Form($db);
         $Nav=  '<table class="noborder" width="50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
         if($current!=0){
@@ -237,16 +213,14 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current=0){
         $Nav.="\n\t\t</th>\n\t</tr>\n </table>\n";
         return $Nav;
 }
-
 /* Funciton to fect timesheet to be approuved.
     *  @param    int              	$current            current item of the select
     *  @param    int              	$selectList        list of the item showed in the navigation select
     *  @return   array(task_timesheet)                     result
-    */    
+    */
 function getTStobeApproved($current, $selectList){ // FIXME use the list tab as input and tta->fetch()
     global $db;
     if((!is_array($selectList) || !is_array($selectList[$current]['idList'])))return array();
-
     $listTTA=array();
     foreach($selectList[$current]['idList'] as $idTTA){
         $TTA= new TimesheetTask($db);
@@ -257,18 +231,17 @@ function getTStobeApproved($current, $selectList){ // FIXME use the list tab as 
 }
  /*
  * function to get the Approval elible for this user
- * 
+ *
   *  @param    object           	$db             database objet
- *  @param    array(int)/int        $userids    	array of manager id 
+ *  @param    array(int)/int        $userids    	array of manager id
   *  @return  array (int => String)  				array( ID => userName)
  */
 function getSelectAps($subId, $tasks, $role_key){
     if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
     global $db, $langs, $conf, $roles;
     $sql="SELECT COUNT(ts.rowid) as nb, ";
-
 switch($conf->global->TIMESHEET_TIME_SPAN){
-        case 'month': 
+        case 'month':
             $sql.=" CONCAT(DATE_FORMAT(ts.date_start, '%m/%Y'), '-', pjt.ref) as id, ";
              if($db->type!='pgsql'){
                 $sql.=" CONCAT(pjt.title, ' (', MONTH(date_start), '/', YEAR(date_start), ' )#' ) as label, ";
@@ -276,15 +249,14 @@ switch($conf->global->TIMESHEET_TIME_SPAN){
                 $sql.=" CONCAT(pjt.title, ' (', date_part('month', date_start), '/', date_part('year', date_start), ' )#' ) as label, ";
              }
             break;
-        case 'week':  
-        case 'splitedWeek': 
+        case 'week':
+        case 'splitedWeek':
         default:
             $sql.=" CONCAT(DATE_FORMAT(ts.date_start, '%v/%Y'), '-', pjt.ref) as id, ";
            if($db->type!='pgsql'){
                $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ' )#' ) as label, ";
            }else  {
                $sql.=" CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week', ts.date_start), '/', date_part('year', ts.date_start), ' )#' ) as label, ";
-               
            }
            break;
 }
@@ -308,7 +280,6 @@ if($db->type!='pgsql'){
     dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
     $list=array();
     $resql=$db->query($sql);
-    
     if ($resql)
     {
         $i=0;
@@ -317,7 +288,6 @@ if($db->type!='pgsql'){
         while ( $i<$num)
         {
             $obj = $db->fetch_object($resql);
-            
             if ($obj)
             {
                 $j=1;
@@ -336,7 +306,6 @@ if($db->type!='pgsql'){
             }
             $i++;
         }
-
     }
     else
     {
@@ -347,7 +316,6 @@ if($db->type!='pgsql'){
       //$select.="\n";
       return $list;
  }
- 
  function  getHTMLRows($objectArray){
      global $langs, $conf;
      $headers=array('Approval', 'Note', 'Tasks', 'User');
@@ -378,7 +346,6 @@ if($db->type!='pgsql'){
          echo "<tr>\n";
      }
  }
- 
  function uniordHex($u) {
     return strtoupper(bin2hex(iconv('UTF-8', 'UCS-2BE', $u)));
      /*
@@ -386,4 +353,4 @@ if($db->type!='pgsql'){
     $k1 = ord(substr($k, 0, 1));
     $k2 = ord(substr($k, 1, 1));
     return dechex($k2 ).dechex($k1);*/
-} 
+}

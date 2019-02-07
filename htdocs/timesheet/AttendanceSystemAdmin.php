@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -17,14 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 /**
  *   	\file       dev/AttendanceSystems/AttendanceSystem_page.php
  *		\ingroup    timesheet othermodule1 othermodule2
  *		\brief      This file is an example of a php page
  *					Initialy built by build_class_from_table on 2019-01-30 16:24
  */
-
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
 //if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
@@ -36,7 +34,6 @@
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');			// If we don't need to load the html.form.class.php
 //if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 //if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
-
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 // Change this following line to use the correct relative path from htdocs
@@ -56,7 +53,6 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("AttendanceSystem@timesheet");
-
 // Get parameter
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -80,30 +76,19 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 	$ls_task= GETPOST('ls_task', 'int');
 	$ls_project= GETPOST('ls_project', 'int');
 	$ls_status= GETPOST('ls_status', 'int');
-
-    
 }
-
-
 $page = GETPOST('page', 'int');
 if ($page == -1) { $page = 0;}
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-
-
  // uncomment to avoid resubmision
 //if(isset( $_SESSION['AttendanceSystem_class'][$tms]))
 //{
-
  //   $cancel=TRUE;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
 //}
-
-
-
 // Right Management
  /*
 if ($user->societe_id > 0 ||
@@ -115,7 +100,6 @@ if ($user->societe_id > 0 ||
 	accessforbidden();
 }
 */
-
 // create object and set id or ref if provided as parameter
 $object=new AttendanceSystem($db);
 if($id>0)
@@ -130,17 +114,12 @@ if(!empty($ref))
     $object->id=$id;
     $object->fetch($id, $ref);
     $ref=dol_sanitizeFileName($object->ref);
-    
 }
-
-
 /*******************************************************************
 * ACTIONS
 *
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
-
-         
 // Action to remove record
  switch($action){
     case 'confirm_delete':	
@@ -163,15 +142,12 @@ if(!empty($ref))
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
-      
-    } 
-
+    }
 /***************************************************
 * VIEW
 *
 * Put here all code to build page
 ****************************************************/
-
 llxHeader('', 'AttendanceSystem', '');
 print "<div> <!-- module body-->";
 $form=new Form($db);
@@ -179,7 +155,6 @@ $formother=new FormOther($db);
 $formproject=new FormProjets($db);
 $fuser=new User($db);
 // Put here content of your page
-
 // Example : Adding jquery code
 /*print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
@@ -194,11 +169,8 @@ jQuery(document).ready(function() {
 	});
 });
 </script>';*/
-
-
     $sql = 'SELECT';
     $sql.= ' t.rowid, ';
-    
 	$sql.=' t.label, ';
 	$sql.=' t.ip, ';
 	$sql.=' t.port, ';
@@ -207,8 +179,6 @@ jQuery(document).ready(function() {
 	$sql.=' t.fk_task, ';
 	$sql.=' t.fk_project, ';
 	$sql.=' t.status';
-
-    
     $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_system as t';
     $sqlwhere='';
     if(isset($object->entity))
@@ -231,12 +201,9 @@ jQuery(document).ready(function() {
 	if($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
 	if($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
 	if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
-
-    
     //list limit
     if(!empty($sqlwhere))
         $sql.=' WHERE '.substr ($sqlwhere, 5);
-    
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -249,13 +216,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
     if(!empty($sortfield)){$sql.= $db->order($sortfield, $sortorder);
     }else{ $sortorder = 'ASC';}
-    
     if (!empty($limit))
     {
             $sql.= $db->plimit($limit+1, $offset);
     }
-    
-
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
     $resql=$db->query($sql);
@@ -272,15 +236,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	if (!empty($ls_task))	$param.='&ls_task='.urlencode($ls_task);
 	if (!empty($ls_project))	$param.='&ls_project='.urlencode($ls_project);
 	if (!empty($ls_status))	$param.='&ls_status='.urlencode($ls_status);
-
-        
         if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
-        
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
         print_barre_liste($langs->trans("AttendanceSystem"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
         print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
-
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="liste" width="100%">'."\n";
         //TITLE
@@ -301,8 +261,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print "\n";
 	print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-
-        
         print '</tr>';
         //SEARCH FIELDS
         print '<tr class="liste_titre">';
@@ -345,9 +303,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" size="16" type="text" name="ls_status" value="'.$ls_status.'">';
 	print '</td>';
-
-        
-        
         print '<td width="15px">';
         print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -388,9 +343,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print "<td>".$obj->status."</td>";
 	print '<td><a href="AttendanceSystemCard.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 	print "</tr>";
-
-                
-
             }
             $i++;
         }
@@ -400,18 +352,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $error++;
         dol_print_error($db);
     }
-
     print '</table>'."\n";
     print '</form>'."\n";
     // new button
     print '<a href="AttendanceSystemCard.php?action=create" class="butAction" role="button">'.$langs->trans('New');
     print ' '.$langs->trans('AttendanceSystem')."</a>\n";
-
-    
-
-
-
-
 // End of page
 llxFooter();
 $db->close();

@@ -18,25 +18,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
-
 /**
  *		\file       htdocs/core/modules/supplier_invoice/modules_facturefournisseur.php
  *      \ingroup    facture fournisseur
  *      \brief      File that contains parent class for supplier invoices models
  *					and parent class for supplier invoices numbering models
  */
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';	// required for use by classes that inherit
-
-
 /**
  *	Parent class for supplier invoices models
  */
 abstract class ModelPDFTimesheetReport extends CommonDocGenerator
 {
 	var $error='';
-
-
 	/**
 	 *  Return list of active generation models
 	 *
@@ -47,14 +41,10 @@ abstract class ModelPDFTimesheetReport extends CommonDocGenerator
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
-
 		$type='timesheetReport';
 		$liste=array();
-
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
-
 		return $liste;
 	}
-
 }

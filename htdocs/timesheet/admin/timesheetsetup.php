@@ -5,7 +5,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -13,26 +13,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 /**
  *  \file       htdocs/admin/project.php
  *  \ingroup    project
  *  \brief      Page to setup project module
  */
-
 include '../core/lib/includeMain.lib.php';
 include '../core/lib/generic.lib.php';
-
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-
 $langs->load("admin");
 $langs->load("errors");
 $langs->load("other");
 $langs->load("timesheet@timesheet");
-        
 if (!$user->admin) {
     $accessforbidden = accessforbidden("you need to be admin");
 }
@@ -63,7 +58,6 @@ $addForOther=$conf->global->TIMESHEET_ADD_FOR_OTHER;
 $noteOnPDF=$conf->global->TIMESHEET_PDF_NOTEISOTASK;
 $showTimespentNote=$conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE;
 //Invoice part
-
 $invoicetasktime=$conf->global->TIMESHEET_INVOICE_TASKTIME;
 $invoicetimetype=$conf->global->TIMESHEET_INVOICE_TIMETYPE;
 $invoicemethod=$conf->global->TIMESHEET_INVOICE_METHOD;
@@ -77,7 +71,7 @@ if(sizeof($apflows)!=6)$apflows=array('_', '0', '0', '0', '0', '0');
 $error=0;
 function null2int($var, $int=0){
     return ($var=='')?$int:$var;
-} 
+}
 switch($action)
 {
     case "save":
@@ -125,7 +119,6 @@ switch($action)
         dolibarr_set_const($db, "MAIN_DISABLE_AJAX_COMBOX", $dropdownAjax, 'int', 0, '', $conf->entity);
         $addForOther=getpost('addForOther', 'int');
         dolibarr_set_const($db, "TIMESHEET_ADD_FOR_OTHER", $addForOther, 'int', 0, '', $conf->entity);
- 
         //headers handling
         $showProject=getpost('showProject', 'int');
         $showTaskParent=getpost('showTaskParent', 'int');
@@ -146,7 +139,6 @@ switch($action)
         $headers.=$showProgress?(empty($headers)?'':'||').'Progress':'';
         $headers.=$showTotal?(empty($headers)?'':'||').'Total':'';
         dolibarr_set_const($db, "TIMESHEET_HEADERS", $headers, 'chaine', 0, '', $conf->entity);
-        
         //color handling
         $draftColor=getpost('draftColor', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_COL_DRAFT", $draftColor, 'chaine', 0, '', $conf->entity);
@@ -158,14 +150,13 @@ switch($action)
         dolibarr_set_const($db, "TIMESHEET_COL_REJECTED", $rejectedColor, 'chaine', 0, '', $conf->entity);
         $cancelledColor=getpost('cancelledColor', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_COL_CANCELLED", $cancelledColor, 'chaine', 0, '', $conf->entity);
-        
         //holiday
         $addholidaytime=getpost('addholidaytime', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_ADD_HOLIDAY_TIME", $addholidaytime, 'chaine', 0, '', $conf->entity);
         //docs
         $adddocs=getpost('adddocs', 'int');
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
-        // open days        
+        // open days
         $opendays=array('_', '0', '0', '0', '0', '0', '0', '0');
         foreach(getpost('opendays', 'array') as $key => $day){
             $opendays[$key]=$day;
@@ -176,7 +167,6 @@ switch($action)
         foreach(getpost('apflows', 'array') as $key => $flow){
             $apflows[$key]=$flow;
         }
-        
         //INVOICE
         dolibarr_set_const($db, "TIMESHEET_APPROVAL_FLOWS", implode('', $apflows), 'chaine', 0, '', $conf->entity)  ;
         $invoicemethod=getpost('invoiceMethod', 'alpha');
@@ -198,7 +188,6 @@ switch($action)
         // serach box
         $searchbox=getpost('searchBox', 'int');
         dolibarr_set_const($db, "TIMESHEET_SEARCHBOX", $searchbox, 'int', 0, '', $conf->entity);
-
         setEventMessage($langs->transnoentitiesnoconv("ConfigurationSaved"));
         break;
     default:
@@ -237,35 +226,25 @@ foreach ($headersT as $header) {
         default:
             break;
     }
-    
 }
-
-/* 
+/*
  *  VIEW
  *  */
-
-
 //permet d'afficher la structure dolibarr
 $morejs=array("/timesheet/core/js/timesheet.js?v2.0", "/timesheet/core/js/jscolor.js");
 llxHeader("", $langs->trans("timesheetSetup"), '', '', '', '', $morejs, '', 0, 0);
-
-
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("timesheetSetup"), $linkback, 'title_setup');
 echo '<div class="fiche"><br><br>';
 /*
  * TABS
  */
-
 echo '<div class="tabs" data-role="controlgroup" data-type="horizontal"  >';
 echo '  <div id="defaultOpen"  class="inline-block tabsElem" onclick="openTab(event, \'General\')"><a  href="javascript:void(0);"  class="tabunactive tab inline-block" data-role="button">'.$langs->trans('General').'</a></div>';
 echo '  <div class="inline-block tabsElem" onclick="openTab(event, \'Advanced\')"><a  href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Advanced').'</a></div>';
 echo '  <div class="inline-block tabsElem"  onclick="openTab(event, \'Invoice\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Invoice').'</a></div>';
 echo '  <div class="inline-block tabsElem"   onclick="openTab(event, \'Other\')"><a href="javascript:void(0);" class="tabunactive tab inline-block" data-role="button">'.$langs->trans('Other').'</a></div>';
-
 echo '</div>';
-
-
 /*
  * General
  */
@@ -315,17 +294,12 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("adddocs");
 echo '</td><td align="left">'.$langs->trans("adddocsDesc").'</td>';
 echo  '<td align="left"><input type="checkbox" name="adddocs" value="1" ';
 echo (($adddocs=='1')?'checked':'')."></td></tr>\n";
-
 //Add for other
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("addForOther");
 echo '</td><td align="left">'.$langs->trans("addForOtherDesc").'</td>';
 echo  '<td align="left"><input type="checkbox" name="addForOther" value="1" ';
 echo (($addForOther=='1')?'checked':'')."></td></tr>\n\t\t";
-
 echo "\t</table><br>\n";
-
-
-
 print_titre($langs->trans("DiplayOptions"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
@@ -340,30 +314,17 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("hideref");
 echo '</td><td align="left">'.$langs->trans("hideRefDesc").'</td>';
 echo  '<td align="left"><input type="checkbox" name="hideref" value="1" ';
 echo (($hideref=='1')?'checked':'')."></td></tr>\n\t\t";
-
 // hide zeros
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("hidezeros");
 echo '</td><td align="left">'.$langs->trans("hideZerosDesc").'</td>';
 echo  '<td align="left"><input type="checkbox" name="hidezeros" value="1" ';
 echo (($hidezeros=='1')?'checked':'')."></td></tr>\n";
-
 // show timespentNote
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("ShowTimespentNote");
 echo '</td><td align="left">'.$langs->trans("ShowTimespentNoteDesc").'</td>';
 echo  '<td align="left"><input type="checkbox" name="showTimespentNote" value="1" ';
 echo (($showTimespentNote=='1')?'checked':'')."></td></tr>\n";
-
-
-
-
-
-
 echo "\t</table><br>\n";
-
-
-
-
-
 print_titre($langs->trans("OpenDays"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th>'.$langs->trans("Monday").'</th><th>';
@@ -372,13 +333,11 @@ echo $langs->trans("Thursday").'</th><th>'.$langs->trans("Friday").'</th><th>';
 echo $langs->trans("Saturday").'</th><th>'.$langs->trans("Sunday").'</th>';
 echo '<input type="hidden" name="opendays[0]" value="_">';
 echo "</tr><tr>\n\t\t";
-
 for ($i=1;$i<8;$i++){
 echo  '<td width="14%" style="text-align:left"><input type="checkbox" name="opendays['.$i.']" value="1" ';
 echo (($opendays[$i]=='1')?'checked':'')."></td>\n\t\t";
         }
 echo "</tr>\n\t</table><br>\n";
-
 print_titre($langs->trans("ColumnToShow"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
@@ -428,8 +387,6 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("Total");
 echo '</td><td align="left">'.$langs->trans("TotalDesc").'</td>';
 echo  '<td align="left"><input type="checkbox" name="showTotal" value="1" ';
 echo (($showTotal=='1')?'checked':'')."></td></tr>\n\t\t";
-
-
 /*
 // custom FIXME
 echo  '<tr class="oddeven"><th align="left">'.$langs->trans("CustomCol");
@@ -439,17 +396,12 @@ echo (($showCustomCol=='1')?'checked':'')."</th></tr>\n\t\t";
 */
 echo '</table>';
 echo "</div>\n";
-
 /*
  * ADVANCED
  */
-
-
-
 echo '<div id="Advanced" class="tabBar">';
 print '<a>'.$langs->trans("AdvancedTabDesc").'</a>';
 print_titre($langs->trans("Approval"));
-
 echo '<table class="noborder" width="100%">'."\n\t\t";
 // approval by week
 echo '<tr class="liste_titre" width="100%" ><th width="200px">'.$langs->trans("Name").'</th><th>';
@@ -462,7 +414,7 @@ echo '<input type="radio" name="approvalbyweek" value="1" ';
 echo ($approvalbyweek=='1'?"checked":"").'> '.$langs->trans("Week").'<br>';
 echo '<input type="radio" name="approvalbyweek" value="2" ';
 echo ($approvalbyweek=='2'?"checked":"").'> '.$langs->trans("Month")."</td></tr>\n\t\t";
-// max approval 
+// max approval
 echo '<tr class="oddeven" ><td align="left">'.$langs->trans("maxapproval");//FIXTRAD
 echo '</td><td align="left">'.$langs->trans("maxapprovalDesc").'</td>';// FIXTRAD
 echo '<td  align="left"><input type="text" name="maxapproval" value="'.$maxApproval;
@@ -490,12 +442,8 @@ echo (($apflows[4]=='1')?'checked':'').'></td><tr>';
 //Other
 echo '<tr style="display:none"><td>'.$langs->trans("Other").'</td><td>'.$langs->trans("OtherApprovalDesc").'</td><td><input type="checkbox" name="apflows[5]" value="1"';
 echo (($apflows[5]=='1')?'checked':'').'></td><tr>';
-
 */
-
-
 echo "</tr>\n\t</table><br>\n";
-
 //Color
 print_titre($langs->trans("Color"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
@@ -526,13 +474,7 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("rejected");
 echo '</td><td align="left">'.$langs->trans("rejectedColorDesc").'</td>';
 echo  '<td align="left"><input name="rejectedColor" class="jscolor" value="';
 echo $rejectedColor."\"></td></tr>\n\t\t";
-
-
 echo '</table><br>';
-
-
-
-
 //whitelist mode
 print_titre($langs->trans("blackWhiteList"));
 echo '<table class="noborder" width="100%">'."\n\t\t";
@@ -553,16 +495,11 @@ echo ($whiteListMode=="1"?"checked":"").'> '.$langs->trans("modeBlackList")."<br
 echo '<input type="radio" name="blackWhiteListMode" value="2" ';
 echo ($whiteListMode=="2"?"checked":"").'> '.$langs->trans("modeNone")."</td></tr>\n\t\t";
 echo '</table><br>';
-
-
 echo '<br>';
-
 echo '</div>';
-
 /*
  * INVOICE
  */
-
 echo '<div id="Invoice" class="tabBar">';
 print '<a>'.$langs->trans("InvoiceTabDesc").'</a>';
 print_titre($langs->trans("Invoice"));
@@ -585,7 +522,6 @@ echo '<td align="left"><input type="radio" name="invoiceTimeType" value="hours" 
 echo ($invoicetimetype=="hours"?"checked":"").'> '.$langs->trans("Hours").'<br>';
 echo '<input type="radio" name="invoiceTimeType" value="days" ';
 echo ($invoicetimetype=="days"?"checked":"").'> '.$langs->trans("Days")."</td></tr>\n\t\t";
-
 //line invoice Service
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("invoiceService");
 echo '</td><td align="left">'.$langs->trans("invoiceServiceDesc").'</td>';
@@ -614,17 +550,13 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("invoiceShowTask");
 echo '</td><td align="left">'.$langs->trans("invoiceShowTaskDesc").'</td>';
 echo  '<td align="left"><input type="checkbox" name="invoiceShowTask" value="1" ';
 echo (($invoiceshowuser=='1')?'checked':'')."></td></tr>\n\t\t";
-
 // Show note on PDF
 echo '<tr class="oddeven"><td align="left">'.$langs->trans("NoteOnPDF").'</td><td align="left">'.$langs->trans("NoteOnPDFDesc").'</td>';
 echo '<td align="left"><input type="radio" name="noteOnPDF" value="0" ';
 echo ($noteOnPDF=="0"?"checked":"").'> '.$langs->trans("Task").'<br> <input type="radio" name="noteOnPDF" value="1" ';
 echo ($noteOnPDF=="1"?"checked":"").'> '.$langs->trans("Note").'<br>  <input type="radio" name="noteOnPDF" value="2"';
 echo ($noteOnPDF=="2"?"checked":"").'> '.$langs->trans("Task")."&".$langs->trans("Note")."</td></tr>\n\t\t";
-
-
 echo '</table><br>';
-
 echo '</div>';//taskbar
 /*
  * Other
@@ -644,16 +576,13 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("searchbox");
 echo '</td><td align="left">'.$langs->trans("searchboxDesc").'</td>';
 echo  '<td align="left"><input type="checkbox" name="searchBox" value="1" ';
 echo (($searchbox=='1')?'checked':'')."></td></tr>\n";
-
 echo '</table><br>';
 // doc
 print_titre($langs->trans("Manual"));
 echo '<a href="../doc/Module_timesheet.pdf">  PDF </a></br>'."\n\t\t";
 echo '<a href="../doc/Module_timesheet.docx">  DOCX </a></br></br>'."\n\t\t";
-
 print_titre($langs->trans("Feedback"));
 echo $langs->trans('feebackDesc').' : <a href="mailto:patrick@pmpd.eu?subject=TimesheetFeedback"> Patrick Delcroix</a></br></br>';
-
 print_titre($langs->trans("Reminder"));
 print '<br><div>'.$langs->trans('reminderEmailProcess').'</div>';
 echo '</div>';
@@ -661,6 +590,5 @@ echo '</div>';// end fiche
 echo '<input type="submit" class="butAction" value="'.$langs->trans('Save')."\">\n</from>";
 echo '<br><br><br>';
 echo '<script>document.getElementById("defaultOpen").click()</script>';
-
 llxFooter();
 $db->close();

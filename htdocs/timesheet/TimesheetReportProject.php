@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,17 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-
 include 'core/lib/includeMain.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once './core/lib/timesheet.lib.php';
 require_once './class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
-
 $htmlother = new FormOther($db);
-
-
 $id		= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
 //$dateStart	= GETPOST('dateStart', 'alpha');
@@ -40,14 +35,11 @@ $projectSelectedId=GETPOST('projectSelected');
     $month=GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Date']))
 // Load traductions files requiredby by page
 //$langs->load("companies");
-
 $firstDay= ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
 $lastDay=  ($month)?strtotime('last day of this month', $firstDay):strtotime('last day of previous month');
-
 $langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
-
 //find the right week
 //find the right week
 $dateStart               = strtotime(GETPOST('dateStart', 'alpha'));
@@ -55,23 +47,19 @@ $dateStartday =GETPOST('dateStartday', 'int');// to not look for the date if act
 $dateStartmonth               = GETPOST('dateStartmonth', 'int');
 $dateStartyear               = GETPOST('dateStartyear', 'int');
 $dateStart=parseDate($dateStartday, $dateStartmonth, $dateStartyear, $dateStart);
-
 $dateEnd               = strtotime(GETPOST('dateEnd', 'alpha'));
 $dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goTodate
 $dateEndmonth               = GETPOST('dateEndmonth', 'int');
 $dateEndyear               = GETPOST('dateEndyear', 'int');
 $dateEnd=parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly=GETPOST('invoicabletaskOnly', 'int');
-
 if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)){
     $step=0;
     $dateStart=  strtotime("first day of previous month", time());
     $dateEnd=  strtotime("last day of previous month", time());
  }
-
 if($action=='getpdf'){
     $report=new TimesheetReport($db);
-   
     $report->initBasic($projectSelectedId, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
     $pdf=new pdf_rat($db);
     //$outputlangs=$langs;
@@ -81,18 +69,10 @@ if($action=='getpdf'){
     }
     exit();
 }
-
 //$_SESSION["dateStart"]=$dateStart ;
-
-
 llxHeader('', $langs->trans('projectReport'), '');
-
 $userid=  is_object($user)?$user->id:$user;
-
-
-
 //querry to get the project where the user have priviledge;either project responsible or admin
-
 $sql='SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
 if(!$user->admin){
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid= element_id ';
@@ -102,10 +82,8 @@ if(!$user->admin){
 }else{
     $sql.=' WHERE fk_statut = \'1\' ';
 }
-
 dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
 //launch the sql querry
-
 $resql=$db->query($sql);
 $numProject=0;
 $projectList=array();
@@ -130,21 +108,18 @@ if ($resql)
 $querryRes='';
 if ($projectSelectedId   &&!empty($dateStart))
 {
-
     $projectSelected=$projectList[$projectSelectedId];
-
     if($projectSelectedId=='-999'){
         foreach($projectList as $project){
-        $querryRes.=$project->getHTMLreport($short, 
-           dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'), 
+        $querryRes.=$project->getHTMLreport($short,
+           dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
     }else{
-    $querryRes=$projectSelected->getHTMLreport($short, 
-            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'), 
+    $querryRes=$projectSelected->getHTMLreport($short,
+            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
-    
 }else
 {
     $year=date('Y', $dateStart);
@@ -188,7 +163,6 @@ $Form.=(($invoicabletaskOnly==1)?'checked>':'>').'</td>';
 // Select Export friendly
 $Form.='<td><input type="checkbox" name="exportfriendly" value="1" ';
 $Form.=(($exportfriendly==1)?'checked>':'>').'</td>';
-
 // Select mode
 $Form.= '<td><input type="radio" name="mode" value="UTD" '.($mode=='UTD'?'checked':'');
 $Form.='> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>';
@@ -200,16 +174,9 @@ $Form.='> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->tran
  //submit
  $Form.='<input class="butAction" type="submit" value="'.$langs->trans('getReport').'">';
 if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0 ))$Form.='<a class="butAction" href="TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
-
 if(!empty($querryRes))$Form.='<a class="butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
  $Form.='</form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
-
-
-
-
 echo $querryRes;
-
-
 llxFooter();
 $db->close();

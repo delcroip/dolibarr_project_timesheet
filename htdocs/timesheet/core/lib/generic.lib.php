@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
  *
@@ -8,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, 
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -18,12 +17,10 @@
  */
 //global $db;
 global $langs;
-
-
 /*
- * function to genegate a select list from a table, the showed text will be a concatenation of some 
- * column defined in column bit, the Least sinificative bit will represent the first colum 
- * 
+ * function to genegate a select list from a table, the showed text will be a concatenation of some
+ * column defined in column bit, the Least sinificative bit will represent the first colum
+ *
  *  @param    string              	$table                 table which the fk refers to (without prefix)
  *  @param    string              	$fieldValue         field of the table which the fk refers to, the one to put in the Valuepart
  *  @param    string              	$htmlName        name to the form select
@@ -34,9 +31,8 @@ global $langs;
 *  @param    string              	$sqlTailWhere              to limit per entity, to filter ...
 *  @param    string              	$selectparam          to add parameters to the select
  *  @param    array(string)             $addtionnalChoices    array of additionnal fields Array['VALUE']=string to show
-*  @param    string              	$sqlTailTAble              to add join ... 
+*  @param    string              	$sqlTailTAble              to add join ...
 *  @param    string              	$ajaxUrl             path to the ajax handler ajaxSelectGenericHandler.php
-
  *  @return string                                                   html code
  */
 // to be taken into account when passing a Ajax handler
@@ -46,12 +42,11 @@ global $langs;
  //$conf->global->RESOURCE_USE_SEARCH_TO_SELECT
 //$conf->global->BARCODE_USE_SEARCH_TO_SELECT
 //$conf->global->CONTACT_USE_SEARCH_TO_SELECT
-function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''), 
-                        $htmlarray=array('name'=> 'HTMLSellist', 'class'=>'', 'otherparam'=>'', '$ajaxNbChar'=>'', 'separator'=> ' ', 'noajax'=>0), 
-                        $selected='', 
+function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
+                        $htmlarray=array('name'=> 'HTMLSellist', 'class'=>'', 'otherparam'=>'', '$ajaxNbChar'=>'', 'separator'=> ' ', 'noajax'=>0),
+                        $selected='',
                         $addtionnalChoices=array('NULL'=>'NULL')){
         global $conf, $langs, $db;
-
      $noajax=   isset($htmlarray['noajax']);
      $ajax=$conf->use_javascript_ajax && !$noajax ;
     if( !isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) || !isset($htmlarray['name']))
@@ -68,7 +63,7 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
         $label=$item;
         if($start){
             $label=substr($item, $start+4);
-        }else if($start2){
+        }elseif($start2){
             $label=substr($item, $start2+1);
         }
         $fields[]=array('select' => $item, 'label'=>trim($label));
@@ -76,10 +71,8 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
     $select="\n";
     if ($ajax)
     {
-
         include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
        $token=getToken();
-
         $urloption='token='.$token;
         $comboenhancement = '';
         //$ajaxUrl='';
@@ -90,7 +83,6 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
             $_SESSION['ajaxQuerry'][$token]['fields']=$fields;
             $_SESSION['ajaxQuerry'][$token]['html']=$htmlarray;
             $_SESSION['ajaxQuerry'][$token]['option']=$addtionnalChoices;
-            
                     //array('table'=>$table, 'fieldValue'=>$fieldValue, 'htmlName'=> $htmlName, 'fieldToShow1'=>$fieldToShow1, 'fieldToShow2'=>$fieldToShow2, 'separator'=> $separator, 'sqlTailTable'=>$sqlTailTable, 'sqlTailWhere'=>$sqlTailWhere, 'addtionnalChoices'=>$addtionnalChoices);
             $comboenhancement = ajax_autocompleter($selected, $htmlName, $ajaxUrl, $urloption, $ajaxNbChar);
             $sqlTail.=" LIMIT 5";
@@ -108,11 +100,8 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
         //incluse js code in the html response
         $select.=$comboenhancement;
         $nodatarole=($comboenhancement?' data-role="none"':'');
-        
     }
-    
     //dBQuerry
-
     $SelectOptions='';
     $selectedValue='';
     $sql='SELECT DISTINCT ';
@@ -129,13 +118,9 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
     // remove the 't." if any
     $startkey=strpos($sqlarray['keyfield'], '.');
     $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
-    
     $resql=$db->query($sql);
-   
     if ($resql)
     {
-
-
         $selectOptions.= "<option value=\"-1\" ".(empty($selected)?"selected":"").">&nbsp;</option>\n";
         $i=0;
         $separator=isset($htmlarray['separator'])?$htmlarray['separator']:' ';
@@ -143,17 +128,14 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
         $num = $db->num_rows($resql);
         while ($i < $num)
         {
-            
             $obj = $db->fetch_object($resql);
-            
             if ($obj)
             {
-
                 $fieldtoshow='';
                 foreach($fields as $item){
                     if(!empty($fieldtoshow))$fieldtoshow.=$separator;
                     $fieldtoshow.=$obj->{$item['label']};
-                } 
+                }
                 $selectOptions.= "<option value=\"".$obj->{$labelKey}."\" ";
                 if($obj->{$labelKey}==$selected){
                      $selectOptions.='selected=\"selected\"';
@@ -161,16 +143,13 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
                  }
                  $selectOptions.=">";
                  $selectOptions.=$fieldtoshow;
-
                  $selectOptions.="</option>\n";
-            } 
+            }
             $i++;
         }
         if($addtionnalChoices)foreach($addtionnalChoices as $value => $choice){
             $selectOptions.= '<option value="'.$value.'" '.(($selected==$value)?'selected':'').">{$choice}</option>\n";
         }
-
-        
     }
     else
     {
@@ -178,8 +157,6 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
         dol_print_error($db);
        $select.= "<option value=\"-1\" selected=\"selected\">ERROR</option>\n";
     }
-     
-   
     if($ajaxNbChar && $ajax){
         if ($selectedValue=='' && is_array($addtionnalChoices)){
             $selectedValue=$addtionnalChoices[$selected];
@@ -192,27 +169,22 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
     }
    // }
       return $select;
-    
-} 
-
+}
 function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2='', $selected='', $separator=' - ', $sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'), $sqlTailTable='', $ajaxNbChar=''){
-    return select_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => '', 'where'=>$sqlTailWhere, 'tail'=>$sqlTailTable), 
-                        $htmlarray=array('name'=>$htmlName, 'class'=>'', 'otherparam'=>$selectparam, 'ajaxNbChar'=>$ajaxNbChar, 'separator'=> $separator), 
-                        $selected, 
+    return select_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => '', 'where'=>$sqlTailWhere, 'tail'=>$sqlTailTable),
+                        $htmlarray=array('name'=>$htmlName, 'class'=>'', 'otherparam'=>$selectparam, 'ajaxNbChar'=>$ajaxNbChar, 'separator'=> $separator),
+                        $selected,
                         $addtionnalChoices);
  }
- 
- 
- function print_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''), 
+ function print_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
                         $selected, $separator=' ', $url=''){
     global $conf, $langs, $db;
     if( !isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) )
     {
         return 'error, one of the mandatory field of the function  select_sellist is missing:'.$sqlarray['table'].$sqlarray['keyfield'].$sqlarray['fields'];
-    }else if (empty($selected)){
+    }elseif(empty($selected)){
         return "NuLL";
     }
-    
     $sql='SELECT DISTINCT ';
     $sql.=$sqlarray['keyfield'];
     $sql.=' , '.$sqlarray['fields'];
@@ -227,7 +199,6 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
     dol_syslog('form::print_sellist ', LOG_DEBUG);
     $startkey=strpos($sqlarray['keyfield'], '.');
     $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
-
     $resql=$db->query($sql);
      if ($resql)
     {
@@ -239,7 +210,7 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
         $label=$item;
         if($start){
             $label=substr($item, $start+4);
-        }else if($start2){
+        }elseif($start2){
             $label=substr($item, $start2+1);
         }
         $fields[]=array('select' => $item, 'label'=>trim($label));
@@ -248,7 +219,6 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
         if ( $num)
         {
             $obj = $db->fetch_object($resql);
-            
             if ($obj)
             {
                 $select='';
@@ -273,35 +243,32 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
       //$select.="\n";
       return $select;
  }
- 
 /*
- * function to genegate a select list from a table, the showed text will be a concatenation of some 
- * column defined in column bit, the Least sinificative bit will represent the first colum 
- * 
+ * function to genegate a select list from a table, the showed text will be a concatenation of some
+ * column defined in column bit, the Least sinificative bit will represent the first colum
+ *
  *  @param    string              	$table                 table which the fk refers to (without prefix)
  *  @param    string              	$fieldValue         field of the table which the fk refers to, the one to put in the Valuepart
  *  @param    string              	$selected           value selected of the field value column
  *  @param    string              	$fieldToShow1    first part of the concatenation
  *  @param    string              	$fieldToShow2        separator between the tow contactened fileds
  *  @param    string              	$sqlTail              to limit per entity, to filter ...
-
  *  @return string                                                   html code
  */
 function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2="", $separator=' - ', $sqltail="", $sqljoin=""){
    //return $table.$db.$field;
- return  print_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail), 
+ return  print_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail),
                         $selected, $separator);
  }
  /*
  * function to print a bitstring (or sting starting  with _)
- * 
+ *
  *  @param    string                                            $bitstring              list f bits
  *  @param     array( string label))   $labels                 array of label ( dispaly label) for the bit number key
- *  @param     array(string name))     $names                 array of name (input name) for the bit number key  
+ *  @param     array(string name))     $names                 array of name (input name) for the bit number key
  *  @param    int                       $edit             active the  read only mode
- *  @return   string                htmlcode                                       
+ *  @return   string                htmlcode
  */
- 
  function printBitStringHTML($bitstring, $labels, $names, $edit=0){
      global $langs;
      $html="error, paramters of printBitStringHTML not valid";
@@ -309,29 +276,22 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
      if(is_array($labels) && count_chars(bitstring)!=($numberOfBits+1)){
           $htmlValue='';
           $html='<table class="noborder" width="100%"><tr class="titre">';
-
            for($i=0;$i<$numberOfBits;$i++){
                // labels
                $html.='<td width="'.floor(100/$numberOfBits).'%">'.$labels[$i].'<td>';
                $htmlValue.='<td><input type="checkbox" name="'.$names[$i].'"'.((substr($bitstring, $i+1, 1))?' checked':'').(($edit)?'':' readonly').' ><td>';
-
            }
            $html.='</tr><tr>'.$htmlValue.'</tr></table>';
      }
      return $html;
-
  }
- 
- 
  /*
  * function to genegate a random number
- * 
+ *
  *  @param    int            	$min                min seed
  *  @param    int                      $max            max seed
- *  @return   int                                  random number                                         
+ *  @return   int                                  random number
  */
- 
- 
  function crypto_rand_secure($min, $max) {
         $range = $max - $min;
         if ($range < 0) return $min;// not so random...
@@ -347,9 +307,9 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
 }
  /*
  * function to genegate a random string
- * 
+ *
  *  @param    int            	$lentgh                lentgh of the random string
- *  @return   int                                  random sting                                        
+ *  @return   int                                  random sting
  */
 function getToken($length=32){
     $token = "";
