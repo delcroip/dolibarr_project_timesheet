@@ -60,7 +60,7 @@ function AttendanceSystemPrepareHead($object)
 		if (!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = dol_buildpath('/timesheet/AttendanceSystem_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= ' <span class = "badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
 		$h++;
 	}
@@ -68,10 +68,10 @@ function AttendanceSystemPrepareHead($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->timesheet->dir_output . "/AttendanceSystem/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	$nbLinks=Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemDoc.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class = "badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 /*
@@ -83,10 +83,10 @@ function AttendanceSystemPrepareHead($object)
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
-	//	'entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__'
+	//	'entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id = __ID__'
 	//);// to add new tab
 	//$this->tabs = array(
-	//	'entity:-tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__'
+	//	'entity:-tabname:Title:@timesheet:/timesheet/mypage.php?id = __ID__'
 	//);// to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'AttendanceSystem@timesheet');
 	return $head;

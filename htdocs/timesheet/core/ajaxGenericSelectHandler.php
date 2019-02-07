@@ -19,29 +19,29 @@ include 'lib/includeMain.lib.php';
  global $conf, $langs, $db;
  top_httphead();
 //get the token, exit if
-$token=GETPOST('token', 'apha');
+$token = GETPOST('token', 'apha');
 if(!isset($_SESSION['ajaxQuerry'][$token])){
     ob_end_flush();
     exit();
 }
-$sqlarray=$_SESSION['ajaxQuerry'][$token]['sql'];
-$fields=$_SESSION['ajaxQuerry'][$token]['fields'];
-$htmlarray=$_SESSION['ajaxQuerry'][$token]['html'];
-$addtionnalChoices=$_SESSION['ajaxQuerry'][$token]['option'];
-$separator=isset($htmlarray['separator'])?$htmlarray['separator']:' ';
- $search=GETPOST($htmlName, 'alpha');
+$sqlarray = $_SESSION['ajaxQuerry'][$token]['sql'];
+$fields = $_SESSION['ajaxQuerry'][$token]['fields'];
+$htmlarray = $_SESSION['ajaxQuerry'][$token]['html'];
+$addtionnalChoices = $_SESSION['ajaxQuerry'][$token]['option'];
+$separator = isset($htmlarray['separator'])?$htmlarray['separator']:' ';
+ $search = GETPOST($htmlName, 'alpha');
 //find if barckets
-$posBs=strpos($htmlName, '[');
+$posBs = strpos($htmlName, '[');
 if($posBs>0){
-    $subStrL1= substr($htmlName, 0, $posBs);
-    $search=$_GET[$subStrL1];
+    $subStrL1 = substr($htmlName, 0, $posBs);
+    $search = $_GET[$subStrL1];
     while(is_array($search)){// assumption there is only one value in the array
-        $search=array_pop($search);
+        $search = array_pop($search);
     }
 }
-        $SelectOptions='';
-    $selectedValue='';
-    $sql='SELECT DISTINCT ';
+        $SelectOptions = '';
+    $selectedValue = '';
+    $sql = 'SELECT DISTINCT ';
     $sql .= $sqlarray['keyfield'];
     $sql .= ', '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
@@ -53,28 +53,28 @@ if($posBs>0){
             $sql .= ' '.$sqlarray['tail'];
     dol_syslog('form::ajax_select_generic ', LOG_DEBUG);
     $return_arr = array();
-    $resql=$db->query($sql);
+    $resql = $db->query($sql);
    //remove the 't. from key fields
-    $startkey=strpos($sqlarray['keyfield'], '.');
-    $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
+    $startkey = strpos($sqlarray['keyfield'], '.');
+    $labelKey = ($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
     if ($resql)
     {
-          // support AS in the fields ex $field1='CONTACT(u.firstname, ' ', u.lastname) AS fullname'
-        // with sqltail= 'JOIN llx_user as u ON t.fk_user=u.rowid'
-        $listFields=explode(',', $sqlarray['fields']);
-        $fields=array();
+          // support AS in the fields ex $field1 = 'CONTACT(u.firstname, ' ', u.lastname) AS fullname'
+        // with sqltail = 'JOIN llx_user as u ON t.fk_user = u.rowid'
+        $listFields = explode(',', $sqlarray['fields']);
+        $fields = array();
     foreach($listFields as $item){
-        $start=MAX(strpos($item, ' AS '), strpos($item, ' as '));
-        $start2=strpos($item, '.');
-        $label=$item;
+        $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
+        $start2 = strpos($item, '.');
+        $label = $item;
         if($start){
-            $label=substr($item, $start+4);
+            $label = substr($item, $start+4);
         }elseif($start2){
-            $label=substr($item, $start2+1);
+            $label = substr($item, $start2+1);
         }
-        $fields[]=array('select' => $item, 'label'=>trim($label));
+        $fields[] = array('select' => $item, 'label'=>trim($label));
     }
-        $i=0;
+        $i = 0;
          //return $table."this->db".$field;
         $num = $db->num_rows($resql);
         while ($i < $num)
@@ -82,16 +82,16 @@ if($posBs>0){
             $obj = $db->fetch_object($resql);
             if ($obj)
             {
-                $label='';
+                $label = '';
                 foreach($fields as $item){
                     if(!empty($label))$label .= $separator;
                     $label .= $obj->{$item['label']};
                 }
-                $row_array['label'] =  $label;
-                $value=$obj->{$labelKey};
+                $row_array['label'] = $label;
+                $value = $obj->{$labelKey};
 		//$row_array['value'] = $value;
-                $row_array['value'] =  $label;
-	        $row_array['key'] =$value;
+                $row_array['value'] = $label;
+	        $row_array['key'] = $value;
                 array_push($return_arr, $row_array);
             }
             $i++;
@@ -99,7 +99,7 @@ if($posBs>0){
         if($addtionnalChoices)foreach($addtionnalChoices as $value => $label){
                 $row_array['label'] = $label;
 		$row_array['value'] = $label;
-	        $row_array['key'] =$value;
+	        $row_array['key'] = $value;
             array_push($return_arr, $row_array);
         }
     }

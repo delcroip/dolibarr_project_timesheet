@@ -19,19 +19,19 @@
  *	\brief      Module de generation de l'affichage de la box factures
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-$path=dirname(dirname(dirname(__FILE__)));
+$path = dirname(dirname(dirname(__FILE__)));
 set_include_path($path);
 require_once 'core/lib/timesheet.lib.php';
 global $dolibarr_main_url_root_alt;
-$res=0;
+$res = 0;
 /**
  * Class to manage the box to show last invoices
  */
 class box_approval extends ModeleBoxes
 {
-	var $boxcode="nbTsToApprove";
-	var $boximg="timesheet";
-	var $boxlabel="BoxApproval";
+	var $boxcode = "nbTsToApprove";
+	var $boximg = "timesheet";
+	var $boxlabel = "BoxApproval";
 	var $depends = array("timesheet");
 	var $db;
 	var $param;
@@ -43,22 +43,22 @@ class box_approval extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
-		$this->max=$max;
-        $userid=  is_object($user)?$user->id:$user;
-		$text =$langs->trans('Timesheet');
+		$this->max = $max;
+        $userid = is_object($user)?$user->id:$user;
+		$text = $langs->trans('Timesheet');
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text)
 		);
         if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
-           $subordinate=implode(',', getSubordinates($db, $userid, 2));
-           if($subordinate == '')$subordinate=0;
-           $tasks=implode(',', array_keys(getTasks($db, $userid)));
-           if($tasks == '')$tasks=0;
+           $subordinate = implode(',', getSubordinates($db, $userid, 2));
+           if($subordinate == '')$subordinate = 0;
+           $tasks = implode(',', array_keys(getTasks($db, $userid)));
+           if($tasks == '')$tasks = 0;
            // $sql .= ' COUNT(t.rowid) as nb, ';
             $sql .= ' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
@@ -73,45 +73,45 @@ class box_approval extends ModeleBoxes
                 while ($num>0){
                     $obj = $db->fetch_object($result);
                     if($obj->recipient == 'project'){
-                        $nbPrj=$obj->nbtsk;
+                        $nbPrj = $obj->nbtsk;
                     }elseif($obj->recipient == 'team'){
-                        $nbTm=$obj->nbtm;
+                        $nbTm = $obj->nbtm;
                     }
                     $num--;
                     }
                     $this->info_box_contents[0][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'align = "left"',
                         'text' => $langs->trans('team').': ',
                         'text2'=> $langs->trans('nbTsToApprove'),
                         'asis' => 1,
                     );
                     $this->info_box_contents[0][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'align = "right"',
                         'text' => $nbTm,
                         'asis' => 1,
                     );
                     $this->info_box_contents[1][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'align = "left"',
                         'text' => $langs->trans('project').': ',
                         'text2'=> $langs->trans('nbTsToApprove'),
                         'asis' => 1,
                     );
                     $this->info_box_contents[1][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'align = "right"',
                         'text' => $nbPrj,
                         'asis' => 1,
                     );
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => 'align = "left"',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
+                'td' => 'align = "left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
             );
         }

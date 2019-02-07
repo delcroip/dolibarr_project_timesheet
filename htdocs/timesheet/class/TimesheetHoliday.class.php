@@ -32,22 +32,22 @@ class TimesheetHoliday extends Holiday
  	
     public function __construct($db)
 	{
-		$this->db=$db;
-		//$this->date_end=strtotime('now -1 year');
-		//$this->date_start=strtotime('now -1 year');
+		$this->db = $db;
+		//$this->date_end = strtotime('now -1 year');
+		//$this->date_start = strtotime('now -1 year');
 	}
         /*public function initTimeSheet($weekWorkLoad, $taskTimeId)
     {
-            $this->weekWorkLoad=$weekWorkLoad;
-            $this->taskTimeId=$taskTimeId;
+            $this->weekWorkLoad = $weekWorkLoad;
+            $this->taskTimeId = $taskTimeId;
     }*/
     public function fetchUserWeek($userId, $datestart, $datestop)
     {
-        $SQLfilter=  " AND (cp.date_fin>='".$this->db->idate($datestart)."') ";
+        $SQLfilter = " AND (cp.date_fin>='".$this->db->idate($datestart)."') ";
         $SQLfilter.= " AND (cp.date_debut<'".$this->db->idate($datestop)."')";
-        $ret=$this->fetchByUser($userId, '', $SQLfilter);
-        $this->holidayPresent=($ret == 1);
-        $this->holidaylist=array();
+        $ret = $this->fetchByUser($userId, '', $SQLfilter);
+        $this->holidayPresent = ($ret == 1);
+        $this->holidaylist = array();
         //fixme fill the holiday list
         /*
          * id       --> id of the holiday task if any
@@ -55,56 +55,56 @@ class TimesheetHoliday extends Holiday
          * am       --> is the morning off
          * pm       --> is the afternoon off
          * next     --> is it the holiday continuing the day after
-         * status   --> is the holiday submitted or approuved ( none if id=0)
+         * status   --> is the holiday submitted or approuved ( none if id = 0)
          */
-        $timespan=getDayInterval($datestart, $datestop);
-        for($day=0;$day<$timespan;$day++)
+        $timespan = getDayInterval($datestart, $datestop);
+        for($day = 0;$day<$timespan;$day++)
         {
-                $curDay=strtotime(' + '.$day.' days', $datestart);
-                $this->holidaylist[$day]=array('amId'=>'0', 'pmId'=>'0', 'prev'=>false, 'am'=>false, 'pm'=>false, 'next'=>false, 'amStatus'=>0, 'pmStatus'=>0);
+                $curDay = strtotime(' + '.$day.' days', $datestart);
+                $this->holidaylist[$day] = array('amId'=>'0', 'pmId'=>'0', 'prev'=>false, 'am'=>false, 'pm'=>false, 'next'=>false, 'amStatus'=>0, 'pmStatus'=>0);
                 foreach($this->holiday as $record){
                     if($record['date_debut']<=$curDay && $record['date_fin']>=$curDay){
-                     $prev=($record['date_debut']<$curDay)?true:false;
-                     $next=($record['date_fin']>$curDay)?true:false;
-                     $am=false;
-                     $pm=false;
+                     $prev = ($record['date_debut']<$curDay)?true:false;
+                     $next = ($record['date_fin']>$curDay)?true:false;
+                     $am = false;
+                     $pm = false;
                      switch ($record['halfday']){
                          case -1://Holiday start the afteroon and end the afternnon -+++
-                             $am=$prev;
-                             $pm=true;
+                             $am = $prev;
+                             $pm = true;
                              break;
                           case 1: //Holiday start the morning and end the morning    +++-
-                             $am=true;
-                             $pm=$next;
+                             $am = true;
+                             $pm = $next;
                              break;
                          case 2: //Holiday start the afternoon and end the morning  -++-
-                             $am=$prev;
-                             $pm=$next;
+                             $am = $prev;
+                             $pm = $next;
                             break;
                          case 0: //Holiday start the morning and end the afternnon  ++++
                          default:
-                             $am=true;
-                             $pm=true;
+                             $am = true;
+                             $pm = true;
                              break;
                      }
                      // in case of 2 holiday present in the half day order 3, 2, 1, 5, 4
-                     $oldSatus=$this->holidaylist[$day]['amStatus'];
-                     $amOverride=($this->holidaylist[$day]['amId'] == 0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
-                     $oldSatus=$this->holidaylist[$day]['amStatus'];
-                     $pmOverride=($this->holidaylist[$day]['pmId'] == 0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
+                     $oldSatus = $this->holidaylist[$day]['amStatus'];
+                     $amOverride = ($this->holidaylist[$day]['amId'] == 0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
+                     $oldSatus = $this->holidaylist[$day]['amStatus'];
+                     $pmOverride = ($this->holidaylist[$day]['pmId'] == 0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
                      if($am && $amOverride){
-                         $this->holidaylist[$day]['am']=true;
-                         $this->holidaylist[$day]['amId']=$record['rowid'];
-                         $this->holidaylist[$day]['prev']=$prev;
-                         $this->holidaylist[$day]['amStatus']=$record['statut'];
+                         $this->holidaylist[$day]['am'] = true;
+                         $this->holidaylist[$day]['amId'] = $record['rowid'];
+                         $this->holidaylist[$day]['prev'] = $prev;
+                         $this->holidaylist[$day]['amStatus'] = $record['statut'];
                      }
                      if($pm && $pmOverride){
-                         $this->holidaylist[$day]['pm']=true;
-                         $this->holidaylist[$day]['pmId']=$record['rowid'];
-                         $this->holidaylist[$day]['next']=$next;
-                         $this->holidaylist[$day]['pmStatus']=$record['statut'];
+                         $this->holidaylist[$day]['pm'] = true;
+                         $this->holidaylist[$day]['pmId'] = $record['rowid'];
+                         $this->holidaylist[$day]['next'] = $next;
+                         $this->holidaylist[$day]['pmStatus'] = $record['statut'];
                      }
-                     //$this->holidaylist[$dayOfWeek]=array('idam'=>$record['rowid'], 'idpm'=>$record['rowid'], 'prev'=>$prev, 'am'=>$am, 'pm'=>$pm, 'next'=>$next, 'status'=>$record['statut']);
+                     //$this->holidaylist[$dayOfWeek] = array('idam'=>$record['rowid'], 'idpm'=>$record['rowid'], 'prev'=>$prev, 'am'=>$am, 'pm'=>$pm, 'next'=>$next, 'status'=>$record['statut']);
                     }
                 }
         }
@@ -121,46 +121,46 @@ class TimesheetHoliday extends Holiday
         global $langs;
         global $statusColor;
         global $conf;
-        $timetype=$conf->global->TIMESHEET_TIME_TYPE;
-        $dayshours=$conf->global->TIMESHEET_DAY_DURATION;
+        $timetype = $conf->global->TIMESHEET_TIME_TYPE;
+        $dayshours = $conf->global->TIMESHEET_DAY_DURATION;
         if(!is_array($this->holidaylist))
            return '<tr>ERROR: wrong parameters for getFormLine'.empty($startDate).'|'.empty($stopDate).'|'.empty($headers).'</tr>';
         if(!$this->holidayPresent) // don't show the holiday line if nothing present
            return '';
-        $html ="<tr id='holiday'>\n";
-        $html .= '<th colspan="'.count($headers).'" align="right" > '.$langs->trans('Holiday').' </th>';
-        $i=0;
+        $html = "<tr id = 'holiday'>\n";
+        $html .= '<th colspan = "'.count($headers).'" align = "right" > '.$langs->trans('Holiday').' </th>';
+        $i = 0;
         foreach ($this->holidaylist as $holiday)
         {
-            $am=$holiday['am'];
-            $pm=$holiday['pm'];
-            $amId=$holiday['amId'];
-            $pmId=$holiday['pmId'];
-            $amValue=($holiday['amStatus'] == 3);
-            $pmValue=($holiday['pmStatus'] == 3);
-            $value=($timetype == "hours")?date('H:i', mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
-            $html .= '<th style="margin: 0;padding: 0;">';
-            if($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1)$html .= '<input type="hidden" class="time4day['.$tsUserId.']['.$i.']"  value="'.$value.'">';
-            $html .= '<ul id="holiday['.$i.']" class="listHoliday" >';
-                $html .= '<li id="holiday['.$i.'][0]" class="listItemHoliday" ><a ';
+            $am = $holiday['am'];
+            $pm = $holiday['pm'];
+            $amId = $holiday['amId'];
+            $pmId = $holiday['pmId'];
+            $amValue = ($holiday['amStatus'] == 3);
+            $pmValue = ($holiday['pmStatus'] == 3);
+            $value = ($timetype == "hours")?date('H:i', mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
+            $html .= '<th style = "margin: 0;padding: 0;">';
+            if($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1)$html .= '<input type = "hidden" class = "time4day['.$tsUserId.']['.$i.']"  value = "'.$value.'">';
+            $html .= '<ul id = "holiday['.$i.']" class = "listHoliday" >';
+                $html .= '<li id = "holiday['.$i.'][0]" class = "listItemHoliday" ><a ';
                 if($am){
-                    $html .= 'href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
-                    $amColor=($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
-                    $amClass= ($holiday['prev'])?'':' noPrevHoliday';
+                    $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
+                    $amColor = ($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
+                    $amClass = ($holiday['prev'])?'':' noPrevHoliday';
                     $amClass.= ($pm && $pmId == $amId )?'':' noNextHoliday';
-                    $html .= ' class="holiday'.$amClass.'" style="'.$amColor.'">&nbsp;</a></li>';
+                    $html .= ' class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
                 }else{
-                    $html .= ' class="holiday" >&nbsp;</a></li>';
+                    $html .= ' class = "holiday" >&nbsp;</a></li>';
                 }
-                $html .= '<li id="holiday['.$i.'][1]" class="listItemHoliday" ><a ';
+                $html .= '<li id = "holiday['.$i.'][1]" class = "listItemHoliday" ><a ';
                 if($pm){
-                    $html .= 'href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
-                    $pmColor=($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
-                    $pmClass= ($am && $pmId == $amId)?'':' noPrevHoliday';
+                    $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
+                    $pmColor = ($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
+                    $pmClass = ($am && $pmId == $amId)?'':' noPrevHoliday';
                     $pmClass.= ($holiday['next'])?'':' noNextHoliday';
-                    $html .= ' class="holiday'.$pmClass.'" style="'.$pmColor.'">&nbsp;</a></li>';
+                    $html .= ' class = "holiday'.$pmClass.'" style = "'.$pmColor.'">&nbsp;</a></li>';
                 }else{
-                    $html .= ' class="holiday" >&nbsp;</a></li>';
+                    $html .= ' class = "holiday" >&nbsp;</a></li>';
                 }
            // }
             $html .= "</ul></th>\n";
@@ -181,7 +181,7 @@ function serialize(){
 function unserialize($str){
 }
     function parseTaskTime($taskTime){
-        $ret=floor($taskTime/3600).":".str_pad (floor($taskTime%3600/60), 2, "0", STR_PAD_LEFT);
+        $ret = floor($taskTime/3600).":".str_pad (floor($taskTime%3600/60), 2, "0", STR_PAD_LEFT);
         return $ret;
         //return '00:00';
     }
