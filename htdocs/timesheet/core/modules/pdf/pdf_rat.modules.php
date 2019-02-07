@@ -256,7 +256,7 @@ function write_file($object,$outputlangs)
                         //Write the table border and footer on the previous page
                         if ($pagenb == 1)
                         {
-                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, $heightoftitleline , $outputlangs, 0, 1);
+                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, $heightoftitleline, $outputlangs, 0, 1);
                         }else
                         {
                                 $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, $heightoftitleline, $outputlangs, 1, 1);

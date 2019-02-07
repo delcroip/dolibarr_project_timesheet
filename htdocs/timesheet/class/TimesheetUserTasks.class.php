@@ -114,8 +114,8 @@ class TimesheetUserTasks extends CommonObject
 		$sql.=' '.(! isset($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'\''.$this->db->idate($this->date_start).'\'').', ';
 		$sql.=' '.(! isset($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'\''.$this->db->idate($this->date_end).'\'').', ';
 		$sql.=' '.(! isset($this->status)?DRAFT:$this->status).', ';
-		$sql.=' NOW() , ';
-                $sql.=' NOW() , ';
+		$sql.=' NOW(), ';
+                $sql.=' NOW(), ';
 		$sql.=' \''.$userId.'\', ';//fixme 3.5
 		$sql.=' '.(! isset($this->note)?'NULL':'\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'');
 		$sql.= ")";
@@ -295,7 +295,7 @@ class TimesheetUserTasks extends CommonObject
 		$sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').', ';
 		$sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').', ';
 		$sql.=' status='.(empty($this->status)? DRAFT:$this->status).', ';
-		$sql.=' date_modification=NOW() , ';
+		$sql.=' date_modification=NOW(), ';
 		$sql.=' fk_user_modification=\''.$userId.'\', ';
 		$sql.=' note=\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'';
         $sql.= " WHERE rowid=".$this->id;
@@ -1215,7 +1215,7 @@ function GetTimeSheetXML()
           {
                $url.=$dolibarr_main_url_root_alt;
           }
-          $url.='/timesheet/timesheet.php?dateStart='.$this->date_start;
+          $url.='/timesheet/Timesheet.php?dateStart='.$this->date_start;
           $message=$langs->trans('YouHaveTimesheetRejectedMsg', date(' d', $this->date_start), $url);
           //$message="Bonjour, \n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
           $sendto=$tsUser->email;

@@ -56,7 +56,7 @@ $lastDay=  ($month)?strtotime('last day of this month', $firstDay):strtotime('la
 $_SESSION["dateStart"]=$dateStart ;
 llxHeader('', $langs->trans('userReport'), '');
 //querry to get the project where the user have priviledge;either project responsible or admin
-$sql='SELECT DISTINCT usr.rowid as userid, usr.lastname , usr.firstname '
+$sql='SELECT DISTINCT usr.rowid as userid, usr.lastname, usr.firstname '
      .'FROM '.MAIN_DB_PREFIX.'user as usr ';
 $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
      .' ON ec.fk_socpeople=usr.rowid '
@@ -66,7 +66,7 @@ if(!$user->admin)
 {
     $list=getSubordinates($db, $userid, 3);
     $list[]=$userid;
-    $sql.=' AND (usr.rowid in ('.implode(', ', $list).'))';
+    $sql.=' AND (usr.rowid in ('.implode(',', $list).'))';
 }
 dol_syslog("timesheet::reportuser::userList", LOG_DEBUG);
 //launch the sql querry

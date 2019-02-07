@@ -55,7 +55,7 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
     }
     $htmlName=$htmlarray['name'];
     $ajaxNbChar=$htmlarray['ajaxNbChar'];
-    $listFields=explode(', ', $sqlarray['fields']);
+    $listFields=explode(',', $sqlarray['fields']);
     $fields=array();
     foreach($listFields as $item){
         $start=MAX(strpos($item, ' AS '), strpos($item, ' as '));
@@ -106,7 +106,7 @@ function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 
     $selectedValue='';
     $sql='SELECT DISTINCT ';
     $sql.=$sqlarray['keyfield'];
-    $sql.=' , '.$sqlarray['fields'];
+    $sql.=', '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql.=' '.$sqlarray['join'];
@@ -187,7 +187,7 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
     }
     $sql='SELECT DISTINCT ';
     $sql.=$sqlarray['keyfield'];
-    $sql.=' , '.$sqlarray['fields'];
+    $sql.=', '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql.=' '.$sqlarray['join'];
@@ -202,7 +202,7 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
     $resql=$db->query($sql);
      if ($resql)
     {
-        $listFields=explode(', ', $sqlarray['fields']);
+        $listFields=explode(',', $sqlarray['fields']);
         $fields=array();
     foreach($listFields as $item){
         $start=MAX(strpos($item, ' AS '), strpos($item, ' as '));

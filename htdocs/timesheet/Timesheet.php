@@ -115,7 +115,6 @@ switch($action){
                                                 $task_timesheet->setStatus($user, SUBMITTED);
                                                 $ret++;
                                              //$task_timesheet->status="SUBMITTED";
-						
 					 }else{
                                              $task_timesheet->setStatus($user, DRAFT);
                                          }
@@ -169,6 +168,7 @@ if($xml){
    header("Content-type: text/xml;charset=utf-8");
     echo $task_timesheet->GetTimeSheetXML();
     ob_end_flush();
+exit();
 }
 $morejs=array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader('', $langs->trans('Timesheet'), '', '', '', '', $morejs);
@@ -211,4 +211,3 @@ if($conf->global->TIMESHEET_ADD_DOCS==1){
 // End of page
 llxFooter();
 $db->close();
-?>

@@ -175,14 +175,14 @@ function getSubordinates($db, $userid, $depth=5, $ecludeduserid=array(), $role=T
   *  @return     string                                                   html code
  */
 function getTasks($db, $userid, $role='project'){
-    $sql='SELECT tk.fk_projet as project , tk.rowid as task';
+    $sql='SELECT tk.fk_projet as project, tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON  tk.fk_projet= ec.element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
     $sql.=' WHERE ctc.element in (\'project\') AND ctc.active=\'1\' AND ctc.code LIKE \'%LEADER%\' ';
     $sql.=' AND fk_socpeople=\''.$userid.'\'';
     $sql.=' UNION ';
-    $sql.=' SELECT tk.fk_projet as project , tk.rowid as task';
+    $sql.=' SELECT tk.fk_projet as project, tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on (tk.rowid= element_id )';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
@@ -227,7 +227,7 @@ function getUsersName($userids){
     }
     $sql="SELECT usr.rowid, CONCAT(usr.firstname, ' ', usr.lastname) as username, usr.lastname FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
 if(is_array($userids)){
-	$sql.=' usr.rowid in ('.implode(', ', $userids).')';
+	$sql.=' usr.rowid in ('.implode(',', $userids).')';
 }else{
     $sql.=' usr.rowid ='.$userids;
 }

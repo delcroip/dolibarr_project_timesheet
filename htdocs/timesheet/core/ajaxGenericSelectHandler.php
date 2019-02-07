@@ -20,7 +20,10 @@ include 'lib/includeMain.lib.php';
  top_httphead();
 //get the token, exit if
 $token=GETPOST('token', 'apha');
-if(!isset($_SESSION['ajaxQuerry'][$token]))ob_end_flush();
+if(!isset($_SESSION['ajaxQuerry'][$token])){
+    ob_end_flush();
+    exit();
+}
 $sqlarray=$_SESSION['ajaxQuerry'][$token]['sql'];
 $fields=$_SESSION['ajaxQuerry'][$token]['fields'];
 $htmlarray=$_SESSION['ajaxQuerry'][$token]['html'];
@@ -40,7 +43,7 @@ if($posBs>0){
     $selectedValue='';
     $sql='SELECT DISTINCT ';
     $sql.=$sqlarray['keyfield'];
-    $sql.=' , '.$sqlarray['fields'];
+    $sql.=', '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql.=' '.$sqlarray['join'];
@@ -58,7 +61,7 @@ if($posBs>0){
     {
           // support AS in the fields ex $field1='CONTACT(u.firstname, ' ', u.lastname) AS fullname'
         // with sqltail= 'JOIN llx_user as u ON t.fk_user=u.rowid'
-        $listFields=explode(', ', $sqlarray['fields']);
+        $listFields=explode(',', $sqlarray['fields']);
         $fields=array();
     foreach($listFields as $item){
         $start=MAX(strpos($item, ' AS '), strpos($item, ' as '));

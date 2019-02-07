@@ -502,7 +502,7 @@ switch ($action) {
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
-            $filtrearr = explode(', ', $filter);
+            $filtrearr = explode(',', $filter);
             foreach ($filtrearr as $fil)
             {
                     $filt = explode(':', $fil);
@@ -642,7 +642,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     break;
 }
 dol_fiche_end();
-function reloadpage($backtopage, $id, $ref){
+/** function to reload page
+ * 
+ * @param string $backtopage    url source
+ * @param int $id               id of the object
+ * @param type $ref             ref of the object
+ */
+function reloadpage($backtopage, $id, $ref){{
         if (!empty($backtopage)){
             header("Location: ".$backtopage);
         //}elseif(!empty($ref) ){
@@ -654,7 +660,16 @@ function reloadpage($backtopage, $id, $ref){
             header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
         }
     ob_end_flush();
+exit();
 }
+/** function to prepare hear
+ * 
+ * @global object $langs    lang object
+ * @global object $conf     conf object
+ * @global object $user     current user
+ * @param object  $object   current object browsed
+ * @return string
+ */
 function Timesheetuser_prepare_head($object)
 {
     global $langs, $conf, $user;

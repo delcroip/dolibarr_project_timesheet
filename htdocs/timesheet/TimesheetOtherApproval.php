@@ -48,7 +48,7 @@ if(!is_numeric($offset))$offset=0;
 $print=(GETPOST('optioncss', 'alpha')=='print')?true:false;
 $current=  GETPOST('target', 'int');
 $token=  GETPOST('token', 'alpha');
-if($current==NULL)$current='0';
+if($current==null)$current='0';
 //handle submission
 if($action=='submit'){
     if (isset($_SESSION['task_timesheet'][$token]))
@@ -75,12 +75,12 @@ if($action=='submit'){
                 }
                 switch(uniordHex($approvals[$id])){
                     case '2705'://Approved':
-                       $ret=$task_timesheet->Approved($user, array_search($role_row , $roles) );
+                       $ret=$task_timesheet->Approved($user, array_search($role_row, $roles) );
                         if($ret<0)$errors++;
                         else $tsApproved++;
                         break;
                     case '274C'://'Rejected':
-                        $ret=$task_timesheet->challenged($user, array_search($role_row , $roles) );
+                        $ret=$task_timesheet->challenged($user, array_search($role_row, $roles) );
                         if($ret<0)$errors++;
                         else $tsRejected++;
                         break;
@@ -112,7 +112,7 @@ if($action=='submit'){
 * Put here all code to build page
 ****************************************************/
 $subId=($user->admin)?'all':getSubordinates($db, $userId, 1, array($userId), $role_key);//FIx ME for other role
-$tasks=implode(', ', array_keys(getTasks($db, $userId)));
+$tasks=implode(',', array_keys(getTasks($db, $userId)));
 if($tasks=="")$tasks=0;
 $selectList=getSelectAps($subId, $tasks, $role_key);
 if($current>=count($selectList))$current=0;
@@ -271,7 +271,7 @@ if($db->type!='pgsql'){
     $sql.=' WHERE ts.status in ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.' )';
     $sql.=' AND recipient='.$role_key;
     if($subId!='all'){
-        $sql.=' AND ts.fk_userid in ('.implode(', ', $subId).')';
+        $sql.=' AND ts.fk_userid in ('.implode(',', $subId).')';
         if($role_key==PROJECT){
             $sql.=' AND tsk.rowid in ('.$tasks.') ';
         }
@@ -292,7 +292,7 @@ if($db->type!='pgsql'){
             {
                 $j=1;
                 $nb=$obj->nb;
-                $idsList=explode(', ', $obj->idlist);
+                $idsList=explode(',', $obj->idlist);
                 // split the nb in x line to avoid going over the max approval
                 while($nb>TIMESHEET_MAX_TTA_APPROVAL){
                     $custIdList=  array_slice($idsList, $nb-TIMESHEET_MAX_TTA_APPROVAL, TIMESHEET_MAX_TTA_APPROVAL);

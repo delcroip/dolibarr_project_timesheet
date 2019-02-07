@@ -115,7 +115,7 @@ if ($cancel){
         $_SESSION['timesheetFavourite'.$tms]['action']=$action;
     }else {
         $editedUser=GETPOST('User', 'int');
-        $editedProject=GETPOST('Project', 'int');		
+        $editedProject=GETPOST('Project', 'int');
     }
 }elseif(($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
@@ -204,6 +204,7 @@ if ($cancel){
                                    if ($ajax==1){
                                            echo json_encode(array('id'=> $result));
                                            ob_end_flush();
+exit();
                                    }else{
                                        setEventMessage('RecordSucessfullyCreated', 'mesgs');
                                        reloadpage($backtopage, $result, $ref);
@@ -224,6 +225,7 @@ if ($cancel){
                                 if ($ajax==1){
                                            echo json_encode(array('id'=> '0'));
                                            ob_end_flush();
+exit();
                                 }else{
                                     setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
                                     reloadpage();
@@ -257,6 +259,7 @@ if(isset( $_SESSION['timesheetFavourite'.$tms]) &&  !GETPOST('Project', 'int') )
 if ($ajax==1){
     echo json_encode(array('errors'=> $object->errors));
     ob_end_flush();
+exit();
 }
 /***************************************************
 * VIEW
@@ -517,7 +520,7 @@ switch ($action) {
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
-            $filtrearr = explode(', ', $filter);
+            $filtrearr = explode(',', $filter);
             foreach ($filtrearr as $fil)
             {
                     $filt = explode(':', $fil);
@@ -612,7 +615,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $htmlProjectArray=array('name'=>'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
         $sqlProjectArray=array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
         print select_sellist($sqlProjectArray, $htmlProjectArray, $ls_project);
-//        print select_generic('projet', 'rowid', 'ls_project', 'ref', 'title', $ls_project , ' - ', '', '', NULL, '', $ajaxNbChar);
+//        print select_generic('projet', 'rowid', 'ls_project', 'ref', 'title', $ls_project, ' - ', '', '', NULL, '', $ajaxNbChar);
 	print '</td>';
 //Search field forproject_task
 	print '<td class="liste_titre" colspan="1" >';
@@ -620,7 +623,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $htmlProjectTaskArray=array('name'=>'ls_project_task', 'ajaxNbChar'=>$ajaxNbChar);
         $sqlProjectTaskArray=array('table'=>'projet_task', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
         print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
-        //print select_generic('projet_task', 'rowid', 'ls_project_task', 'ref', 'label', $ls_project_task , ' - ', '', '', NULL, '', $ajaxNbChar);
+        //print select_generic('projet_task', 'rowid', 'ls_project_task', 'ref', 'label', $ls_project_task, ' - ', '', '', NULL, '', $ajaxNbChar);
 	print '</td>';
 //Search field forsubtask
 	print '<td class="liste_titre" colspan="1" >';
@@ -680,7 +683,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         break;
 }
 dol_fiche_end();
-function reloadpage($backtopage, $id, $ref){
+/** function to reload page
+ * 
+ * @param string $backtopage    url source
+ * @param int $id               id of the object
+ * @param string $ref             ref of the object
+ */
+function reloadpage($backtopage, $id, $ref)
+{
         if (!empty($backtopage)){
             header("Location: ".$backtopage);
         }elseif(!empty($ref) ){
@@ -692,7 +702,16 @@ function reloadpage($backtopage, $id, $ref){
             header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
         }
 ob_end_flush();
+exit();
 }
+/** function to prepare hear
+ * 
+ * @global object $langs    lang object
+ * @global object $conf     conf object
+ * @global object $user     current user
+ * @param object  $object   current object browsed
+ * @return string
+ */
 function timesheetFavourite_prepare_head($object)
 {
     global $langs, $conf, $user;

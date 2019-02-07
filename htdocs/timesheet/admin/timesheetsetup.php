@@ -96,10 +96,10 @@ switch($action)
         $attendance=getpost('attendance', 'int');
         dolibarr_set_const($db, "TIMESHEET_ATTENDANCE", $attendance, 'int', 0, '', $conf->entity);
         $maxhoursperevent=getpost('maxhoursperevent', 'int');
-        dolibarr_set_const($db, "TIMESHEET_EVEN_MAX_DURATION", $maxhoursperevent, 'int', 0, '', $conf->entity);
-        $defaulthoursperevent=getpost('maxhoursperevent', 'int');
-        dolibarr_set_const($db, "TIMESHEET_EVEN_DEFAULT_DURATION", $defaulthoursperevent, 'int', 0, '', $conf->entity);
-        $maxhoursperday=getpost('maxhoursperevent', 'int');
+        dolibarr_set_const($db, "TIMESHEET_EVENT_MAX_DURATION", $maxhoursperevent, 'int', 0, '', $conf->entity);
+        $defaulthoursperevent=getpost('defaulthoursperevent', 'int');
+        dolibarr_set_const($db, "TIMESHEET_EVENT_DEFAULT_DURATION", $defaulthoursperevent, 'int', 0, '', $conf->entity);
+        $maxhoursperday=getpost('maxhoursperday', 'int');
         dolibarr_set_const($db, "TIMESHEET_DAY_MAX_DURATION", $maxhoursperday, 'int', 0, '', $conf->entity);
         $hidedraft=getpost('hidedraft', 'int');
         dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", $hidedraft, 'int', 0, '', $conf->entity);

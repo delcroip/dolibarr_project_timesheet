@@ -122,7 +122,7 @@ public $date_time_event_start;
         $sql.=' '.(empty($this->project)?'NULL':"'".$this->project."'").', ';
         $sql.=' '.(empty($this->token)?'NULL':"'".$this->token."'").', ';
         $sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
-        $sql.=' , NOW(), \''.$user->id.'\'';
+        $sql.=', NOW(), \''.$user->id.'\'';
         $sql.= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -546,7 +546,7 @@ public $date_time_event_start;
         $sql.=' event_location_ref='.(empty($this->event_location_ref)!=0 ? 'null':"'".$this->db->escape($this->event_location_ref)."'").', ';
         $sql.=' event_type='.(empty($this->event_type)!=0 ? 'null':"'".$this->event_type."'").', ';
         $sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").', ';
-        $sql.=' date_modification=NOW() , ';
+        $sql.=' date_modification=NOW(), ';
         $sql.=' fk_userid='.(empty($this->userid)!=0 ? 'null':"'".$this->userid."'").', ';
         $sql.=' fk_user_modification="'.$user->id.'", ';
         $sql.=' fk_third_party='.(empty($this->third_party)!=0 ? 'null':"'".$this->third_party."'").', ';
@@ -623,17 +623,17 @@ public $date_time_event_start;
         $tokenDb=$this->token;
         if(empty($tokenDb) ){  // 00 01 no db record found by token or user
             $this->initAsSpecimen();
-            $this->status= json_encode(array(
+            $this->status= array(
                    'text'=>$langs->trans('NoActiveEvent'),
                    'type'=>'errors',
-                   'param'=>''));
+                   'param'=>'');
             // AUTO START ?
         }elseif($this->event_type>=EVENT_STOP){ // found but already stopped
             $this->initAsSpecimen();
-            $this->status=json_encode(array(
+            $this->status=array(
                    'text'=>$langs->trans('EventNotActive'),
                    'type'=>'errors',
-                   'param'=>''));
+                   'param'=>'');
         }else{// 11 && 10 found and active
             if(!empty($tokenJson)){ //11
                 $this->event_location_ref=$location_ref;
@@ -657,10 +657,10 @@ public $date_time_event_start;
                 $this->createTimeSpend($user, $tokenDb);//FIXME
             }else{
                 $this->initAsSpecimen();
-                $this->status=json_encode(array(
+                $this->status=array(
                    'text'=>$langs->trans('DBError'),
                    'type'=>'errors',
-                   'param'=>''));
+                   'param'=>'');
             }
         }
         return $this->serialize(2);;
@@ -691,15 +691,15 @@ public $date_time_event_start;
         if( (empty($tokenJson) && empty($tokenDb) )||
                 (!empty($tokenDb) && $this->event_type>=EVENT_STOP)){  //00
             $this->initAsSpecimen();
-            $this->status=json_encode(array(
+            $this->status=array(
                    'text'=>$langs->trans('NoActiveEvent'),
                    'type'=>'warning',
-                   'param'=>''));
+                   'param'=>'');
         }elseif(empty($tokenDb) && !empty($tokenJson)){ // json recieved with token //01
-            $this->status=json_encode(array(
+            $this->status=array(
                    'text'=>$langs->trans('EventNotActive'),
                    'type'=>'errors',
-                   'param'=>''));
+                   'param'=>'');
         }elseif(!empty($tokenDb)){// 11 && 10
             if(!empty($tokenJson)){ //11
                 $this->event_location_ref=$location_ref;
@@ -759,7 +759,7 @@ function createTimeSpend($user, $token=''){
         print '<div>';
             print '<div style="width:50px%;height:60px;float:left;vertical-align:middle" >';
                 print '<img height="64px" id = "mainPlayStop" src="img/'.(($this->id==0)?'play-arrow':'stop-square');
-                print '.png" onClick=startStop(event, '.$this->userid.', null) style="cursor:pointer;vertical-align:middle">  ';
+                print '.png" onClick=startStop(event,'.$this->userid.',null) style="cursor:pointer;vertical-align:middle">  ';
             print '</div>';
             print '<div style="width:40%;height:60px;float:left" >';
                 print '<textarea name="eventNote" id="eventNote" style="width:80%;height:100%"></textarea>';

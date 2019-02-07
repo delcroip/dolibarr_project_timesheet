@@ -87,7 +87,7 @@ class TimesheetTask extends Task
             $this->status=DRAFT;
             $this->sender=USER;
             $this->recipient=TEAM;
-            $this->user_app= array(TEAM=>0 , PROJECT=>0 , CUSTOMER=>0 , SUPPLIER=>0 , OTHER=>0  );
+            $this->user_app= array(TEAM=>0, PROJECT=>0, CUSTOMER=>0, SUPPLIER=>0, OTHER=>0  );
 	}
     /******************************************************************************
      *
@@ -164,8 +164,8 @@ class TimesheetTask extends Task
         $sql.=' '.(empty($this->user_app[CUSTOMER])?'NULL':'\''.$this->user_app[CUSTOMER].'\'').', ';
         $sql.=' '.(empty($this->user_app[SUPPLIER])?'NULL':'\''.$this->user_app[SUPPLIER].'\'').', ';
         $sql.=' '.(empty($this->user_app[OTHER])?'NULL':'\''.$this->user_app[OTHER].'\'').', ';
-        $sql.=' NOW() , ';
-        $sql.=' NOW() , ';
+        $sql.=' NOW(), ';
+        $sql.=' NOW(), ';
         $sql.=' \''.$userId.'\', ';
         $sql.=' '.(empty($this->id)?'NULL':'\''.$this->id.'\'').', ';
         $sql.=' '.(empty($this->task_timesheet)?'NULL':'\''.$this->task_timesheet.'\'').', ';
@@ -426,7 +426,7 @@ class TimesheetTask extends Task
 		$sql.=' fk_user_app_customer='.(empty($this->user_app[CUSTOMER]) ? 'NULL':'\''.$this->user_app[CUSTOMER].'\'').', ';
 		$sql.=' fk_user_app_supplier='.(empty($this->user_app[SUPPLIER]) ? 'NULL':'\''.$this->user_app[SUPPLIER].'\'').', ';
 		$sql.=' fk_user_app_other='.(empty($this->user_app[OTHER]) ? 'NULL':'\''.$this->user_app[OTHER].'\'').', ';
-		$sql.=' date_modification=NOW() , ';
+		$sql.=' date_modification=NOW(), ';
 		$sql.=' fk_user_modification=\''.$userId.'\', ';
 		$sql.=' fk_projet_task='.(empty($this->id) ? 'null':'\''.$this->id.'\'').', ';
 		$sql.=' fk_project_task_timesheet='.(empty($this->task_timesheet) ? 'null':'\''.$this->task_timesheet.'\'').', ';
@@ -534,7 +534,7 @@ class TimesheetTask extends Task
         if(is_array($this->tasklist))foreach($this->tasklist as $item){
             if($item['id']!='')$idList[]=$item['id'];
         }
-        $ids=implode(', ', $idList);
+        $ids=implode(',', $idList);
         $sql='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET fk_task_time_approval=\'';
         $sql.=$this->appId.'\', status=\''.$status.'\' WHERE rowid in ('.$ids.')';
         // SQL start
@@ -591,7 +591,7 @@ class TimesheetTask extends Task
         } else {
             $sql .= ", CONCAT(p.ref, ' - ', p.title) as title";
             $sql .= ", CONCAT(pt.ref, ' - ', pt.label) as label";
-            if($taskParent) $sql .= ", pt.fk_task_parent, CONCAT(ptp.ref, ' - ', ptp.label) as taskParentLabel";	
+            if($taskParent) $sql .= ", pt.fk_task_parent, CONCAT(ptp.ref, ' - ', ptp.label) as taskParentLabel";
         }
         if($Company)$sql .= ', p.fk_soc as companyId, s.nom as companyName';
         $sql .=" FROM ".MAIN_DB_PREFIX."projet_task AS pt";
@@ -663,7 +663,7 @@ class TimesheetTask extends Task
         $this->timespent_fk_user=$userid;
         $dayelapsed=getDayInterval($timeStart, $timeEnd);
         if($dayelapsed<1)return -1;
-        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date, ptt.note";	
+        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date, ptt.note";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ";
         // FIXME If status above
@@ -721,7 +721,7 @@ class TimesheetTask extends Task
         // change the time to take all the TS per day
    $dayelapsed=getDayInterval($this->date_start_approval, $this->date_end_approval);
         if(($dayelapsed<1)||empty($headers))
-           return '<tr>ERROR: wrong parameters for getFormLine|'.$headers.'</tr>';
+           return '<tr>ERROR: wrong parameters for getTimesheetLine|'.$headers.'</tr>';
         if($tsUserId!=0)$this->userId=$tsUserId;
         $Class='oddeven '.(($this->listed)?'timesheet_whitelist':'timesheet_blacklist').' timesheet_line ';
         $htmltail='';
@@ -735,7 +735,7 @@ class TimesheetTask extends Task
         * Open task ?
         */
         if($this->status==INVOICED)$openOveride=-1;// once invoice it should not change
-        $isOpenStatus=($openOveride==1) || in_array($this->status , array(DRAFT , CANCELLED, REJECTED, PLANNED));
+        $isOpenStatus=($openOveride==1) || in_array($this->status, array(DRAFT, CANCELLED, REJECTED, PLANNED));
         if($openOveride==-1)$isOpenStatus=false;
         /*
          * info section
@@ -793,7 +793,7 @@ class TimesheetTask extends Task
                 } else {
                     $bkcolor='background:#'.TIMESHEET_BC_FREEZED;
                 }
-                $html .= "<td >\n";
+                $html .= "<td>\n";
                 // add note popup
                 if($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE){
                 $html .=img_object('Note', 'generic', ' style="display:inline-block;float:right;" onClick="openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
@@ -801,7 +801,7 @@ class TimesheetTask extends Task
                 $html .='<div class="modal" id="note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';
                 $html .='<div class="modal-content">';
                 $html .='<span class="close " onclick="closeNotes()">&times;</span>';
-                $html.='<a align="left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.', '.dol_print_date($today, 'day').")".'</a></br>';
+                $html.='<a>'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.', '.dol_print_date($today, 'day').")".'</a></br>';
                 $html.= '<textarea class="flat"  rows="3" style="width:350px;top:10px"';
                 $html.= 'name="task['.$this->userId.']['.$this->id.']['.$dayCur.'][1]" ';
                 $html .= '>'.$this->tasklist[$dayCur]['note'].'</textarea>';
@@ -820,7 +820,7 @@ class TimesheetTask extends Task
             } else {
                 //$bkcolor='background:#'.(($dayWorkLoadSec!=0)?(self::$statusColor[$this->status]):'#FFFFFF');
                 //$html .= ' <td style="'.$bkcolor.'"><a class="time4day['.$this->userId.']['.$dayCur.']"';
-                $html .= ' <td ><a class="column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
+                $html .= ' <td><a class="column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
                 //$html .= ' name="task['.$this->userId.']['.$this->id.']['.$dayCur.']" ';if one whant multiple ts per validation
                 if(!empty($this->tasklist[$dayCur]['note']))$html.=' title="'.htmlentities($this->tasklist[$dayCur]['note']).'"';
                 $html .= ' name="task['.$this->id.']['.$dayCur.']" ';
@@ -857,7 +857,7 @@ class TimesheetTask extends Task
                     $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
                     break;
                 case 'Tasks':
-                    if( $conf->global->TIMESHEET_WHITELIST==1)$html.='<img id = "'.$this->listed.'" src="img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick=favOnOff(event, '.$this->fk_project.', '.$this->id.') style="cursor:pointer;">  ';
+                    if( $conf->global->TIMESHEET_WHITELIST==1)$html.='<img id = "'.$this->listed.'" src="img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick=favOnOff(event,'.$this->fk_project.','.$this->id.') style="cursor:pointer;">  ';
                     $html.='<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'"> '.$this->description.'</a>';
                     break;
                 case 'DateStart':
@@ -921,7 +921,7 @@ class TimesheetTask extends Task
                     //}
                     $htmltail.="</td></tr>\n";*/
             }
-           $htmlTitle.='<td align="left" '.((count($headers)==1)?'colspan="2" ':'').'>'.$html."</td>\n";
+           $htmlTitle.='<td'.((count($headers)==1)?' colspan="2" ':'').'>'.$html."</td>\n";
         }return $htmlTitle;
     }
            /*
@@ -954,7 +954,7 @@ class TimesheetTask extends Task
     public function getHTMLlinePlayStop($start){
         $html='<td>';
         $html.='<img height="32px" class="playStopButton" id = "playStop_'.$this->id.'" src="img/'.(($start==false)?'play-arrow':'stop-square');
-        $html.='.png" onClick=startStop(event, '.$this->userId.', '.$this->id.') style="cursor:pointer;">  ';
+        $html.='.png" onClick=startStop(event,'.$this->userId.','.$this->id.') style="cursor:pointer;">  ';
         //if($start>0)$html.= dol_print_date($start, 'hour');
         $html.='</td>';
         return $html;
@@ -1033,13 +1033,13 @@ class TimesheetTask extends Task
         $arRet['appId']=$this->appId;// Task_time_approval id
         $arRet['tasklist']=$this->tasklist;
         $arRet['userId']=$this->userId;// user id booking the time
-        $arRet['note']=$this->note;			
+        $arRet['note']=$this->note;
         $arRet['fk_project']=$this->fk_project ;
         $arRet['ProjectTitle']=$this->ProjectTitle;
-        $arRet['date_start']=$this->date_start;			
+        $arRet['date_start']=$this->date_start;
         $arRet['date_end']=$this->date_end	;
-        $arRet['date_start_approval']=$this->date_start_approval;			
-        $arRet['date_end_approval']=$this->date_end_approval	;		
+        $arRet['date_start_approval']=$this->date_start_approval;
+        $arRet['date_end_approval']=$this->date_end_approval	;
         $arRet['duration_effective']=$this->duration_effective ;
         $arRet['planned_workload']=$this->planned_workload ;
         $arRet['fk_projet_task_parent']=$this->fk_projet_task_parent ;
@@ -1066,13 +1066,13 @@ class TimesheetTask extends Task
         $this->appId=$arRet['appId'];
         $this->userId=$arRet['userId'];
         $this->tasklist=$arRet['tasklist'];
-        $this->note=$arRet['note'];			
+        $this->note=$arRet['note'];
         $this->fk_project=$arRet['fk_project'] ;
         $this->ProjectTitle=$arRet['ProjectTitle'];
-        $this->date_start_approval=$arRet['date_start_approval'];			
-        $this->date_end_approval=$arRet['date_end_approval']	;		
-        $this->date_start=$arRet['date_start'];			
-        $this->date_end=$arRet['date_end']	;		
+        $this->date_start_approval=$arRet['date_start_approval'];
+        $this->date_end_approval=$arRet['date_end_approval']	;
+        $this->date_start=$arRet['date_start'];
+        $this->date_end=$arRet['date_end']	;
         $this->duration_effective=$arRet['duration_effective'] ;
         $this->planned_workload=$arRet['planned_workload'] ;
         $this->fk_projet_task_parent=$arRet['fk_projet_task_parent'] ;
@@ -1202,7 +1202,7 @@ class TimesheetTask extends Task
     *  @param    array(int)              	$tasktimeid          the id of the tasktime if any
     *  @param     int              	$timestamp          timesheetweek
     *  @param     sting             	$status          status to be update
-    *  @return     int                                                       1 => succes , 0 => Failure
+    *  @return     int                                                       1 => succes, 0 => Failure
     */
     function postTaskTimeActual($timesheetPost, $userId, $Submitter, $timestamp, $status, $note='')
     {

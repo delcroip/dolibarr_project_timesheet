@@ -68,6 +68,7 @@ if($action=='getpdf'){
     	return;
     }
     ob_end_flush();
+exit();
 }
 //$_SESSION["dateStart"]=$dateStart ;
 llxHeader('', $langs->trans('projectReport'), '');

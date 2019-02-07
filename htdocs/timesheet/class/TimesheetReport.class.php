@@ -222,7 +222,7 @@ class TimesheetReport
     * @param
     * @param   string  $sqltail    sql tail after the where
     * @return string
-      * mode layout PTD project/task /day , PDT, DPT
+      * mode layout PTD project/task /day, PDT, DPT
       * periodeTitle give a name to the report
       * timemode show time using day or hours (==0)
       */

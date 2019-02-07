@@ -78,7 +78,7 @@ class TimesheetFavourite extends CommonObject
         $sql.= 'fk_project_task, ';
         $sql.= 'subtask, ';
         $sql.= 'date_start, ';
-        $sql.= 'date_end';		
+        $sql.= 'date_end';
         $sql.= ") VALUES (";
         $sql.=' \''.$this->user.'\', ';
         $sql.=' \''.$this->project.'\', ';
@@ -189,7 +189,7 @@ class TimesheetFavourite extends CommonObject
     function getTaskList()
     {
         $sql = "SELECT";
-	$sql.= " t.rowid";		
+	$sql.= " t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
          if($this->project_task && $this->subtask){
              $sql.= '  WHERE  (t.rowid=\''.$this->project_task.'\'';
@@ -237,7 +237,7 @@ class TimesheetFavourite extends CommonObject
         $sql.=' t.fk_project_task, ';
         $sql.=' t.subtask, ';
         $sql.=' t.date_start, ';
-        $sql.=' t.date_end';		
+        $sql.=' t.date_end';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql.= ' WHERE t.ref = \''.$ref.'\'';
         else $sql.= " WHERE t.rowid = ".$id;

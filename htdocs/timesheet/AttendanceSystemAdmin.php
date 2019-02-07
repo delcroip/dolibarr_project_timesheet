@@ -122,7 +122,7 @@ if(!empty($ref))
 ********************************************************************/
 // Action to remove record
  switch($action){
-    case 'confirm_delete':	
+    case 'confirm_delete':
        $result=($confirm=='yes')?$object->delete($user):0;
        if ($result > 0)
        {
@@ -185,7 +185,7 @@ jQuery(document).ready(function() {
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
-            $filtrearr = explode(', ', $filter);
+            $filtrearr = explode(',', $filter);
             foreach ($filtrearr as $fil)
             {
                     $filt = explode(':', $fil);

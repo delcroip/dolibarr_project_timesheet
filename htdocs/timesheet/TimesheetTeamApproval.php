@@ -156,6 +156,7 @@ if($xml){
    header("Content-type: text/xml;charset=utf-8");
   //  echo $task_timesheet->GetTimeSheetXML($userId, 5);//fixme
     ob_end_flush();
+exit();
 }*/
 $task_timesheet= new TimesheetUserTasks($db);
 $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
@@ -247,16 +248,16 @@ $byWeek=$conf->global->TIMESHEET_APPROVAL_BY_WEEK;
         $sql ="SELECT *";
         if($byWeek==2){
             if($db->type!='pgsql'){
-                $sql.=", CONCAT( MONTH(date_start), '/', YEAR(date_start), '#' , fk_userid) as usermonth";
+                $sql.=", CONCAT( MONTH(date_start), '/', YEAR(date_start), '#', fk_userid) as usermonth";
             }else{
-                $sql.=", CONCAT( date_part('month', date_start), '/', date_part('year', date_start), '#' , fk_userid) as usermonth";
+                $sql.=", CONCAT( date_part('month', date_start), '/', date_part('year', date_start), '#', fk_userid) as usermonth";
             }
         }
         $sql.=" FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts";
         $sql.=' WHERE (ts.status='.SUBMITTED.' OR ts.status='.CHALLENGED.') ';
         switch($role){
             case TEAM:
-                if($subId!='all') $sql.=' AND fk_userid in ('.implode(', ', $subId).')';
+                if($subId!='all') $sql.=' AND fk_userid in ('.implode(',', $subId).')';
  //               $sql.=' AND recipient="'.$role.'"';
                 break;
         }
@@ -357,7 +358,7 @@ function getSelectAps($subId){
     global $db, $langs, $conf;
     $sql='';
     $sqlWhere.=' WHERE ts.status  in ('.SUBMITTED.', '.CHALLENGED.')';
-    if($subId!='all')$sqlWhere.=' AND ts.fk_userid in ('.implode(', ', $subId).')';
+    if($subId!='all')$sqlWhere.=' AND ts.fk_userid in ('.implode(',', $subId).')';
     if($conf->global->TIMESHEET_APPROVAL_BY_WEEK==1){
         $sql='SELECT COUNT(ts.date_start) as nb, ts.date_start as id, ';
         $sql.=" DATE_FORMAT(ts.date_start, '".$langs->trans('Week')." %u (%m/%Y)') as label";

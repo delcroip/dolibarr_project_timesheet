@@ -677,7 +677,7 @@ class ZKLibrary {
 				{
 					socket_recvfrom($this->socket, $received_data, 1032, 0, $this->ip, $this->port);
 					array_push( $this->user_data, $received_data);
-					$bytes -= 1024;					
+					$bytes -= 1024;
 				}
 				$this->session_id =  hexdec( $u['h6'].$u['h5'] );
 				socket_recvfrom($this->socket, $received_data, 1024, 0, $this->ip, $this->port);
@@ -768,7 +768,7 @@ class ZKLibrary {
 				{
 					socket_recvfrom($this->socket, $received_data, 1032, 0, $this->ip, $this->port);
 					array_push( $this->user_data, $received_data);
-					$bytes -= 1024;					
+					$bytes -= 1024;
 				}
 				$this->session_id =  hexdec( $u['h6'].$u['h5'] );
 				socket_recvfrom($this->socket, $received_data, 1024, 0, $this->ip, $this->port);
@@ -830,7 +830,7 @@ class ZKLibrary {
 				{
 					socket_recvfrom($this->socket, $received_data, 1032, 0, $this->ip, $this->port);
 					array_push($this->user_data, $received_data);
-					$bytes -= 1024;					
+					$bytes -= 1024;
 				}
 				$this->session_id =  hexdec($u['h6'].$u['h5']);
 				socket_recvfrom($this->socket, $received_data, 1024, 0, $this->ip, $this->port);

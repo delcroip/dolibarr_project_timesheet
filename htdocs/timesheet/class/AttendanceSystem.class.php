@@ -503,7 +503,7 @@ class AttendanceSystem extends CommonObject
 	$sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").', ';
 	$sql.=' fk_project='.(empty($this->project)!=0 ? 'null':"'".$this->project."'").', ';
 	$sql.=' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").', ';
-	$sql.=' date_modification=NOW() , ';
+	$sql.=' date_modification=NOW(), ';
 	$sql.=' fk_user_modification="'.$user->id.'"';
         return $sql;
     }

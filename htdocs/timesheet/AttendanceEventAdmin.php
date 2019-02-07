@@ -162,10 +162,11 @@ $form= new Form($db);
         {
                 // Creation OK
             // remove the tms
-               //if($ajax==1){
-                   //FIXME
-               //     ob_end_flush();// don't remove the tms. don't continue with the
-              // }
+               if($ajax==1){
+                   $object->serialize(2); //return JSON
+                    ob_end_flush();
+exit();// don't remove the tms. don't continue with the
+               }
                    unset($_SESSION['Attendanceevent'][$tms]);
                setEventMessage('RecordSucessfullyCreated', 'mesgs');
                //AttendanceeventReloadPage($backtopage, $result, '');
@@ -235,7 +236,7 @@ jQuery(document).ready(function() {
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
-            $filtrearr = explode(', ', $filter);
+            $filtrearr = explode(',', $filter);
             foreach ($filtrearr as $fil)
             {
                     $filt = explode(':', $fil);
