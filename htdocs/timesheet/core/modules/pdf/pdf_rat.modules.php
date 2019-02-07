@@ -257,7 +257,7 @@ function write_file($object,$outputlangs)
                         if (! empty($tplidx)) $pdf->useTemplate($tplidx);
                         $pdf->setPage($pageposafter);
                         if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 1, $outputlangs,$tasktimearray['lines'][0]['userName']);
-                        $pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
+                        $pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
                         $pdf->MultiCell(0, 3, '');		// Set interline to 3
                         $pdf->SetTextColor(0,0,0);  
                         $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.

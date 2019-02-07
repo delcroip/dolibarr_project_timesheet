@@ -1,6 +1,4 @@
 <?php
-
-
  /* Copyright (C) 2017 delcroip <patrick@pmpd.eu>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,5 +15,4 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
     
-  header('Location: ../timesheet.php');      
-?>
+  header('Location: ../timesheet.php');

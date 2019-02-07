@@ -82,7 +82,7 @@ class TimesheetTask extends Task
          * canceled or planned shouldn't affect the TS status update
          * draft will be stange at this stage but could be retrieved automatically // FIXME
          * invoiced should appear when there is no Submitted, underapproval, Approved, challenged, rejected
-         * Approved should apear when there is no Submitted, underapproval,  challenged, rejected left
+         * Approved should apear when there is no Submitted, underapproval, challenged, rejected left
          * Submitted should appear when no approval action is started: underapproval, Approved, challenged, rejected
          * 
          */

@@ -74,18 +74,18 @@ class modTimesheet extends DolibarrModules
 		$this->module_parts = array('triggers' => 0,
                                             'css' => array('/timesheet/core/css/timesheet.css'));
                 ////$this->module_parts = array(
-		//                        	'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
-		//							'login' => 0,                                    	// Set this to 1 if module has its own login method directory (core/login)
-		//							'substitutions' => 0,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
-		//							'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
-		//							'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
-		//                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
-		//							'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
-		//							'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
+		//                        	'triggers' => 0,                                	// Set this to 1 if module has its own trigger directory (core/triggers)
+		//							'login' => 0,                                   	// Set this to 1 if module has its own login method directory (core/login)
+		//							'substitutions' => 0,                           	// Set this to 1 if module has its own substitution function file (core/substitutions)
+		//							'menus' => 0,                                   	// Set this to 1 if module has its own menus handler directory (core/menus)
+		//							'theme' => 0,                                   	// Set this to 1 if module has its own theme directory (theme)
+		//                        	'tpl' => 0,                                     	// Set this to 1 if module overwrite template dir (core/tpl)
+		//							'barcode' => 0,                                 	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
+		//							'models' => 0,                                  	// Set this to 1 if module has its own models directory (core/modules/xxx)
 		//							'css' => array('/mymodule/css/mymodule.css.php'),	// Set this to relative path of css file if module has its own css file
-	 	//							'js' => array('/mymodule/js/mymodule.js'),          // Set this to relative path of js file if module must load a js on all pages
+	 	//							'js' => array('/mymodule/js/mymodule.js'),         // Set this to relative path of js file if module must load a js on all pages
 		//							'hooks' => array('hookcontext1','hookcontext2')  	// Set here all hooks context managed by module
-		//							'dir' => array('output' => 'othermodulename'),      // To force the default directories names
+		//							'dir' => array('output' => 'othermodulename'),     // To force the default directories names
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@mymodule')) // Set here all workflow context managed by module
 		//                        );
 		//$this->module_parts = array();
@@ -184,8 +184,8 @@ class modTimesheet extends DolibarrModules
 
                 //$this->const[2] = array("CONST3","chaine","valeur3","Libelle3");
 		// Array to add new pages in new tabs
-		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1
-        //                              'objecttype:+tabname2:Title2:mylangfile@mymodule:$user->rights->othermodule->read:/mymodule/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2
+		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__', 	// To add a new tab identified by code tabname1
+        //                              'objecttype:+tabname2:Title2:mylangfile@mymodule:$user->rights->othermodule->read:/mymodule/mynewtab2.php?id=__ID__', 	// To add another new tab identified by code tabname2
         //                              'objecttype:-tabname':NU:conditiontoremove);                                                     						// To remove an existing tab identified by code tabname
 		// where objecttype can be
 		// 'thirdparty'       to add a tab in third party view
@@ -298,7 +298,7 @@ class modTimesheet extends DolibarrModules
 		// Add here entries to declare new menus
 		//
 		// Example to declare a new Top Menu entry and its Left menu entry:
-		$this->menu[$r]=array(	'fk_menu'=>0,               // Put 0 if this is a top menu
+		$this->menu[$r]=array(	'fk_menu'=>0,              // Put 0 if this is a top menu
 									'type'=>'top',			                // This is a Top menu entry
 									'titre'=>'Timesheet',
 									'mainmenu'=>'timesheet',
@@ -327,7 +327,7 @@ class modTimesheet extends DolibarrModules
 									'user'=>2);
                   $r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',               // Put 0 if this is a top menu
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=timesheet',              // Put 0 if this is a top menu
 									'type'=>'left',			                // This is a Top menu entry
 									'titre'=>'Timesheet',
 									'mainmenu'=>'timesheet',
@@ -377,7 +377,7 @@ class modTimesheet extends DolibarrModules
 									'url'=>'/timesheet/TimesheetReportUser.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>130,
-									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
@@ -391,7 +391,7 @@ class modTimesheet extends DolibarrModules
 									'url'=>'/timesheet/TimesheetFavouriteAdmin.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>110,
-									'enabled'=>'$conf->global->TIMESHEET_WHITELIST==1',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'enabled'=>'$conf->global->TIMESHEET_WHITELIST==1', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
@@ -406,7 +406,7 @@ class modTimesheet extends DolibarrModules
 									'url'=>'/timesheet/TimesheetReportProject.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>120,
-									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
@@ -419,7 +419,7 @@ class modTimesheet extends DolibarrModules
 									'url'=>'/timesheet/TimesheetProjectInvoice.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>121,
-									'enabled'=>'$conf->timesheet->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'$user->rights->facture->creer',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);               
@@ -432,7 +432,7 @@ class modTimesheet extends DolibarrModules
 									'url'=>'/timesheet/TimesheetTeamApproval.php',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>130,
-									'enabled'=>'$user->rights->timesheet->approval',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'enabled'=>'$user->rights->timesheet->approval', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'$user->rights->timesheet->approval',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
@@ -446,7 +446,7 @@ class modTimesheet extends DolibarrModules
 									'url'=>'/timesheet/TimesheetUserTasksAdmin.php?action=list&sortfield=t.date_start&sortorder=desc',
 									'langs'=>'timesheet@timesheet',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>131,
-									'enabled'=>'$user->rights->timesheet->approval->admin',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'enabled'=>'$user->rights->timesheet->approval->admin', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'$user->rights->timesheet->approval->admin',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>2);
@@ -505,9 +505,9 @@ class modTimesheet extends DolibarrModules
                 dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
                 include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-                $extrafields->addExtraField('fk_service', "DefaultService", 'sellist',    1, '', 'user',         0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
-                $extrafields->addExtraField('fk_service', "DefaultService", 'sellist',    1, '', 'projet_task',  0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
-                $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean',    1, '', 'projet_task',  0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+                $extrafields->addExtraField('fk_service', "DefaultService", 'sellist',   1, '', 'user',        0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+                $extrafields->addExtraField('fk_service', "DefaultService", 'sellist',   1, '', 'projet_task', 0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+                $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean',   1, '', 'projet_task', 0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
 
 		return $this->_init($sql, $options);
 	}

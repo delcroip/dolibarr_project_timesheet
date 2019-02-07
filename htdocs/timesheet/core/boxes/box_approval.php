@@ -68,7 +68,7 @@ class box_approval extends ModeleBoxes
                 
         if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
-           $subordinate=implode(',',  getSubordinates($db, $userid,2));
+           $subordinate=implode(',', getSubordinates($db, $userid,2));
            if($subordinate=='')$subordinate=0;
            $tasks=implode(',', array_keys(getTasks($db, $userid)));
            if($tasks=='')$tasks=0;

@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -26,14 +26,14 @@ require_once 'class/TimesheetReport.class.php';
 $htmlother = new FormOther($db);
 
 $userid=  is_object($user)?$user->id:$user;
-$id		= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
+$id		= GETPOST('id', 'int');
+$action		= GETPOST('action', 'alpha');
 $dateStart	= GETPOST('dateStart', 'alpha');
-$userIdSelected   = GETPOST('userSelected','int');
+$userIdSelected   = GETPOST('userSelected', 'int');
 $exportFriendly = GETPOST('exportFriendly', 'alpha');
 if(empty($userIdSelected))$userIdSelected=$userid;
 $exportfriendly=GETPOST('exportfriendly', 'alpha');
-$optioncss = GETPOST('optioncss','alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 
 
@@ -46,25 +46,25 @@ $langs->load('timesheet@timesheet');
 
 //find the right week
 $toDate                 = GETPOST('toDate', 'alpha');
-$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday','int'):0; // to not look for the date if action not goTodate
-$toDatemonth                 = GETPOST('toDatemonth','int');
-$toDateyear                 = GETPOST('toDateyear','int');
+$toDateday =(!empty($toDate) && $action=='goToDate')? GETPOST('toDateday', 'int'):0; // to not look for the date if action not goTodate
+$toDatemonth                 = GETPOST('toDatemonth', 'int');
+$toDateyear                 = GETPOST('toDateyear', 'int');
 if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=$_SESSION["dateStart"];
 }else {
-    $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
+    $dateStart=parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
 }
-    $mode=GETPOST('mode','alpha');
+    $mode=GETPOST('mode', 'alpha');
     if(empty($mode))$mode='PTD';
-    $short=GETPOST('short','int');;
+    $short=GETPOST('short', 'int');;
     $userSelected=$userList[$userIdSelected];
-    $year=GETPOST('year','int');;
-    $month=GETPOST('month','int');;//strtotime(str_replace('/', '-',$_POST['Date'])); 
+    $year=GETPOST('year', 'int');;
+    $month=GETPOST('month', 'int');;//strtotime(str_replace('/', '-', $_POST['Date'])); 
     $firstDay= ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
-$lastDay=  ($month)?strtotime('last day of this month',$firstDay):strtotime('last day of previous month');
+$lastDay=  ($month)?strtotime('last day of this month', $firstDay):strtotime('last day of previous month');
 $_SESSION["dateStart"]=$dateStart ;
 
-llxHeader('',$langs->trans('userReport'),'');
+llxHeader('', $langs->trans('userReport'), '');
 
 //querry to get the project where the user have priviledge; either project responsible or admin
 $sql='SELECT DISTINCT usr.rowid as userid, usr.lastname , usr.firstname '
@@ -72,12 +72,12 @@ $sql='SELECT DISTINCT usr.rowid as userid, usr.lastname , usr.firstname '
 $sql.='JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
      .' ON ec.fk_socpeople=usr.rowid '
      .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact'
-     .' WHERE ctc.element in (\'project_task\',\'project\') AND ctc.active=\'1\' ';
+     .' WHERE ctc.element in (\'project_task\', \'project\') AND ctc.active=\'1\' ';
 if(!$user->admin)
 {
-    $list=getSubordinates($db,$userid,3);
+    $list=getSubordinates($db, $userid, 3);
     $list[]=$userid;
-    $sql.=' AND (usr.rowid in ('.implode(',',$list).'))';  
+    $sql.=' AND (usr.rowid in ('.implode(', ', $list).'))';  
 }
     
 
@@ -97,7 +97,7 @@ if ($resql)
                 $error=0;
                 $obj = $db->fetch_object($resql);
                 $userList[$obj->userid]=new TimesheetReport($db);
-                $userList[$obj->userid]->initBasic('',$obj->userid,$obj->firstname.' '.$obj->lastname,$firstDay,$lastDay,$mode );
+                $userList[$obj->userid]->initBasic('', $obj->userid, $obj->firstname.' '.$obj->lastname, $firstDay, $lastDay, $mode );
                 $i++;
         }
         $db->free($resql);
@@ -137,25 +137,25 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
 
     if($userIdSelected=='-999'){
         foreach($userList as $userSt){
-        $querryRes.=$userSt->getHTMLreport($short,
-            $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
+        $querryRes.=$userSt->getHTMLreport($short, 
+            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))), 
+            $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
     }else{
         
-        $querryRes=$userList[$userIdSelected]->getHTMLreport($short,
-            $langs->trans(date('F',strtotime('12/13/1999 +'.$month.' month'))),
-            $conf->global->TIMESHEET_DAY_DURATION,$exportfriendly);
+        $querryRes=$userList[$userIdSelected]->getHTMLreport($short, 
+            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))), 
+            $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
     
 }else
 {
-    $year=date('Y',$dateStart);
-    $month=date('m',$dateStart);
+    $year=date('Y', $dateStart);
+    $month=date('m', $dateStart);
 }
 
 $Form.='</select></td>'
-        .'<td>'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year,'year',0,10,3).' </td>' 
+        .'<td>'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year, 'year', 0, 10, 3).' </td>' 
         .'<td><input type="checkbox" name="short" value="1" '
         .(($short==1)?'checked>':'>').$langs->trans('short').'</td>'
         .'<td><input type="checkbox" name="exportfriendly" value="1" '

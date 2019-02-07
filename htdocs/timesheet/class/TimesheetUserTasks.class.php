@@ -581,7 +581,7 @@ function saveInSession(){
      $sqlwhiteList='';
     /* if($whiteListNumber){
          
-            $sqlwhiteList=', (CASE WHEN tsk.rowid IN ('.implode(",",  array_keys($whiteList)).') THEN \'1\' ';
+            $sqlwhiteList=', (CASE WHEN tsk.rowid IN ('.implode(",", array_keys($whiteList)).') THEN \'1\' ';
             $sqlwhiteList.=' ELSE \'0\' END ) AS listed';
     }*/
   
