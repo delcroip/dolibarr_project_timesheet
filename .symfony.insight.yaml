@@ -1,0 +1,17 @@
+# Configure the PHP version SymfonyInsight should use to analyze
+# your project. It can be defined to 5, 7.0, or 7.1. If not
+# present, it will prefer 7.1 but fallback to 5 if errored.
+php_version: 7.1
+# Configure which PHP extensions your project need to be analyzed.
+php_ini: |
+    extension=zip.so
+    extension=mcrypt.so
+working_directory: htdocs
+# Configure a rule
+php.class_too_long:
+    max_length: 2000
+    threshold:  10
+pre_composer_script: |    
+    git clone --depth 1 -b develop https://github.com/Dolibarr/dolibarr.git
+    rsync -r dolibarr/ delcroip/dolibarr_project_timesheet/
+    rm dolibarr -rf
