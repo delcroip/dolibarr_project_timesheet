@@ -648,7 +648,8 @@ dol_fiche_end();
  * @param int $id               id of the object
  * @param type $ref             ref of the object
  */
-function reloadpage($backtopage, $id, $ref){{
+function reloadpage($backtopage, $id, $ref)
+{
         if (!empty($backtopage)){
             header("Location: ".$backtopage);
         //}elseif(!empty($ref) ){
