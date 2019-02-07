@@ -214,7 +214,7 @@ $langs->load('timesheet@timesheet');
                             }
                         }
 			header('Location: ' . $object->getNomUrl(0, '', 0, 1, ''));
-			exit();
+			ob_end_flush();
 		}
 		else
 		{

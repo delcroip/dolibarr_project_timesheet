@@ -155,7 +155,7 @@ if($xml){
     ob_clean();
    header("Content-type: text/xml;charset=utf-8");
   //  echo $task_timesheet->GetTimeSheetXML($userId, 5);//fixme
-    exit;
+    ob_end_flush();
 }*/
 $task_timesheet= new TimesheetUserTasks($db);
 $head=($print)?'<style type="text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';

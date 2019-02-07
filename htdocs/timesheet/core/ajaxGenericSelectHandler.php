@@ -20,7 +20,7 @@ include 'lib/includeMain.lib.php';
  top_httphead();
 //get the token, exit if
 $token=GETPOST('token', 'apha');
-if(!isset($_SESSION['ajaxQuerry'][$token]))exit();
+if(!isset($_SESSION['ajaxQuerry'][$token]))ob_end_flush();
 $sqlarray=$_SESSION['ajaxQuerry'][$token]['sql'];
 $fields=$_SESSION['ajaxQuerry'][$token]['fields'];
 $htmlarray=$_SESSION['ajaxQuerry'][$token]['html'];

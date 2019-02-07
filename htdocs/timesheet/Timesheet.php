@@ -168,7 +168,7 @@ if($xml){
     ob_clean();
    header("Content-type: text/xml;charset=utf-8");
     echo $task_timesheet->GetTimeSheetXML();
-    exit;
+    ob_end_flush();
 }
 $morejs=array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader('', $langs->trans('Timesheet'), '', '', '', '', $morejs);

@@ -653,7 +653,7 @@ function reloadpage($backtopage, $id, $ref){
         }else{
             header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
         }
-    exit();
+    ob_end_flush();
 }
 function Timesheetuser_prepare_head($object)
 {

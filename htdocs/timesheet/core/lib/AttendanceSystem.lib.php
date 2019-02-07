@@ -34,7 +34,7 @@ function AttendanceSystemReloadPage($backtopage, $id, $ref){
         }else{
            header("Location: ".dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1));
         }
-    exit();
+    ob_end_flush();
 }
 /**
  * Prepare array of tabs for AttendanceSystem

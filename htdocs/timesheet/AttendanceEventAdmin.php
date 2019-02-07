@@ -164,7 +164,7 @@ $form= new Form($db);
             // remove the tms
                //if($ajax==1){
                    //FIXME
-               //     exit();// don't remove the tms. don't continue with the
+               //     ob_end_flush();// don't remove the tms. don't continue with the
               // }
                    unset($_SESSION['Attendanceevent'][$tms]);
                setEventMessage('RecordSucessfullyCreated', 'mesgs');

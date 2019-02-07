@@ -67,7 +67,7 @@ if($action=='getpdf'){
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$report->ref.".pdf");
     	return;
     }
-    exit();
+    ob_end_flush();
 }
 //$_SESSION["dateStart"]=$dateStart ;
 llxHeader('', $langs->trans('projectReport'), '');

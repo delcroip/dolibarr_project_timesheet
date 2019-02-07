@@ -203,7 +203,7 @@ if ($cancel){
                                    unset($_SESSION['timesheetFavourite'.$tms]);
                                    if ($ajax==1){
                                            echo json_encode(array('id'=> $result));
-                                           exit;
+                                           ob_end_flush();
                                    }else{
                                        setEventMessage('RecordSucessfullyCreated', 'mesgs');
                                        reloadpage($backtopage, $result, $ref);
@@ -223,7 +223,7 @@ if ($cancel){
                                     // Delete OK
                                 if ($ajax==1){
                                            echo json_encode(array('id'=> '0'));
-                                           exit;
+                                           ob_end_flush();
                                 }else{
                                     setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
                                     reloadpage();
@@ -256,7 +256,7 @@ if(isset( $_SESSION['timesheetFavourite'.$tms]) &&  !GETPOST('Project', 'int') )
 }
 if ($ajax==1){
     echo json_encode(array('errors'=> $object->errors));
-    exit;
+    ob_end_flush();
 }
 /***************************************************
 * VIEW
@@ -691,7 +691,7 @@ function reloadpage($backtopage, $id, $ref){
         }else{
             header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
         }
-exit();
+ob_end_flush();
 }
 function timesheetFavourite_prepare_head($object)
 {

@@ -58,19 +58,19 @@ switch($action){
            // ob_clean();
             header("Content-type: text/json;charset=utf-8");
             echo $json;
-            exit;
+            ob_end_flush();
     case 'stop':
             $json=$timesheet_attendance->ajaxStop($user, $json);
            // ob_clean();
             header("Content-type: text/json;charset=utf-8");
             echo $json;
-            exit;
+            ob_end_flush();
     case 'heartbeat':
             $json=$timesheet_attendance->ajaxheartbeat($user, $json);
            // ob_clean();
             header("Content-type: text/json;charset=utf-8");
             echo $json;
-            exit;
+            ob_end_flush();
     default:
         break;
 }
