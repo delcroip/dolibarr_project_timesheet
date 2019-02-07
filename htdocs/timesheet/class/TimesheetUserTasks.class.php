@@ -249,7 +249,6 @@ class TimesheetUserTasks extends CommonObject
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_modification = $obj->fk_user_modification;
                 $this->note = $obj->note;
-                $this->date_end = $this->db->jdate($obj->date_end);
             }else{
                 unset($this->status) ;
                 unset($this->date_modification );

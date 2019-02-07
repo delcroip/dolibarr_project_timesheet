@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *      \file       test/phpunit/ProjectTest.php
+ *      \file       test/phpunit/TimesheetUserTasksTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -49,7 +49,7 @@ class TimesheetTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return ProjectTest
+	 * @return TimesheetUserTasksTest
 	 */
 	function __construct()
 	{
@@ -103,56 +103,57 @@ class TimesheetTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
     /**
-     * testProjectCreate
+     * testTimesheetUserTasksCreate
      *
      * @return	void
      */
-    public function testProjectCreate()
+    public function testTimesheetUserTasksCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		$localobject=new Project($this->savdb);//FIXEME
+		$localobject=new TimesheetUserTasks($this->savdb,1);//FIXEME
     	$localobject->initAsSpecimen();
+        $localobject->date_start= mktime();
     	$result=$localobject->create($user);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
     	return $result;
     }
     /**
-     * testProjectFetch
+     * testTimesheetUserTasksFetch
      *
      * @param	int		$id		Id of object
      * @return	void
      *
-     * @depends	testProjectCreate
+     * @depends	testTimesheetUserTasksCreate
      * The depends says test is run only if previous is ok
      */
-    public function testProjectFetch($id)
+    public function testTimesheetUserTasksFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		$localobject=new Project($this->savdb);
+		$localobject=new TimesheetUserTasks($this->savdb,1);
     	$result=$localobject->fetch($id);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
     	return $localobject;
     }
     /**
-     * testProjectValid
+     * testTimesheetUserTasksValid
      *
-     * @param	Project	$localobject	Project
-     * @return	Project
+     * @param	TimesheetUserTasks	$localobject	TimesheetUserTasks
+     * @return	TimesheetUserTasks
      *
-     * @depends	testProjectFetch
+     * @depends	testTimesheetUserTasksFetch
      * The depends says test is run only if previous is ok
      */
-    public function testProjectValid($localobject)
+    public function testTimesheetUserTasksValid($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -165,43 +166,43 @@ class TimesheetTest extends PHPUnit_Framework_TestCase
     	return $localobject;
     }
 	/**
-     * testProjectClose
+     * testTimesheetUserTasksClose
      *
-     * @param	Project	$localobject	Project
+     * @param	TimesheetUserTasks	$localobject	TimesheetUserTasks
      * @return	int
      *
-     * @depends testProjectValid
+     * @depends testTimesheetUserTasksValid
      * The depends says test is run only if previous is ok
      */
-    public function testProjectOther($localobject)
+    public function testTimesheetUserTasksOther($localobject)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
         $user=$this->savuser;
         $langs=$this->savlangs;
         $db=$this->savdb;
-        $result=$localobject->setClose($user);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+        //$result=$localobject->setClose($user);
+    	//print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	//$this->assertLessThan($result, 0);
         return $localobject->id;
     }
     /**
-     * testProjectDelete
+     * testTimesheetUserTasksDelete
      *
      * @param	int		$id		Id of project
      * @return	void
      *
-     * @depends	testProjectClose
+     * @depends	testTimesheetUserTasksClose
      * The depends says test is run only if previous is ok
      */
-    public function testProjectDelete($id)
+    public function testTimesheetUserTasksDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		$localobject=new Project($this->savdb);
+		$localobject=new TimesheetUserTasks($this->savdb,1);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 		print __METHOD__." id=".$id." result=".$result."\n";
