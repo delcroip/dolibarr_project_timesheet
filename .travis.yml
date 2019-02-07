@@ -113,7 +113,7 @@ install:
     echo "Downloading dolibarr"
     #wget -O dolibarr.tgz https://github.com/Dolibarr/dolibarr/archive/develop.zip
     git clone --depth 1 -b develop https://github.com/Dolibarr/dolibarr.git
-    rsync -r dolibarr/ $TRAVIS_BUILD_DIR/delcroip/dolibarr_project_timesheet 
+    rsync -r dolibarr/ $TRAVIS_BUILD_DIR 
     rm dolibarr -rf
     echo
 - |
@@ -150,7 +150,7 @@ install:
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo
 before_script:
-  - |cd 
+  - |
     echo Start travis
     echo Current dir is `pwd`
     echo Home dir is `echo ~`
@@ -347,7 +347,7 @@ script:
   cd -
   set +e
   echo
-  #cat /tmp/dolibarr_install.logcd /var 
+  #cat /tmp/dolibarr_install.log
   cat $TRAVIS_BUILD_DIR/enablemodule.log
 - |
   echo "Unit testing"
