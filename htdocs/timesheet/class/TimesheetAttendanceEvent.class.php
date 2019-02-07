@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -32,13 +32,13 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once 'class/TimesheetTask.class.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-define(EVENT_AUTO_START,-2);
+define(EVENT_AUTO_START, -2);
 DEFINE(EVENT_HEARTBEAT, 1);
-define(EVENT_START,2);
-define(EVENT_STOP,3);
-define(EVENT_AUTO_STOP,4);
-$attendanceeventStatusPictoArray=array(-2=> 'status7', 3=> 'statut3',1=>'statut3',2=>'statut3',4=>'statut7');
-$attendanceeventStatusArray=array(-2=> $langs->trans('AutoCheckin'),1=>$langs->trans('Heartbeat'), 2=>$langs->trans('Checkin'),3=>$langs->trans('Checkout'),4=>$langs->trans('AutoCheckout'));
+define(EVENT_START, 2);
+define(EVENT_STOP, 3);
+define(EVENT_AUTO_STOP, 4);
+$attendanceeventStatusPictoArray=array(-2=> 'status7', 3=> 'statut3', 1=>'statut3', 2=>'statut3', 4=>'statut7');
+$attendanceeventStatusArray=array(-2=> $langs->trans('AutoCheckin'), 1=>$langs->trans('Heartbeat'), 2=>$langs->trans('Checkin'), 3=>$langs->trans('Checkout'), 4=>$langs->trans('AutoCheckout'));
 /**
  *	Put here description of your class
  */
@@ -84,7 +84,7 @@ public $date_time_event_start;
      *  @param	DoliDb		$db      Database handler
      *  @param	object          $userid    userid 
      */
-    function __construct($db,$userid)
+    function __construct($db, $userid)
     {
         $this->db = $db;
         $this->userid=$userid;
@@ -111,29 +111,29 @@ public $date_time_event_start;
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-        $sql.= 'date_time_event,';
-        $sql.= 'event_location_ref,';
-        $sql.= 'event_type,';
-        $sql.= 'note,';
-        $sql.= 'fk_userid,';
-        $sql.= 'fk_third_party,';
-        $sql.= 'fk_task,';
-        $sql.= 'fk_project,';
-        $sql.= 'token,';
-        $sql.= 'status,';
-        $sql.= 'date_modification,fk_user_modification';
+        $sql.= 'date_time_event, ';
+        $sql.= 'event_location_ref, ';
+        $sql.= 'event_type, ';
+        $sql.= 'note, ';
+        $sql.= 'fk_userid, ';
+        $sql.= 'fk_third_party, ';
+        $sql.= 'fk_task, ';
+        $sql.= 'fk_project, ';
+        $sql.= 'token, ';
+        $sql.= 'status, ';
+        $sql.= 'date_modification, fk_user_modification';
         $sql.= ") VALUES (";
-        $sql.=' '.(empty($this->date_time_event) || dol_strlen($this->date_time_event)==0?'NULL':"'".$this->db->idate($this->date_time_event)."'").',';
-        $sql.=' '.(empty($this->event_location_ref)?'NULL':"'".$this->db->escape($this->event_location_ref)."'").',';
-        $sql.=' '.(empty($this->event_type)?'NULL':"'".$this->event_type."'").',';
-        $sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").',';
-        $sql.=' '.(empty($this->userid)?'NULL':"'".$this->userid."'").',';
-        $sql.=' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").',';
-        $sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").',';
-        $sql.=' '.(empty($this->project)?'NULL':"'".$this->project."'").',';
-        $sql.=' '.(empty($this->token)?'NULL':"'".$this->token."'").',';
+        $sql.=' '.(empty($this->date_time_event) || dol_strlen($this->date_time_event)==0?'NULL':"'".$this->db->idate($this->date_time_event)."'").', ';
+        $sql.=' '.(empty($this->event_location_ref)?'NULL':"'".$this->db->escape($this->event_location_ref)."'").', ';
+        $sql.=' '.(empty($this->event_type)?'NULL':"'".$this->event_type."'").', ';
+        $sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").', ';
+        $sql.=' '.(empty($this->userid)?'NULL':"'".$this->userid."'").', ';
+        $sql.=' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").', ';
+        $sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").', ';
+        $sql.=' '.(empty($this->project)?'NULL':"'".$this->project."'").', ';
+        $sql.=' '.(empty($this->token)?'NULL':"'".$this->token."'").', ';
         $sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
-        $sql.=' , NOW(),\''.$user->id.'\'';
+        $sql.=' , NOW(), \''.$user->id.'\'';
         $sql.= ")";
 
         $this->db->begin();
@@ -152,7 +152,7 @@ public $date_time_event_start;
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+            //$result=$this->call_trigger('MYOBJECT_CREATE', $user);
             //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
@@ -185,23 +185,23 @@ public $date_time_event_start;
      *  @param	string          $startToken	token used to find the start event
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$user=null,$startToken='')
+    function fetch($id, $user=null, $startToken='')
     {
     	global $langs;
         $sql = "SELECT";
-        $sql.= " t.rowid,";
-        $sql.=' t.date_time_event,';
-        $sql.=' t.event_location_ref,';
-        $sql.=' t.event_type,';
-        $sql.=' t.note,';
-        $sql.=' t.date_modification,';
-        $sql.=' t.fk_userid,';
-        $sql.=' t.fk_user_modification,';
-        $sql.=' t.fk_third_party,';
-        $sql.=' t.fk_task,';
-        $sql.=' t.fk_project,';
-        $sql.=' t.token,';
-        $sql.=' t.status,';
+        $sql.= " t.rowid, ";
+        $sql.=' t.date_time_event, ';
+        $sql.=' t.event_location_ref, ';
+        $sql.=' t.event_type, ';
+        $sql.=' t.note, ';
+        $sql.=' t.date_modification, ';
+        $sql.=' t.fk_userid, ';
+        $sql.=' t.fk_user_modification, ';
+        $sql.=' t.fk_third_party, ';
+        $sql.=' t.fk_task, ';
+        $sql.=' t.fk_project, ';
+        $sql.=' t.token, ';
+        $sql.=' t.status, ';
         $sql.='  st.date_time_event  as date_time_event_start ';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element." as st ON t.token=st.token AND ABS(st.event_type=2)";
@@ -210,7 +210,7 @@ public $date_time_event_start;
         else if (!empty($user))$sql.=  " t.fk_userid = '".$user->id;
         else if (!empty($startToken))  $sql.= "  t.token='".$startToken;
         else{
-            dol_syslog(get_class($this)."::fetch: no param",LOG_DEBUG);
+            dol_syslog(get_class($this)."::fetch: no param", LOG_DEBUG);
             return -1;
         }
         $sql.= "' ORDER BY date_time_event DESC" ;
@@ -277,7 +277,7 @@ public $date_time_event_start;
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+            //$result=$this->call_trigger('MYOBJECT_MODIFY', $user);
             //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
@@ -311,7 +311,7 @@ public $date_time_event_start;
      *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
      *	@return		string						String with URL
      */
-    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
+    function getNomUrl($htmlcontent, $id=0, $ref='', $withpicto=0)
     {
 	global $conf, $langs;
 
@@ -340,9 +340,9 @@ public $date_time_event_start;
         }else $linkclose = ($morecss?' class="'.$morecss.'"':'');
         
         if($id){
-            $lien = '<a href="'.dol_buildpath('/timesheet/Attendanceevent_card.php',1).'id='.$id.'&action=view"'.$linkclose.'>';
+            $lien = '<a href="'.dol_buildpath('/timesheet/Attendanceevent_card.php', 1).'id='.$id.'&action=view"'.$linkclose.'>';
         }else if (!empty($ref)){
-            $lien = '<a href="'.dol_buildpath('/timesheet/Attendanceevent_card.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
+            $lien = '<a href="'.dol_buildpath('/timesheet/Attendanceevent_card.php', 1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
             $lien =  "";
         }
@@ -360,9 +360,9 @@ public $date_time_event_start;
         
         
     	if ($withpicto==1){ 
-            $result.=($lien.img_object($label,$picto).$htmlcontent.$lienfin);
+            $result.=($lien.img_object($label, $picto).$htmlcontent.$lienfin);
         }else if ($withpicto==2) {
-            $result.=$lien.img_object($label,$picto).$lienfin;
+            $result.=$lien.img_object($label, $picto).$lienfin;
         }else{  
             $result.=$lien.$htmlcontent.$lienfin;
         }
@@ -374,10 +374,10 @@ public $date_time_event_start;
 	 *  @param	object 		$form          form object that should be created	
       *  *  @return	string 			       html code to select status
 	 */
-	function selectLibStatut($form,$htmlname='Status')
+	function selectLibStatut($form, $htmlname='Status')
 	{
-            global $attendanceeventStatusPictoArray,$attendanceeventStatusArray;
-            return $form->selectarray($htmlname,$attendanceeventStatusArray,$this->status);
+            global $attendanceeventStatusPictoArray, $attendanceeventStatusArray;
+            return $form->selectarray($htmlname, $attendanceeventStatusArray, $this->status);
 	}   
     /**
 	 *  Retourne le libelle du status (actif, inactif)
@@ -387,7 +387,7 @@ public $date_time_event_start;
 	 */
 	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 	/**
 	 *  Return the status
@@ -396,9 +396,9 @@ public $date_time_event_start;
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	static function LibStatut($status, $mode=0)
 	{
-		global $langs,$attendanceeventStatusPictoArray,$attendanceeventStatusArray;
+		global $langs, $attendanceeventStatusPictoArray, $attendanceeventStatusArray;
 		if ($mode == 0)
 		{
 			$prefix='';
@@ -410,23 +410,23 @@ public $date_time_event_start;
 		}
 		if ($mode == 2)
 		{
-			 return img_picto($attendanceeventStatusArray[$status],$attendanceeventStatusPictoArray[$status]).' '.$langs->trans($attendanceeventStatusArray[$status]);
+			 return img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]).' '.$langs->trans($attendanceeventStatusArray[$status]);
 		}
 		if ($mode == 3)
 		{
-			 return img_picto($attendanceeventStatusArray[$status],$attendanceeventStatusPictoArray[$status]);
+			 return img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]);
 		}
 		if ($mode == 4)
 		{
-			 return img_picto($attendanceeventStatusArray[$status],$attendanceeventStatusPictoArray[$status]).' '.$langs->trans($attendanceeventStatusArray[$status]);
+			 return img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]).' '.$langs->trans($attendanceeventStatusArray[$status]);
 		}
 		if ($mode == 5)
 		{
-			 return $langs->trans($attendanceeventStatusArray[$status]).' '.img_picto($attendanceeventStatusArray[$status],$attendanceeventStatusPictoArray[$status]);
+			 return $langs->trans($attendanceeventStatusArray[$status]).' '.img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]);
 		}
 		if ($mode == 6)
 		{
-			 return $langs->trans($attendanceeventStatusArray[$status]).' '.img_picto($attendanceeventStatusArray[$status],$attendanceeventStatusPictoArray[$status]);
+			 return $langs->trans($attendanceeventStatusArray[$status]).' '.img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]);
 		}
 	}
 
@@ -449,7 +449,7 @@ public $date_time_event_start;
         // Uncomment this and change MYOBJECT to your own tag if you
         // want this action calls a trigger.
         //// Call triggers
-        //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+        //$result=$this->call_trigger('MYOBJECT_DELETE', $user);
         //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
         //// End call triggers
             }
@@ -494,7 +494,7 @@ public $date_time_event_start;
      */
     function createFromClone($fromid)
     {
-        global $user,$langs;
+        global $user, $langs;
         $error=0;
         $object=new Attendanceevent($this->db);
         $this->db->begin();
@@ -585,17 +585,17 @@ public $date_time_event_start;
      */    
     function setSQLfields($user){
         $sql='';
-        $sql.=' date_time_event='.(dol_strlen($this->date_time_event)!=0 ? "'".$this->db->idate($this->date_time_event)."'":'null').',';
-        $sql.=' event_location_ref='.(empty($this->event_location_ref)!=0 ? 'null':"'".$this->db->escape($this->event_location_ref)."'").',';
-        $sql.=' event_type='.(empty($this->event_type)!=0 ? 'null':"'".$this->event_type."'").',';
-        $sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").',';
-        $sql.=' date_modification=NOW() ,';
-        $sql.=' fk_userid='.(empty($this->userid)!=0 ? 'null':"'".$this->userid."'").',';
-        $sql.=' fk_user_modification="'.$user->id.'",';
-        $sql.=' fk_third_party='.(empty($this->third_party)!=0 ? 'null':"'".$this->third_party."'").',';
-        $sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").',';
-        $sql.=' fk_project='.(empty($this->project)!=0 ? 'null':"'".$this->project."'").',';
-        $sql.=' token='.(empty($this->token)!=0 ? 'null':"'".$this->token."'").',';
+        $sql.=' date_time_event='.(dol_strlen($this->date_time_event)!=0 ? "'".$this->db->idate($this->date_time_event)."'":'null').', ';
+        $sql.=' event_location_ref='.(empty($this->event_location_ref)!=0 ? 'null':"'".$this->db->escape($this->event_location_ref)."'").', ';
+        $sql.=' event_type='.(empty($this->event_type)!=0 ? 'null':"'".$this->event_type."'").', ';
+        $sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").', ';
+        $sql.=' date_modification=NOW() , ';
+        $sql.=' fk_userid='.(empty($this->userid)!=0 ? 'null':"'".$this->userid."'").', ';
+        $sql.=' fk_user_modification="'.$user->id.'", ';
+        $sql.=' fk_third_party='.(empty($this->third_party)!=0 ? 'null':"'".$this->third_party."'").', ';
+        $sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").', ';
+        $sql.=' fk_project='.(empty($this->project)!=0 ? 'null':"'".$this->project."'").', ';
+        $sql.=' token='.(empty($this->token)!=0 ? 'null':"'".$this->token."'").', ';
         $sql.=' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").'';
         return $sql;
     }
@@ -608,9 +608,9 @@ public $date_time_event_start;
      *  @param  int		$task            task id on which the attendance is register 
      *  @return	json				 return the json of the object started
      */    
-    function ajaxStart($user,$json='',$customer='',$project='',$task=''){
+    function ajaxStart($user, $json='', $customer='', $project='', $task=''){
 
-        if(empty($task) && empty($project) && empty($customer)) return '{"errorType":"startError","error":"no event to start"}';
+        if(empty($task) && empty($project) && empty($customer)) return '{"errorType":"startError", "error":"no event to start"}';
         $location_ref='';
         //load old if any
         if(!empty($json)){
@@ -618,7 +618,7 @@ public $date_time_event_start;
             //save the location ref 
             $location_ref=$this->event_location_ref;
             //close the most recent one if any 
-            $this->ajaxStop($user,$json,true);
+            $this->ajaxStop($user, $json, true);
             //$this->status=
         }        
 //erase the data
@@ -653,8 +653,8 @@ public $date_time_event_start;
      *  @param  string		$json	 json of the request
      *  @return	int					 <0 if KO, >0 if OK
      */    
-    function ajaxStop($user,$json='',$auto=false){
-        global $conf,$langs;
+    function ajaxStop($user, $json='', $auto=false){
+        global $conf, $langs;
         $location_ref='';
         $note='';
         $tokenJson='';
@@ -665,25 +665,25 @@ public $date_time_event_start;
             $location_ref=$this->event_location_ref;
             $note=$this->note;
             $tokenJson=$this->token;
-            $this->fetch('','',$tokenJson);
+            $this->fetch('', '', $tokenJson);
         }  else {
-             $this->fetch('',$user);
+             $this->fetch('', $user);
         }
         $ret=0;
         $tokenDb=$this->token;
         if(empty($tokenDb) ){  // 00 01 no db record found by token or user
             $this->initAsSpecimen();
             $this->status= json_encode(array(
-                   'text'=>$langs->trans('NoActiveEvent'),
-                   'type'=>'errors',
+                   'text'=>$langs->trans('NoActiveEvent'), 
+                   'type'=>'errors', 
                    'param'=>''));
 
             // AUTO START ?
         }else if($this->event_type>=EVENT_STOP){ // found but already stopped
             $this->initAsSpecimen();
             $this->status=json_encode(array(
-                   'text'=>$langs->trans('EventNotActive'),
-                   'type'=>'errors',
+                   'text'=>$langs->trans('EventNotActive'), 
+                   'type'=>'errors', 
                    'param'=>''));
             
         }else{// 11 && 10 found and active
@@ -708,14 +708,14 @@ public $date_time_event_start;
                   
             $ret=$this->create($user);
             if ($ret>0) {
-                $this->createTimeSpend($user,$tokenDb);//FIXME
+                $this->createTimeSpend($user, $tokenDb);//FIXME
     
             }else{
                 $this->initAsSpecimen();
                 
                 $this->status=json_encode(array(
-                   'text'=>$langs->trans('DBError'),
-                   'type'=>'errors',
+                   'text'=>$langs->trans('DBError'), 
+                   'type'=>'errors', 
                    'param'=>''));
             }
         }
@@ -731,8 +731,8 @@ public $date_time_event_start;
      *  @param  int		$task            task id on which the attendance is register 
      *  @return	int					 <0 if KO, >0 if OK
      */    
-    function ajaxHeartbeat($user,$json){
-        global $conf,$langs;
+    function ajaxHeartbeat($user, $json){
+        global $conf, $langs;
         $location_ref='';
         $note='';
         $tokenJson='';
@@ -743,21 +743,21 @@ public $date_time_event_start;
             $note=$this->note;
             $tokenJson=$this->token;
         }
-        $this->fetch('',$user);
+        $this->fetch('', $user);
         //var_dump($this->event_type);
         $tokenDb=$this->token;
         if( (empty($tokenJson) && empty($tokenDb) )|| 
                 (!empty($tokenDb) && $this->event_type>=EVENT_STOP)){  //00
             $this->initAsSpecimen();
             $this->status=json_encode(array(
-                   'text'=>$langs->trans('NoActiveEvent'),
-                   'type'=>'warning',
+                   'text'=>$langs->trans('NoActiveEvent'), 
+                   'type'=>'warning', 
                    'param'=>''));
 
         }else if (empty($tokenDb) && !empty($tokenJson)){ // json recieved with token //01
             $this->status=json_encode(array(
-                   'text'=>$langs->trans('EventNotActive'),
-                   'type'=>'errors',
+                   'text'=>$langs->trans('EventNotActive'), 
+                   'type'=>'errors', 
                    'param'=>''));
         }else if(!empty($tokenDb)){// 11 && 10
             if(!empty($tokenJson)){ //11
@@ -786,19 +786,19 @@ public $date_time_event_start;
   * @param type $user
   * @param type $token
   */
-function createTimeSpend($user,$token=''){
+function createTimeSpend($user, $token=''){
     //if(empty($token))$token=$this->token;
     if(!empty($token)){
-        $this->fetch('','',$token);
+        $this->fetch('', '', $token);
         if($this->event_type==EVENT_STOP && $this->task>0){
-            $start=  strtotime("midnight",(int)$this->date_time_event);
-            $end=  strtotime("tomorrow",(int)$this->date_time_event)-1;
+            $start=  strtotime("midnight", (int)$this->date_time_event);
+            $end=  strtotime("tomorrow", (int)$this->date_time_event)-1;
             $duration=$this->date_time_event -$this->date_time_event_start;
-            $tta= new TimesheetTask($this->db,$this->task);
-            $tta->getActuals($start, $end,$this->userid);
+            $tta= new TimesheetTask($this->db, $this->task);
+            $tta->getActuals($start, $end, $this->userid);
             //var_dump($tta->getTaskTab());
-            $arrayRes=$tta->saveTaskTime($user,$duration,$this->note,0,true);
-            $this->status=TimesheetsetEventMessage($arrayRes,true);
+            $arrayRes=$tta->saveTaskTime($user, $duration, $this->note, 0, true);
+            $this->status=TimesheetsetEventMessage($arrayRes, true);
             if(is_array($arrayRes) && array_sum($arrayRes)-$arrayRes['updateError']>0) $tta->updateTimeUsed();
             //TimesheetsetEventMessage($arrayRes);
         }
@@ -808,11 +808,11 @@ function createTimeSpend($user,$token=''){
     /* Function generate the HTML code to use the clock
     *  @return     html code                                       result
     */    
-    function printHTMLTaskList($headers,$userid=''){
+    function printHTMLTaskList($headers, $userid=''){
         $tasksList=$this->fetchTasks($userid);
         $html='';
         if(is_array($tasksList))foreach($tasksList as $task){
-            $html.=$task->getAttendanceLine($headers,($task->id==$this->task));
+            $html.=$task->getAttendanceLine($headers, ($task->id==$this->task));
         }
         return $html;
     }
@@ -824,7 +824,7 @@ function createTimeSpend($user,$token=''){
         print '<div>';
             print '<div style="width:50px%;height:60px;float:left;vertical-align:middle" >';
                 print '<img height="64px" id = "mainPlayStop" src="img/'.(($this->id==0)?'play-arrow':'stop-square');
-                print '.png" onClick=startStop(event,'.$this->userid.',null) style="cursor:pointer;vertical-align:middle">  ';
+                print '.png" onClick=startStop(event, '.$this->userid.', null) style="cursor:pointer;vertical-align:middle">  ';
             print '</div>';
             print '<div style="width:40%;height:60px;float:left" >';
                 print '<textarea name="eventNote" id="eventNote" style="width:80%;height:100%"></textarea>';
@@ -847,15 +847,15 @@ function createTimeSpend($user,$token=''){
  *  @param    int              	$userid                   user id to fetch the timesheets
  *  @return     array(string)                                             array of timesheet (serialized)
  */
- function fetchTasks($userid='',$date=''){     
+ function fetchTasks($userid='', $date=''){     
     global $conf;
     if(empty($date))$date=time();
     if($userid==''){$userid=$this->userid;}
     $this->userid=$userid;
-    $datestart=strtotime('yesterday midnight',$date);
-    $datestop= strtotime('today midnight',$date);
+    $datestart=strtotime('yesterday midnight', $date);
+    $datestop= strtotime('today midnight', $date);
      $tasksList=array();
-    $sql ='SELECT DISTINCT element_id as taskid,prj.fk_soc,prj.ref,tsk.ref';
+    $sql ='SELECT DISTINCT element_id as taskid, prj.fk_soc, prj.ref, tsk.ref';
     $sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec";
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid=ec.fk_c_type_contact  AND ctc.active=\'1\') ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid=ec.element_id ';
@@ -866,7 +866,7 @@ function createTimeSpend($user,$token=''){
     $sql.=' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
     $sql.=' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
     $sql.=' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
-    $sql.='  ORDER BY prj.fk_soc,prj.ref,tsk.ref ';
+    $sql.='  ORDER BY prj.fk_soc, prj.ref, tsk.ref ';
 
      dol_syslog("timesheetEvent::fetchTask ", LOG_DEBUG);
 
@@ -946,7 +946,7 @@ function createTimeSpend($user,$token=''){
      * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */    
-       public function unserialize($str,$mode=0){
+       public function unserialize($str, $mode=0){
        $ret='';
        if (empty($str))return -1;
        $array= array();
@@ -958,7 +958,7 @@ function createTimeSpend($user,$token=''){
                 break;
             case 1:
             case 2:
-                $array=json_decode($str,JSON_OBJECT_AS_ARRAY);
+                $array=json_decode($str, JSON_OBJECT_AS_ARRAY);
                 break;
  /*           case 3:
                 $array=$str;
@@ -967,7 +967,7 @@ function createTimeSpend($user,$token=''){
 
         // automatic unserialisation based on match between property name and key value
         foreach ($array as $key => $value) {
-            if(property_exists($this,$key)){
+            if(property_exists($this, $key)){
                 $this->{$key}=$value;
             }
         }
@@ -990,10 +990,10 @@ function createTimeSpend($user,$token=''){
             $this->third_partyLabel=$staticTask->companyName;
         }else{
             if(!empty($this->project) && empty($this->projectLabel) ){
-                $this->projectLabel=print_sellist(array('table'=>"projet",'keyfield'=> 'rowid','fields'=>'title'),$this->project);
+                $this->projectLabel=print_sellist(array('table'=>"projet", 'keyfield'=> 'rowid', 'fields'=>'title'), $this->project);
             }
             if(!empty($this->third_party) && empty($this->third_partyLabel)){
-                $this->third_partyLabel=print_sellist(array('table'=>"societe",'keyfield'=> 'rowid','fields'=>'nom'), $this->third_party);
+                $this->third_partyLabel=print_sellist(array('table'=>"societe", 'keyfield'=> 'rowid', 'fields'=>'nom'), $this->third_party);
             }
         }
     }

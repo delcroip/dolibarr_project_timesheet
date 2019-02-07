@@ -5,7 +5,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -36,7 +36,7 @@ $langs->load("timesheet@timesheet");
 if (!$user->admin) {
     $accessforbidden = accessforbidden("you need to be admin");
 }
-$action = getpost('action','alpha');
+$action = getpost('action', 'alpha');
 $attendance=$conf->global->TIMESHEET_ATTENDANCE;
 $timetype=$conf->global->TIMESHEET_TIME_TYPE;
 $timeSpan=$conf->global->TIMESHEET_TIME_SPAN;
@@ -71,71 +71,71 @@ $invoiceservice=$conf->global->TIMESHEET_INVOICE_SERVICE;
 $invoiceshowtask=$conf->global->TIMESHEET_INVOICE_SHOW_TASK;
 $invoiceshowuser=$conf->global->TIMESHEET_INVOICE_SHOW_USER;
 $searchbox=intval($conf->global->TIMESHEET_SEARCHBOX);
-if(sizeof($opendays)!=8)$opendays=array('_','0','0','0','0','0','0','0');
+if(sizeof($opendays)!=8)$opendays=array('_', '0', '0', '0', '0', '0', '0', '0');
 $apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
-if(sizeof($apflows)!=6)$apflows=array('_','0','0','0','0','0');
+if(sizeof($apflows)!=6)$apflows=array('_', '0', '0', '0', '0', '0');
 $error=0;
-function null2int($var,$int=0){
+function null2int($var, $int=0){
     return ($var=='')?$int:$var;
 } 
 switch($action)
 {
     case "save":
         //general option
-        $hoursperday=getpost('hoursperday','int');
+        $hoursperday=getpost('hoursperday', 'int');
         if($hoursperday==0){ //error handling if hour per day is empty
             $hoursperday=$conf->global->TIMESHEET_DAY_DURATION;
-            setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"),'errors');
+            setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"), 'errors');
             break;
         }
         dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
-        $timetype=getpost('timeType','alpha');
+        $timetype=getpost('timeType', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
-        $timeSpan=getpost('timeSpan','alpha');
+        $timeSpan=getpost('timeSpan', 'alpha');
         if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN){ // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
-            $sql.= ' WHERE status IN (1,5)';//'DRAFT','REJECTED'
+            $sql.= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
             dol_syslog(__METHOD__);
             $resql = $db->query($sql);
         }
         dolibarr_set_const($db, "TIMESHEET_TIME_SPAN", $timeSpan, 'chaine', 0, '', $conf->entity);
-        $attendance=getpost('attendance','int');
+        $attendance=getpost('attendance', 'int');
         dolibarr_set_const($db, "TIMESHEET_ATTENDANCE", $attendance, 'int', 0, '', $conf->entity);
-        $maxhoursperevent=getpost('maxhoursperevent','int');
+        $maxhoursperevent=getpost('maxhoursperevent', 'int');
         dolibarr_set_const($db, "TIMESHEET_EVEN_MAX_DURATION", $maxhoursperevent, 'int', 0, '', $conf->entity);
-        $defaulthoursperevent=getpost('maxhoursperevent','int');
+        $defaulthoursperevent=getpost('maxhoursperevent', 'int');
         dolibarr_set_const($db, "TIMESHEET_EVEN_DEFAULT_DURATION", $defaulthoursperevent, 'int', 0, '', $conf->entity);
-        $maxhoursperday=getpost('maxhoursperevent','int');
+        $maxhoursperday=getpost('maxhoursperevent', 'int');
         dolibarr_set_const($db, "TIMESHEET_DAY_MAX_DURATION", $maxhoursperday, 'int', 0, '', $conf->entity);
-        $hidedraft=getpost('hidedraft','int');
+        $hidedraft=getpost('hidedraft', 'int');
         dolibarr_set_const($db, "TIMESHEET_HIDE_DRAFT", $hidedraft, 'int', 0, '', $conf->entity);
-        $hidezeros=getpost('hidezeros','int');
+        $hidezeros=getpost('hidezeros', 'int');
         dolibarr_set_const($db, "TIMESHEET_HIDE_ZEROS", $hidezeros, 'int', 0, '', $conf->entity);
-        $maxApproval=getpost('maxapproval','int');
+        $maxApproval=getpost('maxapproval', 'int');
         dolibarr_set_const($db, "TIMESHEET_MAX_APPROVAL", $maxApproval, 'int', 0, '', $conf->entity);
-        $approvalbyweek=getpost('approvalbyweek','int');
+        $approvalbyweek=getpost('approvalbyweek', 'int');
         dolibarr_set_const($db, "TIMESHEET_APPROVAL_BY_WEEK", $approvalbyweek, 'int', 0, '', $conf->entity);
-        $hideref=getpost('hideref','int');
+        $hideref=getpost('hideref', 'int');
         dolibarr_set_const($db, "TIMESHEET_HIDE_REF", $hideref, 'int', 0, '', $conf->entity);
-        $whiteListMode=getpost('blackWhiteListMode','int');
+        $whiteListMode=getpost('blackWhiteListMode', 'int');
         dolibarr_set_const($db, "TIMESHEET_WHITELIST_MODE", $whiteList?$whiteListMode:2, 'int', 0, '', $conf->entity);
-        $whiteList=getpost('blackWhiteList','int');
+        $whiteList=getpost('blackWhiteList', 'int');
         dolibarr_set_const($db, "TIMESHEET_WHITELIST", $whiteList, 'int', 0, '', $conf->entity);
-        $dropdownAjax=getpost('dropdownAjax','int');
+        $dropdownAjax=getpost('dropdownAjax', 'int');
         dolibarr_set_const($db, "MAIN_DISABLE_AJAX_COMBOX", $dropdownAjax, 'int', 0, '', $conf->entity);
-        $addForOther=getpost('addForOther','int');
+        $addForOther=getpost('addForOther', 'int');
         dolibarr_set_const($db, "TIMESHEET_ADD_FOR_OTHER", $addForOther, 'int', 0, '', $conf->entity);
  
         //headers handling
-        $showProject=getpost('showProject','int');
-        $showTaskParent=getpost('showTaskParent','int');
-        $showTasks=getpost('showTasks','int');
-        $showDateStart=getpost('showDateStart','int');
-        $showDateEnd=getpost('showDateEnd','int');
-        $showProgress=getpost('showProgress','int');
-        $showCompany=getpost('showCompany','int');
-        $showNote=getpost('showNote','int');
-        $showTotal=getpost('showTotal','int');
+        $showProject=getpost('showProject', 'int');
+        $showTaskParent=getpost('showTaskParent', 'int');
+        $showTasks=getpost('showTasks', 'int');
+        $showDateStart=getpost('showDateStart', 'int');
+        $showDateEnd=getpost('showDateEnd', 'int');
+        $showProgress=getpost('showProgress', 'int');
+        $showCompany=getpost('showCompany', 'int');
+        $showNote=getpost('showNote', 'int');
+        $showTotal=getpost('showTotal', 'int');
         $headers=$showNote?'Note':'';
         $headers.=$showCompany?(empty($headers)?'':'||').'Company':'';
         $headers.=$showProject?(empty($headers)?'':'||').'Project':'';
@@ -148,55 +148,55 @@ switch($action)
         dolibarr_set_const($db, "TIMESHEET_HEADERS", $headers, 'chaine', 0, '', $conf->entity);
         
         //color handling
-        $draftColor=getpost('draftColor','alpha');
+        $draftColor=getpost('draftColor', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_COL_DRAFT", $draftColor, 'chaine', 0, '', $conf->entity);
-        $submittedColor=getpost('submittedColor','alpha');
+        $submittedColor=getpost('submittedColor', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_COL_SUBMITTED", $submittedColor, 'chaine', 0, '', $conf->entity);
-        $approvedColor=getpost('approvedColor','alpha');
+        $approvedColor=getpost('approvedColor', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_COL_APPROVED", $approvedColor, 'chaine', 0, '', $conf->entity);
-        $rejectedColor=getpost('rejectedColor','alpha');
+        $rejectedColor=getpost('rejectedColor', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_COL_REJECTED", $rejectedColor, 'chaine', 0, '', $conf->entity);
-        $cancelledColor=getpost('cancelledColor','alpha');
+        $cancelledColor=getpost('cancelledColor', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_COL_CANCELLED", $cancelledColor, 'chaine', 0, '', $conf->entity);
         
         //holiday
-        $addholidaytime=getpost('addholidaytime','alpha');
+        $addholidaytime=getpost('addholidaytime', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_ADD_HOLIDAY_TIME", $addholidaytime, 'chaine', 0, '', $conf->entity);
         //docs
-        $adddocs=getpost('adddocs','int');
+        $adddocs=getpost('adddocs', 'int');
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
         // open days        
-        $opendays=array('_','0','0','0','0','0','0','0');
-        foreach(getpost('opendays','array') as $key => $day){
+        $opendays=array('_', '0', '0', '0', '0', '0', '0', '0');
+        foreach(getpost('opendays', 'array') as $key => $day){
             $opendays[$key]=$day;
         }
-        dolibarr_set_const($db, "TIMESHEET_OPEN_DAYS", implode('',$opendays), 'chaine', 0, '', $conf->entity);
+        dolibarr_set_const($db, "TIMESHEET_OPEN_DAYS", implode('', $opendays), 'chaine', 0, '', $conf->entity);
         //approval flows
-        $apflows=array('_','0','0','0','0','0');
-        foreach(getpost('apflows','array') as $key => $flow){
+        $apflows=array('_', '0', '0', '0', '0', '0');
+        foreach(getpost('apflows', 'array') as $key => $flow){
             $apflows[$key]=$flow;
         }
         
         //INVOICE
-        dolibarr_set_const($db, "TIMESHEET_APPROVAL_FLOWS", implode('',$apflows), 'chaine', 0, '', $conf->entity)  ;
-        $invoicemethod=getpost('invoiceMethod','alpha');
+        dolibarr_set_const($db, "TIMESHEET_APPROVAL_FLOWS", implode('', $apflows), 'chaine', 0, '', $conf->entity)  ;
+        $invoicemethod=getpost('invoiceMethod', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_METHOD", $invoicemethod, 'chaine', 0, '', $conf->entity);
-        $invoicetasktime=getpost('invoiceTaskTime','alpha');
+        $invoicetasktime=getpost('invoiceTaskTime', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_TASKTIME", $invoicetasktime, 'chaine', 0, '', $conf->entity);
-        $invoicetimetype=getpost('invoiceTimeType','alpha');
+        $invoicetimetype=getpost('invoiceTimeType', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_TIMETYPE", $invoicetimetype, 'chaine', 0, '', $conf->entity);
-        $invoiceservice=getpost('invoiceService','int');
+        $invoiceservice=getpost('invoiceService', 'int');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SERVICE", $invoiceservice, 'int', 0, '', $conf->entity);
-        $invoiceshowtask=getpost('invoiceShowTask','int');
+        $invoiceshowtask=getpost('invoiceShowTask', 'int');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SHOW_TASK", $invoiceshowtask, 'int', 0, '', $conf->entity);
-        $invoiceshowuser=getpost('invoiceShowUser','int');
+        $invoiceshowuser=getpost('invoiceShowUser', 'int');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SHOW_USER", $invoiceshowuser, 'int', 0, '', $conf->entity);
-        $showTimespentNote=getpost('showTimespentNote','int');
+        $showTimespentNote=getpost('showTimespentNote', 'int');
         dolibarr_set_const($db, "TIMESHEET_SHOW_TIMESPENT_NOTE", $showTimespentNote, 'int', 0, '', $conf->entity);
-        $noteOnPDF=getpost('noteOnPDF','alpha');
+        $noteOnPDF=getpost('noteOnPDF', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_PDF_NOTEISOTASK", $noteOnPDF, 'chaine', 0, '', $conf->entity);
         // serach box
-        $searchbox=getpost('searchBox','int');
+        $searchbox=getpost('searchBox', 'int');
         dolibarr_set_const($db, "TIMESHEET_SEARCHBOX", $searchbox, 'int', 0, '', $conf->entity);
 
         setEventMessage($langs->transnoentitiesnoconv("ConfigurationSaved"));
@@ -204,7 +204,7 @@ switch($action)
     default:
         break;
 }
-$headersT=explode('||',$headers);
+$headersT=explode('||', $headers);
 foreach ($headersT as $header) {
     switch($header){
         case 'Project':
@@ -246,12 +246,12 @@ foreach ($headersT as $header) {
 
 
 //permet d'afficher la structure dolibarr
-$morejs=array("/timesheet/core/js/timesheet.js?v2.0","/timesheet/core/js/jscolor.js");
-llxHeader("",$langs->trans("timesheetSetup"),'','','','',$morejs,'',0,0);
+$morejs=array("/timesheet/core/js/timesheet.js?v2.0", "/timesheet/core/js/jscolor.js");
+llxHeader("", $langs->trans("timesheetSetup"), '', '', '', '', $morejs, '', 0, 0);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("timesheetSetup"),$linkback,'title_setup');
+print_fiche_titre($langs->trans("timesheetSetup"), $linkback, 'title_setup');
 echo '<div class="fiche"><br><br>';
 /*
  * TABS
@@ -590,11 +590,11 @@ echo ($invoicetimetype=="days"?"checked":"").'> '.$langs->trans("Days")."</td></
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("invoiceService");
 echo '</td><td align="left">'.$langs->trans("invoiceServiceDesc").'</td>';
 echo  '<td align="left">';
-$addchoices=array('-999'=> $langs->transnoentitiesnoconv('not2invoice'),-1=> $langs->transnoentitiesnoconv('Custom'));
+$addchoices=array('-999'=> $langs->transnoentitiesnoconv('not2invoice'), -1=> $langs->transnoentitiesnoconv('Custom'));
 $ajaxNbChar=$conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
-$htmlProductArray=array('name'=>'invoiceService','ajaxNbChar'=>$ajaxNbChar);
-$sqlProductArray=array('table'=>'product','keyfield'=>'rowid','fields'=>'ref,label','where'=>'tosell=1 AND fk_product_type=1','separator' => ' - ');
-print select_sellist($sqlProductArray,$htmlProductArray,$invoiceservice,$addchoices);
+$htmlProductArray=array('name'=>'invoiceService', 'ajaxNbChar'=>$ajaxNbChar);
+$sqlProductArray=array('table'=>'product', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'where'=>'tosell=1 AND fk_product_type=1', 'separator' => ' - ');
+print select_sellist($sqlProductArray, $htmlProductArray, $invoiceservice, $addchoices);
 echo "</td></tr>\n\t\t";
 //line tasktime ==
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("invoiceTaskTime");

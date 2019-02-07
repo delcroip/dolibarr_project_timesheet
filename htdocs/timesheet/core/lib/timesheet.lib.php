@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -17,62 +17,62 @@
  */
 
 //const STATUS= [
-Define( "NULL",0);
-Define( "DRAFT",1);
-Define( "SUBMITTED",2);
-Define( "APPROVED",3);
-Define( "CANCELLED",4);
-Define( "REJECTED",5);
-Define( "CHALLENGED",6);
-Define( "INVOICED",7);
-Define( "UNDERAPPROVAL",8);
-Define( "PLANNED",9);
-Define( "STATUSMAX",10);
+Define( "NULL", 0);
+Define( "DRAFT", 1);
+Define( "SUBMITTED", 2);
+Define( "APPROVED", 3);
+Define( "CANCELLED", 4);
+Define( "REJECTED", 5);
+Define( "CHALLENGED", 6);
+Define( "INVOICED", 7);
+Define( "UNDERAPPROVAL", 8);
+Define( "PLANNED", 9);
+Define( "STATUSMAX", 10);
 //APPFLOW
 //const LINKED_ITEM = [
-Define( "USER",0);
-Define( "TEAM",1);
-Define( "PROJECT",2);
-Define( "CUSTOMER",3);
-Define( "SUPPLIER",4);
-Define( "OTHER",5);
-Define( "ROLEMAX",6);
+Define( "USER", 0);
+Define( "TEAM", 1);
+Define( "PROJECT", 2);
+Define( "CUSTOMER", 3);
+Define( "SUPPLIER", 4);
+Define( "OTHER", 5);
+Define( "ROLEMAX", 6);
 // back ground colors
-define('TIMESHEET_BC_FREEZED','909090');
-define('TIMESHEET_BC_VALUE','f0fff0');
+define('TIMESHEET_BC_FREEZED', '909090');
+define('TIMESHEET_BC_VALUE', 'f0fff0');
 
 // number of second in a day, used to make the code readable
-define('SECINDAY',86400);
+define('SECINDAY', 86400);
 // for display trads
 global $langs;
-$roles=array(0=> 'user',1=> 'team', 2=> 'project',3=>'customer',4=>'supplier',5=>'other');
-$statusA=array(0=> $langs->trans('null'),1 =>$langs->trans('draft'),2=>$langs->trans('submitted'),3=>$langs->trans('approved'),4=>$langs->trans('cancelled'),5=>$langs->trans('rejected'),6=>$langs->trans('challenged'),7=>$langs->trans('invoiced'),8=>$langs->trans('underapproval'),9=>$langs->trans('planned'));
+$roles=array(0=> 'user', 1=> 'team', 2=> 'project', 3=>'customer', 4=>'supplier', 5=>'other');
+$statusA=array(0=> $langs->trans('null'), 1 =>$langs->trans('draft'), 2=>$langs->trans('submitted'), 3=>$langs->trans('approved'), 4=>$langs->trans('cancelled'), 5=>$langs->trans('rejected'), 6=>$langs->trans('challenged'), 7=>$langs->trans('invoiced'), 8=>$langs->trans('underapproval'), 9=>$langs->trans('planned'));
 $apflows=str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 $statusColor=array(
-    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
-    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,
-    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,
-    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,
-    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED,
-    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED,
-    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED,
-    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,
+    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT, 
+    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED, 
+    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED, 
+    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED, 
+    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED, 
+    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED, 
+    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED, 
+    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED, 
     PLANNED=>$conf->global->TIMESHEET_COL_DRAFT);
 
 //const REDUNDANCY=[
-/*Define( "NULL",0);
-Define( "NONE",1);
-Define( "WEEK",2);
-Define( "MONTH",3);
-Define( "QUARTER",4);
-Define( "YEAR",5);
+/*Define( "NULL", 0);
+Define( "NONE", 1);
+Define( "WEEK", 2);
+Define( "MONTH", 3);
+Define( "QUARTER", 4);
+Define( "YEAR", 5);
 
 //const LINKED_ITEM = [
-Define( "NULL",0);
-Define( "NONE",1);
-Define( "TASK",2);
-Define( "PROJECT",3);
-Define( "TIMESPENT",4);
+Define( "NULL", 0);
+Define( "NONE", 1);
+Define( "TASK", 2);
+Define( "PROJECT", 3);
+Define( "TIMESPENT", 4);
 
 */
 
@@ -96,7 +96,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  *  @param     int              	$entity         entity where to look for
   *  @return     array(userId)                                                  html code
  */
-function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM,$entity='1'){
+function getSubordinates($db, $userid, $depth=5, $ecludeduserid=array(), $role=TEAM, $entity='1'){
     //FIX ME handle multicompany
     if($userid=="")
     {
@@ -106,7 +106,7 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM
     $sql[PROJECT][0] .= ' WHERE element_id in (SELECT element_id';
     $sql[PROJECT][0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
     $sql[PROJECT][0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
-    $sql[PROJECT][0] .= ' WHERE ctc.active=\'1\' AND ctc.element in (\'project\',\'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\'  )';
+    $sql[PROJECT][0] .= ' WHERE ctc.active=\'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\'  )';
     $sql[PROJECT][0] .= ' AND fk_socpeople in (';
     $sql[PROJECT][2] = ')) AND fk_socpeople not in (';
     $sql[PROJECT][4] = ')';
@@ -116,8 +116,8 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM
     $sql[TEAM][4] = ')';
     $idlist='';
     if(is_array($userid)){
-        $ecludeduserid=array_merge($userid,$ecludeduserid);
-        $idlist=implode(",", $userid);
+        $ecludeduserid=array_merge($userid, $ecludeduserid);
+        $idlist=implode(", ", $userid);
     }else{
         $ecludeduserid[]=$userid;
         $idlist=$userid;
@@ -125,7 +125,7 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM
     $sql[$role][1]=$idlist;
     $idlist='';
     if(is_array($ecludeduserid)){
-        $idlist=implode(",", $ecludeduserid);
+        $idlist=implode(", ", $ecludeduserid);
     }else if (!empty($ecludeduserid)){
         $idlist=$ecludeduserid;
     } 
@@ -152,16 +152,16 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM
         }
         if(count($list)>0 && $depth>1){
             //this will get the same result plus the subordinate of the subordinate
-            $result=getSubordinates($db,$list,$depth-1,$ecludeduserid, $role, $entity);
+            $result=getSubordinates($db, $list, $depth-1, $ecludeduserid, $role, $entity);
             if(is_array($result))
             {
-                $list=array_merge($list,$result);
+                $list=array_merge($list, $result);
             }
         }
         if(is_array($userid))
         {
             
-            $list=array_merge($list,$userid);
+            $list=array_merge($list, $userid);
         }else
         {
             //$list[]=$userid;
@@ -189,15 +189,15 @@ function getSubordinates($db,$userid, $depth=5,$ecludeduserid=array(),$role=TEAM
  *  @param     int              	$entity         entity where to look for
   *  @return     string                                                   html code
  */
-function getTasks($db,$userid,$role='project'){
-    $sql='SELECT tk.fk_projet as project ,tk.rowid as task';
+function getTasks($db, $userid, $role='project'){
+    $sql='SELECT tk.fk_projet as project , tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON  tk.fk_projet= ec.element_id ';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
     $sql.=' WHERE ctc.element in (\'project\') AND ctc.active=\'1\' AND ctc.code LIKE \'%LEADER%\' ';
     $sql.=' AND fk_socpeople=\''.$userid.'\'';
     $sql.=' UNION ';
-    $sql.=' SELECT tk.fk_projet as project ,tk.rowid as task';
+    $sql.=' SELECT tk.fk_projet as project , tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql.=' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on (tk.rowid= element_id )';
     $sql.=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid=ec.fk_c_type_contact';
@@ -244,9 +244,9 @@ function getUsersName($userids){
         return array();
     }
 
-    $sql="SELECT usr.rowid, CONCAT(usr.firstname,' ',usr.lastname) as username,usr.lastname FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
+    $sql="SELECT usr.rowid, CONCAT(usr.firstname, ' ', usr.lastname) as username, usr.lastname FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
 if(is_array($userids)){
-	$sql.=' usr.rowid in ('.implode(',',$userids).')';
+	$sql.=' usr.rowid in ('.implode(', ', $userids).')';
 }else{
     $sql.=' usr.rowid ='.$userids;
 }
@@ -255,7 +255,7 @@ if(is_array($userids)){
 	
         for($i=0;$i<$nbIds-1 ;$i++)
 	{
-		$sql."'".$userids[$i]."',";
+		$sql."'".$userids[$i]."', ";
 	}
 	$sql.=((is_array($userids))?("'".$userids[$nbIds-1]."'"):('"'.$userids.'"')).')';
         */
@@ -307,7 +307,7 @@ if (!is_callable(setEventMessages)){
     // function from /htdocs/core/lib/function.lib.php in Dolibarr 3.8
     function setEventMessages($mesg, $mesgs, $style='mesgs')
     {
-            if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
+            if (! in_array((string) $style, array('mesgs', 'warnings', 'errors'))) dol_print_error('', 'Bad parameter for setEventMessage');
             if (empty($mesgs)) setEventMessage($mesg, $style);
             else
             {
@@ -352,7 +352,7 @@ function getEventMessagesXML(){
  *  @param    string              	$style            style of the message error | ok | warning
  *  @return     string                                         XML
  */
-function getEventMessageXML($messages,$style='ok'){
+function getEventMessageXML($messages, $style='ok'){
     $msg='';
     
     if(is_array($messages)){
@@ -384,7 +384,7 @@ function getEventMessageXML($messages,$style='ok'){
  *  @param    int               $prevNext       -1 for previous period, +1 for next period
  *  @return     string                                   
  */
-function getStartDate($datetime,$prevNext=0){
+function getStartDate($datetime, $prevNext=0){
    global $conf;
     // use the day, month, year value
      $startDate=null;
@@ -402,42 +402,42 @@ function getStartDate($datetime,$prevNext=0){
      switch($conf->global->TIMESHEET_TIME_SPAN){
 
         case 'month': //by Month   
-        //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  );
+        //     $startDate=  strtotime('first day of '.$prefix.' month midnight', $datetime  );
         //     break;
                 if($prevNext==1){
-                    $startDate=  strtotime('first day of next month midnight',$datetime  );
+                    $startDate=  strtotime('first day of next month midnight', $datetime  );
                 }else if($prevNext==0){
-                    $startDate=  strtotime('first day of this month midnight',$datetime  );
+                    $startDate=  strtotime('first day of this month midnight', $datetime  );
                 }else if($prevNext==-1){
-                    $startDate=  strtotime('first day of previous month midnight',$datetime  );
+                    $startDate=  strtotime('first day of previous month midnight', $datetime  );
                 }
             break;
         case 'week': //by user   
-                    //     $startDate=  strtotime('first day of '.$prefix.' month midnight',$datetime  );
+                    //     $startDate=  strtotime('first day of '.$prefix.' month midnight', $datetime  );
         //     break;
                 if($prevNext==1){
-                    $startDate=  strtotime('monday next week midnight',$datetime  );
+                    $startDate=  strtotime('monday next week midnight', $datetime  );
                 }else if($prevNext==0){
-                    $startDate=  strtotime('monday this week midnight',$datetime  );
+                    $startDate=  strtotime('monday this week midnight', $datetime  );
                 }else if($prevNext==-1){
-                    $startDate=  strtotime('monday previous week midnight',$datetime  );
+                    $startDate=  strtotime('monday previous week midnight', $datetime  );
                 }
             break;
         case 'splitedWeek': //by week
         default:
 
                 if($prevNext==1){
-                    $startDateMonth=  strtotime('first day of next month  midnight',$datetime  );
-                    $startDateWeek=  strtotime('monday next week midnight',$datetime  );
+                    $startDateMonth=  strtotime('first day of next month  midnight', $datetime  );
+                    $startDateWeek=  strtotime('monday next week midnight', $datetime  );
                     $startDate=MIN( $startDateMonth, $startDateWeek);
                 }else if($prevNext==0){
-                    $startDateMonth=  strtotime('first day of this month midnight',$datetime  );
-                    $startDateWeek=  strtotime('monday this week  midnight',$datetime  );
+                    $startDateMonth=  strtotime('first day of this month midnight', $datetime  );
+                    $startDateWeek=  strtotime('monday this week  midnight', $datetime  );
                     $startDate=MAX( $startDateMonth, $startDateWeek);
                 }else if($prevNext==-1){
-                    $startDateMonth=  strtotime('first day of this month  midnight',$datetime  );
-                    $startDateWeek=  strtotime('monday this week  midnight',$datetime  );
-                    $startDatePrevWeek=  strtotime('monday previous week  midnight',$datetime  );
+                    $startDateMonth=  strtotime('first day of this month  midnight', $datetime  );
+                    $startDateWeek=  strtotime('monday this week  midnight', $datetime  );
+                    $startDatePrevWeek=  strtotime('monday previous week  midnight', $datetime  );
                     if($startDateMonth>$startDateWeek ){
                         $startDate=$startDateWeek;
                     }else{
@@ -465,20 +465,20 @@ function getEndDate($datetime){
     switch($conf->global->TIMESHEET_TIME_SPAN){
 
         case 'month': 
-            $endDate=strtotime('first day of next month midnight',$datetime);
+            $endDate=strtotime('first day of next month midnight', $datetime);
             break;
         case 'week':  
-            $endDate=strtotime('monday next week midnight',$datetime);
+            $endDate=strtotime('monday next week midnight', $datetime);
             break;
         case 'splitedWeek': 
         default:
-            $day=date('d',$datetime);
-            $dayOfWeek=date('N',$datetime);
-            $dayInMonth=date('t',$datetime);
+            $day=date('d', $datetime);
+            $dayOfWeek=date('N', $datetime);
+            $dayInMonth=date('t', $datetime);
             if ($dayInMonth<$day+(7-$dayOfWeek) ){
-                $endDate=strtotime('first day of next month midnight',$datetime);
+                $endDate=strtotime('first day of next month midnight', $datetime);
             }else{
-                $endDate=strtotime('monday next week midnight',$datetime);
+                $endDate=strtotime('monday next week midnight', $datetime);
             }
         
             break;
@@ -497,23 +497,23 @@ function getEndDate($datetime){
  *  @param    string            $date           date on a string format
  *  @return     string                                   
  */
-function parseDate($day=0,$month=0,$year=0,$date=0){  
+function parseDate($day=0, $month=0, $year=0, $date=0){  
     $datetime=time();
     $splitWeek=0;
     if ($day!=0 && $month!=0 && $year!= 0)
     {
-        $datetime=dol_mktime(0,0,0,$month,$day,$year);
+        $datetime=dol_mktime(0, 0, 0, $month, $day, $year);
     // the date is already in linux format
     }else if(is_numeric($date) && $date!=0){  // if date is a datetime
         $datetime=$date;
     }else if(is_string($date)&& $date!=""){  // if date is a string
         //foolproof: incase the yearweek in passed in date
-        if( strlen($date)>3 && substr($date,-3,2)=="_H"){
-              if(substr($date,-1,1)==1){
-                  $date=substr($date,0,7);
+        if( strlen($date)>3 && substr($date, -3, 2)=="_H"){
+              if(substr($date, -1, 1)==1){
+                  $date=substr($date, 0, 7);
                   $splitWeek=1;
               }else{
-                  $date='last day of  week '.substr($date,0,7);
+                  $date='last day of  week '.substr($date, 0, 7);
                   $splitWeek=2;
               }
         }
@@ -534,10 +534,10 @@ function parseDate($day=0,$month=0,$year=0,$date=0){
   *  @return  void  				array( ID => userName)
  */
 function showTimesheetApTabs($role_key){
-global $langs, $roles,$apflows;
+global $langs, $roles, $apflows;
 global $conf;
-//$roles=array(0=> 'team', 1=> 'project',2=>'customer',3=>'supplier',4=>'other');
-$rolesUrl=array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOtherApproval.php?role=project',3=>'TimesheetOtherApproval.php?role=customer',4=>'TimesheetOtherApproval.php?role=supplier',5=>'TimesheetOtherApproval.php?role=other');
+//$roles=array(0=> 'team', 1=> 'project', 2=>'customer', 3=>'supplier', 4=>'other');
+$rolesUrl=array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOtherApproval.php?role=project', 3=>'TimesheetOtherApproval.php?role=customer', 4=>'TimesheetOtherApproval.php?role=supplier', 5=>'TimesheetOtherApproval.php?role=other');
     foreach($apflows as $key=> $value){
         if($value==1){
             echo '  <div class="inline-block tabsElem"><a  href="'.$rolesUrl[$key].'&leftmenu=timesheet" class="';
@@ -555,7 +555,7 @@ $rolesUrl=array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOtherAp
  *  @param    string        $datEnd             end date
   *  @return  void  				array( ID => userName)
  */
-function getDayInterval($dateStart,$dateEnd){
+function getDayInterval($dateStart, $dateEnd){
     return round(($dateEnd-$dateStart)/SECINDAY, 0, PHP_ROUND_HALF_UP);
 }
 /* Function to format the duration
@@ -564,7 +564,7 @@ function getDayInterval($dateStart,$dateEnd){
  *  @param    int        $hoursperdays          mode -1 fetch from config, 0 show in hours, >0 shows in days 
  *  @return  string       			time display
  */
-function formatTime($duration,$hoursperdays=-1)
+function formatTime($duration, $hoursperdays=-1)
     {
         global $conf;
         if($hoursperdays==-1){
@@ -578,11 +578,11 @@ function formatTime($duration,$hoursperdays=-1)
             $TotalSec=$duration%60;
             $TotalMin=(($duration-$TotalSec)/60)%60;
             $TotalHours=$TotalHours=($duration-$TotalMin*60- $TotalSec)/3600;
-            return $TotalHours.':'.sprintf("%02s",$TotalMin);
+            return $TotalHours.':'.sprintf("%02s", $TotalMin);
         }else
         {
             
-            $totalDay=round($duration/3600/$hoursperdays,3);
+            $totalDay=round($duration/3600/$hoursperdays, 3);
             return strval($totalDay);
             
         }
@@ -597,19 +597,19 @@ function formatTime($duration,$hoursperdays=-1)
      * @param bool $returnstring    
      * @return string   messages
      */
-    function TimesheetsetEventMessage($arraymessage,$returnstring=false){
+    function TimesheetsetEventMessage($arraymessage, $returnstring=false){
         global $langs;
         $messages=array();
-        $messages[]= array('type'=>'mesgs','text'=>'NumberOfTimeSpendCreated','param'=>$arraymessage['timeSpendCreated']);
-        $messages[]=array('type'=>'mesgs','text'=>'NumberOfTimeSpendModified','param'=>$arraymessage['timeSpendModified']);
-        $messages[]= array('type'=>'mesgs','text'=>'NumberOfTimeSpendDeleted','param'=>$arraymessage['timeSpendDeleted']);
-        $default=          array('type'=>'warnings','text'=>'NothingChanged','param'=>0);
-        $messages[]=      array('type'=>'mesgs','text'=>'NoteUpdated','param'=>$arraymessage['NoteUpdated']);
-        $messages[]=      array('type'=>'errors','text'=>'updateError','param'=>$arraymessage['updateError']);
+        $messages[]= array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
+        $messages[]=array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
+        $messages[]= array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
+        $default=          array('type'=>'warnings', 'text'=>'NothingChanged', 'param'=>0);
+        $messages[]=      array('type'=>'mesgs', 'text'=>'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
+        $messages[]=      array('type'=>'errors', 'text'=>'updateError', 'param'=>$arraymessage['updateError']);
         $nbr=0;
         foreach($messages as $key=> $message){
             if($message['param']>0 ){
-                if($returnstring==false)setEventMessage($langs->transnoentitiesnoconv($message['text']).$message['param'],$message['type']);
+                if($returnstring==false)setEventMessage($langs->transnoentitiesnoconv($message['text']).$message['param'], $message['type']);
                 else $messages[$key]['text']=$langs->trans($message['text']);
                 $nbr++;
             }else{
@@ -617,10 +617,10 @@ function formatTime($duration,$hoursperdays=-1)
             }           
         } 
         if($nbr==0) setEventMessage($langs->transnoentitiesnoconv(
-                    $default['text']),$default['type']);
+                    $default['text']), $default['type']);
         /*
         if (array_sum($arraymessage)==0){
-            setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"),'warnings');
+            setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warnings');
         }else{
             if($arraymessage['timeSpendCreated']>0) 
                 $str=$langs->transnoentitiesnoconv("NumberOfTimeSpendCreated")
@@ -641,7 +641,7 @@ function formatTime($duration,$hoursperdays=-1)
             if($arraymessage['updateError']>0) 
                 setEventMessage( $langs->transnoentitiesnoconv("InternalError")
                         .$langs->transnoentitiesnoconv(" Update failed")
-                        .':'.$arraymessage['updateError'],'errors');
+                        .':'.$arraymessage['updateError'], 'errors');
             
         }*/
         if($returnstring==true)return json_encode($messages);

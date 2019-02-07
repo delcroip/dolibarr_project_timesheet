@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -34,12 +34,12 @@ require_once 'class/TimesheetTask.class.php';
 if (!$user->rights->timesheet->attendance->user) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");
 }
-$tms=GETPOST('tms','alpha');
-$action=GETPOST('action','alpha');
-$project=GETPOST('project','int');
-$task=GETPOST('taskid','int');
-$customer=GETPOST('customer','int');
-$json=$_POST['json'];//],'alpha');
+$tms=GETPOST('tms', 'alpha');
+$action=GETPOST('action', 'alpha');
+$project=GETPOST('project', 'int');
+$task=GETPOST('taskid', 'int');
+$customer=GETPOST('customer', 'int');
+$json=$_POST['json'];//], 'alpha');
 $today =time();
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -49,7 +49,7 @@ $langs->load('timesheet@timesheet');
 
 
 $userid=$user->id;
-$timesheet_attendance= new Attendanceevent($db,$userid);
+$timesheet_attendance= new Attendanceevent($db, $userid);
 
 /*******************************************************************
 * ACTIONS
@@ -61,21 +61,21 @@ $update=false;
 switch($action){
 
     case 'start':
-            $json=$timesheet_attendance->ajaxStart($user,$json,$customer,$project,$task);
+            $json=$timesheet_attendance->ajaxStart($user, $json, $customer, $project, $task);
            // ob_clean();
             header("Content-type: text/json;charset=utf-8");
             echo $json;
             exit;
 
     case 'stop':
-            $json=$timesheet_attendance->ajaxStop($user,$json);
+            $json=$timesheet_attendance->ajaxStop($user, $json);
            // ob_clean();
             header("Content-type: text/json;charset=utf-8");
             echo $json;
             exit;
             
     case 'heartbeat':
-            $json=$timesheet_attendance->ajaxheartbeat($user,$json);
+            $json=$timesheet_attendance->ajaxheartbeat($user, $json);
            // ob_clean();
             header("Content-type: text/json;charset=utf-8");
             echo $json;
@@ -103,19 +103,19 @@ if(!empty($tms)){
 * Put here all code to build page
 ****************************************************/
 
-$morejs=array("/timesheet/core/js/stopWatch.js","/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
+$morejs=array("/timesheet/core/js/stopWatch.js", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 $morecss=array("/timesheet/core/css/stopWatch.css");
-llxHeader('',$langs->trans('Attendance'),'','','',"",$morejs,$morecss);
+llxHeader('', $langs->trans('Attendance'), '', '', '', "", $morejs, $morecss);
 //calculate the week days
 // clock
-$timesheet_attendance->fetch('',$user);
+$timesheet_attendance->fetch('', $user);
 
 $timesheet_attendance->printHTMLClock();
 //tmstp=time();
 //fetch ts for others
 
 if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER==1 && (count($SubordiateIds)>1 || $user->admin)){
-    //print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid,$user->admin);
+    //print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 $headers=explode('||', $conf->global->TIMESHEET_HEADERS);
 
@@ -137,7 +137,7 @@ $html .= "<th>".$langs->trans("Action")."</th></tr>";
     $html .='<td><a>'.$langs->trans("Search").'</a></td>';
     $html .='<td span="0"><input type="texte" name="taskSearch" onkeyup="searchTask(this)"></td></tr>';
 
-$html .= $timesheet_attendance->printHTMLTaskList($headers,$user->id);
+$html .= $timesheet_attendance->printHTMLTaskList($headers, $user->id);
 $html .= "</table>";
 
 

@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -30,8 +30,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
-$AttendanceSystemStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
-$AttendanceSystemStatusArray=array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 =>'Payed');
+$AttendanceSystemStatusPictoArray=array(0=> 'statut7', 1=>'statut3', 2=>'statut8', 3=>'statut4');
+$AttendanceSystemStatusArray=array(0=> 'Draft', 1=>'Validated', 2=>'Cancelled', 3 =>'Payed');
 /**
  *	Put here description of your class
  */
@@ -97,25 +97,25 @@ class AttendanceSystem extends CommonObject
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
         
-	$sql.= 'label,';
-	$sql.= 'ip,';
-	$sql.= 'port,';
-	$sql.= 'note,';
-	$sql.= 'fk_third_party,';
-	$sql.= 'fk_task,';
-	$sql.= 'fk_project,';
+	$sql.= 'label, ';
+	$sql.= 'ip, ';
+	$sql.= 'port, ';
+	$sql.= 'note, ';
+	$sql.= 'fk_third_party, ';
+	$sql.= 'fk_task, ';
+	$sql.= 'fk_project, ';
 	$sql.= 'status';
 
         
         $sql.= ") VALUES (";
         
-	$sql.=' '.(empty($this->label)?'NULL':"'".$this->db->escape($this->label)."'").',';
-	$sql.=' '.(empty($this->ip)?'NULL':"'".$this->db->escape($this->ip)."'").',';
-	$sql.=' '.(empty($this->port)?'NULL':"'".$this->port."'").',';
-	$sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").',';
-	$sql.=' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").',';
-	$sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").',';
-	$sql.=' '.(empty($this->project)?'NULL':"'".$this->project."'").',';
+	$sql.=' '.(empty($this->label)?'NULL':"'".$this->db->escape($this->label)."'").', ';
+	$sql.=' '.(empty($this->ip)?'NULL':"'".$this->db->escape($this->ip)."'").', ';
+	$sql.=' '.(empty($this->port)?'NULL':"'".$this->port."'").', ';
+	$sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").', ';
+	$sql.=' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").', ';
+	$sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").', ';
+	$sql.=' '.(empty($this->project)?'NULL':"'".$this->project."'").', ';
 	$sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
 
         
@@ -137,7 +137,7 @@ class AttendanceSystem extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+            //$result=$this->call_trigger('MYOBJECT_CREATE', $user);
             //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
@@ -169,21 +169,21 @@ class AttendanceSystem extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id, $ref='')
     {
     	global $langs;
         $sql = "SELECT";
-        $sql.= " t.rowid,";
+        $sql.= " t.rowid, ";
         
-	$sql.=' t.label,';
-	$sql.=' t.ip,';
-	$sql.=' t.port,';
-	$sql.=' t.note,';
-	$sql.=' t.fk_third_party,';
-	$sql.=' t.fk_task,';
-	$sql.=' t.fk_project,';
-	$sql.=' t.status,';
-	$sql.=' t.date_modification,';
+	$sql.=' t.label, ';
+	$sql.=' t.ip, ';
+	$sql.=' t.port, ';
+	$sql.=' t.note, ';
+	$sql.=' t.fk_third_party, ';
+	$sql.=' t.fk_task, ';
+	$sql.=' t.fk_project, ';
+	$sql.=' t.status, ';
+	$sql.=' t.date_modification, ';
 	$sql.=' t.fk_user_modification';
 
         
@@ -254,7 +254,7 @@ class AttendanceSystem extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+            //$result=$this->call_trigger('MYOBJECT_MODIFY', $user);
             //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
@@ -288,7 +288,7 @@ class AttendanceSystem extends CommonObject
      *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
      *	@return		string						String with URL
      */
-    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
+    function getNomUrl($htmlcontent, $id=0, $ref='', $withpicto=0)
     {
 	global $conf, $langs;
 
@@ -317,9 +317,9 @@ class AttendanceSystem extends CommonObject
         }else $linkclose = ($morecss?' class="'.$morecss.'"':'');
         
         if($id){
-            $lien = '<a href="'.dol_buildpath('/timesheet/AttendanceSystemCard.php',1).'id='.$id.'&action=view"'.$linkclose.'>';
+            $lien = '<a href="'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'id='.$id.'&action=view"'.$linkclose.'>';
         }else if (!empty($ref)){
-            $lien = '<a href="'.dol_buildpath('/timesheet/AttendanceSystemCard.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
+            $lien = '<a href="'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
             $lien =  "";
         }
@@ -337,9 +337,9 @@ class AttendanceSystem extends CommonObject
         
         
     	if ($withpicto==1){ 
-            $result.=($lien.img_object($label,$picto).$htmlcontent.$lienfin);
+            $result.=($lien.img_object($label, $picto).$htmlcontent.$lienfin);
         }else if ($withpicto==2) {
-            $result.=$lien.img_object($label,$picto).$lienfin;
+            $result.=$lien.img_object($label, $picto).$lienfin;
         }else{  
             $result.=$lien.$htmlcontent.$lienfin;
         }
@@ -351,10 +351,10 @@ class AttendanceSystem extends CommonObject
 	 *  @param	object 		$form          form object that should be created	
       *  *  @return	string 			       html code to select status
 	 */
-	function selectLibStatut($form,$htmlname='Status')
+	function selectLibStatut($form, $htmlname='Status')
 	{
-            global $AttendanceSystemStatusPictoArray,$AttendanceSystemStatusArray;
-            return $form->selectarray($htmlname,$AttendanceSystemStatusArray,$this->status);
+            global $AttendanceSystemStatusPictoArray, $AttendanceSystemStatusArray;
+            return $form->selectarray($htmlname, $AttendanceSystemStatusArray, $this->status);
 	}   
     /**
 	 *  Retourne le libelle du status (actif, inactif)
@@ -364,7 +364,7 @@ class AttendanceSystem extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 	/**
 	 *  Return the status
@@ -373,9 +373,9 @@ class AttendanceSystem extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	static function LibStatut($status, $mode=0)
 	{
-		global $langs,$AttendanceSystemStatusPictoArray,$AttendanceSystemStatusArray;
+		global $langs, $AttendanceSystemStatusPictoArray, $AttendanceSystemStatusArray;
 		if ($mode == 0)
 		{
 			$prefix='';
@@ -387,23 +387,23 @@ class AttendanceSystem extends CommonObject
 		}
 		if ($mode == 2)
 		{
-			 return img_picto($AttendanceSystemStatusArray[$status],$AttendanceSystemStatusPictoArray[$status]).' '.$langs->trans($AttendanceSystemStatusArray[$status]);
+			 return img_picto($AttendanceSystemStatusArray[$status], $AttendanceSystemStatusPictoArray[$status]).' '.$langs->trans($AttendanceSystemStatusArray[$status]);
 		}
 		if ($mode == 3)
 		{
-			 return img_picto($AttendanceSystemStatusArray[$status],$AttendanceSystemStatusPictoArray[$status]);
+			 return img_picto($AttendanceSystemStatusArray[$status], $AttendanceSystemStatusPictoArray[$status]);
 		}
 		if ($mode == 4)
 		{
-			 return img_picto($AttendanceSystemStatusArray[$status],$AttendanceSystemStatusPictoArray[$status]).' '.$langs->trans($AttendanceSystemStatusArray[$status]);
+			 return img_picto($AttendanceSystemStatusArray[$status], $AttendanceSystemStatusPictoArray[$status]).' '.$langs->trans($AttendanceSystemStatusArray[$status]);
 		}
 		if ($mode == 5)
 		{
-			 return $langs->trans($AttendanceSystemStatusArray[$status]).' '.img_picto($AttendanceSystemStatusArray[$status],$AttendanceSystemStatusPictoArray[$status]);
+			 return $langs->trans($AttendanceSystemStatusArray[$status]).' '.img_picto($AttendanceSystemStatusArray[$status], $AttendanceSystemStatusPictoArray[$status]);
 		}
 		if ($mode == 6)
 		{
-			 return $langs->trans($AttendanceSystemStatusArray[$status]).' '.img_picto($AttendanceSystemStatusArray[$status],$AttendanceSystemStatusPictoArray[$status]);
+			 return $langs->trans($AttendanceSystemStatusArray[$status]).' '.img_picto($AttendanceSystemStatusArray[$status], $AttendanceSystemStatusPictoArray[$status]);
 		}
 	}
 
@@ -426,7 +426,7 @@ class AttendanceSystem extends CommonObject
         // Uncomment this and change MYOBJECT to your own tag if you
         // want this action calls a trigger.
         //// Call triggers
-        //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+        //$result=$this->call_trigger('MYOBJECT_DELETE', $user);
         //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
         //// End call triggers
             }
@@ -471,7 +471,7 @@ class AttendanceSystem extends CommonObject
      */
     function createFromClone($fromid)
     {
-        global $user,$langs;
+        global $user, $langs;
         $error=0;
         $object=new AttendanceSystem($this->db);
         $this->db->begin();
@@ -559,15 +559,15 @@ class AttendanceSystem extends CommonObject
     function setSQLfields($user){
         $sql='';
         
-	$sql.=' label='.(empty($this->label)!=0 ? 'null':"'".$this->db->escape($this->label)."'").',';
-	$sql.=' ip='.(empty($this->ip)!=0 ? 'null':"'".$this->db->escape($this->ip)."'").',';
-	$sql.=' port='.(empty($this->port)!=0 ? 'null':"'".$this->port."'").',';
-	$sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").',';
-	$sql.=' fk_third_party='.(empty($this->third_party)!=0 ? 'null':"'".$this->third_party."'").',';
-	$sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").',';
-	$sql.=' fk_project='.(empty($this->project)!=0 ? 'null':"'".$this->project."'").',';
-	$sql.=' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").',';
-	$sql.=' date_modification=NOW() ,';
+	$sql.=' label='.(empty($this->label)!=0 ? 'null':"'".$this->db->escape($this->label)."'").', ';
+	$sql.=' ip='.(empty($this->ip)!=0 ? 'null':"'".$this->db->escape($this->ip)."'").', ';
+	$sql.=' port='.(empty($this->port)!=0 ? 'null':"'".$this->port."'").', ';
+	$sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").', ';
+	$sql.=' fk_third_party='.(empty($this->third_party)!=0 ? 'null':"'".$this->third_party."'").', ';
+	$sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").', ';
+	$sql.=' fk_project='.(empty($this->project)!=0 ? 'null':"'".$this->project."'").', ';
+	$sql.=' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").', ';
+	$sql.=' date_modification=NOW() , ';
 	$sql.=' fk_user_modification="'.$user->id.'"';
 
         
@@ -615,7 +615,7 @@ class AttendanceSystem extends CommonObject
      * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */    
-       public function unserialize($str,$mode=0){
+       public function unserialize($str, $mode=0){
        $ret='';
        $array= array();
         switch($mode)

@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -24,17 +24,17 @@
  *					Initialy built by build_class_from_table on 2015-08-01 08:59
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
+//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
+//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');			// Do not check style html tag into posted data
+//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
+//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');			// If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';;
@@ -58,38 +58,38 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 $langs->load("Timesheet");
 
 // Get parameter
-$id			= GETPOST('id','int');
-$ref                  = GETPOST('ref','alpha');
-$action		= GETPOST('action','alpha');
-$backtopage = GETPOST('backtopage','aplha');
-$cancel=GETPOST('cancel','aplha');
-$confirm=GETPOST('confirm','aplha');
-$tms= GETPOST('tms','alpha');
-$ajax	= GETPOST('ajax','int');
+$id			= GETPOST('id', 'int');
+$ref                  = GETPOST('ref', 'alpha');
+$action		= GETPOST('action', 'alpha');
+$backtopage = GETPOST('backtopage', 'aplha');
+$cancel=GETPOST('cancel', 'aplha');
+$confirm=GETPOST('confirm', 'aplha');
+$tms= GETPOST('tms', 'alpha');
+$ajax	= GETPOST('ajax', 'int');
 //// Get parameters
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter=GETPOSTISSET("removefilter_x") || GETPOSTISSET("removefilter");
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )		// Both test must be present to be compatible with all browsers
 {
-    	$ls_user= GETPOST('ls_user','int');
+    	$ls_user= GETPOST('ls_user', 'int');
 	if($ls_user==-1)$ls_user='';
-	$ls_project= GETPOST('ls_project','int');
+	$ls_project= GETPOST('ls_project', 'int');
 	if($ls_project==-1)$ls_project='';
-	$ls_project_task= GETPOST('ls_project_task','int');
+	$ls_project_task= GETPOST('ls_project_task', 'int');
 	if($ls_project_task==-1)$ls_project_task='';
-	$ls_subtask= GETPOST('ls_subtask','int');
-	$ls_date_start_month= GETPOST('ls_date_start_month','int');
-	$ls_date_start_year= GETPOST('ls_date_start_year','int');
-	$ls_date_end_month= GETPOST('ls_date_end_month','int');
-	$ls_date_end_year= GETPOST('ls_date_end_year','int');
+	$ls_subtask= GETPOST('ls_subtask', 'int');
+	$ls_date_start_month= GETPOST('ls_date_start_month', 'int');
+	$ls_date_start_year= GETPOST('ls_date_start_year', 'int');
+	$ls_date_end_month= GETPOST('ls_date_end_month', 'int');
+	$ls_date_end_year= GETPOST('ls_date_end_year', 'int');
 
     
 }
 
 
-$page = GETPOST('page','int');//FIXME, need to use for all the list
+$page = GETPOST('page', 'int');//FIXME, need to use for all the list
 if ($page == -1) { $page = 0;}
 $limit=$conf->liste_limit;
 $offset = $limit * $page;
@@ -119,16 +119,16 @@ if(!empty($ref))
 // Action to add record
 $error=0;
 if ($cancel){
-        reloadpage($backtopage,$id,$ref);
+        reloadpage($backtopage, $id, $ref);
 }else if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
-    if(GETPOST('User','int')=="" ) //to keep the tms on javvascript reload
+    if(GETPOST('User', 'int')=="" ) //to keep the tms on javvascript reload
     {
         $tms=getToken();
         $_SESSION['timesheetFavourite'.$tms]=array();
         $_SESSION['timesheetFavourite'.$tms]['action']=$action;
     }else {
-        $editedUser=GETPOST('User','int');
-        $editedProject=GETPOST('Project','int');		
+        $editedUser=GETPOST('User', 'int');
+        $editedProject=GETPOST('Project', 'int');		
         
     }
     
@@ -140,16 +140,16 @@ if ($cancel){
                 $action=($action=='add')?'create':'edit';
         }
         //retrive the data
-             $object->user=($user->admin && $ajax!=1)?GETPOST('User','int'):$userId;
-            $object->project=GETPOST('Project','int');
+             $object->user=($user->admin && $ajax!=1)?GETPOST('User', 'int'):$userId;
+            $object->project=GETPOST('Project', 'int');
             if($object->project==-1)$object->project='';
-            $object->project_task=GETPOST('Projecttask','int');
+            $object->project_task=GETPOST('Projecttask', 'int');
             if($object->project_task==-1)$object->project_task='';
-            $object->subtask=GETPOST('Subtask','int');
+            $object->subtask=GETPOST('Subtask', 'int');
             if( $object->subtask=="") $object->subtask=0;
             
-            $object->date_start=dol_mktime(0, 0, 0,GETPOST('Datestartmonth','int'),GETPOST('Datestartday','int'),GETPOST('Datestartyear','int'));
-            $object->date_end=dol_mktime(0, 0, 0,GETPOST('Dateendmonth','int'),GETPOST('Dateendday','int'),GETPOST('Dateendyear','int'));
+            $object->date_start=dol_mktime(0, 0, 0, GETPOST('Datestartmonth', 'int'), GETPOST('Datestartday', 'int'), GETPOST('Datestartyear', 'int'));
+            $object->date_end=dol_mktime(0, 0, 0, GETPOST('Dateendmonth', 'int'), GETPOST('Dateendday', 'int'), GETPOST('Dateendyear', 'int'));
 
         
         
@@ -180,7 +180,7 @@ if ($cancel){
                                 // Creation OK
                                 unset($_SESSION['timesheetFavourite'.$tms]);
                                     setEventMessage('RecordUpdated', 'mesgs');
-                                    reloadpage($backtopage,$object->id,$ref);
+                                    reloadpage($backtopage, $object->id, $ref);
                             }
                             else
                             {
@@ -198,10 +198,10 @@ if ($cancel){
                             // fetch the object data if possible
                             if ($id > 0 || !empty($ref) )
                             {
-                                    $result=$object->fetch($id,$ref);
+                                    $result=$object->fetch($id, $ref);
                                     // only admin can check the whitelist of other
                                     if(!$user->admin && $user->id != $object->user){
-                                        setEventMessage( $langs->trans('notYourWhitelist').' id:'.$id,'errors');
+                                        setEventMessage( $langs->trans('notYourWhitelist').' id:'.$id, 'errors');
                                         reloadpage();
                                     }
                                     if ($result < 0){ 
@@ -214,8 +214,8 @@ if ($cancel){
                                
                             }else
                             {
-                                    setEventMessage( $langs->trans('noIdPresent').' id:'.$id,'errors');
-                                    reloadpage(null,$id,$ref);
+                                    setEventMessage( $langs->trans('noIdPresent').' id:'.$id, 'errors');
+                                    reloadpage(null, $id, $ref);
                             }
                             break;
                     case 'add':
@@ -230,7 +230,7 @@ if ($cancel){
                                            exit;
                                    }else{
                                        setEventMessage('RecordSucessfullyCreated', 'mesgs');
-                                       reloadpage($backtopage,$result,$ref);
+                                       reloadpage($backtopage, $result, $ref);
                                    }
                                     
                             }else
@@ -260,16 +260,16 @@ if ($cancel){
                             else
                             {
                                     // Delete NOK
-                                    if (! empty($object->errors)) setEventMessage($object->errors,'errors');
-                                    else setEventMessage('RecordNotDeleted','errors');
-                                    reloadpage(null,$id,$ref);
+                                    if (! empty($object->errors)) setEventMessage($object->errors, 'errors');
+                                    else setEventMessage('RecordNotDeleted', 'errors');
+                                    reloadpage(null, $id, $ref);
                             }
                          break;
                     case 'list':
                     case 'create':
                     default:
                         //document handling
-                        if(version_compare(DOL_VERSION,"4.0")>=0){
+                        if(version_compare(DOL_VERSION, "4.0")>=0){
                             include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
                         }else{
                             include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
@@ -279,7 +279,7 @@ if ($cancel){
                             break;
             }             
 //Removing the tms array so the order can't be submitted two times
-if(isset( $_SESSION['timesheetFavourite'.$tms]) &&  !GETPOST('Project','int') )
+if(isset( $_SESSION['timesheetFavourite'.$tms]) &&  !GETPOST('Project', 'int') )
 {
    // unset($_SESSION['timesheetFavourite'.$tms]);
 }
@@ -293,7 +293,7 @@ if ($ajax==1){
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','timesheetFavourite','');
+llxHeader('', 'timesheetFavourite', '');
 print "<div> <!-- module body-->";
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -329,7 +329,7 @@ jQuery(document).ready(function() {
 	function init_myfunc()
 	{
 		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
+		jQuery("#myid").attr(\'disabled\', \'disabled\');
 	}
 	init_myfunc();
 	jQuery("#mybutton").click(function() {
@@ -346,7 +346,7 @@ switch ($action) {
         $edit=1;
    case 'delete';
         if( $action=='delete' && ($id>0 || $ref!="")){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDeleteTimesheetwhitelist'),'confirm_delete', '', 0, 1);
+         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteTimesheetwhitelist'), $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -359,7 +359,7 @@ switch ($action) {
         // tabs
         if($edit==0 && $new==0){ //show tabs
             $head=timesheetFavourite_prepare_head($object);
-            dol_fiche_head($head,'card',$langs->trans('Timesheetwhitelist'),0,'timesheet@timesheet');
+            dol_fiche_head($head, 'card', $langs->trans('Timesheetwhitelist'), 0, 'timesheet@timesheet');
         }else{
             print_fiche_titre($langs->trans('Timesheetwhitelist'));
         }
@@ -401,7 +401,7 @@ switch ($action) {
                     print $form->select_dolusers($object->user, 'User', 1, '', !$user->admin );
 
             }else{
-            print print_generic('user', 'rowid',$object->user,'lastname','firstname',' ');
+            print print_generic('user', 'rowid', $object->user, 'lastname', 'firstname', ' ');
             }
             print "</td>";
             print "</tr>\n";
@@ -421,17 +421,17 @@ switch ($action) {
                         $formUserWhere.=" OR (t.public='1')";
 
                 }
-                    //select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxUrl='')
+                    //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2='', $selected='', $separator=' - ', $sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'), $sqlTailTable='', $ajaxUrl='')
 		$ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
-            $htmlProjectArray=array('name'=>'Project','ajaxNbChar'=>$ajaxNbChar,'otherparam'=>' onchange="reload(this.form)"');
-            $sqlProjectArray=array('table'=>'projet','keyfield'=>'rowid','fields'=>'ref,title','join'=>$formUserJoin,'where'=>$formUserWhere,'separator' => ' - ');
-            print select_sellist($sqlProjectArray,$htmlProjectArray,$object->project);
-                //print select_generic('projet','rowid','Project','ref','title',$object->project,' - ',$formUserWhere,'',NULL,$formUserJoin);
+            $htmlProjectArray=array('name'=>'Project', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange="reload(this.form)"');
+            $sqlProjectArray=array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
+            print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);
+                //print select_generic('projet', 'rowid', 'Project', 'ref', 'title', $object->project, ' - ', $formUserWhere, '', NULL, $formUserJoin);
 		
                 if($ajaxNbChar>=0) print "\n<script type='text/javascript'>\n$('input#Project').change(function(){\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
   //FIXME best to feed additionnal param to the search generic       
                 }else{
-		print print_generic('projet','rowid',$object->project,'ref','title');
+		print print_generic('projet', 'rowid', $object->project, 'ref', 'title');
 		}
 		print "</td>";
 		print "</tr>\n";
@@ -455,16 +455,16 @@ switch ($action) {
                   //if (isset($formProject)){  
                     $ajaxNbChar=intval($conf->global->TIMESHEET_SEARCHBOX);
                         
-                    $htmlProjectTaskArray=array('name'=>'Projecttask','ajaxNbChar'=>$ajaxNbChar);
-                    $sqlProjectTaskArray=array('table'=>'projet_task','keyfield'=>'rowid','fields'=>'ref,label','join'=>$formTaskJoin,'where'=>$formTaskWhere,'separator' => ' - ');
-                    print select_sellist($sqlProjectTaskArray,$htmlProjectTaskArray,$object->project_task);
-                    //print select_generic('projet_task','rowid','Projecttask','ref','label',$object->project_task,' - ',$formTaskWhere,'',NULL,$formTaskJoin,$ajaxNbChar);
+                    $htmlProjectTaskArray=array('name'=>'Projecttask', 'ajaxNbChar'=>$ajaxNbChar);
+                    $sqlProjectTaskArray=array('table'=>'projet_task', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
+                    print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
+                    //print select_generic('projet_task', 'rowid', 'Projecttask', 'ref', 'label', $object->project_task, ' - ', $formTaskWhere, '', NULL, $formTaskJoin, $ajaxNbChar);
                   //}else{
                   //      print '<select class="flat minwidth200" id="Projecttask" name="Projecttask"></select>';
                   //}
                     
                 }else{
-		print print_generic('projet_task','rowid',$object->project_task,'ref','label');
+		print print_generic('projet_task', 'rowid', $object->project_task, 'ref', 'label');
 		}
 		print "</td>";
 		print "</tr>\n";
@@ -487,14 +487,14 @@ switch ($action) {
 		print '<td>'.$langs->trans('DateStart').' </td><td>';
 		if($edit==1){
 		if($new==1){
-			print $form->select_date(-1,'Datestart');
+			print $form->select_date(-1, 'Datestart');
 		}else{
                                                     if($object->date_start=='')
                                                             $object->date_start=-1;
-			print $form->select_date($object->date_start,'Datestart');
+			print $form->select_date($object->date_start, 'Datestart');
 		}
 		}else{
-			print dol_print_date($object->date_start,'day');
+			print dol_print_date($object->date_start, 'day');
 		}
 		print "</td>";
 		print "</tr>\n";
@@ -505,14 +505,14 @@ switch ($action) {
 		print '<td>'.$langs->trans('DateEnd').' </td><td>';
 		if($edit==1){
 		if($new==1){
-			print $form->select_date(-1,'Dateend');
+			print $form->select_date(-1, 'Dateend');
 		}else{
                                                     if($object->date_end=='')
                                                             $object->date_end=-1;
-			print $form->select_date($object->date_end,'Dateend');
+			print $form->select_date($object->date_end, 'Dateend');
 		}
 		}else{
-			print dol_print_date($object->date_end,'day');
+			print dol_print_date($object->date_end, 'day');
 		}
 		print "</td>";
 		print "</tr>\n";
@@ -532,7 +532,7 @@ switch ($action) {
             print '</form>';
         }else{
             $parameters=array();
-            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);// Note that $action and $object may have been modified by hook
+            $reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);// Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
             $userId= (is_object($user)?$user->id:$user);
             if (empty($reshook) && ($user->admin || $userId == $object->user))
@@ -564,7 +564,7 @@ switch ($action) {
         break;
     case 'delete':
         if( ($id>0 || $ref!='')){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteTimesheetwhitelist'),$langs->trans('ConfirmDeleteTimesheetwhitelist'),'confirm_delete', '', 0, 1);
+         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteTimesheetwhitelist'), $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background        
         }
@@ -572,13 +572,13 @@ switch ($action) {
     default:
         {
     $sql = 'SELECT';
-    $sql.= ' t.rowid,';
+    $sql.= ' t.rowid, ';
     
-		$sql.=' t.fk_user,';
-		$sql.=' t.fk_project,';
-		$sql.=' t.fk_project_task,';
-		$sql.=' t.subtask,';
-		$sql.=' t.date_start,';
+		$sql.=' t.fk_user, ';
+		$sql.=' t.fk_project, ';
+		$sql.=' t.fk_project_task, ';
+		$sql.=' t.subtask, ';
+		$sql.=' t.date_start, ';
 		$sql.=' t.date_end';
 
     
@@ -589,7 +589,7 @@ switch ($action) {
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
-            $filtrearr = explode(',', $filter);
+            $filtrearr = explode(', ', $filter);
             foreach ($filtrearr as $fil)
             {
                     $filt = explode(':', $fil);
@@ -612,10 +612,10 @@ switch ($action) {
             if($ls_date_end_month)$sqlwhere .= ' AND MONTH(t.date_end)=\''.$ls_date_end_month.'\'';
             if($ls_date_end_year)$sqlwhere .= ' AND YEAR(t.date_end)=\''.$ls_date_end_year.'\'';
         }else{
-            if($ls_date_start_month)$sqlwhere .= ' AND date_part(\'month\',t.date_start)=\''.$ls_date_start_month.'\'';//FIXME PGSQL
-            if($ls_date_start_year)$sqlwhere .= ' AND date_part(\'year\',t.date_start)=\''.$ls_date_start_year.'\'';
-            if($ls_date_end_month)$sqlwhere .= ' AND date_part(\'month\',t.date_end)=\''.$ls_date_end_month.'\'';
-            if($ls_date_end_year)$sqlwhere .= ' AND date_part(\'year\',t.date_end)=\''.$ls_date_end_year.'\'';
+            if($ls_date_start_month)$sqlwhere .= ' AND date_part(\'month\', t.date_start)=\''.$ls_date_start_month.'\'';//FIXME PGSQL
+            if($ls_date_start_year)$sqlwhere .= ' AND date_part(\'year\', t.date_start)=\''.$ls_date_start_year.'\'';
+            if($ls_date_end_month)$sqlwhere .= ' AND date_part(\'month\', t.date_end)=\''.$ls_date_end_month.'\'';
+            if($ls_date_end_year)$sqlwhere .= ' AND date_part(\'year\', t.date_end)=\''.$ls_date_end_year.'\'';
         }
     
     //list limit
@@ -632,7 +632,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if(!empty($sortfield)){$sql.= $db->order($sortfield,$sortorder);
+    if(!empty($sortfield)){$sql.= $db->order($sortfield, $sortorder);
     }else{ $sortorder = 'ASC';}
     
     if (!empty($limit))
@@ -660,22 +660,22 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
-        print_barre_liste($langs->trans("Timesheetwhitelist"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+        print_barre_liste($langs->trans("Timesheetwhitelist"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="liste" width="100%">'."\n";
         //TITLE
         print '<tr class="liste_titre">';
-        if($user->admin)print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_user','',$param,'',$sortfield,$sortorder);
+        if($user->admin)print_liste_field_titre($langs->trans('User'), $PHP_SELF, 't.fk_user', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Project'),$PHP_SELF,'t.fk_project','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Task'),$PHP_SELF,'t.fk_project_task','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_project_task', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Subtask'),$PHP_SELF,'t.subtask','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Subtask'), $PHP_SELF, 't.subtask', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('DateStart'),$PHP_SELF,'t.date_start','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DateStart'), $PHP_SELF, 't.date_start', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('DateEnd'),$PHP_SELF,'t.date_end','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DateEnd'), $PHP_SELF, 't.date_end', '', $param, '', $sortfield, $sortorder);
 	print "\n";
 
         
@@ -686,24 +686,24 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	if($user->admin){
             print '<td class="liste_titre" colspan="1" >';
             $ajaxNbChar=$conf->global->CONTACT_USE_SEARCH_TO_SELECT;
-            print $form->select_users($ls_user,'ls_user');
+            print $form->select_users($ls_user, 'ls_user');
            print '</td>';
         }
 //Search field forproject
 	print '<td class="liste_titre" colspan="1" >';
         $ajaxNbChar=$conf->global->PROJECT_USE_SEARCH_TO_SELECT;
-        $htmlProjectArray=array('name'=>'ls_project','ajaxNbChar'=>$ajaxNbChar);
-        $sqlProjectArray=array('table'=>'projet','keyfield'=>'rowid','fields'=>'ref,title','join'=>$formUserJoin,'where'=>$formUserWhere,'separator' => ' - ');
-        print select_sellist($sqlProjectArray,$htmlProjectArray,$ls_project);
-//        print select_generic('projet','rowid','ls_project','ref','title',$ls_project ,' - ','', '', NULL,'', $ajaxNbChar);
+        $htmlProjectArray=array('name'=>'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
+        $sqlProjectArray=array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
+        print select_sellist($sqlProjectArray, $htmlProjectArray, $ls_project);
+//        print select_generic('projet', 'rowid', 'ls_project', 'ref', 'title', $ls_project , ' - ', '', '', NULL, '', $ajaxNbChar);
 	print '</td>';
 //Search field forproject_task
 	print '<td class="liste_titre" colspan="1" >';
         $ajaxNbChar=intval($conf->global->TIMESHEET_SEARCHBOX);
-        $htmlProjectTaskArray=array('name'=>'ls_project_task','ajaxNbChar'=>$ajaxNbChar);
-        $sqlProjectTaskArray=array('table'=>'projet_task','keyfield'=>'rowid','fields'=>'ref,label','join'=>$formTaskJoin,'where'=>$formTaskWhere,'separator' => ' - ');
-        print select_sellist($sqlProjectTaskArray,$htmlProjectTaskArray,$object->project_task);
-        //print select_generic('projet_task','rowid','ls_project_task','ref','label',$ls_project_task ,' - ','', '', NULL,'', $ajaxNbChar);
+        $htmlProjectTaskArray=array('name'=>'ls_project_task', 'ajaxNbChar'=>$ajaxNbChar);
+        $sqlProjectTaskArray=array('table'=>'projet_task', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
+        print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
+        //print select_generic('projet_task', 'rowid', 'ls_project_task', 'ref', 'label', $ls_project_task , ' - ', '', '', NULL, '', $ajaxNbChar);
 	print '</td>';
 //Search field forsubtask
 	print '<td class="liste_titre" colspan="1" >';
@@ -713,20 +713,20 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="date_start_month" value="'.$ls_date_start_month.'">';
 	$syear = $ls_date_start_year;
-	$formother->select_year($syear?$syear:-1,'ls_date_start_year',1, 20, 5);
+	$formother->select_year($syear?$syear:-1, 'ls_date_start_year', 1, 20, 5);
 	print '</td>';
 //Search field fordate_end
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="date_end_month" value="'.$ls_date_end_month.'">';
 	$syear = $ls_date_end_year;
-	$formother->select_year($syear?$syear:-1,'ls_date_end_year',1, 20, 5);
+	$formother->select_year($syear?$syear:-1, 'ls_date_end_year', 1, 20, 5);
 	print '</td>';
 
         
         
         print '<td width="15px">';
-        print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-        print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+        print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+        print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
         print '</td>';
         print '</tr>'."\n";
         $i=0;
@@ -740,12 +740,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 // You can use here results
                 		print "<tr class=\"oddeven\"  onclick=\"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
-		if($user->admin)print "<td>".print_generic('user','rowid',$obj->fk_user,'lastname','firstname',' ')."</td>";
-		print "<td>".print_generic('projet','rowid',$obj->fk_project,'ref','title', ' - ')."</td>";
-		print "<td>".print_generic('projet_task','rowid',$obj->fk_project_task,'ref','label', ' - ')."</td>";
+		if($user->admin)print "<td>".print_generic('user', 'rowid', $obj->fk_user, 'lastname', 'firstname', ' ')."</td>";
+		print "<td>".print_generic('projet', 'rowid', $obj->fk_project, 'ref', 'title', ' - ')."</td>";
+		print "<td>".print_generic('projet_task', 'rowid', $obj->fk_project_task, 'ref', 'label', ' - ')."</td>";
 		print "<td>".$obj->subtask."</td>";
-		print "<td>".dol_print_date($obj->date_start,'day')."</td>";
-		print "<td>".dol_print_date($obj->date_end,'day')."</td>";
+		print "<td>".dol_print_date($obj->date_start, 'day')."</td>";
+		print "<td>".dol_print_date($obj->date_end, 'day')."</td>";
                 print '<td><a href="'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 		print "</tr>";
 
@@ -774,7 +774,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 dol_fiche_end();
 
-function reloadpage($backtopage,$id,$ref){
+function reloadpage($backtopage, $id, $ref){
         if (!empty($backtopage)){
             header("Location: ".$backtopage);
         }else if (!empty($ref) ){
@@ -803,8 +803,8 @@ function timesheetFavourite_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__');to add new tab
     // $this->tabs = array('entity:-tabname);												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'timesheet');
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'timesheet','remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet', 'remove');
     /*
     $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewdoc&id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");

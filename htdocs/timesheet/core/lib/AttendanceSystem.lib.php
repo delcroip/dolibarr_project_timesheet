@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -25,7 +25,7 @@
  *					Initialy built by build_class_from_table on 2019-01-30 16:24
  */
 
-function AttendanceSystemReloadPage($backtopage,$id,$ref){
+function AttendanceSystemReloadPage($backtopage, $id, $ref){
         if (!empty($backtopage)){
             header("Location: ".$backtopage);
         }else if (!empty($ref) ){
@@ -74,7 +74,7 @@ function AttendanceSystemPrepareHead($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->timesheet->dir_output . "/AttendanceSystem/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemDoc.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');

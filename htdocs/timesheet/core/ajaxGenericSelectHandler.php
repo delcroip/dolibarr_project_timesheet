@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -18,10 +18,10 @@
  */
 
 include 'lib/includeMain.lib.php';
- global $conf,$langs,$db;
+ global $conf, $langs, $db;
  top_httphead();
-//get the token,exit if 
-$token=GETPOST('token','apha');
+//get the token, exit if 
+$token=GETPOST('token', 'apha');
 
 if(!isset($_SESSION['ajaxQuerry'][$token]))exit();
 
@@ -32,9 +32,9 @@ $addtionnalChoices=$_SESSION['ajaxQuerry'][$token]['option'];
 $separator=isset($htmlarray['separator'])?$htmlarray['separator']:' ';
 
 
- $search=GETPOST($htmlName,'alpha');
+ $search=GETPOST($htmlName, 'alpha');
 //find if barckets
-$posBs=strpos($htmlName,'[');
+$posBs=strpos($htmlName, '[');
 if($posBs>0){
     $subStrL1= substr($htmlName, 0, $posBs);
     $search=$_GET[$subStrL1];
@@ -48,7 +48,7 @@ if($posBs>0){
     $selectedValue='';
     $sql='SELECT DISTINCT ';
     $sql.=$sqlarray['keyfield'];
-    $sql.=' ,'.$sqlarray['fields'];
+    $sql.=' , '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql.=' '.$sqlarray['join'];
@@ -60,19 +60,19 @@ if($posBs>0){
     $return_arr = array();
     $resql=$db->query($sql);
    //remove the 't. from key fields
-    $startkey=strpos($sqlarray['keyfield'],'.');
+    $startkey=strpos($sqlarray['keyfield'], '.');
     $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
     
     
     if ($resql)
     {
-          // support AS in the fields ex $field1='CONTACT(u.firstname,' ',u.lastname) AS fullname'
+          // support AS in the fields ex $field1='CONTACT(u.firstname, ' ', u.lastname) AS fullname'
         // with sqltail= 'JOIN llx_user as u ON t.fk_user=u.rowid'
-        $listFields=explode(',',$sqlarray['fields']);
+        $listFields=explode(', ', $sqlarray['fields']);
         $fields=array();
     foreach($listFields as $item){
-        $start=MAX(strpos($item,' AS '),strpos($item,' as '));
-        $start2=strpos($item,'.');
+        $start=MAX(strpos($item, ' AS '), strpos($item, ' as '));
+        $start2=strpos($item, '.');
         $label=$item;
         if($start){
             $label=substr($item, $start+4);
@@ -103,7 +103,7 @@ if($posBs>0){
 		//$row_array['value'] = $value;
                 $row_array['value'] =  $label;
 	        $row_array['key'] =$value;
-                array_push($return_arr,$row_array);
+                array_push($return_arr, $row_array);
             } 
             $i++;
         }
@@ -111,7 +111,7 @@ if($posBs>0){
                 $row_array['label'] = $label;
 		$row_array['value'] = $label;
 	        $row_array['key'] =$value;
-            array_push($return_arr,$row_array);
+            array_push($return_arr, $row_array);
         }
 
         

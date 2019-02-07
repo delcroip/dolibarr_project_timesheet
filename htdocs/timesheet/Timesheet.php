@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -32,25 +32,25 @@ require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 
 
-$action           = GETPOST('action','alpha');
-$datestart        = GETPOST('dateStart','alpha');
+$action           = GETPOST('action', 'alpha');
+$datestart        = GETPOST('dateStart', 'alpha');
 
 //should return the XMLDoc
-$ajax             = GETPOST('ajax','int');
-$xml             = GETPOST('xml','int');
-$optioncss = GETPOST('optioncss','alpha');
+$ajax             = GETPOST('ajax', 'int');
+$xml             = GETPOST('xml', 'int');
+$optioncss = GETPOST('optioncss', 'alpha');
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 //$toDate               = GETPOST('toDate');
-$toDate               = GETPOST('toDate','alpha');
+$toDate               = GETPOST('toDate', 'alpha');
 if(!empty($toDate) && $action=='goToDate'){
-$toDateday                  =GETPOST('toDateday','int');// to not look for the date if action not goTodate
-$toDatemonth               = GETPOST('toDatemonth','int');
-$toDateyear               = GETPOST('toDateyear','int');
+$toDateday                  =GETPOST('toDateday', 'int');// to not look for the date if action not goTodate
+$toDatemonth               = GETPOST('toDatemonth', 'int');
+$toDateyear               = GETPOST('toDateyear', 'int');
 }
 
-$timestamp=GETPOST('timestamp','alpha');
-$whitelistmode=GETPOST('wlm','int');
+$timestamp=GETPOST('timestamp', 'alpha');
+$whitelistmode=GETPOST('wlm', 'int');
 if($whitelistmode=='')$whitelistmode=$conf->global->TIMESHEET_WHITELIST_MODE;
 $userid=  is_object($user)?$user->id:$user;
 // if the user can enter ts for other the user id is diferent
@@ -62,13 +62,13 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
     }else if(isset($_GET['userid'])){
         $newuserid=$_GET['userid'];
     }
-    $SubordiateIds=getSubordinates($db,$userid, 2,array(),TEAM,$entity='1');
+    $SubordiateIds=getSubordinates($db, $userid, 2, array(), TEAM, $entity='1');
     $SubordiateIds[]=$userid;
     if (in_array($newuserid, $SubordiateIds) || $user->admin){
         $SubordiateIds[]=$userid;
         $userid=$newuserid;
     }else if($action=='getOtherTs'){
-        setEventMessage($langs->transnoentitiesnoconv("NotAllowed"),'errors');
+        setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
         unset($action);
     }
 
@@ -77,12 +77,12 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
 
 
 
-$confirm=GETPOST('confirm','alpha');
+$confirm=GETPOST('confirm', 'alpha');
 
 if($toDateday==0 && $datestart ==0 && isset($_SESSION["dateStart"])) {
     $dateStart=$_SESSION["dateStart"];
 }else {
-    $dateStart=parseDate($toDateday,$toDatemonth,$toDateyear,$datestart);
+    $dateStart=parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
 }
 
 $_SESSION["dateStart"]=$dateStart ;
@@ -102,9 +102,9 @@ $langs->load('timesheet@timesheet');
 /*
 // Get parameters
 
-$id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
-$myparam	= GETPOST('myparam','alpha');
+$id			= GETPOST('id', 'int');
+$action		= GETPOST('action', 'alpha');
+$myparam	= GETPOST('myparam', 'alpha');
 
 // Protection if external user
 if ($user->societe_id > 0)
@@ -114,7 +114,7 @@ if ($user->societe_id > 0)
 
 */
   
-$task_timesheet= new TimesheetUserTasks($db,$userid);
+$task_timesheet= new TimesheetUserTasks($db, $userid);
 
 /*******************************************************************
 * ACTIONS
@@ -132,41 +132,41 @@ switch($action){
             if(GETPOSTISSET('task'))
             {
                                  $ret=0;
-                                 $notesTask=GETPOST('notesTask','array');
-                                 $notesTaskApproval=GETPOST('noteTaskApproval','array');
-                                 $tasks=GETPOST('task','array');
+                                 $notesTask=GETPOST('notesTask', 'array');
+                                 $notesTaskApproval=GETPOST('noteTaskApproval', 'array');
+                                 $tasks=GETPOST('task', 'array');
 				 foreach($tasks as $key => $tasktab){
-					 $task_timesheet->loadFromSession($timestamp,$key);
+					 $task_timesheet->loadFromSession($timestamp, $key);
                                          if($task_timesheet->note!=$notesTaskApproval[$key]){
                                             $update=true;
                                             $task_timesheet->note=$notesTaskApproval[$key];
                                             $task_timesheet->update($user);
                                          }                                    
-                                         $ret=$task_timesheet->updateActuals($tasktab,$notesTask);
+                                         $ret=$task_timesheet->updateActuals($tasktab, $notesTask);
                                          
                                          
                                          if(GETPOSTISSET('submit') ){
-                                                $task_timesheet->setStatus($user,SUBMITTED);
+                                                $task_timesheet->setStatus($user, SUBMITTED);
                                                 $ret++;
                                              //$task_timesheet->status="SUBMITTED";
 						
 					 }else{
-                                             $task_timesheet->setStatus($user,DRAFT);
+                                             $task_timesheet->setStatus($user, DRAFT);
                                          }
-                		//$ret =postActuals($db,$user,$_POST['task'],$timestamp);
+                		//$ret =postActuals($db, $user, $_POST['task'], $timestamp);
                                           TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
 				 }
             }else if(GETPOSTISSET('recall')){
-				$task_timesheet->loadFromSession($timestamp,GETPOST('tsUserId','int'));/*FIXME to support multiple TS sent*/
+				$task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
                                 //$task_timesheet->status="DRAFT";
-                                $ret=$task_timesheet->setStatus($user,DRAFT);
+                                $ret=$task_timesheet->setStatus($user, DRAFT);
                 if($ret>0)setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
-                else setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"),'errors');
+                else setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"), 'errors');
             }else{
-                    setEventMessage( $langs->transnoentitiesnoconv("NoTaskToUpdate"),'errors');
+                    setEventMessage( $langs->transnoentitiesnoconv("NoTaskToUpdate"), 'errors');
             }
         }else
-                setEventMessage( $langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" : timestamp missmatch"),'errors');
+                setEventMessage( $langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" : timestamp missmatch"), 'errors');
 
         break;
     case 'deletefile':
@@ -184,7 +184,7 @@ switch($action){
 if(!empty($timestamp)){
        unset($_SESSION['task_timesheet'][$timestamp]);
 }
-$task_timesheet->fetchAll($dateStart,$whitelistmode);
+$task_timesheet->fetchAll($dateStart, $whitelistmode);
 
 if($conf->global->TIMESHEET_ADD_DOCS){
     dol_include_once('/core/class/html.formfile.class.php');
@@ -192,8 +192,8 @@ if($conf->global->TIMESHEET_ADD_DOCS){
     $modulepart = 'timesheet';
     $object=$task_timesheet;
     $ref=dol_sanitizeFileName($object->ref);
-    $upload_dir = $conf->timesheet->dir_output.'/users/'.get_exdir($object->id,2,0,0,$object,'timesheet').$ref;
-    if(version_compare(DOL_VERSION,"4.0")>=0){
+    $upload_dir = $conf->timesheet->dir_output.'/users/'.get_exdir($object->id, 2, 0, 0, $object, 'timesheet').$ref;
+    if(version_compare(DOL_VERSION, "4.0")>=0){
         include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
     }else{
         include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
@@ -216,19 +216,19 @@ if($xml){
     exit;
 }
 
-$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
-llxHeader('',$langs->trans('Timesheet'),'','','','',$morejs);
+$morejs=array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
+llxHeader('', $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 
 //tmstp=time();
 //fetch ts for others
 
 if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER==1 && (count($SubordiateIds)>1 || $user->admin)){
-    print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid,$user->admin);
+    print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 
 $ajax=false;
-$Form =$task_timesheet->getHTMLNavigation($optioncss,$ajax);
+$Form =$task_timesheet->getHTMLNavigation($optioncss, $ajax);
 $Form .=$task_timesheet->getHTMLFormHeader($ajax);
      If($conf->global->TIMESHEET_WHITELIST==1){
         $Form.= '<div class="tabs" data-role="controlgroup" data-type="horizontal"  >';
@@ -256,7 +256,7 @@ if($conf->global->TIMESHEET_ADD_DOCS==1){
         $object=$task_timesheet;
         $modulepart = 'timesheet';
         $permission = 1;//$user->rights->timesheet->add;
-        $filearray=dol_dir_list($upload_dir,'files',0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+        $filearray=dol_dir_list($upload_dir, 'files', 0, '', '\.meta$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
         //$param = 'action=submitfile&id='.$object->id;
             $form=new Form($db);
             include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';

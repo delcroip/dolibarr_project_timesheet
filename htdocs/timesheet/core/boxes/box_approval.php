@@ -5,7 +5,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -62,20 +62,20 @@ class box_approval extends ModeleBoxes
         $userid=  is_object($user)?$user->id:$user;
 		$text =$langs->trans('Timesheet');
 		$this->info_box_head = array(
-				'text' => $text,
+				'text' => $text, 
 				'limit'=> dol_strlen($text)
 		);
                 
         if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
-           $subordinate=implode(',', getSubordinates($db, $userid,2));
+           $subordinate=implode(', ', getSubordinates($db, $userid, 2));
            if($subordinate=='')$subordinate=0;
-           $tasks=implode(',', array_keys(getTasks($db, $userid)));
+           $tasks=implode(', ', array_keys(getTasks($db, $userid)));
            if($tasks=='')$tasks=0;
-           // $sql.=' COUNT(t.rowid) as nb,';
-            $sql.=' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm ,t.recipient';
+           // $sql.=' COUNT(t.rowid) as nb, ';
+            $sql.=' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm , t.recipient';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
-            $sql.= ' WHERE t.status IN ('.SUBMITTED.','.UNDERAPPROVAL.','.CHALLENGED.') AND ((t.recipient='.TEAM;
+            $sql.= ' WHERE t.status IN ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.') AND ((t.recipient='.TEAM;
             $sql.= ' AND t.fk_userid in ('.$subordinate.'))';//fixme should check subordinate and project
             $sql.= ' OR (t.recipient='.PROJECT.' and fk_projet_task in ('.$tasks.')))';
             $sql.= '  GROUP BY t.recipient ';
@@ -94,43 +94,43 @@ class box_approval extends ModeleBoxes
                     }
 
                     $this->info_box_contents[0][] = array(
-                        'td' => 'align="left"',
-                        'text' => $langs->trans('team').': ',
-                        'text2'=> $langs->trans('nbTsToApprove'),
-                        'asis' => 1,
+                        'td' => 'align="left"', 
+                        'text' => $langs->trans('team').': ', 
+                        'text2'=> $langs->trans('nbTsToApprove'), 
+                        'asis' => 1, 
                     );
 
                     $this->info_box_contents[0][] = array(
-                        'td' => 'align="right"',
-                        'text' => $nbTm,
-                        'asis' => 1,
+                        'td' => 'align="right"', 
+                        'text' => $nbTm, 
+                        'asis' => 1, 
                     );
                     $this->info_box_contents[1][] = array(
-                        'td' => 'align="left"',
-                        'text' => $langs->trans('project').': ',
-                        'text2'=> $langs->trans('nbTsToApprove'),
-                        'asis' => 1,
+                        'td' => 'align="left"', 
+                        'text' => $langs->trans('project').': ', 
+                        'text2'=> $langs->trans('nbTsToApprove'), 
+                        'asis' => 1, 
                     );
 
                     $this->info_box_contents[1][] = array(
-                        'td' => 'align="right"',
-                        'text' => $nbPrj,
-                        'asis' => 1,
+                        'td' => 'align="right"', 
+                        'text' => $nbPrj, 
+                        'asis' => 1, 
                     );
 
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
-                    'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'td' => 'align="left"', 
+                    'maxlength'=>500, 
+                    'text' => ($db->error().' sql='.$sql), 
                 );
             }
 
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left"', 
+                'text' => $langs->trans("ReadPermissionNotAllowed"), 
             );
         }
     }
@@ -142,7 +142,7 @@ class box_approval extends ModeleBoxes
 	 *  @param  array   $contents   Array with properties of box lines
 	 *  @return void
 	 */
-	function showBox($head = null, $contents = null,$nooutput = 0)
+	function showBox($head = null, $contents = null, $nooutput = 0)
 	{
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}

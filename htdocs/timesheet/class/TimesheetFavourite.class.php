@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -85,18 +85,18 @@ class TimesheetFavourite extends CommonObject
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 
-        $sql.= 'fk_user,';
-        $sql.= 'fk_project,';
-        $sql.= 'fk_project_task,';
-        $sql.= 'subtask,';
-        $sql.= 'date_start,';
+        $sql.= 'fk_user, ';
+        $sql.= 'fk_project, ';
+        $sql.= 'fk_project_task, ';
+        $sql.= 'subtask, ';
+        $sql.= 'date_start, ';
         $sql.= 'date_end';		
         $sql.= ") VALUES (";
-        $sql.=' \''.$this->user.'\',';
-        $sql.=' \''.$this->project.'\',';
-        $sql.=' '.(empty($this->project_task)?'NULL':'\''.$this->project_task.'\'').',';
-        $sql.=' '.(($this->subtask) ? 'TRUE':'FALSE').',';
-        $sql.=' '.(empty($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'\''.$this->db->idate($this->date_start).'\'').',';
+        $sql.=' \''.$this->user.'\', ';
+        $sql.=' \''.$this->project.'\', ';
+        $sql.=' '.(empty($this->project_task)?'NULL':'\''.$this->project_task.'\'').', ';
+        $sql.=' '.(($this->subtask) ? 'TRUE':'FALSE').', ';
+        $sql.=' '.(empty($this->date_start) || dol_strlen($this->date_start)==0?'NULL':'\''.$this->db->idate($this->date_start).'\'').', ';
         $sql.=' '.(empty($this->date_end) || dol_strlen($this->date_end)==0?'NULL':'\''.$this->db->idate($this->date_end).'\'').'';
         $sql.= ")";
         $this->db->begin();
@@ -109,7 +109,7 @@ class TimesheetFavourite extends CommonObject
 
             if (! $notrigger)
             {
-   //// Call triggers :$result=$this->call_trigger('MYOBJECT_CREATE',$user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
+   //// Call triggers :$result=$this->call_trigger('MYOBJECT_CREATE', $user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             }
         }
         // Commit or rollback
@@ -138,18 +138,18 @@ class TimesheetFavourite extends CommonObject
     *  @param	date	$datestop	stopdate
      *  @return             array)timesheetFavourite          return the list of the user whiteliste	
      */
-    function fetchUserList($userid,$datestart,$datestop)
+    function fetchUserList($userid, $datestart, $datestop)
     {
       $List=array();
       $Listtask=array();
        $sql = "SELECT";
-		$sql.= " t.rowid,";
+		$sql.= " t.rowid, ";
 		
-		$sql.=' t.fk_user,';
-		$sql.=' t.fk_project,';
-		$sql.=' t.fk_project_task,';
-		$sql.=' t.subtask,';
-		$sql.=' t.date_start,';
+		$sql.=' t.fk_user, ';
+		$sql.=' t.fk_project, ';
+		$sql.=' t.fk_project_task, ';
+		$sql.=' t.subtask, ';
+		$sql.=' t.date_start, ';
 		$sql.=' t.date_end';
 
 		
@@ -185,7 +185,7 @@ class TimesheetFavourite extends CommonObject
             $this->db->free($resql);
             
             foreach($List as $row){
-                //$Listtask=array_merge($Listtask,$row->getTaskList());
+                //$Listtask=array_merge($Listtask, $row->getTaskList());
                 $subListtask=$row->getTaskList();
                 foreach($subListtask as $key => $value){
                     $Listtask[$key]=$value;
@@ -255,15 +255,15 @@ class TimesheetFavourite extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id, $ref='')
     {
         $sql = "SELECT";
-        $sql.= " t.rowid,";
-        $sql.=' t.fk_user,';
-        $sql.=' t.fk_project,';
-        $sql.=' t.fk_project_task,';
-        $sql.=' t.subtask,';
-        $sql.=' t.date_start,';
+        $sql.= " t.rowid, ";
+        $sql.=' t.fk_user, ';
+        $sql.=' t.fk_project, ';
+        $sql.=' t.fk_project_task, ';
+        $sql.=' t.subtask, ';
+        $sql.=' t.date_start, ';
         $sql.=' t.date_end';		
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql.= ' WHERE t.ref = \''.$ref.'\'';
@@ -315,11 +315,11 @@ class TimesheetFavourite extends CommonObject
         // Put here code to add a control on parameters values
     // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'\''.$this->user.'\'').',';
-        $sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'\''.$this->project.'\'').',';
-        $sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'\''.$this->project_task.'\'').',';
-        $sql.=' subtask='.(($this->subtask) ? 'TRUE':'FALSE').',';
-        $sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').',';
+        $sql.=' fk_user='.(empty($this->user)!=0 ? 'null':'\''.$this->user.'\'').', ';
+        $sql.=' fk_project='.(empty($this->project)!=0 ? 'null':'\''.$this->project.'\'').', ';
+        $sql.=' fk_project_task='.(empty($this->project_task)!=0 ? 'null':'\''.$this->project_task.'\'').', ';
+        $sql.=' subtask='.(($this->subtask) ? 'TRUE':'FALSE').', ';
+        $sql.=' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').', ';
         $sql.=' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').'';
         $sql.= " WHERE rowid=".$this->id;
         $this->db->begin();
@@ -331,7 +331,7 @@ class TimesheetFavourite extends CommonObject
             {
                     if (! $notrigger)
                     {
-   //// Call triggers :$result=$this->call_trigger('MYOBJECT_UPDATE',$user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
+   //// Call triggers :$result=$this->call_trigger('MYOBJECT_UPDATE', $user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
             
                      }
             }
@@ -362,7 +362,7 @@ class TimesheetFavourite extends CommonObject
      *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
      *	@return		string						String with URL
      */
-    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
+    function getNomUrl($htmlcontent, $id=0, $ref='', $withpicto=0)
     {
     	global $langs;
     	$result='';
@@ -392,9 +392,9 @@ class TimesheetFavourite extends CommonObject
             $label=$langs->trans("Show").': '.$id;
         }
     	if ($withpicto==1){ 
-            $result.=($lien.img_object($label,$picto).$htmlcontent.$lienfin);
+            $result.=($lien.img_object($label, $picto).$htmlcontent.$lienfin);
         }else if ($withpicto==2) {
-            $result.=$lien.img_object($label,$picto).$lienfin;
+            $result.=$lien.img_object($label, $picto).$lienfin;
         }else{  
             $result.=$lien.$htmlcontent.$lienfin;
         }
@@ -415,7 +415,7 @@ class TimesheetFavourite extends CommonObject
             {
                     if (! $notrigger)
                     {
-                //// Call triggers :$result=$this->call_trigger('MYOBJECT_DELETE',$user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
+                //// Call triggers :$result=$this->call_trigger('MYOBJECT_DELETE', $user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
                     }
             }
 
@@ -456,7 +456,7 @@ class TimesheetFavourite extends CommonObject
 	 */
 	function createFromClone($fromid)
 	{
-		global $user,$langs;
+		global $user, $langs;
 
 		$error=0;
 

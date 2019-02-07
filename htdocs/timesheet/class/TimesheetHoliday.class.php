@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -40,18 +40,18 @@ class TimesheetHoliday extends Holiday
 		//$this->date_start=strtotime('now -1 year');
 	}
 
-        /*public function initTimeSheet($weekWorkLoad,$taskTimeId) 
+        /*public function initTimeSheet($weekWorkLoad, $taskTimeId) 
     {
             $this->weekWorkLoad=$weekWorkLoad;
             $this->taskTimeId=$taskTimeId;
 
     }*/
-    public function fetchUserWeek($userId,$datestart,$datestop)
+    public function fetchUserWeek($userId, $datestart, $datestop)
     {
        
         $SQLfilter=  " AND (cp.date_fin>='".$this->db->idate($datestart)."') ";
         $SQLfilter.= " AND (cp.date_debut<'".$this->db->idate($datestop)."')";
-        $ret=$this->fetchByUser($userId,'',$SQLfilter);
+        $ret=$this->fetchByUser($userId, '', $SQLfilter);
         $this->holidayPresent=($ret==1);
         $this->holidaylist=array();
         //fixme fill the holiday list 
@@ -63,12 +63,12 @@ class TimesheetHoliday extends Holiday
          * next     --> is it the holiday continuing the day after
          * status   --> is the holiday submitted or approuved ( none if id=0)
          */
-        $timespan=getDayInterval($datestart,$datestop);
+        $timespan=getDayInterval($datestart, $datestop);
         for($day=0;$day<$timespan;$day++)
         {
             
-                $curDay=strtotime(' + '.$day.' days',$datestart);
-                $this->holidaylist[$day]=array('amId'=>'0','pmId'=>'0','prev'=>false,'am'=>false,'pm'=>false,'next'=>false,'amStatus'=>0,'pmStatus'=>0);
+                $curDay=strtotime(' + '.$day.' days', $datestart);
+                $this->holidaylist[$day]=array('amId'=>'0', 'pmId'=>'0', 'prev'=>false, 'am'=>false, 'pm'=>false, 'next'=>false, 'amStatus'=>0, 'pmStatus'=>0);
 
                 foreach($this->holiday as $record){
                     if($record['date_debut']<=$curDay && $record['date_fin']>=$curDay){
@@ -95,7 +95,7 @@ class TimesheetHoliday extends Holiday
                              $pm=true;
                              break;
                      }  
-                     // in case of 2 holiday present in the half day order 3,2,1,5,4
+                     // in case of 2 holiday present in the half day order 3, 2, 1, 5, 4
                      $oldSatus=$this->holidaylist[$day]['amStatus'];
                      $amOverride=($this->holidaylist[$day]['amId']==0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
                      $oldSatus=$this->holidaylist[$day]['amStatus'];
@@ -115,7 +115,7 @@ class TimesheetHoliday extends Holiday
                          $this->holidaylist[$day]['pmStatus']=$record['statut'];
                      }
                      
-                     //$this->holidaylist[$dayOfWeek]=array('idam'=>$record['rowid'],'idpm'=>$record['rowid'],'prev'=>$prev,'am'=>$am,'pm'=>$pm,'next'=>$next,'status'=>$record['statut']);
+                     //$this->holidaylist[$dayOfWeek]=array('idam'=>$record['rowid'], 'idpm'=>$record['rowid'], 'prev'=>$prev, 'am'=>$am, 'pm'=>$pm, 'next'=>$next, 'status'=>$record['statut']);
                     }
                 }
                        
@@ -136,7 +136,7 @@ class TimesheetHoliday extends Holiday
  *  @param     int              	$tsUserId           id of the user timesheet
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getHTMLFormLine($headers,$tsUserId) 
+       public function getHTMLFormLine($headers, $tsUserId) 
     {
         
         global $langs;
@@ -159,7 +159,7 @@ class TimesheetHoliday extends Holiday
             $pmId=$holiday['pmId'];
             $amValue=($holiday['amStatus']==3);
             $pmValue=($holiday['pmStatus']==3);
-            $value=($timetype=="hours")?date('H:i',mktime(0,0,($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
+            $value=($timetype=="hours")?date('H:i', mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             
             $html .='<th style="margin: 0;padding: 0;">';
             if($conf->global->TIMESHEET_ADD_HOLIDAY_TIME==1)$html .='<input type="hidden" class="time4day['.$tsUserId.']['.$i.']"  value="'.$value.'">';
@@ -213,7 +213,7 @@ function unserialize($str){
 
     function parseTaskTime($taskTime){
         
-        $ret=floor($taskTime/3600).":".str_pad (floor($taskTime%3600/60),2,"0",STR_PAD_LEFT);
+        $ret=floor($taskTime/3600).":".str_pad (floor($taskTime%3600/60), 2, "0", STR_PAD_LEFT);
         
         return $ret;
         //return '00:00';

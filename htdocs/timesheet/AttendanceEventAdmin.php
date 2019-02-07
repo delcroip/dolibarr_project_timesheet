@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -25,17 +25,17 @@
  *					Initialy built by build_class_from_table on 2018-11-05 20:22
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
+//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
+//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');			// Do not check style html tag into posted data
+//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
+//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');			// If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 include './core/lib/includeMain.lib.php';
@@ -66,38 +66,38 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 //$langs->load("attendance@timesheet");
 
 // Get parameter
-$id			= GETPOST('id','int');
-$ref                  = GETPOST('ref','alpha');
-$action		= GETPOST('action','alpha');
+$id			= GETPOST('id', 'int');
+$ref                  = GETPOST('ref', 'alpha');
+$action		= GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage');
 $cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm');
-$tms= GETPOST('tms','alpha');
+$tms= GETPOST('tms', 'alpha');
 //// Get parameters
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )		// Both test must be present to be compatible with all browsers
 {
-    $ls_date_time_event_month= GETPOST('ls_date_time_event_month','int');
-    $ls_date_time_event_year= GETPOST('ls_date_time_event_year','int');
-    $ls_event_location_ref= GETPOST('ls_event_location_ref','alpha');
-    $ls_event_type= GETPOST('ls_event_type','int');
-    $ls_note= GETPOST('ls_note','alpha');
-    $ls_userid= GETPOST('ls_userid','int');
+    $ls_date_time_event_month= GETPOST('ls_date_time_event_month', 'int');
+    $ls_date_time_event_year= GETPOST('ls_date_time_event_year', 'int');
+    $ls_event_location_ref= GETPOST('ls_event_location_ref', 'alpha');
+    $ls_event_type= GETPOST('ls_event_type', 'int');
+    $ls_note= GETPOST('ls_note', 'alpha');
+    $ls_userid= GETPOST('ls_userid', 'int');
     if($ls_userid==-1)$ls_userid='';
-    $ls_third_party= GETPOST('ls_third_party','int');
-    $ls_task= GETPOST('ls_task','int');
-    $ls_project= GETPOST('ls_project','int');
-    $ls_token= GETPOST('ls_token','int');
-    $ls_status= GETPOST('ls_status','int');
+    $ls_third_party= GETPOST('ls_third_party', 'int');
+    $ls_task= GETPOST('ls_task', 'int');
+    $ls_project= GETPOST('ls_project', 'int');
+    $ls_token= GETPOST('ls_token', 'int');
+    $ls_status= GETPOST('ls_status', 'int');
 }
 
 
-$page = GETPOST('page','int');
+$page = GETPOST('page', 'int');
 if ($page == -1) { $page = 0;}
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -128,7 +128,7 @@ if ($user->societe_id > 0 ||
 */
 
 // create object and set id or ref if provided as parameter
-$object=new Attendanceevent($db,$user);
+$object=new Attendanceevent($db, $user);
 if($id>0)
 {
     $object->id=$id;
@@ -156,8 +156,8 @@ $form= new Form($db);
        else
        {
                // Delete NOK
-               if (! empty($object->errors)) setEventMessages(null,$object->errors,'errors');
-               else setEventMessage('RecordNotDeleted','errors');
+               if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+               else setEventMessage('RecordNotDeleted', 'errors');
        }
        break;
 
@@ -167,8 +167,8 @@ $form= new Form($db);
             $action='list';
         }
     //retrive the data
-        $time=explode(':',GETPOST('DatetimeeventHour'));
-        $object->date_time_event=dol_mktime( $time[0], $time[1],0,GETPOST('Datetimeeventmonth'),GETPOST('Datetimeeventday'),GETPOST('Datetimeeventyear'));
+        $time=explode(':', GETPOST('DatetimeeventHour'));
+        $object->date_time_event=dol_mktime( $time[0], $time[1], 0, GETPOST('Datetimeeventmonth'), GETPOST('Datetimeeventday'), GETPOST('Datetimeeventyear'));
         $object->event_location_ref=GETPOST('Eventlocationref');
         $object->event_type=GETPOST('Eventtype');
         $object->note=GETPOST('Note');
@@ -183,13 +183,14 @@ $form= new Form($db);
         {
                 // Creation OK
             // remove the tms
-               if($ajax==1){
-                    exit();// don't remove the tms. don't continue with the
-               }
+               //if($ajax==1){
+                   //FIXME
+               //     exit();// don't remove the tms. don't continue with the
+              // }
                    unset($_SESSION['Attendanceevent'][$tms]);
                
                setEventMessage('RecordSucessfullyCreated', 'mesgs');
-               //AttendanceeventReloadPage($backtopage,$result,'');
+               //AttendanceeventReloadPage($backtopage, $result, '');
         }else
         {
                 // Creation KO
@@ -212,15 +213,15 @@ if(isset( $_SESSION['Attendanceevent'][$tms]))
 *
 * Put here all code to build page
 ****************************************************/
-$morejs=array("/timesheet/core/js/jsparameters.php","/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
-llxHeader('',$langs->trans('AttendanceAdmin'),'','','','',$morejs);
+$morejs=array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
+llxHeader('', $langs->trans('AttendanceAdmin'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
 $form=new Form($db);
 $formother=new FormOther($db);
 $fuser=new User($db);
 
         if( $action=='delete' && ($id>0)){
-         print $form->form_confirm(dol_buildpath('/timesheet/AttendanceEventAdmin.php',1).'?action=confirm_delete&id='.$id,$langs->trans('DeleteAttendanceevent'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
+         print $form->form_confirm(dol_buildpath('/timesheet/AttendanceEventAdmin.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceevent'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          //if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
  
@@ -234,7 +235,7 @@ jQuery(document).ready(function() {
 	function init_myfunc()
 	{
 		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
+		jQuery("#myid").attr(\'disabled\', \'disabled\');
 	}
 	init_myfunc();
 	jQuery("#mybutton").click(function() {
@@ -245,16 +246,16 @@ jQuery(document).ready(function() {
 
 
     $sql = 'SELECT';
-    $sql.= ' t.rowid,';
-    $sql.=' t.date_time_event,';
-    $sql.=' t.event_location_ref,';
-    $sql.=' t.event_type,';
-    $sql.=' t.note,';
-    $sql.=' t.fk_userid,';
-    $sql.=' t.fk_third_party,';
-    $sql.=' t.fk_task,';
-    $sql.=' t.fk_project,';
-    $sql.=' t.token,';
+    $sql.= ' t.rowid, ';
+    $sql.=' t.date_time_event, ';
+    $sql.=' t.event_location_ref, ';
+    $sql.=' t.event_type, ';
+    $sql.=' t.note, ';
+    $sql.=' t.fk_userid, ';
+    $sql.=' t.fk_third_party, ';
+    $sql.=' t.fk_task, ';
+    $sql.=' t.fk_project, ';
+    $sql.=' t.token, ';
     $sql.=' t.status';
 
     
@@ -264,7 +265,7 @@ jQuery(document).ready(function() {
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
-            $filtrearr = explode(',', $filter);
+            $filtrearr = explode(', ', $filter);
             foreach ($filtrearr as $fil)
             {
                     $filt = explode(':', $fil);
@@ -300,7 +301,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
     if(!empty($sortfield))
-        {$sql.= $db->order($sortfield,$sortorder);
+        {$sql.= $db->order($sortfield, $sortorder);
     }else{
        $sql.=' ORDER BY t.date_time_event DESC';
     }
@@ -335,39 +336,39 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $num = $db->num_rows($resql);
 
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
-        print_barre_liste($langs->trans("Attendance"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+        print_barre_liste($langs->trans("Attendance"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
         // QUICK FOR TO ADD A LINE
         
         print '<form method="POST" action="?action=add">';
         print '<table class="liste" width="100%">'."\n";
         //TITLE ADD
         print '<tr class="liste_titre">';
-        	print_liste_field_titre($langs->trans('Date'),$PHP_SELF,'t.date_time_event','',$param,'',$sortfield,$sortorder);
+        	print_liste_field_titre($langs->trans('Date'), $PHP_SELF, 't.date_time_event', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Eventlocationref'),$PHP_SELF,'t.event_location_ref','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Eventlocationref'), $PHP_SELF, 't.event_location_ref', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Eventtype'),$PHP_SELF,'t.event_type','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Eventtype'), $PHP_SELF, 't.event_type', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Note'),$PHP_SELF,'t.note','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Note'), $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userid','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('User'), $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('ThirdParty'),$PHP_SELF,'t.fk_third_party','',$param,'',$sortfield,$sortorder);// fix translation
+	print_liste_field_titre($langs->trans('ThirdParty'), $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);// fix translation
 	print "\n";
-	print_liste_field_titre($langs->trans('Task'),$PHP_SELF,'t.fk_task','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Project'),$PHP_SELF,'t.fk_project','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Token'),$PHP_SELF,'t.token','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Token'), $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
 	print "\n";
         print '</tr>';
         //add
         print '<tr><td>';
         print '<input type="hidden" name="tms" value="'.$tms.'">';
-        print $form->select_date(time(),'Datetimeevent');
-        print '<input type="text" maxlength="5" onkeypress="return regexEvent(this,event,\'timeChar\')" name="DatetimeeventHour" value="'.date('H:m').'"/>';
+        print $form->select_date(time(), 'Datetimeevent');
+        print '<input type="text" maxlength="5" onkeypress="return regexEvent(this, event, \'timeChar\')" name="DatetimeeventHour" value="'.date('H:m').'"/>';
         print '</td><td>';
         print '<input type="text" value="'.$object->event_location_ref.'" name="Eventlocationref">';
 	print '</td><td>';
@@ -380,20 +381,20 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print $form->select_dolusers($object->userid, 'Userid', 1, '', 0 );
         print '</td><td>';
         //FIXME SOC
-        $sql_third_party=array('table'=> 'societe','keyfield'=> 'rowid','fields'=>'nom', 'join' => '', 'where'=>'','tail'=>'');
-	$html_third_party=array('name'=>'Thirdparty','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
+        $sql_third_party=array('table'=> 'societe', 'keyfield'=> 'rowid', 'fields'=>'nom', 'join' => '', 'where'=>'', 'tail'=>'');
+	$html_third_party=array('name'=>'Thirdparty', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
 	$addChoices_third_party=null;
-        print select_sellist($sql_third_party,$html_third_party, $object->third_party,$addChoices_third_party );
+        print select_sellist($sql_third_party, $html_third_party, $object->third_party, $addChoices_third_party );
         print '</td><td>';
-        $sql_task=array('table'=> 'projet_task','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
-        $html_task=array('name'=>'Task','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
+        $sql_task=array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
+        $html_task=array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
         $addChoices_task=null;
-        print select_sellist($sql_task,$html_task, $object->task,$addChoices_task );
+        print select_sellist($sql_task, $html_task, $object->task, $addChoices_task );
         print '</td><td>';
-        $sql_project=array('table'=> 'projet','keyfield'=> 'rowid','fields'=>'ref,title', 'join' => '', 'where'=>'','tail'=>'');// fixme project open
-        $html_project=array('name'=>'Project','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
+        $sql_project=array('table'=> 'projet', 'keyfield'=> 'rowid', 'fields'=>'ref, title', 'join' => '', 'where'=>'', 'tail'=>'');// fixme project open
+        $html_project=array('name'=>'Project', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
         $addChoices_project=null;
-        print select_sellist($sql_project,$html_project, $object->project,$addChoices_project );
+        print select_sellist($sql_project, $html_project, $object->project, $addChoices_project );
 
         print '</td><td>';
         print '<input type="text"  name="Token">';
@@ -404,25 +405,25 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<table class="liste" width="100%">'."\n";
                 //TITLE
         print '<tr class="liste_titre">';
-        	print_liste_field_titre($langs->trans('Date'),$PHP_SELF,'t.date_time_event','',$param,'',$sortfield,$sortorder);
+        	print_liste_field_titre($langs->trans('Date'), $PHP_SELF, 't.date_time_event', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Eventlocationref'),$PHP_SELF,'t.event_location_ref','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Eventlocationref'), $PHP_SELF, 't.event_location_ref', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Eventtype'),$PHP_SELF,'t.event_type','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Eventtype'), $PHP_SELF, 't.event_type', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Note'),$PHP_SELF,'t.note','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Note'), $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_userid','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('User'), $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Thirdparty'),$PHP_SELF,'t.fk_third_party','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Thirdparty'), $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Task'),$PHP_SELF,'t.fk_task','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Project'),$PHP_SELF,'t.fk_project','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Token'),$PHP_SELF,'t.token','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Token'), $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
 	print "\n";
 
         
@@ -433,7 +434,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="date_time_event_month" value="'.$ls_date_time_event_month.'">';
 	$syear = $ls_date_time_event_year;
-	$formother->select_year($syear?$syear:-1,'ls_date_time_event_year',1, 20, 5);
+	$formother->select_year($syear?$syear:-1, 'ls_date_time_event_year', 1, 20, 5);
 	print '</td>';
 //Search field forevent_location_ref
 	print '<td class="liste_titre" colspan="1" >';
@@ -449,22 +450,22 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '</td>';
 //Search field foruserid
 	print '<td class="liste_titre" colspan="1" >';
-		print $form->select_dolusers('userid',$ls_userid);
+		print $form->select_dolusers('userid', $ls_userid);
 	print '</td>';
 //Search field forthird_party
 	print '<td class="liste_titre" colspan="1" >';
                 $html_third_party['name']='ls_third_party';
-		print select_sellist($sql_third_party,$html_third_party, $ls_third_party,$addChoices_third_party );
+		print select_sellist($sql_third_party, $html_third_party, $ls_third_party, $addChoices_third_party );
 	print '</td>';
 //Search field fortask
 	print '<td class="liste_titre" colspan="1" >';
                 $html_task['name']='ls_task';
-		print select_sellist($sql_task,$html_task, $ls_task,$addChoices_task );
+		print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task );
 	print '</td>';
 //Search field forproject
 	print '<td class="liste_titre" colspan="1" >';
                 $html_project['name']='ls_project';
-		print select_sellist($sql_project,$html_project, $ls_project,$addChoices_project );
+		print select_sellist($sql_project, $html_project, $ls_project, $addChoices_project );
 	print '</td>';
 //Search field fortoken
 	//print '<td class="liste_titre" colspan="1" >';
@@ -479,8 +480,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         
         
         print '<td width="15px">';
-        print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-        print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+        print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+        print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
         print '</td>';
         print '</tr>'."\n";
         $i=0;
@@ -492,7 +493,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             {
                 // You can use here results
                 print "<tr class=\"oddeven\"  >";
-		print "<td>".dol_print_date($db->jdate($obj->date_time_event),'dayhour')."</td>";
+		print "<td>".dol_print_date($db->jdate($obj->date_time_event), 'dayhour')."</td>";
 		print "<td>".$obj->event_location_ref."</td>";
 		print "<td>".Attendanceevent::LibStatut($obj->event_type)."</td>";
 		print "<td>".$obj->note."</td>";
@@ -504,19 +505,19 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 print  $sUser->getNomUrl(1);
                 }
                 print "</td>";
-//		print "<td>".  print_sellist('third_party','rowid',$obj->fk_third_party,'rowid','description')."</td>";
+//		print "<td>".  print_sellist('third_party', 'rowid', $obj->fk_third_party, 'rowid', 'description')."</td>";
                 print "<td>";
                 if($obj->fk_third_party>0){
                 $sThirdParty = new Societe($db);
                 $sThirdParty->fetch($obj->fk_third_party);
-                print $sThirdParty->getNomUrl(1,'');
+                print $sThirdParty->getNomUrl(1, '');
                 }
                 print "</td>";
                  print "<td>";
                 if($obj->fk_task>0){
                 $sTask = new Task($db);
                 $sTask->fetch($obj->fk_task);
-                print $sTask->getNomUrl(1,'');
+                print $sTask->getNomUrl(1, '');
                 }
                 print "</td>";
                                  print "<td>";
@@ -526,9 +527,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 print $sProject->getNomUrl(1);
                 }
                 print "</td>";
-//		print "<td>".print_generic('third_party','rowid',$obj->fk_third_party,'rowid','description')."</td>";
-		//print "<td>".print_generic('projet_task','rowid',$obj->fk_task,'ref','label')."</td>";
-		//print "<td>".print_generic('projet','rowid',$obj->fk_project,'ref','title')."</td>";
+//		print "<td>".print_generic('third_party', 'rowid', $obj->fk_third_party, 'rowid', 'description')."</td>";
+		//print "<td>".print_generic('projet_task', 'rowid', $obj->fk_task, 'ref', 'label')."</td>";
+		//print "<td>".print_generic('projet', 'rowid', $obj->fk_project, 'ref', 'title')."</td>";
 		print "<td>".$obj->token."</td>";
 		print "<td>".$obj->status."</td>";
 		print '<td><a href="AttendanceEventAdmin.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';

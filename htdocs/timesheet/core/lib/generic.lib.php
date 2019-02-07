@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -46,11 +46,11 @@ global $langs;
  //$conf->global->RESOURCE_USE_SEARCH_TO_SELECT
 //$conf->global->BARCODE_USE_SEARCH_TO_SELECT
 //$conf->global->CONTACT_USE_SEARCH_TO_SELECT
-function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','fields'=>'firstname,lastname', 'join' => '', 'where'=>'','tail'=>''),
-                        $htmlarray=array('name'=> 'HTMLSellist','class'=>'','otherparam'=>'','$ajaxNbChar'=>'','separator'=> ' ','noajax'=>0),
-                        $selected='',
+function select_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''), 
+                        $htmlarray=array('name'=> 'HTMLSellist', 'class'=>'', 'otherparam'=>'', '$ajaxNbChar'=>'', 'separator'=> ' ', 'noajax'=>0), 
+                        $selected='', 
                         $addtionnalChoices=array('NULL'=>'NULL')){
-        global $conf,$langs,$db;
+        global $conf, $langs, $db;
 
      $noajax=   isset($htmlarray['noajax']);
      $ajax=$conf->use_javascript_ajax && !$noajax ;
@@ -60,11 +60,11 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
     }
     $htmlName=$htmlarray['name'];
     $ajaxNbChar=$htmlarray['ajaxNbChar'];
-    $listFields=explode(',',$sqlarray['fields']);
+    $listFields=explode(', ', $sqlarray['fields']);
     $fields=array();
     foreach($listFields as $item){
-        $start=MAX(strpos($item,' AS '),strpos($item,' as '));
-        $start2=strpos($item,'.');
+        $start=MAX(strpos($item, ' AS '), strpos($item, ' as '));
+        $start2=strpos($item, '.');
         $label=$item;
         if($start){
             $label=substr($item, $start+4);
@@ -85,26 +85,26 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
         //$ajaxUrl='';
         $searchfields='';
         if($ajaxNbChar ){
-            $ajaxUrl=dol_buildpath('/timesheet/core/ajaxGenericSelectHandler.php',1);
+            $ajaxUrl=dol_buildpath('/timesheet/core/ajaxGenericSelectHandler.php', 1);
             $_SESSION['ajaxQuerry'][$token]['sql']=$sqlarray;
             $_SESSION['ajaxQuerry'][$token]['fields']=$fields;
             $_SESSION['ajaxQuerry'][$token]['html']=$htmlarray;
             $_SESSION['ajaxQuerry'][$token]['option']=$addtionnalChoices;
             
-                    //array('table'=>$table, 'fieldValue'=>$fieldValue,'htmlName'=> $htmlName,'fieldToShow1'=>$fieldToShow1,'fieldToShow2'=>$fieldToShow2,'separator'=> $separator,'sqlTailTable'=>$sqlTailTable,'sqlTailWhere'=>$sqlTailWhere,'addtionnalChoices'=>$addtionnalChoices);
-            $comboenhancement = ajax_autocompleter($selected, $htmlName, $ajaxUrl, $urloption,$ajaxNbChar);
+                    //array('table'=>$table, 'fieldValue'=>$fieldValue, 'htmlName'=> $htmlName, 'fieldToShow1'=>$fieldToShow1, 'fieldToShow2'=>$fieldToShow2, 'separator'=> $separator, 'sqlTailTable'=>$sqlTailTable, 'sqlTailWhere'=>$sqlTailWhere, 'addtionnalChoices'=>$addtionnalChoices);
+            $comboenhancement = ajax_autocompleter($selected, $htmlName, $ajaxUrl, $urloption, $ajaxNbChar);
             $sqlTail.=" LIMIT 5";
             // put \\ before barket so the js will work for Htmlname before it is change to seatch HTMLname
-            $htmlid=str_replace('[','\\\\[',str_replace(']','\\\\]',$htmlName));
-            $comboenhancement=str_replace('#'.$htmlName, '#'.$htmlid,$comboenhancement);
-            $comboenhancement=str_replace($htmlName.':', '"'.$htmlName.'":',$comboenhancement);// #htmlname doesn't cover everything
+            $htmlid=str_replace('[', '\\\\[', str_replace(']', '\\\\]', $htmlName));
+            $comboenhancement=str_replace('#'.$htmlName, '#'.$htmlid, $comboenhancement);
+            $comboenhancement=str_replace($htmlName.':', '"'.$htmlName.'":', $comboenhancement);// #htmlname doesn't cover everything
             $htmlName='search_'.$htmlName;
         }else{
             $comboenhancement = ajax_combobox($htmlName);
         }
         // put \\ before barket so the js will work
-        $htmlid='#'.str_replace('[','\\\\[',str_replace(']','\\\\]',$htmlName));
-        $comboenhancement=str_replace('#'.$htmlName, $htmlid,$comboenhancement);
+        $htmlid='#'.str_replace('[', '\\\\[', str_replace(']', '\\\\]', $htmlName));
+        $comboenhancement=str_replace('#'.$htmlName, $htmlid, $comboenhancement);
         //incluse js code in the html response
         $select.=$comboenhancement;
         $nodatarole=($comboenhancement?' data-role="none"':'');
@@ -117,7 +117,7 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
     $selectedValue='';
     $sql='SELECT DISTINCT ';
     $sql.=$sqlarray['keyfield'];
-    $sql.=' ,'.$sqlarray['fields'];
+    $sql.=' , '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql.=' '.$sqlarray['join'];
@@ -127,7 +127,7 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
             $sql.=' '.$sqlarray['tail'];
     dol_syslog('form::select_sellist ', LOG_DEBUG);
     // remove the 't." if any
-    $startkey=strpos($sqlarray['keyfield'],'.');
+    $startkey=strpos($sqlarray['keyfield'], '.');
     $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
     
     $resql=$db->query($sql);
@@ -195,17 +195,17 @@ function select_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','f
     
 } 
 
-function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow2='',$selected='',$separator=' - ',$sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'),$sqlTailTable='', $ajaxNbChar=''){
-    return select_sellist($sqlarray=array('table'=> $table,'keyfield'=> $fieldValue,'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':','.$fieldToShow2), 'join' => '', 'where'=>$sqlTailWhere,'tail'=>$sqlTailTable),
-                        $htmlarray=array('name'=>$htmlName,'class'=>'','otherparam'=>$selectparam,'ajaxNbChar'=>$ajaxNbChar,'separator'=> $separator),
-                        $selected,
+function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2='', $selected='', $separator=' - ', $sqlTailWhere='', $selectparam='', $addtionnalChoices=array('NULL'=>'NULL'), $sqlTailTable='', $ajaxNbChar=''){
+    return select_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => '', 'where'=>$sqlTailWhere, 'tail'=>$sqlTailTable), 
+                        $htmlarray=array('name'=>$htmlName, 'class'=>'', 'otherparam'=>$selectparam, 'ajaxNbChar'=>$ajaxNbChar, 'separator'=> $separator), 
+                        $selected, 
                         $addtionnalChoices);
  }
  
  
- function print_sellist($sqlarray=array('table'=> 'user','keyfield'=> 'rowid','fields'=>'firstname,lastname', 'join' => '', 'where'=>'','tail'=>''),
-                        $selected,$separator=' ',$url=''){
-    global $conf,$langs,$db;
+ function print_sellist($sqlarray=array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''), 
+                        $selected, $separator=' ', $url=''){
+    global $conf, $langs, $db;
     if( !isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) )
     {
         return 'error, one of the mandatory field of the function  select_sellist is missing:'.$sqlarray['table'].$sqlarray['keyfield'].$sqlarray['fields'];
@@ -215,7 +215,7 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
     
     $sql='SELECT DISTINCT ';
     $sql.=$sqlarray['keyfield'];
-    $sql.=' ,'.$sqlarray['fields'];
+    $sql.=' , '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql.=' '.$sqlarray['join'];
@@ -225,17 +225,17 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
             $sql.=' '.$sqlarray['tail'];
     dol_syslog('form::print_sellist ', LOG_DEBUG);
-    $startkey=strpos($sqlarray['keyfield'],'.');
+    $startkey=strpos($sqlarray['keyfield'], '.');
     $labelKey=($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
 
     $resql=$db->query($sql);
      if ($resql)
     {
-        $listFields=explode(',',$sqlarray['fields']);
+        $listFields=explode(', ', $sqlarray['fields']);
         $fields=array();
     foreach($listFields as $item){
-        $start=MAX(strpos($item,' AS '),strpos($item,' as '));
-        $start2=strpos($item,'.');
+        $start=MAX(strpos($item, ' AS '), strpos($item, ' as '));
+        $start2=strpos($item, '.');
         $label=$item;
         if($start){
             $label=substr($item, $start+4);
@@ -287,10 +287,10 @@ function select_generic($table, $fieldValue,$htmlName,$fieldToShow1,$fieldToShow
 
  *  @return string                                                   html code
  */
-function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2="",$separator=' - ',$sqltail="",$sqljoin=""){
+function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2="", $separator=' - ', $sqltail="", $sqljoin=""){
    //return $table.$db.$field;
- return  print_sellist($sqlarray=array('table'=> $table,'keyfield'=> $fieldValue,'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':','.$fieldToShow2), 'join' => $sqljoin, 'where'=>'','tail'=>$sqltail),
-                        $selected,$separator);
+ return  print_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail), 
+                        $selected, $separator);
  }
  /*
  * function to print a bitstring (or sting starting  with _)
@@ -302,7 +302,7 @@ function print_generic($table, $fieldValue,$selected,$fieldToShow1,$fieldToShow2
  *  @return   string                htmlcode                                       
  */
  
- function printBitStringHTML($bitstring,$labels,$names,$edit=0){
+ function printBitStringHTML($bitstring, $labels, $names, $edit=0){
      global $langs;
      $html="error, paramters of printBitStringHTML not valid";
      $numberOfBits=count($labels);
@@ -357,7 +357,7 @@ function getToken($length=32){
     $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
     $codeAlphabet.= "0123456789";
     for($i=0;$i<$length;$i++){
-        $token .= $codeAlphabet[crypto_rand_secure(0,strlen($codeAlphabet))];
+        $token .= $codeAlphabet[crypto_rand_secure(0, strlen($codeAlphabet))];
     }
     return $token;
 }
