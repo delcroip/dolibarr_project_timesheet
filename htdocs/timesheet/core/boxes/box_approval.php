@@ -5,7 +5,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -50,14 +50,15 @@ class box_approval extends ModeleBoxes
         $userid = is_object($user)?$user->id:$user;
 		$text = $langs->trans('Timesheet');
 		$this->info_box_head = array(
-				'text' => $text,
+				'text' => $text, 
 				'limit'=> dol_strlen($text)
 		);
-        if ($user->rights->timesheet->approval) {
+        if ($user->rights->timesheet->approval)
+{
                         $sql = 'SELECT';
-           $subordinate = implode(',', getSubordinates($db, $userid, 2));
+           $subordinate = implode(', ', getSubordinates($db, $userid, 2));
            if($subordinate == '')$subordinate = 0;
-           $tasks = implode(',', array_keys(getTasks($db, $userid)));
+           $tasks = implode(', ', array_keys(getTasks($db, $userid)));
            if($tasks == '')$tasks = 0;
            // $sql .= ' COUNT(t.rowid) as nb, ';
             $sql .= ' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
@@ -70,49 +71,52 @@ class box_approval extends ModeleBoxes
             if ($result)
             {
                 $num = $db->num_rows($result);
-                while ($num>0){
+                while ($num>0)
+{
                     $obj = $db->fetch_object($result);
-                    if($obj->recipient == 'project'){
+                    if($obj->recipient == 'project')
+{
                         $nbPrj = $obj->nbtsk;
-                    }elseif($obj->recipient == 'team'){
+                    }elseif($obj->recipient == 'team')
+{
                         $nbTm = $obj->nbtm;
                     }
                     $num--;
                     }
                     $this->info_box_contents[0][] = array(
-                        'td' => 'align = "left"',
-                        'text' => $langs->trans('team').': ',
-                        'text2'=> $langs->trans('nbTsToApprove'),
-                        'asis' => 1,
+                        'td' => 'align = "left"', 
+                        'text' => $langs->trans('team').': ', 
+                        'text2'=> $langs->trans('nbTsToApprove'), 
+                        'asis' => 1, 
                     );
                     $this->info_box_contents[0][] = array(
-                        'td' => 'align = "right"',
-                        'text' => $nbTm,
-                        'asis' => 1,
+                        'td' => 'align = "right"', 
+                        'text' => $nbTm, 
+                        'asis' => 1, 
                     );
                     $this->info_box_contents[1][] = array(
-                        'td' => 'align = "left"',
-                        'text' => $langs->trans('project').': ',
-                        'text2'=> $langs->trans('nbTsToApprove'),
-                        'asis' => 1,
+                        'td' => 'align = "left"', 
+                        'text' => $langs->trans('project').': ', 
+                        'text2'=> $langs->trans('nbTsToApprove'), 
+                        'asis' => 1, 
                     );
                     $this->info_box_contents[1][] = array(
-                        'td' => 'align = "right"',
-                        'text' => $nbPrj,
-                        'asis' => 1,
+                        'td' => 'align = "right"', 
+                        'text' => $nbPrj, 
+                        'asis' => 1, 
                     );
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align = "left"',
-                    'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'td' => 'align = "left"', 
+                    'maxlength'=>500, 
+                    'text' => ($db->error().' sql='.$sql), 
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align = "left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align = "left"', 
+                'text' => $langs->trans("ReadPermissionNotAllowed"), 
             );
         }
     }

@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -40,7 +40,8 @@ $toDate = GETPOST('toDate', 'alpha');
 $toDateday = (!empty($toDate) && $action == 'goToDate')? GETPOST('toDateday', 'int'):0;// to not look for the date if action not goTodate
 $toDatemonth = GETPOST('toDatemonth', 'int');
 $toDateyear = GETPOST('toDateyear', 'int');
-if($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
+if($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"]))
+{
     $dateStart = $_SESSION["dateStart"];
 }else {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
@@ -66,7 +67,7 @@ if(!$user->admin)
 {
     $list = getSubordinates($db, $userid, 3);
     $list[] = $userid;
-    $sql .= ' AND (usr.rowid in ('.implode(',', $list).'))';
+    $sql .= ' AND (usr.rowid in ('.implode(', ', $list).'))';
 }
 dol_syslog("timesheet::reportuser::userList", LOG_DEBUG);
 //launch the sql querry
@@ -101,7 +102,8 @@ $Form = '<form action="?action = reportuser'.(($optioncss != '')?'&amp;optioncss
         <tr >
         <td><select  name = "userSelected">
         ';
-foreach($userList as $usr){
+foreach($userList as $usr)
+{
    // $Form .= '<option value = "'.$usr->id.'">'.$usr->name.'</option> ';
     $Form .= '<option value = "'.$usr->userid.'" '.(($userIdSelected == $usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
 }
@@ -111,15 +113,17 @@ $querryRes = '';
 if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         &&!empty($_POST['month']))
 {
-    if($userIdSelected == '-999'){
-        foreach($userList as $userSt){
-        $querryRes .= $userSt->getHTMLreport($short,
-            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
+    if($userIdSelected == '-999')
+{
+        foreach($userList as $userSt)
+{
+        $querryRes .= $userSt->getHTMLreport($short, 
+            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))), 
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
     }else{
-        $querryRes = $userList[$userIdSelected]->getHTMLreport($short,
-            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
+        $querryRes = $userList[$userIdSelected]->getHTMLreport($short, 
+            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))), 
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
 }else
@@ -144,7 +148,8 @@ $Form .= '</select></td>'
         </table></form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 // section to generate
-if(!empty($querryRes)){
+if(!empty($querryRes))
+{
     echo $querryRes;
 }
 llxFooter();

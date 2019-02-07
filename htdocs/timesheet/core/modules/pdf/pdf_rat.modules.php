@@ -169,12 +169,14 @@ function write_file($object,$outputlangs)
             $TotalLines=array();
             $userTaskArray=array();
             //order data per user id and calc total per user
-            foreach($tasktimearray as $line){
+            foreach($tasktimearray as $line)
+{
                 $userTaskArray[$line['userId']]['lines'][]=$line;
                 $TotalLines[$line['userId']]+=$line['duration'];
             }
            /* add a line with the total*/
-            foreach($userTaskArray as $userid => $taskArray){
+            foreach($userTaskArray as $userid => $taskArray)
+{
             $userTaskArray[$userid]['Total']=formatTime($TotalLines[$userid],-1);
             }
             //init the pdf
@@ -220,9 +222,11 @@ function write_file($object,$outputlangs)
                     // looks if the record fit int he current page
                     $addpagebreak=false;
                     $lineheight=$posyafter-$posybefore;
-                    if ($pageposafter>$pageposbefore){ // auto page break
+                    if ($pageposafter>$pageposbefore)
+{ // auto page break
                         $addpagebreak=true;
-                    }elseif($posyafter>$this->page_hauteur - $heightforfooter - $heightforinfotot) { // in the sign zone, check if a new page will be required
+                    }elseif($posyafter>$this->page_hauteur - $heightforfooter - $heightforinfotot)
+{ // in the sign zone, check if a new page will be required
                          if ($posyafter > ($this->page_hauteur - ($heightforfooter)))	// There is a pagebreak, shouldn't happen as this should trigger a auto page break
                         {
                             $addpagebreak=true;
@@ -230,11 +234,13 @@ function write_file($object,$outputlangs)
                         {
                             $addpagebreak=true;
                         }
-                    }elseif(isset($tasktimearray['lines'][$i+1]['pagebreak']) && $tasktimearray['lines'][$i+1]['pagebreak']){//pagebreak mentionned on the next line
+                    }elseif(isset($tasktimearray['lines'][$i+1]['pagebreak']) && $tasktimearray['lines'][$i+1]['pagebreak'])
+{//pagebreak mentionned on the next line
                         $addpagebreak=true;
                     }
                    // action when a page break is required : rollback and write on the next page
-                    if($addpagebreak == true){
+                    if($addpagebreak == true)
+{
                         $cur_tab_height=$tab_height_newpage;
                         $pdf->rollbackTransaction(true);
                         // new page
@@ -335,11 +341,13 @@ function write_file($object,$outputlangs)
      *   @param		Translate               $outputlangs	Langs object
      *   @return	void
      */
-    function write_line(&$pdf, $line,$curY,$outputlangs){
+    function write_line(&$pdf, $line,$curY,$outputlangs)
+{
         global $conf;
         $ref=$line['ref'];
         $libelleline="";
-        switch($this->noteISOtask){
+        switch($this->noteISOtask)
+{
             case 2: // show task and Note
                 $libelleline=$line['taskLabel'].(empty($line['note'])?'':': '.$line['note']);
                 break;
@@ -417,7 +425,8 @@ function write_file($object,$outputlangs)
             //task title
             $pdf->SetXY($this->posxlabel, $tab_top+1);
             $libelleline="";
-            switch($this->noteISOtask){
+            switch($this->noteISOtask)
+{
                 case 2: // show task and Note
                     $libelleline=$outputlangs->transnoentities("Task").':'.$outputlangs->transnoentities("Note");
                     break;
@@ -431,7 +440,8 @@ function write_file($object,$outputlangs)
             $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $libelleline, 0, 'L');
             //duration title
             $pdf->SetXY($this->posxduration, $tab_top+1);
-            if ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "hours"){
+            if ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "hours")
+{
                 $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, 'h:m', 0, 'R');
             }else{
                 $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, $outputlangs->transnoentities("Days"), 0, 'R');
@@ -485,7 +495,8 @@ function write_file($object,$outputlangs)
         $pdf->SetTextColor(0,0,60);
         $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->name), '', 'R');
         //worke name
-        if(!empty($userName) && !$conf->global->TIMESHEET_HIDE_NAME){
+        if(!empty($userName) && !$conf->global->TIMESHEET_HIDE_NAME)
+{
             $pdf->SetXY($this->marge_gauche,$height+$default_font_size + 3);
             $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
         }

@@ -5,7 +5,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,7 +28,8 @@ $langs->load("admin");
 $langs->load("errors");
 $langs->load("other");
 $langs->load("timesheet@timesheet");
-if (!$user->admin) {
+if (!$user->admin)
+{
     $accessforbidden = accessforbidden("you need to be admin");
 }
 $action = getpost('action', 'alpha');
@@ -69,7 +70,8 @@ if(sizeof($opendays)!=8)$opendays = array('_', '0', '0', '0', '0', '0', '0', '0'
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 if(sizeof($apflows)!=6)$apflows = array('_', '0', '0', '0', '0', '0');
 $error = 0;
-function null2int($var, $int = 0){
+function null2int($var, $int = 0)
+{
     return ($var == '')?$int:$var;
 }
 switch($action)
@@ -77,7 +79,8 @@ switch($action)
     case "save":
         //general option
         $hoursperday = getpost('hoursperday', 'int');
-        if($hoursperday == 0){ //error handling if hour per day is empty
+        if($hoursperday == 0)
+{ //error handling if hour per day is empty
             $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
             setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"), 'errors');
             break;
@@ -86,7 +89,8 @@ switch($action)
         $timetype = getpost('timeType', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         $timeSpan = getpost('timeSpan', 'alpha');
-        if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN){ // delete the unsubmitted timesheet so the new time span will be applied
+        if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN)
+{ // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql.= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
             dol_syslog(__METHOD__);
@@ -158,13 +162,15 @@ switch($action)
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
         // open days
         $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
-        foreach(getpost('opendays', 'array') as $key => $day){
+        foreach(getpost('opendays', 'array') as $key => $day)
+{
             $opendays[$key] = $day;
         }
         dolibarr_set_const($db, "TIMESHEET_OPEN_DAYS", implode('', $opendays), 'chaine', 0, '', $conf->entity);
         //approval flows
         $apflows = array('_', '0', '0', '0', '0', '0');
-        foreach(getpost('apflows', 'array') as $key => $flow){
+        foreach(getpost('apflows', 'array') as $key => $flow)
+{
             $apflows[$key] = $flow;
         }
         //INVOICE
@@ -194,8 +200,10 @@ switch($action)
         break;
 }
 $headersT = explode('||', $headers);
-foreach ($headersT as $header) {
-    switch($header){
+foreach ($headersT as $header)
+{
+    switch($header)
+{
         case 'Project':
             $showProject = 1;
             Break;
@@ -333,7 +341,8 @@ echo $langs->trans("Thursday").'</th><th>'.$langs->trans("Friday").'</th><th>';
 echo $langs->trans("Saturday").'</th><th>'.$langs->trans("Sunday").'</th>';
 echo '<input type = "hidden" name = "opendays[0]" value = "_">';
 echo "</tr><tr>\n\t\t";
-for ($i = 1;$i<8;$i++){
+for ($i = 1;$i<8;$i++)
+{
 echo  '<td width = "14%" style = "text-align:left"><input type = "checkbox" name = "opendays['.$i.']" value = "1" ';
 echo (($opendays[$i] == '1')?'checked':'')."></td>\n\t\t";
         }

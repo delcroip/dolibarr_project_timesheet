@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -23,10 +23,13 @@
  *		\brief      This file is an example of a php page
  *					Initialy built by build_class_from_table on 2019-01-30 16:24
  */
-function AttendanceSystemReloadPage($backtopage, $id, $ref){
-        if (!empty($backtopage)){
+function AttendanceSystemReloadPage($backtopage, $id, $ref)
+{
+        if (!empty($backtopage))
+{
             header("Location: ".$backtopage);
-        }elseif(!empty($ref) ){
+        }elseif(!empty($ref) )
+{
             header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?ref='.$ref);
         }elseif($id>0)
         {

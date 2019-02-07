@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -51,7 +51,8 @@ class TimesheetReport
         $this->invoiceableOnly = $invoiceableOnly;
         $this->taskarray = $taskarray;
             $this->projectid = $projectid;// coul
-            if($projectid){
+            if($projectid)
+{
                 $this->project = new Project($this->db);
                 $this->project->fetch($projectid);
                 $this->ref = (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project->ref.' - ').$this->project->title;
@@ -60,7 +61,8 @@ class TimesheetReport
                 $this->thirdparty->fetch($this->project->socid);
             }
             $this->userid = $userid;// coul
-            if($userid){
+            if($userid)
+{
                 $this->user = new User($this->db);
                 $this->user->fetch($userid);
                 //$this->ref.= ($first?'':' - ').$this->user->lastname.' '.$this->user->firstname;
@@ -71,7 +73,8 @@ class TimesheetReport
              $this->name = ($name!="")?$name:$this->ref;// coul
               $this->ref .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
              //$this->ref .= '_'.$startDate.'_'.$stopDate;
-        switch ($mode) {
+        switch ($mode)
+{
         case 'PDT': //project  / task / Days //FIXME dayoff missing
             $this->modeSQLOrder = 'ORDER BY prj.rowid, ptt.task_date, tsk.rowid ASC   ';
             //title
@@ -141,12 +144,14 @@ class TimesheetReport
  * @param   string  $sqltail    sql tail after the where
  * @return array()
  */
-    public function getReportArray(){
+    public function getReportArray()
+{
         global $conf;
         $resArray = array();
         $first = true;
         $sql = 'SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid, ';
-        if($db->type!='pgsql'){
+        if($db->type!='pgsql')
+{
             $sql.= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname, \' \', usr.lastname)) as username, ';
             $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         }else{
@@ -160,18 +165,22 @@ class TimesheetReport
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user = usr.rowid ';
         $sql.= ' WHERE ';
-        if(!empty($this->userid)){
+        if(!empty($this->userid))
+{
             $sql .= ' ptt.fk_user = \''.$this->userid.'\' ';
             $first = false;
         }
-        if(!empty($this->projectid)){
+        if(!empty($this->projectid))
+{
             $sql .= ($first?'':'AND ').'tsk.fk_projet = \''.$this->projectid.'\' ';
             $first = false;
         }
-        if(is_array($this->taskarray) && count($this->taskarray)>1){
+        if(is_array($this->taskarray) && count($this->taskarray)>1)
+{
             $sql .= ($first?'':'AND ').'tsk.rowid in ('.explode($taskarray, ', ').') ';
         }
-        if($this->invoiceableOnly == 1){
+        if($this->invoiceableOnly == 1)
+{
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
          /*if(!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
@@ -179,7 +188,8 @@ class TimesheetReport
           /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
           else */$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
          $sql .= ' GROUP BY usr.rowid, ptt.task_date, tsk.rowid, prj.rowid ';
-        /*if(!empty($sqltail)){
+        /*if(!empty($sqltail))
+{
             $sql .= $sqltail;
         }*/
         $sql .= $this->modeSQLOrder;
@@ -189,20 +199,20 @@ class TimesheetReport
         {
                 $numTaskTime = $this->db->num_rows($resql);
                 $i = 0;
-                // Loop on each record found,
+                // Loop on each record found, 
                 while ($i < $numTaskTime)
                 {
                     $error = 0;
                     $obj = $this->db->fetch_object($resql);
-                    $resArray[$i] = array('projectId' =>$obj->projectid,
-                                'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle,
-                                'taskId' =>$obj->taskid,
-                                'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle,
-                                'date' =>$this->db->jdate($obj->task_date),
-                                'duration' =>$obj->duration,
-                                'userId' =>$obj->userid,
-                                'userName' =>trim($obj->username),
-                                'note'=>$this->db->escape($obj->note),
+                    $resArray[$i] = array('projectId' =>$obj->projectid, 
+                                'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle, 
+                                'taskId' =>$obj->taskid, 
+                                'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle, 
+                                'date' =>$this->db->jdate($obj->task_date), 
+                                'duration' =>$obj->duration, 
+                                'userId' =>$obj->userid, 
+                                'userName' =>trim($obj->username), 
+                                'note'=>$this->db->escape($obj->note), 
                                 'invoiceable'=>$obj->invoiceable );
                     $i++;
                 }
@@ -226,7 +236,8 @@ class TimesheetReport
       * periodeTitle give a name to the report
       * timemode show time using day or hours ( == 0)
       */
-    public function getHTMLreport($short, $periodTitle, $hoursperdays, $reportfriendly = 0){
+    public function getHTMLreport($short, $periodTitle, $hoursperdays, $reportfriendly = 0)
+{
     // HTML buffer
     global $langs;
     $lvl1HTML = '';
@@ -255,7 +266,8 @@ class TimesheetReport
         if($numTaskTime>0)
         {
            // current
-        if($reportfriendly){
+        if($reportfriendly)
+{
             //$HTMLRes = '<br><div class = "titre">'.$this->name.', '.$periodTitle.'</div>';
             $HTMLRes .= '<table class = "noborder" width = "100%">';
             $HTMLRes .= '<tr class = "liste_titre"><th>'.$langs->trans('Name');
@@ -279,7 +291,8 @@ class TimesheetReport
         {
         foreach($resArray as $key => $item)
         {
-            if($Curlvl1 == 0){
+            if($Curlvl1 == 0)
+{
                 $Curlvl1 = $key;
                 $Curlvl2 = $key;
             }
@@ -298,7 +311,8 @@ class TimesheetReport
                 $lvl2HTML .= '<th>'.formatTime($lvl3Total, 0).'</th>';
                 // add the LVL 3 total day on the LVL 2 title
                 $lvl2HTML .= '<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
-                if($short){
+                if($short)
+{
                     $lvl2HTML .= $lvl3Notes;
                 }
                 $lvl3Notes = '';
@@ -367,7 +381,8 @@ class TimesheetReport
         $lvl2HTML .= '<th>'.formatTime($lvl3Total, 0).'</th>';
         // add the LVL 3 total day on the LVL 2 title
         $lvl2HTML .= '<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
-        if($short){
+        if($short)
+{
             $lvl2HTML .= $lvl3Notes;
         }
         $lvl2HTML .= '</th></tr>';

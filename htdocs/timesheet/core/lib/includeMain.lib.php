@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -20,19 +20,23 @@
 // Define status
 $res = 0;
 $path = dirname(__FILE__);
-if (! $res && file_exists($path."/dev.inc.php")) {
+if (! $res && file_exists($path."/dev.inc.php"))
+{
     $res = @include $path.'/dev.inc.php';
 }
 if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
-if (! $res && file_exists($path."/../../../main.inc.php")){
+if (! $res && file_exists($path."/../../../main.inc.php"))
+{
     $res = @include $path.'/../../../main.inc.php';// in HTdocs
     $_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($path."/../../../");
 }
-if (! $res && file_exists($path."/../../../../main.inc.php")) {
+if (! $res && file_exists($path."/../../../../main.inc.php"))
+{
     $res = @include $path.'/../../../../main.inc.php';//in custom
     $_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($path."/../../../../");
 }
-if (! $res && file_exists($path."/../../../../../main.inc.php")) {
+if (! $res && file_exists($path."/../../../../../main.inc.php"))
+{
     $res = @include $path.'/../../../../../main.inc.php';//in custom
     $_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($path."/../../");
 }

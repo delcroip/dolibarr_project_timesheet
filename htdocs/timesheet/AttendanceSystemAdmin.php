@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -78,7 +78,8 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 	$ls_status = GETPOST('ls_status', 'int');
 }
 $page = GETPOST('page', 'int');
-if ($page == -1) { $page = 0;}
+if ($page == -1)
+{ $page = 0;}
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -121,7 +122,8 @@ if(!empty($ref))
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 // Action to remove record
- switch($action){
+ switch($action)
+{
     case 'confirm_delete':
        $result = ($confirm == 'yes')?$object->delete($user):0;
        if ($result > 0)
@@ -137,7 +139,8 @@ if(!empty($ref))
        }
        break;
     case 'delete':
-        if( $action == 'delete' && ($id>0 || $ref!="")){
+        if( $action == 'delete' && ($id>0 || $ref!=""))
+{
          $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?action = confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
@@ -157,14 +160,16 @@ $fuser = new User($db);
 // Put here content of your page
 // Example : Adding jquery code
 /*print '<script type = "text/javascript" language = "javascript">
-jQuery(document).ready(function() {
+jQuery(document).ready(function()
+{
 	function init_myfunc()
 	{
 		jQuery("#myid").removeAttr(\'disabled\');
 		jQuery("#myid").attr(\'disabled\', \'disabled\');
 	}
 	init_myfunc();
-	jQuery("#mybutton").click(function() {
+	jQuery("#mybutton").click(function()
+{
 		init_needroot();
 	});
 });
@@ -185,7 +190,7 @@ jQuery(document).ready(function() {
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
-            $filtrearr = explode(',', $filter);
+            $filtrearr = explode(', ', $filter);
             foreach ($filtrearr as $fil)
             {
                     $filt = explode(':', $fil);
@@ -214,7 +219,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if(!empty($sortfield)){$sql.= $db->order($sortfield, $sortorder);
+    if(!empty($sortfield))
+{$sql.= $db->order($sortfield, $sortorder);
     }else{ $sortorder = 'ASC';}
     if (!empty($limit))
     {
@@ -322,19 +328,22 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print "<td>".$obj->ip."</td>";
 	print "<td>".$obj->port."</td>";
 	print "<td>".$obj->note."</td>";
-	if(class_exist('Societe')){
+	if(class_exist('Societe'))
+{
 		$StaticObject = New Societe($db);
 		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_third_party)."</td>";
 	}else{
 		print print_sellist($sql_third_party, $obj->fk_third_party);
 	}
-	if(class_exist('Task')){
+	if(class_exist('Task'))
+{
 		$StaticObject = New Task($db);
 		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_task)."</td>";
 	}else{
 		print print_sellist($sql_task, $obj->fk_task);
 	}
-	if(class_exist('Project')){
+	if(class_exist('Project'))
+{
 		$StaticObject = New Project($db);
 		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_project)."</td>";
 	}else{

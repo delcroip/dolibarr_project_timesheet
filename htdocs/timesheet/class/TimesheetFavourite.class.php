@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -90,13 +90,16 @@ class TimesheetFavourite extends CommonObject
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++;$this->errors[] = "Error ".$this->db->lasterror();}
+    	if (! $resql)
+        { 
+            $error++;$this->errors[] = "Error ".$this->db->lasterror();
+        }
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
             if (! $notrigger)
             {
-   //// Call triggers :$result = $this->call_trigger('MYOBJECT_CREATE', $user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
+   //// Call triggers :$result = $this->call_trigger('MYOBJECT_CREATE', $user);if ($result < 0){ $error++;//Do also what you must do to rollback action if trigger fail}
             }
         }
         // Commit or rollback
@@ -164,10 +167,12 @@ class TimesheetFavourite extends CommonObject
                 $i++;
             }
             $this->db->free($resql);
-            foreach($List as $row){
+            foreach($List as $row)
+            {
                 //$Listtask = array_merge($Listtask, $row->getTaskList());
                 $subListtask = $row->getTaskList();
-                foreach($subListtask as $key => $value){
+                foreach($subListtask as $key => $value)
+                {
                     $Listtask[$key] = $value;
                 }
             }
@@ -191,10 +196,12 @@ class TimesheetFavourite extends CommonObject
         $sql = "SELECT";
 	$sql.= " t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
-         if($this->project_task && $this->subtask){
+         if($this->project_task && $this->subtask)
+         {
              $sql.= '  WHERE  (t.rowid = \''.$this->project_task.'\'';
              $sql.= '  OR  t.fk_task_parent = \''.$this->project_task.'\')';
-         }elseif($this->project_task ){
+         }elseif($this->project_task )
+         {
             $sql.= '  WHERE t.rowid = \''.$this->project_task.'\'';
          }else{
             $sql.= ' WHERE t.fk_projet = \''.$this->project.'\'';
@@ -296,12 +303,15 @@ class TimesheetFavourite extends CommonObject
         $this->db->begin();
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++;$this->errors[] = "Error ".$this->db->lasterror();}
+    	if (! $resql)
+        { 
+            $error++;$this->errors[] = "Error ".$this->db->lasterror();
+        }
             if (! $error)
             {
                     if (! $notrigger)
                     {
-   //// Call triggers :$result = $this->call_trigger('MYOBJECT_UPDATE', $user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
+   //// Call triggers :$result = $this->call_trigger('MYOBJECT_UPDATE', $user);if ($result < 0){ $error++;//Do also what you must do to rollback action if trigger fail}
                      }
             }
     // Commit or rollback
@@ -334,32 +344,42 @@ class TimesheetFavourite extends CommonObject
     {
     	global $langs;
     	$result = '';
-        if(empty($ref) && $id == 0){
-            if(!empty($this->id))  {
+        if(empty($ref) && $id == 0)
+        {
+            if(!empty($this->id))
+            {
                 $id = $this->id;
-            }elseif(!empty($this->rowid)){
+            }elseif(!empty($this->rowid))
+            {
                 $id = $this->rowid;
-            }if(!empty($this->ref)){
+            }if(!empty($this->ref))
+            {
                 $ref = $this->ref;
             }
         }
-        if($id){
+        if($id)
+        {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?id='.$id.'&action = view">';
-        }elseif(!empty($ref)){
+        }elseif(!empty($ref))
+        {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?ref='.$ref.'&action = view">';
         }else{
             $lien = "";
         }
         $lienfin = empty($lien)?'':'</a>';
     	$picto = 'timesheet@timesheet';
-        if($ref){
+        if($ref)
+        {
             $label = $langs->trans("Show").': '.$ref;
-        }elseif($id){
+        }elseif($id)
+        {
             $label = $langs->trans("Show").': '.$id;
         }
-    	if ($withpicto == 1){
+    	if ($withpicto == 1)
+        {
             $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif($withpicto == 2) {
+        }elseif($withpicto == 2)
+        {
             $result .= $lien.img_object($label, $picto).$lienfin;
         }else{
             $result .= $lien.$htmlcontent.$lienfin;
@@ -381,7 +401,7 @@ class TimesheetFavourite extends CommonObject
             {
                     if (! $notrigger)
                     {
-                //// Call triggers :$result = $this->call_trigger('MYOBJECT_DELETE', $user);if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
+                //// Call triggers :$result = $this->call_trigger('MYOBJECT_DELETE', $user);if ($result < 0){ $error++;//Do also what you must do to rollback action if trigger fail}
                     }
             }
             if (! $error)
@@ -390,7 +410,10 @@ class TimesheetFavourite extends CommonObject
                 $sql.= " WHERE rowid=".$this->id;
                 dol_syslog(__METHOD__);
                 $resql = $this->db->query($sql);
-                if (! $resql) { $error++;$this->errors[] = "Error ".$this->db->lasterror();}
+                if (! $resql)
+                { 
+                    $error++;$this->errors[] = "Error ".$this->db->lasterror();
+                }
             }
     // Commit or rollback
             if ($error)

@@ -9,7 +9,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -103,7 +103,10 @@ class AttendanceSystem extends CommonObject
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++;$this->errors[] = "Error ".$this->db->lasterror();}
+    	if (! $resql)
+        { 
+            $error++;$this->errors[] = "Error ".$this->db->lasterror();
+        }
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
@@ -113,7 +116,7 @@ class AttendanceSystem extends CommonObject
             // want this action calls a trigger.
             //// Call triggers
             //$result = $this->call_trigger('MYOBJECT_CREATE', $user);
-            //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
+
             //// End call triggers
             }
         }
@@ -208,7 +211,8 @@ class AttendanceSystem extends CommonObject
 	$this->db->begin();
 	dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++;$this->errors[] = "Error ".$this->db->lasterror();}
+    	if (! $resql)
+{ $error++;$this->errors[] = "Error ".$this->db->lasterror();}
             if (! $error)
             {
                 if (! $notrigger)
@@ -217,7 +221,7 @@ class AttendanceSystem extends CommonObject
             // want this action calls a trigger.
             //// Call triggers
             //$result = $this->call_trigger('MYOBJECT_MODIFY', $user);
-            //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
+            //if ($result < 0){ $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
             }
@@ -252,12 +256,16 @@ class AttendanceSystem extends CommonObject
 	global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;// Force disable tooltips
     	$result = '';
-        if(empty($ref) && $id == 0){
-            if(isset($this->id))  {
+        if(empty($ref) && $id == 0)
+{
+            if(isset($this->id))
+{
                 $id = $this->id;
-            }elseif(isset($this->rowid)){
+            }elseif(isset($this->rowid))
+{
                 $id = $this->rowid;
-            }if(isset($this->ref)){
+            }if(isset($this->ref))
+{
                 $ref = $this->ref;
             }
         }
@@ -272,9 +280,11 @@ class AttendanceSystem extends CommonObject
             $linkclose .= ' title = "'.dol_escape_htmltag($label, 1).'"';
             $linkclose .= ' class = "classfortooltip'.($morecss?' '.$morecss:'').'"';
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
-        if($id){
+        if($id)
+{
             $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'id='.$id.'&action = view"'.$linkclose.'>';
-        }elseif(!empty($ref)){
+        }elseif(!empty($ref))
+{
             $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?ref='.$ref.'&action = view"'.$linkclose.'>';
         }else{
             $lien = "";
@@ -283,14 +293,18 @@ class AttendanceSystem extends CommonObject
     	$picto = 'generic';
         $label = '<u>' . $langs->trans("spread") . '</u>';
         $label.= '<br>';
-        if($ref){
+        if($ref)
+{
             $label .= $langs->trans("Red").': '.$ref;
-        }elseif($id){
+        }elseif($id)
+{
             $label .= $langs->trans("#").': '.$id;
         }
-    	if ($withpicto == 1){
+    	if ($withpicto == 1)
+{
             $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif($withpicto == 2) {
+        }elseif($withpicto == 2)
+{
             $result .= $lien.img_object($label, $picto).$lienfin;
         }else{
             $result .= $lien.$htmlcontent.$lienfin;
@@ -378,7 +392,7 @@ class AttendanceSystem extends CommonObject
         // want this action calls a trigger.
         //// Call triggers
         //$result = $this->call_trigger('MYOBJECT_DELETE', $user);
-        //if ($result < 0) { $error++;//Do also what you must do to rollback action if trigger fail}
+        //if ($result < 0)S{ $error++;//Do also what you must do to rollback action if trigger fail}
         //// End call triggers
             }
         }
@@ -388,8 +402,10 @@ class AttendanceSystem extends CommonObject
         $sql.= " WHERE rowid=".$this->id;
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++;$this->errors[] = "Error ".$this->db->lasterror();}
-        elseif($this->db->affected_rows($resql) == 0){$error++;$this->errors[] = "Item no found in database";}
+        if (! $resql)
+{ $error++;$this->errors[] = "Error ".$this->db->lasterror();}
+        elseif($this->db->affected_rows($resql) == 0)
+{$error++;$this->errors[] = "Item no found in database";}
         }
 // Commit or rollback
         if ($error)
@@ -475,7 +491,8 @@ class AttendanceSystem extends CommonObject
      *
      *	@return	void
      */
-    function cleanParam(){
+    function cleanParam()
+{
 	if (!empty($this->label)) $this->label = trim($this->label);
 	if (!empty($this->ip)) $this->ip = trim($this->ip);
 	if (!empty($this->port)) $this->port = trim($this->port);
@@ -493,7 +510,8 @@ class AttendanceSystem extends CommonObject
      *
      *	@return	void
      */
-    function setSQLfields($user){
+    function setSQLfields($user)
+{
         $sql = '';
 	$sql .= ' label='.(empty($this->label)!=0 ? 'null':"'".$this->db->escape($this->label)."'").', ';
 	$sql .= ' ip='.(empty($this->ip)!=0 ? 'null':"'".$this->db->escape($this->ip)."'").', ';
@@ -512,7 +530,8 @@ class AttendanceSystem extends CommonObject
     * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
     * @return   string       serialized object
     */
-    public function serialize($mode = 0){
+    public function serialize($mode = 0)
+{
        $ret = '';
        $array = array();
 	$array['label'] = $this->label;
@@ -546,7 +565,8 @@ class AttendanceSystem extends CommonObject
      * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */
-       public function unserialize($str, $mode = 0){
+       public function unserialize($str, $mode = 0)
+{
        $ret = '';
        $array = array();
         switch($mode)
@@ -561,7 +581,8 @@ class AttendanceSystem extends CommonObject
                 break;
         }
         // automatic unserialisation based on match between property name and key value
-        foreach ($array as $key => $value) {
+        foreach ($array as $key => $value)
+{
             if(isset($this->{$key}))$this->{$key} = $value;
         }
     }

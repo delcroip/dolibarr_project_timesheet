@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -20,7 +20,8 @@ include 'lib/includeMain.lib.php';
  top_httphead();
 //get the token, exit if
 $token = GETPOST('token', 'apha');
-if(!isset($_SESSION['ajaxQuerry'][$token])){
+if(!isset($_SESSION['ajaxQuerry'][$token]))
+{
     ob_end_flush();
     exit();
 }
@@ -32,10 +33,12 @@ $separator = isset($htmlarray['separator'])?$htmlarray['separator']:' ';
  $search = GETPOST($htmlName, 'alpha');
 //find if barckets
 $posBs = strpos($htmlName, '[');
-if($posBs>0){
+if($posBs>0)
+{
     $subStrL1 = substr($htmlName, 0, $posBs);
     $search = $_GET[$subStrL1];
-    while(is_array($search)){// assumption there is only one value in the array
+    while(is_array($search))
+{// assumption there is only one value in the array
         $search = array_pop($search);
     }
 }
@@ -61,15 +64,18 @@ if($posBs>0){
     {
           // support AS in the fields ex $field1 = 'CONTACT(u.firstname, ' ', u.lastname) AS fullname'
         // with sqltail = 'JOIN llx_user as u ON t.fk_user = u.rowid'
-        $listFields = explode(',', $sqlarray['fields']);
+        $listFields = explode(', ', $sqlarray['fields']);
         $fields = array();
-    foreach($listFields as $item){
+    foreach($listFields as $item)
+{
         $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
         $start2 = strpos($item, '.');
         $label = $item;
-        if($start){
+        if($start)
+{
             $label = substr($item, $start+4);
-        }elseif($start2){
+        }elseif($start2)
+{
             $label = substr($item, $start2+1);
         }
         $fields[] = array('select' => $item, 'label'=>trim($label));
@@ -83,7 +89,8 @@ if($posBs>0){
             if ($obj)
             {
                 $label = '';
-                foreach($fields as $item){
+                foreach($fields as $item)
+{
                     if(!empty($label))$label .= $separator;
                     $label .= $obj->{$item['label']};
                 }
@@ -96,7 +103,8 @@ if($posBs>0){
             }
             $i++;
         }
-        if($addtionnalChoices)foreach($addtionnalChoices as $value => $label){
+        if($addtionnalChoices)foreach($addtionnalChoices as $value => $label)
+{
                 $row_array['label'] = $label;
 		$row_array['value'] = $label;
 	        $row_array['key'] = $value;

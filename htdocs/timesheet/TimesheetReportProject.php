@@ -7,7 +7,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -53,17 +53,20 @@ $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
-if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)){
+if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId))
+{
     $step = 0;
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
  }
-if($action == 'getpdf'){
+if($action == 'getpdf')
+{
     $report = new TimesheetReport($db);
     $report->initBasic($projectSelectedId, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
-    if( $pdf->write_file($report, $langs)>0){
+    if( $pdf->write_file($report, $langs)>0)
+{
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart = timesheet&file = reports/".$report->ref.".pdf");
     	return;
     }
@@ -75,7 +78,8 @@ llxHeader('', $langs->trans('projectReport'), '');
 $userid = is_object($user)?$user->id:$user;
 //querry to get the project where the user have priviledge;either project responsible or admin
 $sql = 'SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
-if(!$user->admin){
+if(!$user->admin)
+{
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid = element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active = \'1\'  ';
@@ -110,15 +114,17 @@ $querryRes = '';
 if ($projectSelectedId   &&!empty($dateStart))
 {
     $projectSelected = $projectList[$projectSelectedId];
-    if($projectSelectedId == '-999'){
-        foreach($projectList as $project){
-        $querryRes .= $project->getHTMLreport($short,
-           dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
+    if($projectSelectedId == '-999')
+{
+        foreach($projectList as $project)
+{
+        $querryRes .= $project->getHTMLreport($short, 
+           dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'), 
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
     }else{
-    $querryRes = $projectSelected->getHTMLreport($short,
-            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
+    $querryRes = $projectSelected->getHTMLreport($short, 
+            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'), 
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
 }else
@@ -142,12 +148,12 @@ $Form = '<form action="?action = reportproject'.(($optioncss != '')?'&amp;option
         <td><select  name = "projectSelected">
         ';
 // select project
-foreach($projectList as $pjt){
+foreach($projectList as $pjt)
+{
     $Form .= '<option value = "'.$pjt->projectid.'" '.(($projectSelectedId == $pjt->projectid)?"selected":'').' >'.$pjt->name.'</option>'."\n";
 }
-//    if($user->admin){
-        $Form .= '<option value = "-999" '.(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
-//    }
+$Form .= '<option value = "-999" '.(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+
 $Form .= '</select></td>';
         //}
 // select start date

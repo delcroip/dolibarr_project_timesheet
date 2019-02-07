@@ -7,7 +7,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,7 +28,8 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetAttendanceEvent.class.php';
 require_once 'class/TimesheetTask.class.php';
-if (!$user->rights->timesheet->attendance->user) {
+if (!$user->rights->timesheet->attendance->user)
+{
     $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");
 }
 $tms = GETPOST('tms', 'alpha');
@@ -52,7 +53,8 @@ $timesheet_attendance = new Attendanceevent($db, $userid);
 ********************************************************************/
 $status = '';
 $update = false;
-switch($action){
+switch($action)
+{
     case 'start':
             $json = $timesheet_attendance->ajaxStart($user, $json, $customer, $project, $task);
            // ob_clean();
@@ -77,7 +79,8 @@ exit();
     default:
         break;
 }
-if(!empty($tms)){
+if(!empty($tms))
+{
        unset($_SESSION['timesheet_attendance'][$tms]);
 }
 //$timesheet_attendance->fetchAll($today);//FIXME: fetcht the list project/task
@@ -95,7 +98,8 @@ $timesheet_attendance->fetch('', $user);
 $timesheet_attendance->printHTMLClock();
 //tmstp = time();
 //fetch ts for others
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin)){
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin))
+{
     //print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 $headers = explode('||', $conf->global->TIMESHEET_HEADERS);
@@ -104,9 +108,11 @@ $ajax = false;
 //headers
 $html .= "<table class = \"noborder\" width = \"100%\">";
 $html .= "<tr>";
- foreach ($headers as $key => $value){
+ foreach ($headers as $key => $value)
+{
          $html .= "\t<th ";
-         if (count($headers) == 1){
+         if (count($headers) == 1)
+{
                 $html .= 'colspan = "2" ';
          }
          $html .= ">".$langs->trans($value)."</th>\n";

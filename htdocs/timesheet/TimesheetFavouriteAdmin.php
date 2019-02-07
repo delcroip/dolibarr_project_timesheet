@@ -8,7 +8,7 @@
  * the Free Software Foundation;either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -34,7 +34,7 @@
 //if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 //if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
 // Change this following line to use the correct relative path (../, ../../, etc)
-include 'core/lib/includeMain.lib.php';;
+include 'core/lib/includeMain.lib.php';
 // Change this following line to use the correct relative path from htdocs
 require_once 'class/TimesheetFavourite.class.php';
 require_once 'core/lib/timesheet.lib.php';
@@ -45,9 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 //dol_include_once('/core/lib/images.lib.php');
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // include conditionnally of the dolibarr version
-//if((version_compare(DOL_VERSION, "3.8", "<"))){
-global $db;
-//}
+
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
@@ -82,7 +80,8 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 	$ls_date_end_year = GETPOST('ls_date_end_year', 'int');
 }
 $page = GETPOST('page', 'int');//FIXME, need to use for all the list
-if ($page == -1) { $page = 0;}
+if ($page == -1)
+{ $page = 0;}
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -105,9 +104,11 @@ if(!empty($ref))
 ********************************************************************/
 // Action to add record
 $error = 0;
-if ($cancel){
+if ($cancel)
+{
         reloadpage($backtopage, $id, $ref);
-}elseif(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
+}elseif(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref))))
+{
     if(GETPOST('User', 'int') == "" ) //to keep the tms on javvascript reload
     {
         $tms = getToken();
@@ -120,7 +121,8 @@ if ($cancel){
 }elseif(($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
         //block resubmit
-        if($ajax!=1 && (empty($tms) || (!isset($_SESSION['timesheetFavourite'.$tms])))){
+        if($ajax!=1 && (empty($tms) || (!isset($_SESSION['timesheetFavourite'.$tms]))))
+{
                 setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
                 $action = ($action == 'add')?'create':'edit';
         }
@@ -149,7 +151,8 @@ if ($cancel){
      $action = 'list';
  }
  $result = '';
-  switch($action){		
+  switch($action)
+{
                     case 'update':
                             $result = ($user->admin || ($user->id == $object->user))?$object->update():-1;
                             if ($result > 0)
@@ -177,11 +180,13 @@ if ($cancel){
                             {
                                     $result = $object->fetch($id, $ref);
                                     // only admin can check the whitelist of other
-                                    if(!$user->admin && $user->id != $object->user){
+                                    if(!$user->admin && $user->id != $object->user)
+{
                                         setEventMessage( $langs->trans('notYourWhitelist').' id:'.$id, 'errors');
                                         reloadpage();
                                     }
-                                    if ($result < 0){
+                                    if ($result < 0)
+{
                                         dol_print_error($db);
                                     }else { // fill the id & ref
                                         if(isset($object->id))$id = $object->id;
@@ -201,7 +206,8 @@ if ($cancel){
                                     // Creation OK
                                 // remove the tms
                                    unset($_SESSION['timesheetFavourite'.$tms]);
-                                   if ($ajax == 1){
+                                   if ($ajax == 1)
+{
                                            echo json_encode(array('id'=> $result));
                                            ob_end_flush();
 exit();
@@ -222,7 +228,8 @@ exit();
                             if ($result > 0)
                             {
                                     // Delete OK
-                                if ($ajax == 1){
+                                if ($ajax == 1)
+{
                                            echo json_encode(array('id'=> '0'));
                                            ob_end_flush();
 exit();
@@ -243,7 +250,8 @@ exit();
                     case 'create':
                     default:
                         //document handling
-                        if(version_compare(DOL_VERSION, "4.0")>=0){
+                        if(version_compare(DOL_VERSION, "4.0")>=0)
+{
                             include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
                         }else{
                             include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
@@ -256,7 +264,8 @@ if(isset( $_SESSION['timesheetFavourite'.$tms]) &&  !GETPOST('Project', 'int') )
 {
    // unset($_SESSION['timesheetFavourite'.$tms]);
 }
-if ($ajax == 1){
+if ($ajax == 1)
+{
     echo json_encode(array('errors'=> $object->errors));
     ob_end_flush();
 exit();
@@ -274,17 +283,21 @@ $formother = new FormOther($db);
 //javascript to reload the page with the poject selected
 print '
 <SCRIPT type = "text/javascript">
-function reload(form){
+function reload(form)
+{
 var param_array = window.location.href.split(\'?\')[1].split(\'&\');
 var index;
 var id = "";
 var action = "create";
-for(index = 0;index < param_array.length;++index){
+for(index = 0;index < param_array.length;++index)
+{
     x = param_array[index].split(\' = \');
-    if(x[0] == "action"){
+    if(x[0] == "action")
+{
         action = x[1];
     }
-    if(x[0] == "id"){
+    if(x[0] == "id")
+{
         id = "&id = "+x[1];
     }
 }
@@ -295,26 +308,30 @@ self.location = "'.$PHP_SELF.'?&action = " + action + id +"&tms='.$tms.'&User = 
 </script>';
 // Example : Adding jquery code
 /*print '<script type = "text/javascript" language = "javascript">
-jQuery(document).ready(function() {
+jQuery(document).ready(function()
+{
 	function init_myfunc()
 	{
 		jQuery("#myid").removeAttr(\'disabled\');
 		jQuery("#myid").attr(\'disabled\', \'disabled\');
 	}
 	init_myfunc();
-	jQuery("#mybutton").click(function() {
+	jQuery("#mybutton").click(function()
+{
 		init_needroot();
 	});
 });
 </script>';*/
 $edit = $new = 0;
-switch ($action) {
+switch ($action)
+{
     case 'create':
         $new = 1;
     case 'edit':
         $edit = 1;
    case 'delete';
-        if( $action == 'delete' && ($id>0 || $ref!="")){
+        if( $action == 'delete' && ($id>0 || $ref!=""))
+{
          $ret = $form->form_confirm($PHP_SELF.'?action = confirm_delete&id='.$id, $langs->trans('DeleteTimesheetwhitelist'), $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
@@ -325,15 +342,18 @@ switch ($action) {
        // if(!$user->admin)$object->next_prev_filter = ' fk_user = "'.$user->id.'"';
  //
         // tabs
-        if($edit == 0 && $new == 0){ //show tabs
+        if($edit == 0 && $new == 0)
+{ //show tabs
             $head = timesheetFavourite_prepare_head($object);
             dol_fiche_head($head, 'card', $langs->trans('Timesheetwhitelist'), 0, 'timesheet@timesheet');
         }else{
             print_fiche_titre($langs->trans('Timesheetwhitelist'));
         }
 	print '<br>';
-        if($edit == 1){
-            if($new == 1){
+        if($edit == 1)
+{
+            if($new == 1)
+{
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action = add">';
             }else{
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action = update&id='.$id.'">';
@@ -353,7 +373,8 @@ switch ($action) {
 		print "<tr>";
 // show the field user
             print '<td class = "fieldrequired" width = "200px">'.$langs->trans('User').' </td><td>';
-            if($edit == 1){
+            if($edit == 1)
+{
                     if(!empty($editedUser))$object->user = $editedUser;
                     elseif($new == 1) $object->user = $user->id;
                     print $form->select_dolusers($object->user, 'User', 1, '', !$user->admin );
@@ -365,7 +386,8 @@ switch ($action) {
                 print "<tr>";
 // show the field project
 		print '<td class = "fieldrequired">'.$langs->trans('Project').' </td><td>';
-		if($edit == 1){
+		if($edit == 1)
+{
                     if(!empty($editedProject))$object->project = $editedProject;
                 $formUserWhere = ' (t.datee>=\''.$object->db->idate(time()).'\' OR t.datee IS NULL)';
  //               $formUserWhere .= ' AND (projet.dateo<=FROM_UNIXTIME("'.time().'") OR prj.dateo IS NULL)';
@@ -383,7 +405,8 @@ switch ($action) {
             print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);
                 //print select_generic('projet', 'rowid', 'Project', 'ref', 'title', $object->project, ' - ', $formUserWhere, '', NULL, $formUserJoin);
 		
-                if($ajaxNbChar>=0) print "\n<script type = 'text/javascript'>\n$('input#Project').change(function(){\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
+                if($ajaxNbChar>=0) print "\n<script type = 'text/javascript'>\n$('input#Project').change(function()
+{\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
   //FIXME best to feed additionnal param to the search generic
                 }else{
 		print print_generic('projet', 'rowid', $object->project, 'ref', 'title');
@@ -393,7 +416,8 @@ switch ($action) {
 		print "<tr>";
 // show the field project_task
 		print '<td>'.$langs->trans('Task').' </td><td>';
-		if($edit == 1){
+		if($edit == 1)
+                {
                 $formTaskJoin = '';
                 $formTaskWhere = ' fk_projet = \''.($object->project?$object->project:'0').'\'';
                 if(!$user->admin)
@@ -402,15 +426,10 @@ switch ($action) {
                         $formTaskJoin .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = fk_c_type_contact';
                         $formTaskWhere .= " AND (ctc.element = 'project_task' AND ctc.active = '1'  AND ec.fk_socpeople = '".$user->id."' )";
                 }
-                  //if (isset($formProject)){
                     $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
                     $htmlProjectTaskArray = array('name'=>'Projecttask', 'ajaxNbChar'=>$ajaxNbChar);
                     $sqlProjectTaskArray = array('table'=>'projet_task', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
                     print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
-                    //print select_generic('projet_task', 'rowid', 'Projecttask', 'ref', 'label', $object->project_task, ' - ', $formTaskWhere, '', NULL, $formTaskJoin, $ajaxNbChar);
-                  //}else{
-                  //      print '<select class = "flat minwidth200" id = "Projecttask" name = "Projecttask"></select>';
-                  //}
                 }else{
 		print print_generic('projet_task', 'rowid', $object->project_task, 'ref', 'label');
 		}
@@ -419,7 +438,8 @@ switch ($action) {
                 print "<tr>";
 // show the field subtask
 		print '<td>'.$langs->trans('Subtask').' </td><td>';
-		if($edit == 1){
+		if($edit == 1)
+{
 			print ' <input type = "checkbox" value = "1" name = "Subtask" '.($object->subtask?'checked':'').'>';
 		}else{
                         print '<input type = "checkbox" '.($object->subtask?'checked':'').' onclick = "return false" readonly>';
@@ -429,8 +449,10 @@ switch ($action) {
 		print "<tr>";
 // show the field date_start
 		print '<td>'.$langs->trans('DateStart').' </td><td>';
-		if($edit == 1){
-		if($new == 1){
+		if($edit == 1)
+{
+		if($new == 1)
+{
 			print $form->select_date(-1, 'Datestart');
 		}else{
                                                     if($object->date_start == '')
@@ -445,8 +467,10 @@ switch ($action) {
 // show the field date_end
                 print "<tr>";
 		print '<td>'.$langs->trans('DateEnd').' </td><td>';
-		if($edit == 1){
-		if($new == 1){
+		if($edit == 1)
+{
+		if($new == 1)
+{
 			print $form->select_date(-1, 'Dateend');
 		}else{
                                                     if($object->date_end == '')
@@ -461,8 +485,10 @@ switch ($action) {
 	print '</table>'."\n";
 	print '<br>';
 	print '<div class = "center">';
-        if($edit == 1){
-        if($new == 1){
+        if($edit == 1)
+{
+        if($new == 1)
+{
                 print '<input type = "submit" class = "butAction" name = "add" value = "'.$langs->trans('Add').'">';
             }else{
                 print '<input type = "submit" name = "update" value = "'.$langs->trans('Update').'" class = "butAction">';
@@ -497,7 +523,8 @@ switch ($action) {
     }
         break;
     case 'delete':
-        if( ($id>0 || $ref!='')){
+        if( ($id>0 || $ref!=''))
+{
          $ret = $form->form_confirm($PHP_SELF.'?action = confirm_delete&id='.$id, $langs->trans('DeleteTimesheetwhitelist'), $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background
@@ -520,7 +547,7 @@ switch ($action) {
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
-            $filtrearr = explode(',', $filter);
+            $filtrearr = explode(', ', $filter);
             foreach ($filtrearr as $fil)
             {
                     $filt = explode(':', $fil);
@@ -528,15 +555,18 @@ switch ($action) {
             }
     }
     //pass the search criteria
-    	if($ls_user){
+    	if($ls_user)
+{
             $sqlwhere .= natural_search(array('t.fk_user'), $ls_user);
-        }elseif(!$user->admin){
+        }elseif(!$user->admin)
+{
             $sqlwhere .= ' AND t.fk_user = \''.$userId.'\'';
         }
 	if($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
 	if($ls_project_task) $sqlwhere .= natural_search(array('t.fk_project_task'), $ls_project_task);
 	if($ls_subtask) $sqlwhere .= natural_search(array('t.subtask'), $ls_subtask);
-        if($db->type!='pgsql'){
+        if($db->type!='pgsql')
+{
             if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start) = \''.$ls_date_start_month.'\'';
             if($ls_date_start_year)$sqlwhere .= ' AND YEAR(t.date_start) = \''.$ls_date_start_year.'\'';
             if($ls_date_end_month)$sqlwhere .= ' AND MONTH(t.date_end) = \''.$ls_date_end_month.'\'';
@@ -560,7 +590,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if(!empty($sortfield)){$sql.= $db->order($sortfield, $sortorder);
+    if(!empty($sortfield))
+{$sql.= $db->order($sortfield, $sortorder);
     }else{ $sortorder = 'ASC';}
     if (!empty($limit))
     {
@@ -603,7 +634,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         //SEARCH FIELDS
         print '<tr class = "liste_titre">';
         //Search field foruser
-	if($user->admin){
+	if($user->admin)
+{
             print '<td class = "liste_titre" colspan = "1" >';
             $ajaxNbChar = $conf->global->CONTACT_USE_SEARCH_TO_SELECT;
             print $form->select_users($ls_user, 'ls_user');
@@ -679,7 +711,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     // new button
         print '<a href="?action = create" class = "butAction" role = "button">'.$langs->trans('New');
     print ' '.$langs->trans('Timesheetwhitelist')."</a>\n";
-}
+    }
         break;
 }
 dol_fiche_end();
@@ -691,9 +723,11 @@ dol_fiche_end();
  */
 function reloadpage($backtopage, $id, $ref)
 {
-        if (!empty($backtopage)){
+        if (!empty($backtopage))
+        {
             header("Location: ".$backtopage);
-        }elseif(!empty($ref) ){
+        }elseif(!empty($ref) )
+        {
             header("Location: ".$_SERVER["PHP_SELF"].'?action = view&ref='.$id);
         }elseif($id>0)
         {
