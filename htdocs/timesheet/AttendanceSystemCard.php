@@ -126,7 +126,7 @@ if ($cancel)
 {
     //block resubmit
     if(empty($tms) || (!isset($_SESSION['AttendanceSystem'][$tms])))
-{
+    {
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
             $action = ($action == 'add')?'create':'view';
     }
@@ -149,11 +149,11 @@ if ($cancel)
         $action = 'edit';
  }
   */
- }elseif($id == 0 && $ref == '' && $action!='create')
- {
-     $action = 'create';
- }
-  switch($action)
+}elseif($id == 0 && $ref == '' && $action!='create')
+{
+    $action = 'create';
+}
+switch($action)
 {
     case 'update':
         $result = $object->update($user);
@@ -199,17 +199,17 @@ if ($cancel)
         $result = $object->create($user);
         if ($result > 0)
         {
-                // Creation OK
-            // remove the tms
-               unset($_SESSION['AttendanceSystem'][$tms]);
-               setEventMessage('RecordSucessfullyCreated', 'mesgs');
-               AttendanceSystemReloadPage($backtopage, $result, '');
+            // Creation OK
+        // remove the tms
+           unset($_SESSION['AttendanceSystem'][$tms]);
+           setEventMessage('RecordSucessfullyCreated', 'mesgs');
+           AttendanceSystemReloadPage($backtopage, $result, '');
         }else
         {
-                // Creation KO
-                if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-                else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
-                $action = 'create';
+            // Creation KO
+            if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+            else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
+            $action = 'create';
         }
         break;
      case 'confirm_delete':
@@ -227,7 +227,7 @@ if ($cancel)
             }
             AttendanceSystemReloadPage($backtopage, 0, '');
          break;
- }
+}
 //Removing the tms array so the order can't be submitted two times
 if(isset( $_SESSION['AttendanceSystem'][$tms]))
 {
@@ -274,15 +274,14 @@ switch ($action)
         $new = 1;
     case 'edit':
         $edit = 1;
-   case 'delete';
+    case 'delete';
         if( $action == 'delete' && ($id>0 || $ref!=""))
-{
+        {
          $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
     case 'view':
-    {
         // tabs
         if($edit == 0 && $new == 0)
         {
@@ -294,9 +293,9 @@ switch ($action)
         }
 	print '<br>';
         if($edit == 1)
-{
+        {
             if($new == 1)
-{
+            {
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action=add">';
             }else{
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action=update&id='.$id.'">';
@@ -318,9 +317,10 @@ switch ($action)
 	print "<tr>\n";
 	print '<td class = "fieldrequired">'.$langs->trans('Label').' </td><td>';
 	if($edit == 1)
-{
+        {
 		print '<input type = "text" value = "'.$object->label.'" name = "Label">';
-	}else{
+	}else
+        {
 		print $object->label;
 	}
 	print "</td>";
@@ -329,9 +329,10 @@ switch ($action)
 	print "<tr>\n";
 	print '<td class = "fieldrequired">'.$langs->trans('Ip').' </td><td>';
 	if($edit == 1)
-{
-		print '<input type = "text" value = "'.$object->ip.'" name = "Ip">';
-	}else{
+        {
+            print '<input type = "text" value = "'.$object->ip.'" name = "Ip">';
+	}else
+        {
 		print $object->ip;
 	}
 	print "</td>";
@@ -340,13 +341,13 @@ switch ($action)
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Port').' </td><td>';
 	if($edit == 1)
-{
-		if ($new == 1)
-			print '<input type = "text" value = "4370" name = "Port">';
-		else
-			print '<input type = "text" value = "'.$object->port.'" name = "Port">';
+        {
+            if ($new == 1)
+                    print '<input type = "text" value = "4370" name = "Port">';
+            else
+                    print '<input type = "text" value = "'.$object->port.'" name = "Port">';
 	}else{
-		print $object->port;
+            print $object->port;
 	}
 	print "</td>";
 	print "\n</tr>\n";
@@ -354,10 +355,10 @@ switch ($action)
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Note').' </td><td>';
 	if($edit == 1)
-{
-		print '<input type = "text" value = "'.$object->note.'" name = "Note">';
+        {
+            print '<input type = "text" value = "'.$object->note.'" name = "Note">';
 	}else{
-		print $object->note;
+            print $object->note;
 	}
 	print "</td>";
 	print "\n</tr>\n";
@@ -365,18 +366,18 @@ switch ($action)
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Thirdparty').' </td><td>';
 	if($edit == 1)
-{
-		$selected = ($new)?-1:$object->third_party;
-		$htmlname = 'Thirdparty';
-		print $form->select_company($selected, $htmlname, '', 1
-                        );
-	}else{
+        {
+            $selected = ($new)?-1:$object->third_party;
+            $htmlname = 'Thirdparty';
+            print $form->select_company($selected, $htmlname, '', 1);
+	}else
+        {
 		if(class_exist('Societe'))
-{
-			$StaticObject = New Societe($db);
-			print "<td>".$StaticObject->getNomUrl('1', $object->fk_third_party)."</td>";
+                {
+                    $StaticObject = New Societe($db);
+                    print "<td>".$StaticObject->getNomUrl('1', $object->fk_third_party)."</td>";
 		}else{
-			print print_sellist($sql_third_party, $object->fk_third_party);
+                    print print_sellist($sql_third_party, $object->fk_third_party);
 		}
 	}
 	print "</td>";
@@ -385,19 +386,19 @@ switch ($action)
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Task').' </td><td>';
 	if($edit == 1)
-{
-	$sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
-	$html_task = array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
-	$addChoices_task = null;
+        {
+            $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
+            $html_task = array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
+            $addChoices_task = null;
 		print select_sellist($sql_task, $html_task, $object->task, $addChoices_task );
 	}else{
-		if(class_exist('Task'))
-{
-			$StaticObject = New Task($db);
-			print "<td>".$StaticObject->getNomUrl('1', $object->fk_task)."</td>";
-		}else{
-			print print_sellist($sql_task, $object->fk_task);
-		}
+            if(class_exist('Task'))
+            {
+                $StaticObject = New Task($db);
+                print "<td>".$StaticObject->getNomUrl('1', $object->fk_task)."</td>";
+            }else{
+                print print_sellist($sql_task, $object->fk_task);
+            }
 	}
 	print "</td>";
 	print "\n</tr>\n";
@@ -405,18 +406,18 @@ switch ($action)
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Project').' </td><td>';
 	if($edit == 1)
-{
-		$selected = $object->project;
-		$htmlname = 'Project';
-		$formproject->select_projects(-1, $selected, $htmlname);
+        {
+            $selected = $object->project;
+            $htmlname = 'Project';
+            $formproject->select_projects(-1, $selected, $htmlname);
 	}else{
-		if(class_exist('Project'))
-{
-			$StaticObject = New Project($db);
-			print "<td>".$StaticObject->getNomUrl('1', $object->fk_project)."</td>";
-		}else{
-			print print_sellist($sql_project, $object->fk_project);
-		}
+            if(class_exist('Project'))
+            {
+                    $StaticObject = New Project($db);
+                    print "<td>".$StaticObject->getNomUrl('1', $object->fk_project)."</td>";
+            }else{
+                    print print_sellist($sql_project, $object->fk_project);
+            }
 	}
 	print "</td>";
 	print "\n</tr>\n";
@@ -424,10 +425,10 @@ switch ($action)
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Status').' </td><td>';
 	if($edit == 1)
-{
-		print '<input type = "text" value = "'.$object->status.'" name = "Status">';
+        {
+            print '<input type = "text" value = "'.$object->status.'" name = "Status">';
 	}else{
-		print $object->status;
+            print $object->status;
 	}
 	print "</td>";
 	print "\n</tr>\n";
@@ -435,41 +436,31 @@ switch ($action)
 	print '<br>';
 	print '<div class = "center">';
         if($edit == 1)
-{
-        if($new == 1)
-{
+        {
+            if($new == 1)
+            {
                 print '<input type = "submit" class = "butAction" name = "add" value = "'.$langs->trans('Add').'">';
             }else{
                 print '<input type = "submit" name = "update" value = "'.$langs->trans('Update').'" class = "butAction">';
             }
             print ' &nbsp;<input type = "submit" class = "butActionDelete" name = "cancel" value = "'.$langs->trans('Cancel').'"></div>';
             print '</form>';
-        }else{
+        }else
+        {
             $parameters = array();
             $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);// Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
             if (empty($reshook))
             {
                 print '<div class = "tabsAction">';
-                // Boutons d'actions
-                //if($user->rights->AttendanceSystem->edit)
-                //{
-                    print '<a href = "'.$PHP_SELF.'?id='.$id.'&action=edit" class = "butAction">'.$langs->trans('Update').'</a>';
-                //}
-                //if ($user->rights->AttendanceSystem->delete)
-                //{
-                    print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action=delete">'.$langs->trans('Delete').'</a>';
-                //}
-                //else
-                //{
-                //    print '<a class = "butActionRefused" href = "#" title = "'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
-                //}
+                print '<a href = "'.$PHP_SELF.'?id='.$id.'&action=edit" class = "butAction">'.$langs->trans('Update').'</a>';
+                print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action=delete">'.$langs->trans('Delete').'</a>';
+              
                 print '</div>';
             }
         }
         break;
-    }
-        case 'viewinfo':
+    case 'viewinfo':
         print_fiche_titre($langs->trans('AttendanceSystem'));
         $head = AttendanceSystemPrepareHead($object);
         dol_fiche_head($head, 'info', $langs->trans("AttendanceSystem"), 0, 'timesheet@timesheet');
@@ -480,10 +471,10 @@ switch ($action)
         break;
     case 'delete':
         if( ($id>0 || $ref!=''))
-{
-         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
-         if ($ret == 'html') print '<br />';
-         //to have the object to be deleted in the background
+        {
+            $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+            if ($ret == 'html') print '<br />';
+            //to have the object to be deleted in the background
         }
 }
 dol_fiche_end();

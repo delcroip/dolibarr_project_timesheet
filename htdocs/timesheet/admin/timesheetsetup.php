@@ -89,7 +89,7 @@ switch($action)
         //general option
         $hoursperday = getpost('hoursperday', 'int');
         if($hoursperday == 0)
-        { 
+        {
             //error handling if hour per day is empty
             $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
             setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"), 'errors');

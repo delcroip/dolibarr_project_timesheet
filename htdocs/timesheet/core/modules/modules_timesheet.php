@@ -30,21 +30,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';	// re
  */
 abstract class ModelPDFTimesheetReport extends CommonDocGenerator
 {
-	var $error='';
-	/**
-	 *  Return list of active generation models
-	 *
+    var $error='';
+    //phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     *  Return list of active generation models
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
-	 */
-	static function liste_modeles($db, $maxfilenamelength=0)
-	{
-		global $conf;
-		$type='timesheetReport';
-		$liste=array();
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
-		return $liste;
-	}
+     */
+    static function liste_modeles($db, $maxfilenamelength = 0)
+    {
+        global $conf;
+        $type='timesheetReport';
+        $liste=array();
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
+        return $liste;
+    }
 }

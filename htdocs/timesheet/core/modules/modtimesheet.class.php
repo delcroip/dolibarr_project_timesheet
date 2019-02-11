@@ -445,41 +445,31 @@ class modTimesheet extends DolibarrModules
 		// Example:
 		// $this->export_code[$r]=$this->rights_class.'_'.$r;
 		// $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-        // $this->export_enabled[$r]='1';// Condition to show export in list (ie: '$user->id == 3'). Set to 1 to always show when module is enabled.
-		// $this->export_permission[$r]=array(array("facture", "facture", "export"));
-		// $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 's.fk_pays'=>'Country', 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode', 'f.rowid'=>"InvoiceId", 'f.facnumber'=>"InvoiceRef", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.total'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus', 'f.note'=>"InvoiceNote", 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription", 'fd.price'=>"LineUnitPrice", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalTVA", 'fd.total_ttc'=>"LineTotalTTC", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.fk_product'=>'ProductId', 'p.ref'=>'ProductRef');
-		// $this->export_entities_array[$r]=array('s.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 's.fk_pays'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 'f.rowid'=>"invoice", 'f.facnumber'=>"invoice", 'f.datec'=>"invoice", 'f.datef'=>"invoice", 'f.total'=>"invoice", 'f.total_ttc'=>"invoice", 'f.tva'=>"invoice", 'f.paye'=>"invoice", 'f.fk_statut'=>'invoice', 'f.note'=>"invoice", 'fd.rowid'=>'invoice_line', 'fd.description'=>"invoice_line", 'fd.price'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_tva'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.tva_tx'=>"invoice_line", 'fd.qty'=>"invoice_line", 'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.fk_product'=>'product', 'p.ref'=>'product');
-		// $this->export_sql_start[$r]='SELECT DISTINCT ';
-		// $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'facturedet as fd, '.MAIN_DB_PREFIX.'societe as s)';
-		// $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
-		// $this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
-		// $this->export_sql_order[$r] .= ' ORDER BY s.nom';
-		// $r++;
 	}
 	/**
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+         *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	function init($options = '')
 	{
-                global $db, $conf;
-                $result=$this->_load_tables('/timesheet/sql/');
-		$sql = array();
-                $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
-                $sql[0].= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
-                $sql[1] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'rat' AND type='timesheetReport' AND entity = ".$conf->entity;
-                $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.")";
-                dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
-                include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafields = new ExtraFields($this->db);
-                $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'user', 0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
-                $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'projet_task', 0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
-                $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean', 1, '', 'projet_task', 0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
-		return $this->_init($sql, $options);
+            global $db, $conf;
+            $result=$this->_load_tables('/timesheet/sql/');
+            $sql = array();
+            $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
+            $sql[0].= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
+            $sql[1] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'rat' AND type='timesheetReport' AND entity = ".$conf->entity;
+            $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.")";
+            dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
+            include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+            $extrafields = new ExtraFields($this->db);
+            $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'user', 0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+            $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'projet_task', 0, 0, '', array('options'=>array('product:ref|label:rowid::tosell=1 AND fk_product_type=1'=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+            $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean', 1, '', 'projet_task', 0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+            return $this->_init($sql, $options);
 	}
 	/**
 	 *		Function called when module is disabled.
@@ -489,7 +479,7 @@ class modTimesheet extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function remove($options='')
+	function remove($options = '')
 	{
 		return $this->_remove($sql, $options);
 	}

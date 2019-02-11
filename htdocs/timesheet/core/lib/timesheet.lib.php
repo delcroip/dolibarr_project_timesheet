@@ -185,7 +185,7 @@ function getTasks($db, $userid, $role = 'project')
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON  tk.fk_projet = ec.element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
-    $sql .= ' WHERE ctc.element in (\'project\') AND ctc.active = \'1\' AND ctc.code LIKE \'%LEADER%\' ';
+    $sql .= ' WHERE ctc.element in (\''.$role.'\') AND ctc.active = \'1\' AND ctc.code LIKE \'%LEADER%\' ';
     $sql .= ' AND fk_socpeople = \''.$userid.'\'';
     $sql .= ' UNION ';
     $sql .= ' SELECT tk.fk_projet as project, tk.rowid as task';
@@ -560,13 +560,13 @@ function getDayInterval($dateStart, $dateEnd)
  *  @return  string       			time display
  */
 function formatTime($duration, $hoursperdays = -1)
-    {
+{
         global $conf;
         if($hoursperdays == -1)
-{
+        {
             $hoursperdays = ($conf->global->TIMESHEET_TIME_TYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
         }elseif($hoursperdays == -2)
-{
+        {
             $hoursperdays = ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
         }
         if($hoursperdays == 0)
@@ -584,25 +584,25 @@ function formatTime($duration, $hoursperdays = -1)
     /** function to send the eventmessage to dolibarr
      *
      * @global type $langs
-     * @param array $arraymessage
-     * @param bool $returnstring
-     * @return string   messages
+     * @param array $arraymessage array of message to be displayed
+     * @param bool $returnstring  to retrun the json version
+     * @return string   messages in json format
      */
     function TimesheetsetEventMessage($arraymessage, $returnstring = false)
-{
+    {
         global $langs;
         $messages = array();
-        $messages[]= array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
-        $messages[]=array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
-        $messages[]= array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
-        $default=          array('type'=>'warnings', 'text'=>'NothingChanged', 'param'=>0);
-        $messages[]=      array('type'=>'mesgs', 'text'=>'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
-        $messages[]=      array('type'=>'errors', 'text'=>'updateError', 'param'=>$arraymessage['updateError']);
+        $messages[] = array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
+        $messages[] = array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
+        $messages[] = array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
+        $default = array('type'=>'warnings', 'text'=>'NothingChanged', 'param'=>0);
+        $messages[] = array('type'=>'mesgs', 'text'=>'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
+        $messages[] = array('type'=>'errors', 'text'=>'updateError', 'param'=>$arraymessage['updateError']);
         $nbr=0;
         foreach($messages as $key=> $message)
-{
+        {
             if($message['param']>0 )
-{
+            {
                 if($returnstring == false)setEventMessage($langs->transnoentitiesnoconv($message['text']).$message['param'], $message['type']);
                 else $messages[$key]['text']=$langs->trans($message['text']);
                 $nbr++;
@@ -612,29 +612,5 @@ function formatTime($duration, $hoursperdays = -1)
         }
         if($nbr == 0) setEventMessage($langs->transnoentitiesnoconv(
                     $default['text']), $default['type']);
-        /*
-        if (array_sum($arraymessage) == 0)
-{
-            setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warnings');
-        }else{
-            if($arraymessage['timeSpendCreated']>0)
-                $str=$langs->transnoentitiesnoconv("NumberOfTimeSpendCreated")
-                        .':'.$arraymessage['timeSpendCreated'];
-                if($returnstring == true)setEventMessage($str);
-                $retStr+=$str;
-            if($arraymessage['timeSpendModified']>0)
-                setEventMessage( $langs->transnoentitiesnoconv("NumberOfTimeSpendModified")
-                        .':'.$arraymessage['timeSpendCreated']);
-            if($arraymessage['timeSpendDeleted']>0)
-                setEventMessage( $langs->transnoentitiesnoconv("NumberOfTimeSpendDeleted")
-                        .':'.$arraymessage['timeSpendDeleted']);
-            if($arraymessage['NoteUpdated']>0)
-                setEventMessage( $langs->transnoentitiesnoconv("NoteUpdated")
-                        .':'.$arraymessage['NoteUpdated']);
-            if($arraymessage['updateError']>0)
-                setEventMessage( $langs->transnoentitiesnoconv("InternalError")
-                        .$langs->transnoentitiesnoconv(" Update failed")
-                        .':'.$arraymessage['updateError'], 'errors');
-        }*/
         if($returnstring == true)return json_encode($messages);
     }

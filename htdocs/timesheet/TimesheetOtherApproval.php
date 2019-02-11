@@ -106,10 +106,10 @@ if($action == 'submit')
             if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").' '.$tsRejected);
             if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").' '.$errors, 'errors');
             if($errors == 0 && $tsApproved == 0 && $tsRejected == 0)
-                {
-                    setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
-                }
+            {
+                setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
             }
+        }
     }else
     {
         setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
@@ -266,7 +266,8 @@ function getSelectAps($subId, $tasks, $role_key)
              if($db->type!='pgsql')
             {
                 $sql .= " CONCAT(pjt.title, ' (', MONTH(date_start), '/', YEAR(date_start), ' )#' ) as label, ";
-            }else{
+            }else
+            {
                 $sql .= " CONCAT(pjt.title, ' (', date_part('month', date_start), '/', date_part('year', date_start), ' )#' ) as label, ";
             }
             break;
@@ -277,7 +278,8 @@ function getSelectAps($subId, $tasks, $role_key)
            if($db->type!='pgsql')
             {
                 $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ' )#' ) as label, ";
-            }else  {
+            }else
+            {
                 $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week', ts.date_start), '/', date_part('year', ts.date_start), ' )#' ) as label, ";
             }
            break;

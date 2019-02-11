@@ -76,21 +76,21 @@ $numUser = 0;
 $userList = array();
 if ($resql)
 {
-        $numUser = $db->num_rows($resql);
-        $i = 0;
-        // Loop on each record found, so each couple (project id, task id)
-        while ($i < $numUser)
-        {
-                $error = 0;
-                $obj = $db->fetch_object($resql);
-                $userList[$obj->userid] = new TimesheetReport($db);
-                $userList[$obj->userid]->initBasic('', $obj->userid, $obj->firstname.' '.$obj->lastname, $firstDay, $lastDay, $mode );
-                $i++;
-        }
-        $db->free($resql);
+    $numUser = $db->num_rows($resql);
+    $i = 0;
+    // Loop on each record found, so each couple (project id, task id)
+    while ($i < $numUser)
+    {
+        $error = 0;
+        $obj = $db->fetch_object($resql);
+        $userList[$obj->userid] = new TimesheetReport($db);
+        $userList[$obj->userid]->initBasic('', $obj->userid, $obj->firstname.' '.$obj->lastname, $firstDay, $lastDay, $mode );
+        $i++;
+    }
+    $db->free($resql);
 }else
 {
-        dol_print_error($db);
+    dol_print_error($db);
 }
 $Form = '<form action="?action=reportuser'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
         <table class = "noborder"  width = "100%">
@@ -107,24 +107,25 @@ foreach($userList as $usr)
    // $Form .= '<option value = "'.$usr->id.'">'.$usr->name.'</option> ';
     $Form .= '<option value = "'.$usr->userid.'" '.(($userIdSelected == $usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
 }
-    $Form .= '<option value = "-999" '.(($userIdSelected == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+$Form .= '<option value = "-999" '.(($userIdSelected == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
 //$mode = 'PTD';
 $querryRes = '';
 if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         &&!empty($_POST['month']))
 {
     if($userIdSelected == '-999')
-{
+    {
         foreach($userList as $userSt)
-{
-        $querryRes .= $userSt->getHTMLreport($short,
+        {
+            $querryRes .= $userSt->getHTMLreport($short,
             $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
-    }else{
+    }else
+    {
         $querryRes = $userList[$userIdSelected]->getHTMLreport($short,
-            $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
-            $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
+        $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
+        $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
 }else
 {
@@ -154,4 +155,3 @@ if(!empty($querryRes))
 }
 llxFooter();
 $db->close();
-?>

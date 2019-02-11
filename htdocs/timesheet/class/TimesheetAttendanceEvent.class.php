@@ -24,7 +24,7 @@
  *				Initialy built by build_class_from_table on 2018-11-05 20:22
  */
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 //require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once 'class/TimesheetTask.class.php';
@@ -348,67 +348,68 @@ public $date_time_event_start;
         }
     	return $result;
     }
-     /**
-	 *  Retourne select libelle du status (actif, inactif)
-	 *
-	 *  @param	object 		$form          form object that should be created
-      *  *  @return	string 			       html code to select status
-	 */
-	function selectLibStatut($form, $htmlname = 'Status')
-	{
-            global $attendanceeventStatusPictoArray, $attendanceeventStatusArray;
-            return $form->selectarray($htmlname, $attendanceeventStatusArray, $this->status);
-	}
     /**
-	 *  Retourne le libelle du status (actif, inactif)
-	 *
-	 *  @param	int		$mode          0 = libelle long, 1 = libelle court, 2 = Picto + Libelle court, 3 = Picto, 4 = Picto + Libelle long, 5 = Libelle court + Picto
-	 *  @return	string 			       Label of status
-	 */
-	function getLibStatut($mode = 0)
-	{
-		return $this->LibStatut($this->status, $mode);
-	}
-	/**
-	 *  Return the status
-	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0 = long label, 1 = short label, 2 = Picto + short label, 3 = Picto, 4 = Picto + long label, 5 = Short label + Picto, 6 = Long label + Picto
-	 *  @return string 			       	Label of status
-	 */
-	static function LibStatut($status, $mode = 0)
-	{
-		global $langs, $attendanceeventStatusPictoArray, $attendanceeventStatusArray;
-		if ($mode == 0)
-		{
-			$prefix = '';
-			return $langs->trans($attendanceeventStatusArray[$status]);
-		}
-		if ($mode == 1)
-		{
-			return $langs->trans($attendanceeventStatusArray[$status]);
-		}
-		if ($mode == 2)
-		{
-			 return img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]).' '.$langs->trans($attendanceeventStatusArray[$status]);
-		}
-		if ($mode == 3)
-		{
-			 return img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]);
-		}
-		if ($mode == 4)
-		{
-			 return img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]).' '.$langs->trans($attendanceeventStatusArray[$status]);
-		}
-		if ($mode == 5)
-		{
-			 return $langs->trans($attendanceeventStatusArray[$status]).' '.img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]);
-		}
-		if ($mode == 6)
-		{
-			 return $langs->trans($attendanceeventStatusArray[$status]).' '.img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]);
-		}
-	}
+     *  Retourne select libelle du status (actif, inactif)
+     *
+     *  @param	object 		$form          form object that should be created
+     *  @param	string 		$htmlname      HTML name
+     *  @return	string 			       html code to select status
+     */
+    function selectLibStatut($form, $htmlname = 'Status')
+    {
+        global $attendanceeventStatusPictoArray, $attendanceeventStatusArray;
+        return $form->selectarray($htmlname, $attendanceeventStatusArray, $this->status);
+    }
+    /**
+    *  Retourne le libelle du status (actif, inactif)
+    *
+    *  @param	int		$mode          0 = libelle long, 1 = libelle court, 2 = Picto + Libelle court, 3 = Picto, 4 = Picto + Libelle long, 5 = Libelle court + Picto
+    *  @return	string 			       Label of status
+    */
+   function getLibStatut($mode = 0)
+   {
+           return $this->libStatut($this->status, $mode);
+   }
+    /**
+     *  Return the status
+     *
+     *  @param	int		$status        	Id status
+     *  @param  int		$mode          	0 = long label, 1 = short label, 2 = Picto + short label, 3 = Picto, 4 = Picto + long label, 5 = Short label + Picto, 6 = Long label + Picto
+     *  @return string 			       	Label of status
+     */
+    static function libStatut($status, $mode = 0)
+    {
+        global $langs, $attendanceeventStatusPictoArray, $attendanceeventStatusArray;
+        if ($mode == 0)
+        {
+            $prefix = '';
+            return $langs->trans($attendanceeventStatusArray[$status]);
+        }
+        if ($mode == 1)
+        {
+            return $langs->trans($attendanceeventStatusArray[$status]);
+        }
+        if ($mode == 2)
+        {
+            return img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]).' '.$langs->trans($attendanceeventStatusArray[$status]);
+        }
+        if ($mode == 3)
+        {
+            return img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]);
+        }
+        if ($mode == 4)
+        {
+            return img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]).' '.$langs->trans($attendanceeventStatusArray[$status]);
+        }
+        if ($mode == 5)
+        {
+            return $langs->trans($attendanceeventStatusArray[$status]).' '.img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]);
+        }
+        if ($mode == 6)
+        {
+            return $langs->trans($attendanceeventStatusArray[$status]).' '.img_picto($attendanceeventStatusArray[$status], $attendanceeventStatusPictoArray[$status]);
+        }
+    }
     /**
      *  Delete object in database
      *
@@ -418,7 +419,8 @@ public $date_time_event_start;
      */
     function delete($user, $notrigger = 0)
     {
-        global $conf, $langs;
+        //global $conf, $langs;
+        if(empty($user)) return -1;
         $error = 0;
         $this->db->begin();
         if (! $error)
@@ -535,7 +537,7 @@ public $date_time_event_start;
      *	@return	void
      */
     function cleanParam()
-{
+    {
         if (!empty($this->date_time_event)) $this->date_time_event = trim($this->date_time_event);
         if (!empty($this->event_location_ref)) $this->event_location_ref = trim($this->event_location_ref);
         if (!empty($this->event_type)) $this->event_type = trim($this->event_type);
@@ -552,11 +554,11 @@ public $date_time_event_start;
      /**
      *	will create the sql part to update the parameters
      *
-     *
+     *  @param USER $user user that will update
      *	@return	void
      */
     function setSQLfields($user)
-{
+    {
         $sql = '';
         $sql .= ' date_time_event='.(dol_strlen($this->date_time_event)!=0 ? "'".$this->db->idate($this->date_time_event)."'":'null').', ';
         $sql .= ' event_location_ref='.(empty($this->event_location_ref)!=0 ? 'null':"'".$this->db->escape($this->event_location_ref)."'").', ';
@@ -575,18 +577,20 @@ public $date_time_event_start;
     /**
      *  Will start a new attendance and return the result in json
      *
+     *  @param  USER		$user	         user object
+     *  @param  string		$json           json recieve along the start request ( to stop the current task)
      *  @param  int		$customer	 customer id on which the attendance is register
      *  @param  int		$project	 project id on which the attendance is register
      *  @param  int		$task            task id on which the attendance is register
      *  @return	json				 return the json of the object started
      */
     function ajaxStart($user, $json = '', $customer = '', $project = '', $task = '')
-{
+    {
         if(empty($task) && empty($project) && empty($customer)) return '{"errorType":"startError", "error":"no event to start"}';
         $location_ref = '';
         //load old if any
         if(!empty($json))
-{
+        {
             $this->unserialize($json, 1);
             //save the location ref
             $location_ref = $this->event_location_ref;
@@ -619,25 +623,28 @@ public $date_time_event_start;
     /**
      *  Will stop the  attendance and return the result in json
      *
+     *  @param USER $user user that will update
      *  @param  string		$json	 json of the request
-     *  @return	int					 <0 if KO, >0 if OK
+     *  @param bool $auto       auto stop, or triggered by user
+     *  @return	int			<0 if KO, >0 if OK
      */
     function ajaxStop($user, $json = '', $auto = false)
-{
+    {
         global $conf, $langs;
         $location_ref = '';
         $note = '';
         $tokenJson = '';
         $retJson = '';
         if(!empty($json))
-{
+        {
             $this->unserialize($json, 1);
             $this->status = "";
             $location_ref = $this->event_location_ref;
             $note = $this->note;
             $tokenJson = $this->token;
             $this->fetch('', '', $tokenJson);
-        }  else {
+        }else
+        {
              $this->fetch('', $user);
         }
         $ret = 0;
@@ -695,20 +702,19 @@ public $date_time_event_start;
     /**
      *  Will register an hearbear for an attendance and return the result in json
      *
-     *  @param  int		$customer	 customer id on which the attendance is register
-     *  @param  int		$project	 project id on which the attendance is register
-     *  @param  int		$task            task id on which the attendance is register
+     *  @param USER $user user that will update
+     *  @param  string		$json	 json of the request
      *  @return	int					 <0 if KO, >0 if OK
      */
     function ajaxHeartbeat($user, $json)
-{
+    {
         global $conf, $langs;
         $location_ref = '';
         $note = '';
         $tokenJson = '';
         $retJson = '';
         if(!empty($json))
-{
+        {
             $this->unserialize($json, 1);
             $location_ref = $this->event_location_ref;
             $note = $this->note;
@@ -719,53 +725,60 @@ public $date_time_event_start;
         $tokenDb = $this->token;
         if( (empty($tokenJson) && empty($tokenDb) )||
                 (!empty($tokenDb) && $this->event_type>=EVENT_STOP))
-{  //00
+        {
+            //00
             $this->initAsSpecimen();
             $this->status = array(
                    'text'=>$langs->trans('NoActiveEvent'),
                    'type'=>'warning',
                    'param'=>'');
         }elseif(empty($tokenDb) && !empty($tokenJson))
-{ // json recieved with token //01
+        { // json recieved with token //01
             $this->status = array(
                    'text'=>$langs->trans('EventNotActive'),
                    'type'=>'errors',
                    'param'=>'');
         }elseif(!empty($tokenDb))
-{// 11 && 10
+        {
+            // 11 && 10
             if(!empty($tokenJson))
-{ //11
+            {
+                //11
                 $this->event_location_ref = $location_ref;
                 $this->note = $note;
-            }else{ // info not already loaded 10
+            }else{
+                // info not already loaded 10
                 $this->getInfo();
             }
             // update the required fields
             $this->date_time_event = mktime();
             if($this->event_type!=EVENT_HEARTBEAT)
-{ // create an heartbeat only if there is none
+            {
+                // create an heartbeat only if there is none
                 $this->event_type = EVENT_HEARTBEAT;
                 $this->create($user);
-            }else{
+            }else
+            {
                 $this->update($user);
             }
-        }//
+        }
         return $this->serialize(2);
     }
  /** create timespend on the user
-  * @param type $user
-  * @param type $token
+  * @param USER $user user objuect
+  * @param string $token   token
+  * @return null
   */
 function createTimeSpend($user, $token = '')
 {
     //if(empty($token))$token = $this->token;
     if(!empty($token))
-{
+    {
         $this->fetch('', '', $token);
         if($this->event_type == EVENT_STOP && $this->task>0)
-{
-            $start = strtotime("midnight", (int)$this->date_time_event);
-            $end = strtotime("tomorrow", (int)$this->date_time_event)-1;
+        {
+            $start = strtotime("midnight", (int) $this->date_time_event);
+            $end = strtotime("tomorrow", (int) $this->date_time_event)-1;
             $duration = $this->date_time_event -$this->date_time_event_start;
             $tta = new TimesheetTask($this->db, $this->task);
             $tta->getActuals($start, $end, $this->userid);
@@ -777,53 +790,60 @@ function createTimeSpend($user, $token = '')
         }
     }
 }
-    /* Function generate the HTML code to use the clock
-    *  @return     html code                                       result
-    */
+
+    /** Function generate the HTML code to use the clock
+     *
+     * @param string[] $headers header to display
+     * @param int $userid   user id
+     * @return string   HTML code
+     */
     function printHTMLTaskList($headers, $userid = '')
-{
+    {
         $tasksList = $this->fetchTasks($userid);
         $html = '';
         if(is_array($tasksList))foreach($tasksList as $task)
-{
+        {
             $html .= $task->getAttendanceLine($headers, ($task->id == $this->task));
         }
         return $html;
     }
-    /* Function generate the HTML code to use the clock
+    /** Function generate the HTML code to use the clock
     *  @return     html code                                       result
     */
     function printHTMLClock()
-{
+    {
         global $langs;
         print '<div>';
-            print '<div style = "width:50px%;height:60px;float:left;vertical-align:middle" >';
-                print '<img height = "64px" id = "mainPlayStop" src = "img/'.(($this->id == 0)?'play-arrow':'stop-square');
-                print '.png" onClick = startStop(event,'.$this->userid.',null) style = "cursor:pointer;vertical-align:middle">  ';
-            print '</div>';
-            print '<div style = "width:40%;height:60px;float:left" >';
-                print '<textarea name = "eventNote" id = "eventNote" style = "width:80%;height:100%"></textarea>';
-            print '</div>';
-            print '<div style = "width:40%;float:left">';
-                print '<span id = "stopwatch"></span>';
-                print '<div>'.$langs->trans('Customer').': <span id = "customer">&nbsp;</span></div>';
-                print '<div>'.$langs->trans('Project').': <span  id = "project">&nbsp;</span></div>';
-                print '<div>'.$langs->trans('Task').': <span  id = "task">&nbsp;</span></div>';
-            print '</div>';
+        print '<div style = "width:50px%;height:60px;float:left;vertical-align:middle" >';
+        print '<img height = "64px" id = "mainPlayStop" src = "img/'.(($this->id == 0)?'play-arrow':'stop-square');
+        print '.png" onClick = startStop(event,'.$this->userid.',null) style = "cursor:pointer;vertical-align:middle">  ';
+        print '</div>';
+        print '<div style = "width:40%;height:60px;float:left" >';
+        print '<textarea name = "eventNote" id = "eventNote" style = "width:80%;height:100%"></textarea>';
+        print '</div>';
+        print '<div style = "width:40%;float:left">';
+        print '<span id = "stopwatch"></span>';
+        print '<div>'.$langs->trans('Customer').': <span id = "customer">&nbsp;</span></div>';
+        print '<div>'.$langs->trans('Project').': <span  id = "project">&nbsp;</span></div>';
+        print '<div>'.$langs->trans('Task').': <span  id = "task">&nbsp;</span></div>';
+        print '</div>';
         print '</div>';
     }
-    /*
+ /**
  * function to genegate the timesheet tab
  *
  *  @param    int              	$userid                   user id to fetch the timesheets
+ *  @param    dataetime              	$date                   user id to fetch the timesheets
  *  @return     array(string)                                             array of timesheet (serialized)
  */
  function fetchTasks($userid = '', $date = '')
-{
+ {
     global $conf;
     if(empty($date))$date = time();
     if($userid == '')
-{$userid = $this->userid;}
+    {
+        $userid = $this->userid;
+    }
     $this->userid = $userid;
     $datestart = strtotime('yesterday midnight', $date);
     $datestop = strtotime('today midnight', $date);
@@ -835,93 +855,95 @@ function createTimeSpend($user, $token = '')
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
     $sql .= " WHERE ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task' ";
     if($conf->global->TIMESHEET_HIDE_DRAFT == '1')
-{$sql .= ' AND prj.fk_statut>\'0\' ';}
+    {
+        $sql .= ' AND prj.fk_statut>\'0\' ';
+    }
     $sql .= ' AND (prj.datee>=\''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
     $sql .= ' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
     $sql .= ' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
     $sql .= ' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
     $sql .= '  ORDER BY prj.fk_soc, prj.ref, tsk.ref ';
-     dol_syslog("timesheetEvent::fetchTask ", LOG_DEBUG);
+    dol_syslog("timesheetEvent::fetchTask ", LOG_DEBUG);
     $resql = $this->db->query($sql);
     if ($resql)
     {
         $this->taskTimesheet = array();
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            // Loop on each record found, so each couple (project id, task id)
-            while ($i < $num)
-            {
-                    $error = 0;
-                    $obj = $this->db->fetch_object($resql);
-                    $tasksList[$i] = new TimesheetTask($this->db);
-                    $tasksList[$i]->id = $obj->taskid;
-                    $tasksList[$i]->userId = $this->userid;
-                    $tasksList[$i]->getTaskInfo();
-                      $i++;
-            }
-            $this->db->free($resql);
-             $i = 0;
-            return $tasksList;
+        $num = $this->db->num_rows($resql);
+        $i = 0;
+        // Loop on each record found, so each couple (project id, task id)
+        while ($i < $num)
+        {
+            $error = 0;
+            $obj = $this->db->fetch_object($resql);
+            $tasksList[$i] = new TimesheetTask($this->db);
+            $tasksList[$i]->id = $obj->taskid;
+            $tasksList[$i]->userId = $this->userid;
+            $tasksList[$i]->getTaskInfo();
+              $i++;
+        }
+        $this->db->free($resql);
+         $i = 0;
+        return $tasksList;
     }else
     {
-            dol_print_error($this->db);
-            return -1;
+        dol_print_error($this->db);
+        return -1;
     }
- }
-    /*
-    * function to save attendance event as a string
-    * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
-    * @return   string       serialized object
-    */
- public function serialize($mode = 0)
+}
+/**
+* function to save attendance event as a string
+* @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
+* @return   string       serialized object
+*/
+public function serialize($mode = 0)
 {
     $ret = '';
     $array = array();
-        $array['id'] = $this->id;
-	$array['date_time_event'] = $this->date_time_event;
-        $array['date_time_event_start'] = $this->date_time_event_start;
-	$array['event_location_ref'] = $this->event_location_ref;
-	$array['event_type'] = $this->event_type;
-	$array['note'] = $this->note;
-	$array['date_modification'] = $this->date_modification;
-	$array['userid'] = $this->userid;
-	$array['user_modification'] = $this->user_modification;
-	$array['third_party'] = $this->third_party;
-	$array['task'] = $this->task;
-	$array['project'] = $this->project;
-	$array['third_partyLabel'] = $this->third_partyLabel;
-	$array['taskLabel'] = $this->taskLabel;
-	$array['projectLabel'] = $this->projectLabel;
-	$array['token'] = $this->token;
-	$array['status'] = $this->status;
-        $array['processedTime'] = mktime();
-        // working var
-        //$array[''] = $this->tasks;// aarray of tasktimesheet
-     switch($mode)
-     {
-         default:
-         case 0:
-             $ret = serialize($array);
-             break;
-         case 1:
-             $ret = json_encode($array);
-             break;
-         case 2:
-             $ret = json_encode($array, JSON_PRETTY_PRINT);
-             break;
-     }
+    $array['id'] = $this->id;
+    $array['date_time_event'] = $this->date_time_event;
+    $array['date_time_event_start'] = $this->date_time_event_start;
+    $array['event_location_ref'] = $this->event_location_ref;
+    $array['event_type'] = $this->event_type;
+    $array['note'] = $this->note;
+    $array['date_modification'] = $this->date_modification;
+    $array['userid'] = $this->userid;
+    $array['user_modification'] = $this->user_modification;
+    $array['third_party'] = $this->third_party;
+    $array['task'] = $this->task;
+    $array['project'] = $this->project;
+    $array['third_partyLabel'] = $this->third_partyLabel;
+    $array['taskLabel'] = $this->taskLabel;
+    $array['projectLabel'] = $this->projectLabel;
+    $array['token'] = $this->token;
+    $array['status'] = $this->status;
+    $array['processedTime'] = mktime();
+    // working var
+    //$array[''] = $this->tasks;// aarray of tasktimesheet
+    switch($mode)
+    {
+        default:
+        case 0:
+            $ret = serialize($array);
+            break;
+        case 1:
+            $ret = json_encode($array);
+            break;
+        case 2:
+            $ret = json_encode($array, JSON_PRETTY_PRINT);
+            break;
+    }
       return $ret;
     }
-      /* function to load a skeleton as a string
+     /** function to load a skeleton as a string
      * @param   string    $str   serialized object
      * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */
-       public function unserialize($str, $mode = 0)
-{
-       $ret = '';
-       if (empty($str))return -1;
-       $array = array();
+    public function unserialize($str, $mode = 0)
+    {
+        $ret = '';
+        if (empty($str))return -1;
+        $array = array();
         switch($mode)
         {
             default:
@@ -938,9 +960,9 @@ function createTimeSpend($user, $token = '')
         }
         // automatic unserialisation based on match between property name and key value
         foreach ($array as $key => $value)
-{
+        {
             if(property_exists($this, $key))
-{
+            {
                 $this->{$key} = $value;
             }
         }
@@ -949,9 +971,9 @@ function createTimeSpend($user, $token = '')
      *
      */
     public function getInfo()
-{
+    {
         if(!empty($this->task))
-{
+        {
             $staticTask = new TimesheetTask($this->db);
             $staticTask->id = ($this->task);
             $staticTask->userId = ($this->userid);
@@ -962,13 +984,14 @@ function createTimeSpend($user, $token = '')
             $this->projectLabel = $staticTask->ProjectTitle;
             $this->third_party = $staticTask->companyId;
             $this->third_partyLabel = $staticTask->companyName;
-        }else{
+        }else
+        {
             if(!empty($this->project) && empty($this->projectLabel) )
-{
+            {
                 $this->projectLabel = print_sellist(array('table'=>"projet", 'keyfield'=> 'rowid', 'fields'=>'title'), $this->project);
             }
             if(!empty($this->third_party) && empty($this->third_partyLabel))
-{
+            {
                 $this->third_partyLabel = print_sellist(array('table'=>"societe", 'keyfield'=> 'rowid', 'fields'=>'nom'), $this->third_party);
             }
         }

@@ -215,6 +215,12 @@ class TimesheetTask extends Task
      */
     function fetch($id, $ref = '', $loadparentdata = 1)
     {
+        if(!empty($ref) && empty($id)){
+            $temp= explode('_',$ref);
+            if(isset($temp[2])){
+                $id= $temp[2];
+            }
+        }
         global $langs;
         $sql = "SELECT";
         $sql.= " t.rowid, ";
@@ -461,11 +467,10 @@ class TimesheetTask extends Task
     /**
      *  Delete object in database
      *
-     *	@param  User	$user        User that deletes
      *  @param  int		$notrigger	 0 = launch triggers after, 1 = disable triggers
      *  @return	int					 <0 if KO, >0 if OK
      */
-    function delete($user, $notrigger = 0)
+    function delete($notrigger = 0)
     {
         global $conf, $langs;
         $error = 0;

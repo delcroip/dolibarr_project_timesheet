@@ -42,13 +42,26 @@ global $langs;
  //$conf->global->RESOURCE_USE_SEARCH_TO_SELECT
 //$conf->global->BARCODE_USE_SEARCH_TO_SELECT
 //$conf->global->CONTACT_USE_SEARCH_TO_SELECT
-function select_sellist($sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
-                        $htmlarray = array('name'=> 'HTMLSellist', 'class'=>'', 'otherparam'=>'', '$ajaxNbChar'=>'', 'separator'=> ' ', 'noajax'=>0),
-                        $selected = '',
-                        $addtionnalChoices = array('NULL'=>'NULL'))
-{
-        global $conf, $langs, $db;
-     $noajax = isset($htmlarray['noajax']);
+
+/** function to select item
+ *
+ * @global DoliConf $conf conf object
+ * @global DoliLangs $langs lang object
+ * @global DoliDB $db   db object
+ * @param string[] $sqlarray sql parameters
+ * @param string[] $htmlarray html parameters
+ * @param int $selected id of the item to be selected
+ * @param string[] $addtionnalChoices   additionnal choice not part of the DB
+ * @return string HTML code
+ */
+function select_sellist(
+    $sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
+    $htmlarray = array('name'=> 'HTMLSellist', 'class'=>'', 'otherparam'=>'', '$ajaxNbChar'=>'', 'separator'=> ' ', 'noajax'=>0),
+    $selected = '',
+    $addtionnalChoices = array('NULL'=>'NULL')
+) {
+    global $conf, $langs, $db;
+    $noajax = isset($htmlarray['noajax']);
      $ajax = $conf->use_javascript_ajax && !$noajax ;
     if( !isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) || !isset($htmlarray['name']))
     {
@@ -180,22 +193,29 @@ function select_sellist($sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid'
    // }
       return $select;
 }
-function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL'=>'NULL'), $sqlTailTable = '', $ajaxNbChar = '')
-{
-    return select_sellist($sqlarray = array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => '', 'where'=>$sqlTailWhere, 'tail'=>$sqlTailTable),
-                        $htmlarray = array('name'=>$htmlName, 'class'=>'', 'otherparam'=>$selectparam, 'ajaxNbChar'=>$ajaxNbChar, 'separator'=> $separator),
-                        $selected,
-                        $addtionnalChoices);
- }
- function print_sellist($sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
-                        $selected, $separator = ' ', $url = '')
-{
+/** function to select item
+ *
+ * @global DoliConf $conf conf object
+ * @global DoliLangs $langs lang object
+ * @global DoliDB $db   db object
+ * @param string[] $sqlarray sql parametes
+ * @param int $selected id to be selected
+ * @param string[] $separator seperator to be shown between fields
+ * @param string $url link
+ * @return string HTML code
+ */
+function print_sellist(
+    $sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
+    $selected = '',
+    $separator = ' ',
+    $url = ''
+) {
     global $conf, $langs, $db;
     if( !isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) )
     {
         return 'error, one of the mandatory field of the function  select_sellist is missing:'.$sqlarray['table'].$sqlarray['keyfield'].$sqlarray['fields'];
     }elseif(empty($selected))
-{
+    {
         return "NuLL";
     }
     $sql = 'SELECT DISTINCT ';
@@ -217,20 +237,20 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
     {
         $listFields = explode(', ', $sqlarray['fields']);
         $fields = array();
-    foreach($listFields as $item)
-{
-        $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
-        $start2 = strpos($item, '.');
-        $label = $item;
-        if($start)
-{
-            $label = substr($item, $start+4);
-        }elseif($start2)
-{
-            $label = substr($item, $start2+1);
+        foreach($listFields as $item)
+        {
+            $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
+            $start2 = strpos($item, '.');
+            $label = $item;
+            if($start)
+            {
+                $label = substr($item, $start+4);
+            }elseif($start2)
+            {
+                $label = substr($item, $start2+1);
+            }
+            $fields[] = array('select' => $item, 'label'=>trim($label));
         }
-        $fields[] = array('select' => $item, 'label'=>trim($label));
-    }
         $num = $db->num_rows($resql);
         if ( $num)
         {
@@ -239,7 +259,7 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
             {
                 $select = '';
                 foreach($fields as $item)
-{
+                {
                     if(!empty($select))$select .= $separator;
                     $select .= $obj->{$item['label']};
                 }
@@ -259,25 +279,8 @@ function select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToS
     }
       //$select .= "\n";
       return $select;
- }
-/*
- * function to genegate a select list from a table, the showed text will be a concatenation of some
- * column defined in column bit, the Least sinificative bit will represent the first colum
- *
- *  @param    string              	$table                 table which the fk refers to (without prefix)
- *  @param    string              	$fieldValue         field of the table which the fk refers to, the one to put in the Valuepart
- *  @param    string              	$selected           value selected of the field value column
- *  @param    string              	$fieldToShow1    first part of the concatenation
- *  @param    string              	$fieldToShow2        separator between the tow contactened fileds
- *  @param    string              	$sqlTail              to limit per entity, to filter ...
- *  @return string                                                   html code
- */
-function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2 = "", $separator = ' - ', $sqltail = "", $sqljoin = "")
-{
-   //return $table.$db.$field;
- return  print_sellist($sqlarray = array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail),
-                        $selected, $separator);
- }
+}
+
  /*
  * function to print a bitstring (or sting starting  with _)
  *
@@ -287,7 +290,7 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
  *  @param    int                       $edit             active the  read only mode
  *  @return   string                htmlcode
  */
- function printBitStringHTML($bitstring, $labels, $names, $edit = 0)
+function printBitStringHTML($bitstring, $labels, $names, $edit = 0)
 {
      global $langs;
      $html = "error, paramters of printBitStringHTML not valid";
@@ -313,7 +316,7 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
  *  @param    int                      $max            max seed
  *  @return   int                                  random number
  */
- function crypto_rand_secure($min, $max)
+function crypto_rand_secure($min, $max)
 {
         $range = $max - $min;
         if ($range < 0) return $min;// not so random...

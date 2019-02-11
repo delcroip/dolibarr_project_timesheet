@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*Class to handle a line of timesheet*/
-#require_once('mysql.class.php');
         /* Status
          *   1) DraftCP
          *   2) ToReviewCP
@@ -29,13 +28,16 @@ class TimesheetHoliday extends Holiday
 {
         private $holidaylist;
         private $holidayPresent;
-
+    /** Object contructor
+     *
+     * @param database $db db object
+     */
     public function __construct($db)
-	{
-		$this->db = $db;
-		//$this->date_end = strtotime('now -1 year');
-		//$this->date_start = strtotime('now -1 year');
-	}
+    {
+            $this->db = $db;
+            //$this->date_end = strtotime('now -1 year');
+            //$this->date_start = strtotime('now -1 year');
+    }
         /*public function initTimeSheet($weekWorkLoad, $taskTimeId)
     {
             $this->weekWorkLoad = $weekWorkLoad;
@@ -121,7 +123,7 @@ class TimesheetHoliday extends Holiday
  *  @param     int              	$tsUserId           id of the user timesheet
  *  @return     string                                        HTML result containing the timesheet info
  */
-       public function getHTMLFormLine($headers, $tsUserId)
+    public function getHTMLFormLine($headers, $tsUserId)
     {
         global $langs;
         global $statusColor;
@@ -149,24 +151,26 @@ class TimesheetHoliday extends Holiday
             $html .= '<ul id = "holiday['.$i.']" class = "listHoliday" >';
                 $html .= '<li id = "holiday['.$i.'][0]" class = "listItemHoliday" ><a ';
                 if($am)
-{
+                {
                     $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
                     $amColor = ($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
                     $amClass = ($holiday['prev'])?'':' noPrevHoliday';
                     $amClass.= ($pm && $pmId == $amId )?'':' noNextHoliday';
                     $html .= ' class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
-                }else{
+                }else
+                {
                     $html .= ' class = "holiday" >&nbsp;</a></li>';
                 }
                 $html .= '<li id = "holiday['.$i.'][1]" class = "listItemHoliday" ><a ';
                 if($pm)
-{
+                {
                     $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
                     $pmColor = ($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
                     $pmClass = ($am && $pmId == $amId)?'':' noPrevHoliday';
                     $pmClass.= ($holiday['next'])?'':' noNextHoliday';
                     $html .= ' class = "holiday'.$pmClass.'" style = "'.$pmColor.'">&nbsp;</a></li>';
-                }else{
+                }else
+                {
                     $html .= ' class = "holiday" >&nbsp;</a></li>';
                 }
            // }
@@ -175,24 +179,5 @@ class TimesheetHoliday extends Holiday
         }
         $html .= '</tr>';
         return $html;
-    }
-/*
- * function to save a time sheet as a string
- */
-function serialize()
-{
-   return '';
-}
-/*
- * function to load a time sheet as a string
- */
-function unserialize($str)
-{
-}
-    function parseTaskTime($taskTime)
-{
-        $ret = floor($taskTime/3600).":".str_pad (floor($taskTime%3600/60), 2, "0", STR_PAD_LEFT);
-        return $ret;
-        //return '00:00';
     }
 }

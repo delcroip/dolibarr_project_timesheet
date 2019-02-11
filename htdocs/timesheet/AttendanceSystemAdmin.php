@@ -124,7 +124,7 @@ if(!empty($ref))
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 // Action to remove record
- switch($action)
+switch($action)
 {
     case 'confirm_delete':
        $result = ($confirm == 'yes')?$object->delete($user):0;
@@ -147,6 +147,7 @@ if(!empty($ref))
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
+        break;
 }
 /***************************************************
 * VIEW

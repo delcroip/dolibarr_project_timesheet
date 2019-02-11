@@ -116,7 +116,7 @@ if($action== 'submit')
                 if($errors == 0)
                 {
                     setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
-                }else 
+                }else
                 {
                     setEventMessage( $langs->transnoentitiesnoconv("InternalError").':'.$ret, 'errors');
                 }

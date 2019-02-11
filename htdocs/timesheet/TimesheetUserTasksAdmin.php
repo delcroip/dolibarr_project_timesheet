@@ -416,7 +416,7 @@ switch ($action)
         if($object->status != DRAFT && $edit!=1)
 {
             print $object->userName." - ".dol_print_date($object->date_start, 'day');
-            print $object->getHTMLHeader(false);
+            print $object->getHTMLHeader();
             print $object->getHTMLHolidayLines(false);
             print $object->getHTMLTotal();
             print $object->getHTMLtaskLines(false);
@@ -669,22 +669,22 @@ dol_fiche_end();
  *
  * @param string $backtopage    url source
  * @param int $id               id of the object
- * @param type $ref             ref of the object
+ * @return null
  */
-function reloadpage($backtopage, $id, $ref)
+function reloadpage($backtopage, $id)
 {
-        if (!empty($backtopage))
-        {
-            header("Location: ".$backtopage);
-        //    header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$ref);
-        }elseif($id>0)
-        {
-            header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);
-        }else{
-            header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
-        }
+    if (!empty($backtopage))
+    {
+        header("Location: ".$backtopage);
+    //    header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$ref);
+    }elseif($id>0)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);
+    }else{
+        header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
+    }
     ob_end_flush();
-exit();
+    exit();
 }
 /** function to prepare hear
  *

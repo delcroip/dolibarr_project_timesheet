@@ -23,22 +23,30 @@
  *		\brief      This file is an example of a php page
  *					Initialy built by build_class_from_table on 2019-01-30 16:24
  */
+/** fonction to come back on the previous page
+ *
+ * @param string $backtopage url from
+ * @param int $id  object id
+ * @param string $ref object ref
+ * @return null
+ */
 function AttendanceSystemReloadPage($backtopage, $id, $ref)
 {
-        if (!empty($backtopage))
-{
-            header("Location: ".$backtopage);
-        }elseif(!empty($ref) )
-{
-            header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?ref='.$ref);
-        }elseif($id>0)
-        {
-           header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?id='.$id);
-        }else{
-           header("Location: ".dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1));
-        }
+    if (!empty($backtopage))
+    {
+        header("Location: ".$backtopage);
+    }elseif(!empty($ref))
+    {
+        header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?ref='.$ref);
+    }elseif($id>0)
+    {
+        header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?id='.$id);
+    }else
+    {
+        header("Location: ".dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1));
+    }
     ob_end_flush();
-exit();
+    exit();
 }
 /**
  * Prepare array of tabs for AttendanceSystem

@@ -120,15 +120,17 @@ class box_approval extends ModeleBoxes
             );
         }
     }
+        // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
 	/**
 	 *  Method to show box
 	 *
 	 *  @param  array   $head       Array with properties of box title
 	 *  @param  array   $contents   Array with properties of box lines
+	 *  @param  INT   $nooutput   BLOCK OUTPUT
 	 *  @return void
 	 */
 	function showBox($head = null, $contents = null, $nooutput = 0)
 	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+            Parent::showBox($this->info_box_head, $this->info_box_contents);
 	}
 }

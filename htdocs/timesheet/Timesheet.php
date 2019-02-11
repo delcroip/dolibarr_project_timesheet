@@ -203,8 +203,8 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
     print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 //$ajax = false;
-$Form = $task_timesheet->getHTMLNavigation($optioncss, $ajax);
-$Form .= $task_timesheet->getHTMLFormHeader($ajax);
+$Form = $task_timesheet->getHTMLNavigation($optioncss);
+$Form .= $task_timesheet->getHTMLFormHeader();
      If($conf->global->TIMESHEET_WHITELIST == 1)
 {
         $Form.= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
@@ -213,7 +213,7 @@ $Form .= $task_timesheet->getHTMLFormHeader($ajax);
         $Form.= '  <div '.(($task_timesheet->whitelistmode == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
         $Form.= '</div>';
      }
-$Form .= $task_timesheet->getHTML($ajax);
+$Form .= $task_timesheet->getHTML();
 //simulualate a click on of of the tabs
 $Form .= '<script>document.getElementById("defaultOpen").click()</script>';
 //Javascript

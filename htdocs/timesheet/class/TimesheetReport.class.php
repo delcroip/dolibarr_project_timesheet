@@ -41,8 +41,8 @@ class TimesheetReport
     public $user;
     /** constructor
      *
-     * @param object $db
-     * @ return null
+     * @param DATABASE $db db object
+     * @return null
      */
     public function __construct($db)
     {

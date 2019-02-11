@@ -24,7 +24,7 @@
  *				Initialy built by build_class_from_table on 2019-01-30 16:24
  */
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 //require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 $AttendanceSystemStatusPictoArray = array(0=> 'statut7', 1=>'statut3', 2=>'statut8', 3=>'statut4');
@@ -89,7 +89,10 @@ class AttendanceSystem extends CommonObject
 	$sql.= 'fk_third_party, ';
 	$sql.= 'fk_task, ';
 	$sql.= 'fk_project, ';
-	$sql.= 'status';
+	$sql.= 'status,';
+	$sql.= 'user_modification,';
+	$sql.= 'date_modification';
+        
         $sql.= ") VALUES (";
 	$sql .= ' '.(empty($this->label)?'NULL':"'".$this->db->escape($this->label)."'").', ';
 	$sql .= ' '.(empty($this->ip)?'NULL':"'".$this->db->escape($this->ip)."'").', ';
@@ -98,7 +101,9 @@ class AttendanceSystem extends CommonObject
 	$sql .= ' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").', ';
 	$sql .= ' '.(empty($this->task)?'NULL':"'".$this->task."'").', ';
 	$sql .= ' '.(empty($this->project)?'NULL':"'".$this->project."'").', ';
-	$sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
+	$sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").',';
+	$sql .= ' \''.$user->id."'".',';
+	$sql .= ' NOW()';
         $sql.= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -311,17 +316,18 @@ class AttendanceSystem extends CommonObject
         }
     	return $result;
     }
-     /**
-	 *  Retourne select libelle du status (actif, inactif)
-	 *
-	 *  @param	object 		$form          form object that should be created
-      *  *  @return	string 			       html code to select status
-	 */
-	function selectLibStatut($form, $htmlname = 'Status')
-	{
-            global $AttendanceSystemStatusPictoArray, $AttendanceSystemStatusArray;
-            return $form->selectarray($htmlname, $AttendanceSystemStatusArray, $this->status);
-	}
+    /**
+    *  Retourne select libelle du status (actif, inactif)
+    *
+    *  @param	object 		$form          form object that should be created
+    *  @param	string 		$htmlname      HTML name tag
+    *  @return	string 			       html code to select status
+    */
+   function selectLibStatut($form, $htmlname = 'Status')
+   {
+       global $AttendanceSystemStatusPictoArray, $AttendanceSystemStatusArray;
+       return $form->selectarray($htmlname, $AttendanceSystemStatusArray, $this->status);
+   }
     /**
 	 *  Retourne le libelle du status (actif, inactif)
 	 *
@@ -330,7 +336,7 @@ class AttendanceSystem extends CommonObject
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->libStatut($this->status, $mode);
 	}
 	/**
 	 *  Return the status
@@ -339,7 +345,7 @@ class AttendanceSystem extends CommonObject
 	 *  @param  int		$mode          	0 = long label, 1 = short label, 2 = Picto + short label, 3 = Picto, 4 = Picto + long label, 5 = Short label + Picto, 6 = Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status, $mode = 0)
+	static function libStatut($status, $mode = 0)
 	{
 		global $langs, $AttendanceSystemStatusPictoArray, $AttendanceSystemStatusArray;
 		if ($mode == 0)
@@ -381,7 +387,8 @@ class AttendanceSystem extends CommonObject
      */
     function delete($user, $notrigger = 0)
     {
-        global $conf, $langs;
+        //global $conf, $langs;
+        if(empty($user)) return -1;
         $error = 0;
         $this->db->begin();
         if (! $error)
@@ -398,14 +405,18 @@ class AttendanceSystem extends CommonObject
         }
         if (! $error)
         {
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE rowid=".$this->id;
-        dol_syslog(__METHOD__);
-        $resql = $this->db->query($sql);
-        if (! $resql)
-{ $error++;$this->errors[] = "Error ".$this->db->lasterror();}
-        elseif($this->db->affected_rows($resql) == 0)
-{$error++;$this->errors[] = "Item no found in database";}
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+            $sql.= " WHERE rowid=".$this->id;
+            dol_syslog(__METHOD__);
+            $resql = $this->db->query($sql);
+            if (! $resql)
+            {
+                $error++;$this->errors[] = "Error ".$this->db->lasterror();
+            }
+            elseif($this->db->affected_rows($resql) == 0)
+            {
+                $error++;$this->errors[] = "Item no found in database";
+            }
         }
 // Commit or rollback
         if ($error)
@@ -492,7 +503,7 @@ class AttendanceSystem extends CommonObject
      *	@return	void
      */
     function cleanParam()
-{
+    {
 	if (!empty($this->label)) $this->label = trim($this->label);
 	if (!empty($this->ip)) $this->ip = trim($this->ip);
 	if (!empty($this->port)) $this->port = trim($this->port);
@@ -507,11 +518,11 @@ class AttendanceSystem extends CommonObject
      /**
      *	will create the sql part to update the parameters
      *
-     *
+     *  @param USER $user user updateing the fields
      *	@return	void
      */
     function setSQLfields($user)
-{
+    {
         $sql = '';
 	$sql .= ' label='.(empty($this->label)!=0 ? 'null':"'".$this->db->escape($this->label)."'").', ';
 	$sql .= ' ip='.(empty($this->ip)!=0 ? 'null':"'".$this->db->escape($this->ip)."'").', ';
@@ -531,7 +542,7 @@ class AttendanceSystem extends CommonObject
     * @return   string       serialized object
     */
     public function serialize($mode = 0)
-{
+    {
        $ret = '';
        $array = array();
 	$array['label'] = $this->label;
@@ -565,8 +576,8 @@ class AttendanceSystem extends CommonObject
      * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */
-       public function unserialize($str, $mode = 0)
-{
+    public function unserialize($str, $mode = 0)
+    {
        $ret = '';
        $array = array();
         switch($mode)
@@ -582,7 +593,7 @@ class AttendanceSystem extends CommonObject
         }
         // automatic unserialisation based on match between property name and key value
         foreach ($array as $key => $value)
-{
+        {
             if(isset($this->{$key}))$this->{$key} = $value;
         }
     }

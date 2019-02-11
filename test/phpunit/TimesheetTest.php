@@ -65,7 +65,7 @@ class TimesheetTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -114,7 +114,7 @@ class TimesheetTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		$localobject=new TimesheetUserTasks($this->savdb,1);//FIXEME
+		$localobject=new TimesheetUserTasks($this->savdb, 1);//FIXEME
     	$localobject->initAsSpecimen();
         $localobject->date_start= mktime();
     	$result=$localobject->create($user);
@@ -138,7 +138,7 @@ class TimesheetTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		$localobject=new TimesheetUserTasks($this->savdb,1);
+		$localobject=new TimesheetUserTasks($this->savdb, 1);
     	$result=$localobject->fetch($id);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
@@ -202,7 +202,7 @@ class TimesheetTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		$localobject=new TimesheetUserTasks($this->savdb,1);
+		$localobject=new TimesheetUserTasks($this->savdb, 1);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -210,6 +210,3 @@ class TimesheetTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 }
-
-
-
