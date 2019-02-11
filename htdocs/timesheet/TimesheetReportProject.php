@@ -58,7 +58,7 @@ if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId))
     $step = 0;
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
- }
+}
 if($action == 'getpdf')
 {
     $report = new TimesheetReport($db);

@@ -108,38 +108,39 @@ switch($action)
         {
             if(GETPOSTISSET('task'))
             {
-                                 $ret = 0;
-                                 $notesTask = GETPOST('notesTask', 'array');
-                                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
-                                 $tasks = GETPOST('task', 'array');
-				 foreach($tasks as $key => $tasktab)
-{
-					 $task_timesheet->loadFromSession($timestamp, $key);
-                                         if($task_timesheet->note!=$notesTaskApproval[$key])
-{
-                                            $update = true;
-                                            $task_timesheet->note = $notesTaskApproval[$key];
-                                            $task_timesheet->update($user);
-                                         }
-                                         $ret = $task_timesheet->updateActuals($tasktab, $notesTask);
-                                         if(GETPOSTISSET('submit') )
-{
-                                                $task_timesheet->setStatus($user, SUBMITTED);
-                                                $ret++;
-                                             //$task_timesheet->status = "SUBMITTED";
-					 }else{
-                                             $task_timesheet->setStatus($user, DRAFT);
-                                         }
-                		//$ret = postActuals($db, $user, $_POST['task'], $timestamp);
-                                          TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
-				 }
+                $ret = 0;
+                $notesTask = GETPOST('notesTask', 'array');
+                $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
+                $tasks = GETPOST('task', 'array');
+                foreach($tasks as $key => $tasktab)
+                {
+                    $task_timesheet->loadFromSession($timestamp, $key);
+                    if($task_timesheet->note!=$notesTaskApproval[$key])
+                    {
+                       $update = true;
+                       $task_timesheet->note = $notesTaskApproval[$key];
+                       $task_timesheet->update($user);
+                    }
+                    $ret = $task_timesheet->updateActuals($tasktab, $notesTask);
+                    if(GETPOSTISSET('submit') )
+                    {
+                           $task_timesheet->setStatus($user, SUBMITTED);
+                           $ret++;
+                        //$task_timesheet->status = "SUBMITTED";
+                    }else
+                    {
+                        $task_timesheet->setStatus($user, DRAFT);
+                    }
+           //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
+                     TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
+                }
             }elseif(GETPOSTISSET('recall'))
-{
+            {
                 $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
                 //$task_timesheet->status = "DRAFT";
                 $ret = $task_timesheet->setStatus($user, DRAFT);
                 if ($ret > 0)
-{
+                {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
                 } else {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"), 'errors');

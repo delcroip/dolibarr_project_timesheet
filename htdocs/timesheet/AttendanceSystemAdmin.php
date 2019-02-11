@@ -142,12 +142,12 @@ if(!empty($ref))
        break;
     case 'delete':
         if( $action == 'delete' && ($id>0 || $ref!=""))
-{
+        {
          $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
-    }
+}
 /***************************************************
 * VIEW
 *

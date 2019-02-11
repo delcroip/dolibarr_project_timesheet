@@ -956,7 +956,7 @@ function getHTMLHeader($ajax = false, $week = 0)
             }else{
                 $openOveride = 0;
             }
-            $Lines .= $row->getTimesheetLine( $i, $this->headers, $this->id, $openOveride);
+            $Lines .= $row->getTimesheetLine($this->headers, $this->id, $openOveride);
             if( $i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal ();
             $i++;
         }

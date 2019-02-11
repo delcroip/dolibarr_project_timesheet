@@ -89,7 +89,8 @@ switch($action)
         //general option
         $hoursperday = getpost('hoursperday', 'int');
         if($hoursperday == 0)
-{ //error handling if hour per day is empty
+        { 
+            //error handling if hour per day is empty
             $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
             setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"), 'errors');
             break;
@@ -99,7 +100,7 @@ switch($action)
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         $timeSpan = getpost('timeSpan', 'alpha');
         if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN)
-{ // delete the unsubmitted timesheet so the new time span will be applied
+        { // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql.= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
             dol_syslog(__METHOD__);
@@ -172,14 +173,14 @@ switch($action)
         // open days
         $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
         foreach(getpost('opendays', 'array') as $key => $day)
-{
+        {
             $opendays[$key] = $day;
         }
         dolibarr_set_const($db, "TIMESHEET_OPEN_DAYS", implode('', $opendays), 'chaine', 0, '', $conf->entity);
         //approval flows
         $apflows = array('_', '0', '0', '0', '0', '0');
         foreach(getpost('apflows', 'array') as $key => $flow)
-{
+        {
             $apflows[$key] = $flow;
         }
         //INVOICE
@@ -212,7 +213,7 @@ $headersT = explode('||', $headers);
 foreach ($headersT as $header)
 {
     switch($header)
-{
+    {
         case 'Project':
             $showProject = 1;
             Break;
@@ -352,9 +353,9 @@ echo '<input type = "hidden" name = "opendays[0]" value = "_">';
 echo "</tr><tr>\n\t\t";
 for ($i = 1;$i<8;$i++)
 {
-echo  '<td width = "14%" style = "text-align:left"><input type = "checkbox" name = "opendays['.$i.']" value = "1" ';
-echo (($opendays[$i] == '1')?'checked':'')."></td>\n\t\t";
-        }
+    echo  '<td width = "14%" style = "text-align:left"><input type = "checkbox" name = "opendays['.$i.']" value = "1" ';
+    echo (($opendays[$i] == '1')?'checked':'')."></td>\n\t\t";
+}
 echo "</tr>\n\t</table><br>\n";
 print_titre($langs->trans("ColumnToShow"));
 echo '<table class = "noborder" width = "100%">'."\n\t\t";

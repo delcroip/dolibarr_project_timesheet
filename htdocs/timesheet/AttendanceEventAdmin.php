@@ -129,7 +129,7 @@ $form = new Form($db);
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 // Action to remove record
- switch($action)
+switch($action)
 {
     case 'confirm_delete':
        $result = ($confirm == 'yes')?$object->delete($user):0;
@@ -147,7 +147,7 @@ $form = new Form($db);
        break;
     CASE 'add':
         if(empty($tms) || (!isset($_SESSION['Attendanceevent'][$tms])))
-{
+        {
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
             $action = 'list';
         }
@@ -169,7 +169,7 @@ $form = new Form($db);
                 // Creation OK
             // remove the tms
                if($ajax == 1)
-{
+                {
                    $object->serialize(2); //return JSON
                     ob_end_flush();
                     exit();// don't remove the tms. don't continue with the
@@ -184,8 +184,8 @@ $form = new Form($db);
                 else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
                 $action = 'create';
         }
-        break;
-    }
+    break;
+}
     //Removing the tms array so the order can't be submitted two times
 if(isset( $_SESSION['Attendanceevent'][$tms]))
 {

@@ -56,32 +56,32 @@ $update = false;
 switch($action)
 {
     case 'start':
-            $json = $timesheet_attendance->ajaxStart($user, $json, $customer, $project, $task);
-           // ob_clean();
-            header("Content-type: text/json;charset = utf-8");
-            echo $json;
-            ob_end_flush();
-exit();
+        $json = $timesheet_attendance->ajaxStart($user, $json, $customer, $project, $task);
+       // ob_clean();
+        header("Content-type: text/json;charset = utf-8");
+        echo $json;
+        ob_end_flush();
+        exit();
     case 'stop':
-            $json = $timesheet_attendance->ajaxStop($user, $json);
-           // ob_clean();
-            header("Content-type: text/json;charset = utf-8");
-            echo $json;
-            ob_end_flush();
-exit();
+        $json = $timesheet_attendance->ajaxStop($user, $json);
+       // ob_clean();
+        header("Content-type: text/json;charset = utf-8");
+        echo $json;
+        ob_end_flush();
+        exit();
     case 'heartbeat':
-            $json = $timesheet_attendance->ajaxheartbeat($user, $json);
-           // ob_clean();
-            header("Content-type: text/json;charset = utf-8");
-            echo $json;
-            ob_end_flush();
-exit();
+        $json = $timesheet_attendance->ajaxheartbeat($user, $json);
+       // ob_clean();
+        header("Content-type: text/json;charset = utf-8");
+        echo $json;
+        ob_end_flush();
+        exit();
     default:
         break;
 }
 if(!empty($tms))
 {
-       unset($_SESSION['timesheet_attendance'][$tms]);
+    unset($_SESSION['timesheet_attendance'][$tms]);
 }
 //$timesheet_attendance->fetchAll($today);//FIXME: fetcht the list project/task
 /***************************************************
@@ -110,18 +110,18 @@ $html .= "<table class = \"noborder\" width = \"100%\">";
 $html .= "<tr>";
  foreach ($headers as $key => $value)
 {
-         $html .= "\t<th ";
-         if (count($headers) == 1)
-{
-                $html .= 'colspan = "2" ';
-         }
-         $html .= ">".$langs->trans($value)."</th>\n";
-     }
+    $html .= "\t<th ";
+    if (count($headers) == 1)
+    {
+           $html .= 'colspan = "2" ';
+    }
+    $html .= ">".$langs->trans($value)."</th>\n";
+}
 $html .= "<th>".$langs->trans("Action")."</th></tr>";
 // show the filter
-    $html .= '<tr class = "timesheet_line" id = "searchline">';
-    $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
-    $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
+$html .= '<tr class = "timesheet_line" id = "searchline">';
+$html .= '<td><a>'.$langs->trans("Search").'</a></td>';
+$html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
 $html .= $timesheet_attendance->printHTMLTaskList($headers, $user->id);
 $html .= "</table>";
 //Javascript

@@ -36,11 +36,13 @@ if(!$role)
     if($role_key == false)
 {
         header("location:TimesheetTeamApproval.php");
-    }else{
+    }else
+    {
         $role_key++;
         $role = $roles[$role_key];
     }
-}else{
+}else
+{
     $role_key = array_search($role, $roles);
 }
 // end find the role
@@ -70,18 +72,18 @@ if($action == 'submit')
             $notes = GETPOST ('notesTask', 'array');
             $update = false;
             foreach($_SESSION['task_timesheet'][$token] as $id => $role_row)
-{
+            {
                 $count++;
                 $task_timesheet->fetch($id);
                 if($notes[$id]!=$task_timesheet->note)
-{
+                {
                     $task_timesheet->note = $notes[$id];
                     $update = true;
                 }
                 switch(uniordHex($approvals[$id]))
-{
+                {
                     case '2705'://Approved':
-                       $ret = $task_timesheet->approved($user, array_search($role_row, $roles) );
+                        $ret = $task_timesheet->approved($user, array_search($role_row, $roles) );
                         if($ret<0)$errors++;
                         else $tsApproved++;
                         break;
@@ -97,23 +99,22 @@ if($action == 'submit')
                 }
             }
             if(($tsRejected+$tsApproved)>0)
-{
+            {
                $current--;
             }
-          // $offset-=($tsApproved+$tsRejected);
-                           //$ret = postActuals($db, $user, $_POST['task'], $token);
-                if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").' '.$tsApproved);
-                if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").' '.$tsRejected);
-                if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").' '.$errors, 'errors');
-                if($errors == 0 && $tsApproved == 0 && $tsRejected == 0)
-{
+            if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").' '.$tsApproved);
+            if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").' '.$tsRejected);
+            if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").' '.$errors, 'errors');
+            if($errors == 0 && $tsApproved == 0 && $tsRejected == 0)
+                {
                     setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
                 }
             }
-        }else{
-            setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
-        }
+    }else
+    {
+        setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
     }
+}
 /***************************************************
 * PREP VIEW
 *
@@ -146,7 +147,7 @@ if(is_array($objectArray))
 {
     // SAVE THE ARRAY IN THE SESSION FOR CHECK UPON SUBMIT
     foreach($objectArray as $object)
-{
+    {
         $_SESSION['task_timesheet'][$token][$object->appId] = $role;
     }
 }
@@ -162,24 +163,23 @@ llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 showTimesheetApTabs($role_key);
 echo '<div id = "'.$role.'" class = "tabBar">';
-//FIXME Approve/reject/leave all buton
-    if(!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $current);
-    // form header
-    echo '<form action="?action=submit" method = "POST" name = "OtherAp" id = "OtherAp">';
-    echo '<input type = "hidden" name = "token" value = "'.$token.'"/>';
-    echo '<input type = "hidden" name = "role" value = "'.$role.'"/>';
-    echo '<input type = "hidden" name = "target" value = "'.($current+1)."\"/>\n";
-    // table hearder
-    echo "\n<table id = \"ApTable\" class = \"noborder\" width = \"100%\">\n";
-    //rows
-    getHTMLRows($objectArray);
-    // table footer
-    echo "\n</table>";
-    echo '<div class = "tabsAction">';
-    echo '<input type = "submit" class = "butAction" name = "Send" value = "'.$langs->trans('Submit').'/'.$langs->trans('Next')."\" />\n";
-    //form footer
-    echo '</div>';
-    echo "\n</form>";
+if(!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $current);
+// form header
+echo '<form action="?action=submit" method = "POST" name = "OtherAp" id = "OtherAp">';
+echo '<input type = "hidden" name = "token" value = "'.$token.'"/>';
+echo '<input type = "hidden" name = "role" value = "'.$role.'"/>';
+echo '<input type = "hidden" name = "target" value = "'.($current+1)."\"/>\n";
+// table hearder
+echo "\n<table id = \"ApTable\" class = \"noborder\" width = \"100%\">\n";
+//rows
+getHTMLRows($objectArray);
+// table footer
+echo "\n</table>";
+echo '<div class = "tabsAction">';
+echo '<input type = "submit" class = "butAction" name = "Send" value = "'.$langs->trans('Submit').'/'.$langs->trans('Next')."\" />\n";
+//form footer
+echo '</div>';
+echo "\n</form>";
 echo '</div>';
 llxFooter();
 /***************************************************
@@ -199,35 +199,35 @@ llxFooter();
  */
 function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
 {
-	global $langs, $db;
-        $htmlSelect = '<select name = "target">';
-        foreach($selectList as $key => $element)
-        {
-            $htmlSelect .= ' <option value = "'.$key.'" '.(($current == $key)?'selected':'').'>'.$element['label'].'</option>';
-        }
-        $htmlSelect .= '</select>';
-        $form = new Form($db);
-        $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
-        if($current!=0)
-        {
-            $Nav.= '<a href="?action=goTo&target='.($current-1);
-            $Nav.=  '&role='.($role);
-            if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
-            $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
-        }
-        $Nav .= "</th>\n\t\t<th>\n\t\t\t";
-	$Nav.=  '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
-        $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
-	$Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-	if($current<count($selectList))
-        {
-            $Nav.=  '<a href="?action=goTo&target='.($current+1);
-            $Nav.=  '&role='.($role);
-            if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
-            $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
-        }
-        $Nav .= "\n\t\t</th>\n\t</tr>\n </table>\n";
-        return $Nav;
+    global $langs, $db;
+    $htmlSelect = '<select name = "target">';
+    foreach($selectList as $key => $element)
+    {
+        $htmlSelect .= ' <option value = "'.$key.'" '.(($current == $key)?'selected':'').'>'.$element['label'].'</option>';
+    }
+    $htmlSelect .= '</select>';
+    $form = new Form($db);
+    $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
+    if($current!=0)
+    {
+        $Nav.= '<a href="?action=goTo&target='.($current-1);
+        $Nav.=  '&role='.($role);
+        if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
+        $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
+    }
+    $Nav .= "</th>\n\t\t<th>\n\t\t\t";
+    $Nav.=  '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
+    $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
+    $Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+    if($current<count($selectList))
+    {
+        $Nav.=  '<a href="?action=goTo&target='.($current+1);
+        $Nav.=  '&role='.($role);
+        if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
+        $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
+    }
+    $Nav .= "\n\t\t</th>\n\t</tr>\n </table>\n";
+    return $Nav;
 }
 /* Funciton to fect timesheet to be approuved.
     *  @param    int              	$current            current item of the select
@@ -259,45 +259,46 @@ function getSelectAps($subId, $tasks, $role_key)
     if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
     global $db, $langs, $conf, $roles;
     $sql = "SELECT COUNT(ts.rowid) as nb, ";
-switch($conf->global->TIMESHEET_TIME_SPAN)
-{
+    switch($conf->global->TIMESHEET_TIME_SPAN)
+    {
         case 'month':
             $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%m/%Y'), '-', pjt.ref) as id, ";
              if($db->type!='pgsql')
-{
+            {
                 $sql .= " CONCAT(pjt.title, ' (', MONTH(date_start), '/', YEAR(date_start), ' )#' ) as label, ";
-             }else{
+            }else{
                 $sql .= " CONCAT(pjt.title, ' (', date_part('month', date_start), '/', date_part('year', date_start), ' )#' ) as label, ";
-             }
+            }
             break;
         case 'week':
         case 'splitedWeek':
         default:
             $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%v/%Y'), '-', pjt.ref) as id, ";
            if($db->type!='pgsql')
-{
-               $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ' )#' ) as label, ";
-           }else  {
-               $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week', ts.date_start), '/', date_part('year', ts.date_start), ' )#' ) as label, ";
-           }
+            {
+                $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ' )#' ) as label, ";
+            }else  {
+                $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week', ts.date_start), '/', date_part('year', ts.date_start), ' )#' ) as label, ";
+            }
            break;
-}
-if($db->type!='pgsql')
-{
-    $sql .= " GROUP_CONCAT(ts.rowid  SEPARATOR ', ') as idlist";
-}else{
-    $sql .= " STRING_AGG(to_char(ts.rowid, '9999999999999999'), ', ') as idlist";
-}
+    }
+    if($db->type!='pgsql')
+    {
+        $sql .= " GROUP_CONCAT(ts.rowid  SEPARATOR ', ') as idlist";
+    }else
+    {
+        $sql .= " STRING_AGG(to_char(ts.rowid, '9999999999999999'), ', ') as idlist";
+    }
     $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk on ts.fk_projet_task = tsk.rowid ';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet as pjt on tsk.fk_projet = pjt.rowid ';
     $sql .= ' WHERE ts.status in ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.' )';
     $sql .= ' AND recipient='.$role_key;
     if($subId!='all')
-{
+    {
         $sql .= ' AND ts.fk_userid in ('.implode(', ', $subId).')';
         if($role_key == PROJECT)
-{
+        {
             $sql .= ' AND tsk.rowid in ('.$tasks.') ';
         }
     }
@@ -320,7 +321,7 @@ if($db->type!='pgsql')
                 $idsList = explode(', ', $obj->idlist);
                 // split the nb in x line to avoid going over the max approval
                 while($nb>TIMESHEET_MAX_TTA_APPROVAL)
-{
+                {
                     $custIdList = array_slice($idsList, $nb-TIMESHEET_MAX_TTA_APPROVAL, TIMESHEET_MAX_TTA_APPROVAL);
                     $list[] = array("id"=>$obj->id, "idList"=>$custIdList, "label"=>$obj->label.' ('.$j."/".ceil($obj->nb/TIMESHEET_MAX_TTA_APPROVAL).')', "count"=>TIMESHEET_MAX_TTA_APPROVAL);
                     $nb-=TIMESHEET_MAX_TTA_APPROVAL;
@@ -340,8 +341,8 @@ if($db->type!='pgsql')
         $list = array();
     }
       //$select .= "\n";
-      return $list;
- }
+    return $list;
+}
 
  /** get the rows to display
   *
@@ -350,11 +351,11 @@ if($db->type!='pgsql')
   * @param array $objectArray   item to display
   * @return string      html code
   */
- function getHTMLRows($objectArray)
- {
-     global $langs, $conf;
-     $headers = array('Approval', 'Note', 'Tasks', 'User');
-     if(!is_array($objectArray) || !is_object($objectArray[0])) return -1;
+function getHTMLRows($objectArray)
+{
+    global $langs, $conf;
+    $headers = array('Approval', 'Note', 'Tasks', 'User');
+    if(!is_array($objectArray) || !is_object($objectArray[0])) return -1;
     echo '<tr class = "liste_titre">';
     echo '<th>'.$langs->trans('Approval').'</th>';
     echo '<th>'.$langs->trans('Note').'</th>';
@@ -374,21 +375,21 @@ if($db->type!='pgsql')
         echo"\t".'<th width = "60px" style = "text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
     }
     echo "<tr>\n";
-     foreach($objectArray as $key=> $object)
+    foreach($objectArray as $key=> $object)
     {
  //        $object->getTaskInfo();
-         $object->getActuals();
-         echo '<tr>';
-           echo $object->getTimesheetLine( $key, $headers, 0, '-1');
-         echo "<tr>\n";
-     }
- }
+        $object->getActuals();
+        echo '<tr>';
+        echo $object->getTimesheetLine($headers, 0, '-1');
+        echo "<tr>\n";
+    }
+}
  /** function that provide the code of a character
   *
   * @param char $u char to convert
   * @return int Unide number
   */
- function uniordHex($u)
- {
-    return strtoupper(bin2hex(iconv('UTF-8', 'UCS-2BE', $u)));
- }
+function uniordHex($u)
+{
+   return strtoupper(bin2hex(iconv('UTF-8', 'UCS-2BE', $u)));
+}

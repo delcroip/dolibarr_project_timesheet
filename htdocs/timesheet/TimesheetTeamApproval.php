@@ -30,7 +30,7 @@ require_once 'core/lib/generic.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 if(!$user->rights->timesheet->approval)
 {
-        $accessforbidden = accessforbidden("you need to have the approver rights");
+    $accessforbidden = accessforbidden("you need to have the approver rights");
 }
 //$userId = GETPOST('userid');
 $userId = is_object($user)?$user->id:$user;
@@ -56,84 +56,83 @@ $langs->load('timesheet@timesheet');
 ********************************************************************/
 if($action== 'submit')
 {
-         if (isset($_SESSION['timesheetAp'][$timestamp]))
+    if (isset($_SESSION['timesheetAp'][$timestamp]))
+    {
+       // $_SESSION['timesheetAp'][$timestamp]['tsUser']
+        $tsApproved = 0;
+        $tsRejected = 0;
+        $ret = 0;
+        $errors = 0;
+        $count = 0;
+        $appflowOn = in_array('1', array_slice($apflows, 2));
+        //$task_timesheet->db = $db;
+        if (!empty($_POST['approval']))
         {
-            // $_SESSION['timesheetAp'][$timestamp]['tsUser']
-            $tsApproved = 0;
-            $tsRejected = 0;
-            $ret = 0;
-            $errors = 0;
-            $count = 0;
-            $appflowOn = in_array('1', array_slice($apflows, 2));
-            //$task_timesheet->db = $db;
-            if (!empty($_POST['approval']))
+            $notes = $_POST['note'];
+            $notesTask = GETPOST('notesTask', 'array');
+            $approvals = $_POST['approval'];
+            foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser)
             {
-                $notes = $_POST['note'];
-                $notesTask = GETPOST('notesTask', 'array');
-                $approvals = $_POST['approval'];
-                foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser)
-{
-                    $curTaskTimesheet = new TimesheetUserTasks($db);
-                    $count++;
-                    $curTaskTimesheet->fetch($key);
-                    $arrayTTA = $curTaskTimesheet->fetchTaskTimesheet();
-                    $curTaskTimesheet->updateActuals($arrayTTA, $notesTask);
-                    //if($approvals[$key]!=$tsUser)
-                    switch($approvals[$key])
-                    {
-                        case 'Approved':
-                           $ret = $curTaskTimesheet->setStatus($user, (($appflowOn>0)?UNDERAPPROVAL:APPROVED), $key);
-                            if(ret<0)$errors++;
-                            else $tsApproved++;
-                            break;
-                        case 'Rejected':
-                            $ret = $curTaskTimesheet->setStatus($user, REJECTED, $key);
-                            if(ret<0)$errors++;
-                            else $tsRejected++;
-                            break;
-                        case 'Submitted':
-                        default:
-                            break;
-                    }
-                    if($curTaskTimesheet->note!=$notes[$curTaskTimesheet->appId])
-                    {
-                        $curTaskTimesheet->note = $notes[$curTaskTimesheet->appId];
-                        $curTaskTimesheet->update(user);
-                    }
+                $curTaskTimesheet = new TimesheetUserTasks($db);
+                $count++;
+                $curTaskTimesheet->fetch($key);
+                $arrayTTA = $curTaskTimesheet->fetchTaskTimesheet();
+                $curTaskTimesheet->updateActuals($arrayTTA, $notesTask);
+                //if($approvals[$key]!=$tsUser)
+                switch($approvals[$key])
+                {
+                    case 'Approved':
+                        $ret = $curTaskTimesheet->setStatus($user, (($appflowOn>0)?UNDERAPPROVAL:APPROVED), $key);
+                        if(ret<0)$errors++;
+                        else $tsApproved++;
+                        break;
+                    case 'Rejected':
+                        $ret = $curTaskTimesheet->setStatus($user, REJECTED, $key);
+                        if(ret<0)$errors++;
+                        else $tsRejected++;
+                        break;
+                    case 'Submitted':
+                    default:
+                        break;
                 }
-                if(($tsRejected+$tsApproved)>0)
-{
-                    $current--;
+                if($curTaskTimesheet->note!=$notes[$curTaskTimesheet->appId])
+                {
+                    $curTaskTimesheet->note = $notes[$curTaskTimesheet->appId];
+                    $curTaskTimesheet->update(user);
                 }
-               // $offset-=($tsApproved+$tsRejected);
-				//$ret = postActuals($db, $user, $_POST['task'], $timestamp);
-                    if($ret>=0)
-                    {
-                        if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").$tsApproved);
-                        if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").$tsRejected);
-                        if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").$errors);
-                    }
-                    else
-                    {
-                        if($errors == 0)
-{
-                            setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
-                        }else {
-                            setEventMessage( $langs->transnoentitiesnoconv("InternalError").':'.$ret, 'errors');
-                        }
-                    }
-            }else
+            }
+            if(($tsRejected+$tsApproved)>0)
             {
-                    setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
+                $current--;
+            }
+            if($ret>=0)
+            {
+                if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").$tsApproved);
+                if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").$tsRejected);
+                if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").$errors);
+            }
+            else
+            {
+                if($errors == 0)
+                {
+                    setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
+                }else 
+                {
+                    setEventMessage( $langs->transnoentitiesnoconv("InternalError").':'.$ret, 'errors');
+                }
             }
         }else
         {
-                setEventMessage( $langs->transnoentitiesnoconv("InternalError"), 'errors');
+                setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
         }
+    }else
+    {
+            setEventMessage( $langs->transnoentitiesnoconv("InternalError"), 'errors');
+    }
 }
 if(!empty($timestamp))
 {
-       unset($_SESSION['timesheetAp'][$timestamp]);
+    unset($_SESSION['timesheetAp'][$timestamp]);
 }
 $timestamp = getToken();
 $subId = ($user->admin)?'all':getSubordinates($db, $userId, 2, array($userId), TEAM);
@@ -142,20 +141,20 @@ $level = intval($conf->global->TIMESHEET_MAX_APPROVAL);
 $offset = 0;
 if( is_array($selectList)&& count($selectList))
 {
-        if($current>=count($selectList))$current = 0;
-        $offset = 0;
-        for($i = 0;$i<$current;$i++)
-{
-            $offset+= $selectList[$i]['count'];
-        }
-        $level = $selectList[$i]['count'];
+    if($current>=count($selectList))$current = 0;
+    $offset = 0;
+    for($i = 0;$i<$current;$i++)
+    {
+        $offset+= $selectList[$i]['count'];
+    }
+    $level = $selectList[$i]['count'];
 }
 $objectArray = getTStobeApproved($level, $offset, TEAM, $subId);
 if(is_array($objectArray))
 {
-$firstTimesheetUser = reset($objectArray);
-//$curUser = $firstTimesheetUser->userId;
-//$nextUser = $firstTimesheetUser->userId;
+    $firstTimesheetUser = reset($objectArray);
+    //$curUser = $firstTimesheetUser->userId;
+    //$nextUser = $firstTimesheetUser->userId;
 }
 $i = 0;
 //
@@ -196,7 +195,7 @@ if(is_object($firstTimesheetUser))
     //FIXME module holiday should be activated ?
             $task_timesheet->fetchUserHoliday();
             $Form .= $task_timesheet->userName." - ".dol_print_date($task_timesheet->date_start, 'day');
-             $Form .= $task_timesheet->getHTML(false, true);
+            $Form .= $task_timesheet->getHTML(false, true);
             $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id] = $task_timesheet->status;
             if(!$print)
             {
@@ -225,16 +224,13 @@ if(is_object($firstTimesheetUser))
             }
             $i++;//use for the offset
         }
-       // }else{
-       //     $nextUser = $task_timesheet->userId;
-       //     break;
-       // }
     }
    // $offset+=$i;
     if(!$print)
     {
         $Form .= $firstTimesheetUser->getHTMLFooterAp($current, $timestamp);
-    }else{
+    }else
+    {
         $Form .= '<table width = "100%"><tr><td align = "center">'.$langs->trans('customerSignature').'</td><td align = "center">'.$langs->trans('managerSignature').'</td><td align = "center">'.$langs->trans('employeeSignature').'</td></tr></table>';
     }
 }else{
@@ -263,80 +259,80 @@ $db->close();
 */
 function getTStobeApproved($level, $offset, $role, $subId)
 {
-// FIXME LEVEL ISSUE
-global $db, $conf;
-if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
-//$byWeek = ($conf->global->TIMESHEET_APPROVAL_BY_WEEK == 1)?true:false;
-$byWeek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
-        //if($role = 'team')
-        $sql = "SELECT *";
-        if($byWeek == 2)
-{
-            if($db->type!='pgsql')
-{
-                $sql .= ", CONCAT( MONTH(date_start), '/', YEAR(date_start), '#', fk_userid) as usermonth";
-            }else{
-                $sql .= ", CONCAT( date_part('month', date_start), '/', date_part('year', date_start), '#', fk_userid) as usermonth";
-            }
+    // FIXME LEVEL ISSUE
+    global $db, $conf;
+    if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
+    $byWeek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
+    //if($role = 'team')
+    $sql = "SELECT *";
+    if($byWeek == 2)
+    {
+        if($db->type!='pgsql')
+        {
+            $sql .= ", CONCAT( MONTH(date_start), '/', YEAR(date_start), '#', fk_userid) as usermonth";
+        }else{
+            $sql .= ", CONCAT( date_part('month', date_start), '/', date_part('year', date_start), '#', fk_userid) as usermonth";
         }
-        $sql .= " FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts";
-        $sql .= ' WHERE (ts.status='.SUBMITTED.' OR ts.status='.CHALLENGED.') ';
-        switch($role)
-{
-            case TEAM:
-                if($subId!='all') $sql .= ' AND fk_userid in ('.implode(', ', $subId).')';
- //               $sql .= ' AND recipient = "'.$role.'"';
-                break;
+    }
+    $sql .= " FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts";
+    $sql .= ' WHERE (ts.status='.SUBMITTED.' OR ts.status='.CHALLENGED.') ';
+    switch($role)
+    {
+        case TEAM:
+            if($subId!='all') $sql .= ' AND fk_userid in ('.implode(', ', $subId).')';
+ //          $sql .= ' AND recipient = "'.$role.'"';
+            break;
+    }
+    if($byWeek == 1)
+    {
+        $sql .= ' ORDER BY date_start DESC, fk_userid DESC';
+    }elseif($byWeek == 0)
+    {
+        $sql .= ' ORDER BY fk_userid DESC, date_start DESC';
+    }elseif($byWeek == 2)
+    {
+        if($db->type!='pgsql')
+        {
+            $sql .= ' ORDER BY YEAR(date_start) DESC, MONTH(date_start) DESC, fk_userid DESC';
+        }else
+        {
+            $sql .= ' ORDER BY date_part(\'year\', date_start) DESC, ate_part(\'month\', date_start) DESC, fk_userid DESC';
         }
-        if($byWeek == 1)
-{
-            $sql .= ' ORDER BY date_start DESC, fk_userid DESC';
-        }elseif($byWeek == 0)
-{
-            $sql .= ' ORDER BY fk_userid DESC, date_start DESC';
-        }elseif($byWeek == 2)
-{
-            if($db->type!='pgsql')
-{
-                $sql .= ' ORDER BY YEAR(date_start) DESC, MONTH(date_start) DESC, fk_userid DESC';
-            }else{
-                $sql .= ' ORDER BY date_part(\'year\', date_start) DESC, ate_part(\'month\', date_start) DESC, fk_userid DESC';
-            }
-        }
-        $sql .= ' LIMIT '.$level;
-        $sql .= ' OFFSET '.$offset;
-        dol_syslog("timesheet::getTStobeApproved sql=".$sql, LOG_DEBUG);
-     $tsList = array();
+    }
+    $sql .= ' LIMIT '.$level;
+    $sql .= ' OFFSET '.$offset;
+    dol_syslog("timesheet::getTStobeApproved sql=".$sql, LOG_DEBUG);
+    $tsList = array();
     $resql = $db->query($sql);
     if ($resql)
     {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            // Loop on each record found, so each couple (project id, task id)
-            while ($i < $num)
-            {
-                    $error = 0;
-                    $obj = $db->fetch_object($resql);
-                    $tmpTs = NEW TimesheetUserTasks($db, $obj->fk_userid);
-                    $tmpTs->id = $obj->rowid;
-                    //$tmpTs->userId = $obj->fk_userid;
-                    $tmpTs->date_start = $tmpTs->db->jdate($obj->date_start);
-                    $tmpTs->date_start_end = $tmpTs->db->jdate($obj->date_start);
-                    $tmpTs->status = $obj->status;
-                    $tmpTs->planned_workload = $obj->planned_workload;
-                    $tmpTs->note = $obj->note;
-                    $tmpTs->date_creation = $tmpTs->db->jdate($obj->date_creation);
-                    $tmpTs->date_modification = $tmpTs->db->jdate($obj->date_modification);
-                    $tmpTs->user_creation = $obj->fk_user_creation;
-                    $tmpTs->user_modification = $obj->fk_user_modification;
-                    $tmpTs->whitelistmode = 2;// no impact
-                    $tmpTs->date_end = $tmpTs->db->jdate($obj->date_end);
-                    //}
-                    $i++;
-                    $tsList[] = $tmpTs;
-            }
-            $db->free($resql);
-                return $tsList;
+        $num = $db->num_rows($resql);
+        $i = 0;
+        // Loop on each record found, so each couple (project id, task id)
+        while ($i < $num)
+        {
+            $error = 0;
+            $obj = $db->fetch_object($resql);
+            $tmpTs = NEW TimesheetUserTasks($db, $obj->fk_userid);
+            $tmpTs->id = $obj->rowid;
+            //$tmpTs->userId = $obj->fk_userid;
+            $tmpTs->date_start = $tmpTs->db->jdate($obj->date_start);
+            $tmpTs->date_start_end = $tmpTs->db->jdate($obj->date_start);
+            $tmpTs->status = $obj->status;
+            $tmpTs->planned_workload = $obj->planned_workload;
+            $tmpTs->note = $obj->note;
+            $tmpTs->date_creation = $tmpTs->db->jdate($obj->date_creation);
+            $tmpTs->date_modification = $tmpTs->db->jdate($obj->date_modification);
+            $tmpTs->user_creation = $obj->fk_user_creation;
+            $tmpTs->user_modification = $obj->fk_user_modification;
+            $tmpTs->whitelistmode = 2;// no impact
+            $tmpTs->date_end = $tmpTs->db->jdate($obj->date_end);
+            //}
+            $i++;
+            $tsList[] = $tmpTs;
+        }
+        $db->free($resql);
+        return $tsList;
     }else
     {
             dol_print_error($db);
@@ -353,33 +349,33 @@ $byWeek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
  */
 function getHTMLNavigation($optioncss, $selectList, $current = 0)
 {
-	global $langs, $db;
-        $htmlSelect = '<select name = "target">';
-        foreach($selectList as $key => $element)
-{
-            $htmlSelect .= ' <option value = "'.$key.'" '.(($current == $key)?'selected':'').'>'.$element['label'].'</option>';
-        }
-        $htmlSelect .= '</select>';
-        $form = new Form($db);
-        $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
-        if($current!=0)
-{
-            $Nav.= '<a href="?action=goTo&target='.($current-1).'"';
-            if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
-            $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
-        }
-        $Nav .= "</th>\n\t\t<th>\n\t\t\t";
-	$Nav.=  '<form name = "goTo" action="?action=goTo" method = "POST" >'."\n\t\t\t";
-        $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
-	$Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-	if($current<count($selectList))
-{
-            $Nav.=  '<a href="?action=goTo&target='.($current+1);
-            if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
-            $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
-        }
-        $Nav .= "\n\t\t</th>\n\t</tr>\n </table>\n";
-        return $Nav;
+    global $langs, $db;
+    $htmlSelect = '<select name = "target">';
+    foreach($selectList as $key => $element)
+    {
+        $htmlSelect .= ' <option value = "'.$key.'" '.(($current == $key)?'selected':'').'>'.$element['label'].'</option>';
+    }
+    $htmlSelect .= '</select>';
+    $form = new Form($db);
+    $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
+    if($current!=0)
+    {
+        $Nav.= '<a href="?action=goTo&target='.($current-1).'"';
+        if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
+        $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
+    }
+    $Nav .= "</th>\n\t\t<th>\n\t\t\t";
+    $Nav.=  '<form name = "goTo" action="?action=goTo" method = "POST" >'."\n\t\t\t";
+    $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
+    $Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+    if($current<count($selectList))
+    {
+        $Nav.=  '<a href="?action=goTo&target='.($current+1);
+        if ($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
+        $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
+    }
+    $Nav .= "\n\t\t</th>\n\t</tr>\n </table>\n";
+    return $Nav;
 }
  /*
  * function to get the Approval elible for this user
@@ -396,7 +392,7 @@ function getSelectAps($subId)
     $sqlWhere .= ' WHERE ts.status  in ('.SUBMITTED.', '.CHALLENGED.')';
     if($subId!='all')$sqlWhere .= ' AND ts.fk_userid in ('.implode(', ', $subId).')';
     if($conf->global->TIMESHEET_APPROVAL_BY_WEEK == 1)
-{
+    {
         $sql = 'SELECT COUNT(ts.date_start) as nb, ts.date_start as id, ';
         $sql .= " DATE_FORMAT(ts.date_start, '".$langs->trans('Week')." %u (%m/%Y)') as label";
         $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts';
@@ -404,7 +400,7 @@ function getSelectAps($subId)
         $sql .= $sqlWhere;
         $sql .= ' group by ts.date_start ORDER BY ts.date_start DESC';
     }elseif($conf->global->TIMESHEET_APPROVAL_BY_WEEK == 0)
-{
+    {
         $sql = 'SELECT COUNT(ts.rowid) as nb, ts.fk_userid as id, ';
         $sql .= " MAX(CONCAT(usr.firstname, ' ', usr.lastname)) as label";
         $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts';
@@ -438,7 +434,7 @@ function getSelectAps($subId)
                 $nb = $obj->nb;
                 // split the nb in x line to avoid going over the max approval
                 while($nb>$conf->global->TIMESHEET_MAX_APPROVAL)
-{
+                {
                     $list[] = array("id"=>$obj->id, "label"=>$obj->label.' ('.$j."/".ceil($obj->nb/$conf->global->TIMESHEET_MAX_APPROVAL).')', "count"=>$conf->global->TIMESHEET_MAX_APPROVAL);
                     $nb-=$conf->global->TIMESHEET_MAX_APPROVAL;
                     $j++;
@@ -456,4 +452,4 @@ function getSelectAps($subId)
         $list = array();
     }
       return $list;
- }
+}
