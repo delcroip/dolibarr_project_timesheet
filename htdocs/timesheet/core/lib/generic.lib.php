@@ -69,10 +69,11 @@ function select_sellist(
     }
     $htmlName = $htmlarray['name'];
     $ajaxNbChar = $htmlarray['ajaxNbChar'];
-    $listFields = explode(', ', $sqlarray['fields']);
+    $listFields = explode(',', $sqlarray['fields']);
     $fields = array();
     foreach($listFields as $item)
-{
+    {
+        $item=trim($item);
         $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
         $start2 = strpos($item, '.');
         $label = $item;
@@ -235,10 +236,11 @@ function print_sellist(
     $resql = $db->query($sql);
      if ($resql)
     {
-        $listFields = explode(', ', $sqlarray['fields']);
+        $listFields = explode(',', $sqlarray['fields']);
         $fields = array();
         foreach($listFields as $item)
         {
+            $item=trim($item);
             $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
             $start2 = strpos($item, '.');
             $label = $item;

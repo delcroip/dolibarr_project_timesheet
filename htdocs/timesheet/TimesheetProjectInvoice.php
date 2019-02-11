@@ -354,8 +354,8 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     $addchoices = array('-999'=> $langs->transnoentities('not2invoice'), -1=> $langs->transnoentities('Custom'));
     $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
     $html .= '</th><th >';
-    $html .= select_sellist(array('table'=> 'product', 'keyfield'=> 'rowid', 'fields'=>'ref,label', 'join' => '', 'where'=>' tosell = 1 AND fk_product_type = 1', 'tail'=>''),
-                        array('name'=>'userTask['.$user.']['.$task.'][Service]', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>0, 'separator'=> ' - '),
+    $html .= select_sellist(array('table'=> 'product', 'keyfield'=> 'rowid', 'fields'=>'ref,label', 'where'=>' tosell = 1 AND fk_product_type = 1'),
+                        array('name'=>'userTask['.$user.']['.$task.'][Service]',  'separator'=> ' - '),
                         $defaultService,
                         $addchoices);
     $html .= '</th>';
