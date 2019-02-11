@@ -83,7 +83,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
  // uncomment to avoid resubmision
 //if(isset( $_SESSION['AttendanceSystem_class'][$tms]))
 //{
- //   $cancel = TRUE;
+ //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
 //}
 // Right Management

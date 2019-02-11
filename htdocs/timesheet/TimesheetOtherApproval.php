@@ -81,7 +81,7 @@ if($action == 'submit')
                 switch(uniordHex($approvals[$id]))
 {
                     case '2705'://Approved':
-                       $ret = $task_timesheet->Approved($user, array_search($role_row, $roles) );
+                       $ret = $task_timesheet->approved($user, array_search($role_row, $roles) );
                         if($ret<0)$errors++;
                         else $tsApproved++;
                         break;
@@ -350,8 +350,8 @@ if($db->type!='pgsql')
   * @param array $objectArray   item to display
   * @return string      html code
   */
- function  getHTMLRows($objectArray)
-{
+ function getHTMLRows($objectArray)
+ {
      global $langs, $conf;
      $headers = array('Approval', 'Note', 'Tasks', 'User');
      if(!is_array($objectArray) || !is_object($objectArray[0])) return -1;
@@ -389,6 +389,6 @@ if($db->type!='pgsql')
   * @return int Unide number
   */
  function uniordHex($u)
-{
+ {
     return strtoupper(bin2hex(iconv('UTF-8', 'UCS-2BE', $u)));
-}
+ }

@@ -39,42 +39,59 @@ class TimesheetReport
     public $thirdparty;
     public $project;
     public $user;
+    /** constructor
+     * 
+     * @param type $db
+     * @ return null
+     */
     public function __construct($db)
-	{
-            $this->db = $db;
-	}
-    public function initBasic($projectid, $userid, $name, $startDate, $stopDate, $mode, $invoiceableOnly = '0', $taskarray = NULL)
-	{
-        global $langs, $conf;
-        $this->ref = "";
-        $first = false;
-        $this->invoiceableOnly = $invoiceableOnly;
-        $this->taskarray = $taskarray;
-            $this->projectid = $projectid;// coul
-            if($projectid)
-{
-                $this->project = new Project($this->db);
-                $this->project->fetch($projectid);
-                $this->ref = (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project->ref.' - ').$this->project->title;
-                $first = true;
-                $this->thirdparty = new Societe($this->db);
-                $this->thirdparty->fetch($this->project->socid);
-            }
-            $this->userid = $userid;// coul
-            if($userid)
-{
-                $this->user = new User($this->db);
-                $this->user->fetch($userid);
-                //$this->ref.= ($first?'':' - ').$this->user->lastname.' '.$this->user->firstname;
-            }
-            $this->startDate = $startDate;
-            $this->stopDate = $stopDate;
-            $this->mode = $mode;
-             $this->name = ($name!="")?$name:$this->ref;// coul
-              $this->ref .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
-             //$this->ref .= '_'.$startDate.'_'.$stopDate;
+    {
+        $this->db = $db;
+    }
+    
+    /** init the report with date ... 
+     * 
+     * @global object $conf  conf object
+     * @param int|null $projectid id of the project 
+     * @param int|null $userid  id of the user
+     * @param string $name  name of the report
+     * @param datetime $startDate start of the report
+     * @param datetime $stopDate  end of the report
+     * @param string $mode  order of the report's levels
+     * @param bool $invoiceableOnly report only on invoicable task
+     * @param int[] $taskarray  array of task id on which the report should be
+     */
+    public function initBasic($projectid, $userid, $name, $startDate, $stopDate, $mode, $invoiceableOnly = '0', $taskarray = null)
+    {
+    global  $conf;
+    $this->ref = "";
+    $first = false;
+    $this->invoiceableOnly = $invoiceableOnly;
+    $this->taskarray = $taskarray;
+        $this->projectid = $projectid;// coul
+        if($projectid)
+        {
+            $this->project = new Project($this->db);
+            $this->project->fetch($projectid);
+            $this->ref = (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project->ref.' - ').$this->project->title;
+            $first = true;
+            $this->thirdparty = new Societe($this->db);
+            $this->thirdparty->fetch($this->project->socid);
+        }
+        $this->userid = $userid;// coul
+        if($userid)
+        {
+            $this->user = new User($this->db);
+            $this->user->fetch($userid);
+            //$this->ref.= ($first?'':' - ').$this->user->lastname.' '.$this->user->firstname;
+        }
+        $this->startDate = $startDate;
+        $this->stopDate = $stopDate;
+        $this->mode = $mode;
+        $this->name = ($name!="")?$name:$this->ref;// coul
+        $this->ref .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
         switch ($mode)
-{
+        {
         case 'PDT': //project  / task / Days //FIXME dayoff missing
             $this->modeSQLOrder = 'ORDER BY prj.rowid, ptt.task_date, tsk.rowid ASC   ';
             //title
@@ -136,22 +153,22 @@ class TimesheetReport
             break;
         default:
             break;
+        }
     }
-	}
-/* Function to generate array for the resport
- * @param   int    $invoiceableOnly   will return only the invoicable task
- * @param   array(int)   $taskarray   return the report only for those tasks
- * @param   string  $sqltail    sql tail after the where
- * @return array()
- */
+    /* Function to generate array for the resport
+     * @param   int    $invoiceableOnly   will return only the invoicable task
+     * @param   array(int)   $taskarray   return the report only for those tasks
+     * @param   string  $sqltail    sql tail after the where
+     * @return array()
+     */
     public function getReportArray()
-{
+    {
         global $conf;
         $resArray = array();
         $first = true;
         $sql = 'SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid, ';
         if($db->type!='pgsql')
-{
+        {
             $sql.= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname, \' \', usr.lastname)) as username, ';
             $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         }else{
@@ -166,21 +183,21 @@ class TimesheetReport
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user = usr.rowid ';
         $sql.= ' WHERE ';
         if(!empty($this->userid))
-{
+        {
             $sql .= ' ptt.fk_user = \''.$this->userid.'\' ';
             $first = false;
         }
         if(!empty($this->projectid))
-{
+        {
             $sql .= ($first?'':'AND ').'tsk.fk_projet = \''.$this->projectid.'\' ';
             $first = false;
         }
         if(is_array($this->taskarray) && count($this->taskarray)>1)
-{
+        {
             $sql .= ($first?'':'AND ').'tsk.rowid in ('.explode($taskarray, ', ').') ';
         }
         if($this->invoiceableOnly == 1)
-{
+        {
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
          /*if(!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
@@ -237,37 +254,37 @@ class TimesheetReport
       * timemode show time using day or hours ( == 0)
       */
     public function getHTMLreport($short, $periodTitle, $hoursperdays, $reportfriendly = 0)
-{
+    {
     // HTML buffer
-    global $langs;
-    $lvl1HTML = '';
-    $lvl3HTML = '';
-    $lvl2HTML = '';
-    // partial totals
-    $lvl3Total = 0;
-    $lvl2Total = 0;
-    $lvl1Total = 0;
-    $Curlvl1 = 0;
-    $Curlvl2 = 0;
-    $Curlvl3 = 0;
-    $lvl3Notes = "";
-    //mode 1, PER USER
-    //get the list of user
-    //get the list of task per user
-    //sum user
-    //mode 2, PER TASK
-    //list of task
-    //list of user per
-    $title = array('projectLabel'=>'Project', 'date'=>'Day', 'taskLabel'=>'Tasks', 'userName'=>'User');
-    $titleWidth = array('4'=>'120', '7'=>'200');
-    $sqltail = '';
-    $resArray = $this->getReportArray();
-    $numTaskTime = count($resArray);
+        global $langs;
+        $lvl1HTML = '';
+        $lvl3HTML = '';
+        $lvl2HTML = '';
+        // partial totals
+        $lvl3Total = 0;
+        $lvl2Total = 0;
+        $lvl1Total = 0;
+        $Curlvl1 = 0;
+        $Curlvl2 = 0;
+        $Curlvl3 = 0;
+        $lvl3Notes = "";
+        //mode 1, PER USER
+        //get the list of user
+        //get the list of task per user
+        //sum user
+        //mode 2, PER TASK
+        //list of task
+        //list of user per
+        $title = array('projectLabel'=>'Project', 'date'=>'Day', 'taskLabel'=>'Tasks', 'userName'=>'User');
+        $titleWidth = array('4'=>'120', '7'=>'200');
+        $sqltail = '';
+        $resArray = $this->getReportArray();
+        $numTaskTime = count($resArray);
         if($numTaskTime>0)
         {
-           // current
+        // current
         if($reportfriendly)
-{
+        {
             //$HTMLRes = '<br><div class = "titre">'.$this->name.', '.$periodTitle.'</div>';
             $HTMLRes .= '<table class = "noborder" width = "100%">';
             $HTMLRes .= '<tr class = "liste_titre"><th>'.$langs->trans('Name');
@@ -292,7 +309,7 @@ class TimesheetReport
         foreach($resArray as $key => $item)
         {
             if($Curlvl1 == 0)
-{
+            {
                 $Curlvl1 = $key;
                 $Curlvl2 = $key;
             }

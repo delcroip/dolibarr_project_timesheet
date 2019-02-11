@@ -410,7 +410,7 @@ switch ($action)
             $htmlProjectArray = array('name'=>'Project', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
             $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);
-                //print select_generic('projet', 'rowid', 'Project', 'ref', 'title', $object->project, ' - ', $formUserWhere, '', NULL, $formUserJoin);
+                //print select_generic('projet', 'rowid', 'Project', 'ref', 'title', $object->project, ' - ', $formUserWhere, '', null, $formUserJoin);
 
                 if($ajaxNbChar>=0) print "\n<script type = 'text/javascript'>\n$('input#Project').change(function()
 {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
@@ -658,7 +658,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $htmlProjectArray = array('name'=>'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
         $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
         print select_sellist($sqlProjectArray, $htmlProjectArray, $ls_project);
-//        print select_generic('projet', 'rowid', 'ls_project', 'ref', 'title', $ls_project, ' - ', '', '', NULL, '', $ajaxNbChar);
+//        print select_generic('projet', 'rowid', 'ls_project', 'ref', 'title', $ls_project, ' - ', '', '', null, '', $ajaxNbChar);
 	print '</td>';
 //Search field forproject_task
 	print '<td class = "liste_titre" colspan = "1" >';
@@ -666,7 +666,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $htmlProjectTaskArray = array('name'=>'ls_project_task', 'ajaxNbChar'=>$ajaxNbChar);
         $sqlProjectTaskArray = array('table'=>'projet_task', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
         print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
-        //print select_generic('projet_task', 'rowid', 'ls_project_task', 'ref', 'label', $ls_project_task, ' - ', '', '', NULL, '', $ajaxNbChar);
+        //print select_generic('projet_task', 'rowid', 'ls_project_task', 'ref', 'label', $ls_project_task, ' - ', '', '', null, '', $ajaxNbChar);
 	print '</td>';
 //Search field forsubtask
 	print '<td class = "liste_titre" colspan = "1" >';

@@ -612,7 +612,7 @@ function saveInSession()
         {
             $tasktime = new TimesheetTask($this->db);
             $tasktime->unserialize($row);
-            $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp, $this->status, $notes[$tasktime->appId]);
+            $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->appId]);
             $this->taskTimesheet[$key] = $tasktime->serialize();
         }
         /*
@@ -752,7 +752,7 @@ Public function setStatus($user, $status, $id = 0)
         $tasktime = new TimesheetTask($this->db);
         $tasktime->unserialize($ts);
         //$tasktime->appId = $this->id;
-        if($Approved)$ret = $tasktime->Approved($user, TEAM, false);
+        if($Approved)$ret = $tasktime->approved($user, TEAM, false);
         elseif($Rejected)$ret = $tasktime->challenged($user, TEAM, false);
         elseif($Submitted)$ret = $tasktime->submitted($user);
         elseif($draft)$ret = $tasktime->setStatus($user, DRAFT);

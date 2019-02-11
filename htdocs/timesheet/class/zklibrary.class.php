@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016-2018 Kamshory  <kamshory@yahoo.com>
- *
+ * Copyright (C) 2019 pmpdelcroix  <pmpdelcroix@gmail.com>
  * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation;either version 3 of the License, or
@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 error_reporting(0);
+//commands
 define('CMD_CONNECT', 1000);
 define('CMD_EXIT', 1001);
 define('CMD_ENABLEDEVICE', 1002);
@@ -53,11 +54,16 @@ define('CMD_CLEAR_LCD', 67);
 define('CMD_GET_TIME', 201);
 define('CMD_SET_TIME', 202);
 define('USHRT_MAX', 65535);
+//roles
 define('LEVEL_USER', 0);// 0000 0000
 define('LEVEL_ENROLLER', 2);// 0000 0010
 define('LEVEL_MANAGER', 12);// 0000 1100
 define('LEVEL_SUPERMANAGER', 14);// 0000 1110
-class ZKLibrary {
+/**
+ *  Class to communicate with ZK TECO attendance machine
+ */
+class ZKLibrary 
+{
 	public $ip = null;
 	public $port = null;
 	public $socket = null;
@@ -67,7 +73,11 @@ class ZKLibrary {
 	public $attendance_data = array();
 	public $timeout_sec = 5;
 	public $timeout_usec = 5000000;
-
+        /** Object constructor.
+         * 
+         * @param string $ip IP address of device.
+         * @param int $port  UDP port of device.
+         */
 	public function __construct($ip = null, $port = null)
 	{
 		if($ip != null)
@@ -81,13 +91,22 @@ class ZKLibrary {
 		$this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 		$this->setTimeout($this->sec, $this->usec);
 	}
-	public function __destruct()
+	/** destructor
+         * 
+         */
+        public function __destruct()
 	{
 		unset($this->received_data);
 		unset($this->user_data);
 		unset($this->attendance_data);
 	}
-	public function connect($ip = null, $port = 4370)
+	/** Function to make a connection to the device. If IP address and port is not defined yet, this function must take it. Else, this function return FALSE and does not make any connection.
+         * 
+         * @param sting $ip IP address of the device.
+         * @param int $port UDP port of the device.
+         * @return bool
+         */
+        public function connect($ip = null, $port = 4370)
 	{
 		if($ip != null)
 		{
@@ -119,19 +138,23 @@ class ZKLibrary {
 			}
 			else
 			{
-				return FALSE;
+				return false;
 			}
 		}
 		catch(ErrorException $e)
 		{
-			return FALSE;
+			return false;
 		}
 		catch(exception $e)
 		{
-			return FALSE;
+			return false;
 		}
 	}
-	public function disconnect()
+	/** Function to disconnect from the device. If ip address and port is not defined yet, this function must take it. Else, this function return FALSE and does not make any changes.
+         * 
+         * @return bool
+         */
+        public function disconnect()
 	{
 		if($this->ip == null || $this->port == null)
 		{
@@ -152,14 +175,20 @@ class ZKLibrary {
 		}
 		catch(ErrorException $e)
 		{
-			return FALSE;
+			return false;
 		}
 		catch(Exception $e)
 		{
-			return FALSE;
+			return false;
 		}
 	}
-	public function setTimeout($sec = 0, $usec = 0)
+	/** Set timeout for socket connection.
+         * 
+         * @param int $sec Timeout in second.
+         * @param int $usec Timeout in micro second.
+         * @return null
+         */
+        public function setTimeout($sec = 0, $usec = 0)
 	{
 		if($sec != 0)
 		{
@@ -172,6 +201,11 @@ class ZKLibrary {
 		$timeout = array('sec'=>$this->timeout_sec, 'usec'=>$this->timeout_usec);
 		socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, $timeout);
 	}
+        /** ping the attendance machine
+         * 
+         * @param int $timeout does have a timeout
+         * @return int ping time
+         */
 	public function ping($timeout = 1)
 	{
 		$time1 = microtime(true);
@@ -184,7 +218,12 @@ class ZKLibrary {
 		fclose($pfile);
 		return round((($time2 - $time1) * 1000), 0);
 	}
-	private function reverseHex($input)
+	/**  reverse the char of an hexadecimal (IP stack function)
+         * 
+         * @param string $input
+         * @return string
+         */
+        private function reverseHex($input)
 	{
 		$output = '';
 		for($i = strlen($input);$i>=0;$i--)
@@ -194,8 +233,22 @@ class ZKLibrary {
 		}
 		return $output;
 	}
-	private function encodeTime($time)
+	/** encode the time in ZKTECO binary format (IP stack function)
+         * 
+         * @param string $time  YYYY-MM-DD HH:II:SS or UNIX
+         * @return int  
+         */
+        private function encodeTime($time)
 	{
+            if(is_numeric($time)){
+                $year = date('y',$time);
+		$month = date('n',$time);
+		$day = date('j',$time);
+		$hour = date('H',$time);
+		$minute = date('i',$time);
+		$second = date('s',$time);
+            }else
+            {
 		$str = str_replace(array(":", " "), array("-", "-"), $time);
 		$arr = explode("-", $str);
 		$year = @$arr[0]*1;
@@ -204,10 +257,17 @@ class ZKLibrary {
 		$hour = ltrim(@$arr[3], '0')*1;
 		$minute = ltrim(@$arr[4], '0')*1;
 		$second = ltrim(@$arr[5], '0')*1;
-		$data = (($year % 100) * 12 * 31 + (($month - 1) * 31) + $day - 1) * (24 * 60 * 60) + ($hour * 60 + $minute) * 60 + $second;
-		return $data;
+            }
+            $data = (($year % 100) * 12 * 31 + (($month - 1) * 31) + $day - 1) * (24 * 60 * 60) + ($hour * 60 + $minute) * 60 + $second;
+            return $data;
 	}
-	private function decodeTime($data)
+        /** decode the time in ZKTECO format (IP stack function)
+         * 
+         * @param int $data     Binary data from device.
+         * @param bool $unix unix format
+         * @return time|string      date
+         */
+        private function decodeTime($data, $unix=true)
 	{
 		$second = $data % 60;
 		$data = $data / 60;
@@ -220,10 +280,19 @@ class ZKLibrary {
 		$month = $data % 12+1;
 		$data = $data / 12;
 		$year = floor( $data + 2000 );
-		$d = date("Y-m-d H:i:s", strtotime($year.'-'.$month.'-'.$day.' '.$hour.':'.$minute.':'.$second));
+                if($unix===true){
+                    $d= mktime($hour,$minute,$second,$month,$day,$year);
+                }else{
+                    $d = date("Y-m-d H:i:s", strtotime($year.'-'.$month.'-'.$day.' '.$hour.':'.$minute.':'.$second));
+                }
 		return $d;
 	}
-	private function checkSum($p)
+	/** This function calculates the chksum of the packet to be sent to the time clock. (IP stack function)
+         * 
+         * @param string $p     Packet to be checked.
+         * @return int checksum
+         */
+        private function checkSum($p)
 	{
 		/* This function calculates the chksum of the packet to be sent to the time clock */
 		$l = count($p);
@@ -264,7 +333,16 @@ class ZKLibrary {
 		}
 		return pack('S', $chksum);
 	}
-	function createHeader($command, $chksum, $session_id, $reply_id, $command_string)
+	/** Create data header to be sent to the device. (IP stack function)
+         * 
+         * @param int $command  Command to the device in integer.
+         * @param int $chksum   checksum of the packet
+         * @param int $session_id    Session ID of the connection.
+         * @param int $reply_id     
+         * @param string $command_string    Data to be sent to the device.
+         * @return string   header
+         */
+        function createHeader($command, $chksum, $session_id, $reply_id, $command_string)
 	{
 		$buf = pack('SSSS', $command, $chksum, $session_id, $reply_id).$command_string;
 		$buf = unpack('C'.(8+strlen($command_string)).'c', $buf);
@@ -286,20 +364,32 @@ class ZKLibrary {
 		$buf = pack('SSSS', $command, $chksum, $session_id, $reply_id);
 		return $buf.$command_string;
 	}
-	private function checkValid($reply)
+	/** Check wether reply is valid or not.
+         * 
+         * @param sting $reply Reply data to be checked.
+         * @return bool
+         */
+        private function checkValid($reply)
 	{
 		$u = unpack('H2h1/H2h2', substr($reply, 0, 8) );
 		$command = hexdec( $u['h2'].$u['h1'] );
 		if ($command == CMD_ACK_OK)
 		{
-			return TRUE;
+			return true;
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 	}
-	function execCommand($command, $command_string = '', $offset_data = 8)
+	/** Send command and data packet to the device and receive some data if any.
+         * 
+         * @param int $command  Command to the device in integer.
+         * @param string $command_string    Data to be sent to the device.
+         * @param int $offset_data  Offset data to be returned. The default offset is 8.
+         * @return false|string
+         */
+        function execCommand($command, $command_string = '', $offset_data = 8)
 	{
 		$chksum = 0;
 		$session_id = $this->session_id;
@@ -316,14 +406,18 @@ class ZKLibrary {
 		}
 		catch(ErrorException $e)
 		{
-			return FALSE;
+			return false;
 		}
 		catch(exception $e)
 		{
-			return FALSE;
+			return false;
 		}
 	}
-	private function getSizeUser()
+        /**  Get number of user.
+         * 
+         * @return int|false Number of registered user in the device.
+         */
+        private function getSizeUser()
 	{
 		$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
 		$command = hexdec($u['h2'].$u['h1']);
@@ -335,9 +429,13 @@ class ZKLibrary {
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 	}
+         /**  Get number of attendance log.
+         * 
+         * @return int|false    Number of attendance recorded in the device.
+         */
 	private function getSizeAttendance()
 	{
 		$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
@@ -350,9 +448,13 @@ class ZKLibrary {
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 	}
+        /**  get the  number  of template (TBC)
+         * 
+         * @return int|false
+         */
 	private function getSizeTemplate()
 	{
 		$u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
@@ -365,34 +467,55 @@ class ZKLibrary {
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 	}
+        /** restart device
+         * 
+         * @return false|string exec output
+         */
 	public function restartDevice()
 	{
 		$command = CMD_RESTART;
 		$command_string = chr(0).chr(0);
 		return $this->execCommand($command, $command_string);
 	}
-	public function shutdownDevice()
+	/** Shutdown the device.
+         * 
+         * @return false|string exec output
+         */
+        public function shutdownDevice()
 	{
 		$command = CMD_POWEROFF;
 		$command_string = chr(0).chr(0);
 		return $this->execCommand($command, $command_string);
 	}
+	/** Sleep the device.
+         * 
+         * @return false|string exec output
+         */
 	public function sleepDevice()
 	{
 		$command = CMD_SLEEP;
 		$command_string = chr(0).chr(0);
 		return $this->execCommand($command, $command_string);
 	}
+	/** Resume/wake the device.
+         * 
+         * @return false|string exec output
+         */
 	public function resumeDevice()
 	{
 		$command = CMD_RESUME;
 		$command_string = chr(0).chr(0);
 		return $this->execCommand($command, $command_string);
 	}
-	public function changeSpeed($speed = 0)
+        /** Change transfer speed of the device. 0 = slower. 1 = faster.
+         * 
+         * @param int $speed Transfer speed of packet when the device comunicate to other device, i.e server. (not always supported)
+         * @return false|string exec output
+         */
+        public function changeSpeed($speed = 0)
 	{
 		if($speed != 0)
 		{
@@ -403,7 +526,17 @@ class ZKLibrary {
 		$command_string = $byte;
 		return $this->execCommand($command, $command_string);
 	}
-	public function writeLCD($rank, $text)
+        /** Write text on LCD. This order transmit character to demonstrate on LCD, 
+         * the data part 1, 2 bytes of the packet transmit the rank value 
+         * which start to demonstrate, the 3rd byte setting is 0 , 
+         * follows close the filling character which want to be transmit. 
+         * May work in CMD_CLEAR_LCD when use this function.
+         * 
+         * @param int $rank Line number.
+         * @param string $text Text to be demonstrated to LCD of the device.
+         * @return false|string exec output
+         */
+        public function writeLCD($rank, $text)
 	{
 		$command = CMD_WRITE_LCD;
 		$byte1 = chr((int)($rank % 256));
@@ -412,23 +545,40 @@ class ZKLibrary {
 		$command_string = $byte1.$byte2.$byte3.' '.$text;
 		return $this->execCommand($command, $command_string);
 	}
-	public function clearLCD()
+	/** Clear text from LCD.
+         * 
+         * @return false|string exec output
+         */
+        public function clearLCD()
 	{
 		$command = CMD_CLEAR_LCD;
 		return $this->execCommand($command);
 	}
-	public function testVoice()
+	/** Test voice of the device.
+         * 
+         * @return false|string exec output
+         */
+        public function testVoice()
 	{
 		$command = CMD_TESTVOICE;
 		$command_string = chr(0).chr(0);
 		return $this->execCommand($command, $command_string);
 	}
-	public function getVersion()
+	/** Get device version.
+         * 
+         * @return false|string exec output
+         */
+        public function getVersion()
 	{
 		$command = CMD_VERSION;
 		return $this->execCommand($command);
 	}
-	public function getOSVersion($net = true)
+	/** Get OS version.
+         * 
+         * @param bool $net If net set to true, function will return netto data without parameter name.
+         * @return false|string exec output 
+         */
+        public function getOSVersion($net = true)
 	{
 		$command = CMD_OPTIONS_RRQ;
 		$command_string = '~OS';
@@ -443,13 +593,23 @@ class ZKLibrary {
 			return $return;
 		}
 	}
-	public function setOSVersion($osVersion)
+	/** Set OS version
+         * 
+         * @param string $osVersion Version of operating version.
+         * @return false|string exec output
+         */
+        public function setOSVersion($osVersion)
 	{
 		$command = CMD_OPTIONS_WRQ;
 		$command_string = '~OS='.$osVersion;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getPlatform($net = true)
+	/**Get Platform version.
+         * 
+         * @param bool $net If net set to true, function will return netto data without parameter name.
+         * @return false|string|string[] exec output
+         */
+        public function getPlatform($net = true)
 	{
 		$command = CMD_OPTIONS_RRQ;
 		$command_string = '~Platform';
@@ -464,13 +624,23 @@ class ZKLibrary {
 			return $return;
 		}
 	}
-	public function setPlatform($patform)
+	/** Set platform.
+         * 
+         * @param string  $patform pltaform version
+         * @return false|string exec output
+         */
+        public function setPlatform($patform)
 	{
 		$command = CMD_OPTIONS_RRQ;
 		$command_string = '~Platform='.$patform;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getFirmwareVersion($net = true)
+	/**
+         *  Get firmware version.
+         * @param bool $net If net set to true, function will return netto data without parameter name.
+         * @return false|string|string[] exec output
+         */
+        public function getFirmwareVersion($net = true)
 	{
 		$command = CMD_OPTIONS_RRQ;
 		$command_string = '~ZKFPVersion';
@@ -485,13 +655,23 @@ class ZKLibrary {
 			return $return;
 		}
 	}
-	public function setFirmwareVersion($firmwareVersion)
+	/** Set firmware version.
+         * 
+         * @param type $firmwareVersion
+         * @return false|string exec output
+         */
+        public function setFirmwareVersion($firmwareVersion)
 	{
 		$command = CMD_OPTIONS_WRQ;
 		$command_string = '~ZKFPVersion='.$firmwareVersion;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getWorkCode($net = true)
+	/** Get work code.
+         * 
+         * @param bool $net If net set to true, function will return netto data without parameter name.
+         * @return false|string|string[] exec output
+         */
+        public function getWorkCode($net = true)
 	{
 		$command = CMD_OPTIONS_RRQ;
 		$command_string = 'WorkCode';
@@ -506,13 +686,23 @@ class ZKLibrary {
 			return $return;
 		}
 	}
-	public function setWorkCode($workCode)
+	/** Set work code.
+         * 
+         * @param type $workCode
+         * @return false|string exec output
+         */
+        public function setWorkCode($workCode)
 	{
 		$command = CMD_OPTIONS_WRQ;
 		$command_string = 'WorkCode='.$workCode;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getSSR($net = true)
+	/** Get SSR
+         * 
+         * @param bool $net If net set to true, function will return netto data without parameter name.
+         * @return false|string|string[] exec output
+         */
+        public function getSSR($net = true)
 	{
 		$command = CMD_OPTIONS_PRQ;
 		$command_string = '~SSR';
@@ -527,13 +717,22 @@ class ZKLibrary {
 			return $return;
 		}
 	}
-	public function setSSR($ssr)
+	/** Set Self-Service-Recoreder name (TBC)
+         * 
+         * @param string  $ssr (Self-Service-Recoreder)
+         * @return false|string|string[] exec output
+         */
+        public function setSSR($ssr)
 	{
 		$command = CMD_OPTIONS_WRQ;
 		$command_string = '~SSR='.$ssr;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getPinWidth()
+	/** Get pin width.
+         * 
+         * @return false|string exec output
+         */
+        public function getPinWidth()
 	{
 		$command = CMD_GET_PINWIDTH;
 		$command = CMD_OPTIONS_PRQ;
@@ -549,13 +748,23 @@ class ZKLibrary {
 			return $return;
 		}
 	}
-	public function setPinWidth($pinWidth)
+	/** Set pin width.
+         * 
+         * @param int $pinWidth
+         * @return false|string exec output
+         */
+        public function setPinWidth($pinWidth)
 	{
 		$command = CMD_OPTIONS_WRQ;
 		$command_string = '~PIN2Width='.$pinWidth;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getFaceFunctionOn($net = true)
+	/**  Check wether face detection function is available or not.
+         * 
+         * @param bool $net If net set to true, function will return netto data without parameter name.
+         * @return false|string|string[] exec output
+         */
+        public function getFaceFunctionOn($net = true)
 	{
 		$command = CMD_OPTIONS_RRQ;
 		$command_string = 'FaceFunOn';
@@ -570,13 +779,23 @@ class ZKLibrary {
 			return $return;
 		}
 	}
-	public function setFaceFunctionOn($faceFunctionOn)
+	/** Set wether face detection function is available or not.
+         * 
+         * @param string $faceFunctionOn
+         * @return false|string exec output
+         */
+        public function setFaceFunctionOn($faceFunctionOn)
 	{
 		$command = CMD_OPTIONS_WRQ;
 		$command_string = 'FaceFunOn='.$faceFunctionOn;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getSerialNumber($net = true)
+	/** get serial number of the device.
+         * 
+         * @param bool $net If net set to true, function will return netto data without parameter name.
+         * @return false|string|string[] exec output
+         */
+        public function getSerialNumber($net = true)
 	{
 		$command = CMD_OPTIONS_RRQ;
 		$command_string = '~SerialNumber';
@@ -591,13 +810,23 @@ class ZKLibrary {
 			return $return;
 		}
 	}
-	public function setSerialNumber($serialNumber)
+	/** Set serial number of the device.
+         * 
+         * @param string $serialNumber
+         * @return false|string exec output
+         */
+        public function setSerialNumber($serialNumber)
 	{
 		$command = CMD_OPTIONS_WRQ;
 		$command_string = '~SerialNumber='.$serialNumber;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getDeviceName($net = true)
+	/** Get device name.
+         * 
+         * @param bool $net If net set to true, function will return netto data without parameter name.
+         * @return false|string|string[] exec output
+         */
+        public function getDeviceName($net = true)
 	{
 		$command = CMD_OPTIONS_RRQ;
 		$command_string = '~DeviceName';
@@ -612,43 +841,82 @@ class ZKLibrary {
 			return $return;
 		}
 	}
-	public function setDeviceName($deviceName)
+	/** Set device name.
+         * 
+         * @param string $deviceName
+         * @return false|string exec output
+         */
+        public function setDeviceName($deviceName)
 	{
 		$command = CMD_OPTIONS_WRQ;
 		$command_string = '~DeviceName='.$deviceName;
 		return $this->execCommand($command, $command_string);
 	}
-	public function getTime()
+	/** Get time of device from real time clock (RTC). The time resolution is one minute.
+         * 
+         * @param bool $unix     true retun unix time, false     YYYY-MM-DD HH:II:SS.
+         * @return dateime|string  RTC of the device
+         */
+        public function getTime($unix=true)
 	{
 		// resolution = 1 minute
 		$command = CMD_GET_TIME;
-		return $this->decodeTime(hexdec($this->reverseHex(bin2hex($this->execCommand($command)))));
+		return $this->decodeTime(hexdec($this->reverseHex(bin2hex($this->execCommand($command)))),$unix);
 	}
-	public function setTime($t)
+	/** Set time of the device.
+         * 
+         * @param dateime|string $t   unix time,    YYYY-MM-DD HH:II:SS.
+         * @return false|string exec output
+         */
+        public function setTime($t)
 	{
 		// resolution = 1 second
 		$command = CMD_SET_TIME;
 		$command_string = pack('I', $this->encodeTime($t));
 		return $this->execCommand($command, $command_string);
 	}
-	public function enableDevice()
+	/** Ensure the machine to be at in the normal work condition, 
+         * generally when data communication shields the machine auxiliary equipment (keyboard, LCD, sensor), 
+         * this order restores the auxiliary equipment to be at the normal work condition.
+         * 
+         * @return false|string exec output
+         */
+        public function enableDevice()
 	{
 		$command = CMD_ENABLEDEVICE;
 		return $this->execCommand($command);
 	}
-	public function disableDevice()
+	/** Shield machine periphery keyboard, LCD, sensor, if perform successfully, 
+         * there are showing “working” on LCD.
+         * 
+         * @return false|string exec output
+         */
+        public function disableDevice()
 	{
 		$command = CMD_DISABLEDEVICE;
 		$command_string = chr(0).chr(0);
 		return $this->execCommand($command, $command_string);
 	}
-	public function enableClock($mode = 0)
+	/**Set the LCD dot (to glitter ‘:’) the packet data part transmit 0 to stop glittering, 
+         * 1 start to glitter. 
+         * After this order carries out successfully, the firmware will refresh LCD.
+         * 
+         * @param type $mode
+         * @return false|string exec output
+         */
+        public function enableClock($mode = 0)
 	{
 		$command = CMD_ENABLE_CLOCK;
 		$command_string = chr($mode);
 		return $this->execCommand($command, $command_string);
 	}
-	public function getSelectedUser($uid, $finger)
+	/** //FIXME
+         * 
+         * @param int $uid Serial number of the user (2 bytes)
+         * @param type $finger
+         * @return false|string exec output
+         */
+        public function getSelectedUser($uid, $finger)
 	{
 		$command = CMD_USERTEMP_RRQ;
 		$byte1 = chr((int)($uid % 256));
@@ -656,7 +924,11 @@ class ZKLibrary {
 		$command_string = $byte1.$byte2.chr($finger);
 		return $this->execCommand($command, $command_string);
 	}
-	public function getUser()
+	/** Retrive the user list from the device.
+         * 
+         * @return false|array[int uid,string name,int role, string passwd] exec output
+         */
+        public function getUser()
 	{
 		$command = CMD_USERTEMP_RRQ;
 		$command_string = chr(5);
@@ -722,14 +994,19 @@ class ZKLibrary {
 		}
 		catch(ErrorException $e)
 		{
-			return FALSE;
+			return false;
 		}
 		catch(exception $e)
 		{
-			return FALSE;
+			return false;
 		}
 	}
-	public function getUserTemplateAll($uid)
+	/** Get all finger print data from the device for one user.
+         * 
+         * @param int $uid Serial number of the user (2 bytes)
+         * @return array[U16 size, U16 PIn, char FingerID, int valid, char|array(template data)]
+         */
+        public function getUserTemplateAll($uid)
 	{
 		$template = array();
 		$j = 0;
@@ -743,7 +1020,13 @@ class ZKLibrary {
 		}
 		return $template;
 	}
-	public function getUserTemplate($uid, $finger)
+	/** Get finger print data from the device.
+         * 
+         * @param int $uid Serial number of the user (2 bytes)
+         * @param int  $finger  finger(0-9)
+         * @return bool|string  array[U16 size, U16 PIn, char FingerID, char valid, array(template data)]
+         */
+        public function getUserTemplate($uid, $finger)
 	{
 		$template_data = '';
 		$this->user_data = array();
@@ -801,14 +1084,18 @@ class ZKLibrary {
 		}
 		catch(ErrorException $e)
 		{
-			return FALSE;
+			return false;
 		}
 		catch(exception $e)
 		{
-			return FALSE;
+			return false;
 		}
 	}
-	public function getUserData()
+	/** //FIXME
+         * 
+         * @return bool|string user data
+         */
+        public function getUserData()
 	{
 		$uid = 1;
 		$command = CMD_USERTEMP_RRQ;
@@ -859,20 +1146,29 @@ class ZKLibrary {
 		}
 		catch(ErrorException $e)
 		{
-			return FALSE;
+			return false;
 		}
 		catch(exception $e)
 		{
-			return FALSE;
+			return false;
 		}
 	}
-	public function setUser($uid, $userid, $name, $password, $role)
+	/** Write user to the device.
+         * 
+         * @param int $uid Serial number of the user (2 bytes)
+         * @param type $userid
+         * @param sting $name
+         * @param sting $password
+         * @param int $role 0 = LEVEL_USER, 2 = LEVEL_ENROLLER,12 = LEVEL_MANAGER,14 = LEVEL_SUPERMANAGER 
+         * @return false|string exec output
+         */
+        public function setUser($uid, $userid, $name, $password, $role)
 	{
 		$uid = (int) $uid;
 		$role = (int) $role;
 		if($uid > USHRT_MAX)
 		{
-			return FALSE;
+			return false;
 		}
 		if($role > 255) $role = 255;
 		$name = substr($name, 0, 28);
@@ -882,7 +1178,12 @@ class ZKLibrary {
 		$command_string = $byte1.$byte2.chr($role).str_pad($password, 8, chr(0)).str_pad($name, 28, chr(0)).str_pad(chr(1), 9, chr(0)).str_pad($userid, 8, chr(0)).str_repeat(chr(0), 16);
 		return $this->execCommand($command, $command_string);
 	}
-	public function setUserTemplate($data)
+	/**
+         * 
+         * @param type $data
+         * @return false|string exec output
+         */
+        public function setUserTemplate($data)
 	{
 		$command = CMD_USERTEMP_WRQ;
 		$command_string = $data;
@@ -903,25 +1204,38 @@ class ZKLibrary {
 		}
 		catch(ErrorException $e)
 		{
-			return FALSE;
+			return false;
 		}
 		catch(exception $e)
 		{
-			return FALSE;
+			return false;
 		}
 		*/
 	}
-	public function clearData()
+	/**
+         * 
+         * @return false|string exec output
+         */
+        public function clearData()
 	{
 		$command = CMD_CLEAR_DATA;
 		return $this->execCommand($command);
 	}
-	public function clearUser()
+	/**
+         * 
+         * @return false|string exec output
+         */
+        public function clearUser()
 	{
 		$command = CMD_CLEAR_DATA;
 		return $this->execCommand($command);
 	}
-	public function deleteUser($uid)
+	/**
+         * 
+         * @param int $uid Serial number of the user (2 bytes)
+         * @return false|string exec output
+         */
+        public function deleteUser($uid)
 	{
 		$command = CMD_DELETE_USER;
 		$byte1 = chr((int)($uid % 256));
@@ -929,7 +1243,13 @@ class ZKLibrary {
 		$command_string = $byte1.$byte2;
 		return $this->execCommand($command, $command_string);
 	}
-	public function deleteUserTemp($uid, $finger)
+	/**
+         * 
+         * @param int $uid Serial number of the user (2 bytes)
+         * @param type $finger
+         * @return false|string exec output
+         */
+        public function deleteUserTemp($uid, $finger)
 	{
 		$command = CMD_DELETE_USERTEMP;
 		$byte1 = chr((int)($uid % 256));
@@ -937,12 +1257,22 @@ class ZKLibrary {
 		$command_string = $byte1.$byte2.chr($finger);
 		return $this->execCommand($command, $command_string);
 	}
-	public function clearAdmin()
+	/**
+         * 
+         * @return false|string exec output
+         */
+        public function clearAdmin()
 	{
 		$command = CMD_CLEAR_ADMIN;
 		return $this->execCommand($command);
 	}
-	public function testUserTemplate($uid, $finger)
+	/**
+         * 
+         * @param int $uid Serial number of the user (2 bytes)
+         * @param type $finger
+         * @return false|string exec output
+         */
+        public function testUserTemplate($uid, $finger)
 	{
 		$command = CMD_TEST_TEMP;
 		$byte1 = chr((int)($uid % 256));
@@ -952,7 +1282,12 @@ class ZKLibrary {
 		$ret = hexdec( $u['h2'].$u['h1'] );
 		return ($ret == CMD_ACK_OK)?1:0;
 	}
-	public function startVerify($uid)
+	/** start verify //fixme
+         * 
+         * @param int $uid Serial number of the user (2 bytes)
+         * @return false|string exec output
+         */
+        public function startVerify($uid)
 	{
 		$command = CMD_STARTVERIFY;
 		$byte1 = chr((int)($uid % 256));
@@ -960,7 +1295,13 @@ class ZKLibrary {
 		$command_string = $byte1.$byte2;
 		return $this->execCommand($command, $command_string);
 	}
-	public function startEnroll($uid, $finger)
+	/**  Start enroll //fixme
+         * 
+         * @param int $uid user id
+         * @param type $finger
+         * @return false|string
+         */
+        public function startEnroll($uid, $finger)
 	{
 		$command = CMD_STARTENROLL;
 		$byte1 = chr((int)($uid % 256));
@@ -968,12 +1309,21 @@ class ZKLibrary {
 		$command_string = $byte1.$byte2.chr($finger);
 		return $this->execCommand($command, $command_string);
 	}
-	public function cancelCapture()
+	/** cancel current capture
+         * 
+         * @return false|string
+         * 
+         */
+        public function cancelCapture()
 	{
 		$command = CMD_CANCELCAPTURE;
 		return $this->execCommand($command);
 	}
-	public function getAttendance()
+	/** get the attendance
+         * 
+         * @return false|array
+         */
+        public function getAttendance()
 	{
 		$command = CMD_ATTLOG_RRQ;
 		$command_string = '';
@@ -1030,7 +1380,11 @@ class ZKLibrary {
 			return false;
 		}
 	}
-	public function clearAttendance()
+	/** remove attendance
+         * 
+         * @return false|string
+         */
+        public function clearAttendance()
 	{
 		$command = CMD_CLEAR_ATTLOG;
 		return $this->execCommand($command);

@@ -97,7 +97,7 @@ $pagenext = $page + 1;
  // uncomment to avoid resubmision
 //if(isset( $_SESSION['Timesheetuser_class'][$tms]))
 //{
- //   $cancel = TRUE;
+ //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
 //}
 // Right Management
@@ -597,7 +597,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             print '<td class = "liste_titre" colspan = "1" >';
     //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL'=>'NULL'), $sqlTailTable = '', $ajaxUrl = '')
 
-            //print select_generic('user', 'rowid', 'ls_userId', 'lastname', 'firstname', $ls_userId, ' - ', '', '', NULL, '', $ajaxNbChar);
+            //print select_generic('user', 'rowid', 'ls_userId', 'lastname', 'firstname', $ls_userId, ' - ', '', '', null, '', $ajaxNbChar);
             print $form->select_users($ls_userId, 'ls_userId');
             print '</td>';
             //Search field fordate_start

@@ -258,7 +258,7 @@ $edit = 0;
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('Project').'</th><th align = "left" width = "80%" >';
             //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL'=>'NULL'), $sqlTailTable = '', $ajaxUrl = '')
             $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
-            //$Form .= select_generic('projet', 'rowid', 'projectid', 'ref', 'title', $projectId, ' - ', $sqlTailWhere, '', NULL, , $ajaxNbChar);
+            //$Form .= select_generic('projet', 'rowid', 'projectid', 'ref', 'title', $projectId, ' - ', $sqlTailWhere, '', null, , $ajaxNbChar);
             $htmlProjectArray = array('name'=>'projectid', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
             $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'t.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
             $Form .= select_sellist($sqlProjectArray, $htmlProjectArray, $projectId);
