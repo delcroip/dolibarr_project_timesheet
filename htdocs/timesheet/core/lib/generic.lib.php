@@ -348,3 +348,23 @@ function getToken($length = 32)
     }
     return $token;
 }
+
+/*
+ * function to genegate a select list from a table, the showed text will be a concatenation of some
+ * column defined in column bit, the Least sinificative bit will represent the first colum
+ *
+ *  @param    string              	$table                 table which the fk refers to (without prefix)
+ *  @param    string              	$fieldValue         field of the table which the fk refers to, the one to put in the Valuepart
+ *  @param    string              	$selected           value selected of the field value column
+ *  @param    string              	$fieldToShow1    first part of the concatenation
+ *  @param    string              	$fieldToShow2        separator between the tow contactened fileds
+ *  @param    string              	$sqlTail              to limit per entity, to filter ...
+ *  @return string                                                   html code
+ */
+function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2="", $separator=' - ', $sqltail="", $sqljoin="")
+{
+   //return $table.$db.$field;
+    return  print_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail),
+        $selected,
+        $separator);
+ }
