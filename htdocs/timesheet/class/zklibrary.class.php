@@ -268,7 +268,7 @@ class ZKLibrary
         $data = $data / 12;
         $year = floor($data + 2000 );
         if ($unix === true){
-        $d = mktime($hour,$minute,$second,$month,$day,$year);
+        $d = mktime($hour, $minute, $second, $month, $day, $year);
         } else{
         $d = date("Y-m-d H:i:s", strtotime($year.'-'.$month.'-'.$day.' '.$hour.':'.$minute.':'.$second));
         }
@@ -1213,7 +1213,7 @@ class ZKLibrary
      * @param int $uid Serial number of the user (2 bytes)
      * @return false|string exec output
      */
-    public function startVerify($uid) 
+    public function startVerify($uid)
     {
         $command = CMD_STARTVERIFY;
         $byte1 = chr((int) ($uid % 256));

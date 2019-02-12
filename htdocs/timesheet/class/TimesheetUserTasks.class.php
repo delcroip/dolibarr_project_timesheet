@@ -140,16 +140,16 @@ class TimesheetUserTasks extends CommonObject
         }
         // Commit or rollback
         if ($error) {
-                        foreach ($this->errors as $errmsg) {
-                    dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                    $this->error .= ($this->error?', '.$errmsg:$errmsg);
-                        }
-                        $this->db->rollback();
-                        return -1*$error;
-                } else {
-                        $this->db->commit();
+            foreach ($this->errors as $errmsg) {
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+                $this->error .= ($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        } else {
+            $this->db->commit();
             return $this->id;
-                }
+        }
     }
     /**
      *  Load object in memory from the database
@@ -294,28 +294,28 @@ class TimesheetUserTasks extends CommonObject
         if (! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
-                if (! $error) {
-                        if (! $notrigger) {
-                    // Uncomment this and change MYOBJECT to your own tag if you
-                    // want this action calls a trigger.
-                    //// Call triggers
-                    //$result = $this->call_trigger('MYOBJECT_MODIFY', $user);
-                    //if ($result < 0){ $error++;//Do also what you must do to rollback action if trigger fail}
-                    //// End call triggers
-                         }
+        if (! $error) {
+            if (! $notrigger) {
+        // Uncomment this and change MYOBJECT to your own tag if you
+        // want this action calls a trigger.
+        //// Call triggers
+        //$result = $this->call_trigger('MYOBJECT_MODIFY', $user);
+        //if ($result < 0){ $error++;//Do also what you must do to rollback action if trigger fail}
+        //// End call triggers
+            }
+        }
+// Commit or rollback
+        if ($error) {
+                foreach ($this->errors as $errmsg) {
+            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+            $this->error .= ($this->error?', '.$errmsg:$errmsg);
                 }
-        // Commit or rollback
-                if ($error) {
-                        foreach ($this->errors as $errmsg) {
-                    dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                    $this->error .= ($this->error?', '.$errmsg:$errmsg);
-                        }
-                        $this->db->rollback();
-                        return -1*$error;
-                } else {
-                        $this->db->commit();
-                        return 1;
-                }
+                $this->db->rollback();
+                return -1*$error;
+        } else {
+                $this->db->commit();
+                return 1;
+        }
     }
     /**
      *  Delete object in database
@@ -535,7 +535,7 @@ function fetchTaskTimesheet($userid = '')
             $this->db->free($resql);
              $i = 0;
             if (isset($this->taskTimesheet))unset($this->taskTimesheet);
-             foreach ($tasksList as $row) {
+            foreach ($tasksList as $row) {
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
                 $row->getTaskInfo();// get task info include in fetch
                 $row->getActuals($datestart, $datestop, $userid);
@@ -612,7 +612,7 @@ function getUserName()
     }
       //$select .= "\n";
     return 0;
- }
+}
   /*
  * update the status based on the underlying Task_time_approval
  *
@@ -688,21 +688,21 @@ Public function setStatus($user, $status, $id = 0)
         if ($status == REJECTED)$this->sendRejectedReminders($user);
         if (count($this->taskTimesheet)<1) {
         $this->fetch($id);
-    }
-    $this->status = DRAFT;// SET THE STATUS TO DRAFT TO GET ALL
-    $this->fetchTaskTimesheet();
-    $this->status = $status;
-    $this->status = $status;
-    if (count($this->taskTimesheet)>0)foreach ($this->taskTimesheet as $ts) {
-        $tasktime = new TimesheetTask($this->db);
-        $tasktime->unserialize($ts);
-        //$tasktime->appId = $this->id;
-        if ($Approved)$ret = $tasktime->approved($user, TEAM, false);
-        elseif ($Rejected)$ret = $tasktime->challenged($user, TEAM, false);
-        elseif ($Submitted)$ret = $tasktime->submitted($user);
-        elseif ($draft)$ret = $tasktime->setStatus($user, DRAFT);
-    }
-      //if ($ret>0)$this->db->commit();
+        }
+        $this->status = DRAFT;// SET THE STATUS TO DRAFT TO GET ALL
+        $this->fetchTaskTimesheet();
+        $this->status = $status;
+        $this->status = $status;
+        if (count($this->taskTimesheet)>0)foreach ($this->taskTimesheet as $ts) {
+            $tasktime = new TimesheetTask($this->db);
+            $tasktime->unserialize($ts);
+            //$tasktime->appId = $this->id;
+            if ($Approved)$ret = $tasktime->approved($user, TEAM, false);
+            elseif ($Rejected)$ret = $tasktime->challenged($user, TEAM, false);
+            elseif ($Submitted)$ret = $tasktime->submitted($user);
+            elseif ($draft)$ret = $tasktime->setStatus($user, DRAFT);
+        }
+          //if ($ret>0)$this->db->commit();
         return 1;
     }
 }
@@ -766,7 +766,7 @@ function getHTMLHeader()
                 $html .= 'colspan = "2" ';
         }
         $html .= ">".$langs->trans($value)."</th>\n";
-     }
+    }
     $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
     for ($i = 0;$i<$weeklength;$i++)
     {
@@ -775,7 +775,7 @@ function getHTMLHeader()
         $html .= "\t".'<th class = "days_'.$this->id.'" id = "'.$this->id.'_'.$i.'" width = "35px" style = "text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
     }
     return $html;
- }
+}
 /* function to genegate the timesheet table header
  *
   *  @param    bool           $ajax     ajax of html behaviour
@@ -802,7 +802,7 @@ function getHTMLTotal()
     for ($i = 0;$i<$length;$i++)
     {
        $html .= "<th><div class = \"TotalColumn_{$this->id} TotalColumn_{$this->id}_{$i}\">&nbsp;</div></th>\n";
-     }
+    }
     $html .= "</tr>\n";
     return $html;
 }
@@ -1128,51 +1128,51 @@ function GetTimeSheetXML()
  */
 function sendApprovalReminders()
 {
-                  global $langs;
-            $sql = 'SELECT';
-            $sql .= ' COUNT(t.rowid) as nb, ';
-            $sql .= ' u.email, ';
-            $sql .= ' u.fk_user as approverid';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
-            $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
-            $sql.= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
-            $sql.= '  AND t.recipient='.TEAM.' GROUP BY u.fk_user';
-             dol_syslog(__METHOD__, LOG_DEBUG);
-            $resql = $this->db->query($sql);
-            if ($resql) {
-                $num = $this->db->num_rows($resql);
-                for($i = 0;$i<$num;$i++)
-                {
-                    $obj = $this->db->fetch_object($resql);
-                    if ($obj) {
-                        $message = str_replace("__NB_TS__", $obj->nb, str_replace('\n', "\n", $langs->trans('YouHaveApprovalPendingMsg')));
-                        //$message = "Bonjour, \n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
-                        $sendto = $obj->email;
-                        $replyto = $obj->email;
-                        $subject = $langs->transnoentities("YouHaveApprovalPending");
-                        if (!empty($sendto) && $sendto!="NULL") {
-                            require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
-                            $mailfile = new CMailFile
-                                ($subject,
-                                $sendto,
-                                $replyto,
-                                $message,
-                                $filename_list = array(),
-                                $mimetype_list = array(),
-                                $mimefilename_list = array(),
-                                $addr_cc, $addr_bcc = 0,
-                                $deliveryreceipt = 0,
-                                $msgishtml = 1);
-                            $mailfile->sendfile();
-                        }
-                    }
+    global $langs;
+    $sql = 'SELECT';
+    $sql .= ' COUNT(t.rowid) as nb, ';
+    $sql .= ' u.email, ';
+    $sql .= ' u.fk_user as approverid';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
+    $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
+    $sql.= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
+    $sql.= '  AND t.recipient='.TEAM.' GROUP BY u.fk_user';
+     dol_syslog(__METHOD__, LOG_DEBUG);
+    $resql = $this->db->query($sql);
+    if ($resql) {
+        $num = $this->db->num_rows($resql);
+        for($i = 0;$i<$num;$i++)
+        {
+            $obj = $this->db->fetch_object($resql);
+            if ($obj) {
+                $message = str_replace("__NB_TS__", $obj->nb, str_replace('\n', "\n", $langs->trans('YouHaveApprovalPendingMsg')));
+                //$message = "Bonjour, \n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
+                $sendto = $obj->email;
+                $replyto = $obj->email;
+                $subject = $langs->transnoentities("YouHaveApprovalPending");
+                if (!empty($sendto) && $sendto!="NULL") {
+                    require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+                    $mailfile = new CMailFile
+                        ($subject,
+                        $sendto,
+                        $replyto,
+                        $message,
+                        $filename_list = array(),
+                        $mimetype_list = array(),
+                        $mimefilename_list = array(),
+                        $addr_cc, $addr_bcc = 0,
+                        $deliveryreceipt = 0,
+                        $msgishtml = 1);
+                    $mailfile->sendfile();
                 }
-            } else {
-                $error++;
-                dol_print_error($db);
-                $list = array();
             }
         }
+    } else {
+        $error++;
+        dol_print_error($db);
+        $list = array();
+    }
+}
         /**
          * function that will send email upon timesheet rejection
          * @param    Doliuser   $user       objet

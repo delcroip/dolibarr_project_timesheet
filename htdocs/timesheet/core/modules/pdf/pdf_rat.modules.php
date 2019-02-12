@@ -170,7 +170,7 @@ function writeFile($object, $outputlangs)
             foreach ($userTaskArray as $userid => $tasktimearray) {
                   // New page
                 $pagenb++;
-                $pagenb=$this->writeUser($pdf,$tplidx, $object, $outputlangs, $pagenb,$tasktimearray);
+                $pagenb=$this->writeUser($pdf, $tplidx, $object, $outputlangs, $pagenb, $tasktimearray);
             }
             //if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
             //close pdf
@@ -202,7 +202,7 @@ function writeFile($object, $outputlangs)
      * @param array $tasktimearray data to dispaly
      * @return int  number of pages at the end
      */
-    function writeUser(&$pdf, $tplidx, $object, $outputlangs, $pagenb,$tasktimearray)
+    function writeUser(&$pdf, $tplidx, $object, $outputlangs, $pagenb, $tasktimearray)
     {
         global $conf;
         //constant
@@ -456,7 +456,7 @@ function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outputlangs,
  *  @param  string        $userName    user name to be displayed
  *  @return        void
  */
-function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName="")
+function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName = "")
 {
     global $langs, $conf, $mysoc;
     $default_font_size = pdf_getPDFFontSize($outputlangs);

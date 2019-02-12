@@ -29,30 +29,30 @@ $res = 0;
  */
 class box_approval extends ModeleBoxes
 {
-        var $boxcode = "nbTsToApprove";
-        var $boximg = "timesheet";
-        var $boxlabel = "BoxApproval";
-        var $depends = array("timesheet");
-        var $db;
-        var $param;
-        var $info_box_head = array();
-        var $info_box_contents = array();
-        /**
-         *  Load data into info_box_contents array to show array later.
-         *
-         *  @param        int                $max        Maximum number of records to load
+    var $boxcode = "nbTsToApprove";
+    var $boximg = "timesheet";
+    var $boxlabel = "BoxApproval";
+    var $depends = array("timesheet");
+    var $db;
+    var $param;
+    var $info_box_head = array();
+    var $info_box_contents = array();
+    /**
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param        int                $max        Maximum number of records to load
      *  @return        void
-         */
-        function loadBox($max = 5)
-        {
-                global $conf, $user, $langs, $db;
-                $this->max = $max;
+     */
+    function loadBox($max = 5)
+    {
+        global $conf, $user, $langs, $db;
+        $this->max = $max;
         $userid = is_object($user)?$user->id:$user;
-                $text = $langs->trans('Timesheet');
-                $this->info_box_head = array(
-                                'text' => $text,
-                                'limit'=> dol_strlen($text)
-                );
+        $text = $langs->trans('Timesheet');
+        $this->info_box_head = array(
+                        'text' => $text,
+                        'limit'=> dol_strlen($text)
+        );
         if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
            $subordinate = implode(', ', getSubordinates($db, $userid, 2));
@@ -70,7 +70,7 @@ class box_approval extends ModeleBoxes
             if ($result) {
                 $num = $db->num_rows($result);
                 while ($num>0)
-{
+                {
                     $obj = $db->fetch_object($result);
                     if ($obj->recipient == 'project') {
                         $nbPrj = $obj->nbtsk;
@@ -78,29 +78,29 @@ class box_approval extends ModeleBoxes
                         $nbTm = $obj->nbtm;
                     }
                     $num--;
-                    }
-                    $this->info_box_contents[0][] = array(
-                        'td' => 'align = "left"',
-                        'text' => $langs->trans('team').': ',
-                        'text2'=> $langs->trans('nbTsToApprove'),
-                        'asis' => 1,
-                    );
-                    $this->info_box_contents[0][] = array(
-                        'td' => 'align = "right"',
-                        'text' => $nbTm,
-                        'asis' => 1,
-                    );
-                    $this->info_box_contents[1][] = array(
-                        'td' => 'align = "left"',
-                        'text' => $langs->trans('project').': ',
-                        'text2'=> $langs->trans('nbTsToApprove'),
-                        'asis' => 1,
-                    );
-                    $this->info_box_contents[1][] = array(
-                        'td' => 'align = "right"',
-                        'text' => $nbPrj,
-                        'asis' => 1,
-                    );
+                }
+                $this->info_box_contents[0][] = array(
+                    'td' => 'align = "left"',
+                    'text' => $langs->trans('team').': ',
+                    'text2'=> $langs->trans('nbTsToApprove'),
+                    'asis' => 1,
+                );
+                $this->info_box_contents[0][] = array(
+                    'td' => 'align = "right"',
+                    'text' => $nbTm,
+                    'asis' => 1,
+                );
+                $this->info_box_contents[1][] = array(
+                    'td' => 'align = "left"',
+                    'text' => $langs->trans('project').': ',
+                    'text2'=> $langs->trans('nbTsToApprove'),
+                    'asis' => 1,
+                );
+                $this->info_box_contents[1][] = array(
+                    'td' => 'align = "right"',
+                    'text' => $nbPrj,
+                    'asis' => 1,
+                );
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
@@ -116,17 +116,17 @@ class box_approval extends ModeleBoxes
             );
         }
     }
-        // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
-        /**
-         *  Method to show box
-         *
-         *  @param  array   $head       Array with properties of box title
-         *  @param  array   $contents   Array with properties of box lines
-         *  @param  INT   $nooutput   BLOCK OUTPUT
-         *  @return void
-         */
-        function showBox($head = null, $contents = null, $nooutput = 0)
-        {
-            Parent::showBox($this->info_box_head, $this->info_box_contents);
-        }
+    // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
+    /**
+     *  Method to show box
+     *
+     *  @param  array   $head       Array with properties of box title
+     *  @param  array   $contents   Array with properties of box lines
+     *  @param  INT   $nooutput   BLOCK OUTPUT
+     *  @return void
+     */
+    function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        Parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
 }

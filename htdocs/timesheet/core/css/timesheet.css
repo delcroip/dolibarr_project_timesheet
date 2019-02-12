@@ -3,20 +3,20 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 */
-/* 
+/*
     Created on : 19-mars-2016, 17:21:01
     Author     : delcroip
 */
 
 ul.listHoliday{
-    list-style-type: none; 
-    width: 100%; 
+    list-style-type: none;
+    width: 100%;
     margin: 0;
     padding: 0;
 }
 
 li.listItemHoliday{
-    float: left; 
+    float: left;
     width: 50%;
     background-color: transparent;
 }
@@ -44,7 +44,7 @@ input[type="checkbox"][readonly] {
   pointer-events: none;
 }
 
-/* The Modal (background)  https://www.w3schools.com/howto/howto_css_modals.asp */ 
+/* The Modal (background)  https://www.w3schools.com/howto/howto_css_modals.asp */
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */

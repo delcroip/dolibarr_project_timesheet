@@ -151,10 +151,10 @@ function select_sellist(
                 if ($obj->{$labelKey} == $selected) {
                      $selectOptions .= 'selected = \"selected\"';
                      $selectedValue = $fieldtoshow;
-                 }
-                 $selectOptions .= ">";
-                 $selectOptions .= $fieldtoshow;
-                 $selectOptions .= "</option>\n";
+                }
+                $selectOptions .= ">";
+                $selectOptions .= $fieldtoshow;
+                $selectOptions .= "</option>\n";
             }
             $i++;
         }
@@ -217,7 +217,7 @@ function print_sellist(
     $startkey = strpos($sqlarray['keyfield'], '.');
     $labelKey = ($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
     $resql = $db->query($sql);
-     if ($resql) {
+    if ($resql) {
         $listFields = explode(',', $sqlarray['fields']);
         $fields = array();
         foreach ($listFields as $item) {
@@ -268,22 +268,22 @@ function print_sellist(
  */
 function printBitStringHTML($bitstring, $labels, $names, $edit = 0)
 {
-     global $langs;
-     $html = "error, paramters of printBitStringHTML not valid";
-     $numberOfBits = count($labels);
-     if (is_array($labels) && count_chars(bitstring)!=($numberOfBits+1)) {
-          $htmlValue = '';
-          $html = '<table class = "noborder" width = "100%"><tr class = "titre">';
-           for($i = 0;$i<$numberOfBits;$i++)
-{
-               // labels
-               $html .= '<td width = "'.floor(100/$numberOfBits).'%">'.$labels[$i].'<td>';
-               $htmlValue .= '<td><input type = "checkbox" name = "'.$names[$i].'"'.((substr($bitstring, $i+1, 1))?' checked':'').(($edit)?'':' readonly').' ><td>';
-           }
-           $html .= '</tr><tr>'.$htmlValue.'</tr></table>';
-     }
-     return $html;
- }
+    global $langs;
+    $html = "error, paramters of printBitStringHTML not valid";
+    $numberOfBits = count($labels);
+    if (is_array($labels) && count_chars(bitstring)!=($numberOfBits+1)) {
+        $htmlValue = '';
+        $html = '<table class = "noborder" width = "100%"><tr class = "titre">';
+        for($i = 0;$i<$numberOfBits;$i++)
+        {
+            // labels
+            $html .= '<td width = "'.floor(100/$numberOfBits).'%">'.$labels[$i].'<td>';
+            $htmlValue .= '<td><input type = "checkbox" name = "'.$names[$i].'"'.((substr($bitstring, $i+1, 1))?' checked':'').(($edit)?'':' readonly').' ><td>';
+        }
+        $html .= '</tr><tr>'.$htmlValue.'</tr></table>';
+    }
+    return $html;
+}
  /*
  * function to genegate a random number
  *
@@ -293,17 +293,17 @@ function printBitStringHTML($bitstring, $labels, $names, $edit = 0)
  */
 function crypto_rand_secure($min, $max)
 {
-        $range = $max - $min;
-        if ($range < 0) return $min;// not so random...
-        $log = log($range, 2);
-        $bytes = (int) ($log / 8) + 1;// length in bytes
-        $bits = (int) $log + 1;// length in bits
-        $filter = (int) (1 << $bits) - 1;// set all lower bits to 1
-        do {
-            $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
-            $rnd = $rnd & $filter;// discard irrelevant bits
-        } while ($rnd >= $range);
-        return $min + $rnd;
+    $range = $max - $min;
+    if ($range < 0) return $min;// not so random...
+    $log = log($range, 2);
+    $bytes = (int) ($log / 8) + 1;// length in bytes
+    $bits = (int) $log + 1;// length in bits
+    $filter = (int) (1 << $bits) - 1;// set all lower bits to 1
+    do {
+        $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+        $rnd = $rnd & $filter;// discard irrelevant bits
+    } while ($rnd >= $range);
+    return $min + $rnd;
 }
  /*
  * function to genegate a random string
@@ -318,7 +318,7 @@ function getToken($length = 32)
     $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
     $codeAlphabet.= "0123456789";
     for($i = 0;$i<$length;$i++)
-{
+    {
         $token .= $codeAlphabet[crypto_rand_secure(0, strlen($codeAlphabet))];
     }
     return $token;
@@ -336,10 +336,11 @@ function getToken($length = 32)
  *  @param    string               $sqlTail              to limit per entity, to filter ...
  *  @return string                                                   html code
  */
-function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2="", $separator=' - ', $sqltail="", $sqljoin="")
+function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2 = "", $separator = ' - ', $sqltail = "", $sqljoin = "")
 {
    //return $table.$db.$field;
     return  print_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail),
         $selected,
         $separator);
  }
+ 

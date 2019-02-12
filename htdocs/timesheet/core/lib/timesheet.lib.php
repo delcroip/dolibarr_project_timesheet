@@ -153,9 +153,9 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
         dol_print_error($db);
         $list = array();
     }
-      //$select .= "\n";
-      return array_unique($list);
- }
+    //$select .= "\n";
+    return array_unique($list);
+}
   /*
  * function to genegate list of the task that can have approval pending
  *
@@ -214,7 +214,7 @@ function getTasks($db, $userid, $role = 'project')
 function getUsersName($userids)
 {
     global $db;
-        if ($userids == "") {
+    if ($userids == "") {
         return array();
     }
     $sql = "SELECT usr.rowid, CONCAT(usr.firstname, ' ', usr.lastname) as username, usr.lastname FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
@@ -253,8 +253,8 @@ if (is_array($userids)) {
         $list = array();
     }
       //$select .= "\n";
-      return $list;
- }
+    return $list;
+}
 if (!is_callable(GETPOSTISSET)) {
 /**
  * Return true if we are in a context of submitting a parameter
@@ -342,9 +342,9 @@ function getEventMessageXML($messages, $style = 'ok')
  */
 function getStartDate($datetime, $prevNext = 0)
 {
-   global $conf;
+    global $conf;
     // use the day, month, year value
-     $startDate = null;
+    $startDate = null;
         // split week of the current week
   /* $prefix = 'this';
    if ($prevNext == 1) {
@@ -356,49 +356,49 @@ function getStartDate($datetime, $prevNext = 0)
     /**************************
      * calculate the start date form php date
      ***************************/
-     switch ($conf->global->TIMESHEET_TIME_SPAN) {
+    switch ($conf->global->TIMESHEET_TIME_SPAN) {
         case 'month': //by Month
         //     $startDate = strtotime('first day of '.$prefix.' month midnight', $datetime  );
         //     break;
-                if ($prevNext == 1) {
-                    $startDate = strtotime('first day of next month midnight', $datetime  );
-                } elseif ($prevNext == 0) {
-                    $startDate = strtotime('first day of this month midnight', $datetime  );
-                } elseif ($prevNext == -1) {
-                    $startDate = strtotime('first day of previous month midnight', $datetime  );
-                }
+            if ($prevNext == 1) {
+                $startDate = strtotime('first day of next month midnight', $datetime  );
+            } elseif ($prevNext == 0) {
+                $startDate = strtotime('first day of this month midnight', $datetime  );
+            } elseif ($prevNext == -1) {
+                $startDate = strtotime('first day of previous month midnight', $datetime  );
+            }
             break;
         case 'week': //by user
                     //     $startDate = strtotime('first day of '.$prefix.' month midnight', $datetime  );
         //     break;
-                if ($prevNext == 1) {
-                    $startDate = strtotime('monday next week midnight', $datetime  );
-                } elseif ($prevNext == 0) {
-                    $startDate = strtotime('monday this week midnight', $datetime  );
-                } elseif ($prevNext == -1) {
-                    $startDate = strtotime('monday previous week midnight', $datetime  );
-                }
+            if ($prevNext == 1) {
+                $startDate = strtotime('monday next week midnight', $datetime  );
+            } elseif ($prevNext == 0) {
+                $startDate = strtotime('monday this week midnight', $datetime  );
+            } elseif ($prevNext == -1) {
+                $startDate = strtotime('monday previous week midnight', $datetime  );
+            }
             break;
         case 'splitedWeek': //by week
         default:
-                if ($prevNext == 1) {
-                    $startDateMonth = strtotime('first day of next month  midnight', $datetime  );
-                    $startDateWeek = strtotime('monday next week midnight', $datetime  );
-                    $startDate = MIN($startDateMonth, $startDateWeek);
-                } elseif ($prevNext == 0) {
-                    $startDateMonth = strtotime('first day of this month midnight', $datetime  );
-                    $startDateWeek = strtotime('monday this week  midnight', $datetime  );
-                    $startDate = MAX($startDateMonth, $startDateWeek);
-                } elseif ($prevNext == -1) {
-                    $startDateMonth = strtotime('first day of this month  midnight', $datetime  );
-                    $startDateWeek = strtotime('monday this week  midnight', $datetime  );
-                    $startDatePrevWeek = strtotime('monday previous week  midnight', $datetime  );
-                    if ($startDateMonth>$startDateWeek) {
-                        $startDate = $startDateWeek;
-                    } else{
-                        $startDate = ($startDateMonth<$startDatePrevWeek)?$startDatePrevWeek:$startDateMonth;
-                    }
+            if ($prevNext == 1) {
+                $startDateMonth = strtotime('first day of next month  midnight', $datetime  );
+                $startDateWeek = strtotime('monday next week midnight', $datetime  );
+                $startDate = MIN($startDateMonth, $startDateWeek);
+            } elseif ($prevNext == 0) {
+                $startDateMonth = strtotime('first day of this month midnight', $datetime  );
+                $startDateWeek = strtotime('monday this week  midnight', $datetime  );
+                $startDate = MAX($startDateMonth, $startDateWeek);
+            } elseif ($prevNext == -1) {
+                $startDateMonth = strtotime('first day of this month  midnight', $datetime  );
+                $startDateWeek = strtotime('monday this week  midnight', $datetime  );
+                $startDatePrevWeek = strtotime('monday previous week  midnight', $datetime  );
+                if ($startDateMonth>$startDateWeek) {
+                    $startDate = $startDateWeek;
+                } else{
+                    $startDate = ($startDateMonth<$startDatePrevWeek)?$startDatePrevWeek:$startDateMonth;
                 }
+            }
             break;
     }
     return $startDate;
@@ -510,22 +510,22 @@ function getDayInterval($dateStart, $dateEnd)
  */
 function formatTime($duration, $hoursperdays = -1)
 {
-        global $conf;
-        if ($hoursperdays == -1) {
-            $hoursperdays = ($conf->global->TIMESHEET_TIME_TYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
-        } elseif ($hoursperdays == -2) {
-            $hoursperdays = ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
-        }
-        if ($hoursperdays == 0) {
-            $TotalSec = $duration%60;
-            $TotalMin = (($duration-$TotalSec)/60)%60;
-            $TotalHours = $TotalHours = ($duration-$TotalMin*60- $TotalSec)/3600;
-            return $TotalHours.':'.sprintf("%02s", $TotalMin);
-        } else {
-            $totalDay = round($duration/3600/$hoursperdays, 3);
-            return strval($totalDay);
-        }
+    global $conf;
+    if ($hoursperdays == -1) {
+        $hoursperdays = ($conf->global->TIMESHEET_TIME_TYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
+    } elseif ($hoursperdays == -2) {
+        $hoursperdays = ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
     }
+    if ($hoursperdays == 0) {
+        $TotalSec = $duration%60;
+        $TotalMin = (($duration-$TotalSec)/60)%60;
+        $TotalHours = $TotalHours = ($duration-$TotalMin*60- $TotalSec)/3600;
+        return $TotalHours.':'.sprintf("%02s", $TotalMin);
+    } else {
+        $totalDay = round($duration/3600/$hoursperdays, 3);
+        return strval($totalDay);
+    }
+}
     /** function to send the eventmessage to dolibarr
      *
      * @global type $langs

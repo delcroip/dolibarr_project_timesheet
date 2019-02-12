@@ -247,7 +247,7 @@ public $date_time_event_start;
             //$result = $this->call_trigger('MYOBJECT_MODIFY', $user);
             //if ($result < 0){ $error++;//Do also what you must do to rollback action if trigger fail}
             //// End call triggers
-                 }
+                }
             }
         // Commit or rollback
             if ($error) {
@@ -810,13 +810,13 @@ function createTimeSpend($user, $token = '')
               $i++;
         }
         $this->db->free($resql);
-         $i = 0;
+        $i = 0;
         return $tasksList;
     } else {
         dol_print_error($this->db);
         return -1;
     }
-}
+ }
 /**
 * function to save attendance event as a string
 * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
@@ -859,7 +859,7 @@ public function serialize($mode = 0)
             break;
     }
       return $ret;
-    }
+}
      /** function to load a skeleton as a string
      * @param   string    $str   serialized object
      * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT

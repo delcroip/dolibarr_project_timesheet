@@ -246,7 +246,7 @@ if ($conf->global->TIMESHEET_ADD_DOCS && $id>0) {
 if (isset($_SESSION['Timesheetuser_'.$tms])) {
     unset($_SESSION['Timesheetuser_'.$tms]);
 }
- if (($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))) {
+if (($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))) {
     $tms = getToken();
     $_SESSION['Timesheetuser_'.$tms] = array();
     $_SESSION['Timesheetuser_'.$tms]['action'] = $action;
@@ -394,7 +394,7 @@ switch ($action) {
         }
         print '<div class = "center">';
         if ($edit == 1) {
-        if ($new == 1) {
+            if ($new == 1) {
                 print '<input type = "submit" class = "butAction" name = "add" value = "'.$langs->trans('Add').'">';
             } else{
                 print '<input type = "submit" name = "update" value = "'.$langs->trans('Update').'" class = "butAction">';
