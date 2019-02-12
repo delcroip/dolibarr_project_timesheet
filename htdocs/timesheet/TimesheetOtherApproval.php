@@ -64,8 +64,7 @@ if ($action == 'submit') {
             $approvals = GETPOST ('approval', 'array');
             $notes = GETPOST ('notesTask', 'array');
             $update = false;
-            foreach ($_SESSION['task_timesheet'][$token] as $id => $role_row)
-            {
+            foreach ($_SESSION['task_timesheet'][$token] as $id => $role_row) {
                 $count++;
                 $task_timesheet->fetch($id);
                 if ($notes[$id]!=$task_timesheet->note) {
@@ -132,8 +131,7 @@ $objectArray = getTStobeApproved($current, $selectList);
 $token = getToken();
 if (is_array($objectArray)) {
     // SAVE THE ARRAY IN THE SESSION FOR CHECK UPON SUBMIT
-    foreach ($objectArray as $object)
-    {
+    foreach ($objectArray as $object) {
         $_SESSION['task_timesheet'][$token][$object->appId] = $role;
     }
 }
@@ -187,8 +185,7 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
 {
     global $langs, $db;
     $htmlSelect = '<select name = "target">';
-    foreach ($selectList as $key => $element)
-    {
+    foreach ($selectList as $key => $element) {
         $htmlSelect .= ' <option value = "'.$key.'" '.(($current == $key)?'selected':'').'>'.$element['label'].'</option>';
     }
     $htmlSelect .= '</select>';
@@ -223,8 +220,7 @@ function getTStobeApproved($current, $selectList)
     global $db;
     if ((!is_array($selectList) || !is_array($selectList[$current]['idList'])))return array();
     $listTTA = array();
-    foreach ($selectList[$current]['idList'] as $idTTA)
-    {
+    foreach ($selectList[$current]['idList'] as $idTTA) {
         $TTA = new TimesheetTask($db);
         $TTA->fetch($idTTA);
         $listTTA[] = $TTA;
@@ -347,8 +343,7 @@ function getHTMLRows($objectArray)
         echo"\t".'<th width = "60px" style = "text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
     }
     echo "<tr>\n";
-    foreach ($objectArray as $key=> $object)
-    {
+    foreach ($objectArray as $key=> $object) {
  //        $object->getTaskInfo();
         $object->getActuals();
         echo '<tr>';

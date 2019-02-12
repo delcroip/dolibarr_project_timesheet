@@ -67,11 +67,11 @@ $invoiceservice = $conf->global->TIMESHEET_INVOICE_SERVICE;
 $invoiceshowtask = $conf->global->TIMESHEET_INVOICE_SHOW_TASK;
 $invoiceshowuser = $conf->global->TIMESHEET_INVOICE_SHOW_USER;
 $searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
-if (count($opendays)!=8){
+if (count($opendays)!=8) {
     $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
 }
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
-if (count($apflows) != 6){
+if (count($apflows) != 6) {
     $apflows = array('_', '0', '0', '0', '0', '0');
 }
 $error = 0;
@@ -100,7 +100,8 @@ switch ($action) {
         $timetype = getpost('timeType', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         $timeSpan = getpost('timeSpan', 'alpha');
-        if ($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN) { // delete the unsubmitted timesheet so the new time span will be applied
+        if ($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN) {
+            // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql.= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
             dol_syslog(__METHOD__);
@@ -172,15 +173,13 @@ switch ($action) {
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
         // open days
         $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
-        foreach (getpost('opendays', 'array') as $key => $day)
-        {
+        foreach (getpost('opendays', 'array') as $key => $day) {
             $opendays[$key] = $day;
         }
         dolibarr_set_const($db, "TIMESHEET_OPEN_DAYS", implode('', $opendays), 'chaine', 0, '', $conf->entity);
         //approval flows
         $apflows = array('_', '0', '0', '0', '0', '0');
-        foreach (getpost('apflows', 'array') as $key => $flow)
-        {
+        foreach (getpost('apflows', 'array') as $key => $flow) {
             $apflows[$key] = $flow;
         }
         //INVOICE
@@ -210,36 +209,35 @@ switch ($action) {
         break;
 }
 $headersT = explode('||', $headers);
-foreach ($headersT as $header)
-{
+foreach ($headersT as $header) {
     switch ($header) {
         case 'Project':
             $showProject = 1;
-            Break;
+            break;
         case 'TaskParent':
             $showTaskParent = 1;
-            Break;
+            break;
         case 'Tasks':
             $showTasks = 1;
-            Break;
+            break;
         case 'DateStart':
             $showDateStart = 1;
-            Break;
+            break;
         case 'DateEnd':
             $showDateEnd = 1;
-            Break;
+            break;
         case 'Progress':
             $showProgress = 1;
-            Break;
+            break;
         case 'Company':
             $showCompany = 1;
-            Break;
+            break;
         case 'Note':
             $showNote = 1;
-            Break;
+            break;
         case 'Total':
             $showTotal = 1;
-            Break;
+            break;
         default:
             break;
     }
@@ -350,8 +348,7 @@ echo $langs->trans("Thursday").'</th><th>'.$langs->trans("Friday").'</th><th>';
 echo $langs->trans("Saturday").'</th><th>'.$langs->trans("Sunday").'</th>';
 echo '<input type = "hidden" name = "opendays[0]" value = "_">';
 echo "</tr><tr>\n\t\t";
-for ($i = 1;$i<8;$i++)
-{
+for ($i = 1; $i<8; $i++) {
     echo  '<td width = "14%" style = "text-align:left"><input type = "checkbox" name = "opendays['.$i.']" value = "1" ';
     echo (($opendays[$i] == '1')?'checked':'')."></td>\n\t\t";
 }

@@ -124,8 +124,7 @@ class AttendanceSystem extends CommonObject
         }
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
@@ -219,8 +218,7 @@ class AttendanceSystem extends CommonObject
             }
         // Commit or rollback
             if ($error) {
-                foreach ($this->errors as $errmsg)
-                {
+                foreach ($this->errors as $errmsg) {
                     dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                     $this->error .= ($this->error?', '.$errmsg:$errmsg);
                 }
@@ -379,8 +377,7 @@ class AttendanceSystem extends CommonObject
         }
 // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
@@ -541,8 +538,7 @@ class AttendanceSystem extends CommonObject
                 break;
         }
         // automatic unserialisation based on match between property name and key value
-        foreach ($array as $key => $value)
-        {
+        foreach ($array as $key => $value) {
             if (isset($this->{$key}))$this->{$key} = $value;
         }
     }

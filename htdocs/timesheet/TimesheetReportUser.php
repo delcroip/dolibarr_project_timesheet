@@ -98,8 +98,7 @@ $Form = '<form action="?action=reportuser'.(($optioncss != '')?'&amp;optioncss='
         <tr >
         <td><select  name = "userSelected">
         ';
-foreach ($userList as $usr)
-{
+foreach ($userList as $usr) {
    // $Form .= '<option value = "'.$usr->id.'">'.$usr->name.'</option> ';
     $Form .= '<option value = "'.$usr->userid.'" '.(($userIdSelected == $usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
 }
@@ -110,8 +109,7 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         &&!empty($_POST['month']))
 {
     if ($userIdSelected == '-999') {
-        foreach ($userList as $userSt)
-        {
+        foreach ($userList as $userSt) {
             $querryRes .= $userSt->getHTMLreport($short,
             $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);

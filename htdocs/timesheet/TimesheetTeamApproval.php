@@ -66,8 +66,7 @@ if ($action== 'submit') {
             $notes = $_POST['note'];
             $notesTask = GETPOST('notesTask', 'array');
             $approvals = $_POST['approval'];
-            foreach ($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser)
-            {
+            foreach ($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser) {
                 $curTaskTimesheet = new TimesheetUserTasks($db);
                 $count++;
                 $curTaskTimesheet->fetch($key);
@@ -165,8 +164,7 @@ echo '<div id = "Team" class = "tabBar">';
 if (is_object($firstTimesheetUser)) {
     if (!$print) echo getHTMLNavigation($optioncss, $selectList, $current);
     $Form .= $firstTimesheetUser->getHTMLFormHeader($ajax);
-    foreach ($objectArray as $key=> $task_timesheet)
-    {
+    foreach ($objectArray as $key=> $task_timesheet) {
 
         if ($i<$level) {
             $task_timesheet->fetchTaskTimesheet();
@@ -316,8 +314,7 @@ function getHTMLNavigation($optioncss, $selectList, $current = 0)
 {
     global $langs, $db;
     $htmlSelect = '<select name = "target">';
-    foreach ($selectList as $key => $element)
-    {
+    foreach ($selectList as $key => $element) {
         $htmlSelect .= ' <option value = "'.$key.'" '.(($current == $key)?'selected':'').'>'.$element['label'].'</option>';
     }
     $htmlSelect .= '</select>';

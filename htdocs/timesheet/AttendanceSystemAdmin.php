@@ -186,8 +186,7 @@ jQuery(document).ready(function()
     if ($filter && $filter != -1) {
         // GETPOST('filtre') may be a string {
         $filtrearr = explode(', ', $filter);
-        foreach ($filtrearr as $fil)
-        {
+        foreach ($filtrearr as $fil) {
                 $filt = explode(':', $fil);
                 $sqlwhere .= ' AND ' . $filt[0] . ' = ' . $filt[1];
         }

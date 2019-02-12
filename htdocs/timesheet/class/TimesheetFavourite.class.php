@@ -101,8 +101,7 @@ class TimesheetFavourite extends CommonObject
         }
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
@@ -159,12 +158,10 @@ class TimesheetFavourite extends CommonObject
                 $i++;
             }
             $this->db->free($resql);
-            foreach ($List as $row)
-            {
+            foreach ($List as $row) {
                 //$Listtask = array_merge($Listtask, $row->getTaskList());
                 $subListtask = $row->getTaskList();
-                foreach ($subListtask as $key => $value)
-                {
+                foreach ($subListtask as $key => $value) {
                     $Listtask[$key] = $value;
                 }
             }
@@ -293,8 +290,7 @@ class TimesheetFavourite extends CommonObject
         }
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
@@ -376,8 +372,7 @@ class TimesheetFavourite extends CommonObject
         }
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }

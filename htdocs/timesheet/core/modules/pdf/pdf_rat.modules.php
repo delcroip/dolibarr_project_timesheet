@@ -147,14 +147,12 @@ function writeFile($object, $outputlangs)
             $TotalLines=array();
             $userTaskArray=array();
             //order data per user id and calc total per user
-            foreach ($tasktimearray as $line)
-            {
+            foreach ($tasktimearray as $line) {
                 $userTaskArray[$line['userId']]['lines'][]=$line;
                 $TotalLines[$line['userId']]+=$line['duration'];
             }
            /* add a line with the total*/
-            foreach ($userTaskArray as $userid => $taskArray)
-            {
+            foreach ($userTaskArray as $userid => $taskArray) {
                 $userTaskArray[$userid]['Total']=formatTime($TotalLines[$userid], -1);
             }
             //init the pdf
@@ -169,8 +167,7 @@ function writeFile($object, $outputlangs)
             if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
             $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);// Left, Top, Right
             //generate pages per userid
-            foreach ($userTaskArray as $userid => $tasktimearray)
-            {
+            foreach ($userTaskArray as $userid => $tasktimearray) {
                   // New page
                 $pagenb++;
                 $pagenb=$this->writeUser($pdf,$tplidx, $object, $outputlangs, $pagenb,$tasktimearray);

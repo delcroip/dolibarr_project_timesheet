@@ -440,8 +440,7 @@ switch ($action) {
         dol_fiche_head($head, 'documents', $langs->trans("Timesheetuser"), 0, 'timesheet@timesheet');
         $filearray = dol_dir_list($upload_dir, 'files', 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
+	foreach ($filearray as $key => $file) {
 		$totalsize+=$file['size'];
 	}
         print '<table class = "border" width = "100%">';
@@ -483,8 +482,7 @@ switch ($action) {
     if ($filter && $filter != -1) {
         // GETPOST('filtre') may be a string {
         $filtrearr = explode(', ', $filter);
-        foreach ($filtrearr as $fil)
-        {
+        foreach ($filtrearr as $fil) {
                 $filt = explode(':', $fil);
                 $sqlwhere .= ' AND ' . $filt[0] . ' = ' . $filt[1];
         }

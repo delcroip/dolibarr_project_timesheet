@@ -104,8 +104,7 @@ $ajax = false;
 //headers
 $html .= "<table class = \"noborder\" width = \"100%\">";
 $html .= "<tr>";
-foreach ($headers as $key => $value)
-{
+foreach ($headers as $key => $value) {
     $html .= "\t<th ";
     if (count($headers) == 1) {
            $html .= 'colspan = "2" ';

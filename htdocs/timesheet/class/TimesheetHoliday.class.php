@@ -64,8 +64,7 @@ class TimesheetHoliday extends Holiday
         {
                 $curDay = strtotime(' + '.$day.' days', $datestart);
                 $this->holidaylist[$day] = array('amId'=>'0', 'pmId'=>'0', 'prev'=>false, 'am'=>false, 'pm'=>false, 'next'=>false, 'amStatus'=>0, 'pmStatus'=>0);
-                foreach ($this->holiday as $record)
-{
+                foreach ($this->holiday as $record) {
                     if ($record['date_debut']<=$curDay && $record['date_fin']>=$curDay) {
                      $prev = ($record['date_debut']<$curDay)?true:false;
                      $next = ($record['date_fin']>$curDay)?true:false;
@@ -133,8 +132,7 @@ class TimesheetHoliday extends Holiday
         $html = "<tr id = 'holiday'>\n";
         $html .= '<th colspan = "'.count($headers).'" align = "right" > '.$langs->trans('Holiday').' </th>';
         $i = 0;
-        foreach ($this->holidaylist as $holiday)
-        {
+        foreach ($this->holidaylist as $holiday) {
             $am = $holiday['am'];
             $pm = $holiday['pm'];
             $amId = $holiday['amId'];

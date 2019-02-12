@@ -280,8 +280,7 @@ class TimesheetReport
                 $HTMLRes .= '<th>'.$langs->trans($title[$this->lvl3Title]).'</th>';
                 $HTMLRes .= '<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
                 $HTMLRes .= '<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
-                foreach ($resArray as $key => $item)
-                {
+                foreach ($resArray as $key => $item) {
                    $item['date'] = dol_print_date($item['date'], 'day');
                    $HTMLRes.= '<tr class = "oddeven" align = "left"><th width = "200px">'.$this->name.'</th>';
                    $HTMLRes.= '<th '.(isset($titleWidth[$this->lvl1Title])?'width = "'.$titleWidth[$this->lvl1Title].'"':'' ).'>'.$item[$this->lvl1Title].'</th>';
@@ -292,8 +291,7 @@ class TimesheetReport
                 }
                 $HTMLRes .= '</table>';
             }else {
-                foreach ($resArray as $key => $item)
-                {
+                foreach ($resArray as $key => $item) {
                     if ($Curlvl1 == 0) {
                         $Curlvl1 = $key;
                         $Curlvl2 = $key;

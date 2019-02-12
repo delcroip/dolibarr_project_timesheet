@@ -108,8 +108,7 @@ $querryRes = '';
 if ($projectSelectedId   &&!empty($dateStart)) {
     $projectSelected = $projectList[$projectSelectedId];
     if ($projectSelectedId == '-999') {
-        foreach ($projectList as $project)
-{
+        foreach ($projectList as $project) {
         $querryRes .= $project->getHTMLreport($short,
            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
@@ -139,8 +138,7 @@ $Form = '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncs
         <td><select  name = "projectSelected">
         ';
 // select project
-foreach ($projectList as $pjt)
-{
+foreach ($projectList as $pjt) {
     $Form .= '<option value = "'.$pjt->projectid.'" '.(($projectSelectedId == $pjt->projectid)?"selected":'').' >'.$pjt->name.'</option>'."\n";
 }
 $Form .= '<option value = "-999" '.(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";

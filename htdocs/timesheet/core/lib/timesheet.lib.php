@@ -316,8 +316,7 @@ function getEventMessageXML($messages, $style = 'ok')
     $msg = '';
     if (is_array($messages)) {
         $count = count($messages);
-        foreach ($messages as $message)
-{
+        foreach ($messages as $message) {
             $msg .= $message;
             if ($count>1)$msg .= "<br/>";
             $count--;
@@ -484,8 +483,7 @@ global $langs, $roles, $apflows;
 global $conf;
 //$roles = array(0=> 'team', 1=> 'project', 2=>'customer', 3=>'supplier', 4=>'other');
 $rolesUrl = array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOtherApproval.php?role=project', 3=>'TimesheetOtherApproval.php?role=customer', 4=>'TimesheetOtherApproval.php?role=supplier', 5=>'TimesheetOtherApproval.php?role=other');
-    foreach ($apflows as $key=> $value)
-{
+    foreach ($apflows as $key=> $value) {
         if ($value == 1) {
             echo '  <div class = "inline-block tabsElem"><a  href = "'.$rolesUrl[$key].'&leftmenu=timesheet" class = "';
             echo    ($role_key == $key)?'tabactive':'tabunactive';
@@ -546,8 +544,7 @@ function formatTime($duration, $hoursperdays = -1)
         $messages[] = array('type'=>'mesgs', 'text'=>'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
         $messages[] = array('type'=>'errors', 'text'=>'updateError', 'param'=>$arraymessage['updateError']);
         $nbr=0;
-        foreach ($messages as $key=> $message)
-        {
+        foreach ($messages as $key=> $message) {
             if ($message['param']>0 ) {
                 if ($returnstring == false)setEventMessage($langs->transnoentitiesnoconv($message['text']).$message['param'], $message['type']);
                 else $messages[$key]['text']=$langs->trans($message['text']);

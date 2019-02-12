@@ -187,8 +187,7 @@ class TimesheetTask extends Task
         }
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
@@ -432,8 +431,7 @@ class TimesheetTask extends Task
         }
 // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
@@ -476,8 +474,7 @@ class TimesheetTask extends Task
         }
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
@@ -532,8 +529,7 @@ class TimesheetTask extends Task
         }
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
@@ -790,8 +786,7 @@ class TimesheetTask extends Task
     {
         global $langs, $conf;
         $htmlTitle = '';
-        foreach ($headers as $key => $title)
-        {
+        foreach ($headers as $key => $title) {
             $html = '';
             switch ($title) {
                 case 'Project':
@@ -1052,8 +1047,7 @@ class TimesheetTask extends Task
         }
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg)
-            {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__.$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
@@ -1123,8 +1117,7 @@ class TimesheetTask extends Task
     {
         $ttaDuration = 0;
         if (!is_array($this->tasklist))$this->getActuals();
-        foreach ($this->tasklist as $item)
-        {
+        foreach ($this->tasklist as $item) {
             $ttaDuration+=$item['duration'];
         }
         return $ttaDuration;
@@ -1313,8 +1306,7 @@ class TimesheetTask extends Task
         //update the roles
         $rolepassed = false;
         // look for the role open after the curent role and set it as recipient
-        foreach (array_slice ($apflows, 1) as $key=> $value)
-        {
+        foreach (array_slice ($apflows, 1) as $key=> $value) {
             $key++;
             if ($value == 1 ) {
                 if ( $key == $role) {
@@ -1358,8 +1350,7 @@ class TimesheetTask extends Task
         $ret = -1;
        //unset the approver ( could be set previsouly)
         //update the roles, look for the open role and define it as sender and save the previous role open as recipient
-        foreach (array_slice ($apflows, 1) as $key=> $recipient)
-        {
+        foreach (array_slice ($apflows, 1) as $key=> $recipient) {
             $key++;
             if ($recipient == 1) {
                 if ( $key == $role) {
@@ -1392,8 +1383,7 @@ class TimesheetTask extends Task
         global $apflows;
         // assign the first role open as recipient, put user as default
         $this->recipient = USER;
-        foreach (array_slice ($apflows, 1) as $key=> $recipient)
-        {
+        foreach (array_slice ($apflows, 1) as $key=> $recipient) {
             $key++;
             if ($recipient == 1) {
                 $this->recipient = $key;

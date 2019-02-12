@@ -70,8 +70,7 @@ function select_sellist(
     $ajaxNbChar = $htmlarray['ajaxNbChar'];
     $listFields = explode(',', $sqlarray['fields']);
     $fields = array();
-    foreach ($listFields as $item)
-    {
+    foreach ($listFields as $item) {
         $item=trim($item);
         $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
         $start2 = strpos($item, '.');
@@ -144,8 +143,7 @@ function select_sellist(
             $obj = $db->fetch_object($resql);
             if ($obj) {
                 $fieldtoshow = '';
-                foreach ($fields as $item)
-{
+                foreach ($fields as $item) {
                     if (!empty($fieldtoshow))$fieldtoshow .= $separator;
                     $fieldtoshow .= $obj->{$item['label']};
                 }
@@ -222,8 +220,7 @@ function print_sellist(
      if ($resql) {
         $listFields = explode(',', $sqlarray['fields']);
         $fields = array();
-        foreach ($listFields as $item)
-        {
+        foreach ($listFields as $item) {
             $item=trim($item);
             $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
             $start2 = strpos($item, '.');
@@ -240,8 +237,7 @@ function print_sellist(
             $obj = $db->fetch_object($resql);
             if ($obj) {
                 $select = '';
-                foreach ($fields as $item)
-                {
+                foreach ($fields as $item) {
                     if (!empty($select))$select .= $separator;
                     $select .= $obj->{$item['label']};
                 }

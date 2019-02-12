@@ -63,8 +63,7 @@ if ($posBs>0) {
         // with sqltail = 'JOIN llx_user as u ON t.fk_user = u.rowid'
         $listFields = explode(', ', $sqlarray['fields']);
         $fields = array();
-    foreach ($listFields as $item)
-{
+    foreach ($listFields as $item) {
         $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
         $start2 = strpos($item, '.');
         $label = $item;
@@ -83,8 +82,7 @@ if ($posBs>0) {
             $obj = $db->fetch_object($resql);
             if ($obj) {
                 $label = '';
-                foreach ($fields as $item)
-{
+                foreach ($fields as $item) {
                     if (!empty($label))$label .= $separator;
                     $label .= $obj->{$item['label']};
                 }

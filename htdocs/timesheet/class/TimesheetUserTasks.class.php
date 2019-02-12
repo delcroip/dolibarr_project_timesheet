@@ -140,8 +140,7 @@ class TimesheetUserTasks extends CommonObject
         }
         // Commit or rollback
         if ($error) {
-			foreach ($this->errors as $errmsg)
-			{
+			foreach ($this->errors as $errmsg) {
 	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 	            $this->error .= ($this->error?', '.$errmsg:$errmsg);
 			}
@@ -307,8 +306,7 @@ class TimesheetUserTasks extends CommonObject
 		}
         // Commit or rollback
 		if ($error) {
-			foreach ($this->errors as $errmsg)
-			{
+			foreach ($this->errors as $errmsg) {
 	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 	            $this->error .= ($this->error?', '.$errmsg:$errmsg);
 			}
@@ -351,8 +349,7 @@ class TimesheetUserTasks extends CommonObject
             }
     // Commit or rollback
             if ($error) {
-                foreach ($this->errors as $errmsg)
-                {
+                foreach ($this->errors as $errmsg) {
                     dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                     $this->error .= ($this->error?', '.$errmsg:$errmsg);
                 }
@@ -538,8 +535,7 @@ function fetchTaskTimesheet($userid = '')
             $this->db->free($resql);
              $i = 0;
             if (isset($this->taskTimesheet))unset($this->taskTimesheet);
-             foreach ($tasksList as $row)
-            {
+             foreach ($tasksList as $row) {
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
                 $row->getTaskInfo();// get task info include in fetch
                 $row->getActuals($datestart, $datestop, $userid);
@@ -572,8 +568,7 @@ function updateActuals($tabPost, $notes = array())
         /*
          * For each task store in matching the session timestamp
          */
-        foreach ($this->taskTimesheet as $key  => $row)
-        {
+        foreach ($this->taskTimesheet as $key  => $row) {
             $tasktime = new TimesheetTask($this->db);
             $tasktime->unserialize($row);
             $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->appId]);
@@ -651,8 +646,7 @@ function updateStatus($user, $status = 0)
     UNDERAPPROVAL=>3,
     PLANNED=>9);
     //look for the status to apply to the TS  from the TTA
-    foreach ($this->taskTimesheet as $row)
-{
+    foreach ($this->taskTimesheet as $row) {
         $tta = new TimesheetTask($this->db);
         $tta->unserialize($row);
         if ($tta->appId>0) { // tta already created
@@ -766,8 +760,7 @@ function getHTMLHeader()
         $html .= '</tr>';
     }
     $html .= '<tr class = "liste_titre" id = "">'."\n";
-    foreach ($this->headers as $key => $value)
-    {
+    foreach ($this->headers as $key => $value) {
         $html .= "\t<th ";
         if (count($this->headers) == 1) {
                 $html .= 'colspan = "2" ';
@@ -877,8 +870,7 @@ function getHTMLtaskLines($ajax = false)
     $Lines = '';
     $nbline = count($this->taskTimesheet);
     if (!$ajax & is_array($this->taskTimesheet)) {
-        foreach ($this->taskTimesheet as $timesheet)
-        {
+        foreach ($this->taskTimesheet as $timesheet) {
             $row = new TimesheetTask($this->db);
             $row->unserialize($timesheet);
             //$row->db = $this->db;
@@ -1091,8 +1083,7 @@ function GetTimeSheetXML()
     //header
     $i = 0;
     $xmlheaders = '';
-    foreach ($this->headers as $header)
-{
+    foreach ($this->headers as $header) {
         if ($header == 'Project') {
             $link = ' link = "'.DOL_URL_ROOT.'/projet/card.php?id="';
         }elseif ($header == 'Tasks' || $header == 'TaskParent') {
@@ -1119,8 +1110,7 @@ function GetTimeSheetXML()
         $tab = $this->fetchTaskTimesheet();
         $i = 0;
         $xml .= "<userTs userid = \"{$this->userId}\"  count = \"".count($this->taskTimesheet)."\" userName = \"{$this->userName}\" >";
-        foreach ($this->taskTimesheet as $timesheet)
-{
+        foreach ($this->taskTimesheet as $timesheet) {
             $row = new TimesheetTask($this->db);
              $row->unserialize($timesheet);
             $xml.= $row->getXML($this->date_start);//FIXME

@@ -144,8 +144,7 @@ $langs->load('timesheet@timesheet');
             $Form .= '<th >'.$langs->trans("Custom").':'.$langs->trans("Description").'</th><th >'.$langs->trans("Custom").':'.$langs->trans("UnitPriceHT").'</th>';
             $Form .= '<th >'.$langs->trans("Custom").':'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("savedDuration").'</th>';
             $form = new Form($db);
-            foreach ($resArray as $res)
-            {
+            foreach ($resArray as $res) {
                 $Form .= htmlPrintServiceChoice($res["USER"], $res["TASK"], 'oddeven', $res["DURATION"], $res['LIST'], $mysoc, $socid);
             }
             $Form .= '</table>';
@@ -170,8 +169,7 @@ $langs->load('timesheet@timesheet');
             $hoursPerDay = $conf->global->TIMESHEET_DAY_DURATION;
             $task_time_array = array();
             if (is_array($resArray)) {
-                foreach ($resArray as $uId =>$userTaskService)
-                {
+                foreach ($resArray as $uId =>$userTaskService) {
                         //$userTaskService[$user][$task] = array('duration', 'VAT', 'Desc', 'PriceHT', 'Service', 'unit_duration', 'unit_duration_unit');
                     if (is_array($userTaskService ))foreach ($userTaskService as  $tId => $service) {
                         $durationTab = explode (':', $service['duration']);
@@ -205,8 +203,7 @@ $langs->load('timesheet@timesheet');
             if ($id > 0 && ! $error) {
                 $db->commit();
                 if (version_compare(DOL_VERSION, "4.9.9")>=0) {
-                    foreach ($task_time_array AS $idLine=> $task_time_list)
-                    {
+                    foreach ($task_time_array AS $idLine=> $task_time_list) {
                             //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
                         Update_task_time_invoice($id, $idLine, $task_time_list);
                     }
