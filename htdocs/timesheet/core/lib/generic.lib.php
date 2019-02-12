@@ -342,5 +342,4 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
     return  print_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail),
         $selected,
         $separator);
- }
- 
+}
