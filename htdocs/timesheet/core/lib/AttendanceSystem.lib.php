@@ -32,17 +32,13 @@
  */
 function AttendanceSystemReloadPage($backtopage, $id, $ref)
 {
-    if (!empty($backtopage))
-    {
+    if (!empty($backtopage)) {
         header("Location: ".$backtopage);
-    }elseif (!empty($ref))
-    {
+    }elseif (!empty($ref)) {
         header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?ref='.$ref);
-    }elseif ($id>0)
-    {
+    }elseif ($id>0) {
         header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?id='.$id);
-    }else
-    {
+    }else {
         header("Location: ".dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1));
     }
     ob_end_flush();
@@ -64,8 +60,7 @@ function AttendanceSystemPrepareHead($object)
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
-	if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
-	{
+	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) $nbNote++;
 		if (!empty($object->note_public)) $nbNote++;

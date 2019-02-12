@@ -66,20 +66,19 @@ $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
-if (!$removefilter )		// Both test must be present to be compatible with all browsers
-{
-    	$ls_label = GETPOST('ls_label', 'alpha');
-	$ls_ip = GETPOST('ls_ip', 'alpha');
-	$ls_port = GETPOST('ls_port', 'int');
-	$ls_note = GETPOST('ls_note', 'alpha');
-	$ls_third_party = GETPOST('ls_third_party', 'int');
-	$ls_task = GETPOST('ls_task', 'int');
-	$ls_project = GETPOST('ls_project', 'int');
-	$ls_status = GETPOST('ls_status', 'int');
+if (!$removefilter ) {
+    // Both test must be present to be compatible with all browsers {
+    $ls_label = GETPOST('ls_label', 'alpha');
+    $ls_ip = GETPOST('ls_ip', 'alpha');
+    $ls_port = GETPOST('ls_port', 'int');
+    $ls_note = GETPOST('ls_note', 'alpha');
+    $ls_third_party = GETPOST('ls_third_party', 'int');
+    $ls_task = GETPOST('ls_task', 'int');
+    $ls_project = GETPOST('ls_project', 'int');
+    $ls_status = GETPOST('ls_status', 'int');
 }
 $page = GETPOST('page', 'int');
-if ($page == -1)
-{
+if ($page == -1) {
     $page = 0;
 }
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -105,14 +104,12 @@ if ($user->societe_id > 0 ||
 */
 // create object and set id or ref if provided as parameter
 $object = new AttendanceSystem($db);
-if ($id>0)
-{
+if ($id>0) {
     $object->id = $id;
     $object->fetch($id);
     $ref = dol_sanitizeFileName($object->ref);
 }
-if (!empty($ref))
-{
+if (!empty($ref)) {
     $object->ref = $ref;
     $object->id = $id;
     $object->fetch($id, $ref);
@@ -124,25 +121,20 @@ if (!empty($ref))
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 // Action to remove record
-switch($action)
-{
+switch ($action) {
     case 'confirm_delete':
        $result = ($confirm == 'yes')?$object->delete($user):0;
-       if ($result > 0)
-       {
+       if ($result > 0) {
                // Delete OK
                setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
-       }
-       else
-       {
+       }else {
                // Delete NOK
                if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
                else setEventMessage('RecordNotDeleted', 'errors');
        }
        break;
     case 'delete':
-        if ( $action == 'delete' && ($id>0 || $ref!=""))
-        {
+        if ( $action == 'delete' && ($id>0 || $ref!="")) {
          $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
@@ -191,14 +183,14 @@ jQuery(document).ready(function()
     $sqlwhere = '';
     if (isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
-    if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
-    {
-            $filtrearr = explode(', ', $filter);
-            foreach ($filtrearr as $fil)
-            {
-                    $filt = explode(':', $fil);
-                    $sqlwhere .= ' AND ' . $filt[0] . ' = ' . $filt[1];
-            }
+    if ($filter && $filter != -1) {
+        // GETPOST('filtre') may be a string {
+        $filtrearr = explode(', ', $filter);
+        foreach ($filtrearr as $fil)
+        {
+                $filt = explode(':', $fil);
+                $sqlwhere .= ' AND ' . $filt[0] . ' = ' . $filt[1];
+        }
     }
     //pass the search criteria
     	if ($ls_label) $sqlwhere .= natural_search('t.label', $ls_label);
@@ -214,29 +206,25 @@ jQuery(document).ready(function()
         $sql .= ' WHERE '.substr ($sqlwhere, 5);
 // Count total nb of records
 $nbtotalofrecords = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'attendance_system as t';
         if (!empty($sqlwhere))
             $sqlcount .= ' WHERE '.substr ($sqlwhere, 5);
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if (!empty($sortfield))
-    {
+    if (!empty($sortfield)) {
         $sql.= $db->order($sortfield, $sortorder);
     }else{
         $sortorder = 'ASC';
     }
-    if (!empty($limit))
-    {
+    if (!empty($limit)) {
             $sql.= $db->plimit($limit+1, $offset);
     }
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $param = '';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
         if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
@@ -325,8 +313,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         while ($i < $num && $i<$limit)
         {
             $obj = $db->fetch_object($resql);
-            if ($obj)
-            {
+            if ($obj) {
                 // You can use here results
                 	print "<tr class = \"oddeven\"  onclick = \"location.href='";
 	print $basedurl.$obj->rowid."'\" >";
@@ -334,22 +321,19 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print "<td>".$obj->ip."</td>";
 	print "<td>".$obj->port."</td>";
 	print "<td>".$obj->note."</td>";
-	if (class_exist('Societe'))
-{
+	if (class_exist('Societe')) {
 		$StaticObject = New Societe($db);
 		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_third_party)."</td>";
 	}else{
 		print print_sellist($sql_third_party, $obj->fk_third_party);
 	}
-	if (class_exist('Task'))
-{
+	if (class_exist('Task')) {
 		$StaticObject = New Task($db);
 		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_task)."</td>";
 	}else{
 		print print_sellist($sql_task, $obj->fk_task);
 	}
-	if (class_exist('Project'))
-{
+	if (class_exist('Project')) {
 		$StaticObject = New Project($db);
 		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_project)."</td>";
 	}else{
@@ -361,9 +345,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             }
             $i++;
         }
-    }
-    else
-    {
+    }else {
         $error++;
         dol_print_error($db);
     }

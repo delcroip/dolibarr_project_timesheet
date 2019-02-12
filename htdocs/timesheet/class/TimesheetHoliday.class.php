@@ -64,16 +64,14 @@ class TimesheetHoliday extends Holiday
         {
                 $curDay = strtotime(' + '.$day.' days', $datestart);
                 $this->holidaylist[$day] = array('amId'=>'0', 'pmId'=>'0', 'prev'=>false, 'am'=>false, 'pm'=>false, 'next'=>false, 'amStatus'=>0, 'pmStatus'=>0);
-                foreach($this->holiday as $record)
+                foreach ($this->holiday as $record)
 {
-                    if ($record['date_debut']<=$curDay && $record['date_fin']>=$curDay)
-{
+                    if ($record['date_debut']<=$curDay && $record['date_fin']>=$curDay) {
                      $prev = ($record['date_debut']<$curDay)?true:false;
                      $next = ($record['date_fin']>$curDay)?true:false;
                      $am = false;
                      $pm = false;
-                     switch ($record['halfday'])
-{
+                     switch ($record['halfday']) {
                          case -1://Holiday start the afteroon and end the afternnon -+++
                              $am = $prev;
                              $pm = true;
@@ -97,15 +95,13 @@ class TimesheetHoliday extends Holiday
                      $amOverride = ($this->holidaylist[$day]['amId'] == 0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
                      $oldSatus = $this->holidaylist[$day]['amStatus'];
                      $pmOverride = ($this->holidaylist[$day]['pmId'] == 0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
-                     if ($am && $amOverride)
-{
+                     if ($am && $amOverride) {
                          $this->holidaylist[$day]['am'] = true;
                          $this->holidaylist[$day]['amId'] = $record['rowid'];
                          $this->holidaylist[$day]['prev'] = $prev;
                          $this->holidaylist[$day]['amStatus'] = $record['statut'];
                      }
-                     if ($pm && $pmOverride)
-{
+                     if ($pm && $pmOverride) {
                          $this->holidaylist[$day]['pm'] = true;
                          $this->holidaylist[$day]['pmId'] = $record['rowid'];
                          $this->holidaylist[$day]['next'] = $next;
@@ -150,27 +146,23 @@ class TimesheetHoliday extends Holiday
             if ($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1)$html .= '<input type = "hidden" class = "time4day['.$tsUserId.']['.$i.']"  value = "'.$value.'">';
             $html .= '<ul id = "holiday['.$i.']" class = "listHoliday" >';
                 $html .= '<li id = "holiday['.$i.'][0]" class = "listItemHoliday" ><a ';
-                if ($am)
-                {
+                if ($am) {
                     $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
                     $amColor = ($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
                     $amClass = ($holiday['prev'])?'':' noPrevHoliday';
                     $amClass.= ($pm && $pmId == $amId )?'':' noNextHoliday';
                     $html .= ' class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
-                }else
-                {
+                }else {
                     $html .= ' class = "holiday" >&nbsp;</a></li>';
                 }
                 $html .= '<li id = "holiday['.$i.'][1]" class = "listItemHoliday" ><a ';
-                if ($pm)
-                {
+                if ($pm) {
                     $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
                     $pmColor = ($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
                     $pmClass = ($am && $pmId == $amId)?'':' noPrevHoliday';
                     $pmClass.= ($holiday['next'])?'':' noNextHoliday';
                     $html .= ' class = "holiday'.$pmClass.'" style = "'.$pmColor.'">&nbsp;</a></li>';
-                }else
-                {
+                }else {
                     $html .= ' class = "holiday" >&nbsp;</a></li>';
                 }
            // }

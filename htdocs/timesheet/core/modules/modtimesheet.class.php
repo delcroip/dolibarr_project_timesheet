@@ -198,8 +198,7 @@ class modTimesheet extends DolibarrModules
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
         $this->tabs = array();
         // Dictionaries
-	    if (! isset($conf->mymodule->enabled))
-        {
+	    if (! isset($conf->mymodule->enabled)) {
         	$conf->mymodule=new stdClass();
         	$conf->mymodule->enabled=0;
         }

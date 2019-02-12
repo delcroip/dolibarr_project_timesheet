@@ -53,8 +53,7 @@ class box_approval extends ModeleBoxes
 				'text' => $text,
 				'limit'=> dol_strlen($text)
 		);
-        if ($user->rights->timesheet->approval)
-{
+        if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
            $subordinate = implode(', ', getSubordinates($db, $userid, 2));
            if ($subordinate == '')$subordinate = 0;
@@ -68,17 +67,14 @@ class box_approval extends ModeleBoxes
             $sql.= ' OR (t.recipient='.PROJECT.' and fk_projet_task in ('.$tasks.')))';
             $sql.= '  GROUP BY t.recipient ';
             $result = $db->query($sql);
-            if ($result)
-            {
+            if ($result) {
                 $num = $db->num_rows($result);
                 while ($num>0)
 {
                     $obj = $db->fetch_object($result);
-                    if ($obj->recipient == 'project')
-{
+                    if ($obj->recipient == 'project') {
                         $nbPrj = $obj->nbtsk;
-                    }elseif ($obj->recipient == 'team')
-{
+                    }elseif ($obj->recipient == 'team') {
                         $nbTm = $obj->nbtm;
                     }
                     $num--;

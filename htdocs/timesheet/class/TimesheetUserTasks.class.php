@@ -124,15 +124,12 @@ class TimesheetUserTasks extends CommonObject
 		$this->db->begin();
 	   	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql)
-        {
+    	if (! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
-	if (! $error)
-        {
+	if (! $error) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-			if (! $notrigger)
-			{
+			if (! $notrigger) {
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action calls a trigger.
 	            //// Call triggers
@@ -142,18 +139,15 @@ class TimesheetUserTasks extends CommonObject
 			}
         }
         // Commit or rollback
-        if ($error)
-		{
-			foreach($this->errors as $errmsg)
+        if ($error) {
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 	            $this->error .= ($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
-		}
-		else
-		{
+		}else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -185,10 +179,8 @@ class TimesheetUserTasks extends CommonObject
         else $sql.= " WHERE t.rowid = ".$id;
     	dol_syslog(get_class($this)."::fetch");
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
                 $this->id = $obj->rowid;
                 $this->userId = $obj->fk_userid;
@@ -203,9 +195,7 @@ class TimesheetUserTasks extends CommonObject
             $this->db->free($resql);
             $this->ref = $this->date_start.'_'.$this->userId;
             return 1;
-        }
-        else
-        {
+        }else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -237,10 +227,8 @@ class TimesheetUserTasks extends CommonObject
         //$sql.= " AND t.rowid = ".$id;
     	dol_syslog(get_class($this)."::fetchByWeek");
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
                 $this->id = $obj->rowid;
                 $this->userId = $obj->fk_userid;
@@ -263,9 +251,7 @@ class TimesheetUserTasks extends CommonObject
             }
             $this->db->free($resql);
             return 1;
-        }
-        else
-        {
+        }else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -306,14 +292,11 @@ class TimesheetUserTasks extends CommonObject
 		$this->db->begin();
 		dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql)
-        {
+    	if (! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		if (! $error) {
+			if (! $notrigger) {
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action calls a trigger.
 	            //// Call triggers
@@ -323,18 +306,15 @@ class TimesheetUserTasks extends CommonObject
 			 }
 		}
         // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
+		if ($error) {
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 	            $this->error .= ($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
-		}
-		else
-		{
+		}else {
 			$this->db->commit();
 			return 1;
 		}
@@ -350,10 +330,8 @@ class TimesheetUserTasks extends CommonObject
             global $conf, $langs;
             $error = 0;
             $this->db->begin();
-            if (! $error)
-            {
-                if (! $notrigger)
-                {
+            if (! $error) {
+                if (! $notrigger) {
                         // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
             //// Call triggers
@@ -362,30 +340,25 @@ class TimesheetUserTasks extends CommonObject
             //// End call triggers
                 }
             }
-            if (! $error)
-            {
+            if (! $error) {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
                 $sql.= " WHERE rowid=".$this->id;
                 dol_syslog(__METHOD__);
                 $resql = $this->db->query($sql);
-                if (! $resql)
-                {
+                if (! $resql) {
                     $error++;$this->errors[] = "Error ".$this->db->lasterror();
                 }
             }
     // Commit or rollback
-            if ($error)
-            {
-                foreach($this->errors as $errmsg)
+            if ($error) {
+                foreach ($this->errors as $errmsg)
                 {
                     dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                     $this->error .= ($this->error?', '.$errmsg:$errmsg);
                 }
                 $this->db->rollback();
                 return -1*$error;
-            }
-            else
-            {
+            }else {
                 $this->db->commit();
                 return 1;
             }
@@ -411,22 +384,17 @@ class TimesheetUserTasks extends CommonObject
         // Create clone
         $result = $object->create();
         // Other options
-        if ($result < 0)
-        {
+        if ($result < 0) {
                 $this->error = $object->error;
                 $error++;
         }
-        if (! $error)
-        {
+        if (! $error) {
         }
         // End
-        if (! $error)
-        {
+        if (! $error) {
                 $this->db->commit();
                 return $object->id;
-        }
-        else
-        {
+        }else {
                 $this->db->rollback();
                 return -1;
         }
@@ -505,8 +473,7 @@ function fetchTaskTimesheet($userid = '')
 {
     global $conf;
     $res = array();
-    if ($userid == '')
-    {
+    if ($userid == '') {
         $userid = $this->userId;
     }
     $whiteList = array();
@@ -525,8 +492,7 @@ function fetchTaskTimesheet($userid = '')
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = ec.element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
     //approval
-    if ( $this->status == DRAFT || $this->status == REJECTED)
-    {
+    if ( $this->status == DRAFT || $this->status == REJECTED) {
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
     }else{ // take only the ones with a task_time linked
         $sql .= 'JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
@@ -536,8 +502,7 @@ function fetchTaskTimesheet($userid = '')
     $sql .= ' AND app.date_end = \''.$this->db->idate($datestop).'\'';
     //end approval
     $sql .= " WHERE ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task' ";
-    if ($conf->global->TIMESHEET_HIDE_DRAFT == '1')
-    {
+    if ($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
          $sql .= ' AND prj.fk_statut>\'0\' ';
     }
     $sql .= ' AND (prj.datee>=\''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
@@ -547,8 +512,7 @@ function fetchTaskTimesheet($userid = '')
     $sql .= '  ORDER BY prj.fk_soc, prjRef, tskRef ';
      dol_syslog("timesheet::getTasksTimesheet full ", LOG_DEBUG);
     $resql = $this->db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $this->taskTimesheet = array();
             $num = $this->db->num_rows($resql);
             $i = 0;
@@ -559,8 +523,7 @@ function fetchTaskTimesheet($userid = '')
                     $obj = $this->db->fetch_object($resql);
                     $tasksList[$i] = NEW TimesheetTask($this->db, $obj->taskid);
                     //$tasksList[$i]->id = $obj->taskid;
-                    if ($obj->appid)
-                    {
+                    if ($obj->appid) {
                         $tasksList[$i]->fetch($obj->appid);
                     }
                     $tasksList[$i]->userId = $this->userId;
@@ -575,7 +538,7 @@ function fetchTaskTimesheet($userid = '')
             $this->db->free($resql);
              $i = 0;
             if (isset($this->taskTimesheet))unset($this->taskTimesheet);
-             foreach($tasksList as $row)
+             foreach ($tasksList as $row)
             {
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
                 $row->getTaskInfo();// get task info include in fetch
@@ -583,8 +546,7 @@ function fetchTaskTimesheet($userid = '')
                 $this->taskTimesheet[] = $row->serialize();
             }
             return $ret;
-    }else
-    {
+    }else {
             dol_print_error($this->db);
             return -1;
     }
@@ -618,8 +580,7 @@ function updateActuals($tabPost, $notes = array())
             $this->taskTimesheet[$key] = $tasktime->serialize();
         }
         /*
-    if (!empty($idList))
-{
+    if (!empty($idList)) {
         //$this->project_tasktime_list = $idList;
         $this->update($this->user);
     }
@@ -639,24 +600,19 @@ function getUserName()
 	$sql .= ' usr.rowid = '.$this->userId;
       dol_syslog("task_timesheet::get_userName ", LOG_DEBUG);
     $resql = $this->db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $i = 0;
         $num = $this->db->num_rows($resql);
-        if ( $num)
-        {
+        if ( $num) {
             $obj = $this->db->fetch_object($resql);
-            if ($obj)
-            {
+            if ($obj) {
                 $this->userName = $obj->username;
             }else{
                 return -1;
             }
             $i++;
         }
-    }
-    else
-    {
+    }else {
        return -1;
     }
       //$select .= "\n";
@@ -672,19 +628,16 @@ function getUserName()
 function updateStatus($user, $status = 0)
 {
     if ($this->id<=0)return -1;
-    if ($status!='')
-{
+    if ($status!='') {
         if ($status<0 || $status> STATUSMAX)return -1;// status not valid
         $updatedStatus = $status;
-    }elseif (!empty($this->status))
-{
+    }elseif (!empty($this->status)) {
          $updatedStatus = $this->status;
     }else{ // no status
         $updatedStatus = 2;
     }
     if (count($this->taskTimesheet)<1 )$this->fetchTaskTimesheet();
-    if ($status == $this->status)
-{ // to avoid eternal loop
+    if ($status == $this->status) { // to avoid eternal loop
         return 1;
     }
     $Priority = array(
@@ -698,12 +651,11 @@ function updateStatus($user, $status = 0)
     UNDERAPPROVAL=>3,
     PLANNED=>9);
     //look for the status to apply to the TS  from the TTA
-    foreach($this->taskTimesheet as $row)
+    foreach ($this->taskTimesheet as $row)
 {
         $tta = new TimesheetTask($this->db);
         $tta->unserialize($row);
-        if ($tta->appId>0)
-{ // tta already created
+        if ($tta->appId>0) { // tta already created
             $tta->fetch($tta->appId);
             $statusPriorityCur = $tta->status;
             $updatedStatus = ($Priority[$updatedStatus]>$Priority[$statusPriorityCur])?$updatedStatus:$statusPriorityCur;
@@ -725,8 +677,7 @@ Public function setStatus($user, $status, $id = 0)
     //role ?
     $error = 0;
     //if the satus is not an ENUM status
-    if ($status<0 || $status>STATUSMAX)
-    {
+    if ($status<0 || $status>STATUSMAX) {
         dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERR);
         return false;
     }
@@ -739,19 +690,16 @@ Public function setStatus($user, $status, $id = 0)
     $this->status = $status;
     // Update request
     $error = ($this->id<=0)?$this->create($user):$this->update($user);
-    if ($error>0)
-    {
+    if ($error>0) {
         if ($status == REJECTED)$this->sendRejectedReminders($user);
-        if (count($this->taskTimesheet)<1 )
-    {
+        if (count($this->taskTimesheet)<1 ) {
         $this->fetch($id);
     }
     $this->status = DRAFT;// SET THE STATUS TO DRAFT TO GET ALL
     $this->fetchTaskTimesheet();
     $this->status = $status;
     $this->status = $status;
-    if (count($this->taskTimesheet)>0 )foreach($this->taskTimesheet as $ts)
-    {
+    if (count($this->taskTimesheet)>0 )foreach ($this->taskTimesheet as $ts) {
         $tasktime = new TimesheetTask($this->db);
         $tasktime->unserialize($ts);
         //$tasktime->appId = $this->id;
@@ -790,8 +738,7 @@ function getHTML($ajax = false, $Approval = false)
     $Form .= $this->getHTMLTotal();
     $Form .= '</table>';
     $Form .= $this->getHTMLNote($ajax);
-    if (!$Approval)
-    {
+    if (!$Approval) {
         $Form .= $this->getHTMLFooter($ajax);
     }
     $Form .= '<br>'."\n";
@@ -812,8 +759,7 @@ function getHTMLHeader()
      $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
      ///Whitelist tab
-    if ($conf->global->TIMESHEET_TIME_SPAN == "month")
-    {
+    if ($conf->global->TIMESHEET_TIME_SPAN == "month") {
         $format = "%d";
         $html .= '<tr class = "liste_titre" id = "">'."\n";
         $html .= '<td colspan = "'.$maxColSpan.'" align = "center"><a >'.$langs->trans(date('F', $this->date_start)).' '.date('Y', $this->date_start).'</a></td>';
@@ -823,8 +769,7 @@ function getHTMLHeader()
     foreach ($this->headers as $key => $value)
     {
         $html .= "\t<th ";
-        if (count($this->headers) == 1)
-        {
+        if (count($this->headers) == 1) {
                 $html .= 'colspan = "2" ';
         }
         $html .= ">".$langs->trans($value)."</th>\n";
@@ -879,20 +824,17 @@ function getHTMLFooter($ajax = false)
     //form button
     $html .= '<div class = "tabsAction">';
      $isOpenSatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED));
-    if ($isOpenSatus)
-    {
+    if ($isOpenSatus) {
         $html .= '<input type = "submit" class = "butAction" name = "save" value = "'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type = "submit" class = "butAction" name = "submit" onClick = "return submitTs();" value = "'.$langs->trans('Submit')."\" />\n";
-        if (in_array('1', array_slice ($apflows, 1)))
-        {
+        if (in_array('1', array_slice ($apflows, 1))) {
             $html .= '<input type = "submit" class = "butAction" name = "submit"  value = "'.$langs->trans('Submit')."\" />\n";
         }
         $html .= '<a class = "butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
     }elseif ($this->status == SUBMITTED)$html .= '<input type = "submit" class = "butAction" name = "recall" " value = "'.$langs->trans('Recall')."\" />\n";
     $html .= '</div>';
     $html .= "</form>\n";
-    if ($ajax)
-    {
+    if ($ajax) {
         $html .= '<script type = "text/javascript">'."\n\t";
         $html .= 'window.onload = function()
             {loadXMLTimesheet("'.$this->date_start.'", '.$this->userId.');}';
@@ -917,8 +859,7 @@ function getHTMLFooterAp($current, $timestamp)
     //$html .= '<input type = "submit" class = "butAction" name = "submit" onClick = "return submitTs();" value = "'.$langs->trans('Submit')."\" />\n";
     $html .= '</div>';
     $html .= "</form>\n";
-    if ($ajax)
-    {
+    if ($ajax) {
         $html .= '<script type = "text/javascript">'."\n\t";
         $html .= 'window.onload = function()
     {loadXMLTimesheet("'.$this->date_start.'", '.$this->userId.');}';
@@ -935,18 +876,15 @@ function getHTMLtaskLines($ajax = false)
     $i = 1;
     $Lines = '';
     $nbline = count($this->taskTimesheet);
-    if (!$ajax & is_array($this->taskTimesheet))
-    {
+    if (!$ajax & is_array($this->taskTimesheet)) {
         foreach ($this->taskTimesheet as $timesheet)
         {
             $row = new TimesheetTask($this->db);
             $row->unserialize($timesheet);
             //$row->db = $this->db;
-            if (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED )))
-            {
+            if (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED ))) {
                 $openOveride = 1;
-            }elseif (in_array($this->status, array(UNDERAPPROVAL, INVOICED, APPROVED, CHALLENGED, SUBMITTED )))
-            {
+            }elseif (in_array($this->status, array(UNDERAPPROVAL, INVOICED, APPROVED, CHALLENGED, SUBMITTED ))) {
                 $openOveride = -1;
             }else{
                 $openOveride = 0;
@@ -967,12 +905,10 @@ function getHTMLNote()
      global $langs;
      $isOpenSatus = (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED )));
      $html = '<div class = "noborder"><div  width = "100%">'.$langs->trans('Note').'</div><div width = "100%">';
-    if ($isOpenSatus)
-    {
+    if ($isOpenSatus) {
         $html .= '<textarea class = "flat"  cols = "75" name = "noteTaskApproval['.$this->id.']" rows = "3" >'.$this->note.'</textarea>';
         $html .= '</div>';
-    }elseif (!empty($this->note))
-    {
+    }elseif (!empty($this->note)) {
         $html .= $this->note;
         $html .= '></div>';
     }else{
@@ -988,8 +924,7 @@ function getHTMLHolidayLines($ajax = false)
 {
     $i = 0;
     $Lines = '';
-    if (!$ajax)
-    {
+    if (!$ajax) {
         $Lines .= $this->holidays->getHTMLFormLine($this->headers, $this->id);
     }
     return $Lines;
@@ -1010,8 +945,7 @@ function getHTMLNavigation($optioncss, $ajax = false)
     //$tail = '&wlm='.$this->whitelistmode;
     if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1  )$tail = '&userid='.$this->userId;
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
-    if ($ajax)
-    {
+    if ($ajax) {
 //     $Nav.=  '<a id = "navPrev" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, -1).'\', 0);';
     }else{
         $Nav.=  '<a href="?dateStart='.getStartDate($this->date_start, -1).$tail;
@@ -1049,42 +983,32 @@ function getHTMLNavigation($optioncss, $ajax = false)
     {
     	global $langs;
     	$result = '';
-        if (empty($ref) && $id == 0)
-        {
-            if (isset($this->id))
-            {
+        if (empty($ref) && $id == 0) {
+            if (isset($this->id)) {
                 $id = $this->id;
-            }elseif (isset($this->rowid))
-            {
+            }elseif (isset($this->rowid)) {
                 $id = $this->rowid;
-            }if (isset($this->ref))
-            {
+            }if (isset($this->ref)) {
                 $ref = $this->ref;
             }
         }
-        if ($id)
-        {
+        if ($id) {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?id='.$id.'&action=view">';
-        }elseif (!empty($ref))
-        {
+        }elseif (!empty($ref)) {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?ref='.$ref.'&action=view">';
         }else{
             $lien = "";
         }
         $lienfin = empty($lien)?'':'</a>';
     	$picto = 'timesheet@timesheet';
-        if ($ref)
-        {
+        if ($ref) {
             $label = $langs->trans("Show").': '.$ref;
-        }elseif ($id)
-        {
+        }elseif ($id) {
             $label = $langs->trans("Show").': '.$id;
         }
-    	if ($withpicto == 1)
-        {
+    	if ($withpicto == 1) {
             $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif ($withpicto == 2)
-        {
+        }elseif ($withpicto == 2) {
             $result .= $lien.img_object($label, $picto).$lienfin;
         }else{
             $result .= $lien.$htmlcontent.$lienfin;
@@ -1104,8 +1028,7 @@ function getHTMLGetOtherUserTs($idsList, $selected, $admin)
     global $langs;
     $form = new Form($this->db);
     $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method = "POST">';
-    if (!$admin)
-    {
+    if (!$admin) {
         $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
     }else{
          $HTML .= $form->select_dolusers($selected, 'userid');
@@ -1139,8 +1062,7 @@ function getHTMLGetOtherUserTs($idsList, $selected, $admin)
         //$this->user_modification = '';
         $this->task = '';
         $this->note = '';
-        if ($test)
-        {
+        if ($test) {
             $this->userId = 1;
             $this->date_start = srttotime('this monday', dol_mktime());
             $this->date_end = srttotime('next monday', dol_mktime())-1;
@@ -1169,16 +1091,13 @@ function GetTimeSheetXML()
     //header
     $i = 0;
     $xmlheaders = '';
-    foreach($this->headers as $header)
+    foreach ($this->headers as $header)
 {
-        if ($header == 'Project')
-{
+        if ($header == 'Project') {
             $link = ' link = "'.DOL_URL_ROOT.'/projet/card.php?id="';
-        }elseif ($header == 'Tasks' || $header == 'TaskParent')
-{
+        }elseif ($header == 'Tasks' || $header == 'TaskParent') {
             $link = ' link = "'.DOL_URL_ROOT.'/projet/tasks/task.php?withproject=1&amp;id="';
-        }elseif ($header == 'Company')
-{
+        }elseif ($header == 'Company') {
             $link = ' link = "'.DOL_URL_ROOT.'/societe/soc.php?socid="';
         }else{
             $link = '';
@@ -1230,21 +1149,18 @@ function sendApprovalReminders()
             $sql.= '  AND t.recipient='.TEAM.' GROUP BY u.fk_user';
              dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
-            if ($resql)
-            {
+            if ($resql) {
                 $num = $this->db->num_rows($resql);
                 for( $i = 0;$i<$num;$i++)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    if ($obj)
-                    {
+                    if ($obj) {
                         $message = str_replace("__NB_TS__", $obj->nb, str_replace('\n', "\n", $langs->trans('YouHaveApprovalPendingMsg')));
                         //$message = "Bonjour, \n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
                         $sendto = $obj->email;
                         $replyto = $obj->email;
                         $subject = $langs->transnoentities("YouHaveApprovalPending");
-                        if (!empty($sendto) && $sendto!="NULL")
-{
+                        if (!empty($sendto) && $sendto!="NULL") {
                             require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
                             $mailfile = new CMailFile
                                 ($subject,
@@ -1261,9 +1177,7 @@ function sendApprovalReminders()
                         }
                     }
                 }
-            }
-            else
-            {
+            }else {
                 $error++;
                 dol_print_error($db);
                 $list = array();
@@ -1280,8 +1194,7 @@ function sendApprovalReminders()
         $tsUser = new User($db);
         $tsUser->fetch($this->userId);
           $url = $dolibarr_main_url_root;
-          if (strpos($dolibarr_main_url_root_alt, $_SERVER['PHP_SELF'])>0)
-          {
+          if (strpos($dolibarr_main_url_root_alt, $_SERVER['PHP_SELF'])>0) {
                $url .= $dolibarr_main_url_root_alt;
           }
           $url .= '/timesheet/Timesheet.php?dateStart='.$this->date_start;
@@ -1290,8 +1203,7 @@ function sendApprovalReminders()
           $sendto = $tsUser->email;
           $replyto = $user->email;
           $subject = $langs->transnoentities("YouHaveTimesheetRejected");
-          if (!empty($sendto) && $sendto!="NULL")
-          {
+          if (!empty($sendto) && $sendto!="NULL") {
             require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
             $mailfile = new CMailFile(
                 $subject,

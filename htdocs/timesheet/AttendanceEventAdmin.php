@@ -51,8 +51,7 @@ dol_include_once('/core/class/html.formother.class.php');
 dol_include_once('/user/class/user.class.php');
 dol_include_once('/projet/class/project.class.php');
 dol_include_once('/core/class/html.formother.class.php');
-if (!$user->rights->timesheet->attendance->admin)
-{
+if (!$user->rights->timesheet->attendance->admin) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono admin right");
 }
 //dol_include_once('/projet/class/projet.class.php');
@@ -73,8 +72,8 @@ $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
-if (!$removefilter )		// Both test must be present to be compatible with all browsers
-{
+if (!$removefilter ) {
+// Both test must be present to be compatible with all browsers {
     $ls_date_time_event_month = GETPOST('ls_date_time_event_month', 'int');
     $ls_date_time_event_year = GETPOST('ls_date_time_event_year', 'int');
     $ls_event_location_ref = GETPOST('ls_event_location_ref', 'alpha');
@@ -89,8 +88,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
     $ls_status = GETPOST('ls_status', 'int');
 }
 $page = GETPOST('page', 'int');
-if ($page == -1)
-{
+if ($page == -1) {
     $page = 0;
 }
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -116,8 +114,7 @@ if ($user->societe_id > 0 ||
 */
 // create object and set id or ref if provided as parameter
 $object = new Attendanceevent($db, $user);
-if ($id>0)
-{
+if ($id>0) {
     $object->id = $id;
     $object->fetch($id);
     $ref = dol_sanitizeFileName($object->ref);
@@ -129,25 +126,20 @@ $form = new Form($db);
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 // Action to remove record
-switch($action)
-{
+switch ($action) {
     case 'confirm_delete':
        $result = ($confirm == 'yes')?$object->delete($user):0;
-       if ($result > 0)
-       {
+       if ($result > 0) {
                // Delete OK
                setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
-       }
-       else
-       {
+       }else {
                // Delete NOK
                if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
                else setEventMessage('RecordNotDeleted', 'errors');
        }
        break;
     CASE 'add':
-        if (empty($tms) || (!isset($_SESSION['Attendanceevent'][$tms])))
-        {
+        if (empty($tms) || (!isset($_SESSION['Attendanceevent'][$tms]))) {
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
             $action = 'list';
         }
@@ -164,12 +156,10 @@ switch($action)
         $object->token = GETPOST('Token');
         $object->status = GETPOST('Status');
         $result = $object->create($user);
-        if ($result > 0)
-        {
+        if ($result > 0) {
                 // Creation OK
             // remove the tms
-               if ($ajax == 1)
-                {
+               if ($ajax == 1) {
                    $object->serialize(2); //return JSON
                     ob_end_flush();
                     exit();// don't remove the tms. don't continue with the
@@ -177,8 +167,7 @@ switch($action)
                    unset($_SESSION['Attendanceevent'][$tms]);
                setEventMessage('RecordSucessfullyCreated', 'mesgs');
                //AttendanceeventReloadPage($backtopage, $result, '');
-        }else
-        {
+        }else {
                 // Creation KO
                 if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
                 else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
@@ -187,8 +176,7 @@ switch($action)
     break;
 }
     //Removing the tms array so the order can't be submitted two times
-if (isset( $_SESSION['Attendanceevent'][$tms]))
-{
+if (isset( $_SESSION['Attendanceevent'][$tms])) {
     unset($_SESSION['Attendanceevent'][$tms]);
 }
     $tms = getToken();
@@ -205,8 +193,7 @@ print "<div> <!-- module body-->";
 $form = new Form($db);
 $formother = new FormOther($db);
 $fuser = new User($db);
-        if ( $action == 'delete' && ($id>0))
-{
+        if ( $action == 'delete' && ($id>0)) {
          print $form->form_confirm(dol_buildpath('/timesheet/AttendanceEventAdmin.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceevent'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          //if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
@@ -244,8 +231,8 @@ jQuery(document).ready(function()
     $sqlwhere = '';
     if (isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
-    if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
-    {
+    if ($filter && $filter != -1) {
+        // GETPOST('filtre') may be a string {
             $filtrearr = explode(', ', $filter);
             foreach ($filtrearr as $fil)
             {
@@ -270,29 +257,25 @@ jQuery(document).ready(function()
         $sql .= ' WHERE '.substr ($sqlwhere, 5);
 // Count total nb of records
 $nbtotalofrecords = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'attendance_event as t';
         if (!empty($sqlwhere))
             $sqlcount .= ' WHERE '.substr ($sqlwhere, 5);
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if (!empty($sortfield))
-    {
+    if (!empty($sortfield)) {
         $sql.= $db->order($sortfield, $sortorder);
     }else{
        $sql .= ' ORDER BY t.date_time_event DESC';
     }
-    if (!empty($limit))
-    {
+    if (!empty($limit)) {
             $sql.= $db->plimit($limit+1, $offset);
     }
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $param = '';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
         if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
@@ -455,8 +438,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         while ($i < $num && $i<$limit)
         {
             $obj = $db->fetch_object($resql);
-            if ($obj)
-            {
+            if ($obj) {
                 // You can use here results
                 print "<tr class = \"oddeven\"  >";
 		print "<td>".dol_print_date($db->jdate($obj->date_time_event), 'dayhour')."</td>";
@@ -464,8 +446,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print "<td>".Attendanceevent::LibStatut($obj->event_type)."</td>";
 		print "<td>".$obj->note."</td>";
                 print "<td>";
-                if ($obj->fk_userid>0)
-{
+                if ($obj->fk_userid>0) {
                 $sUser = new User($db);
                 $sUser->fetch($obj->fk_userid);
                 print  $sUser->getNomUrl(1);
@@ -473,24 +454,21 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 print "</td>";
 //		print "<td>".  print_sellist('third_party', 'rowid', $obj->fk_third_party, 'rowid', 'description')."</td>";
                 print "<td>";
-                if ($obj->fk_third_party>0)
-{
+                if ($obj->fk_third_party>0) {
                 $sThirdParty = new Societe($db);
                 $sThirdParty->fetch($obj->fk_third_party);
                 print $sThirdParty->getNomUrl(1, '');
                 }
                 print "</td>";
                  print "<td>";
-                if ($obj->fk_task>0)
-{
+                if ($obj->fk_task>0) {
                 $sTask = new Task($db);
                 $sTask->fetch($obj->fk_task);
                 print $sTask->getNomUrl(1, '');
                 }
                 print "</td>";
                                  print "<td>";
-                if ($obj->fk_project>0)
-{
+                if ($obj->fk_project>0) {
                 $sProject = new Project($db);
                 $sProject->fetch($obj->fk_project);
                 print $sProject->getNomUrl(1);
@@ -506,9 +484,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             }
             $i++;
         }
-    }
-    else
-    {
+    }else {
         $error++;
         dol_print_error($db);
     }

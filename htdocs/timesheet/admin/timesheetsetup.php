@@ -67,9 +67,13 @@ $invoiceservice = $conf->global->TIMESHEET_INVOICE_SERVICE;
 $invoiceshowtask = $conf->global->TIMESHEET_INVOICE_SHOW_TASK;
 $invoiceshowuser = $conf->global->TIMESHEET_INVOICE_SHOW_USER;
 $searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
-if (count($opendays)!=8)$opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
+if (count($opendays)!=8){
+    $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
+}
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
-if (count($apflows)!=6)$apflows = array('_', '0', '0', '0', '0', '0');
+if (count($apflows) != 6){
+    $apflows = array('_', '0', '0', '0', '0', '0');
+}
 $error = 0;
 /** make sure that there is a 0 iso null
  *
@@ -82,13 +86,11 @@ function null2int($var, $int = 0)
     return ($var == '' || !is_numeric($var))?$int:$var;
 }
 
-switch($action)
-{
+switch ($action) {
     case "save":
         //general option
         $hoursperday = getpost('hoursperday', 'int');
-        if ($hoursperday == 0)
-        {
+        if ($hoursperday == 0) {
             //error handling if hour per day is empty
             $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
             setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"), 'errors');
@@ -98,8 +100,7 @@ switch($action)
         $timetype = getpost('timeType', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         $timeSpan = getpost('timeSpan', 'alpha');
-        if ($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN)
-        { // delete the unsubmitted timesheet so the new time span will be applied
+        if ($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN) { // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql.= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
             dol_syslog(__METHOD__);
@@ -171,14 +172,14 @@ switch($action)
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
         // open days
         $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
-        foreach(getpost('opendays', 'array') as $key => $day)
+        foreach (getpost('opendays', 'array') as $key => $day)
         {
             $opendays[$key] = $day;
         }
         dolibarr_set_const($db, "TIMESHEET_OPEN_DAYS", implode('', $opendays), 'chaine', 0, '', $conf->entity);
         //approval flows
         $apflows = array('_', '0', '0', '0', '0', '0');
-        foreach(getpost('apflows', 'array') as $key => $flow)
+        foreach (getpost('apflows', 'array') as $key => $flow)
         {
             $apflows[$key] = $flow;
         }
@@ -211,8 +212,7 @@ switch($action)
 $headersT = explode('||', $headers);
 foreach ($headersT as $header)
 {
-    switch($header)
-    {
+    switch ($header) {
         case 'Project':
             $showProject = 1;
             Break;

@@ -40,8 +40,7 @@ $toDate = GETPOST('toDate', 'alpha');
 $toDateday = (!empty($toDate) && $action == 'goToDate')? GETPOST('toDateday', 'int'):0;// to not look for the date if action not goTodate
 $toDatemonth = GETPOST('toDatemonth', 'int');
 $toDateyear = GETPOST('toDateyear', 'int');
-if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"]))
-{
+if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $dateStart = $_SESSION["dateStart"];
 }else {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
@@ -63,8 +62,7 @@ $sql .= 'JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
      .' ON ec.fk_socpeople = usr.rowid '
      .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact'
      .' WHERE ctc.element in (\'project_task\', \'project\') AND ctc.active = \'1\' ';
-if (!$user->admin)
-{
+if (!$user->admin) {
     $list = getSubordinates($db, $userid, 3);
     $list[] = $userid;
     $sql .= ' AND (usr.rowid in ('.implode(', ', $list).'))';
@@ -74,8 +72,7 @@ dol_syslog("timesheet::reportuser::userList", LOG_DEBUG);
 $resql = $db->query($sql);
 $numUser = 0;
 $userList = array();
-if ($resql)
-{
+if ($resql) {
     $numUser = $db->num_rows($resql);
     $i = 0;
     // Loop on each record found, so each couple (project id, task id)
@@ -88,8 +85,7 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
-}else
-{
+}else {
     dol_print_error($db);
 }
 $Form = '<form action="?action=reportuser'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
@@ -102,7 +98,7 @@ $Form = '<form action="?action=reportuser'.(($optioncss != '')?'&amp;optioncss='
         <tr >
         <td><select  name = "userSelected">
         ';
-foreach($userList as $usr)
+foreach ($userList as $usr)
 {
    // $Form .= '<option value = "'.$usr->id.'">'.$usr->name.'</option> ';
     $Form .= '<option value = "'.$usr->userid.'" '.(($userIdSelected == $usr->userid)?"selected":'').' >'.$usr->name.'</option>'."\n";
@@ -113,22 +109,19 @@ $querryRes = '';
 if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         &&!empty($_POST['month']))
 {
-    if ($userIdSelected == '-999')
-    {
-        foreach($userList as $userSt)
+    if ($userIdSelected == '-999') {
+        foreach ($userList as $userSt)
         {
             $querryRes .= $userSt->getHTMLreport($short,
             $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
-    }else
-    {
+    }else {
         $querryRes = $userList[$userIdSelected]->getHTMLreport($short,
         $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
         $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
-}else
-{
+}else {
     $year = date('Y', $dateStart);
     $month = date('m', $dateStart);
 }
@@ -149,8 +142,7 @@ $Form .= '</select></td>'
         </table></form>';
 if (!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 // section to generate
-if (!empty($querryRes))
-{
+if (!empty($querryRes)) {
     echo $querryRes;
 }
 llxFooter();

@@ -69,8 +69,7 @@ class TimesheetReport
     $this->invoiceableOnly = $invoiceableOnly;
     $this->taskarray = $taskarray;
         $this->projectid = $projectid;// coul
-        if ($projectid)
-        {
+        if ($projectid) {
             $this->project = new Project($this->db);
             $this->project->fetch($projectid);
             $this->ref = (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project->ref.' - ').$this->project->title;
@@ -79,8 +78,7 @@ class TimesheetReport
             $this->thirdparty->fetch($this->project->socid);
         }
         $this->userid = $userid;// coul
-        if ($userid)
-        {
+        if ($userid) {
             $this->user = new User($this->db);
             $this->user->fetch($userid);
             //$this->ref.= ($first?'':' - ').$this->user->lastname.' '.$this->user->firstname;
@@ -90,8 +88,7 @@ class TimesheetReport
         $this->mode = $mode;
         $this->name = ($name!="")?$name:$this->ref;// coul
         $this->ref .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
-        switch ($mode)
-        {
+        switch ($mode) {
         case 'PDT': //project  / task / Days //FIXME dayoff missing
             $this->modeSQLOrder = 'ORDER BY prj.rowid, ptt.task_date, tsk.rowid ASC   ';
             //title
@@ -167,12 +164,10 @@ class TimesheetReport
         $resArray = array();
         $first = true;
         $sql = 'SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid, ';
-        if ($db->type!='pgsql')
-        {
+        if ($db->type!='pgsql') {
             $sql.= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname, \' \', usr.lastname)) as username, ';
             $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
-        }else
-        {
+        }else {
             $sql.= ' prj.title as projecttitle, prj.ref as projectref, CONCAT(usr.firstname, \'  \', usr.lastname) as username, ';
             $sql.= " tsk.ref as taskref, tsk.label as tasktitle, STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         }
@@ -183,22 +178,18 @@ class TimesheetReport
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user = usr.rowid ';
         $sql.= ' WHERE ';
-        if (!empty($this->userid))
-        {
+        if (!empty($this->userid)) {
             $sql .= ' ptt.fk_user = \''.$this->userid.'\' ';
             $first = false;
         }
-        if (!empty($this->projectid))
-        {
+        if (!empty($this->projectid)) {
             $sql .= ($first?'':'AND ').'tsk.fk_projet = \''.$this->projectid.'\' ';
             $first = false;
         }
-        if (is_array($this->taskarray) && count($this->taskarray)>1)
-        {
+        if (is_array($this->taskarray) && count($this->taskarray)>1) {
             $sql .= ($first?'':'AND ').'tsk.rowid in ('.explode($taskarray, ', ').') ';
         }
-        if ($this->invoiceableOnly == 1)
-        {
+        if ($this->invoiceableOnly == 1) {
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
          /*if (!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
@@ -206,15 +197,13 @@ class TimesheetReport
           /*if (!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
           else */$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
          $sql .= ' GROUP BY usr.rowid, ptt.task_date, tsk.rowid, prj.rowid ';
-        /*if (!empty($sqltail))
-{
+        /*if (!empty($sqltail)) {
             $sql .= $sqltail;
         }*/
         $sql .= $this->modeSQLOrder;
         dol_syslog("timesheet::userreport::tasktimeList", LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $numTaskTime = $this->db->num_rows($resql);
             $i = 0;
             // Loop on each record found,
@@ -236,8 +225,7 @@ class TimesheetReport
             }
             $this->db->free($resql);
             return $resArray;
-        }else
-        {
+        }else {
             dol_print_error($this->db);
             return array();
         }
@@ -281,11 +269,9 @@ class TimesheetReport
         $sqltail = '';
         $resArray = $this->getReportArray();
         $numTaskTime = count($resArray);
-        if ($numTaskTime>0)
-        {
+        if ($numTaskTime>0) {
             // current
-            if ($reportfriendly)
-            {
+            if ($reportfriendly) {
                 //$HTMLRes = '<br><div class = "titre">'.$this->name.', '.$periodTitle.'</div>';
                 $HTMLRes .= '<table class = "noborder" width = "100%">';
                 $HTMLRes .= '<tr class = "liste_titre"><th>'.$langs->trans('Name');
@@ -294,7 +280,7 @@ class TimesheetReport
                 $HTMLRes .= '<th>'.$langs->trans($title[$this->lvl3Title]).'</th>';
                 $HTMLRes .= '<th>'.$langs->trans('Duration').':'.$langs->trans('hours').'</th>';
                 $HTMLRes .= '<th>'.$langs->trans('Duration').':'.$langs->trans('Days').'</th></tr>';
-                foreach($resArray as $key => $item)
+                foreach ($resArray as $key => $item)
                 {
                    $item['date'] = dol_print_date($item['date'], 'day');
                    $HTMLRes.= '<tr class = "oddeven" align = "left"><th width = "200px">'.$this->name.'</th>';
@@ -305,12 +291,10 @@ class TimesheetReport
                    $HTMLRes .= '<th width = "70px">'.formatTime($item['duration'], $hoursperdays).'</th></tr>';
                 }
                 $HTMLRes .= '</table>';
-            }else
-            {
-                foreach($resArray as $key => $item)
+            }else {
+                foreach ($resArray as $key => $item)
                 {
-                    if ($Curlvl1 == 0)
-                    {
+                    if ($Curlvl1 == 0) {
                         $Curlvl1 = $key;
                         $Curlvl2 = $key;
                     }
@@ -329,8 +313,7 @@ class TimesheetReport
                         $lvl2HTML .= '<th>'.formatTime($lvl3Total, 0).'</th>';
                         // add the LVL 3 total day on the LVL 2 title
                         $lvl2HTML .= '<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
-                        if ($short)
-                        {
+                        if ($short) {
                             $lvl2HTML .= $lvl3Notes;
                         }
                         $lvl3Notes = '';
@@ -346,8 +329,7 @@ class TimesheetReport
                         // save the new lvl2 ref
                         $Curlvl2 = $key;
                         //creat the LVL 1 Title line when lvl 1 change detected
-                        if (($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key]))
-                        {
+                        if (($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key])) {
                              //creat the LVL 1 Title line
                             $lvl1HTML .= '<tr class = "oddeven" align = "left"><th >'
                                 .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
@@ -368,8 +350,7 @@ class TimesheetReport
                         }
                     }
                     // show the LVL 3 only if not short
-                    if (!$short)
-                    {
+                    if (!$short) {
                         $lvl3HTML .= '<tr class = "oddeven" align = "left"><th></th><th></th><th>'
                             .$resArray[$key][$this->lvl3Title].'</th><th>';
                         $lvl3HTML .= formatTime($item['duration'], 0).'</th><th>';
@@ -377,14 +358,12 @@ class TimesheetReport
                         $lvl3HTML .= $resArray[$key]['note'];
                         $lvl3HTML .= '</th></tr>';
                        /*
-                        if ($hoursperdays == 0)
-                        {
+                        if ($hoursperdays == 0) {
                             $lvl3HTML .= date('G:i', mktime(0, 0, $resArray[$key]['duration'])).'</th></tr>';
                         }else{
                             $lvl3HTML .= $resArray[$key]['duration']/3600/$hoursperdays.'</th></tr>';
                         }*/
-                    }elseif (!empty ($resArray[$key]['note']))
-                    {
+                    }elseif (!empty ($resArray[$key]['note'])) {
                         $lvl3Notes .= "<br>".$resArray[$key]['note'];
                     }
                     $lvl3Total+=$resArray[$key]['duration'];
@@ -399,8 +378,7 @@ class TimesheetReport
                 $lvl2HTML .= '<th>'.formatTime($lvl3Total, 0).'</th>';
                 // add the LVL 3 total day on the LVL 2 title
                 $lvl2HTML .= '<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
-                if ($short)
-                {
+                if ($short) {
                     $lvl2HTML .= $lvl3Notes;
                 }
                 $lvl2HTML .= '</th></tr>';

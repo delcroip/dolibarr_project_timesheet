@@ -171,15 +171,12 @@ class TimesheetTask extends Task
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql)
-        {
+    	if (! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
-        if (! $error)
-        {
+        if (! $error) {
             $this->appId = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-            if (! $notrigger)
-            {
+            if (! $notrigger) {
         // Uncomment this and change MYOBJECT to your own tag if you
         // want this action calls a trigger.
         //// Call triggers
@@ -189,18 +186,15 @@ class TimesheetTask extends Task
             }
         }
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
+        if ($error) {
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
                 $this->db->rollback();
                 return -1*$error;
-        }
-        else
-        {
+        }else {
                 $this->db->commit();
                 return $this->appId;
         }
@@ -215,11 +209,9 @@ class TimesheetTask extends Task
      */
     function fetch($id, $ref = '', $loadparentdata = 1)
     {
-        if (!empty($ref) && empty($id))
-        {
+        if (!empty($ref) && empty($id)) {
             $temp= explode('_', $ref);
-            if (isset($temp[2]))
-            {
+            if (isset($temp[2])) {
                 $id= $temp[2];
             }
         }
@@ -250,10 +242,8 @@ class TimesheetTask extends Task
         $sql.= " WHERE t.rowid = ".$id;
     	dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
                 $this->appId = $obj->rowid;
                 $this->userId = $obj->fk_userid;
@@ -281,9 +271,7 @@ class TimesheetTask extends Task
             $this->whitelistmode = 2;// no impact
             if ($loadparentdata)$this->getTaskInfo();
             return 1;
-        }
-        else
-        {
+        }else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -323,10 +311,8 @@ class TimesheetTask extends Task
         //$sql.= " AND t.rowid = ".$id;
     	dol_syslog(get_class($this)."::fetchByWeek");
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
                 $this->appId = $obj->rowid;
                 $this->userId = $obj->fk_userid;
@@ -372,9 +358,7 @@ class TimesheetTask extends Task
             $this->db->free($resql);
             $this->getTaskInfo();
             return 1;
-        }
-        else
-        {
+        }else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -433,14 +417,11 @@ class TimesheetTask extends Task
         $this->db->begin();
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql)
-        {
+    	if (! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
+        if (! $error) {
+            if (! $notrigger) {
         // Uncomment this and change MYOBJECT to your own tag if you
         // want this action calls a trigger.
         //// Call triggers
@@ -450,18 +431,15 @@ class TimesheetTask extends Task
             }
         }
 // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
+        if ($error) {
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
-        {
+        }else {
             $this->db->commit();
             return 1;
         }
@@ -477,10 +455,8 @@ class TimesheetTask extends Task
         global $conf, $langs;
         $error = 0;
         $this->db->begin();
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
+        if (! $error) {
+            if (! $notrigger) {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
                 //// Call triggers
@@ -489,30 +465,25 @@ class TimesheetTask extends Task
                 //// End call triggers
             }
         }
-        if (! $error)
-        {
+        if (! $error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid=".$this->appId;
             dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
-            if (! $resql)
-            {
+            if (! $resql) {
                 $error++;$this->errors[] = "Error ".$this->db->lasterror();
             }
         }
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
+        if ($error) {
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
-        {
+        }else {
             $this->db->commit();
             return 1;
         }
@@ -535,8 +506,7 @@ class TimesheetTask extends Task
         //Update the the fk_tta in the project task time
         $idList = array();
         if (!is_array($this->tasklist)) $this->getActuals ($this->date_start_approval, $this->date_end_approval, $this->userId);
-        if (is_array($this->tasklist))foreach($this->tasklist as $item)
-        {
+        if (is_array($this->tasklist))foreach ($this->tasklist as $item) {
             if ($item['id']!='')$idList[] = $item['id'];
         }
         $ids = implode(', ', $idList);
@@ -546,15 +516,12 @@ class TimesheetTask extends Task
         dol_syslog(__METHOD__);
         $this->db->begin();
         $resql = $this->db->query($sql);
-    	if (! $resql)
-        {
+    	if (! $resql) {
             $error++;
             $this->errors[] = "Error ".$this->db->lasterror();
         }
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
+        if (! $error) {
+            if (! $notrigger) {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
                 //// Call triggers
@@ -564,18 +531,15 @@ class TimesheetTask extends Task
             }
         }
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
+        if ($error) {
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
-        {
+        }else {
             $this->db->commit();
             return 1;
         }
@@ -592,12 +556,10 @@ class TimesheetTask extends Task
         $Company = true;// fixme should be base on the third party module activation
         $taskParent = strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')!== false;
         $sql = 'SELECT p.rowid, p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo, pt.dateo, pt.datee, pt.planned_workload, pt.duration_effective';
-        if ($conf->global->TIMESHEET_HIDE_REF == 1)
-        {
+        if ($conf->global->TIMESHEET_HIDE_REF == 1) {
             $sql .= ', p.title as title, pt.label as label, pt.planned_workload';
             if ($taskParent) $sql .= ', pt.fk_task_parent, ptp.label as taskParentLabel';
-        }else
-        {
+        }else {
             $sql .= ", CONCAT(p.ref, ' - ', p.title) as title";
             $sql .= ", CONCAT(pt.ref, ' - ', pt.label) as label";
             if ($taskParent) $sql .= ", pt.fk_task_parent, CONCAT(ptp.ref, ' - ', ptp.label) as taskParentLabel";
@@ -606,23 +568,19 @@ class TimesheetTask extends Task
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task AS pt";
         $sql .= " JOIN ".MAIN_DB_PREFIX."projet as p";
         $sql .= " ON pt.fk_projet = p.rowid";
-        if ($taskParent)
-        {
+        if ($taskParent) {
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as ptp";
             $sql .= " ON pt.fk_task_parent = ptp.rowid";
         }
-        if ($Company)
-        {
+        if ($Company) {
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s";
             $sql .= " ON p.fk_soc = s.rowid";
         }
         $sql .= " WHERE pt.rowid = '".$this->id."'";
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
                 $this->description			 = $obj->label;
                 $this->fk_project = $obj->rowid;
@@ -634,22 +592,18 @@ class TimesheetTask extends Task
                 $this->startDatePjct = $this->db->jdate($obj->pdateo);
                 $this->stopDatePjct = $this->db->jdate($obj->pdatee);
                 $this->pStatus = $obj->pstatus;
-                if ($taskParent)
-                {
+                if ($taskParent) {
                     $this->fk_projet_task_parent = $obj->fk_projet_task_parent;
                     $this->taskParentDesc = $obj->taskParentLabel;
                 }
-                if ($Company)
-                {
+                if ($Company) {
                     $this->companyName = $obj->companyName;
                     $this->companyId = $obj->companyId;
                 }
             }
             $this->db->free($resql);
             return 1;
-        }
-        else
-        {
+        }else {
             $this->error = "Error ".$this->db->lasterror();
             dol_syslog(__METHOD__.$this->error, LOG_ERR);
             return -1;
@@ -676,8 +630,7 @@ class TimesheetTask extends Task
         $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date, ptt.note";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ";
-        if (in_array($this->status, array(SUBMITTED, UNDERAPPROVAL, APPROVED, CHALLENGED, INVOICED)))
-        {
+        if (in_array($this->status, array(SUBMITTED, UNDERAPPROVAL, APPROVED, CHALLENGED, INVOICED))) {
             $sql .= ' ptt.fk_task_time_approval = \''.$this->appId.'\'';
         } else {
             $sql .= " ptt.fk_task = '".$this->id."' ";
@@ -691,8 +644,7 @@ class TimesheetTask extends Task
                 $this->tasklist[$i] = array('id'=>0, 'duration'=>0, 'date'=>$timeStart+SECINDAY*$i+SECINDAY/4);
         }
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $this->db->num_rows($resql);
             $i = 0;
             // Loop on each record found, so each couple (project id, task id)
@@ -707,8 +659,7 @@ class TimesheetTask extends Task
             }
             $this->db->free($resql);
             return 1;
-        }else
-        {
+        }else {
             $this->error = "Error ".$this->db->lasterror();
             dol_syslog(__METHOD__.$this->error, LOG_ERR);
             return -1;
@@ -733,11 +684,9 @@ class TimesheetTask extends Task
         $Class = 'oddeven '.(($this->listed)?'timesheet_whitelist':'timesheet_blacklist').' timesheet_line ';
         $htmltail = '';
         $linestyle = '';
-        if (($this->pStatus == "2"))
-        {
+        if (($this->pStatus == "2")) {
             $linestyle .= 'background:#'.TIMESHEET_BC_FREEZED.';';
-        }elseif ($statusColor[$this->status]!='' &&  $statusColor[$this->status]!='FFFFFF')
-        {
+        }elseif ($statusColor[$this->status]!='' &&  $statusColor[$this->status]!='FFFFFF') {
             $linestyle .= 'background:#'.$statusColor[$this->status].';';// --FIXME
         }
         /*
@@ -784,15 +733,13 @@ class TimesheetTask extends Task
             $dayWorkLoad = formatTime($dayWorkLoadSec, -1);
             $startDates = ($this->date_start>$this->startDatePjct )?$this->date_start:$this->startDatePjct;
             $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct == 0)?$this->date_end:$this->stopDatePjct;
-            if ($isOpenStatus)
-            {
+            if ($isOpenStatus) {
                 $isOpen = $isOpenStatus && (($startDates == 0) || ($startDates < $today +SECINDAY/4));
                 $isOpen = $isOpen && (($stopDates == 0) ||($stopDates >= $today ));
                 $isOpen = $isOpen && ($this->pStatus < "2") ;
                 $isOpen = $isOpen  && $opendays[date("N", $today)];
                 $bkcolor = '';
-                if ($isOpen)
-                {
+                if ($isOpen) {
                     $bkcolor = 'background:#'.$statusColor[$this->status];
                     if ($dayWorkLoadSec!=0 && $this->status == DRAFT )$bkcolor = 'background:#'.TIMESHEET_BC_VALUE;
                 } else {
@@ -800,8 +747,7 @@ class TimesheetTask extends Task
                 }
                 $html .= "<td>\n";
                 // add note popup
-                if ($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE)
-                {
+                if ($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE) {
                 $html .= img_object('Note', 'generic', ' style = "display:inline-block;float:right;" onClick = "openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
                 //note code
                 $html .= '<div class = "modal" id = "note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';
@@ -847,11 +793,9 @@ class TimesheetTask extends Task
         foreach ($headers as $key => $title)
         {
             $html = '';
-            switch($title)
-            {
+            switch ($title) {
                 case 'Project':
-                    if (version_compare(DOL_VERSION, "3.7")>=0)
-                    {
+                    if (version_compare(DOL_VERSION, "3.7")>=0) {
                         $html .= '<a href = "'.DOL_URL_ROOT.'/projet/card.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
                     } else {
                         $html .= '<a href = "'.DOL_URL_ROOT.'/projet/fiche.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
@@ -875,14 +819,13 @@ class TimesheetTask extends Task
                     break;
                 case 'Progress':
                     $html .= $this->parseTaskTime($this->duration_effective).'/';
-                    if ($this->planned_workload>0)
-                    {
+                    if ($this->planned_workload>0) {
                         $html .= $this->parseTaskTime($this->planned_workload ).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
                     } else {
                         $html .= "-:--(-%)";
                     }
-                    if ($this->planned_workload_approval) // show the time planned for the week
-                    {
+                    if ($this->planned_workload_approval) {
+                        // show the time planned for the week {
                         $html .= '('.$this->parseTaskTime($this->planned_workload_approval).')';
                     }
                     break;
@@ -977,8 +920,7 @@ class TimesheetTask extends Task
         $xml .= " </DateEnd>";
         $xml .= "<Company id = \"{$this->companyId}\">{$this->companyName} </Company>";
         $xml .= "<TaskProgress id = \"{$this->companyId}\">";
-        if ($this->planned_workload)
-        {
+        if ($this->planned_workload) {
             $xml .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
         } else {
             $xml .= "-:--(-%)";
@@ -992,18 +934,15 @@ class TimesheetTask extends Task
                 # to avoid editing if the task is closed
                 $dayWorkLoadSec = isset($this->tasklist[$dayOfWeek])?$this->tasklist[$dayOfWeek]['duration']:0;
                 # to avoid editing if the task is closed
-                if ($hidezeros == 1 && $dayWorkLoadSec == 0)
-{
+                if ($hidezeros == 1 && $dayWorkLoadSec == 0) {
                     $dayWorkLoad = ' ';
-                }elseif ($timetype == "days")
-                {
+                }elseif ($timetype == "days") {
                     $dayWorkLoad = $dayWorkLoadSec/3600/$dayshours;
                 }else {
                     $dayWorkLoad = date('H:i', mktime(0, 0, $dayWorkLoadSec));
                 }
                 $open = '0';
-                if ((empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today )))
-                {
+                if ((empty($this->date_start) || ($this->date_start <= $today +86399)) && (empty($this->date_end) ||($this->date_end >= $today ))) {
                     $open = '1';
                 }
                 $xml .= "<day col = \"{$dayOfWeek}\" open = \"{$open}\">{$dayWorkLoad}</day>";
@@ -1104,28 +1043,23 @@ class TimesheetTask extends Task
             ."WHERE pt.rowid = '".$this->id."' ";
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
                 // return 1;
-        }
-        else
-        {
+        }else {
             $this->error = "Error ".$this->db->lasterror();
             dol_syslog(__METHOD__.$this->error, LOG_ERR);
             $error++;
         }
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
+        if ($error) {
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__.$errmsg, LOG_ERR);
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        } else
-        {
+        } else {
             $this->db->commit();
             return $this->id;
         }
@@ -1156,28 +1090,23 @@ class TimesheetTask extends Task
         $ret = 0;
         //if the satus is not an ENUM status
 
-        if ($this->status<0 || $this->status> STATUSMAX)
-        {
+        if ($this->status<0 || $this->status> STATUSMAX) {
             dol_syslog(__METHOD__." this status '{$status}' is not part or the possible list", LOG_ERR);
             return false;
         }
         // Check parameters
         $this->status = $status;
         //if ($this->appId && $this->date_start_approval == 0)$this->fetch($this->appId);
-        if ($this->getDuration()>0 || $this->note!='')
-        {
-            if ($this->appId >0)
-            {
+        if ($this->getDuration()>0 || $this->note!='') {
+            if ($this->appId >0) {
                 $ret = $this->update($user);
             } else{
                 $ret = $this->create($user);
             }
-        }elseif ($this->appId >0)
-        {
+        }elseif ($this->appId >0) {
                 $ret = $this->delete($user);
         }
-        if ($ret>0 && $updateTS == true)
-        {// success of the update, then update the timesheet user if possible
+        if ($ret>0 && $updateTS == true) {// success of the update, then update the timesheet user if possible
             $staticTS = new TimesheetUserTasks($this->db );
             $staticTS->fetch($this->task_timesheet);
             $ret = $staticTS->updateStatus($user, $status);
@@ -1194,7 +1123,7 @@ class TimesheetTask extends Task
     {
         $ttaDuration = 0;
         if (!is_array($this->tasklist))$this->getActuals();
-        foreach($this->tasklist as $item)
+        foreach ($this->tasklist as $item)
         {
             $ttaDuration+=$item['duration'];
         }
@@ -1217,21 +1146,17 @@ class TimesheetTask extends Task
         $noteUpdate = 0;
         dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user = $userId;
-        if (!empty($note) && $note!=$this->note)
-        {
+        if (!empty($note) && $note!=$this->note) {
             $this->note = $note;
             $noteUpdate++;
         }
-        if (is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $dayData)
-        {
+        if (is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $dayData) {
             $wkload = $dayData[0];
             $daynote = $dayData[1];
             $duration = 0;
-            if ($conf->global->TIMESHEET_TIME_TYPE == "days")
-            {
+            if ($conf->global->TIMESHEET_TIME_TYPE == "days") {
                 $duration = $wkload*$conf->global->TIMESHEET_DAY_DURATION*3600;
-            }else
-            {
+            }else {
                 $durationTab = date_parse($wkload);
                 $duration = $durationTab['minute']*60+$durationTab['hour']*3600;
             }
@@ -1241,15 +1166,12 @@ class TimesheetTask extends Task
             $_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']+=$lineresult['timeSpendDeleted'];
             $_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']+=$lineresult['timeSpendCreated'];
         }
-        if (is_array($_SESSION['task_timesheet'][$timestamp]) && array_sum($_SESSION['task_timesheet'][$timestamp])>$_SESSION['task_timesheet'][$timestamp]['updateError'])
-        {
+        if (is_array($_SESSION['task_timesheet'][$timestamp]) && array_sum($_SESSION['task_timesheet'][$timestamp])>$_SESSION['task_timesheet'][$timestamp]['updateError']) {
             $this->updateTimeUsed();// needed upon delete
         }
-        if ($noteUpdate)
-        {
+        if ($noteUpdate) {
             $retNote = $this->update($user);
-            if ($retNote)
-        {
+            if ($retNote) {
                 $_SESSION['task_timesheet'][$timestamp]['NoteUpdated']++;
             }else{
                  $_SESSION['task_timesheet'][$timestamp]['updateError']++;
@@ -1275,58 +1197,46 @@ class TimesheetTask extends Task
             $item = $this->tasklist[$dayKey];
             dol_syslog(__METHOD__."   duration Old=".$item['duration']." New=".$duration." Id=".$item['id'].", date=".$item['date'], LOG_DEBUG);
             $this->timespent_date = $item['date'];
-            if (isset( $this->timespent_datehour))
-            {
+            if (isset( $this->timespent_datehour)) {
                 $this->timespent_datehour = $item['date'];
             }
-            if ($item['id']>0)
-            {
+            if ($item['id']>0) {
                 $this->timespent_id = $item['id'];
                 $this->timespent_old_duration = $item['duration'];
                 $this->timespent_note .= $item['note'];
-                if ($addmode)
-                {
+                if ($addmode) {
                     $this->timespent_note .= $daynote.". ";
                     $this->timespent_duration = $duration+$this->timespent_old_duration;
                 }else{
                     $this->timespent_note = $daynote;
                     $this->timespent_duration = $duration;
                 }
-                if ($item['duration']!=$duration || $daynote!=$item['note'])
-                {
-                    if ($this->timespent_duration>0 || !empty($daynote))
-                    {
+                if ($item['duration']!=$duration || $daynote!=$item['note']) {
+                    if ($this->timespent_duration>0 || !empty($daynote)) {
                         dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
-                        if ($this->updateTimeSpent($Submitter, 0)>=0)
-                        {
+                        if ($this->updateTimeSpent($Submitter, 0)>=0) {
                             $resArray['timeSpendModified']++;
-                        }else
-                        {
+                        }else {
                             $resArray['updateError']++;
                         }
                     } else {
                         dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
-                        if ($this->delTimeSpent($Submitter, 0)>=0)
-                        {
+                        if ($this->delTimeSpent($Submitter, 0)>=0) {
                             $resArray['timeSpendDeleted']++;
                             $this->tasklist[$dayKey]['id'] = 0;
-                        }else
-                        {
+                        }else {
                             $resArray['updateError']++;
                         }
                     }
                 }
-            }elseif ($duration>0 || !empty($daynote))
-            {
+            }elseif ($duration>0 || !empty($daynote)) {
                 $this->timespent_note = $daynote;
                 $this->timespent_duration = $duration;
                 $newId = $this->addTimeSpent($Submitter, 0);
-                if ($newId>=0)
-                {
+                if ($newId>=0) {
                     $resArray['timeSpendCreated']++;
                     $this->tasklist[$dayKey]['id'] = $newId;
-                }else
-                {
+                }else {
                     $resArray['updateError']++;
                 }
             }
@@ -1353,21 +1263,18 @@ class TimesheetTask extends Task
             $sql.= ' GROUP BY u.fk_user';
              dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
-            if ($resql)
-            {
+            if ($resql) {
                 $num = $this->db->num_rows($resql);
                 for( $i = 0;$i<$num;$i++)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    if ($obj)
-                    {
+                    if ($obj) {
                         $message = str_replace("__NB_TS__", $obj->nb, str_replace('\n', "\n", $langs->transnoentities('YouHaveApprovalPendingMsg')));
                         //$message = "Bonjour, \n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
                         $sendto = $obj->email;
                         $replyto = $obj->email;
                         $subject = $langs->transnoentities("YouHaveApprovalPending");
-                        if (!empty($sendto) && $sendto!="NULL")
-{
+                        if (!empty($sendto) && $sendto!="NULL") {
                            require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
                            $mailfile = new CMailFile(
 	                        $subject,
@@ -1379,9 +1286,7 @@ class TimesheetTask extends Task
                         }
                     }
                 }
-            }
-            else
-            {
+            }else {
                 $error++;
                 dol_print_error($db);
                 $list = array();
@@ -1408,29 +1313,24 @@ class TimesheetTask extends Task
         //update the roles
         $rolepassed = false;
         // look for the role open after the curent role and set it as recipient
-        foreach(array_slice ($apflows, 1) as $key=> $value)
+        foreach (array_slice ($apflows, 1) as $key=> $value)
         {
             $key++;
-            if ($value == 1 )
-            {
-                if ( $key == $role)
-                {
+            if ($value == 1 ) {
+                if ( $key == $role) {
                     $this->sender = $key;
                     $rolepassed = true;
-                }elseif ($rolepassed)
-                {
+                }elseif ($rolepassed) {
                     $this->recipient = $key;
                     $ret = $key;
                     break;
                 }
             }
         }
-        if ($ret>0)
-        {//other approval found
+        if ($ret>0) {//other approval found
             $nextStatus = UNDERAPPROVAL;
             $ret = $this->setStatus($user, UNDERAPPROVAL, $updteTS);
-        }elseif ($this->sender == $role)
-        { // only if the role was alloed
+        }elseif ($this->sender == $role) { // only if the role was alloed
              $this->recipient = USER;
              $nextStatus = APPROVED;
             // if approved, recipient
@@ -1458,27 +1358,22 @@ class TimesheetTask extends Task
         $ret = -1;
        //unset the approver ( could be set previsouly)
         //update the roles, look for the open role and define it as sender and save the previous role open as recipient
-        foreach(array_slice ($apflows, 1) as $key=> $recipient)
+        foreach (array_slice ($apflows, 1) as $key=> $recipient)
         {
             $key++;
-            if ($recipient == 1)
-            {
-                if ( $key == $role)
-                {
+            if ($recipient == 1) {
+                if ( $key == $role) {
                         $this->sender = $role;
                     break;
-                }else
-                {
+                }else {
                     $this->recipient = $key;
                     $ret = $key;
                 }
             }
         }
-        if ($ret>0)
-        {//other approval found
+        if ($ret>0) {//other approval found
             $nextStatus = CHALLENGED;
-        }elseif ($this->sender == $role)
-        { //update only if the role was allowed
+        }elseif ($this->sender == $role) { //update only if the role was allowed
             $this->recipient = USER;
             $nextStatus = REJECTED;
         }
@@ -1497,11 +1392,10 @@ class TimesheetTask extends Task
         global $apflows;
         // assign the first role open as recipient, put user as default
         $this->recipient = USER;
-        foreach(array_slice ($apflows, 1) as $key=> $recipient)
+        foreach (array_slice ($apflows, 1) as $key=> $recipient)
         {
             $key++;
-            if ($recipient == 1)
-            {
+            if ($recipient == 1) {
                 $this->recipient = $key;
                 break;
             }
