@@ -111,9 +111,8 @@ install:
 - |
     echo "Downloading dolibarr"
     #wget -O dolibarr.tgz https://github.com/Dolibarr/dolibarr/archive/develop.zip
-    git clone --depth 1 -b develop https://github.com/Dolibarr/dolibarr.git
-    rsync -r dolibarr/ $TRAVIS_BUILD_DIR 
-    rm dolibarr -rf
+    git clone --depth 1 -b develop https://github.com/Dolibarr/dolibarr.git /tmp/dolibarr
+    rsync -r /tmp/dolibarr/dev/ $TRAVIS_BUILD_DIR/dev 
     echo
 - |
   echo "Updating Composer"
@@ -286,7 +285,7 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude htdocs/includes     --exclude htdocs/compta --exclude htdocs/core --blame .
+  parallel-lint --blame .
   set +e
   echo
 - |
@@ -350,6 +349,7 @@ script:
   cat $TRAVIS_BUILD_DIR/enablemodule.log
 - |
   echo "Unit testing"
+  rsync -r /tmp/dolibarr/ $TRAVIS_BUILD_DIR
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php

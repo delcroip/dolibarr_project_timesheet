@@ -299,25 +299,25 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '<table class = "liste" width = "100%">'."\n";
         //TITLE ADD
         print '<tr class = "liste_titre">';
-         print_liste_field_titre($langs->trans('Date'), $PHP_SELF, 't.date_time_event', '', $param, '', $sortfield, $sortorder);
+         print_liste_field_titre('Date', $PHP_SELF, 't.date_time_event', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Eventlocationref'), $PHP_SELF, 't.event_location_ref', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Eventlocationref', $PHP_SELF, 't.event_location_ref', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Eventtype'), $PHP_SELF, 't.event_type', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Eventtype', $PHP_SELF, 't.event_type', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Note'), $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Note', $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('User'), $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('User', $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('ThirdParty'), $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);// fix translation
+        print_liste_field_titre('ThirdParty', $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);// fix translation
         print "\n";
-        print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Task', $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Project', $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Token'), $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Token', $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Status', $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
         print "\n";
         print '</tr>';
         //add
@@ -360,25 +360,25 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '<table class = "liste" width = "100%">'."\n";
                 //TITLE
         print '<tr class = "liste_titre">';
-         print_liste_field_titre($langs->trans('Date'), $PHP_SELF, 't.date_time_event', '', $param, '', $sortfield, $sortorder);
+         print_liste_field_titre('Date', $PHP_SELF, 't.date_time_event', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Eventlocationref'), $PHP_SELF, 't.event_location_ref', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Eventlocationref', $PHP_SELF, 't.event_location_ref', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Eventtype'), $PHP_SELF, 't.event_type', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Eventtype', $PHP_SELF, 't.event_type', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Note'), $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Note', $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('User'), $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('User', $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Thirdparty'), $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Thirdparty', $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Task', $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Project', $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Token'), $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Token', $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Status', $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
         print "\n";
         print '</tr>';
         //SEARCH FIELDS

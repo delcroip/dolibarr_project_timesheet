@@ -548,17 +548,17 @@ switch ($action) {
             print '<table class = "liste" width = "100%">'."\n";
             //TITLE
             print '<tr class = "liste_titre">';
-            if ($user->admin)print_liste_field_titre($langs->trans('User'), $PHP_SELF, 't.fk_user', '', $param, '', $sortfield, $sortorder);
+            if ($user->admin)print_liste_field_titre('User', $PHP_SELF, 't.fk_user', '', $param, '', $sortfield, $sortorder);
             print "\n";
-            print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('Project', $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
             print "\n";
-            print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_project_task', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('Task', $PHP_SELF, 't.fk_project_task', '', $param, '', $sortfield, $sortorder);
             print "\n";
-            print_liste_field_titre($langs->trans('Subtask'), $PHP_SELF, 't.subtask', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('Subtask', $PHP_SELF, 't.subtask', '', $param, '', $sortfield, $sortorder);
             print "\n";
-            print_liste_field_titre($langs->trans('DateStart'), $PHP_SELF, 't.date_start', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('DateStart', $PHP_SELF, 't.date_start', '', $param, '', $sortfield, $sortorder);
             print "\n";
-            print_liste_field_titre($langs->trans('DateEnd'), $PHP_SELF, 't.date_end', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('DateEnd', $PHP_SELF, 't.date_end', '', $param, '', $sortfield, $sortorder);
             print "\n";
             print '</tr>';
             //SEARCH FIELDS

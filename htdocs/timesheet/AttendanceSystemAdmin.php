@@ -244,21 +244,21 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '<table class = "liste" width = "100%">'."\n";
         //TITLE
         print '<tr class = "liste_titre">';
-         print_liste_field_titre($langs->trans('Label'), $PHP_SELF, 't.label', '', $param, '', $sortfield, $sortorder);
+         print_liste_field_titre('Label', $PHP_SELF, 't.label', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Ip'), $PHP_SELF, 't.ip', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Ip', $PHP_SELF, 't.ip', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Port'), $PHP_SELF, 't.port', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Port', $PHP_SELF, 't.port', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Note'), $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Note', $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Thirdparty'), $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Thirdparty', $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Task', $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Project', $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Status', $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
         print "\n";
         print '</tr>';
         //SEARCH FIELDS

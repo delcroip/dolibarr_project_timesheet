@@ -535,13 +535,13 @@ switch ($action) {
             print '<table class = "liste" style = "border-collapse:separate;" width = "100%">'."\n";
             //TITLE
             print '<tr class = "liste_titre">';
-            print_liste_field_titre($langs->trans('User'), $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('User', $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
             print "\n";
-            print_liste_field_titre($langs->trans('DateStart'), $PHP_SELF, 't.date_start', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('DateStart', $PHP_SELF, 't.date_start', '', $param, '', $sortfield, $sortorder);
             print "\n";
-            //print_liste_field_titre($langs->trans('dateend'), $PHP_SELF, 't.date_end', '', $param, '', $sortfield, $sortorder);
+            //print_liste_field_titre('dateend', $PHP_SELF, 't.date_end', '', $param, '', $sortfield, $sortorder);
             //print "\n";
-            print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('Status', $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
             print "\n";
             //print "\n";
             print '<td class = "liste_titre" colspan = "1" >';
