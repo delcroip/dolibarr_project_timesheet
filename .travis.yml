@@ -113,6 +113,8 @@ install:
     #wget -O dolibarr.tgz https://github.com/Dolibarr/dolibarr/archive/develop.zip
     git clone --depth 1 -b develop https://github.com/Dolibarr/dolibarr.git /tmp/dolibarr
     rsync -r /tmp/dolibarr/dev/ $TRAVIS_BUILD_DIR/dev 
+    rsync -r /tmp/dolibarr/build/ $TRAVIS_BUILD_DIR/build 
+    rsync -r /tmp/dolibarr/include/ $TRAVIS_BUILD_DIR/include 
     echo
 - |
   echo "Updating Composer"
@@ -285,7 +287,7 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --blame .
+  parallel-lint --exclude htdocs/includes  --blame .
   set +e
   echo
 - |
@@ -294,7 +296,7 @@ script:
   set -e
   # Exclusions are defined in the ruleset.xml file
   #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
-  phpcs -s -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
+  phpcs -s -p -d memory_limit=-1 --colors --tab-width=4 --ignore=htdocs/includes --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
   set +e
   echo
 # TODO: Check Javascript (jshint?)
