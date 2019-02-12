@@ -69,7 +69,7 @@ class TimesheetReport
     $this->invoiceableOnly = $invoiceableOnly;
     $this->taskarray = $taskarray;
         $this->projectid = $projectid;// coul
-        if($projectid)
+        if ($projectid)
         {
             $this->project = new Project($this->db);
             $this->project->fetch($projectid);
@@ -79,7 +79,7 @@ class TimesheetReport
             $this->thirdparty->fetch($this->project->socid);
         }
         $this->userid = $userid;// coul
-        if($userid)
+        if ($userid)
         {
             $this->user = new User($this->db);
             $this->user->fetch($userid);
@@ -167,7 +167,7 @@ class TimesheetReport
         $resArray = array();
         $first = true;
         $sql = 'SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid, ';
-        if($db->type!='pgsql')
+        if ($db->type!='pgsql')
         {
             $sql.= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname, \' \', usr.lastname)) as username, ';
             $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
@@ -183,30 +183,30 @@ class TimesheetReport
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user = usr.rowid ';
         $sql.= ' WHERE ';
-        if(!empty($this->userid))
+        if (!empty($this->userid))
         {
             $sql .= ' ptt.fk_user = \''.$this->userid.'\' ';
             $first = false;
         }
-        if(!empty($this->projectid))
+        if (!empty($this->projectid))
         {
             $sql .= ($first?'':'AND ').'tsk.fk_projet = \''.$this->projectid.'\' ';
             $first = false;
         }
-        if(is_array($this->taskarray) && count($this->taskarray)>1)
+        if (is_array($this->taskarray) && count($this->taskarray)>1)
         {
             $sql .= ($first?'':'AND ').'tsk.rowid in ('.explode($taskarray, ', ').') ';
         }
-        if($this->invoiceableOnly == 1)
+        if ($this->invoiceableOnly == 1)
         {
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
-         /*if(!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
+         /*if (!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
           else */$sql .= 'AND task_date>=\''.$this->db->idate($this->startDate).'\'';
-          /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
+          /*if (!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
           else */$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
          $sql .= ' GROUP BY usr.rowid, ptt.task_date, tsk.rowid, prj.rowid ';
-        /*if(!empty($sqltail))
+        /*if (!empty($sqltail))
 {
             $sql .= $sqltail;
         }*/
@@ -281,10 +281,10 @@ class TimesheetReport
         $sqltail = '';
         $resArray = $this->getReportArray();
         $numTaskTime = count($resArray);
-        if($numTaskTime>0)
+        if ($numTaskTime>0)
         {
             // current
-            if($reportfriendly)
+            if ($reportfriendly)
             {
                 //$HTMLRes = '<br><div class = "titre">'.$this->name.', '.$periodTitle.'</div>';
                 $HTMLRes .= '<table class = "noborder" width = "100%">';
@@ -309,7 +309,7 @@ class TimesheetReport
             {
                 foreach($resArray as $key => $item)
                 {
-                    if($Curlvl1 == 0)
+                    if ($Curlvl1 == 0)
                     {
                         $Curlvl1 = $key;
                         $Curlvl2 = $key;
@@ -317,19 +317,19 @@ class TimesheetReport
                     // reformat date to avoid UNIX time
                     $resArray[$key]['date'] = dol_print_date($item['date'], 'day');
                     //add the LVL 2 total when  change detected in Lvl 2 & 1
-                    if(($resArray[$Curlvl2][$this->lvl2Key]!=$resArray[$key][$this->lvl2Key])
+                    if (($resArray[$Curlvl2][$this->lvl2Key]!=$resArray[$key][$this->lvl2Key])
                             ||($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key]))
                     {
                         //creat the LVL 2 Title line
                         $lvl2HTML .= '<tr class = "oddeven" align = "left"><th></th><th>'
                                 .$resArray[$Curlvl2][$this->lvl2Title].'</th>';
                         // add an empty cell on row if short version (in none short mode there is an additionnal column
-                        if(!$short)$lvl2HTML .= '<th></th>';
+                        if (!$short)$lvl2HTML .= '<th></th>';
                         // add the LVL 3 total hours on the LVL 2 title
                         $lvl2HTML .= '<th>'.formatTime($lvl3Total, 0).'</th>';
                         // add the LVL 3 total day on the LVL 2 title
                         $lvl2HTML .= '<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
-                        if($short)
+                        if ($short)
                         {
                             $lvl2HTML .= $lvl3Notes;
                         }
@@ -346,13 +346,13 @@ class TimesheetReport
                         // save the new lvl2 ref
                         $Curlvl2 = $key;
                         //creat the LVL 1 Title line when lvl 1 change detected
-                        if(($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key]))
+                        if (($resArray[$Curlvl1][$this->lvl1Key]!=$resArray[$key][$this->lvl1Key]))
                         {
                              //creat the LVL 1 Title line
                             $lvl1HTML .= '<tr class = "oddeven" align = "left"><th >'
                                 .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
                             // add an empty cell on row if short version (in none short mode there is an additionnal column
-                            if(!$short)$lvl1HTML .= '<th></th>';
+                            if (!$short)$lvl1HTML .= '<th></th>';
                             $lvl1HTML .= '<th>'.formatTime($lvl2Total, 0).'</th>';
                             $lvl1HTML .= '<th>'.formatTime($lvl2Total, $hoursperdays).'</th></th><th></tr>';
                             //add the LVL 3 HTML content in lvl1
@@ -368,7 +368,7 @@ class TimesheetReport
                         }
                     }
                     // show the LVL 3 only if not short
-                    if(!$short)
+                    if (!$short)
                     {
                         $lvl3HTML .= '<tr class = "oddeven" align = "left"><th></th><th></th><th>'
                             .$resArray[$key][$this->lvl3Title].'</th><th>';
@@ -377,13 +377,13 @@ class TimesheetReport
                         $lvl3HTML .= $resArray[$key]['note'];
                         $lvl3HTML .= '</th></tr>';
                        /*
-                        if($hoursperdays == 0)
+                        if ($hoursperdays == 0)
                         {
                             $lvl3HTML .= date('G:i', mktime(0, 0, $resArray[$key]['duration'])).'</th></tr>';
                         }else{
                             $lvl3HTML .= $resArray[$key]['duration']/3600/$hoursperdays.'</th></tr>';
                         }*/
-                    }elseif(!empty ($resArray[$key]['note']))
+                    }elseif (!empty ($resArray[$key]['note']))
                     {
                         $lvl3Notes .= "<br>".$resArray[$key]['note'];
                     }
@@ -394,12 +394,12 @@ class TimesheetReport
                 $lvl2HTML .= '<tr class = "oddeven" align = "left"><th></th><th>'
                     .$resArray[$Curlvl2][$this->lvl2Title].'</th>';
                 // add an empty cell on row if short version (in none short mode there is an additionnal column
-                if(!$short)$lvl2HTML .= '<th></th>';
+                if (!$short)$lvl2HTML .= '<th></th>';
                 // add the LVL 3 total hours on the LVL 2 title
                 $lvl2HTML .= '<th>'.formatTime($lvl3Total, 0).'</th>';
                 // add the LVL 3 total day on the LVL 2 title
                 $lvl2HTML .= '<th>'.formatTime($lvl3Total, $hoursperdays).'</th><th>';
-                if($short)
+                if ($short)
                 {
                     $lvl2HTML .= $lvl3Notes;
                 }
@@ -412,7 +412,7 @@ class TimesheetReport
                 $lvl1HTML .= '<tr class = "oddeven" align = "left"><th >'
                     .$resArray[$Curlvl1][$this->lvl1Title].'</th><th></th>';
                 // add an empty cell on row if short version (in none short mode there is an additionnal column
-                if(!$short)$lvl1HTML .= '<th></th>';
+                if (!$short)$lvl1HTML .= '<th></th>';
                 $lvl1HTML .= '<th>'.formatTime($lvl2Total, 0).'</th>';
                 $lvl1HTML .= '<th>'.formatTime($lvl2Total, $hoursperdays).'</th></tr>';
                 //add the LVL 3 HTML content in lvl1

@@ -36,7 +36,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $id = GETPOST('id', 'int');
 //$toDate = GETPOST('toDate');
 $toDate = GETPOST('toDate', 'alpha');
-if(!empty($toDate) && $action == 'goToDate')
+if (!empty($toDate) && $action == 'goToDate')
 {
 $toDateday = GETPOST('toDateday', 'int');// to not look for the date if action not goTodate
 $toDatemonth = GETPOST('toDatemonth', 'int');
@@ -44,16 +44,16 @@ $toDateyear = GETPOST('toDateyear', 'int');
 }
 $timestamp = GETPOST('timestamp', 'alpha');
 $whitelistmode = GETPOST('wlm', 'int');
-if($whitelistmode == '')
+if ($whitelistmode == '')
 {
     $whitelistmode = $conf->global->TIMESHEET_WHITELIST_MODE;
 }
 $userid = is_object($user)?$user->id:$user;
 $postUserId= GETPOST('userid', 'int');
 // if the user can enter ts for other the user id is diferent
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1  )
+if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1  )
 {
-    if(!empty($postUserId))
+    if (!empty($postUserId))
     {
             $newuserid = $postUserId;
     }
@@ -63,14 +63,14 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
 {
         $SubordiateIds[] = $userid;
         $userid = $newuserid;
-    }elseif($action == 'getOtherTs')
+    }elseif ($action == 'getOtherTs')
 {
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
         unset($action);
     }
 }
 $confirm = GETPOST('confirm', 'alpha');
-if($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"]))
+if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"]))
 {
     $dateStart = $_SESSION["dateStart"];
 }else {
@@ -104,9 +104,9 @@ $update = false;
 switch($action)
 {
     case 'submit':
-        if(isset($_SESSION['task_timesheet'][$timestamp]))
+        if (isset($_SESSION['task_timesheet'][$timestamp]))
         {
-            if(GETPOSTISSET('task'))
+            if (GETPOSTISSET('task'))
             {
                 $ret = 0;
                 $notesTask = GETPOST('notesTask', 'array');
@@ -115,14 +115,14 @@ switch($action)
                 foreach($tasks as $key => $tasktab)
                 {
                     $task_timesheet->loadFromSession($timestamp, $key);
-                    if($task_timesheet->note!=$notesTaskApproval[$key])
+                    if ($task_timesheet->note!=$notesTaskApproval[$key])
                     {
                        $update = true;
                        $task_timesheet->note = $notesTaskApproval[$key];
                        $task_timesheet->update($user);
                     }
                     $ret = $task_timesheet->updateActuals($tasktab, $notesTask);
-                    if(GETPOSTISSET('submit') )
+                    if (GETPOSTISSET('submit') )
                     {
                            $task_timesheet->setStatus($user, SUBMITTED);
                            $ret++;
@@ -134,7 +134,7 @@ switch($action)
            //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
                      TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
                 }
-            }elseif(GETPOSTISSET('recall'))
+            }elseif (GETPOSTISSET('recall'))
             {
                 $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
                 //$task_timesheet->status = "DRAFT";
@@ -158,12 +158,12 @@ switch($action)
     default:
         break;
 }
-if(!empty($timestamp))
+if (!empty($timestamp))
 {
        unset($_SESSION['task_timesheet'][$timestamp]);
 }
 $task_timesheet->fetchAll($dateStart, $whitelistmode);
-if($conf->global->TIMESHEET_ADD_DOCS)
+if ($conf->global->TIMESHEET_ADD_DOCS)
 {
     dol_include_once('/core/class/html.formfile.class.php');
     dol_include_once('/core/lib/files.lib.php');
@@ -171,7 +171,7 @@ if($conf->global->TIMESHEET_ADD_DOCS)
     $object = $task_timesheet;
     $ref = dol_sanitizeFileName($object->ref);
     $upload_dir = $conf->timesheet->dir_output.'/users/'.get_exdir($object->id, 2, 0, 0, $object, 'timesheet').$ref;
-    if(version_compare(DOL_VERSION, "4.0")>=0)
+    if (version_compare(DOL_VERSION, "4.0")>=0)
 {
         include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
     }else{
@@ -184,7 +184,7 @@ if($conf->global->TIMESHEET_ADD_DOCS)
 *
 * Put here all code to build page
 ****************************************************/
-if($xml)
+if ($xml)
 {
     //renew timestqmp
     ob_clean();
@@ -198,14 +198,14 @@ llxHeader('', $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 //tmstp = time();
 //fetch ts for others
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin))
+if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin))
 {
     print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 //$ajax = false;
 $Form = $task_timesheet->getHTMLNavigation($optioncss);
 $Form .= $task_timesheet->getHTMLFormHeader();
-     If($conf->global->TIMESHEET_WHITELIST == 1)
+     if ($conf->global->TIMESHEET_WHITELIST == 1)
 {
         $Form.= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
         $Form.= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
@@ -224,7 +224,7 @@ $Form .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $Form;
 //add attachement
-if($conf->global->TIMESHEET_ADD_DOCS == 1)
+if ($conf->global->TIMESHEET_ADD_DOCS == 1)
 {
         $object = $task_timesheet;
         $modulepart = 'timesheet';

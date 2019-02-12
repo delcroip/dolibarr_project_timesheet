@@ -21,7 +21,7 @@
  *  \ingroup    timesheet
  *  \brief      Tab for documents linked to AttendanceSystem
  */
-if($_SERVER['SCRIPT_FILENAME'])include 'core/lib/includeMain.lib.php';
+if ($_SERVER['SCRIPT_FILENAME'])include 'core/lib/includeMain.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';

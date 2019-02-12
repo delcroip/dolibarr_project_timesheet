@@ -142,9 +142,9 @@ class TimesheetFavourite extends CommonObject
         $sql .= ' t.date_end';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.fk_user = ".$userid;
-        if($datestart)
+        if ($datestart)
             $sql.= ' AND (t.date_end >\''.$this->db->idate($datestart).'\' OR t.date_end IS NULL)';
-        if($datestop)
+        if ($datestop)
             $sql.= ' AND (t.date_start <\''.$this->db->idate($datestop).'\' OR t.date_start IS NULL)';
         dol_syslog(get_class($this)."::fetchUserList");
         $resql = $this->db->query($sql);
@@ -179,7 +179,7 @@ class TimesheetFavourite extends CommonObject
         {
       	    $this->error = "Error ".$this->db->lasterror();
         }
-        if(count($Listtask)>0)
+        if (count($Listtask)>0)
             return  $Listtask;
         else
             return  null;
@@ -194,11 +194,11 @@ class TimesheetFavourite extends CommonObject
         $sql = "SELECT";
 	$sql.= " t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
-        if($this->project_task && $this->subtask)
+        if ($this->project_task && $this->subtask)
         {
             $sql.= '  WHERE  (t.rowid = \''.$this->project_task.'\'';
             $sql.= '  OR  t.fk_task_parent = \''.$this->project_task.'\')';
-        }elseif($this->project_task )
+        }elseif ($this->project_task )
         {
             $sql.= '  WHERE t.rowid = \''.$this->project_task.'\'';
         }else
@@ -341,23 +341,23 @@ class TimesheetFavourite extends CommonObject
     {
     	global $langs;
     	$result = '';
-        if(empty($ref) && $id == 0)
+        if (empty($ref) && $id == 0)
         {
-            if(!empty($this->id))
+            if (!empty($this->id))
             {
                 $id = $this->id;
-            }elseif(!empty($this->rowid))
+            }elseif (!empty($this->rowid))
             {
                 $id = $this->rowid;
-            }if(!empty($this->ref))
+            }if (!empty($this->ref))
             {
                 $ref = $this->ref;
             }
         }
-        if($id)
+        if ($id)
         {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?id='.$id.'&action=view">';
-        }elseif(!empty($ref))
+        }elseif (!empty($ref))
         {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?ref='.$ref.'&action=view">';
         }else{
@@ -365,17 +365,17 @@ class TimesheetFavourite extends CommonObject
         }
         $lienfin = empty($lien)?'':'</a>';
     	$picto = 'timesheet@timesheet';
-        if($ref)
+        if ($ref)
         {
             $label = $langs->trans("Show").': '.$ref;
-        }elseif($id)
+        }elseif ($id)
         {
             $label = $langs->trans("Show").': '.$id;
         }
     	if ($withpicto == 1)
         {
             $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif($withpicto == 2)
+        }elseif ($withpicto == 2)
         {
             $result .= $lien.img_object($label, $picto).$lienfin;
         }else{

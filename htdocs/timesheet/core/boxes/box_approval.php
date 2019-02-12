@@ -57,9 +57,9 @@ class box_approval extends ModeleBoxes
 {
                         $sql = 'SELECT';
            $subordinate = implode(', ', getSubordinates($db, $userid, 2));
-           if($subordinate == '')$subordinate = 0;
+           if ($subordinate == '')$subordinate = 0;
            $tasks = implode(', ', array_keys(getTasks($db, $userid)));
-           if($tasks == '')$tasks = 0;
+           if ($tasks == '')$tasks = 0;
            // $sql .= ' COUNT(t.rowid) as nb, ';
             $sql .= ' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
@@ -74,10 +74,10 @@ class box_approval extends ModeleBoxes
                 while ($num>0)
 {
                     $obj = $db->fetch_object($result);
-                    if($obj->recipient == 'project')
+                    if ($obj->recipient == 'project')
 {
                         $nbPrj = $obj->nbtsk;
-                    }elseif($obj->recipient == 'team')
+                    }elseif ($obj->recipient == 'team')
 {
                         $nbTm = $obj->nbtm;
                     }

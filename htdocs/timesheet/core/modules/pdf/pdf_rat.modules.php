@@ -265,23 +265,23 @@ function writeFile($object, $outputlangs)
             {
                 // auto page break
                 $addpagebreak=true;
-            }elseif($posyafter>$this->page_hauteur - $heightforfooter - $heightforinfotot)
+            }elseif ($posyafter>$this->page_hauteur - $heightforfooter - $heightforinfotot)
             {
                 // in the sign zone, check if a new page will be required
                 if ($posyafter > ($this->page_hauteur - ($heightforfooter)))	// There is a pagebreak, shouldn't happen as this should trigger a auto page break
                 {
                     $addpagebreak=true;
-                }elseif(($nblignes-$i)*($lineheight)< $this->page_hauteur - $heightforfooter - $posyafter )	// not enough space for te remaining line and the sign box
+                }elseif (($nblignes-$i)*($lineheight)< $this->page_hauteur - $heightforfooter - $posyafter )	// not enough space for te remaining line and the sign box
                 {
                     $addpagebreak=true;
                 }
-            }elseif(isset($tasktimearray['lines'][$i+1]['pagebreak']) && $tasktimearray['lines'][$i+1]['pagebreak'])
+            }elseif (isset($tasktimearray['lines'][$i+1]['pagebreak']) && $tasktimearray['lines'][$i+1]['pagebreak'])
             {
                 //pagebreak mentionned on the next line
                 $addpagebreak=true;
             }
            // action when a page break is required : rollback and write on the next page
-            if($addpagebreak == true)
+            if ($addpagebreak == true)
             {
                 $cur_tab_height=$tab_height_newpage;
                 $pdf->rollbackTransaction(true);
@@ -431,7 +431,7 @@ function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outputlangs,
     // Draw rect of all tab (title + lines). Rect prend une longueur en 3eme param
     $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
     // line prend une position y en 3eme param
-    if($hidetop == 0){
+    if ($hidetop == 0){
         $pdf->line($this->marge_gauche, $tab_top+$heightoftitleline, $this->page_largeur-$this->marge_droite, $tab_top+$heightoftitleline);
         $pdf->SetTextColor(0, 0, 0);
         $pdf->SetFont('', 'B', $default_font_size  );
@@ -515,7 +515,7 @@ function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName="")
     else
     {
         $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
-        if($showaddress == true){
+        if ($showaddress == true){
             $pdf->MultiCell(100, 4+$height, $outputlangs->transnoentities($mysoc->address), 0, 'L');
             $pdf->MultiCell(100, 4+$height*2, $outputlangs->transnoentities($mysoc->zip.' - '.$mysoc->town), 0, 'L');
         }
@@ -530,7 +530,7 @@ function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName="")
     $pdf->SetTextColor(0, 0, 60);
     $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->name), '', 'R');
     //worke name
-    if(!empty($userName) && !$conf->global->TIMESHEET_HIDE_NAME)
+    if (!empty($userName) && !$conf->global->TIMESHEET_HIDE_NAME)
     {
         $pdf->SetXY($this->marge_gauche, $height+$default_font_size + 3);
         $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');

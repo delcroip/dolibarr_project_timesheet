@@ -66,7 +66,7 @@ class TimesheetHoliday extends Holiday
                 $this->holidaylist[$day] = array('amId'=>'0', 'pmId'=>'0', 'prev'=>false, 'am'=>false, 'pm'=>false, 'next'=>false, 'amStatus'=>0, 'pmStatus'=>0);
                 foreach($this->holiday as $record)
 {
-                    if($record['date_debut']<=$curDay && $record['date_fin']>=$curDay)
+                    if ($record['date_debut']<=$curDay && $record['date_fin']>=$curDay)
 {
                      $prev = ($record['date_debut']<$curDay)?true:false;
                      $next = ($record['date_fin']>$curDay)?true:false;
@@ -97,14 +97,14 @@ class TimesheetHoliday extends Holiday
                      $amOverride = ($this->holidaylist[$day]['amId'] == 0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
                      $oldSatus = $this->holidaylist[$day]['amStatus'];
                      $pmOverride = ($this->holidaylist[$day]['pmId'] == 0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
-                     if($am && $amOverride)
+                     if ($am && $amOverride)
 {
                          $this->holidaylist[$day]['am'] = true;
                          $this->holidaylist[$day]['amId'] = $record['rowid'];
                          $this->holidaylist[$day]['prev'] = $prev;
                          $this->holidaylist[$day]['amStatus'] = $record['statut'];
                      }
-                     if($pm && $pmOverride)
+                     if ($pm && $pmOverride)
 {
                          $this->holidaylist[$day]['pm'] = true;
                          $this->holidaylist[$day]['pmId'] = $record['rowid'];
@@ -130,9 +130,9 @@ class TimesheetHoliday extends Holiday
         global $conf;
         $timetype = $conf->global->TIMESHEET_TIME_TYPE;
         $dayshours = $conf->global->TIMESHEET_DAY_DURATION;
-        if(!is_array($this->holidaylist))
+        if (!is_array($this->holidaylist))
            return '<tr>ERROR: wrong parameters for getFormLine'.empty($startDate).'|'.empty($stopDate).'|'.empty($headers).'</tr>';
-        if(!$this->holidayPresent) // don't show the holiday line if nothing present
+        if (!$this->holidayPresent) // don't show the holiday line if nothing present
            return '';
         $html = "<tr id = 'holiday'>\n";
         $html .= '<th colspan = "'.count($headers).'" align = "right" > '.$langs->trans('Holiday').' </th>';
@@ -147,10 +147,10 @@ class TimesheetHoliday extends Holiday
             $pmValue = ($holiday['pmStatus'] == 3);
             $value = ($timetype == "hours")?date('H:i', mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             $html .= '<th style = "margin: 0;padding: 0;">';
-            if($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1)$html .= '<input type = "hidden" class = "time4day['.$tsUserId.']['.$i.']"  value = "'.$value.'">';
+            if ($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1)$html .= '<input type = "hidden" class = "time4day['.$tsUserId.']['.$i.']"  value = "'.$value.'">';
             $html .= '<ul id = "holiday['.$i.']" class = "listHoliday" >';
                 $html .= '<li id = "holiday['.$i.'][0]" class = "listItemHoliday" ><a ';
-                if($am)
+                if ($am)
                 {
                     $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
                     $amColor = ($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
@@ -162,7 +162,7 @@ class TimesheetHoliday extends Holiday
                     $html .= ' class = "holiday" >&nbsp;</a></li>';
                 }
                 $html .= '<li id = "holiday['.$i.'][1]" class = "listItemHoliday" ><a ';
-                if($pm)
+                if ($pm)
                 {
                     $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
                     $pmColor = ($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');

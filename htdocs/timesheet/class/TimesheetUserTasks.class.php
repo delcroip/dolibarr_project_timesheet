@@ -505,7 +505,7 @@ function fetchTaskTimesheet($userid = '')
 {
     global $conf;
     $res = array();
-    if($userid == '')
+    if ($userid == '')
     {
         $userid = $this->userId;
     }
@@ -525,7 +525,7 @@ function fetchTaskTimesheet($userid = '')
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = ec.element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
     //approval
-    if( $this->status == DRAFT || $this->status == REJECTED)
+    if ( $this->status == DRAFT || $this->status == REJECTED)
     {
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
     }else{ // take only the ones with a task_time linked
@@ -536,7 +536,7 @@ function fetchTaskTimesheet($userid = '')
     $sql .= ' AND app.date_end = \''.$this->db->idate($datestop).'\'';
     //end approval
     $sql .= " WHERE ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task' ";
-    if($conf->global->TIMESHEET_HIDE_DRAFT == '1')
+    if ($conf->global->TIMESHEET_HIDE_DRAFT == '1')
     {
          $sql .= ' AND prj.fk_statut>\'0\' ';
     }
@@ -559,7 +559,7 @@ function fetchTaskTimesheet($userid = '')
                     $obj = $this->db->fetch_object($resql);
                     $tasksList[$i] = NEW TimesheetTask($this->db, $obj->taskid);
                     //$tasksList[$i]->id = $obj->taskid;
-                    if($obj->appid)
+                    if ($obj->appid)
                     {
                         $tasksList[$i]->fetch($obj->appid);
                     }
@@ -574,7 +574,7 @@ function fetchTaskTimesheet($userid = '')
             }
             $this->db->free($resql);
              $i = 0;
-            if(isset($this->taskTimesheet))unset($this->taskTimesheet);
+            if (isset($this->taskTimesheet))unset($this->taskTimesheet);
              foreach($tasksList as $row)
             {
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
@@ -598,7 +598,7 @@ function fetchTaskTimesheet($userid = '')
 function updateActuals($tabPost, $notes = array())
 {
      //FIXME, tta should be creted
-    if($this->status == APPROVED)
+    if ($this->status == APPROVED)
         return -1;
     dol_syslog('Entering in Timesheet::task_timesheet.php::updateActuals()');
     $ret = 0;
@@ -618,7 +618,7 @@ function updateActuals($tabPost, $notes = array())
             $this->taskTimesheet[$key] = $tasktime->serialize();
         }
         /*
-    if(!empty($idList))
+    if (!empty($idList))
 {
         //$this->project_tasktime_list = $idList;
         $this->update($this->user);
@@ -671,19 +671,19 @@ function getUserName()
  */
 function updateStatus($user, $status = 0)
 {
-    if($this->id<=0)return -1;
+    if ($this->id<=0)return -1;
     if ($status!='')
 {
-        if($status<0 || $status> STATUSMAX)return -1;// status not valid
+        if ($status<0 || $status> STATUSMAX)return -1;// status not valid
         $updatedStatus = $status;
-    }elseif(!empty($this->status))
+    }elseif (!empty($this->status))
 {
          $updatedStatus = $this->status;
     }else{ // no status
         $updatedStatus = 2;
     }
-    if(count($this->taskTimesheet)<1 )$this->fetchTaskTimesheet();
-    if($status == $this->status)
+    if (count($this->taskTimesheet)<1 )$this->fetchTaskTimesheet();
+    if ($status == $this->status)
 { // to avoid eternal loop
         return 1;
     }
@@ -702,7 +702,7 @@ function updateStatus($user, $status = 0)
 {
         $tta = new TimesheetTask($this->db);
         $tta->unserialize($row);
-        if($tta->appId>0)
+        if ($tta->appId>0)
 { // tta already created
             $tta->fetch($tta->appId);
             $statusPriorityCur = $tta->status;
@@ -725,7 +725,7 @@ Public function setStatus($user, $status, $id = 0)
     //role ?
     $error = 0;
     //if the satus is not an ENUM status
-    if($status<0 || $status>STATUSMAX)
+    if ($status<0 || $status>STATUSMAX)
     {
         dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERR);
         return false;
@@ -735,14 +735,14 @@ Public function setStatus($user, $status, $id = 0)
     $Submitted = ($status == SUBMITTED)?true:false;
     $draft = ($status == DRAFT)?true:false;
     // Check parameters
-    if($id!=0)$this->fetch($id);
+    if ($id!=0)$this->fetch($id);
     $this->status = $status;
     // Update request
     $error = ($this->id<=0)?$this->create($user):$this->update($user);
-    if($error>0)
+    if ($error>0)
     {
-        if($status == REJECTED)$this->sendRejectedReminders($user);
-        if(count($this->taskTimesheet)<1 )
+        if ($status == REJECTED)$this->sendRejectedReminders($user);
+        if (count($this->taskTimesheet)<1 )
     {
         $this->fetch($id);
     }
@@ -750,17 +750,17 @@ Public function setStatus($user, $status, $id = 0)
     $this->fetchTaskTimesheet();
     $this->status = $status;
     $this->status = $status;
-    if(count($this->taskTimesheet)>0 )foreach($this->taskTimesheet as $ts)
+    if (count($this->taskTimesheet)>0 )foreach($this->taskTimesheet as $ts)
     {
         $tasktime = new TimesheetTask($this->db);
         $tasktime->unserialize($ts);
         //$tasktime->appId = $this->id;
-        if($Approved)$ret = $tasktime->approved($user, TEAM, false);
-        elseif($Rejected)$ret = $tasktime->challenged($user, TEAM, false);
-        elseif($Submitted)$ret = $tasktime->submitted($user);
-        elseif($draft)$ret = $tasktime->setStatus($user, DRAFT);
+        if ($Approved)$ret = $tasktime->approved($user, TEAM, false);
+        elseif ($Rejected)$ret = $tasktime->challenged($user, TEAM, false);
+        elseif ($Submitted)$ret = $tasktime->submitted($user);
+        elseif ($draft)$ret = $tasktime->setStatus($user, DRAFT);
     }
-      //if($ret>0)$this->db->commit();
+      //if ($ret>0)$this->db->commit();
         return 1;
     }
 }
@@ -783,14 +783,14 @@ function getHTML($ajax = false, $Approval = false)
     $Form .= '<td><a>'.$langs->trans("Search").'</a></td>';
     $Form .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
     $Form .= $this->getHTMLHolidayLines($ajax);
-    if(!$Approval)$Form .= $this->getHTMLTotal();
+    if (!$Approval)$Form .= $this->getHTMLTotal();
     //$Form .= '<tbody style = "overflow:auto;">';//FIXME, max height should be defined
     $Form .= $this->getHTMLtaskLines($ajax);
     //$Form .= '</tbody>';// overflow div
     $Form .= $this->getHTMLTotal();
     $Form .= '</table>';
     $Form .= $this->getHTMLNote($ajax);
-    if(!$Approval)
+    if (!$Approval)
     {
         $Form .= $this->getHTMLFooter($ajax);
     }
@@ -812,7 +812,7 @@ function getHTMLHeader()
      $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
      ///Whitelist tab
-    if($conf->global->TIMESHEET_TIME_SPAN == "month")
+    if ($conf->global->TIMESHEET_TIME_SPAN == "month")
     {
         $format = "%d";
         $html .= '<tr class = "liste_titre" id = "">'."\n";
@@ -847,7 +847,7 @@ function getHTMLFormHeader($ajax = false)
 {
      global $langs;
     $html = '<form id = "timesheetForm" name = "timesheet" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
-    if($ajax)$html .= ' onsubmit = " return submitTimesheet(0);"';
+    if ($ajax)$html .= ' onsubmit = " return submitTimesheet(0);"';
     $html .= '>';
      return $html;
 }
@@ -879,19 +879,19 @@ function getHTMLFooter($ajax = false)
     //form button
     $html .= '<div class = "tabsAction">';
      $isOpenSatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED));
-    if($isOpenSatus)
+    if ($isOpenSatus)
     {
         $html .= '<input type = "submit" class = "butAction" name = "save" value = "'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type = "submit" class = "butAction" name = "submit" onClick = "return submitTs();" value = "'.$langs->trans('Submit')."\" />\n";
-        if(in_array('1', array_slice ($apflows, 1)))
+        if (in_array('1', array_slice ($apflows, 1)))
         {
             $html .= '<input type = "submit" class = "butAction" name = "submit"  value = "'.$langs->trans('Submit')."\" />\n";
         }
         $html .= '<a class = "butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
-    }elseif($this->status == SUBMITTED)$html .= '<input type = "submit" class = "butAction" name = "recall" " value = "'.$langs->trans('Recall')."\" />\n";
+    }elseif ($this->status == SUBMITTED)$html .= '<input type = "submit" class = "butAction" name = "recall" " value = "'.$langs->trans('Recall')."\" />\n";
     $html .= '</div>';
     $html .= "</form>\n";
-    if($ajax)
+    if ($ajax)
     {
         $html .= '<script type = "text/javascript">'."\n\t";
         $html .= 'window.onload = function()
@@ -913,11 +913,11 @@ function getHTMLFooterAp($current, $timestamp)
     $html .= '<input type = "hidden" name = "timestamp" value = "'.$timestamp."\"/>\n";
     $html .= '<input type = "hidden" name = "target" value = "'.($current+1)."\"/>\n";
     $html .= '<div class = "tabsAction">';
-    if($offset == 0 || $prevOffset!=$offset)$html .= '<input type = "submit" class = "butAction" name = "Send" value = "'.$langs->trans('Next')."\" />\n";
+    if ($offset == 0 || $prevOffset!=$offset)$html .= '<input type = "submit" class = "butAction" name = "Send" value = "'.$langs->trans('Next')."\" />\n";
     //$html .= '<input type = "submit" class = "butAction" name = "submit" onClick = "return submitTs();" value = "'.$langs->trans('Submit')."\" />\n";
     $html .= '</div>';
     $html .= "</form>\n";
-    if($ajax)
+    if ($ajax)
     {
         $html .= '<script type = "text/javascript">'."\n\t";
         $html .= 'window.onload = function()
@@ -935,24 +935,24 @@ function getHTMLtaskLines($ajax = false)
     $i = 1;
     $Lines = '';
     $nbline = count($this->taskTimesheet);
-    if(!$ajax & is_array($this->taskTimesheet))
+    if (!$ajax & is_array($this->taskTimesheet))
     {
         foreach ($this->taskTimesheet as $timesheet)
         {
             $row = new TimesheetTask($this->db);
             $row->unserialize($timesheet);
             //$row->db = $this->db;
-            if(in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED )))
+            if (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED )))
             {
                 $openOveride = 1;
-            }elseif(in_array($this->status, array(UNDERAPPROVAL, INVOICED, APPROVED, CHALLENGED, SUBMITTED )))
+            }elseif (in_array($this->status, array(UNDERAPPROVAL, INVOICED, APPROVED, CHALLENGED, SUBMITTED )))
             {
                 $openOveride = -1;
             }else{
                 $openOveride = 0;
             }
             $Lines .= $row->getTimesheetLine($this->headers, $this->id, $openOveride);
-            if( $i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal ();
+            if ( $i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal ();
             $i++;
         }
     }
@@ -967,11 +967,11 @@ function getHTMLNote()
      global $langs;
      $isOpenSatus = (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED )));
      $html = '<div class = "noborder"><div  width = "100%">'.$langs->trans('Note').'</div><div width = "100%">';
-    if($isOpenSatus)
+    if ($isOpenSatus)
     {
         $html .= '<textarea class = "flat"  cols = "75" name = "noteTaskApproval['.$this->id.']" rows = "3" >'.$this->note.'</textarea>';
         $html .= '</div>';
-    }elseif(!empty($this->note))
+    }elseif (!empty($this->note))
     {
         $html .= $this->note;
         $html .= '></div>';
@@ -988,7 +988,7 @@ function getHTMLHolidayLines($ajax = false)
 {
     $i = 0;
     $Lines = '';
-    if(!$ajax)
+    if (!$ajax)
     {
         $Lines .= $this->holidays->getHTMLFormLine($this->headers, $this->id);
     }
@@ -1008,9 +1008,9 @@ function getHTMLNavigation($optioncss, $ajax = false)
     $form = new Form($this->db);
     $tail = '';
     //$tail = '&wlm='.$this->whitelistmode;
-    if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1  )$tail = '&userid='.$this->userId;
+    if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1  )$tail = '&userid='.$this->userId;
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
-    if($ajax)
+    if ($ajax)
     {
 //     $Nav.=  '<a id = "navPrev" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, -1).'\', 0);';
     }else{
@@ -1018,7 +1018,7 @@ function getHTMLNavigation($optioncss, $ajax = false)
     }
     if ($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
     $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-//  if($ajax)
+//  if ($ajax)
 //  {
     //    $Nav.=  '<form name = "goToDate" onsubmit = "return toDateHandler();" action="?action=goToDate&wlm='.$this->whitelistmode.'" method = "POST">'."\n\t\t\t";
     //}else{
@@ -1026,7 +1026,7 @@ function getHTMLNavigation($optioncss, $ajax = false)
     //}
     $Nav.=   $langs->trans("GoTo").': '.$form->select_date(-1, 'toDate', 0, 0, 0, "", 1, 1, 1)."\n\t\t\t";;
     $Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-    //if($ajax)
+    //if ($ajax)
 //    {
     //    $Nav.=  '<a id = "navNext" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, 1).'\', 0);';
     //}else{
@@ -1049,23 +1049,23 @@ function getHTMLNavigation($optioncss, $ajax = false)
     {
     	global $langs;
     	$result = '';
-        if(empty($ref) && $id == 0)
+        if (empty($ref) && $id == 0)
         {
-            if(isset($this->id))
+            if (isset($this->id))
             {
                 $id = $this->id;
-            }elseif(isset($this->rowid))
+            }elseif (isset($this->rowid))
             {
                 $id = $this->rowid;
-            }if(isset($this->ref))
+            }if (isset($this->ref))
             {
                 $ref = $this->ref;
             }
         }
-        if($id)
+        if ($id)
         {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?id='.$id.'&action=view">';
-        }elseif(!empty($ref))
+        }elseif (!empty($ref))
         {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?ref='.$ref.'&action=view">';
         }else{
@@ -1073,17 +1073,17 @@ function getHTMLNavigation($optioncss, $ajax = false)
         }
         $lienfin = empty($lien)?'':'</a>';
     	$picto = 'timesheet@timesheet';
-        if($ref)
+        if ($ref)
         {
             $label = $langs->trans("Show").': '.$ref;
-        }elseif($id)
+        }elseif ($id)
         {
             $label = $langs->trans("Show").': '.$id;
         }
     	if ($withpicto == 1)
         {
             $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif($withpicto == 2)
+        }elseif ($withpicto == 2)
         {
             $result .= $lien.img_object($label, $picto).$lienfin;
         }else{
@@ -1104,7 +1104,7 @@ function getHTMLGetOtherUserTs($idsList, $selected, $admin)
     global $langs;
     $form = new Form($this->db);
     $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method = "POST">';
-    if(!$admin)
+    if (!$admin)
     {
         $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
     }else{
@@ -1139,7 +1139,7 @@ function getHTMLGetOtherUserTs($idsList, $selected, $admin)
         //$this->user_modification = '';
         $this->task = '';
         $this->note = '';
-        if($test)
+        if ($test)
         {
             $this->userId = 1;
             $this->date_start = srttotime('this monday', dol_mktime());
@@ -1243,7 +1243,7 @@ function sendApprovalReminders()
                         $sendto = $obj->email;
                         $replyto = $obj->email;
                         $subject = $langs->transnoentities("YouHaveApprovalPending");
-                        if(!empty($sendto) && $sendto!="NULL")
+                        if (!empty($sendto) && $sendto!="NULL")
 {
                             require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
                             $mailfile = new CMailFile
@@ -1280,7 +1280,7 @@ function sendApprovalReminders()
         $tsUser = new User($db);
         $tsUser->fetch($this->userId);
           $url = $dolibarr_main_url_root;
-          if(strpos($dolibarr_main_url_root_alt, $_SERVER['PHP_SELF'])>0)
+          if (strpos($dolibarr_main_url_root_alt, $_SERVER['PHP_SELF'])>0)
           {
                $url .= $dolibarr_main_url_root_alt;
           }
@@ -1290,7 +1290,7 @@ function sendApprovalReminders()
           $sendto = $tsUser->email;
           $replyto = $user->email;
           $subject = $langs->transnoentities("YouHaveTimesheetRejected");
-          if(!empty($sendto) && $sendto!="NULL")
+          if (!empty($sendto) && $sendto!="NULL")
           {
             require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
             $mailfile = new CMailFile(

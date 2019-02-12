@@ -261,15 +261,15 @@ class AttendanceSystem extends CommonObject
 	global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;// Force disable tooltips
     	$result = '';
-        if(empty($ref) && $id == 0)
+        if (empty($ref) && $id == 0)
 {
-            if(isset($this->id))
+            if (isset($this->id))
 {
                 $id = $this->id;
-            }elseif(isset($this->rowid))
+            }elseif (isset($this->rowid))
 {
                 $id = $this->rowid;
-            }if(isset($this->ref))
+            }if (isset($this->ref))
 {
                 $ref = $this->ref;
             }
@@ -285,10 +285,10 @@ class AttendanceSystem extends CommonObject
             $linkclose .= ' title = "'.dol_escape_htmltag($label, 1).'"';
             $linkclose .= ' class = "classfortooltip'.($morecss?' '.$morecss:'').'"';
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
-        if($id)
+        if ($id)
 {
             $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'id='.$id.'&action=view"'.$linkclose.'>';
-        }elseif(!empty($ref))
+        }elseif (!empty($ref))
 {
             $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
@@ -298,17 +298,17 @@ class AttendanceSystem extends CommonObject
     	$picto = 'generic';
         $label = '<u>' . $langs->trans("spread") . '</u>';
         $label.= '<br>';
-        if($ref)
+        if ($ref)
 {
             $label .= $langs->trans("Red").': '.$ref;
-        }elseif($id)
+        }elseif ($id)
 {
             $label .= $langs->trans("#").': '.$id;
         }
     	if ($withpicto == 1)
 {
             $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif($withpicto == 2)
+        }elseif ($withpicto == 2)
 {
             $result .= $lien.img_object($label, $picto).$lienfin;
         }else{
@@ -388,7 +388,7 @@ class AttendanceSystem extends CommonObject
     function delete($user, $notrigger = 0)
     {
         //global $conf, $langs;
-        if(empty($user)) return -1;
+        if (empty($user)) return -1;
         $error = 0;
         $this->db->begin();
         if (! $error)
@@ -413,7 +413,7 @@ class AttendanceSystem extends CommonObject
             {
                 $error++;$this->errors[] = "Error ".$this->db->lasterror();
             }
-            elseif($this->db->affected_rows($resql) == 0)
+            elseif ($this->db->affected_rows($resql) == 0)
             {
                 $error++;$this->errors[] = "Item no found in database";
             }
@@ -594,7 +594,7 @@ class AttendanceSystem extends CommonObject
         // automatic unserialisation based on match between property name and key value
         foreach ($array as $key => $value)
         {
-            if(isset($this->{$key}))$this->{$key} = $value;
+            if (isset($this->{$key}))$this->{$key} = $value;
         }
     }
 }

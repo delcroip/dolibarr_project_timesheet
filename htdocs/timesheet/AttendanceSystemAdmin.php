@@ -87,7 +87,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
  // uncomment to avoid resubmision
-//if(isset( $_SESSION['AttendanceSystem_class'][$tms]))
+//if (isset( $_SESSION['AttendanceSystem_class'][$tms]))
 //{
  //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
@@ -105,13 +105,13 @@ if ($user->societe_id > 0 ||
 */
 // create object and set id or ref if provided as parameter
 $object = new AttendanceSystem($db);
-if($id>0)
+if ($id>0)
 {
     $object->id = $id;
     $object->fetch($id);
     $ref = dol_sanitizeFileName($object->ref);
 }
-if(!empty($ref))
+if (!empty($ref))
 {
     $object->ref = $ref;
     $object->id = $id;
@@ -141,7 +141,7 @@ switch($action)
        }
        break;
     case 'delete':
-        if( $action == 'delete' && ($id>0 || $ref!=""))
+        if ( $action == 'delete' && ($id>0 || $ref!=""))
         {
          $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
@@ -189,7 +189,7 @@ jQuery(document).ready(function()
 	$sql .= ' t.status';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_system as t';
     $sqlwhere = '';
-    if(isset($object->entity))
+    if (isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
@@ -201,28 +201,28 @@ jQuery(document).ready(function()
             }
     }
     //pass the search criteria
-    	if($ls_label) $sqlwhere .= natural_search('t.label', $ls_label);
-	if($ls_ip) $sqlwhere .= natural_search('t.ip', $ls_ip);
-	if($ls_port) $sqlwhere .= natural_search(array('t.port'), $ls_port);
-	if($ls_note) $sqlwhere .= natural_search('t.note', $ls_note);
-	if($ls_third_party) $sqlwhere .= natural_search(array('t.fk_third_party'), $ls_third_party);
-	if($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
-	if($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
-	if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
+    	if ($ls_label) $sqlwhere .= natural_search('t.label', $ls_label);
+	if ($ls_ip) $sqlwhere .= natural_search('t.ip', $ls_ip);
+	if ($ls_port) $sqlwhere .= natural_search(array('t.port'), $ls_port);
+	if ($ls_note) $sqlwhere .= natural_search('t.note', $ls_note);
+	if ($ls_third_party) $sqlwhere .= natural_search(array('t.fk_third_party'), $ls_third_party);
+	if ($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
+	if ($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
+	if ($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
     //list limit
-    if(!empty($sqlwhere))
+    if (!empty($sqlwhere))
         $sql .= ' WHERE '.substr ($sqlwhere, 5);
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
         $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'attendance_system as t';
-        if(!empty($sqlwhere))
+        if (!empty($sqlwhere))
             $sqlcount .= ' WHERE '.substr ($sqlwhere, 5);
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if(!empty($sortfield))
+    if (!empty($sortfield))
     {
         $sql.= $db->order($sortfield, $sortorder);
     }else{
@@ -334,21 +334,21 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print "<td>".$obj->ip."</td>";
 	print "<td>".$obj->port."</td>";
 	print "<td>".$obj->note."</td>";
-	if(class_exist('Societe'))
+	if (class_exist('Societe'))
 {
 		$StaticObject = New Societe($db);
 		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_third_party)."</td>";
 	}else{
 		print print_sellist($sql_third_party, $obj->fk_third_party);
 	}
-	if(class_exist('Task'))
+	if (class_exist('Task'))
 {
 		$StaticObject = New Task($db);
 		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_task)."</td>";
 	}else{
 		print print_sellist($sql_task, $obj->fk_task);
 	}
-	if(class_exist('Project'))
+	if (class_exist('Project'))
 {
 		$StaticObject = New Project($db);
 		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_project)."</td>";

@@ -29,7 +29,7 @@ $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $short = GETPOST('short', 'int');
 $mode = GETPOST('mode', 'alpha');
-if(!$mode)$mode = 'UTD';
+if (!$mode)$mode = 'UTD';
 $projectSelectedId = GETPOST('projectSelected');
     $year = GETPOST('year', 'int');
     $month = GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Date']))
@@ -53,19 +53,19 @@ $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
-if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId))
+if (empty($dateStart) || empty($dateEnd) || empty($projectSelectedId))
 {
     $step = 0;
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
 }
-if($action == 'getpdf')
+if ($action == 'getpdf')
 {
     $report = new TimesheetReport($db);
     $report->initBasic($projectSelectedId, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
-    if( $pdf->writeFile($report, $langs)>0)
+    if ( $pdf->writeFile($report, $langs)>0)
 {
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$report->ref.".pdf");
     	return;
@@ -78,7 +78,7 @@ llxHeader('', $langs->trans('projectReport'), '');
 $userid = is_object($user)?$user->id:$user;
 //querry to get the project where the user have priviledge;either project responsible or admin
 $sql = 'SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
-if(!$user->admin)
+if (!$user->admin)
 {
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid = element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
@@ -114,7 +114,7 @@ $querryRes = '';
 if ($projectSelectedId   &&!empty($dateStart))
 {
     $projectSelected = $projectList[$projectSelectedId];
-    if($projectSelectedId == '-999')
+    if ($projectSelectedId == '-999')
 {
         foreach($projectList as $project)
 {
@@ -180,10 +180,10 @@ $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->tr
  $Form .= '</td></tr></table>';
  //submit
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
-if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0 ))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
-if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
+if (!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0 ))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
+if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
  $Form .= '</form>';
-if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
+if (!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 echo $querryRes;
 llxFooter();
 $db->close();

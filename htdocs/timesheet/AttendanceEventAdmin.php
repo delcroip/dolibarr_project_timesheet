@@ -81,7 +81,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
     $ls_event_type = GETPOST('ls_event_type', 'int');
     $ls_note = GETPOST('ls_note', 'alpha');
     $ls_userid = GETPOST('ls_userid', 'int');
-    if($ls_userid == -1)$ls_userid = '';
+    if ($ls_userid == -1)$ls_userid = '';
     $ls_third_party = GETPOST('ls_third_party', 'int');
     $ls_task = GETPOST('ls_task', 'int');
     $ls_project = GETPOST('ls_project', 'int');
@@ -98,7 +98,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
  // uncomment to avoid resubmision
-//if(isset( $_SESSION['attendanceevent_class'][$tms]))
+//if (isset( $_SESSION['attendanceevent_class'][$tms]))
 //{
  //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
@@ -116,7 +116,7 @@ if ($user->societe_id > 0 ||
 */
 // create object and set id or ref if provided as parameter
 $object = new Attendanceevent($db, $user);
-if($id>0)
+if ($id>0)
 {
     $object->id = $id;
     $object->fetch($id);
@@ -146,7 +146,7 @@ switch($action)
        }
        break;
     CASE 'add':
-        if(empty($tms) || (!isset($_SESSION['Attendanceevent'][$tms])))
+        if (empty($tms) || (!isset($_SESSION['Attendanceevent'][$tms])))
         {
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
             $action = 'list';
@@ -168,7 +168,7 @@ switch($action)
         {
                 // Creation OK
             // remove the tms
-               if($ajax == 1)
+               if ($ajax == 1)
                 {
                    $object->serialize(2); //return JSON
                     ob_end_flush();
@@ -187,7 +187,7 @@ switch($action)
     break;
 }
     //Removing the tms array so the order can't be submitted two times
-if(isset( $_SESSION['Attendanceevent'][$tms]))
+if (isset( $_SESSION['Attendanceevent'][$tms]))
 {
     unset($_SESSION['Attendanceevent'][$tms]);
 }
@@ -205,7 +205,7 @@ print "<div> <!-- module body-->";
 $form = new Form($db);
 $formother = new FormOther($db);
 $fuser = new User($db);
-        if( $action == 'delete' && ($id>0))
+        if ( $action == 'delete' && ($id>0))
 {
          print $form->form_confirm(dol_buildpath('/timesheet/AttendanceEventAdmin.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceevent'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          //if ($ret == 'html') print '<br />';
@@ -242,7 +242,7 @@ jQuery(document).ready(function()
     $sql .= ' t.status';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_event as t';
     $sqlwhere = '';
-    if(isset($object->entity))
+    if (isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
@@ -254,31 +254,31 @@ jQuery(document).ready(function()
             }
     }
     //pass the search criteria
-    	if($ls_date_time_event_month)$sqlwhere .= ' AND MONTH(t.date_time_event) = "'.$ls_date_time_event_month."'";
-	if($ls_date_time_event_year)$sqlwhere .= ' AND YEAR(t.date_time_event) = "'.$ls_date_time_event_year."'";
-	if($ls_event_location_ref) $sqlwhere .= natural_search('t.event_location_ref', $ls_event_location_ref);
-	if($ls_event_type) $sqlwhere .= natural_search(array('t.event_type'), $ls_event_type);
-	if($ls_note) $sqlwhere .= natural_search('t.note', $ls_note);
-	if($ls_userid) $sqlwhere .= natural_search(array('t.fk_userid'), $ls_userid);
-	if($ls_third_party) $sqlwhere .= natural_search(array('t.fk_third_party'), $ls_third_party);
-	if($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
-	if($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
-	if($ls_token) $sqlwhere .= natural_search(array('t.token'), $ls_token);
-	if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
+    	if ($ls_date_time_event_month)$sqlwhere .= ' AND MONTH(t.date_time_event) = "'.$ls_date_time_event_month."'";
+	if ($ls_date_time_event_year)$sqlwhere .= ' AND YEAR(t.date_time_event) = "'.$ls_date_time_event_year."'";
+	if ($ls_event_location_ref) $sqlwhere .= natural_search('t.event_location_ref', $ls_event_location_ref);
+	if ($ls_event_type) $sqlwhere .= natural_search(array('t.event_type'), $ls_event_type);
+	if ($ls_note) $sqlwhere .= natural_search('t.note', $ls_note);
+	if ($ls_userid) $sqlwhere .= natural_search(array('t.fk_userid'), $ls_userid);
+	if ($ls_third_party) $sqlwhere .= natural_search(array('t.fk_third_party'), $ls_third_party);
+	if ($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
+	if ($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
+	if ($ls_token) $sqlwhere .= natural_search(array('t.token'), $ls_token);
+	if ($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
     //list limit
-    if(!empty($sqlwhere))
+    if (!empty($sqlwhere))
         $sql .= ' WHERE '.substr ($sqlwhere, 5);
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
         $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'attendance_event as t';
-        if(!empty($sqlwhere))
+        if (!empty($sqlwhere))
             $sqlcount .= ' WHERE '.substr ($sqlwhere, 5);
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if(!empty($sortfield))
+    if (!empty($sortfield))
     {
         $sql.= $db->order($sortfield, $sortorder);
     }else{
@@ -350,7 +350,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '</td><td>';
         print '<input type = "text" value = "'.$object->note.'" name = "Note">';
 	print '</td><td>';
-        if(empty($object->userid))$object->userid = $user->id;
+        if (empty($object->userid))$object->userid = $user->id;
         print $form->select_dolusers($object->userid, 'Userid', 1, '', 0 );
         print '</td><td>';
         //FIXME SOC
@@ -464,7 +464,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print "<td>".Attendanceevent::LibStatut($obj->event_type)."</td>";
 		print "<td>".$obj->note."</td>";
                 print "<td>";
-                if($obj->fk_userid>0)
+                if ($obj->fk_userid>0)
 {
                 $sUser = new User($db);
                 $sUser->fetch($obj->fk_userid);
@@ -473,7 +473,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 print "</td>";
 //		print "<td>".  print_sellist('third_party', 'rowid', $obj->fk_third_party, 'rowid', 'description')."</td>";
                 print "<td>";
-                if($obj->fk_third_party>0)
+                if ($obj->fk_third_party>0)
 {
                 $sThirdParty = new Societe($db);
                 $sThirdParty->fetch($obj->fk_third_party);
@@ -481,7 +481,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 }
                 print "</td>";
                  print "<td>";
-                if($obj->fk_task>0)
+                if ($obj->fk_task>0)
 {
                 $sTask = new Task($db);
                 $sTask->fetch($obj->fk_task);
@@ -489,7 +489,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
                 }
                 print "</td>";
                                  print "<td>";
-                if($obj->fk_project>0)
+                if ($obj->fk_project>0)
 {
                 $sProject = new Project($db);
                 $sProject->fetch($obj->fk_project);

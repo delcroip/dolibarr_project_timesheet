@@ -81,7 +81,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 }
 */
  // uncomment to avoid resubmision
-//if(isset( $_SESSION['AttendanceSystem_class'][$tms]))
+//if (isset( $_SESSION['AttendanceSystem_class'][$tms]))
 //{
  //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
@@ -99,13 +99,13 @@ if ($user->societe_id > 0 ||
 */
 // create object and set id or ref if provided as parameter
 $object = new AttendanceSystem($db);
-if($id>0)
+if ($id>0)
 {
     $object->id = $id;
     $object->fetch($id);
     $ref = dol_sanitizeFileName($object->ref);
 }
-if(!empty($ref))
+if (!empty($ref))
 {
     $object->ref = $ref;
     $object->id = $id;
@@ -122,10 +122,10 @@ $error = 0;
 if ($cancel)
 {
         AttendanceSystemReloadPage($backtopage, $id, $ref);
-}elseif(($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
+}elseif (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
     //block resubmit
-    if(empty($tms) || (!isset($_SESSION['AttendanceSystem'][$tms])))
+    if (empty($tms) || (!isset($_SESSION['AttendanceSystem'][$tms])))
     {
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
             $action = ($action == 'add')?'create':'view';
@@ -141,7 +141,7 @@ if ($cancel)
 	$object->status = GETPOST('Status');
 // test here if the post data is valide
  /*
- if($object->prop1 == 0 || $object->prop2 == 0)
+ if ($object->prop1 == 0 || $object->prop2 == 0)
  {
      if ($id>0 || $ref!='')
         $action = 'create';
@@ -149,7 +149,7 @@ if ($cancel)
         $action = 'edit';
  }
   */
-}elseif($id == 0 && $ref == '' && $action!='create')
+}elseif ($id == 0 && $ref == '' && $action!='create')
 {
     $action = 'create';
 }
@@ -171,7 +171,7 @@ switch($action)
         }
         $action = 'view';
     case 'delete':
-        if(isset($_GET['urlfile'])) $action = 'deletefile';
+        if (isset($_GET['urlfile'])) $action = 'deletefile';
     case 'view':
     case 'viewinfo':
     case 'edit':
@@ -185,9 +185,9 @@ switch($action)
             }else
             {
             // fill the id & ref
-                if(isset($object->id))$id = $object->id;
-                if(isset($object->rowid))$id = $object->rowid;
-                if(isset($object->ref))$ref = $object->ref;
+                if (isset($object->id))$id = $object->id;
+                if (isset($object->rowid))$id = $object->rowid;
+                if (isset($object->ref))$ref = $object->ref;
             }
         }else
         {
@@ -229,11 +229,11 @@ switch($action)
          break;
 }
 //Removing the tms array so the order can't be submitted two times
-if(isset( $_SESSION['AttendanceSystem'][$tms]))
+if (isset( $_SESSION['AttendanceSystem'][$tms]))
 {
     unset($_SESSION['AttendanceSystem'][$tms]);
 }
-if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref))))
+if (($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref))))
 {
     $tms = getToken();
     $_SESSION['AttendanceSystem'][$tms] = array();
@@ -275,7 +275,7 @@ switch ($action)
     case 'edit':
         $edit = 1;
     case 'delete';
-        if( $action == 'delete' && ($id>0 || $ref!=""))
+        if ( $action == 'delete' && ($id>0 || $ref!=""))
         {
          $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
@@ -283,7 +283,7 @@ switch ($action)
         }
     case 'view':
         // tabs
-        if($edit == 0 && $new == 0)
+        if ($edit == 0 && $new == 0)
         {
             //show tabs
             $head = AttendanceSystemPrepareHead($object);
@@ -292,9 +292,9 @@ switch ($action)
             print_fiche_titre($langs->trans('AttendanceSystem'));
         }
 	print '<br>';
-        if($edit == 1)
+        if ($edit == 1)
         {
-            if($new == 1)
+            if ($new == 1)
             {
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action=add">';
             }else{
@@ -307,7 +307,7 @@ switch ($action)
             // show the nav bar
             $basedurl = dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1);
             $linkback = '<a href = "'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-            if(!isset($object->ref))//save ref if any
+            if (!isset($object->ref))//save ref if any
                 $object->ref = $object->id;
             print $form->showrefnav($object, 'action = view&id', $linkback, 1, 'rowid', 'ref', '');
             //reloqd the ref
@@ -316,7 +316,7 @@ switch ($action)
 // show the field label
 	print "<tr>\n";
 	print '<td class = "fieldrequired">'.$langs->trans('Label').' </td><td>';
-	if($edit == 1)
+	if ($edit == 1)
         {
 		print '<input type = "text" value = "'.$object->label.'" name = "Label">';
 	}else
@@ -328,7 +328,7 @@ switch ($action)
 // show the field ip
 	print "<tr>\n";
 	print '<td class = "fieldrequired">'.$langs->trans('Ip').' </td><td>';
-	if($edit == 1)
+	if ($edit == 1)
         {
             print '<input type = "text" value = "'.$object->ip.'" name = "Ip">';
 	}else
@@ -340,7 +340,7 @@ switch ($action)
 // show the field port
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Port').' </td><td>';
-	if($edit == 1)
+	if ($edit == 1)
         {
             if ($new == 1)
                     print '<input type = "text" value = "4370" name = "Port">';
@@ -354,7 +354,7 @@ switch ($action)
 // show the field note
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Note').' </td><td>';
-	if($edit == 1)
+	if ($edit == 1)
         {
             print '<input type = "text" value = "'.$object->note.'" name = "Note">';
 	}else{
@@ -365,14 +365,14 @@ switch ($action)
 // show the field third_party
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Thirdparty').' </td><td>';
-	if($edit == 1)
+	if ($edit == 1)
         {
             $selected = ($new)?-1:$object->third_party;
             $htmlname = 'Thirdparty';
             print $form->select_company($selected, $htmlname, '', 1);
 	}else
         {
-		if(class_exist('Societe'))
+		if (class_exist('Societe'))
                 {
                     $StaticObject = New Societe($db);
                     print "<td>".$StaticObject->getNomUrl('1', $object->fk_third_party)."</td>";
@@ -385,14 +385,14 @@ switch ($action)
 // show the field task
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Task').' </td><td>';
-	if($edit == 1)
+	if ($edit == 1)
         {
             $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
             $html_task = array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
             $addChoices_task = null;
 		print select_sellist($sql_task, $html_task, $object->task, $addChoices_task );
 	}else{
-            if(class_exist('Task'))
+            if (class_exist('Task'))
             {
                 $StaticObject = New Task($db);
                 print "<td>".$StaticObject->getNomUrl('1', $object->fk_task)."</td>";
@@ -405,13 +405,13 @@ switch ($action)
 // show the field project
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Project').' </td><td>';
-	if($edit == 1)
+	if ($edit == 1)
         {
             $selected = $object->project;
             $htmlname = 'Project';
             $formproject->select_projects(-1, $selected, $htmlname);
 	}else{
-            if(class_exist('Project'))
+            if (class_exist('Project'))
             {
                     $StaticObject = New Project($db);
                     print "<td>".$StaticObject->getNomUrl('1', $object->fk_project)."</td>";
@@ -424,7 +424,7 @@ switch ($action)
 // show the field status
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Status').' </td><td>';
-	if($edit == 1)
+	if ($edit == 1)
         {
             print '<input type = "text" value = "'.$object->status.'" name = "Status">';
 	}else{
@@ -435,9 +435,9 @@ switch ($action)
 	print '</table>'."\n";
 	print '<br>';
 	print '<div class = "center">';
-        if($edit == 1)
+        if ($edit == 1)
         {
-            if($new == 1)
+            if ($new == 1)
             {
                 print '<input type = "submit" class = "butAction" name = "add" value = "'.$langs->trans('Add').'">';
             }else{
@@ -470,7 +470,7 @@ switch ($action)
         print '</div>';
         break;
     case 'delete':
-        if( ($id>0 || $ref!=''))
+        if ( ($id>0 || $ref!=''))
         {
             $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
             if ($ret == 'html') print '<br />';

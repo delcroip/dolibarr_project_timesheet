@@ -30,10 +30,10 @@ $userId = is_object($user)?$user->id:$user;
 // find the Role //FIX ME SHOW ONLY if he has right
 $role = GETPOST('role', 'alpha');
 $role_key = '';
-if(!$role)
+if (!$role)
 {
     $role_key = array_search('1', array_slice ($apflows, 2))+1;// search other than team
-    if($role_key == false)
+    if ($role_key == false)
 {
         header("location:TimesheetTeamApproval.php");
     }else
@@ -48,13 +48,13 @@ if(!$role)
 // end find the role
 // get other param
 $action = GETPOST('action', 'alpha');
-if(!is_numeric($offset))$offset = 0;
+if (!is_numeric($offset))$offset = 0;
 $print = (GETPOST('optioncss', 'alpha') == 'print')?true:false;
 $current = GETPOST('target', 'int');
 $token = GETPOST('token', 'alpha');
-if($current == null)$current = '0';
+if ($current == null)$current = '0';
 //handle submission
-if($action == 'submit')
+if ($action == 'submit')
 {
     if (isset($_SESSION['task_timesheet'][$token]))
     {
@@ -75,7 +75,7 @@ if($action == 'submit')
             {
                 $count++;
                 $task_timesheet->fetch($id);
-                if($notes[$id]!=$task_timesheet->note)
+                if ($notes[$id]!=$task_timesheet->note)
                 {
                     $task_timesheet->note = $notes[$id];
                     $update = true;
@@ -84,28 +84,28 @@ if($action == 'submit')
                 {
                     case '2705'://Approved':
                         $ret = $task_timesheet->approved($user, array_search($role_row, $roles) );
-                        if($ret<0)$errors++;
+                        if ($ret<0)$errors++;
                         else $tsApproved++;
                         break;
                     case '274C'://'Rejected':
                         $ret = $task_timesheet->challenged($user, array_search($role_row, $roles) );
-                        if($ret<0)$errors++;
+                        if ($ret<0)$errors++;
                         else $tsRejected++;
                         break;
                     case '2753': // ? submitted
-                        if($update)$task_timesheet->update($user);
+                        if ($update)$task_timesheet->update($user);
                     default:
                         break;
                 }
             }
-            if(($tsRejected+$tsApproved)>0)
+            if (($tsRejected+$tsApproved)>0)
             {
                $current--;
             }
-            if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").' '.$tsApproved);
-            if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").' '.$tsRejected);
-            if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").' '.$errors, 'errors');
-            if($errors == 0 && $tsApproved == 0 && $tsRejected == 0)
+            if ($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").' '.$tsApproved);
+            if ($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").' '.$tsRejected);
+            if ($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").' '.$errors, 'errors');
+            if ($errors == 0 && $tsApproved == 0 && $tsRejected == 0)
             {
                 setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
             }
@@ -122,17 +122,17 @@ if($action == 'submit')
 ****************************************************/
 $subId = ($user->admin)?'all':getSubordinates($db, $userId, 1, array($userId), $role_key);//FIx ME for other role
 $tasks = implode(', ', array_keys(getTasks($db, $userId)));
-if($tasks == "")$tasks = 0;
+if ($tasks == "")$tasks = 0;
 $selectList = getSelectAps($subId, $tasks, $role_key);
-if($current>=count($selectList))$current = 0;
+if ($current>=count($selectList))$current = 0;
 // number of TS to show
 $level = intval(TIMESHEET_MAX_TTA_APPROVAL);
 //define the offset
 $offset = 0;
 /*
-if( is_array($selectList)&& count($selectList))
+if ( is_array($selectList)&& count($selectList))
 {
-        if($current>=count($selectList))$current = 0;
+        if ($current>=count($selectList))$current = 0;
         $offset = 0;
         for($i = 0;$i<$current;$i++)
 {
@@ -143,7 +143,7 @@ if( is_array($selectList)&& count($selectList))
 // get the TTA to show
 $objectArray = getTStobeApproved($current, $selectList);
 $token = getToken();
-if(is_array($objectArray))
+if (is_array($objectArray))
 {
     // SAVE THE ARRAY IN THE SESSION FOR CHECK UPON SUBMIT
     foreach($objectArray as $object)
@@ -163,7 +163,7 @@ llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 showTimesheetApTabs($role_key);
 echo '<div id = "'.$role.'" class = "tabBar">';
-if(!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $current);
+if (!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $current);
 // form header
 echo '<form action="?action=submit" method = "POST" name = "OtherAp" id = "OtherAp">';
 echo '<input type = "hidden" name = "token" value = "'.$token.'"/>';
@@ -208,7 +208,7 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
     $htmlSelect .= '</select>';
     $form = new Form($db);
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
-    if($current!=0)
+    if ($current!=0)
     {
         $Nav.= '<a href="?action=goTo&target='.($current-1);
         $Nav.=  '&role='.($role);
@@ -219,7 +219,7 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
     $Nav.=  '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
     $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
     $Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-    if($current<count($selectList))
+    if ($current<count($selectList))
     {
         $Nav.=  '<a href="?action=goTo&target='.($current+1);
         $Nav.=  '&role='.($role);
@@ -237,7 +237,7 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
 function getTStobeApproved($current, $selectList)
 {
     global $db;
-    if((!is_array($selectList) || !is_array($selectList[$current]['idList'])))return array();
+    if ((!is_array($selectList) || !is_array($selectList[$current]['idList'])))return array();
     $listTTA = array();
     foreach($selectList[$current]['idList'] as $idTTA)
     {
@@ -256,14 +256,14 @@ function getTStobeApproved($current, $selectList)
  */
 function getSelectAps($subId, $tasks, $role_key)
 {
-    if((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
+    if ((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
     global $db, $langs, $conf, $roles;
     $sql = "SELECT COUNT(ts.rowid) as nb, ";
     switch($conf->global->TIMESHEET_TIME_SPAN)
     {
         case 'month':
             $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%m/%Y'), '-', pjt.ref) as id, ";
-             if($db->type!='pgsql')
+            if ($db->type!='pgsql')
             {
                 $sql .= " CONCAT(pjt.title, ' (', MONTH(date_start), '/', YEAR(date_start), ' )#' ) as label, ";
             }else
@@ -275,7 +275,7 @@ function getSelectAps($subId, $tasks, $role_key)
         case 'splitedWeek':
         default:
             $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%v/%Y'), '-', pjt.ref) as id, ";
-           if($db->type!='pgsql')
+            if ($db->type!='pgsql')
             {
                 $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ' )#' ) as label, ";
             }else
@@ -284,7 +284,7 @@ function getSelectAps($subId, $tasks, $role_key)
             }
            break;
     }
-    if($db->type!='pgsql')
+    if ($db->type!='pgsql')
     {
         $sql .= " GROUP_CONCAT(ts.rowid  SEPARATOR ', ') as idlist";
     }else
@@ -296,10 +296,10 @@ function getSelectAps($subId, $tasks, $role_key)
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet as pjt on tsk.fk_projet = pjt.rowid ';
     $sql .= ' WHERE ts.status in ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.' )';
     $sql .= ' AND recipient='.$role_key;
-    if($subId!='all')
+    if ($subId!='all')
     {
         $sql .= ' AND ts.fk_userid in ('.implode(', ', $subId).')';
-        if($role_key == PROJECT)
+        if ($role_key == PROJECT)
         {
             $sql .= ' AND tsk.rowid in ('.$tasks.') ';
         }
@@ -357,7 +357,7 @@ function getHTMLRows($objectArray)
 {
     global $langs, $conf;
     $headers = array('Approval', 'Note', 'Tasks', 'User');
-    if(!is_array($objectArray) || !is_object($objectArray[0])) return -1;
+    if (!is_array($objectArray) || !is_object($objectArray[0])) return -1;
     echo '<tr class = "liste_titre">';
     echo '<th>'.$langs->trans('Approval').'</th>';
     echo '<th>'.$langs->trans('Note').'</th>';
@@ -365,7 +365,7 @@ function getHTMLRows($objectArray)
     echo '<th>'.$langs->trans('User').'</th>';
     $weeklength = getDayInterval($objectArray[0]->date_start_approval, $objectArray[0]->date_end_approval);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
-    if($conf->global->TIMESHEET_TIME_SPAN == "month")
+    if ($conf->global->TIMESHEET_TIME_SPAN == "month")
     {
         //remove Year
         $format = str_replace('Y', '', str_replace('%Y', '', str_replace('Y/', '', str_replace('/%Y', '', $format))));

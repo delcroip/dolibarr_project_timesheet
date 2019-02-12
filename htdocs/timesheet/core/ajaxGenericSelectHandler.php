@@ -20,7 +20,7 @@ include 'lib/includeMain.lib.php';
  top_httphead();
 //get the token, exit if
 $token = GETPOST('token', 'apha');
-if(!isset($_SESSION['ajaxQuerry'][$token]))
+if (!isset($_SESSION['ajaxQuerry'][$token]))
 {
     ob_end_flush();
     exit();
@@ -33,7 +33,7 @@ $separator = isset($htmlarray['separator'])?$htmlarray['separator']:' ';
  $search = GETPOST($htmlName, 'alpha');
 //find if barckets
 $posBs = strpos($htmlName, '[');
-if($posBs>0)
+if ($posBs>0)
 {
     $subStrL1 = substr($htmlName, 0, $posBs);
     $search = $_GET[$subStrL1];
@@ -48,11 +48,11 @@ if($posBs>0)
     $sql .= $sqlarray['keyfield'];
     $sql .= ', '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
-    if(isset($sqlarray['join']) && !empty($sqlarray['join']))
+    if (isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql .= ' '.$sqlarray['join'];
-    if(isset($sqlarray['where']) && !empty($sqlarray['where']))
+    if (isset($sqlarray['where']) && !empty($sqlarray['where']))
             $sql .= ' WHERE '.$sqlarray['where'];
-    if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
+    if (isset($sqlarray['tail']) && !empty($sqlarray['tail']))
             $sql .= ' '.$sqlarray['tail'];
     dol_syslog('form::ajax_select_generic ', LOG_DEBUG);
     $return_arr = array();
@@ -71,10 +71,10 @@ if($posBs>0)
         $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
         $start2 = strpos($item, '.');
         $label = $item;
-        if($start)
+        if ($start)
 {
             $label = substr($item, $start+4);
-        }elseif($start2)
+        }elseif ($start2)
 {
             $label = substr($item, $start2+1);
         }
@@ -91,7 +91,7 @@ if($posBs>0)
                 $label = '';
                 foreach($fields as $item)
 {
-                    if(!empty($label))$label .= $separator;
+                    if (!empty($label))$label .= $separator;
                     $label .= $obj->{$item['label']};
                 }
                 $row_array['label'] = $label;
@@ -103,7 +103,7 @@ if($posBs>0)
             }
             $i++;
         }
-        if($addtionnalChoices)foreach($addtionnalChoices as $value => $label)
+        if ($addtionnalChoices)foreach($addtionnalChoices as $value => $label)
 {
                 $row_array['label'] = $label;
 		$row_array['value'] = $label;

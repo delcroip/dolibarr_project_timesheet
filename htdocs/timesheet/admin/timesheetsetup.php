@@ -28,8 +28,7 @@ $langs->load("admin");
 $langs->load("errors");
 $langs->load("other");
 $langs->load("timesheet@timesheet");
-if (!$user->admin)
-{
+if (!$user->admin) {
     $accessforbidden = accessforbidden("you need to be admin");
 }
 $action = getpost('action', 'alpha');
@@ -68,9 +67,9 @@ $invoiceservice = $conf->global->TIMESHEET_INVOICE_SERVICE;
 $invoiceshowtask = $conf->global->TIMESHEET_INVOICE_SHOW_TASK;
 $invoiceshowuser = $conf->global->TIMESHEET_INVOICE_SHOW_USER;
 $searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
-if(count($opendays)!=8)$opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
+if (count($opendays)!=8)$opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
-if(count($apflows)!=6)$apflows = array('_', '0', '0', '0', '0', '0');
+if (count($apflows)!=6)$apflows = array('_', '0', '0', '0', '0', '0');
 $error = 0;
 /** make sure that there is a 0 iso null
  *
@@ -88,7 +87,7 @@ switch($action)
     case "save":
         //general option
         $hoursperday = getpost('hoursperday', 'int');
-        if($hoursperday == 0)
+        if ($hoursperday == 0)
         {
             //error handling if hour per day is empty
             $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
@@ -99,7 +98,7 @@ switch($action)
         $timetype = getpost('timeType', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         $timeSpan = getpost('timeSpan', 'alpha');
-        if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN)
+        if ($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN)
         { // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql.= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'

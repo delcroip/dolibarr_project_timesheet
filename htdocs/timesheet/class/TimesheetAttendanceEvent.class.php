@@ -189,8 +189,8 @@ public $date_time_event_start;
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element." as st ON t.token = st.token AND ABS(st.event_type = 2)";
         $sql.= " WHERE ";
         if (!empty($id))$sql.= "t.rowid = '".$id;
-        elseif(!empty($user))$sql.=  " t.fk_userid = '".$user->id;
-        elseif(!empty($startToken))  $sql.= "  t.token = '".$startToken;
+        elseif (!empty($user))$sql.=  " t.fk_userid = '".$user->id;
+        elseif (!empty($startToken))  $sql.= "  t.token = '".$startToken;
         else{
             dol_syslog(get_class($this)."::fetch: no param", LOG_DEBUG);
             return -1;
@@ -293,15 +293,15 @@ public $date_time_event_start;
 	global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;// Force disable tooltips
     	$result = '';
-        if(empty($ref) && $id == 0)
+        if (empty($ref) && $id == 0)
 {
-            if(isset($this->id))
+            if (isset($this->id))
 {
                 $id = $this->id;
-            }elseif(isset($this->rowid))
+            }elseif (isset($this->rowid))
 {
                 $id = $this->rowid;
-            }if(isset($this->ref))
+            }if (isset($this->ref))
 {
                 $ref = $this->ref;
             }
@@ -317,10 +317,10 @@ public $date_time_event_start;
             $linkclose .= ' title = "'.dol_escape_htmltag($label, 1).'"';
             $linkclose .= ' class = "classfortooltip'.($morecss?' '.$morecss:'').'"';
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
-        if($id)
+        if ($id)
 {
             $lien = '<a href = "'.dol_buildpath('/timesheet/Attendanceevent_card.php', 1).'id='.$id.'&action=view"'.$linkclose.'>';
-        }elseif(!empty($ref))
+        }elseif (!empty($ref))
 {
             $lien = '<a href = "'.dol_buildpath('/timesheet/Attendanceevent_card.php', 1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
@@ -330,17 +330,17 @@ public $date_time_event_start;
     	$picto = 'generic';
         $label = '<u>' . $langs->trans("spread") . '</u>';
         $label.= '<br>';
-        if($ref)
+        if ($ref)
 {
             $label .= $langs->trans("Red").': '.$ref;
-        }elseif($id)
+        }elseif ($id)
 {
             $label .= $langs->trans("#").': '.$id;
         }
     	if ($withpicto == 1)
 {
             $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif($withpicto == 2)
+        }elseif ($withpicto == 2)
 {
             $result .= $lien.img_object($label, $picto).$lienfin;
         }else{
@@ -420,7 +420,7 @@ public $date_time_event_start;
     function delete($user, $notrigger = 0)
     {
         //global $conf, $langs;
-        if(empty($user)) return -1;
+        if (empty($user)) return -1;
         $error = 0;
         $this->db->begin();
         if (! $error)
@@ -443,7 +443,7 @@ public $date_time_event_start;
         $resql = $this->db->query($sql);
         if (! $resql)
 { $error++;$this->errors[] = "Error ".$this->db->lasterror();}
-        elseif($this->db->affected_rows($resql) == 0)
+        elseif ($this->db->affected_rows($resql) == 0)
 {$error++;$this->errors[] = "Item no found in database";}
         }
 // Commit or rollback
@@ -586,10 +586,10 @@ public $date_time_event_start;
      */
     function ajaxStart($user, $json = '', $customer = '', $project = '', $task = '')
     {
-        if(empty($task) && empty($project) && empty($customer)) return '{"errorType":"startError", "error":"no event to start"}';
+        if (empty($task) && empty($project) && empty($customer)) return '{"errorType":"startError", "error":"no event to start"}';
         $location_ref = '';
         //load old if any
-        if(!empty($json))
+        if (!empty($json))
         {
             $this->unserialize($json, 1);
             //save the location ref
@@ -635,7 +635,7 @@ public $date_time_event_start;
         $note = '';
         $tokenJson = '';
         $retJson = '';
-        if(!empty($json))
+        if (!empty($json))
         {
             $this->unserialize($json, 1);
             $this->status = "";
@@ -649,7 +649,7 @@ public $date_time_event_start;
         }
         $ret = 0;
         $tokenDb = $this->token;
-        if(empty($tokenDb) )
+        if (empty($tokenDb) )
 {  // 00 01 no db record found by token or user
             $this->initAsSpecimen();
             $this->status = array(
@@ -657,7 +657,7 @@ public $date_time_event_start;
                    'type'=>'errors',
                    'param'=>'');
             // AUTO START ?
-        }elseif($this->event_type>=EVENT_STOP)
+        }elseif ($this->event_type>=EVENT_STOP)
 { // found but already stopped
             $this->initAsSpecimen();
             $this->status = array(
@@ -665,7 +665,7 @@ public $date_time_event_start;
                    'type'=>'errors',
                    'param'=>'');
         }else{// 11 && 10 found and active
-            if(!empty($tokenJson))
+            if (!empty($tokenJson))
 { //11
                 $this->event_location_ref = $location_ref;
                 $this->note = $note;
@@ -673,7 +673,7 @@ public $date_time_event_start;
             $this->event_type = EVENT_STOP;
             $this->date_time_event = mktime();
             //if the max time is breach
-            if(($conf->global->TIMESHEET_EVENT_MAX_DURATION>0 &&
+            if (($conf->global->TIMESHEET_EVENT_MAX_DURATION>0 &&
                 $this->date_time_event-$this->date_time_event_start>$conf->global->TIMESHEET_EVENT_MAX_DURATION*3600))
                 {
                 // put the max time per default
@@ -713,7 +713,7 @@ public $date_time_event_start;
         $note = '';
         $tokenJson = '';
         $retJson = '';
-        if(!empty($json))
+        if (!empty($json))
         {
             $this->unserialize($json, 1);
             $location_ref = $this->event_location_ref;
@@ -723,7 +723,7 @@ public $date_time_event_start;
         $this->fetch('', $user);
         //var_dump($this->event_type);
         $tokenDb = $this->token;
-        if( (empty($tokenJson) && empty($tokenDb) )||
+        if ( (empty($tokenJson) && empty($tokenDb) )||
                 (!empty($tokenDb) && $this->event_type>=EVENT_STOP))
         {
             //00
@@ -732,16 +732,16 @@ public $date_time_event_start;
                    'text'=>$langs->trans('NoActiveEvent'),
                    'type'=>'warning',
                    'param'=>'');
-        }elseif(empty($tokenDb) && !empty($tokenJson))
+        }elseif (empty($tokenDb) && !empty($tokenJson))
         { // json recieved with token //01
             $this->status = array(
                    'text'=>$langs->trans('EventNotActive'),
                    'type'=>'errors',
                    'param'=>'');
-        }elseif(!empty($tokenDb))
+        }elseif (!empty($tokenDb))
         {
             // 11 && 10
-            if(!empty($tokenJson))
+            if (!empty($tokenJson))
             {
                 //11
                 $this->event_location_ref = $location_ref;
@@ -752,7 +752,7 @@ public $date_time_event_start;
             }
             // update the required fields
             $this->date_time_event = mktime();
-            if($this->event_type!=EVENT_HEARTBEAT)
+            if ($this->event_type!=EVENT_HEARTBEAT)
             {
                 // create an heartbeat only if there is none
                 $this->event_type = EVENT_HEARTBEAT;
@@ -771,11 +771,11 @@ public $date_time_event_start;
   */
 function createTimeSpend($user, $token = '')
 {
-    //if(empty($token))$token = $this->token;
-    if(!empty($token))
+    //if (empty($token))$token = $this->token;
+    if (!empty($token))
     {
         $this->fetch('', '', $token);
-        if($this->event_type == EVENT_STOP && $this->task>0)
+        if ($this->event_type == EVENT_STOP && $this->task>0)
         {
             $start = strtotime("midnight", (int) $this->date_time_event);
             $end = strtotime("tomorrow", (int) $this->date_time_event)-1;
@@ -785,7 +785,7 @@ function createTimeSpend($user, $token = '')
             //var_dump($tta->getTaskTab());
             $arrayRes = $tta->saveTaskTime($user, $duration, $this->note, 0, true);
             $this->status = TimesheetsetEventMessage($arrayRes, true);
-            if(is_array($arrayRes) && array_sum($arrayRes)-$arrayRes['updateError']>0) $tta->updateTimeUsed();
+            if (is_array($arrayRes) && array_sum($arrayRes)-$arrayRes['updateError']>0) $tta->updateTimeUsed();
             //TimesheetsetEventMessage($arrayRes);
         }
     }
@@ -801,7 +801,7 @@ function createTimeSpend($user, $token = '')
     {
         $tasksList = $this->fetchTasks($userid);
         $html = '';
-        if(is_array($tasksList))foreach($tasksList as $task)
+        if (is_array($tasksList))foreach($tasksList as $task)
         {
             $html .= $task->getAttendanceLine($headers, ($task->id == $this->task));
         }
@@ -839,8 +839,8 @@ function createTimeSpend($user, $token = '')
  function fetchTasks($userid = '', $date = '')
  {
     global $conf;
-    if(empty($date))$date = time();
-    if($userid == '')
+    if (empty($date))$date = time();
+    if ($userid == '')
     {
         $userid = $this->userid;
     }
@@ -854,7 +854,7 @@ function createTimeSpend($user, $token = '')
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = ec.element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
     $sql .= " WHERE ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task' ";
-    if($conf->global->TIMESHEET_HIDE_DRAFT == '1')
+    if ($conf->global->TIMESHEET_HIDE_DRAFT == '1')
     {
         $sql .= ' AND prj.fk_statut>\'0\' ';
     }
@@ -961,7 +961,7 @@ public function serialize($mode = 0)
         // automatic unserialisation based on match between property name and key value
         foreach ($array as $key => $value)
         {
-            if(property_exists($this, $key))
+            if (property_exists($this, $key))
             {
                 $this->{$key} = $value;
             }
@@ -972,7 +972,7 @@ public function serialize($mode = 0)
      */
     public function getInfo()
     {
-        if(!empty($this->task))
+        if (!empty($this->task))
         {
             $staticTask = new TimesheetTask($this->db);
             $staticTask->id = ($this->task);
@@ -986,11 +986,11 @@ public function serialize($mode = 0)
             $this->third_partyLabel = $staticTask->companyName;
         }else
         {
-            if(!empty($this->project) && empty($this->projectLabel) )
+            if (!empty($this->project) && empty($this->projectLabel) )
             {
                 $this->projectLabel = print_sellist(array('table'=>"projet", 'keyfield'=> 'rowid', 'fields'=>'title'), $this->project);
             }
-            if(!empty($this->third_party) && empty($this->third_partyLabel))
+            if (!empty($this->third_party) && empty($this->third_partyLabel))
             {
                 $this->third_partyLabel = print_sellist(array('table'=>"societe", 'keyfield'=> 'rowid', 'fields'=>'nom'), $this->third_party);
             }

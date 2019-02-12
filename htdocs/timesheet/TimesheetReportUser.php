@@ -27,7 +27,7 @@ $action		 = GETPOST('action', 'alpha');
 $dateStart	 = GETPOST('dateStart', 'alpha');
 $userIdSelected = GETPOST('userSelected', 'int');
 $exportFriendly = GETPOST('exportFriendly', 'alpha');
-if(empty($userIdSelected))$userIdSelected = $userid;
+if (empty($userIdSelected))$userIdSelected = $userid;
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 // Load traductions files requiredby by page
@@ -40,14 +40,14 @@ $toDate = GETPOST('toDate', 'alpha');
 $toDateday = (!empty($toDate) && $action == 'goToDate')? GETPOST('toDateday', 'int'):0;// to not look for the date if action not goTodate
 $toDatemonth = GETPOST('toDatemonth', 'int');
 $toDateyear = GETPOST('toDateyear', 'int');
-if($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"]))
+if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"]))
 {
     $dateStart = $_SESSION["dateStart"];
 }else {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
 }
     $mode = GETPOST('mode', 'alpha');
-    if(empty($mode))$mode = 'PTD';
+    if (empty($mode))$mode = 'PTD';
     $short = GETPOST('short', 'int');;
     $userSelected = $userList[$userIdSelected];
     $year = GETPOST('year', 'int');;
@@ -63,7 +63,7 @@ $sql .= 'JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
      .' ON ec.fk_socpeople = usr.rowid '
      .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact'
      .' WHERE ctc.element in (\'project_task\', \'project\') AND ctc.active = \'1\' ';
-if(!$user->admin)
+if (!$user->admin)
 {
     $list = getSubordinates($db, $userid, 3);
     $list[] = $userid;
@@ -113,7 +113,7 @@ $querryRes = '';
 if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         &&!empty($_POST['month']))
 {
-    if($userIdSelected == '-999')
+    if ($userIdSelected == '-999')
     {
         foreach($userList as $userSt)
         {
@@ -147,9 +147,9 @@ $Form .= '</select></td>'
         .'<td><input type = "submit" value = "'.$langs->trans('getReport').'"></td>
         </tr>
         </table></form>';
-if(!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
+if (!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
 // section to generate
-if(!empty($querryRes))
+if (!empty($querryRes))
 {
     echo $querryRes;
 }

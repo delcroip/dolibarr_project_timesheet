@@ -35,10 +35,10 @@ function AttendanceSystemReloadPage($backtopage, $id, $ref)
     if (!empty($backtopage))
     {
         header("Location: ".$backtopage);
-    }elseif(!empty($ref))
+    }elseif (!empty($ref))
     {
         header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?ref='.$ref);
-    }elseif($id>0)
+    }elseif ($id>0)
     {
         header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?id='.$id);
     }else
