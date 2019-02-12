@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
+ * Copyright (C) 2018           Patrick DELCROIX     <pmpdelcroix@gmail.com>
  *  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software;you can redistribute it and/or modify
@@ -70,43 +70,43 @@ $help_url = '';
 //$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 if ($object->id) {
-	/*
-	 * Show tabs
-	 */
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = AttendanceSystemPrepareHead($object);
-	dol_fiche_head($head, 'document', $langs->trans("AttendanceSystem"), -1, 'AttendanceSystem@timesheet');
-	// Construit liste des fichiers
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize = 0;
-	foreach ($filearray as $key => $file) {
-		$totalsize+=$file['size'];
-	}
-	// Object card
-	// ------------------------------------------------------------
-	$linkback = '<a href = "' .dol_buildpath('/timesheet/AttendanceSystemAdmin.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+        /*
+         * Show tabs
+         */
+        if (! empty($conf->notification->enabled)) $langs->load("mails");
+        $head = AttendanceSystemPrepareHead($object);
+        dol_fiche_head($head, 'document', $langs->trans("AttendanceSystem"), -1, 'AttendanceSystem@timesheet');
+        // Construit liste des fichiers
+        $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc'?SORT_DESC:SORT_ASC), 1);
+        $totalsize = 0;
+        foreach ($filearray as $key => $file) {
+                $totalsize+=$file['size'];
+        }
+        // Object card
+        // ------------------------------------------------------------
+        $linkback = '<a href = "' .dol_buildpath('/timesheet/AttendanceSystemAdmin.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
     print '<div class = "fichecenter">';
     print '<div class = "underbanner clearboth"></div>';
-	print '<table class = "border centpercent">';
-	// Number of files
-	print '<tr><td class = "titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan = "3">'.count($filearray).'</td></tr>';
-	// Total size
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan = "3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	print '</table>';
-	print '</div>';
-	dol_fiche_end();
-	$modulepart = 'timesheet';
-	//$permission = $user->rights->timesheet->create;
-	$permission = 1;
-	//$permtoedit = $user->rights->timesheet->create;
-	$permtoedit = 1;
-	$param = '&id= ' . $object->id;
-	//$relativepathwithnofile = 'AttendanceSystem/' . dol_sanitizeFileName($object->id).'/';
-	$relativepathwithnofile = 'AttendanceSystem/' . dol_sanitizeFileName($object->ref).'/';
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-}else {
-	accessforbidden('', 0, 0);
+        print '<table class = "border centpercent">';
+        // Number of files
+        print '<tr><td class = "titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan = "3">'.count($filearray).'</td></tr>';
+        // Total size
+        print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan = "3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+        print '</table>';
+        print '</div>';
+        dol_fiche_end();
+        $modulepart = 'timesheet';
+        //$permission = $user->rights->timesheet->create;
+        $permission = 1;
+        //$permtoedit = $user->rights->timesheet->create;
+        $permtoedit = 1;
+        $param = '&id= ' . $object->id;
+        //$relativepathwithnofile = 'AttendanceSystem/' . dol_sanitizeFileName($object->id).'/';
+        $relativepathwithnofile = 'AttendanceSystem/' . dol_sanitizeFileName($object->ref).'/';
+        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+} else {
+        accessforbidden('', 0, 0);
 }
 llxFooter();
 $db->close();

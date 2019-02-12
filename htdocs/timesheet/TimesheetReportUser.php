@@ -22,9 +22,9 @@ require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetReport.class.php';
 $htmlother = new FormOther($db);
 $userid = is_object($user)?$user->id:$user;
-$id		 = GETPOST('id', 'int');
-$action		 = GETPOST('action', 'alpha');
-$dateStart	 = GETPOST('dateStart', 'alpha');
+$id                 = GETPOST('id', 'int');
+$action                 = GETPOST('action', 'alpha');
+$dateStart         = GETPOST('dateStart', 'alpha');
 $userIdSelected = GETPOST('userSelected', 'int');
 $exportFriendly = GETPOST('exportFriendly', 'alpha');
 if (empty($userIdSelected))$userIdSelected = $userid;
@@ -42,7 +42,7 @@ $toDatemonth = GETPOST('toDatemonth', 'int');
 $toDateyear = GETPOST('toDateyear', 'int');
 if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $dateStart = $_SESSION["dateStart"];
-}else {
+} else {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
 }
     $mode = GETPOST('mode', 'alpha');
@@ -85,7 +85,7 @@ if ($resql) {
         $i++;
     }
     $db->free($resql);
-}else {
+} else {
     dol_print_error($db);
 }
 $Form = '<form action="?action=reportuser'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
@@ -114,12 +114,12 @@ if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
             $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
-    }else {
+    } else {
         $querryRes = $userList[$userIdSelected]->getHTMLreport($short,
         $langs->trans(date('F', strtotime('12/13/1999 +'.$month.' month'))),
         $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
-}else {
+} else {
     $year = date('Y', $dateStart);
     $month = date('m', $dateStart);
 }
@@ -138,7 +138,7 @@ $Form .= '</select></td>'
         .'<td><input type = "submit" value = "'.$langs->trans('getReport').'"></td>
         </tr>
         </table></form>';
-if (!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
+if (!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
 // section to generate
 if (!empty($querryRes)) {
     echo $querryRes;

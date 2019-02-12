@@ -22,9 +22,9 @@ require_once './core/lib/timesheet.lib.php';
 require_once './class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
 $htmlother = new FormOther($db);
-$id		 = GETPOST('id', 'int');
-$action		 = GETPOST('action', 'alpha');
-//$dateStart	 = GETPOST('dateStart', 'alpha');
+$id                 = GETPOST('id', 'int');
+$action                 = GETPOST('action', 'alpha');
+//$dateStart         = GETPOST('dateStart', 'alpha');
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $short = GETPOST('short', 'int');
@@ -63,9 +63,9 @@ if ($action == 'getpdf') {
     $report->initBasic($projectSelectedId, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
-    if ( $pdf->writeFile($report, $langs)>0) {
+    if ($pdf->writeFile($report, $langs)>0) {
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$report->ref.".pdf");
-    	return;
+        return;
     }
     ob_end_flush();
 exit();
@@ -80,7 +80,7 @@ if (!$user->admin) {
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active = \'1\'  ';
     $sql .= ' AND fk_socpeople = \''.$userid.'\' and fk_statut = \'1\'';
-}else{
+} else{
     $sql .= ' WHERE fk_statut = \'1\' ';
 }
 dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
@@ -101,7 +101,7 @@ if ($resql) {
                 $i++;
         }
         $db->free($resql);
-}else {
+} else {
         dol_print_error($db);
 }
 $querryRes = '';
@@ -109,16 +109,16 @@ if ($projectSelectedId   &&!empty($dateStart)) {
     $projectSelected = $projectList[$projectSelectedId];
     if ($projectSelectedId == '-999') {
         foreach ($projectList as $project) {
-        $querryRes .= $project->getHTMLreport($short,
-           dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
-            $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
+            $querryRes .= $project->getHTMLreport($short,
+                dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
+                $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
         }
-    }else{
-    $querryRes = $projectSelected->getHTMLreport($short,
+    } else{
+        $querryRes = $projectSelected->getHTMLreport($short,
             dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
             $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
     }
-}else {
+} else {
     $year = date('Y', $dateStart);
     $month = date('m', $dateStart);
 }
@@ -169,10 +169,10 @@ $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->tr
  $Form .= '</td></tr></table>';
  //submit
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
-if (!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0 ))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
+if (!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
  $Form .= '</form>';
-if (!($optioncss != '' && !empty($_POST['userSelected']) )) echo $Form;
+if (!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
 echo $querryRes;
 llxFooter();
 $db->close();

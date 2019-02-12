@@ -57,7 +57,7 @@ class TimesheetHoliday extends Holiday
          * am       --> is the morning off
          * pm       --> is the afternoon off
          * next     --> is it the holiday continuing the day after
-         * status   --> is the holiday submitted or approuved ( none if id = 0)
+         * status   --> is the holiday submitted or approuved (none if id = 0)
          */
         $timespan = getDayInterval($datestart, $datestop);
         for($day = 0;$day<$timespan;$day++)
@@ -114,8 +114,8 @@ class TimesheetHoliday extends Holiday
  /*
  * function to form a HTMLform line for this timesheet
  *
- *  @param    string              	$headers             header to shows
- *  @param     int              	$tsUserId           id of the user timesheet
+ *  @param    string               $headers             header to shows
+ *  @param     int               $tsUserId           id of the user timesheet
  *  @return     string                                        HTML result containing the timesheet info
  */
     public function getHTMLFormLine($headers, $tsUserId)
@@ -150,7 +150,7 @@ class TimesheetHoliday extends Holiday
                     $amClass = ($holiday['prev'])?'':' noPrevHoliday';
                     $amClass.= ($pm && $pmId == $amId )?'':' noNextHoliday';
                     $html .= ' class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
-                }else {
+                } else {
                     $html .= ' class = "holiday" >&nbsp;</a></li>';
                 }
                 $html .= '<li id = "holiday['.$i.'][1]" class = "listItemHoliday" ><a ';
@@ -160,7 +160,7 @@ class TimesheetHoliday extends Holiday
                     $pmClass = ($am && $pmId == $amId)?'':' noPrevHoliday';
                     $pmClass.= ($holiday['next'])?'':' noNextHoliday';
                     $html .= ' class = "holiday'.$pmClass.'" style = "'.$pmColor.'">&nbsp;</a></li>';
-                }else {
+                } else {
                     $html .= ' class = "holiday" >&nbsp;</a></li>';
                 }
            // }

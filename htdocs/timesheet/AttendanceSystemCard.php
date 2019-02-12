@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
+ * Copyright (C) 2018           Patrick DELCROIX     <pmpdelcroix@gmail.com>
  * * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software;you can redistribute it and/or modify
@@ -18,22 +18,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *   	\file       dev/AttendanceSystems/AttendanceSystem_page.php
- *		\ingroup    timesheet othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Initialy built by build_class_from_table on 2019-01-30 16:24
+ *        \file       dev/AttendanceSystems/AttendanceSystem_page.php
+ *                \ingroup    timesheet othermodule1 othermodule2
+ *                \brief      This file is an example of a php page
+ *                                        Initialy built by build_class_from_table on 2019-01-30 16:24
  */
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
 //if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');			// If we don't need to load the html.form.class.php
+//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');                        // Do not check anti CSRF attack test
+//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');                        // Do not check style html tag into posted data
+//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');                // Do not check anti POST attack test
+//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');                        // If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');                        // If we don't need to load the html.form.class.php
 //if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
+//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');                                // If this page is public (can be called outside logged session)
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 // Change this following line to use the correct relative path from htdocs
@@ -55,9 +55,9 @@ $PHP_SELF = $_SERVER['PHP_SELF'];
 //$langs->load("companies");
 $langs->load("AttendanceSystem@timesheet");
 // Get parameter
-$id			 = GETPOST('id', 'int');
+$id                         = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action		 = GETPOST('action', 'alpha');
+$action                 = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
@@ -68,19 +68,19 @@ $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
-if (!$removefilter )		// Both test must be present to be compatible with all browsers {
-    	$ls_label = GETPOST('ls_label', 'alpha');
-	$ls_ip = GETPOST('ls_ip', 'alpha');
-	$ls_port = GETPOST('ls_port', 'int');
-	$ls_note = GETPOST('ls_note', 'alpha');
-	$ls_third_party = GETPOST('ls_third_party', 'int');
-	$ls_task = GETPOST('ls_task', 'int');
-	$ls_project = GETPOST('ls_project', 'int');
-	$ls_status = GETPOST('ls_status', 'int');
+if (!$removefilter)                // Both test must be present to be compatible with all browsers {
+        $ls_label = GETPOST('ls_label', 'alpha');
+        $ls_ip = GETPOST('ls_ip', 'alpha');
+        $ls_port = GETPOST('ls_port', 'int');
+        $ls_note = GETPOST('ls_note', 'alpha');
+        $ls_third_party = GETPOST('ls_third_party', 'int');
+        $ls_task = GETPOST('ls_task', 'int');
+        $ls_project = GETPOST('ls_project', 'int');
+        $ls_status = GETPOST('ls_status', 'int');
 }
 */
  // uncomment to avoid resubmision
-//if (isset( $_SESSION['AttendanceSystem_class'][$tms]))
+//if (isset($_SESSION['AttendanceSystem_class'][$tms]))
 //{
  //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
@@ -93,7 +93,7 @@ if ($user->societe_id > 0 ||
        (!$user->rights->timesheet->delete && ($action == 'confirm_delete')) ||
        (!$user->rights->timesheet->edit && ($action == 'edit' || $action = 'update')))
 {
-	accessforbidden();
+        accessforbidden();
 }
 */
 // create object and set id or ref if provided as parameter
@@ -118,21 +118,21 @@ if (!empty($ref)) {
 $error = 0;
 if ($cancel) {
         AttendanceSystemReloadPage($backtopage, $id, $ref);
-}elseif (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref)))) {
+} elseif (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref)))) {
     //block resubmit
     if (empty($tms) || (!isset($_SESSION['AttendanceSystem'][$tms]))) {
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
             $action = ($action == 'add')?'create':'view';
     }
     //retrive the data
-    	$object->label = GETPOST('Label');
-	$object->ip = GETPOST('Ip');
-	$object->port = GETPOST('Port');
-	$object->note = GETPOST('Note');
-	$object->third_party = GETPOST('Thirdparty');
-	$object->task = GETPOST('Task');
-	$object->project = GETPOST('Project');
-	$object->status = GETPOST('Status');
+        $object->label = GETPOST('Label');
+        $object->ip = GETPOST('Ip');
+        $object->port = GETPOST('Port');
+        $object->note = GETPOST('Note');
+        $object->third_party = GETPOST('Thirdparty');
+        $object->task = GETPOST('Task');
+        $object->project = GETPOST('Project');
+        $object->status = GETPOST('Status');
 // test here if the post data is valide
  /*
  if ($object->prop1 == 0 || $object->prop2 == 0) {
@@ -142,7 +142,7 @@ if ($cancel) {
         $action = 'edit';
  }
   */
-}elseif ($id == 0 && $ref == '' && $action!='create') {
+} elseif ($id == 0 && $ref == '' && $action!='create') {
     $action = 'create';
 }
 switch ($action) {
@@ -152,7 +152,7 @@ switch ($action) {
             // Creation OK
             unset($_SESSION['AttendanceSystem'][$tms]);
             setEventMessage('RecordUpdated', 'mesgs');
-        }else {
+        } else {
                 // Creation KO
             if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
             else setEventMessage('RecordNotUpdated', 'errors');
@@ -164,18 +164,18 @@ switch ($action) {
     case 'viewinfo':
     case 'edit':
         // fetch the object data if possible
-        if ($id > 0 || !empty($ref) ) {
+        if ($id > 0 || !empty($ref)) {
             $result = $object->fetch($id, $ref);
             if ($result < 0) {
                 dol_print_error($db);
-            }else {
+            } else {
             // fill the id & ref
                 if (isset($object->id))$id = $object->id;
                 if (isset($object->rowid))$id = $object->rowid;
                 if (isset($object->ref))$ref = $object->ref;
             }
-        }else {
-            setEventMessage( $langs->trans('noIdPresent').' id:'.$id, 'errors');
+        } else {
+            setEventMessage($langs->trans('noIdPresent').' id:'.$id, 'errors');
             $action = 'create';
         }
         break;
@@ -187,7 +187,7 @@ switch ($action) {
            unset($_SESSION['AttendanceSystem'][$tms]);
            setEventMessage('RecordSucessfullyCreated', 'mesgs');
            AttendanceSystemReloadPage($backtopage, $result, '');
-        }else {
+        } else {
             // Creation KO
             if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
             else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
@@ -199,7 +199,7 @@ switch ($action) {
             if ($result > 0) {
                 // Delete OK
                 setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
-            }else {
+            } else {
                 // Delete NOK
                 if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
                 else setEventMessage('RecordNotDeleted', 'errors');
@@ -208,7 +208,7 @@ switch ($action) {
          break;
 }
 //Removing the tms array so the order can't be submitted two times
-if (isset( $_SESSION['AttendanceSystem'][$tms])) {
+if (isset($_SESSION['AttendanceSystem'][$tms])) {
     unset($_SESSION['AttendanceSystem'][$tms]);
 }
 if (($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))) {
@@ -232,16 +232,16 @@ $fuser = new User($db);
 /*print '<script type = "text/javascript" language = "javascript">
 jQuery(document).ready(function()
 {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\', \'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function()
+        function init_myfunc()
+        {
+                jQuery("#myid").removeAttr(\'disabled\');
+                jQuery("#myid").attr(\'disabled\', \'disabled\');
+        }
+        init_myfunc();
+        jQuery("#mybutton").click(function()
 {
-		init_needroot();
-	});
+                init_needroot();
+        });
 });
 </script>';*/
 $edit = $new = 0;
@@ -251,7 +251,7 @@ switch ($action) {
     case 'edit':
         $edit = 1;
     case 'delete';
-        if ( $action == 'delete' && ($id>0 || $ref!="")) {
+        if ($action == 'delete' && ($id>0 || $ref!="")) {
          $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
@@ -262,19 +262,19 @@ switch ($action) {
             //show tabs
             $head = AttendanceSystemPrepareHead($object);
             dol_fiche_head($head, 'card', $langs->trans('AttendanceSystem'), 0, 'timesheet@timesheet');
-        }else{
+        } else{
             print_fiche_titre($langs->trans('AttendanceSystem'));
         }
-	print '<br>';
+        print '<br>';
         if ($edit == 1) {
             if ($new == 1) {
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action=add">';
-            }else{
+            } else{
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action=update&id='.$id.'">';
             }
             print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
-        }else {
+        } else {
             // show the nav bar
             $basedurl = dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1);
             $linkback = '<a href = "'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -283,124 +283,124 @@ switch ($action) {
             print $form->showrefnav($object, 'action = view&id', $linkback, 1, 'rowid', 'ref', '');
             //reloqd the ref
         }
-	print '<table class = "border centpercent">'."\n";
+        print '<table class = "border centpercent">'."\n";
 // show the field label
-	print "<tr>\n";
-	print '<td class = "fieldrequired">'.$langs->trans('Label').' </td><td>';
-	if ($edit == 1) {
-		print '<input type = "text" value = "'.$object->label.'" name = "Label">';
-	}else {
-		print $object->label;
-	}
-	print "</td>";
-	print "\n</tr>\n";
+        print "<tr>\n";
+        print '<td class = "fieldrequired">'.$langs->trans('Label').' </td><td>';
+        if ($edit == 1) {
+                print '<input type = "text" value = "'.$object->label.'" name = "Label">';
+        } else {
+                print $object->label;
+        }
+        print "</td>";
+        print "\n</tr>\n";
 // show the field ip
-	print "<tr>\n";
-	print '<td class = "fieldrequired">'.$langs->trans('Ip').' </td><td>';
-	if ($edit == 1) {
+        print "<tr>\n";
+        print '<td class = "fieldrequired">'.$langs->trans('Ip').' </td><td>';
+        if ($edit == 1) {
             print '<input type = "text" value = "'.$object->ip.'" name = "Ip">';
-	}else {
-		print $object->ip;
-	}
-	print "</td>";
-	print "\n</tr>\n";
+        } else {
+                print $object->ip;
+        }
+        print "</td>";
+        print "\n</tr>\n";
 // show the field port
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Port').' </td><td>';
-	if ($edit == 1) {
+        print "<tr>\n";
+        print '<td>'.$langs->trans('Port').' </td><td>';
+        if ($edit == 1) {
             if ($new == 1)
                     print '<input type = "text" value = "4370" name = "Port">';
             else
                     print '<input type = "text" value = "'.$object->port.'" name = "Port">';
-	}else{
+        } else{
             print $object->port;
-	}
-	print "</td>";
-	print "\n</tr>\n";
+        }
+        print "</td>";
+        print "\n</tr>\n";
 // show the field note
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Note').' </td><td>';
-	if ($edit == 1) {
+        print "<tr>\n";
+        print '<td>'.$langs->trans('Note').' </td><td>';
+        if ($edit == 1) {
             print '<input type = "text" value = "'.$object->note.'" name = "Note">';
-	}else{
+        } else{
             print $object->note;
-	}
-	print "</td>";
-	print "\n</tr>\n";
+        }
+        print "</td>";
+        print "\n</tr>\n";
 // show the field third_party
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Thirdparty').' </td><td>';
-	if ($edit == 1) {
+        print "<tr>\n";
+        print '<td>'.$langs->trans('Thirdparty').' </td><td>';
+        if ($edit == 1) {
             $selected = ($new)?-1:$object->third_party;
             $htmlname = 'Thirdparty';
             print $form->select_company($selected, $htmlname, '', 1);
-	}else {
-		if (class_exist('Societe')) {
+        } else {
+                if (class_exist('Societe')) {
                     $StaticObject = New Societe($db);
                     print "<td>".$StaticObject->getNomUrl('1', $object->fk_third_party)."</td>";
-		}else{
+                } else{
                     print print_sellist($sql_third_party, $object->fk_third_party);
-		}
-	}
-	print "</td>";
-	print "\n</tr>\n";
+                }
+        }
+        print "</td>";
+        print "\n</tr>\n";
 // show the field task
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Task').' </td><td>';
-	if ($edit == 1) {
+        print "<tr>\n";
+        print '<td>'.$langs->trans('Task').' </td><td>';
+        if ($edit == 1) {
             $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
             $html_task = array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
             $addChoices_task = null;
-		print select_sellist($sql_task, $html_task, $object->task, $addChoices_task );
-	}else{
+                print select_sellist($sql_task, $html_task, $object->task, $addChoices_task );
+        } else{
             if (class_exist('Task')) {
                 $StaticObject = New Task($db);
                 print "<td>".$StaticObject->getNomUrl('1', $object->fk_task)."</td>";
-            }else{
+            } else{
                 print print_sellist($sql_task, $object->fk_task);
             }
-	}
-	print "</td>";
-	print "\n</tr>\n";
+        }
+        print "</td>";
+        print "\n</tr>\n";
 // show the field project
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Project').' </td><td>';
-	if ($edit == 1) {
+        print "<tr>\n";
+        print '<td>'.$langs->trans('Project').' </td><td>';
+        if ($edit == 1) {
             $selected = $object->project;
             $htmlname = 'Project';
             $formproject->select_projects(-1, $selected, $htmlname);
-	}else{
+        } else{
             if (class_exist('Project')) {
                     $StaticObject = New Project($db);
                     print "<td>".$StaticObject->getNomUrl('1', $object->fk_project)."</td>";
-            }else{
+            } else{
                     print print_sellist($sql_project, $object->fk_project);
             }
-	}
-	print "</td>";
-	print "\n</tr>\n";
+        }
+        print "</td>";
+        print "\n</tr>\n";
 // show the field status
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Status').' </td><td>';
-	if ($edit == 1) {
+        print "<tr>\n";
+        print '<td>'.$langs->trans('Status').' </td><td>';
+        if ($edit == 1) {
             print '<input type = "text" value = "'.$object->status.'" name = "Status">';
-	}else{
+        } else{
             print $object->status;
-	}
-	print "</td>";
-	print "\n</tr>\n";
-	print '</table>'."\n";
-	print '<br>';
-	print '<div class = "center">';
+        }
+        print "</td>";
+        print "\n</tr>\n";
+        print '</table>'."\n";
+        print '<br>';
+        print '<div class = "center">';
         if ($edit == 1) {
             if ($new == 1) {
                 print '<input type = "submit" class = "butAction" name = "add" value = "'.$langs->trans('Add').'">';
-            }else{
+            } else{
                 print '<input type = "submit" name = "update" value = "'.$langs->trans('Update').'" class = "butAction">';
             }
             print ' &nbsp;<input type = "submit" class = "butActionDelete" name = "cancel" value = "'.$langs->trans('Cancel').'"></div>';
             print '</form>';
-        }else {
+        } else {
             $parameters = array();
             $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);// Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -423,7 +423,7 @@ switch ($action) {
         print '</div>';
         break;
     case 'delete':
-        if ( ($id>0 || $ref!='')) {
+        if (($id>0 || $ref!='')) {
             $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
             if ($ret == 'html') print '<br />';
             //to have the object to be deleted in the background

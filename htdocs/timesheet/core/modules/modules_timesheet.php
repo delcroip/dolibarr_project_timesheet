@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010	Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010        Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012        Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2016   Philippe Grand  <philippe.grand@atoo-net.com>
  * Copyright (C) 2014   Marcos García   <marcosgdf@gmail.com>
  *
@@ -19,14 +19,14 @@
  * or see http://www.gnu.org/
  */
 /**
- *		\file       htdocs/core/modules/supplier_invoice/modules_facturefournisseur.php
+ *                \file       htdocs/core/modules/supplier_invoice/modules_facturefournisseur.php
  *      \ingroup    facture fournisseur
  *      \brief      File that contains parent class for supplier invoices models
- *					and parent class for supplier invoices numbering models
+ *                                        and parent class for supplier invoices numbering models
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';	// required for use by classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';        // required for use by classes that inherit
 /**
- *	Parent class for supplier invoices models
+ *        Parent class for supplier invoices models
  */
 abstract class ModelPDFTimesheetReport extends CommonDocGenerator
 {
@@ -35,9 +35,9 @@ abstract class ModelPDFTimesheetReport extends CommonDocGenerator
     /**
      *  Return list of active generation models
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of numbers
+     *  @param        DoliDB        $db                        Database handler
+     *  @param  integer        $maxfilenamelength  Max length of value to show
+     *  @return        array                                                List of numbers
      */
     static function liste_modeles($db, $maxfilenamelength = 0)
     {

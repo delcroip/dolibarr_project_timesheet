@@ -69,7 +69,7 @@ if ($posBs>0) {
         $label = $item;
         if ($start) {
             $label = substr($item, $start+4);
-        }elseif ($start2) {
+        } elseif ($start2) {
             $label = substr($item, $start2+1);
         }
         $fields[] = array('select' => $item, 'label'=>trim($label));
@@ -88,17 +88,17 @@ if ($posBs>0) {
                 }
                 $row_array['label'] = $label;
                 $value = $obj->{$labelKey};
-		//$row_array['value'] = $value;
+                //$row_array['value'] = $value;
                 $row_array['value'] = $label;
-	        $row_array['key'] = $value;
+                $row_array['key'] = $value;
                 array_push($return_arr, $row_array);
             }
             $i++;
         }
         if ($addtionnalChoices)foreach ($addtionnalChoices as $value => $label) {
                 $row_array['label'] = $label;
-		$row_array['value'] = $label;
-	        $row_array['key'] = $value;
+                $row_array['value'] = $label;
+                $row_array['key'] = $value;
             array_push($return_arr, $row_array);
         }
     }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014	   Patrick DELCROIX     <patrick@pmpd.eu>
+ * Copyright (C) 2014           Patrick DELCROIX     <patrick@pmpd.eu>
  *
  * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,26 +16,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 //const STATUS = [
-Define( "NULL", 0);
-Define( "DRAFT", 1);
-Define( "SUBMITTED", 2);
-Define( "APPROVED", 3);
-Define( "CANCELLED", 4);
-Define( "REJECTED", 5);
-Define( "CHALLENGED", 6);
-Define( "INVOICED", 7);
-Define( "UNDERAPPROVAL", 8);
-Define( "PLANNED", 9);
-Define( "STATUSMAX", 10);
+Define("NULL", 0);
+Define("DRAFT", 1);
+Define("SUBMITTED", 2);
+Define("APPROVED", 3);
+Define("CANCELLED", 4);
+Define("REJECTED", 5);
+Define("CHALLENGED", 6);
+Define("INVOICED", 7);
+Define("UNDERAPPROVAL", 8);
+Define("PLANNED", 9);
+Define("STATUSMAX", 10);
 //APPFLOW
 //const LINKED_ITEM = [
-Define( "USER", 0);
-Define( "TEAM", 1);
-Define( "PROJECT", 2);
-Define( "CUSTOMER", 3);
-Define( "SUPPLIER", 4);
-Define( "OTHER", 5);
-Define( "ROLEMAX", 6);
+Define("USER", 0);
+Define("TEAM", 1);
+Define("PROJECT", 2);
+Define("CUSTOMER", 3);
+Define("SUPPLIER", 4);
+Define("OTHER", 5);
+Define("ROLEMAX", 6);
 // back ground colors
 define('TIMESHEET_BC_FREEZED', '909090');
 define('TIMESHEET_BC_VALUE', 'f0fff0');
@@ -57,18 +57,18 @@ $statusColor = array(
     UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,
     PLANNED=>$conf->global->TIMESHEET_COL_DRAFT);
 //const REDUNDANCY = [
-/*Define( "NULL", 0);
-Define( "NONE", 1);
-Define( "WEEK", 2);
-Define( "MONTH", 3);
-Define( "QUARTER", 4);
-Define( "YEAR", 5);
+/*Define("NULL", 0);
+Define("NONE", 1);
+Define("WEEK", 2);
+Define("MONTH", 3);
+Define("QUARTER", 4);
+Define("YEAR", 5);
 //const LINKED_ITEM = [
-Define( "NULL", 0);
-Define( "NONE", 1);
-Define( "TASK", 2);
-Define( "PROJECT", 3);
-Define( "TIMESPENT", 4);
+Define("NULL", 0);
+Define("NONE", 1);
+Define("TASK", 2);
+Define("PROJECT", 3);
+Define("TIMESPENT", 4);
 */
 //global $db;
 // to get the whitlist object
@@ -78,12 +78,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  /*
  * function to genegate list of the subordinate ID
  *
-  *  @param    object           	$db             database objet
- *  @param    array(int)/int        $id    		    array of manager id
- *  @param     int              	$depth          depth of the recursivity
- *  @param    array(int)/int 		$ecludeduserid  exection that shouldn't be part of the result ( to avoid recursive loop)
- *  @param     string              	$role           team will look for organigram subordinate, project for project subordinate
- *  @param     int              	$entity         entity where to look for
+  *  @param    object            $db             database objet
+ *  @param    array(int)/int        $id                    array of manager id
+ *  @param     int               $depth          depth of the recursivity
+ *  @param    array(int)/int                $ecludeduserid  exection that shouldn't be part of the result (to avoid recursive loop)
+ *  @param     string               $role           team will look for organigram subordinate, project for project subordinate
+ *  @param     int               $entity         entity where to look for
   *  @return     array(userId)                                                  html code
  */
 function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $role = TEAM, $entity = '1')
@@ -108,7 +108,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
     if (is_array($userid)) {
         $ecludeduserid = array_merge($userid, $ecludeduserid);
         $idlist = implode(", ", $userid);
-    }else{
+    } else{
         $ecludeduserid[] = $userid;
         $idlist = $userid;
     }
@@ -116,7 +116,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
     $idlist = '';
     if (is_array($ecludeduserid)) {
         $idlist = implode(", ", $ecludeduserid);
-    }elseif (!empty($ecludeduserid)) {
+    } elseif (!empty($ecludeduserid)) {
         $idlist = $ecludeduserid;
     }
    $sql[$role][3] = $idlist;
@@ -128,7 +128,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
     if ($resql) {
         $i = 0;
         $num = $db->num_rows($resql);
-        while ( $i<$num)
+        while ($i<$num)
         {
             $obj = $db->fetch_object($resql);
             if ($obj) {
@@ -145,10 +145,10 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
         }
         if (is_array($userid)) {
             $list = array_merge($list, $userid);
-        }else {
+        } else {
             //$list[] = $userid;
         }
-    }else {
+    } else {
         $error++;
         dol_print_error($db);
         $list = array();
@@ -159,12 +159,12 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
   /*
  * function to genegate list of the task that can have approval pending
  *
-  *  @param    object           	$db             database objet
- *  @param    array(int)/int        $id    		    array of manager id
- *  @param     int              	$depth          depth of the recursivity
- *  @param    array(int)/int 		$ecludeduserid  exection that shouldn't be part of the result ( to avoid recursive loop)
- *  @param     string              	$role           team will look for organigram subordinate, project for project subordinate
- *  @param     int              	$entity         entity where to look for
+  *  @param    object            $db             database objet
+ *  @param    array(int)/int        $id                    array of manager id
+ *  @param     int               $depth          depth of the recursivity
+ *  @param    array(int)/int                $ecludeduserid  exection that shouldn't be part of the result (to avoid recursive loop)
+ *  @param     string               $role           team will look for organigram subordinate, project for project subordinate
+ *  @param     int               $entity         entity where to look for
   *  @return     string                                                   html code
  */
 function getTasks($db, $userid, $role = 'project')
@@ -199,7 +199,7 @@ function getTasks($db, $userid, $role = 'project')
                    $i++;
            }
            $db->free($resql);
-   }else {
+   } else {
            dol_print_error($db);
    }
    return $taskList;
@@ -207,30 +207,30 @@ function getTasks($db, $userid, $role = 'project')
  /*
  * function to get the name from a list of ID
  *
-  *  @param    object           	$db             database objet
- *  @param    array(int)/int        $userids    	array of manager id
-  *  @return  array (int => String)  				array( ID => userName)
+  *  @param    object            $db             database objet
+ *  @param    array(int)/int        $userids        array of manager id
+  *  @return  array (int => String)                                array(ID => userName)
  */
 function getUsersName($userids)
 {
     global $db;
-	if ($userids == "") {
+        if ($userids == "") {
         return array();
     }
     $sql = "SELECT usr.rowid, CONCAT(usr.firstname, ' ', usr.lastname) as username, usr.lastname FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
 if (is_array($userids)) {
-	$sql .= ' usr.rowid in ('.implode(', ', $userids).')';
-}else{
+        $sql .= ' usr.rowid in ('.implode(', ', $userids).')';
+} else{
     $sql .= ' usr.rowid ='.$userids;
 }
-	/*
+        /*
         $nbIds = (is_array($userids))?count($userids)-1:0;
 
         for($i = 0;$i<$nbIds-1 ;$i++)
-	{
-		$sql."'".$userids[$i]."', ";
-	}
-	$sql .= ((is_array($userids))?("'".$userids[$nbIds-1]."'"):('"'.$userids.'"')).')';
+        {
+                $sql."'".$userids[$i]."', ";
+        }
+        $sql .= ((is_array($userids))?("'".$userids[$nbIds-1]."'"):('"'.$userids.'"')).')';
         */
         $sql .= ' ORDER BY usr.lastname ASC';
     dol_syslog('form::get_userName '.$sql, LOG_DEBUG);
@@ -239,7 +239,7 @@ if (is_array($userids)) {
     if ($resql) {
         $i = 0;
         $num = $db->num_rows($resql);
-        while ( $i<$num)
+        while ($i<$num)
         {
             $obj = $db->fetch_object($resql);
             if ($obj) {
@@ -247,7 +247,7 @@ if (is_array($userids)) {
             }
             $i++;
         }
-    }else {
+    } else {
         $error++;
         dol_print_error($db);
         $list = array();
@@ -255,16 +255,16 @@ if (is_array($userids)) {
       //$select .= "\n";
       return $list;
  }
-if (!is_callable( GETPOSTISSET)) {
+if (!is_callable(GETPOSTISSET)) {
 /**
  * Return true if we are in a context of submitting a parameter
  *
- * @param 	string	$paramname		Name or parameter to test
- * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ * @param        string        $paramname                Name or parameter to test
+ * @return        boolean                                        True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
  */
 function GETPOSTISSET($paramname)
 {
-	return (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+        return (isset($_POST[$paramname]) || isset($_GET[$paramname]));
 }
 }
 if (!is_callable(setEventMessages)) {
@@ -274,7 +274,7 @@ if (!is_callable(setEventMessages)) {
             if (! in_array((string) $style, array('mesgs', 'warnings', 'errors'))) dol_print_error('', 'Bad parameter for setEventMessage');
             if (empty($mesgs)) setEventMessage($mesg, $style);
             else {
-                    if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
+                    if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);        // Add message string if not already into array
                     setEventMessage($mesgs, $style);
             }
     }
@@ -289,17 +289,17 @@ function getEventMessagesXML()
     $xml = '';
        // Show mesgs
    if (isset($_SESSION['dol_events']['mesgs'])) {
-     $xml .= getEventMessageXML( $_SESSION['dol_events']['mesgs']);
+     $xml .= getEventMessageXML($_SESSION['dol_events']['mesgs']);
      unset($_SESSION['dol_events']['mesgs']);
    }
    // Show errors
    if (isset($_SESSION['dol_events']['errors'])) {
-     $xml .= getEventMessageXML(  $_SESSION['dol_events']['errors'], 'error');
+     $xml .= getEventMessageXML($_SESSION['dol_events']['errors'], 'error');
      unset($_SESSION['dol_events']['errors']);
    }
    // Show warnings
    if (isset($_SESSION['dol_events']['warnings'])) {
-     $xml .= getEventMessageXML(  $_SESSION['dol_events']['warnings'], 'warning');
+     $xml .= getEventMessageXML($_SESSION['dol_events']['warnings'], 'warning');
      unset($_SESSION['dol_events']['warnings']);
    }
    return $xml;
@@ -307,8 +307,8 @@ function getEventMessagesXML()
 /*
  * function convert the dolibarr eventMessage in a XML format
  *
- *  @param    string              	$message           message to show
- *  @param    string              	$style            style of the message error | ok | warning
+ *  @param    string               $message           message to show
+ *  @param    string               $style            style of the message error | ok | warning
  *  @return     string                                         XML
  */
 function getEventMessageXML($messages, $style = 'ok')
@@ -321,7 +321,7 @@ function getEventMessageXML($messages, $style = 'ok')
             if ($count>1)$msg .= "<br/>";
             $count--;
         }
-    }else
+    } else
         $msg = $messages;
     $ret = '';
     if ($msg!="") {
@@ -334,8 +334,8 @@ function getEventMessageXML($messages, $style = 'ok')
  * function to make the StartDate
  *
   *  @param    int              $day                    day of the date
- *  @param    int              	$month                   month of the date
- *  @param    int              	$year                    year of the date
+ *  @param    int               $month                   month of the date
+ *  @param    int               $year                    year of the date
  *  @param    string            $date           date on a string format
  *  @param    int               $prevNext       -1 for previous period, +1 for next period
  *  @return     string
@@ -349,7 +349,7 @@ function getStartDate($datetime, $prevNext = 0)
   /* $prefix = 'this';
    if ($prevNext == 1) {
         $prefix = 'next';
-   }elseif ($prevNext == -1) {
+   } elseif ($prevNext == -1) {
        $prefix = 'previous';
    }
  */
@@ -362,9 +362,9 @@ function getStartDate($datetime, $prevNext = 0)
         //     break;
                 if ($prevNext == 1) {
                     $startDate = strtotime('first day of next month midnight', $datetime  );
-                }elseif ($prevNext == 0) {
+                } elseif ($prevNext == 0) {
                     $startDate = strtotime('first day of this month midnight', $datetime  );
-                }elseif ($prevNext == -1) {
+                } elseif ($prevNext == -1) {
                     $startDate = strtotime('first day of previous month midnight', $datetime  );
                 }
             break;
@@ -373,9 +373,9 @@ function getStartDate($datetime, $prevNext = 0)
         //     break;
                 if ($prevNext == 1) {
                     $startDate = strtotime('monday next week midnight', $datetime  );
-                }elseif ($prevNext == 0) {
+                } elseif ($prevNext == 0) {
                     $startDate = strtotime('monday this week midnight', $datetime  );
-                }elseif ($prevNext == -1) {
+                } elseif ($prevNext == -1) {
                     $startDate = strtotime('monday previous week midnight', $datetime  );
                 }
             break;
@@ -384,19 +384,19 @@ function getStartDate($datetime, $prevNext = 0)
                 if ($prevNext == 1) {
                     $startDateMonth = strtotime('first day of next month  midnight', $datetime  );
                     $startDateWeek = strtotime('monday next week midnight', $datetime  );
-                    $startDate = MIN( $startDateMonth, $startDateWeek);
-                }elseif ($prevNext == 0) {
+                    $startDate = MIN($startDateMonth, $startDateWeek);
+                } elseif ($prevNext == 0) {
                     $startDateMonth = strtotime('first day of this month midnight', $datetime  );
                     $startDateWeek = strtotime('monday this week  midnight', $datetime  );
-                    $startDate = MAX( $startDateMonth, $startDateWeek);
-                }elseif ($prevNext == -1) {
+                    $startDate = MAX($startDateMonth, $startDateWeek);
+                } elseif ($prevNext == -1) {
                     $startDateMonth = strtotime('first day of this month  midnight', $datetime  );
                     $startDateWeek = strtotime('monday this week  midnight', $datetime  );
                     $startDatePrevWeek = strtotime('monday previous week  midnight', $datetime  );
-                    if ($startDateMonth>$startDateWeek ) {
+                    if ($startDateMonth>$startDateWeek) {
                         $startDate = $startDateWeek;
-                    }else{
-                        $startDate = ( $startDateMonth<$startDatePrevWeek)?$startDatePrevWeek:$startDateMonth;
+                    } else{
+                        $startDate = ($startDateMonth<$startDatePrevWeek)?$startDatePrevWeek:$startDateMonth;
                     }
                 }
             break;
@@ -429,9 +429,9 @@ function getEndDate($datetime)
             $day = date('d', $datetime);
             $dayOfWeek = date('N', $datetime);
             $dayInMonth = date('t', $datetime);
-            if ($dayInMonth<$day+(7-$dayOfWeek) ) {
+            if ($dayInMonth<$day+(7-$dayOfWeek)) {
                 $endDate = strtotime('first day of next month midnight', $datetime);
-            }else{
+            } else{
                 $endDate = strtotime('monday next week midnight', $datetime);
             }
             break;
@@ -442,8 +442,8 @@ function getEndDate($datetime)
  * function to make the Date in PHP format
  *
   *  @param    int              $day                    day of the date
- *  @param    int              	$month                   month of the date
- *  @param    int              	$year                    year of the date
+ *  @param    int               $month                   month of the date
+ *  @param    int               $year                    year of the date
  *  @param    string            $date           date on a string format
  *  @return     string
  */
@@ -454,15 +454,15 @@ function parseDate($day = 0, $month = 0, $year = 0, $date = 0)
     if ($day!=0 && $month!=0 && $year!= 0) {
         $datetime = dol_mktime(0, 0, 0, $month, $day, $year);
     // the date is already in linux format
-    }elseif (is_numeric($date) && $date!=0) {  // if date is a datetime
+    } elseif (is_numeric($date) && $date!=0) {  // if date is a datetime
         $datetime = $date;
-    }elseif (is_string($date)&& $date!="") {  // if date is a string
+    } elseif (is_string($date)&& $date!="") {  // if date is a string
         //foolproof: incase the yearweek in passed in date
-        if ( strlen($date)>3 && substr($date, -3, 2) == "_H") {
+        if (strlen($date)>3 && substr($date, -3, 2) == "_H") {
               if (substr($date, -1, 1) == 1) {
                   $date = substr($date, 0, 7);
                   $splitWeek = 1;
-              }else{
+              } else{
                   $date = 'last day of  week '.substr($date, 0, 7);
                   $splitWeek = 2;
               }
@@ -474,8 +474,8 @@ function parseDate($day = 0, $month = 0, $year = 0, $date = 0)
 /*
  * function to show the AP tab
  *
- *  @param    string        $role    	active role
-  *  @return  void  				array( ID => userName)
+ *  @param    string        $role        active role
+  *  @return  void                                array(ID => userName)
  */
 function showTimesheetApTabs($role_key)
 {
@@ -494,9 +494,9 @@ $rolesUrl = array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOther
 /*
  * function calculate the number of day between two dates
  *
- *  @param    string        $dateStart    	start date
+ *  @param    string        $dateStart        start date
  *  @param    string        $datEnd             end date
-  *  @return  void  				array( ID => userName)
+  *  @return  void                                array(ID => userName)
  */
 function getDayInterval($dateStart, $dateEnd)
 {
@@ -506,14 +506,14 @@ function getDayInterval($dateStart, $dateEnd)
  *
  *  @param    int        $duration             time in seconds
  *  @param    int        $hoursperdays          mode -1 fetch from config, 0 show in hours, >0 shows in days
- *  @return  string       			time display
+ *  @return  string                        time display
  */
 function formatTime($duration, $hoursperdays = -1)
 {
         global $conf;
         if ($hoursperdays == -1) {
             $hoursperdays = ($conf->global->TIMESHEET_TIME_TYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
-        }elseif ($hoursperdays == -2) {
+        } elseif ($hoursperdays == -2) {
             $hoursperdays = ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
         }
         if ($hoursperdays == 0) {
@@ -521,7 +521,7 @@ function formatTime($duration, $hoursperdays = -1)
             $TotalMin = (($duration-$TotalSec)/60)%60;
             $TotalHours = $TotalHours = ($duration-$TotalMin*60- $TotalSec)/3600;
             return $TotalHours.':'.sprintf("%02s", $TotalMin);
-        }else {
+        } else {
             $totalDay = round($duration/3600/$hoursperdays, 3);
             return strval($totalDay);
         }
@@ -545,11 +545,11 @@ function formatTime($duration, $hoursperdays = -1)
         $messages[] = array('type'=>'errors', 'text'=>'updateError', 'param'=>$arraymessage['updateError']);
         $nbr=0;
         foreach ($messages as $key=> $message) {
-            if ($message['param']>0 ) {
+            if ($message['param']>0) {
                 if ($returnstring == false)setEventMessage($langs->transnoentitiesnoconv($message['text']).$message['param'], $message['type']);
                 else $messages[$key]['text']=$langs->trans($message['text']);
                 $nbr++;
-            }else{
+            } else{
                 unset($messages[$key]);
             }
         }

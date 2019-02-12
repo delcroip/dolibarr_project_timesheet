@@ -17,10 +17,10 @@
  * or see http://www.gnu.org/
  */
 /**
- *	\file       htdocs/core/modules/project/doc/pdf_rat.modules.php
- *	\ingroup    project
- *	\brief      File of class to generate project document Baleine
- *	\author	    Regis Houssin
+ *        \file       htdocs/core/modules/project/doc/pdf_rat.modules.php
+ *        \ingroup    project
+ *        \brief      File of class to generate project document Baleine
+ *        \author            Regis Houssin
  */
 require_once './class/TimesheetReport.class.php';
 require_once './core/modules/modules_timesheet.php';
@@ -28,18 +28,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 /**
- *	Class to manage generation of project document Baleine
+ *        Class to manage generation of project document Baleine
  */
 class pdf_rat extends ModelPDFTimesheetReport
 {
-    var $emetteur;	// Objet societe qui emet
+    var $emetteur;        // Objet societe qui emet
     var $posxworker;
     var $posxdate;
     var $posxduration;
     /**
-     *	Constructor
+     *        Constructor
      *
-     *  @param		DoliDB		$db      Database handler
+     *  @param                DoliDB                $db      Database handler
      */
     function __construct($db)
     {
@@ -88,11 +88,11 @@ class pdf_rat extends ModelPDFTimesheetReport
         }
     }
 /**
- *	Fonction generant le projet sur le disque
+ *        Fonction generant le projet sur le disque
  *
- *	@param	Project		$object   		Object project a generer
- *	@param	Translate	$outputlangs	Lang output object
- *	@return	int         				1 if OK, <=0 if KO
+ *        @param        Project                $object                Object project a generer
+ *        @param        Translate        $outputlangs        Lang output object
+ *        @return        int                                  1 if OK, <=0 if KO
  */
 function writeFile($object, $outputlangs)
 {
@@ -118,7 +118,7 @@ function writeFile($object, $outputlangs)
                 $this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
                 return 0;
             }
-        }else { //dir does exist
+        } else { //dir does exist
             // Add pdfgeneration hook
             if (! is_object($hookmanager)) {
                 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -186,7 +186,7 @@ function writeFile($object, $outputlangs)
             $this->result = array('fullpath'=>$file);
             return 1;// Pas d'erreur
         }
-    }else {
+    } else {
         $this->error=$langs->transnoentities("ErrorConstantNotDefined", "PROJECT_OUTPUTDIR");
         return 0;
     }
@@ -206,8 +206,8 @@ function writeFile($object, $outputlangs)
     {
         global $conf;
         //constant
-        $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
-        //$heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
+        $default_font_size = pdf_getPDFFontSize($outputlangs);        // Must be after pdf_getInstance
+        //$heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);        // Height reserved to output the free text on last page
         $tab_top = 42;
         $tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
         $writable_height = 170;
@@ -217,7 +217,7 @@ function writeFile($object, $outputlangs)
         //$cur_tab_height=$tab_height;
         $HeightSignBox=30;
         $heightforinfotot = 40;
-        $heightforfooter = $this->marge_basse+1;	// Height reserved to output the footer (value include bottom margin)
+        $heightforfooter = $this->marge_basse+1;        // Height reserved to output the footer (value include bottom margin)
         $pageposbefore=0;
         $heightoftitleline =6;
         $bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
@@ -227,10 +227,10 @@ function writeFile($object, $outputlangs)
         //init pdf cursor
         $pdf->setPage($pagenb);
         if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-        $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+        $pdf->setPageOrientation('', 1, $heightforfooter);        // The only function to edit the bottom margin of current page to set it.
         $this->pageHead($pdf, $object, 1, $outputlangs, $tasktimearray['lines'][0]['userName']);
         $pdf->SetFont('', '', $default_font_size - 1);
-        $pdf->MultiCell(0, 3, '');		// Set interline to 3
+        $pdf->MultiCell(0, 3, '');                // Set interline to 3
         $pdf->SetTextColor(0, 0, 0);
         $nexY = $tab_top + $heightoftitleline + 1;
         $nblignes=count($tasktimearray['lines']);
@@ -251,16 +251,16 @@ function writeFile($object, $outputlangs)
             if ($pageposafter>$pageposbefore) {
                 // auto page break
                 $addpagebreak=true;
-            }elseif ($posyafter>$this->page_hauteur - $heightforfooter - $heightforinfotot) {
+            } elseif ($posyafter>$this->page_hauteur - $heightforfooter - $heightforinfotot) {
                 // in the sign zone, check if a new page will be required
                 if ($posyafter > ($this->page_hauteur - ($heightforfooter))) {
                     // There is a pagebreak, shouldn't happen as this should trigger a auto page break {
                     $addpagebreak=true;
-                }elseif (($nblignes-$i)*($lineheight)< $this->page_hauteur - $heightforfooter - $posyafter ) {
+                } elseif (($nblignes-$i)*($lineheight)< $this->page_hauteur - $heightforfooter - $posyafter) {
                     // not enough space for te remaining line and the sign box {
                     $addpagebreak=true;
                 }
-            }elseif (isset($tasktimearray['lines'][$i+1]['pagebreak']) && $tasktimearray['lines'][$i+1]['pagebreak']) {
+            } elseif (isset($tasktimearray['lines'][$i+1]['pagebreak']) && $tasktimearray['lines'][$i+1]['pagebreak']) {
                 //pagebreak mentionned on the next line
                 $addpagebreak=true;
             }
@@ -276,9 +276,9 @@ function writeFile($object, $outputlangs)
                 $pdf->setPage($pageposafter);
                 if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->pageHead($pdf, $object, 1, $outputlangs, $tasktimearray['lines'][0]['userName']);
                 $pdf->SetFont('', '', $default_font_size - 1);// On repositionne la police par defaut
-                $pdf->MultiCell(0, 3, '');		// Set interline to 3
+                $pdf->MultiCell(0, 3, '');                // Set interline to 3
                 $pdf->SetTextColor(0, 0, 0);
-                $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+                $pdf->setPageOrientation('', 1, $heightforfooter);        // The only function to edit the bottom margin of current page to set it.
                 //write on the next page
                 $curY = $tab_top_newpage + $heightoftitleline + 1;
                 // Detect if some page were added automatically and output _tableau for past pages
@@ -287,17 +287,17 @@ function writeFile($object, $outputlangs)
                 //Write the table border and footer on the previous page
                 if ($pagenb == 1) {
                     $this->tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, $heightoftitleline, $outputlangs, 0);
-                }else {
+                } else {
                     $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, $heightoftitleline, $outputlangs, 1);
                 }
                 //$this->pageFoot($pdf, $object, $outputlangs, 1);
                 $pdf->setPage($pagenb);
-                $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+                $pdf->setPageOrientation('', 1, 0);        // The only function to edit the bottom margin of current page to set it.
                 if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->pageHead($pdf, $object, 0, $outputlangs, $startday, $stopday);
                 $pagenb++;
                 $pdf->setPage($pageposafter);
                 $pageposafter=$pdf->getPage();
-            }else {
+            } else {
                 // No pagebreak, commit transaction {
                 $pdf->commitTransaction();
                 $nexY = $pdf->GetY();
@@ -307,7 +307,7 @@ function writeFile($object, $outputlangs)
         // Show table border for last page
         if ($pagenb == 1) {
             $this->tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot -   $heightforfooter, $heightoftitleline, $outputlangs, 0);
-        }else {
+        } else {
             $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot   - $heightforfooter, $heightoftitleline, $outputlangs, 1);
         }// show the sign box & total on the last page for the user
         if ($showSign == 1) {
@@ -337,11 +337,11 @@ function writeFile($object, $outputlangs)
 /**
  *   Show lines
  *
- *   @param		PDF			$pdf     		Object PDF
- *   @param		string                  $line		array containing the data to display
- *   @param		int			$curY		position of the cursor on the pdf page
- *   @param		Translate               $outputlangs	Langs object
- *   @return	void
+ *   @param                PDF                        $pdf                Object PDF
+ *   @param                string                  $line                array containing the data to display
+ *   @param                int                        $curY                position of the cursor on the pdf page
+ *   @param                Translate               $outputlangs        Langs object
+ *   @return        void
  */
 function writeLine(&$pdf, $line, $curY, $outputlangs)
 {
@@ -380,7 +380,7 @@ function writeLine(&$pdf, $line, $curY, $outputlangs)
     $pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxduration, 3, $duration, 0, 'R');
     $nexY=$pdf->GetY();
     // Add dash line between entries
-    if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) ) {
+    if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES)) {
         //$pdf->setPage($pageposafter);
         $pdf->SetLineStyle(array('dash'=>'1, 1', 'color'=>array(80, 80, 80)));
         //$pdf->SetDrawColor(190, 190, 200);
@@ -392,13 +392,13 @@ function writeLine(&$pdf, $line, $curY, $outputlangs)
 /**
  *   Show table for lines
  *
- *   @param		PDF			$pdf     		Object PDF
- *   @param		string		$tab_top		Top position of table
- *   @param		string		$tab_height		Height of table (rectangle)
- *   @param		int			$heightoftitleline		height of line
- *   @param		Translate	$outputlangs	Langs object
- *   @param		int			$hidetop		Hide top bar of array
- *   @return	void
+ *   @param                PDF                        $pdf                Object PDF
+ *   @param                string                $tab_top                Top position of table
+ *   @param                string                $tab_height                Height of table (rectangle)
+ *   @param                int                        $heightoftitleline                height of line
+ *   @param                Translate        $outputlangs        Langs object
+ *   @param                int                        $hidetop                Hide top bar of array
+ *   @return        void
  */
 function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outputlangs, $hidetop = 0)
 {
@@ -441,7 +441,7 @@ function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outputlangs,
         $pdf->SetXY($this->posxduration, $tab_top+1);
         if ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "hours") {
             $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, 'h:m', 0, 'R');
-        }else{
+        } else{
             $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, $outputlangs->transnoentities("Days"), 0, 'R');
         }
     }
@@ -449,12 +449,12 @@ function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outputlangs,
 /**
  *  Show top header of page.
  *
- *  @param	PDF			$pdf     		Object PDF
- *  @param  Project		$object     	Object to show
- *  @param  int	    	$showaddress    0=no, 1=yes
- *  @param  Translate	$outputlangs	Object lang for output
- *  @param  string	$userName    user name to be displayed
- *  @return	void
+ *  @param        PDF                        $pdf                Object PDF
+ *  @param  Project                $object        Object to show
+ *  @param  int                $showaddress    0=no, 1=yes
+ *  @param  Translate        $outputlangs        Object lang for output
+ *  @param  string        $userName    user name to be displayed
+ *  @return        void
  */
 function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName="")
 {
@@ -476,14 +476,14 @@ function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName="")
             $height=pdf_getHeightForLogo($logo);
             $tmp=dol_getImageSize($logo, $url);
             $logoWidth=$tmp['width']>130?130:$tmp['width'];
-            $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);	// width=0 (auto)
-        }else {
+            $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);        // width=0 (auto)
+        } else {
                 $pdf->SetTextColor(200, 0, 0);
                 $pdf->SetFont('', 'B', $default_font_size - 2);
                 $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
                 $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
         }
-    }else {
+    } else {
         $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
         if ($showaddress == true){
             $pdf->MultiCell(100, 4+$height, $outputlangs->transnoentities($mysoc->address), 0, 'L');
@@ -523,13 +523,13 @@ function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName="")
     $pdf->SetTextColor(0, 0, 60);
 }
 /**
- *   	Show footer of page. Need this->emetteur object
+ *        Show footer of page. Need this->emetteur object
  *
- *   	@param	PDF			$pdf     			PDF
- * 		@param	Project		$object				Object to show
- *      @param	Translate	$outputlangs		Object lang for output
- *      @param	int			$hidefreetext		1=Hide free text
- *      @return	integer
+ *        @param        PDF                        $pdf                        PDF
+ *                @param        Project                $object                                Object to show
+ *      @param        Translate        $outputlangs                Object lang for output
+ *      @param        int                        $hidefreetext                1=Hide free text
+ *      @return        integer
  */
 /*function pageFoot(&$pdf, $object, $outputlangs, $hidefreetext=0)
 {

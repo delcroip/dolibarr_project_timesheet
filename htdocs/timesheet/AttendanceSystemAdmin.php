@@ -18,22 +18,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *   	\file       dev/AttendanceSystems/AttendanceSystem_page.php
- *		\ingroup    timesheet othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Initialy built by build_class_from_table on 2019-01-30 16:24
+ *        \file       dev/AttendanceSystems/AttendanceSystem_page.php
+ *                \ingroup    timesheet othermodule1 othermodule2
+ *                \brief      This file is an example of a php page
+ *                                        Initialy built by build_class_from_table on 2019-01-30 16:24
  */
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
 //if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');			// If we don't need to load the html.form.class.php
+//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');                        // Do not check anti CSRF attack test
+//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');                        // Do not check style html tag into posted data
+//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');                // Do not check anti POST attack test
+//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');                        // If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');                        // If we don't need to load the html.form.class.php
 //if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
+//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');                                // If this page is public (can be called outside logged session)
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 // Change this following line to use the correct relative path from htdocs
@@ -66,7 +66,7 @@ $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
-if (!$removefilter ) {
+if (!$removefilter) {
     // Both test must be present to be compatible with all browsers {
     $ls_label = GETPOST('ls_label', 'alpha');
     $ls_ip = GETPOST('ls_ip', 'alpha');
@@ -86,7 +86,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
  // uncomment to avoid resubmision
-//if (isset( $_SESSION['AttendanceSystem_class'][$tms]))
+//if (isset($_SESSION['AttendanceSystem_class'][$tms]))
 //{
  //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
@@ -99,7 +99,7 @@ if ($user->societe_id > 0 ||
        (!$user->rights->timesheet->delete && ($action == 'confirm_delete')) ||
        (!$user->rights->timesheet->edit && ($action == 'edit' || $action = 'update')))
 {
-	accessforbidden();
+        accessforbidden();
 }
 */
 // create object and set id or ref if provided as parameter
@@ -127,14 +127,14 @@ switch ($action) {
        if ($result > 0) {
                // Delete OK
                setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
-       }else {
+       } else {
                // Delete NOK
                if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
                else setEventMessage('RecordNotDeleted', 'errors');
        }
        break;
     case 'delete':
-        if ( $action == 'delete' && ($id>0 || $ref!="")) {
+        if ($action == 'delete' && ($id>0 || $ref!="")) {
          $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
@@ -157,28 +157,28 @@ $fuser = new User($db);
 /*print '<script type = "text/javascript" language = "javascript">
 jQuery(document).ready(function()
 {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\', \'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function()
+        function init_myfunc()
+        {
+                jQuery("#myid").removeAttr(\'disabled\');
+                jQuery("#myid").attr(\'disabled\', \'disabled\');
+        }
+        init_myfunc();
+        jQuery("#mybutton").click(function()
 {
-		init_needroot();
-	});
+                init_needroot();
+        });
 });
 </script>';*/
     $sql = 'SELECT';
     $sql.= ' t.rowid, ';
-	$sql .= ' t.label, ';
-	$sql .= ' t.ip, ';
-	$sql .= ' t.port, ';
-	$sql .= ' t.note, ';
-	$sql .= ' t.fk_third_party, ';
-	$sql .= ' t.fk_task, ';
-	$sql .= ' t.fk_project, ';
-	$sql .= ' t.status';
+        $sql .= ' t.label, ';
+        $sql .= ' t.ip, ';
+        $sql .= ' t.port, ';
+        $sql .= ' t.note, ';
+        $sql .= ' t.fk_third_party, ';
+        $sql .= ' t.fk_task, ';
+        $sql .= ' t.fk_project, ';
+        $sql .= ' t.status';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_system as t';
     $sqlwhere = '';
     if (isset($object->entity))
@@ -192,14 +192,14 @@ jQuery(document).ready(function()
         }
     }
     //pass the search criteria
-    	if ($ls_label) $sqlwhere .= natural_search('t.label', $ls_label);
-	if ($ls_ip) $sqlwhere .= natural_search('t.ip', $ls_ip);
-	if ($ls_port) $sqlwhere .= natural_search(array('t.port'), $ls_port);
-	if ($ls_note) $sqlwhere .= natural_search('t.note', $ls_note);
-	if ($ls_third_party) $sqlwhere .= natural_search(array('t.fk_third_party'), $ls_third_party);
-	if ($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
-	if ($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
-	if ($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
+        if ($ls_label) $sqlwhere .= natural_search('t.label', $ls_label);
+        if ($ls_ip) $sqlwhere .= natural_search('t.ip', $ls_ip);
+        if ($ls_port) $sqlwhere .= natural_search(array('t.port'), $ls_port);
+        if ($ls_note) $sqlwhere .= natural_search('t.note', $ls_note);
+        if ($ls_third_party) $sqlwhere .= natural_search(array('t.fk_third_party'), $ls_third_party);
+        if ($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
+        if ($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
+        if ($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
     //list limit
     if (!empty($sqlwhere))
         $sql .= ' WHERE '.substr ($sqlwhere, 5);
@@ -209,12 +209,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'attendance_system as t';
         if (!empty($sqlwhere))
             $sqlcount .= ' WHERE '.substr ($sqlwhere, 5);
-	$result = $db->query($sqlcount);
+        $result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
     if (!empty($sortfield)) {
         $sql.= $db->order($sortfield, $sortorder);
-    }else{
+    } else{
         $sortorder = 'ASC';
     }
     if (!empty($limit)) {
@@ -227,14 +227,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $param = '';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
         if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-        	if (!empty($ls_label))	$param .= '&ls_label='.urlencode($ls_label);
-	if (!empty($ls_ip))	$param .= '&ls_ip='.urlencode($ls_ip);
-	if (!empty($ls_port))	$param .= '&ls_port='.urlencode($ls_port);
-	if (!empty($ls_note))	$param .= '&ls_note='.urlencode($ls_note);
-	if (!empty($ls_third_party))	$param .= '&ls_third_party='.urlencode($ls_third_party);
-	if (!empty($ls_task))	$param .= '&ls_task='.urlencode($ls_task);
-	if (!empty($ls_project))	$param .= '&ls_project='.urlencode($ls_project);
-	if (!empty($ls_status))	$param .= '&ls_status='.urlencode($ls_status);
+         if (!empty($ls_label))        $param .= '&ls_label='.urlencode($ls_label);
+        if (!empty($ls_ip))        $param .= '&ls_ip='.urlencode($ls_ip);
+        if (!empty($ls_port))        $param .= '&ls_port='.urlencode($ls_port);
+        if (!empty($ls_note))        $param .= '&ls_note='.urlencode($ls_note);
+        if (!empty($ls_third_party))        $param .= '&ls_third_party='.urlencode($ls_third_party);
+        if (!empty($ls_task))        $param .= '&ls_task='.urlencode($ls_task);
+        if (!empty($ls_project))        $param .= '&ls_project='.urlencode($ls_project);
+        if (!empty($ls_status))        $param .= '&ls_status='.urlencode($ls_status);
         if ($filter && $filter != -1) $param .= '&filtre='.urlencode($filter);
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
@@ -244,64 +244,64 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '<table class = "liste" width = "100%">'."\n";
         //TITLE
         print '<tr class = "liste_titre">';
-        	print_liste_field_titre($langs->trans('Label'), $PHP_SELF, 't.label', '', $param, '', $sortfield, $sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Ip'), $PHP_SELF, 't.ip', '', $param, '', $sortfield, $sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Port'), $PHP_SELF, 't.port', '', $param, '', $sortfield, $sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Note'), $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Thirdparty'), $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
-	print "\n";
+         print_liste_field_titre($langs->trans('Label'), $PHP_SELF, 't.label', '', $param, '', $sortfield, $sortorder);
+        print "\n";
+        print_liste_field_titre($langs->trans('Ip'), $PHP_SELF, 't.ip', '', $param, '', $sortfield, $sortorder);
+        print "\n";
+        print_liste_field_titre($langs->trans('Port'), $PHP_SELF, 't.port', '', $param, '', $sortfield, $sortorder);
+        print "\n";
+        print_liste_field_titre($langs->trans('Note'), $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
+        print "\n";
+        print_liste_field_titre($langs->trans('Thirdparty'), $PHP_SELF, 't.fk_third_party', '', $param, '', $sortfield, $sortorder);
+        print "\n";
+        print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
+        print "\n";
+        print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
+        print "\n";
+        print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
+        print "\n";
         print '</tr>';
         //SEARCH FIELDS
         print '<tr class = "liste_titre">';
         //Search field forlabel
-	print '<td class = "liste_titre" colspan = "1" >';
-	print '<input class = "flat" size = "16" type = "text" name = "ls_label" value = "'.$ls_label.'">';
-	print '</td>';
+        print '<td class = "liste_titre" colspan = "1" >';
+        print '<input class = "flat" size = "16" type = "text" name = "ls_label" value = "'.$ls_label.'">';
+        print '</td>';
 //Search field forip
-	print '<td class = "liste_titre" colspan = "1" >';
-	print '<input class = "flat" size = "16" type = "text" name = "ls_ip" value = "'.$ls_ip.'">';
-	print '</td>';
+        print '<td class = "liste_titre" colspan = "1" >';
+        print '<input class = "flat" size = "16" type = "text" name = "ls_ip" value = "'.$ls_ip.'">';
+        print '</td>';
 //Search field forport
-	print '<td class = "liste_titre" colspan = "1" >';
-	print '<input class = "flat" size = "16" type = "text" name = "ls_port" value = "'.$ls_port.'">';
-	print '</td>';
+        print '<td class = "liste_titre" colspan = "1" >';
+        print '<input class = "flat" size = "16" type = "text" name = "ls_port" value = "'.$ls_port.'">';
+        print '</td>';
 //Search field fornote
-	print '<td class = "liste_titre" colspan = "1" >';
-	print '<input class = "flat" size = "16" type = "text" name = "ls_note" value = "'.$ls_note.'">';
-	print '</td>';
+        print '<td class = "liste_titre" colspan = "1" >';
+        print '<input class = "flat" size = "16" type = "text" name = "ls_note" value = "'.$ls_note.'">';
+        print '</td>';
 //Search field forthird_party
-	print '<td class = "liste_titre" colspan = "1" >';
-		$selected = $ls_third_party;
-		$htmlname = 'ls_third_party';
-		$form->select_company($selected, $htmlname);
-	print '</td>';
+        print '<td class = "liste_titre" colspan = "1" >';
+                $selected = $ls_third_party;
+                $htmlname = 'ls_third_party';
+                $form->select_company($selected, $htmlname);
+        print '</td>';
 //Search field fortask
-	print '<td class = "liste_titre" colspan = "1" >';
-	$sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
-	$html_task = array('name'=>'ls_task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
-	$addChoices_task = null;
-		print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task );
-	print '</td>';
+        print '<td class = "liste_titre" colspan = "1" >';
+        $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
+        $html_task = array('name'=>'ls_task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
+        $addChoices_task = null;
+                print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task );
+        print '</td>';
 //Search field forproject
-	print '<td class = "liste_titre" colspan = "1" >';
-		$selected = $ls_project;
-		$htmlname = 'ls_project';
-		$formproject->select_projects(-1, $selected, $htmlname);
-	print '</td>';
+        print '<td class = "liste_titre" colspan = "1" >';
+                $selected = $ls_project;
+                $htmlname = 'ls_project';
+                $formproject->select_projects(-1, $selected, $htmlname);
+        print '</td>';
 //Search field forstatus
-	print '<td class = "liste_titre" colspan = "1" >';
-	print '<input class = "flat" size = "16" type = "text" name = "ls_status" value = "'.$ls_status.'">';
-	print '</td>';
+        print '<td class = "liste_titre" colspan = "1" >';
+        print '<input class = "flat" size = "16" type = "text" name = "ls_status" value = "'.$ls_status.'">';
+        print '</td>';
         print '<td width = "15px">';
         print '<input type = "image" class = "liste_titre" name = "search" src = "'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value = "'.dol_escape_htmltag($langs->trans("Search")).'" title = "'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '<input type = "image" class = "liste_titre" name = "removefilter" src = "'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value = "'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title = "'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -314,37 +314,37 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
             $obj = $db->fetch_object($resql);
             if ($obj) {
                 // You can use here results
-                	print "<tr class = \"oddeven\"  onclick = \"location.href='";
-	print $basedurl.$obj->rowid."'\" >";
-	print "<td>".$obj->label."</td>";
-	print "<td>".$obj->ip."</td>";
-	print "<td>".$obj->port."</td>";
-	print "<td>".$obj->note."</td>";
-	if (class_exist('Societe')) {
-		$StaticObject = New Societe($db);
-		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_third_party)."</td>";
-	}else{
-		print print_sellist($sql_third_party, $obj->fk_third_party);
-	}
-	if (class_exist('Task')) {
-		$StaticObject = New Task($db);
-		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_task)."</td>";
-	}else{
-		print print_sellist($sql_task, $obj->fk_task);
-	}
-	if (class_exist('Project')) {
-		$StaticObject = New Project($db);
-		print "<td>".$StaticObject->getNomUrl('1', $obj->fk_project)."</td>";
-	}else{
-		print print_sellist($sql_project, $obj->fk_project);
-	}
-	print "<td>".$obj->status."</td>";
-	print '<td><a href = "AttendanceSystemCard.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
-	print "</tr>";
+                 print "<tr class = \"oddeven\"  onclick = \"location.href='";
+        print $basedurl.$obj->rowid."'\" >";
+        print "<td>".$obj->label."</td>";
+        print "<td>".$obj->ip."</td>";
+        print "<td>".$obj->port."</td>";
+        print "<td>".$obj->note."</td>";
+        if (class_exist('Societe')) {
+                $StaticObject = New Societe($db);
+                print "<td>".$StaticObject->getNomUrl('1', $obj->fk_third_party)."</td>";
+        } else{
+                print print_sellist($sql_third_party, $obj->fk_third_party);
+        }
+        if (class_exist('Task')) {
+                $StaticObject = New Task($db);
+                print "<td>".$StaticObject->getNomUrl('1', $obj->fk_task)."</td>";
+        } else{
+                print print_sellist($sql_task, $obj->fk_task);
+        }
+        if (class_exist('Project')) {
+                $StaticObject = New Project($db);
+                print "<td>".$StaticObject->getNomUrl('1', $obj->fk_project)."</td>";
+        } else{
+                print print_sellist($sql_project, $obj->fk_project);
+        }
+        print "<td>".$obj->status."</td>";
+        print '<td><a href = "AttendanceSystemCard.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+        print "</tr>";
             }
             $i++;
         }
-    }else {
+    } else {
         $error++;
         dol_print_error($db);
     }

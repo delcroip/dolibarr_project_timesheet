@@ -34,11 +34,11 @@ if (!$role) {
     $role_key = array_search('1', array_slice ($apflows, 2))+1;// search other than team
     if ($role_key == false) {
         header("location:TimesheetTeamApproval.php");
-    }else {
+    } else {
         $role_key++;
         $role = $roles[$role_key];
     }
-}else {
+} else {
     $role_key = array_search($role, $roles);
 }
 // end find the role
@@ -98,8 +98,8 @@ if ($action == 'submit') {
                 setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
             }
         }
-    }else {
-        setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
+    } else {
+        setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
     }
 }
 /***************************************************
@@ -117,7 +117,7 @@ $level = intval(TIMESHEET_MAX_TTA_APPROVAL);
 //define the offset
 $offset = 0;
 /*
-if ( is_array($selectList)&& count($selectList)) {
+if (is_array($selectList)&& count($selectList)) {
         if ($current>=count($selectList))$current = 0;
         $offset = 0;
         for($i = 0;$i<$current;$i++)
@@ -174,9 +174,9 @@ llxFooter();
 /*
  * function to print the timesheet navigation header
  *
- *  @param    string              	$role                  the role of the user
- *  @param     string            	$optioncss             optioncss for the print mode
- *  @param     array             	$selectList       	list of pages
+ *  @param    string               $role                  the role of the user
+ *  @param     string             $optioncss             optioncss for the print mode
+ *  @param     array              $selectList        list of pages
  *  @param     int                      $current                current page
  *
  *  @return     string                                         HTML
@@ -211,8 +211,8 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
     return $Nav;
 }
 /* Funciton to fect timesheet to be approuved.
-    *  @param    int              	$current            current item of the select
-    *  @param    int              	$selectList        list of the item showed in the navigation select
+    *  @param    int               $current            current item of the select
+    *  @param    int               $selectList        list of the item showed in the navigation select
     *  @return   array(task_timesheet)                     result
     */
 function getTStobeApproved($current, $selectList)
@@ -230,13 +230,13 @@ function getTStobeApproved($current, $selectList)
  /*
  * function to get the Approval elible for this user
  *
-  *  @param    object           	$db             database objet
- *  @param    array(int)/int        $userids    	array of manager id
-  *  @return  array (int => String)  				array( ID => userName)
+  *  @param    object            $db             database objet
+ *  @param    array(int)/int        $userids        array of manager id
+  *  @return  array (int => String)                                array(ID => userName)
  */
 function getSelectAps($subId, $tasks, $role_key)
 {
-    if ((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
+    if ((!is_array($subId) || !count($subId)) && $subId!='all')return array();
     global $db, $langs, $conf, $roles;
     $sql = "SELECT COUNT(ts.rowid) as nb, ";
     switch ($conf->global->TIMESHEET_TIME_SPAN) {
@@ -244,7 +244,7 @@ function getSelectAps($subId, $tasks, $role_key)
             $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%m/%Y'), '-', pjt.ref) as id, ";
             if ($db->type!='pgsql') {
                 $sql .= " CONCAT(pjt.title, ' (', MONTH(date_start), '/', YEAR(date_start), ' )#' ) as label, ";
-            }else {
+            } else {
                 $sql .= " CONCAT(pjt.title, ' (', date_part('month', date_start), '/', date_part('year', date_start), ' )#' ) as label, ";
             }
             break;
@@ -254,14 +254,14 @@ function getSelectAps($subId, $tasks, $role_key)
             $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%v/%Y'), '-', pjt.ref) as id, ";
             if ($db->type!='pgsql') {
                 $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ' )#' ) as label, ";
-            }else {
+            } else {
                 $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week', ts.date_start), '/', date_part('year', ts.date_start), ' )#' ) as label, ";
             }
            break;
     }
     if ($db->type!='pgsql') {
         $sql .= " GROUP_CONCAT(ts.rowid  SEPARATOR ', ') as idlist";
-    }else {
+    } else {
         $sql .= " STRING_AGG(to_char(ts.rowid, '9999999999999999'), ', ') as idlist";
     }
     $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts';
@@ -283,7 +283,7 @@ function getSelectAps($subId, $tasks, $role_key)
         $i = 0;
         $j = 0;
         $num = $db->num_rows($resql);
-        while ( $i<$num)
+        while ($i<$num)
         {
             $obj = $db->fetch_object($resql);
             if ($obj) {
@@ -304,7 +304,7 @@ function getSelectAps($subId, $tasks, $role_key)
             }
             $i++;
         }
-    }else {
+    } else {
         $error++;
         dol_print_error($db);
         $list = array();

@@ -167,7 +167,7 @@ class TimesheetReport
         if ($db->type!='pgsql') {
             $sql.= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname, \' \', usr.lastname)) as username, ';
             $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
-        }else {
+        } else {
             $sql.= ' prj.title as projecttitle, prj.ref as projectref, CONCAT(usr.firstname, \'  \', usr.lastname) as username, ';
             $sql.= " tsk.ref as taskref, tsk.label as tasktitle, STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         }
@@ -225,7 +225,7 @@ class TimesheetReport
             }
             $this->db->free($resql);
             return $resArray;
-        }else {
+        } else {
             dol_print_error($this->db);
             return array();
         }
@@ -240,7 +240,7 @@ class TimesheetReport
     * @return string
     * mode layout PTD project/task /day, PDT, DPT
     * periodeTitle give a name to the report
-    * timemode show time using day or hours ( == 0)
+    * timemode show time using day or hours (== 0)
     */
     public function getHTMLreport($short, $periodTitle, $hoursperdays, $reportfriendly = 0)
     {
@@ -290,7 +290,7 @@ class TimesheetReport
                    $HTMLRes .= '<th width = "70px">'.formatTime($item['duration'], $hoursperdays).'</th></tr>';
                 }
                 $HTMLRes .= '</table>';
-            }else {
+            } else {
                 foreach ($resArray as $key => $item) {
                     if ($Curlvl1 == 0) {
                         $Curlvl1 = $key;
@@ -358,10 +358,10 @@ class TimesheetReport
                        /*
                         if ($hoursperdays == 0) {
                             $lvl3HTML .= date('G:i', mktime(0, 0, $resArray[$key]['duration'])).'</th></tr>';
-                        }else{
+                        } else{
                             $lvl3HTML .= $resArray[$key]['duration']/3600/$hoursperdays.'</th></tr>';
                         }*/
-                    }elseif (!empty ($resArray[$key]['note'])) {
+                    } elseif (!empty ($resArray[$key]['note'])) {
                         $lvl3Notes .= "<br>".$resArray[$key]['note'];
                     }
                     $lvl3Total+=$resArray[$key]['duration'];

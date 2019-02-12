@@ -100,18 +100,18 @@ if ($action== 'submit') {
                 if ($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").$tsApproved);
                 if ($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").$tsRejected);
                 if ($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").$errors);
-            }else {
+            } else {
                 if ($errors == 0) {
                     setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');
-                }else {
-                    setEventMessage( $langs->transnoentitiesnoconv("InternalError").':'.$ret, 'errors');
+                } else {
+                    setEventMessage($langs->transnoentitiesnoconv("InternalError").':'.$ret, 'errors');
                 }
             }
-        }else {
-                setEventMessage( $langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
+        } else {
+                setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warning');// shoudn't happend
         }
-    }else {
-            setEventMessage( $langs->transnoentitiesnoconv("InternalError"), 'errors');
+    } else {
+            setEventMessage($langs->transnoentitiesnoconv("InternalError"), 'errors');
     }
 }
 if (!empty($timestamp)) {
@@ -122,7 +122,7 @@ $subId = ($user->admin)?'all':getSubordinates($db, $userId, 2, array($userId), T
 $selectList = getSelectAps($subId);
 $level = intval($conf->global->TIMESHEET_MAX_APPROVAL);
 $offset = 0;
-if ( is_array($selectList)&& count($selectList)) {
+if (is_array($selectList)&& count($selectList)) {
     if ($current>=count($selectList))$current = 0;
     $offset = 0;
     for($i = 0;$i<$current;$i++)
@@ -203,10 +203,10 @@ if (is_object($firstTimesheetUser)) {
    // $offset+=$i;
     if (!$print) {
         $Form .= $firstTimesheetUser->getHTMLFooterAp($current, $timestamp);
-    }else {
+    } else {
         $Form .= '<table width = "100%"><tr><td align = "center">'.$langs->trans('customerSignature').'</td><td align = "center">'.$langs->trans('managerSignature').'</td><td align = "center">'.$langs->trans('employeeSignature').'</td></tr></table>';
     }
-}else{
+} else{
     $Form .= '<h1>'.$langs->trans('NothingToValidate').'</h1>';
     $staticTs = new TimesheetUserTasks($db);
     $Form .= $staticTs->getHTMLFooterAp($current, $timestamp);
@@ -224,9 +224,9 @@ echo '</div>';
 llxFooter();
 $db->close();
 /* Funciton to fect timesheet to be approuved.
-*  @param    int              	$level            number of ts to fetch
-*  @param    int              	$offset           number of ts to skip
-*  @param    int              	$role             team, project, customer ...
+*  @param    int               $level            number of ts to fetch
+*  @param    int               $offset           number of ts to skip
+*  @param    int               $role             team, project, customer ...
 *  @param    array(int)             $role             if team, array fo subordinate_id, array of task_id for other
 *  @return   array(task_timesheet)                     result
 */
@@ -234,15 +234,15 @@ function getTStobeApproved($level, $offset, $role, $subId)
 {
     // FIXME LEVEL ISSUE
     global $db, $conf;
-    if ((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
+    if ((!is_array($subId) || !count($subId)) && $subId!='all')return array();
     $byWeek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
     //if ($role = 'team')
     $sql = "SELECT *";
     if ($byWeek == 2) {
         if ($db->type!='pgsql') {
-            $sql .= ", CONCAT( MONTH(date_start), '/', YEAR(date_start), '#', fk_userid) as usermonth";
-        }else{
-            $sql .= ", CONCAT( date_part('month', date_start), '/', date_part('year', date_start), '#', fk_userid) as usermonth";
+            $sql .= ", CONCAT(MONTH(date_start), '/', YEAR(date_start), '#', fk_userid) as usermonth";
+        } else{
+            $sql .= ", CONCAT(date_part('month', date_start), '/', date_part('year', date_start), '#', fk_userid) as usermonth";
         }
     }
     $sql .= " FROM ".MAIN_DB_PREFIX."project_task_timesheet as ts";
@@ -255,12 +255,12 @@ function getTStobeApproved($level, $offset, $role, $subId)
     }
     if ($byWeek == 1) {
         $sql .= ' ORDER BY date_start DESC, fk_userid DESC';
-    }elseif ($byWeek == 0) {
+    } elseif ($byWeek == 0) {
         $sql .= ' ORDER BY fk_userid DESC, date_start DESC';
-    }elseif ($byWeek == 2) {
+    } elseif ($byWeek == 2) {
         if ($db->type!='pgsql') {
             $sql .= ' ORDER BY YEAR(date_start) DESC, MONTH(date_start) DESC, fk_userid DESC';
-        }else {
+        } else {
             $sql .= ' ORDER BY date_part(\'year\', date_start) DESC, ate_part(\'month\', date_start) DESC, fk_userid DESC';
         }
     }
@@ -297,7 +297,7 @@ function getTStobeApproved($level, $offset, $role, $subId)
         }
         $db->free($resql);
         return $tsList;
-    }else {
+    } else {
             dol_print_error($db);
             return -1;
     }
@@ -305,9 +305,9 @@ function getTStobeApproved($level, $offset, $role, $subId)
 /*
  * function to print the timesheet navigation header
  *
- *  @param    string              	$optioncss            get print mode
- *  @param     int              	$selectList           List of pages
- *  @param     object             	$current                current page
+ *  @param    string               $optioncss            get print mode
+ *  @param     int               $selectList           List of pages
+ *  @param     object              $current                current page
  *  @return     string                                         HTML
  */
 function getHTMLNavigation($optioncss, $selectList, $current = 0)
@@ -340,13 +340,13 @@ function getHTMLNavigation($optioncss, $selectList, $current = 0)
  /*
  * function to get the Approval elible for this user
  *
- *  @param    object           	$db             database objet
- *  @param    array(int)/int        $userids    	array of manager id
- *  @return  array (int => String)  				array( ID => userName)
+ *  @param    object            $db             database objet
+ *  @param    array(int)/int        $userids        array of manager id
+ *  @return  array (int => String)                                array(ID => userName)
  */
 function getSelectAps($subId)
 {
-    if ((!is_array($subId) || !count($subId)) && $subId!='all' )return array();
+    if ((!is_array($subId) || !count($subId)) && $subId!='all')return array();
     global $db, $langs, $conf;
     $sql = '';
     $sqlWhere .= ' WHERE ts.status  in ('.SUBMITTED.', '.CHALLENGED.')';
@@ -358,14 +358,14 @@ function getSelectAps($subId)
         $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid = usr.rowid ';
         $sql .= $sqlWhere;
         $sql .= ' group by ts.date_start ORDER BY ts.date_start DESC';
-    }elseif ($conf->global->TIMESHEET_APPROVAL_BY_WEEK == 0) {
+    } elseif ($conf->global->TIMESHEET_APPROVAL_BY_WEEK == 0) {
         $sql = 'SELECT COUNT(ts.rowid) as nb, ts.fk_userid as id, ';
         $sql .= " MAX(CONCAT(usr.firstname, ' ', usr.lastname)) as label";
         $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts';
         $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid = usr.rowid ';
         $sql .= $sqlWhere;
         $sql .= ' group by ts.fk_userid ORDER BY ts.fk_userid DESC';
-    }else{
+    } else{
         $sql = 'SELECT month, COUNT(rowid) as nb, month as id, ';
         $sql .= ' month as label';
         $sql .= ' FROM (SELECT DATE_FORMAT(ts.date_start, \' %m/%Y\') as month, ';
@@ -382,7 +382,7 @@ function getSelectAps($subId)
         $i = 0;
         $j = 0;
         $num = $db->num_rows($resql);
-        while ( $i<$num)
+        while ($i<$num)
         {
             $obj = $db->fetch_object($resql);
             if ($obj) {
@@ -400,7 +400,7 @@ function getSelectAps($subId)
             }
             $i++;
         }
-    }else {
+    } else {
         $error++;
         dol_print_error($db);
         $list = array();

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2018	   Patrick DELCROIX     <pmpdelcroix@gmail.com>
+ * Copyright (C) 2018           Patrick DELCROIX     <pmpdelcroix@gmail.com>
  *
  * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,18 @@ global $langs;
  * function to genegate a select list from a table, the showed text will be a concatenation of some
  * column defined in column bit, the Least sinificative bit will represent the first colum
  *
- *  @param    string              	$table                 table which the fk refers to (without prefix)
- *  @param    string              	$fieldValue         field of the table which the fk refers to, the one to put in the Valuepart
- *  @param    string              	$htmlName        name to the form select
- *  @param    string              	$fieldToShow1    first part of the concatenation
- *  @param    string              	$fieldToShow2    second part of the concatenation
- *  @param    string              	$selected            which value must be selected
- *  @param    string              	$separator          separator between the tow contactened fileds
-*  @param    string              	$sqlTailWhere              to limit per entity, to filter ...
-*  @param    string              	$selectparam          to add parameters to the select
+ *  @param    string               $table                 table which the fk refers to (without prefix)
+ *  @param    string               $fieldValue         field of the table which the fk refers to, the one to put in the Valuepart
+ *  @param    string               $htmlName        name to the form select
+ *  @param    string               $fieldToShow1    first part of the concatenation
+ *  @param    string               $fieldToShow2    second part of the concatenation
+ *  @param    string               $selected            which value must be selected
+ *  @param    string               $separator          separator between the tow contactened fileds
+*  @param    string               $sqlTailWhere              to limit per entity, to filter ...
+*  @param    string               $selectparam          to add parameters to the select
  *  @param    array(string)             $addtionnalChoices    array of additionnal fields Array['VALUE'] = string to show
-*  @param    string              	$sqlTailTAble              to add join ...
-*  @param    string              	$ajaxUrl             path to the ajax handler ajaxSelectGenericHandler.php
+*  @param    string               $sqlTailTAble              to add join ...
+*  @param    string               $ajaxUrl             path to the ajax handler ajaxSelectGenericHandler.php
  *  @return string                                                   html code
  */
 // to be taken into account when passing a Ajax handler
@@ -63,7 +63,7 @@ function select_sellist(
     global $conf, $langs, $db;
     $noajax = isset($htmlarray['noajax']);
      $ajax = $conf->use_javascript_ajax && !$noajax ;
-    if ( !isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) || !isset($htmlarray['name'])) {
+    if (!isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) || !isset($htmlarray['name'])) {
         return 'error, one of the mandatory field of the function  select_sellist is missing';
     }
     $htmlName = $htmlarray['name'];
@@ -77,7 +77,7 @@ function select_sellist(
         $label = $item;
         if ($start) {
             $label = substr($item, $start+4);
-        }elseif ($start2) {
+        } elseif ($start2) {
             $label = substr($item, $start2+1);
         }
         $fields[] = array('select' => $item, 'label'=>trim($label));
@@ -90,7 +90,7 @@ function select_sellist(
         $comboenhancement = '';
         //$ajaxUrl = '';
         $searchfields = '';
-        if ($ajaxNbChar ) {
+        if ($ajaxNbChar) {
             $ajaxUrl = dol_buildpath('/timesheet/core/ajaxGenericSelectHandler.php', 1);
             $_SESSION['ajaxQuerry'][$token]['sql'] = $sqlarray;
             $_SESSION['ajaxQuerry'][$token]['fields'] = $fields;
@@ -104,7 +104,7 @@ function select_sellist(
             $comboenhancement = str_replace('#'.$htmlName, '#'.$htmlid, $comboenhancement);
             $comboenhancement = str_replace($htmlName.':', '"'.$htmlName.'":', $comboenhancement);// #htmlname doesn't cover everything
             $htmlName = 'search_'.$htmlName;
-        }else{
+        } else{
             $comboenhancement = ajax_combobox($htmlName);
         }
         // put \\ before barket so the js will work
@@ -161,7 +161,7 @@ function select_sellist(
         if ($addtionnalChoices)foreach ($addtionnalChoices as $value => $choice) {
             $selectOptions.= '<option value = "'.$value.'" '.(($selected == $value)?'selected':'').">{$choice}</option>\n";
         }
-    }else {
+    } else {
         $error++;
         dol_print_error($db);
        $select.= "<option value = \"-1\" selected = \"selected\">ERROR</option>\n";
@@ -171,7 +171,7 @@ function select_sellist(
             $selectedValue = $addtionnalChoices[$selected];
         }
         $select .= '<input type = "text" class = "minwidth200 '.(isset($htmlarray['class'])?$htmlarray['class']:'').'" name = "'.$htmlName.'" id = "'.(isset($htmlarray['id'])?$htmlarray['id']:$htmlName).'" value = "'.$selectedValue.'"'.$htmlarray['otherparam'].' />';
-    }else{
+    } else{
         $select .= '<select class = "flat minwidth200 '.(isset($htmlarray['class'])?$htmlarray['class']:'').'" id = "'.(isset($htmlarray['id'])?$htmlarray['id']:$htmlName).'" name = "'.$htmlName.'"'.$nodatarole.' '.$htmlarray['otherparam'].'>';
         $select .= $selectOptions;
         $select .= "</select>\n";
@@ -197,9 +197,9 @@ function print_sellist(
     $url = ''
 ) {
     global $conf, $langs, $db;
-    if ( !isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) ) {
+    if (!isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields'])) {
         return 'error, one of the mandatory field of the function  select_sellist is missing:'.$sqlarray['table'].$sqlarray['keyfield'].$sqlarray['fields'];
-    }elseif (empty($selected)) {
+    } elseif (empty($selected)) {
         return "NuLL";
     }
     $sql = 'SELECT DISTINCT ';
@@ -227,13 +227,13 @@ function print_sellist(
             $label = $item;
             if ($start) {
                 $label = substr($item, $start+4);
-            }elseif ($start2) {
+            } elseif ($start2) {
                 $label = substr($item, $start2+1);
             }
             $fields[] = array('select' => $item, 'label'=>trim($label));
         }
         $num = $db->num_rows($resql);
-        if ( $num) {
+        if ($num) {
             $obj = $db->fetch_object($resql);
             if ($obj) {
                 $select = '';
@@ -242,13 +242,13 @@ function print_sellist(
                     $select .= $obj->{$item['label']};
                 }
                      if (!empty($url))$select = '<a href = "'.$url.$obj->{$sqlarray['keyfield']}.'">'.$select.'</a>';
-            }else{
+            } else{
                 $select = "NULL";
             }
-        }else{
+        } else{
             $select = "NULL";
         }
-    }else {
+    } else {
         $error++;
         dol_print_error($db);
        $select.= "ERROR";
@@ -261,7 +261,7 @@ function print_sellist(
  * function to print a bitstring (or sting starting  with _)
  *
  *  @param    string                                            $bitstring              list f bits
- *  @param     array( string label))   $labels                 array of label ( dispaly label) for the bit number key
+ *  @param     array(string label))   $labels                 array of label (dispaly label) for the bit number key
  *  @param     array(string name))     $names                 array of name (input name) for the bit number key
  *  @param    int                       $edit             active the  read only mode
  *  @return   string                htmlcode
@@ -287,7 +287,7 @@ function printBitStringHTML($bitstring, $labels, $names, $edit = 0)
  /*
  * function to genegate a random number
  *
- *  @param    int            	$min                min seed
+ *  @param    int             $min                min seed
  *  @param    int                      $max            max seed
  *  @return   int                                  random number
  */
@@ -308,7 +308,7 @@ function crypto_rand_secure($min, $max)
  /*
  * function to genegate a random string
  *
- *  @param    int            	$lentgh                lentgh of the random string
+ *  @param    int             $lentgh                lentgh of the random string
  *  @return   int                                  random sting
  */
 function getToken($length = 32)
@@ -328,12 +328,12 @@ function getToken($length = 32)
  * function to genegate a select list from a table, the showed text will be a concatenation of some
  * column defined in column bit, the Least sinificative bit will represent the first colum
  *
- *  @param    string              	$table                 table which the fk refers to (without prefix)
- *  @param    string              	$fieldValue         field of the table which the fk refers to, the one to put in the Valuepart
- *  @param    string              	$selected           value selected of the field value column
- *  @param    string              	$fieldToShow1    first part of the concatenation
- *  @param    string              	$fieldToShow2        separator between the tow contactened fileds
- *  @param    string              	$sqlTail              to limit per entity, to filter ...
+ *  @param    string               $table                 table which the fk refers to (without prefix)
+ *  @param    string               $fieldValue         field of the table which the fk refers to, the one to put in the Valuepart
+ *  @param    string               $selected           value selected of the field value column
+ *  @param    string               $fieldToShow1    first part of the concatenation
+ *  @param    string               $fieldToShow2        separator between the tow contactened fileds
+ *  @param    string               $sqlTail              to limit per entity, to filter ...
  *  @return string                                                   html code
  */
 function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2="", $separator=' - ', $sqltail="", $sqljoin="")

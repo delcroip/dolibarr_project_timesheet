@@ -57,7 +57,7 @@ if ($user->rights->facture->creer && hasProjectRight($userid, $projectId)) {
     if ($socid == 0 || !is_numeric($socid))$socid = $staticProject->socid;//FIXME check must be in place to ensure the user hqs the right to see the project details
 $edit = 1;
 // avoid SQL issue
-if (empty($dateStart) || empty($dateEnd) ||$dateStart == $dateEnd ) {
+if (empty($dateStart) || empty($dateEnd) ||$dateStart == $dateEnd) {
     $step = 0;
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
@@ -72,7 +72,7 @@ $langs->load('timesheet@timesheet');
             $sql = 'SELECT  '.$fields.', SUM(tt.task_duration) as duration, ';
             if ($db->type!='pgsql') {
                 $sql .= " GROUP_CONCAT(tt.rowid  SEPARATOR ', ') as task_time_list";
-            }else{
+            } else{
                 $sql .= " STRING_AGG(to_char(tt.rowid, '9999999999999999'), ', ') as task_time_list";
             }
              $sql .= ' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
@@ -132,7 +132,7 @@ $langs->load('timesheet@timesheet');
                     $i++;
                 }
                 $db->free($resql);
-            }else {
+            } else {
                 dol_print_error($db);
                 return '';
             }
@@ -150,7 +150,7 @@ $langs->load('timesheet@timesheet');
             $Form .= '</table>';
             $Form .= '<input type = "submit"  class = "butAction" value = "'.$langs->trans('Next')."\">\n</form>";
              break;}
-        case 3: // review choice and list of item + quantity ( editable)
+        case 3: // review choice and list of item + quantity (editable)
             require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
             require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
             $object = new Facture($db);
@@ -159,10 +159,10 @@ $langs->load('timesheet@timesheet');
             $dateinvoice = time();
                     //$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
                             // Si facture standard
-            $object->socid				 = $socid;
-            $object->type				 = 0;//Facture::TYPE_STANDARD;
-            $object->date				 = $dateinvoice;
-            $object->fk_project			 = $projectId;
+            $object->socid                                 = $socid;
+            $object->type                                 = 0;//Facture::TYPE_STANDARD;
+            $object->date                                 = $dateinvoice;
+            $object->fk_project                         = $projectId;
             $object->fetch_thirdparty();
             $id = $object->create($user);
             $resArray = $_POST['userTask'];
@@ -171,7 +171,7 @@ $langs->load('timesheet@timesheet');
             if (is_array($resArray)) {
                 foreach ($resArray as $uId =>$userTaskService) {
                         //$userTaskService[$user][$task] = array('duration', 'VAT', 'Desc', 'PriceHT', 'Service', 'unit_duration', 'unit_duration_unit');
-                    if (is_array($userTaskService ))foreach ($userTaskService as  $tId => $service) {
+                    if (is_array($userTaskService))foreach ($userTaskService as  $tId => $service) {
                         $durationTab = explode (':', $service['duration']);
                         $duration = $durationTab[1]*60+$durationTab[0]*3600;
                         //$startday = dol_mktime(12, 0, 0, $month, 1, $year);
@@ -189,16 +189,16 @@ $langs->load('timesheet@timesheet');
                             if ($factor == 0)$factor = 1;//to avoid divided by $factor0
                             $quantity = $duration/($factor*$unit_factor);
                             $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
-                        }elseif ($service['Service']<>-999) {
+                        } elseif ($service['Service']<>-999) {
                             $factor = ($service['unit_duration_unit'] == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
                             $factor = $factor*intval($service['unit_duration']);
                             $quantity = $duration/$factor;
                             $result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], '', '', '', 0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
                         }
                         if ($service['taskTimeList']<>'' &&  $result>0)$task_time_array[$result] = $service['taskTimeList'];
-                    }else $error++;
+                    } else $error++;
                 }
-            }else $error++;
+            } else $error++;
             // End of object creation, we show it
             if ($id > 0 && ! $error) {
                 $db->commit();
@@ -211,7 +211,7 @@ $langs->load('timesheet@timesheet');
                 header('Location: ' . $object->getNomUrl(0, '', 0, 1, ''));
                 ob_end_flush();
                 exit();
-            }else {
+            } else {
                 $db->rollback();
                 //header('Location: ' . $_SERVER["PHP_SELF"] . '?step=0');
                 setEventMessages($object->error, $object->errors, 'errors');
@@ -263,7 +263,7 @@ $langs->load('timesheet@timesheet');
             if (version_compare(DOL_VERSION, "4.9.9")>=0) {
                     $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('TimesheetNotInvoiced');
                     $Form .= '</th><th align = "left"><input type = "checkbox" name = "tsNotInvoiced" value = "1" ></th></tr>';
-            }else{
+            } else{
                 $Form .= '<input type = "hidden" name = "tsNotInvoiced" value = "0">';
             }
             //$invoicabletaskOnly
@@ -275,7 +275,7 @@ $langs->load('timesheet@timesheet');
             if ($ajaxNbChar>=0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif ($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
             break;
     }
-}else {
+} else {
     $accessforbidden = accessforbidden("you don't have enough rights to see this page");
 }
 /***************************************************

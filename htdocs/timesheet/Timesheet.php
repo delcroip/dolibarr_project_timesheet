@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *   	\file       dev/skeletons/skeleton_page.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Put here some comments
+ *        \file       dev/skeletons/skeleton_page.php
+ *                \ingroup    mymodule othermodule1 othermodule2
+ *                \brief      This file is an example of a php page
+ *                                        Put here some comments
  */
 // hide left menu
 //$_POST['dol_hide_leftmenu'] = 1;
@@ -49,7 +49,7 @@ if ($whitelistmode == '') {
 $userid = is_object($user)?$user->id:$user;
 $postUserId= GETPOST('userid', 'int');
 // if the user can enter ts for other the user id is diferent
-if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1  ) {
+if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 ) {
     if (!empty($postUserId)) {
             $newuserid = $postUserId;
     }
@@ -58,7 +58,7 @@ if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_AD
     if (in_array($newuserid, $SubordiateIds) || $user->admin) {
         $SubordiateIds[] = $userid;
         $userid = $newuserid;
-    }elseif ($action == 'getOtherTs') {
+    } elseif ($action == 'getOtherTs') {
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
         unset($action);
     }
@@ -66,7 +66,7 @@ if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_AD
 $confirm = GETPOST('confirm', 'alpha');
 if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $dateStart = $_SESSION["dateStart"];
-}else {
+} else {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
 }
 $_SESSION["dateStart"] = $dateStart ;
@@ -77,12 +77,12 @@ $langs->load("projects");
 $langs->load('timesheet@timesheet');
 /*
 // Get parameters
-$id			 = GETPOST('id', 'int');
-$action		 = GETPOST('action', 'alpha');
-$myparam	 = GETPOST('myparam', 'alpha');
+$id                         = GETPOST('id', 'int');
+$action                 = GETPOST('action', 'alpha');
+$myparam         = GETPOST('myparam', 'alpha');
 // Protection if external user
 if ($user->societe_id > 0) {
-	//accessforbidden();
+        //accessforbidden();
 }
 */
 $task_timesheet = new TimesheetUserTasks($db, $userid);
@@ -109,17 +109,17 @@ switch ($action) {
                        $task_timesheet->update($user);
                     }
                     $ret = $task_timesheet->updateActuals($tasktab, $notesTask);
-                    if (GETPOSTISSET('submit') ) {
+                    if (GETPOSTISSET('submit')) {
                            $task_timesheet->setStatus($user, SUBMITTED);
                            $ret++;
                         //$task_timesheet->status = "SUBMITTED";
-                    }else {
+                    } else {
                         $task_timesheet->setStatus($user, DRAFT);
                     }
            //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
                      TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
                 }
-            }elseif (GETPOSTISSET('recall')) {
+            } elseif (GETPOSTISSET('recall')) {
                 $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
                 //$task_timesheet->status = "DRAFT";
                 $ret = $task_timesheet->setStatus($user, DRAFT);
@@ -128,11 +128,11 @@ switch ($action) {
                 } else {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"), 'errors');
                 }
-            }else{
-                    setEventMessage( $langs->transnoentitiesnoconv("NoTaskToUpdate"), 'errors');
+            } else{
+                    setEventMessage($langs->transnoentitiesnoconv("NoTaskToUpdate"), 'errors');
             }
-        }else{
-                setEventMessage( $langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" : timestamp missmatch"), 'errors');
+        } else{
+                setEventMessage($langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" : timestamp missmatch"), 'errors');
         }
         break;
     case 'deletefile':
@@ -154,7 +154,7 @@ if ($conf->global->TIMESHEET_ADD_DOCS) {
     $upload_dir = $conf->timesheet->dir_output.'/users/'.get_exdir($object->id, 2, 0, 0, $object, 'timesheet').$ref;
     if (version_compare(DOL_VERSION, "4.0")>=0) {
         include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
-    }else{
+    } else{
         include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
         //dol_include_once('/core/class/html.form.class.php');
     }

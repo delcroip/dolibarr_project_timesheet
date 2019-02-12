@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *   	\file       dev/skeletons/skeleton_page.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Put here some comments
+ *        \file       dev/skeletons/skeleton_page.php
+ *                \ingroup    mymodule othermodule1 othermodule2
+ *                \brief      This file is an example of a php page
+ *                                        Put here some comments
  */
 // hide left menu
 //$_POST['dol_hide_leftmenu'] = 1;

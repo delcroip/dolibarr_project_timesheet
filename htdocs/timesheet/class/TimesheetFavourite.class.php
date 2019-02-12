@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014           Juanjo Menent                <jmenent@2byte.es>
  * Copyright (C) Patrick Delcroix <patrick@pmpd.eu>
  *
  * This program is free software;you can redistribute it and/or modify
@@ -20,22 +20,22 @@
  *  \file       dev/timesheetFavourites/timesheetFavourite.class.php
  *  \ingroup    timesheet othermodule1 othermodule2
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *				Initialy built by build_class_from_table on 2015-08-01 08:59
+ *                                Initialy built by build_class_from_table on 2015-08-01 08:59
  */
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 //require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 /**
- *	Put here description of your class
+ *        Put here description of your class
  */
 class TimesheetFavourite extends CommonObject
 {
-    public $db;							//!< To store db handler
-    public $error;							//!< To return error code (or message)
-    public $errors = array();				//!< To return several error codes (or messages)
-    public $element = 'timesheetFavourite';			//!< Id that identify managed objects
-    public $table_element = 'timesheet_whitelist';		//!< Name of table without prefix where object is stored
+    public $db;                                                        //!< To store db handler
+    public $error;                                                        //!< To return error code (or message)
+    public $errors = array();                                //!< To return several error codes (or messages)
+    public $element = 'timesheetFavourite';                        //!< Id that identify managed objects
+    public $table_element = 'timesheet_whitelist';                //!< Name of table without prefix where object is stored
     public $id;
     public $user;
     public $project;
@@ -46,7 +46,7 @@ class TimesheetFavourite extends CommonObject
     /**
      *  Constructor
      *
-     *  @param	DoliDb		$db      Database handler
+     *  @param        DoliDb                $db      Database handler
      */
     function __construct($db)
     {
@@ -56,8 +56,8 @@ class TimesheetFavourite extends CommonObject
     /**
      *  Create object into database
      *
-     *  @param  int		$notrigger   0 = launch triggers after, 1 = disable triggers
-     *  @return int      		   	 <0 if KO, Id of created object if OK
+     *  @param  int                $notrigger   0 = launch triggers after, 1 = disable triggers
+     *  @return int                         <0 if KO, Id of created object if OK
      */
     function create($notrigger = 0)
     {
@@ -90,7 +90,7 @@ class TimesheetFavourite extends CommonObject
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql) {
+        if (! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
         if (! $error) {
@@ -107,7 +107,7 @@ class TimesheetFavourite extends CommonObject
             }
             $this->db->rollback();
             return -1*$error;
-        }else {
+        } else {
             $this->db->commit();
             return $this->id;
         }
@@ -115,9 +115,9 @@ class TimesheetFavourite extends CommonObject
         /**
      *  Load the list of the user whitelist open between those date
      *
-     *  @param	int      $userid   	Id object
-    *  @param	date	$datestart	start date
-    *  @param	date	$datestop	stopdate
+     *  @param        int      $userid        Id object
+    *  @param        date        $datestart        start date
+    *  @param        date        $datestop        stopdate
      *  @return             array)timesheetFavourite          return the list of the user whiteliste
      */
     function fetchUserList($userid, $datestart, $datestop)
@@ -165,8 +165,8 @@ class TimesheetFavourite extends CommonObject
                     $Listtask[$key] = $value;
                 }
             }
-        }else {
-      	    $this->error = "Error ".$this->db->lasterror();
+        } else {
+            $this->error = "Error ".$this->db->lasterror();
         }
         if (count($Listtask)>0)
             return  $Listtask;
@@ -176,22 +176,22 @@ class TimesheetFavourite extends CommonObject
    /**
      *  get all the task open with this line
      *
-     *  @return int          	task list
+     *  @return int           task list
      */
     function getTaskList()
     {
         $sql = "SELECT";
-	$sql.= " t.rowid";
+        $sql.= " t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
         if ($this->project_task && $this->subtask) {
             $sql.= '  WHERE  (t.rowid = \''.$this->project_task.'\'';
             $sql.= '  OR  t.fk_task_parent = \''.$this->project_task.'\')';
-        }elseif ($this->project_task ) {
+        } elseif ($this->project_task) {
             $sql.= '  WHERE t.rowid = \''.$this->project_task.'\'';
-        }else {
+        } else {
             $sql.= ' WHERE t.fk_projet = \''.$this->project.'\'';
         }
-    	dol_syslog(get_class($this)."::getTaskList");
+        dol_syslog(get_class($this)."::getTaskList");
         $resql = $this->db->query($sql);
         if ($resql) {
             $Listtask = Array();
@@ -205,17 +205,17 @@ class TimesheetFavourite extends CommonObject
             }
             $this->db->free($resql);
             return $Listtask;
-        }else {
-      	    $this->error = "Error ".$this->db->lasterror();
+        } else {
+            $this->error = "Error ".$this->db->lasterror();
             return null;
         }
     }
     /**
      *  Load object in memory from the database
      *
-     *  @param	int		$id    	Id object
-     *  @param	string	$ref	Ref
-     *  @return int          	<0 if KO, >0 if OK
+     *  @param        int                $id        Id object
+     *  @param        string        $ref        Ref
+     *  @return int           <0 if KO, >0 if OK
      */
     function fetch($id, $ref = '')
     {
@@ -230,7 +230,7 @@ class TimesheetFavourite extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql.= ' WHERE t.ref = \''.$ref.'\'';
         else $sql.= " WHERE t.rowid = ".$id;
-    	dol_syslog(get_class($this)."::fetch");
+        dol_syslog(get_class($this)."::fetch");
         $resql = $this->db->query($sql);
         if ($resql) {
             if ($this->db->num_rows($resql)) {
@@ -245,16 +245,16 @@ class TimesheetFavourite extends CommonObject
             }
             $this->db->free($resql);
             return 1;
-        }else {
-      	    $this->error = "Error ".$this->db->lasterror();
+        } else {
+            $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
     /**
      *  Update object into database
      *
-     *  @param  int		$notrigger	 0 = launch triggers after, 1 = disable triggers
-     *  @return int     		   	 <0 if KO, >0 if OK
+     *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
+     *  @return int                         <0 if KO, >0 if OK
      */
     function update($notrigger = 0)
     {
@@ -280,7 +280,7 @@ class TimesheetFavourite extends CommonObject
         $this->db->begin();
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql) {
+        if (! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
         }
         if (! $error) {
@@ -296,28 +296,28 @@ class TimesheetFavourite extends CommonObject
             }
             $this->db->rollback();
             return -1*$error;
-        }else {
+        } else {
             $this->db->commit();
             return 1;
         }
     }
      /**
-     *	Return clickable name (with picto eventually)
+     *        Return clickable name (with picto eventually)
      *
-     *	@param		string			$htmlcontent 		text to show
-     *	@param		int			$id                     Object ID
-     *	@param		string			$ref                    Object ref
-     *	@param		int			$withpicto		0 = _No picto, 1 = Includes the picto in the linkn, 2 = Picto only
-     *	@return		string						String with URL
+     *        @param                string                        $htmlcontent                text to show
+     *        @param                int                        $id                     Object ID
+     *        @param                string                        $ref                    Object ref
+     *        @param                int                        $withpicto                0 = _No picto, 1 = Includes the picto in the linkn, 2 = Picto only
+     *        @return                string                                                String with URL
      */
     function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
     {
-    	global $langs;
-    	$result = '';
+        global $langs;
+        $result = '';
         if (empty($ref) && $id == 0) {
             if (!empty($this->id)) {
                 $id = $this->id;
-            }elseif (!empty($this->rowid)) {
+            } elseif (!empty($this->rowid)) {
                 $id = $this->rowid;
             }if (!empty($this->ref)) {
                 $ref = $this->ref;
@@ -325,32 +325,32 @@ class TimesheetFavourite extends CommonObject
         }
         if ($id) {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?id='.$id.'&action=view">';
-        }elseif (!empty($ref)) {
+        } elseif (!empty($ref)) {
             $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetFavouriteAdmin.php?ref='.$ref.'&action=view">';
-        }else{
+        } else{
             $lien = "";
         }
         $lienfin = empty($lien)?'':'</a>';
-    	$picto = 'timesheet@timesheet';
+        $picto = 'timesheet@timesheet';
         if ($ref) {
             $label = $langs->trans("Show").': '.$ref;
-        }elseif ($id) {
+        } elseif ($id) {
             $label = $langs->trans("Show").': '.$id;
         }
-    	if ($withpicto == 1) {
+        if ($withpicto == 1) {
             $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        }elseif ($withpicto == 2) {
+        } elseif ($withpicto == 2) {
             $result .= $lien.img_object($label, $picto).$lienfin;
-        }else{
+        } else{
             $result .= $lien.$htmlcontent.$lienfin;
         }
-    	return $result;
+        return $result;
     }
     /**
      *  Delete object in database
      *
-     *  @param  int		$notrigger	 0 = launch triggers after, 1 = disable triggers
-     *  @return	int					 <0 if KO, >0 if OK
+     *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
+     *  @return        int                                         <0 if KO, >0 if OK
      */
     function delete($notrigger = 0)
     {
@@ -378,16 +378,16 @@ class TimesheetFavourite extends CommonObject
             }
             $this->db->rollback();
             return -1*$error;
-        }else {
+        } else {
                 $this->db->commit();
                 return 1;
         }
     }
     /**
-     *	Load an object from its id and create a new one in database
+     *        Load an object from its id and create a new one in database
      *
-     *	@param	int		$fromid     Id of object to clone
-     * 	@return	int					New id of clone
+     *        @param        int                $fromid     Id of object to clone
+     *        @return        int                                        New id of clone
      */
     function createFromClone($fromid)
     {
@@ -414,16 +414,16 @@ class TimesheetFavourite extends CommonObject
         if (! $error) {
             $this->db->commit();
             return $object->id;
-        }else {
+        } else {
             $this->db->rollback();
             return -1;
         }
     }
     /**
-     *	Initialise object with example values
-     *	Id must be 0 if object instance is a specimen
+     *        Initialise object with example values
+     *        Id must be 0 if object instance is a specimen
      *
-     *	@return	void
+     *        @return        void
      */
     function initAsSpecimen()
     {
