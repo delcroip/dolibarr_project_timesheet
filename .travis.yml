@@ -307,6 +307,8 @@ script:
   echo "Upgrading Dolibarr"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see log files.
   rsync -r /tmp/dolibarr/ $TRAVIS_BUILD_DIR
+  //remove the dev include
+  rm $TRAVIS_BUILD_DIR/htdocs/timesheet/core/lib/dev.inc.php
   set +e
   cd htdocs/install
   # Enable modules not enabled into original dump
