@@ -351,7 +351,7 @@ switch ($action) {
             $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
             $html_task = array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
             $addChoices_task = null;
-                print select_sellist($sql_task, $html_task, $object->task, $addChoices_task );
+                print select_sellist($sql_task, $html_task, $object->task, $addChoices_task);
         } else{
             if (class_exist('Task')) {
                 $StaticObject = New Task($db);

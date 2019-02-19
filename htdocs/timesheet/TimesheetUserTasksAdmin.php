@@ -322,7 +322,7 @@ switch ($action) {
 // show the field userId
                 print '<td class = "fieldrequired">'.$langs->trans('User').' </td><td>';
                 if ($edit == 1) {
-                print $form->select_dolusers($object->userId, 'Userid', 1, '', 0 );
+                print $form->select_dolusers($object->userId, 'Userid', 1, '', 0);
                 } else{
                 print print_generic('user', 'rowid', $object->userId, 'lastname', 'firstname', ' ');
                 }

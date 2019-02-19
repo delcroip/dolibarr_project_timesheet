@@ -290,7 +290,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
         $html_task = array('name'=>'ls_task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
         $addChoices_task = null;
-                print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task );
+                print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task);
         print '</td>';
 //Search field forproject
         print '<td class = "liste_titre" colspan = "1" >';

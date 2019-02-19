@@ -26,7 +26,7 @@ ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idac  FOR
 ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idas  FOREIGN KEY (fk_user_app_suplier) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idac  FOREIGN KEY (fk_user_app_other) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idc  FOREIGN KEY (fk_user_creation ) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idc  FOREIGN KEY (fk_user_creation) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_id  FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_task_id  FOREIGN KEY (fk_projet_task) REFERENCES llx_projet_task(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;

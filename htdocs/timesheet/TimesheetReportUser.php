@@ -81,7 +81,7 @@ if ($resql) {
         $error = 0;
         $obj = $db->fetch_object($resql);
         $userList[$obj->userid] = new TimesheetReport($db);
-        $userList[$obj->userid]->initBasic('', $obj->userid, $obj->firstname.' '.$obj->lastname, $firstDay, $lastDay, $mode );
+        $userList[$obj->userid]->initBasic('', $obj->userid, $obj->firstname.' '.$obj->lastname, $firstDay, $lastDay, $mode);
         $i++;
     }
     $db->free($resql);

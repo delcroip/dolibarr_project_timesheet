@@ -91,9 +91,9 @@ class TimesheetHoliday extends Holiday
                      }
                      // in case of 2 holiday present in the half day order 3, 2, 1, 5, 4
                      $oldSatus = $this->holidaylist[$day]['amStatus'];
-                     $amOverride = ($this->holidaylist[$day]['amId'] == 0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
+                     $amOverride = ($this->holidaylist[$day]['amId'] == 0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3)));
                      $oldSatus = $this->holidaylist[$day]['amStatus'];
-                     $pmOverride = ($this->holidaylist[$day]['pmId'] == 0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3 ) ));
+                     $pmOverride = ($this->holidaylist[$day]['pmId'] == 0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3)));
                      if ($am && $amOverride) {
                          $this->holidaylist[$day]['am'] = true;
                          $this->holidaylist[$day]['amId'] = $record['rowid'];
@@ -148,7 +148,7 @@ class TimesheetHoliday extends Holiday
                     $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
                     $amColor = ($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
                     $amClass = ($holiday['prev'])?'':' noPrevHoliday';
-                    $amClass.= ($pm && $pmId == $amId )?'':' noNextHoliday';
+                    $amClass.= ($pm && $pmId == $amId)?'':' noNextHoliday';
                     $html .= ' class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
                 } else {
                     $html .= ' class = "holiday" >&nbsp;</a></li>';

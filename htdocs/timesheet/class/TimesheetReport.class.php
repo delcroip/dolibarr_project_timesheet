@@ -220,7 +220,7 @@ class TimesheetReport
                     'userId' =>$obj->userid,
                     'userName' =>trim($obj->username),
                     'note'=>$this->db->escape($obj->note),
-                    'invoiceable'=>$obj->invoiceable );
+                    'invoiceable'=>$obj->invoiceable);
                 $i++;
             }
             $this->db->free($resql);
@@ -283,9 +283,9 @@ class TimesheetReport
                 foreach ($resArray as $key => $item) {
                    $item['date'] = dol_print_date($item['date'], 'day');
                    $HTMLRes.= '<tr class = "oddeven" align = "left"><th width = "200px">'.$this->name.'</th>';
-                   $HTMLRes.= '<th '.(isset($titleWidth[$this->lvl1Title])?'width = "'.$titleWidth[$this->lvl1Title].'"':'' ).'>'.$item[$this->lvl1Title].'</th>';
-                   $HTMLRes .= '<th '.(isset($titleWidth[$this->lvl2Title])?'width = "'.$titleWidth[$this->lvl2Title].'"':'' ).'>'.$item[$this->lvl2Title].'</th>';
-                   $HTMLRes .= '<th '.(isset($titleWidth[$this->lvl3Title])?'width = "'.$titleWidth[$this->lvl3Title].'"':'' ).'>'.$item[$this->lvl3Title].'</th>';
+                   $HTMLRes.= '<th '.(isset($titleWidth[$this->lvl1Title])?'width = "'.$titleWidth[$this->lvl1Title].'"':'').'>'.$item[$this->lvl1Title].'</th>';
+                   $HTMLRes .= '<th '.(isset($titleWidth[$this->lvl2Title])?'width = "'.$titleWidth[$this->lvl2Title].'"':'').'>'.$item[$this->lvl2Title].'</th>';
+                   $HTMLRes .= '<th '.(isset($titleWidth[$this->lvl3Title])?'width = "'.$titleWidth[$this->lvl3Title].'"':'').'>'.$item[$this->lvl3Title].'</th>';
                    $HTMLRes .= '<th width = "70px">'.formatTime($item['duration'], 0).'</th>';
                    $HTMLRes .= '<th width = "70px">'.formatTime($item['duration'], $hoursperdays).'</th></tr>';
                 }

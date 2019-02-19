@@ -339,7 +339,7 @@ function getToken($length = 32)
 function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToShow2 = "", $separator = ' - ', $sqltail = "", $sqljoin = "")
 {
    //return $table.$db.$field;
-    return  print_sellist($sqlarray=array('table'=> $table, 'keyfield'=> $fieldValue, 'fields'=>$fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where'=>'', 'tail'=>$sqltail),
+    return  print_sellist($sqlarray = array('table' => $table, 'keyfield' => $fieldValue, 'fields' => $fieldToShow1.(empty($fieldToShow2)?'':', '.$fieldToShow2), 'join' => $sqljoin, 'where' => '', 'tail' => $sqltail),
         $selected,
         $separator);
 }

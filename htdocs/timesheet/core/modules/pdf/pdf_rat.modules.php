@@ -311,7 +311,7 @@ function writeFile($object, $outputlangs)
             $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot   - $heightforfooter, $heightoftitleline, $outputlangs, 1);
         }// show the sign box & total on the last page for the user
         if ($showSign == 1) {
-            $pdf->SetFont('', 'B', $default_font_size );
+            $pdf->SetFont('', 'B', $default_font_size);
             $txtTotal= $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1, 0, true, 'L');
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $txtTotal, 0, 1, 0, true, 'R');
@@ -412,7 +412,7 @@ function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outputlangs,
     if ($hidetop == 0){
         $pdf->line($this->marge_gauche, $tab_top+$heightoftitleline, $this->page_largeur-$this->marge_droite, $tab_top+$heightoftitleline);
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('', 'B', $default_font_size  );
+        $pdf->SetFont('', 'B', $default_font_size);
         //ref title
         $pdf->SetXY($this->posxref, $tab_top+1);
         $pdf->MultiCell($this->posxdate-$this->posxref, 3, "#", '', 'L');
@@ -495,7 +495,7 @@ function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName = "")
 
 
 //pdf title
-    $pdf->SetFont('', 'B', $default_font_size +1 );
+    $pdf->SetFont('', 'B', $default_font_size +1);
     $pdf->SetXY($this->marge_gauche+$logoWidth, $posy);
     $pdf->SetTextColor(0, 0, 60);
     $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->name), '', 'R');
@@ -504,7 +504,7 @@ function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName = "")
         $pdf->SetXY($this->marge_gauche, $height+$default_font_size + 3);
         $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
     }
-    $pdf->SetFont('', '', $default_font_size  );
+    $pdf->SetFont('', '', $default_font_size);
     //dateStart
     $posy+=12;
     $pdf->SetXY($posx, $posy);

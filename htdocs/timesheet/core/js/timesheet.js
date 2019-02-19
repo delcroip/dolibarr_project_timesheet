@@ -36,7 +36,7 @@ function submitTs(){
               
               if(((charCode >= 48) && (charCode <= 57)) || //num
                     (charCode===46) || (charCode===8)||// comma & periode
-                    (charCode === 58) || (charCode==44) )// : & all charcode
+                    (charCode === 58) || (charCode==44))// : & all charcode
               {
                   // ((charCode>=96) && (charCode<=105)) || //numpad
                 return true;
@@ -85,12 +85,12 @@ function validateTotal(col_id){
         var Total =document.getElementsByClassName('TotalColumn_'+col_id);    
         var lines =document.getElementsByClassName('column_'+col_id);
         total=getTotal(lines);
-        if(Total[0].innerHTML!=minutesToHTML(total) ){
+        if(Total[0].innerHTML!=minutesToHTML(total)){
             var hours=total/60;
             if(hours>day_max_hours){
                $.jnotify(err_msg_max_hours_exceded ,'error',false);   //
                 return -1;
-            }else if(hours>day_hours ){
+            }else if(hours>day_hours){
                $.jnotify(wng_msg_hours_exceded ,'warning',false); 
             }   
         }
@@ -166,7 +166,7 @@ function validateTime(object,col_id){
                 object.style.backgroundColor = "lightgreen";       
                 object.value=object.value.replace(',','.');
                 var regex=/^([0-5]{1}([.,]{1}[0-9]{1,3})?|[.,]{1}[0-9]{1,3}|)$/;
-                if(!regex.test(object.value) ){      
+                if(!regex.test(object.value)){      
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
                   }      
@@ -330,7 +330,7 @@ function searchTask(evt){
         tslist[i].style.display = "";
         fields=tslist[i].children;
         var displayLine=(tslist[i].id=="searchline")?true:false;
-        for (j=0; j<fields.length;j++ ){
+        for (j=0; j<fields.length;j++){
            var found=0;
            found+=fields[j].innerText.search(search);
            if(found>=0){

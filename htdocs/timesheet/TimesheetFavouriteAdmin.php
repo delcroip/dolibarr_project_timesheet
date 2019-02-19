@@ -343,7 +343,7 @@ switch ($action) {
         if ($edit == 1) {
             if (!empty($editedUser))$object->user = $editedUser;
             elseif ($new == 1) $object->user = $user->id;
-            print $form->select_dolusers($object->user, 'User', 1, '', !$user->admin );
+            print $form->select_dolusers($object->user, 'User', 1, '', !$user->admin);
         } else{
         print print_generic('user', 'rowid', $object->user, 'lastname', 'firstname', ' ');
         }
@@ -358,7 +358,7 @@ switch ($action) {
             if (!$user->admin) {
                 $formUserJoin = ' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid = ec.element_id';
                 $formUserJoin .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = fk_c_type_contact';
-                $formUserWhere .= " AND (ctc.element = 'project' AND ctc.active = '1'  AND ec.fk_socpeople = '".$user->id."' )";
+                $formUserWhere .= " AND (ctc.element = 'project' AND ctc.active = '1'  AND ec.fk_socpeople = '".$user->id."')";
                 $formUserWhere .= " OR (t.public = '1')";
             }
             $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
@@ -381,7 +381,7 @@ switch ($action) {
             if (!$user->admin) {
                 $formTaskJoin = ' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid = ec.element_id';
                 $formTaskJoin .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = fk_c_type_contact';
-                $formTaskWhere .= " AND (ctc.element = 'project_task' AND ctc.active = '1'  AND ec.fk_socpeople = '".$user->id."' )";
+                $formTaskWhere .= " AND (ctc.element = 'project_task' AND ctc.active = '1'  AND ec.fk_socpeople = '".$user->id."')";
             }
             $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
             $htmlProjectTaskArray = array('name'=>'Projecttask', 'ajaxNbChar'=>$ajaxNbChar);

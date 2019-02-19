@@ -242,8 +242,8 @@ class TimesheetUserTasks extends CommonObject
                 unset($this->status) ;
                 unset($this->date_modification);
                 unset($this->user_modification);
-                unset($this->note );
-                unset($this->date_creation  );
+                unset($this->note);
+                unset($this->date_creation);
                 //$this->date_end = getEndWeek($this->date_start);
                 $this->create($this->user);
                 $this->fetch($this->id);
@@ -408,7 +408,7 @@ class TimesheetUserTasks extends CommonObject
     function fetchAll($startdate, $whitelistmode = false)
     {
         global $conf;
-        $this->whitelistmode = (is_numeric($whitelistmode)&& !empty($whitelistmode) )?$whitelistmode:$conf->global->TIMESHEET_WHITELIST_MODE;
+        $this->whitelistmode = (is_numeric($whitelistmode)&& !empty($whitelistmode))?$whitelistmode:$conf->global->TIMESHEET_WHITELIST_MODE;
         $this->date_start = getStartDate($startdate);
         $this->ref = $this->date_start.'_'.$this->userId;
         $this->date_end = getEndDate($this->date_start);
@@ -895,7 +895,7 @@ function getHTMLtaskLines($ajax = false)
 function getHTMLNote()
 {
      global $langs;
-     $isOpenSatus = (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED )));
+     $isOpenSatus = (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED)));
      $html = '<div class = "noborder"><div  width = "100%">'.$langs->trans('Note').'</div><div width = "100%">';
     if ($isOpenSatus) {
         $html .= '<textarea class = "flat"  cols = "75" name = "noteTaskApproval['.$this->id.']" rows = "3" >'.$this->note.'</textarea>';
@@ -935,7 +935,7 @@ function getHTMLNavigation($optioncss, $ajax = false)
     $form = new Form($this->db);
     $tail = '';
     //$tail = '&wlm='.$this->whitelistmode;
-    if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 )$tail = '&userid='.$this->userId;
+    if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1)$tail = '&userid='.$this->userId;
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
     if ($ajax) {
 //     $Nav.=  '<a id = "navPrev" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, -1).'\', 0);';
@@ -1206,7 +1206,7 @@ function sendApprovalReminders()
                 $addr_cc, $addr_bcc = 0,
                 $deliveryreceipt = 0,
                 $msgishtml = 1
-            );
+          );
            $mailfile->sendfile();
           }
     }

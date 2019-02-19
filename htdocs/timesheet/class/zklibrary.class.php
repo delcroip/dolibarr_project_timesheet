@@ -156,7 +156,7 @@ class ZKLibrary
         $chksum = 0;
         $session_id = $this->session_id;
         $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
-        $reply_id = hexdec($u['h8'].$u['h7'] );
+        $reply_id = hexdec($u['h8'].$u['h7']);
         $buf = $this->createHeader($command, $chksum, $session_id, $reply_id, $command_string);
         socket_sendto($this->socket, $buf, strlen($buf), 0, $this->ip, $this->port);
         try
@@ -266,7 +266,7 @@ class ZKLibrary
         $data = $data / 31;
         $month = $data % 12+1;
         $data = $data / 12;
-        $year = floor($data + 2000 );
+        $year = floor($data + 2000);
         if ($unix === true){
         $d = mktime($hour, $minute, $second, $month, $day, $year);
         } else{
@@ -351,8 +351,8 @@ class ZKLibrary
      */
     private function checkValid($reply)
     {
-        $u = unpack('H2h1/H2h2', substr($reply, 0, 8) );
-        $command = hexdec($u['h2'].$u['h1'] );
+        $u = unpack('H2h1/H2h2', substr($reply, 0, 8));
+        $command = hexdec($u['h2'].$u['h1']);
         if ($command == CMD_ACK_OK) {
             return true;
         } else {
@@ -370,15 +370,15 @@ class ZKLibrary
     {
         $chksum = 0;
         $session_id = $this->session_id;
-        $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8) );
-        $reply_id = hexdec($u['h8'].$u['h7'] );
+        $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
+        $reply_id = hexdec($u['h8'].$u['h7']);
         $buf = $this->createHeader($command, $chksum, $session_id, $reply_id, $command_string);
         socket_sendto($this->socket, $buf, strlen($buf), MSG_EOR, $this->ip, $this->port);
         try
         {
             socket_recvfrom($this->socket, $this->received_data, 1024, 0, $this->ip, $this->port);
-            $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8 ) );
-            $this->session_id = hexdec($u['h6'].$u['h5'] );
+            $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8));
+            $this->session_id = hexdec($u['h6'].$u['h5']);
             return substr($this->received_data, $offset_data);
         }
         catch(ErrorException $e)
@@ -413,7 +413,7 @@ class ZKLibrary
     private function getSizeAttendance()
     {
         $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
-        $command = hexdec($u['h2'].$u['h1'] );
+        $command = hexdec($u['h2'].$u['h1']);
         if ($command == CMD_PREPARE_DATA) {
             $u = unpack('H2h1/H2h2/H2h3/H2h4', substr($this->received_data, 8, 4));
             $size = hexdec($u['h4'].$u['h3'].$u['h2'].$u['h1']);
@@ -429,7 +429,7 @@ class ZKLibrary
     private function getSizeTemplate()
     {
         $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
-        $command = hexdec($u['h2'].$u['h1'] );
+        $command = hexdec($u['h2'].$u['h1']);
         if ($command == CMD_PREPARE_DATA) {
             $u = unpack('H2h1/H2h2/H2h3/H2h4', substr($this->received_data, 8, 4));
             $size = hexdec($u['h4'].$u['h3'].$u['h2'].$u['h1']);
@@ -874,14 +874,14 @@ class ZKLibrary
         $command_string = chr(5);
         $chksum = 0;
         $session_id = $this->session_id;
-        $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8) );
-        $reply_id = hexdec($u['h8'].$u['h7'] );
+        $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
+        $reply_id = hexdec($u['h8'].$u['h7']);
         $buf = $this->createHeader($command, $chksum, $session_id, $reply_id, $command_string);
         socket_sendto($this->socket, $buf, strlen($buf), 0, $this->ip, $this->port);
         try
         {
             socket_recvfrom($this->socket, $this->received_data, 1024, 0, $this->ip, $this->port);
-            $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8 ) );
+            $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8));
             $bytes = $this->getSizeUser();
             if ($bytes) {
             while($bytes > 0)
@@ -890,7 +890,7 @@ class ZKLibrary
                 array_push($this->user_data, $received_data);
                 $bytes -= 1024;
             }
-            $this->session_id = hexdec($u['h6'].$u['h5'] );
+            $this->session_id = hexdec($u['h6'].$u['h5']);
             socket_recvfrom($this->socket, $received_data, 1024, 0, $this->ip, $this->port);
             }
             $users = array();
@@ -911,8 +911,8 @@ class ZKLibrary
                 $u2 = hexdec(substr($u[1], 4, 2));
                 $uid = $u1+($u2*256);// 2 byte
                 $role = hexdec(substr($u[1], 6, 2)).' ';// 1 byte
-                $password = hex2bin(substr($u[1], 8, 16 )).' ';// 8 byte
-                $name = hex2bin(substr($u[1], 24, 74 )). ' ';// 37 byte
+                $password = hex2bin(substr($u[1], 8, 16)).' ';// 8 byte
+                $name = hex2bin(substr($u[1], 24, 74)). ' ';// 37 byte
                 $userid = hex2bin(substr($u[1], 98, 72)).' ';// 36 byte
                 $passwordArr = explode(chr(0), $password, 2);// explode to array
                 $password = $passwordArr[0];// get password
@@ -973,14 +973,14 @@ class ZKLibrary
         $command_string = $byte1.$byte2.chr($finger);
         $chksum = 0;
         $session_id = $this->session_id;
-        $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8) );
-        $reply_id = hexdec($u['h8'].$u['h7'] );
+        $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
+        $reply_id = hexdec($u['h8'].$u['h7']);
         $buf = $this->createHeader($command, $chksum, $session_id, $reply_id, $command_string);
         socket_sendto($this->socket, $buf, strlen($buf), 0, $this->ip, $this->port);
         try
         {
             socket_recvfrom($this->socket, $this->received_data, 1024, 0, $this->ip, $this->port);
-            $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8 ) );
+            $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8));
             $bytes = $this->getSizeTemplate();
             if ($bytes) {
                 while($bytes > 0)
@@ -989,7 +989,7 @@ class ZKLibrary
                     array_push($this->user_data, $received_data);
                     $bytes -= 1024;
                 }
-                $this->session_id = hexdec($u['h6'].$u['h5'] );
+                $this->session_id = hexdec($u['h6'].$u['h5']);
                 socket_recvfrom($this->socket, $received_data, 1024, 0, $this->ip, $this->port);
             }
             $template_data = array();
@@ -1035,7 +1035,7 @@ class ZKLibrary
         $chksum = 0;
         $session_id = $this->session_id;
         $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
-        $reply_id = hexdec($u['h8'].$u['h7'] );
+        $reply_id = hexdec($u['h8'].$u['h7']);
         $buf = $this->createHeader($command, $chksum, $session_id, $reply_id, $command_string);
         socket_sendto($this->socket, $buf, strlen($buf), 0, $this->ip, $this->port);
         try
@@ -1118,15 +1118,15 @@ class ZKLibrary
         /*
         $chksum = 0;
         $session_id = $this->session_id;
-        $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8) );
-        $reply_id = hexdec($u['h8'].$u['h7'] );
+        $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
+        $reply_id = hexdec($u['h8'].$u['h7']);
         $buf = $this->createHeader($command, $chksum, $session_id, $reply_id, $command_string);
         socket_sendto($this->socket, $buf, strlen($buf), 0, $this->ip, $this->port);
         try
         {
-            $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8 ) );
-            $this->session_id = hexdec($u['h6'].$u['h5'] );
-            return substr($this->received_data, 8 );
+            $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8));
+            $this->session_id = hexdec($u['h6'].$u['h5']);
+            return substr($this->received_data, 8);
         }
         catch(ErrorException $e)
         {
@@ -1205,7 +1205,7 @@ class ZKLibrary
         $byte2 = chr((int) ($uid >> 8));
         $command_string = $byte1.$byte2.chr($finger);
         $u = unpack('H2h1/H2h2', $this->execCommand($command, $command_string));
-        $ret = hexdec($u['h2'].$u['h1'] );
+        $ret = hexdec($u['h2'].$u['h1']);
         return ($ret == CMD_ACK_OK)?1:0;
     }
     /** start verify //fixme
@@ -1291,10 +1291,10 @@ class ZKLibrary
                 $u2 = hexdec(substr($u[1], 6, 2));
                 $uid = $u1+($u2*256);
                 $id = str_replace("\0", '', hex2bin(substr($u[1], 8, 16)));
-                $state = hexdec(substr($u[1], 56, 2 ) );
+                $state = hexdec(substr($u[1], 56, 2));
                 $timestamp = $this->decodeTime(hexdec($this->reverseHex(substr($u[1], 58, 8))));
                 array_push($attendance, array($uid, $id, $state, $timestamp));
-                $attendance_data = substr($attendance_data, 40 );
+                $attendance_data = substr($attendance_data, 40);
             }
             }
             return $attendance;

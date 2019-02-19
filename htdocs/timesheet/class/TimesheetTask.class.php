@@ -89,7 +89,7 @@ class TimesheetTask extends Task
         $this->status = DRAFT;
         $this->sender = USER;
         $this->recipient = TEAM;
-        $this->user_app = array(TEAM=>0, PROJECT=>0, CUSTOMER=>0, SUPPLIER=>0, OTHER=>0  );
+        $this->user_app = array(TEAM=>0, PROJECT=>0, CUSTOMER=>0, SUPPLIER=>0, OTHER=>0);
     }
     /******************************************************************************
      *
@@ -341,16 +341,16 @@ class TimesheetTask extends Task
                 unset($this->tracking_ids) ;
                 unset($this->date_modification);
                 unset($this->user_app[TEAM]);
-                unset($this->user_app[PROJECT] );
-                unset($this->user_app[CUSTOMER] );
-                unset($this->user_app[SUPPLIER] );
-                unset($this->user_app[OTHER] );
-                unset($this->user_creation );
+                unset($this->user_app[PROJECT]);
+                unset($this->user_app[CUSTOMER]);
+                unset($this->user_app[SUPPLIER]);
+                unset($this->user_app[OTHER]);
+                unset($this->user_creation);
                 unset($this->user_modification);
-                unset($this->id );
-                unset($this->note );
-                unset($this->task_timesheet );
-                unset($this->date_creation  );
+                unset($this->id);
+                unset($this->note);
+                unset($this->task_timesheet);
+                unset($this->date_creation);
                 $this->create($this->user);
                 $this->fetch($this->appId);
             }
@@ -727,11 +727,11 @@ class TimesheetTask extends Task
             // to avoid editing if the task is closed
             $dayWorkLoadSec = isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
             $dayWorkLoad = formatTime($dayWorkLoadSec, -1);
-            $startDates = ($this->date_start>$this->startDatePjct )?$this->date_start:$this->startDatePjct;
+            $startDates = ($this->date_start>$this->startDatePjct)?$this->date_start:$this->startDatePjct;
             $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct == 0)?$this->date_end:$this->stopDatePjct;
             if ($isOpenStatus) {
                 $isOpen = $isOpenStatus && (($startDates == 0) || ($startDates < $today +SECINDAY/4));
-                $isOpen = $isOpen && (($stopDates == 0) ||($stopDates >= $today ));
+                $isOpen = $isOpen && (($stopDates == 0) ||($stopDates >= $today));
                 $isOpen = $isOpen && ($this->pStatus < "2") ;
                 $isOpen = $isOpen  && $opendays[date("N", $today)];
                 $bkcolor = '';
@@ -815,7 +815,7 @@ class TimesheetTask extends Task
                 case 'Progress':
                     $html .= $this->parseTaskTime($this->duration_effective).'/';
                     if ($this->planned_workload>0) {
-                        $html .= $this->parseTaskTime($this->planned_workload ).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
+                        $html .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
                     } else {
                         $html .= "-:--(-%)";
                     }
@@ -1101,7 +1101,7 @@ class TimesheetTask extends Task
                 $ret = $this->delete($user);
         }
         if ($ret>0 && $updateTS == true) {// success of the update, then update the timesheet user if possible
-            $staticTS = new TimesheetUserTasks($this->db );
+            $staticTS = new TimesheetUserTasks($this->db);
             $staticTS->fetch($this->task_timesheet);
             $ret = $staticTS->updateStatus($user, $status);
         }
@@ -1274,7 +1274,7 @@ class TimesheetTask extends Task
                                 $sendto,
                                 $replyto,
                                 $message
-                            );
+                          );
                            $mailfile->sendfile();
                         }
                     }

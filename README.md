@@ -28,7 +28,7 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
  - Timespend entry by week or Month for all the eligible tasks of a user in the timesheet page (splitted week possible, possible to add time spent for subordinates)
  - total per day and per timesheet
  - Holiday are showed in the timesheet page
- - Layout customisation (show/hide the '00:00', show/hide the draft project task,show ref or not, show the related project or not ... )
+ - Layout customisation (show/hide the '00:00', show/hide the draft project task,show ref or not, show the related project or not ...)
  - Timesheet approval by N+1 (home box & email reminder possible)
  - Tasks can be masked/showed via favoris
  - User report by month

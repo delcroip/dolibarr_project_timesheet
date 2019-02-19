@@ -96,7 +96,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
     $sql[PROJECT][0] .= ' WHERE element_id in (SELECT element_id';
     $sql[PROJECT][0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
     $sql[PROJECT][0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
-    $sql[PROJECT][0] .= ' WHERE ctc.active = \'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\'  )';
+    $sql[PROJECT][0] .= ' WHERE ctc.active = \'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\')';
     $sql[PROJECT][0] .= ' AND fk_socpeople in (';
     $sql[PROJECT][2] = ')) AND fk_socpeople not in (';
     $sql[PROJECT][4] = ')';
@@ -178,7 +178,7 @@ function getTasks($db, $userid, $role = 'project')
     $sql .= ' UNION ';
     $sql .= ' SELECT tk.fk_projet as project, tk.rowid as task';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
-    $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on (tk.rowid = element_id )';
+    $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on (tk.rowid = element_id)';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE ctc.element in (\'project_task\') AND ctc.active = \'1\' AND ctc.code LIKE \'%EXECUTIVE%\' ';
     $sql .= ' AND ec.fk_socpeople = \''.$userid.'\'';
@@ -358,41 +358,41 @@ function getStartDate($datetime, $prevNext = 0)
      ***************************/
     switch ($conf->global->TIMESHEET_TIME_SPAN) {
         case 'month': //by Month
-        //     $startDate = strtotime('first day of '.$prefix.' month midnight', $datetime  );
+        //     $startDate = strtotime('first day of '.$prefix.' month midnight', $datetime);
         //     break;
             if ($prevNext == 1) {
-                $startDate = strtotime('first day of next month midnight', $datetime  );
+                $startDate = strtotime('first day of next month midnight', $datetime);
             } elseif ($prevNext == 0) {
-                $startDate = strtotime('first day of this month midnight', $datetime  );
+                $startDate = strtotime('first day of this month midnight', $datetime);
             } elseif ($prevNext == -1) {
-                $startDate = strtotime('first day of previous month midnight', $datetime  );
+                $startDate = strtotime('first day of previous month midnight', $datetime);
             }
             break;
         case 'week': //by user
-                    //     $startDate = strtotime('first day of '.$prefix.' month midnight', $datetime  );
+                    //     $startDate = strtotime('first day of '.$prefix.' month midnight', $datetime);
         //     break;
             if ($prevNext == 1) {
-                $startDate = strtotime('monday next week midnight', $datetime  );
+                $startDate = strtotime('monday next week midnight', $datetime);
             } elseif ($prevNext == 0) {
-                $startDate = strtotime('monday this week midnight', $datetime  );
+                $startDate = strtotime('monday this week midnight', $datetime);
             } elseif ($prevNext == -1) {
-                $startDate = strtotime('monday previous week midnight', $datetime  );
+                $startDate = strtotime('monday previous week midnight', $datetime);
             }
             break;
         case 'splitedWeek': //by week
         default:
             if ($prevNext == 1) {
-                $startDateMonth = strtotime('first day of next month  midnight', $datetime  );
-                $startDateWeek = strtotime('monday next week midnight', $datetime  );
+                $startDateMonth = strtotime('first day of next month  midnight', $datetime);
+                $startDateWeek = strtotime('monday next week midnight', $datetime);
                 $startDate = MIN($startDateMonth, $startDateWeek);
             } elseif ($prevNext == 0) {
-                $startDateMonth = strtotime('first day of this month midnight', $datetime  );
-                $startDateWeek = strtotime('monday this week  midnight', $datetime  );
+                $startDateMonth = strtotime('first day of this month midnight', $datetime);
+                $startDateWeek = strtotime('monday this week  midnight', $datetime);
                 $startDate = MAX($startDateMonth, $startDateWeek);
             } elseif ($prevNext == -1) {
-                $startDateMonth = strtotime('first day of this month  midnight', $datetime  );
-                $startDateWeek = strtotime('monday this week  midnight', $datetime  );
-                $startDatePrevWeek = strtotime('monday previous week  midnight', $datetime  );
+                $startDateMonth = strtotime('first day of this month  midnight', $datetime);
+                $startDateWeek = strtotime('monday this week  midnight', $datetime);
+                $startDatePrevWeek = strtotime('monday previous week  midnight', $datetime);
                 if ($startDateMonth>$startDateWeek) {
                     $startDate = $startDateWeek;
                 } else{

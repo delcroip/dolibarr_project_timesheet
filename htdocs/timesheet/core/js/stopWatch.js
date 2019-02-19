@@ -63,7 +63,7 @@ class Stopwatch {
          this.timestampClock=performance.now();
          this.time =performance.now()+ (this.event.date_time_event_start-this.event.processedTime)*1000;
         
-        if (this.event.event_type<3  && this.event.event_type!=0 ) { // launch the clock for heartbeat and 
+        if (this.event.event_type<3  && this.event.event_type!=0) { // launch the clock for heartbeat and 
              this.running = true;
              this.updatePlayStopIcon(this.running,this.event.task);  
              this.animationframeID=requestAnimationFrame(this.step.bind(this));

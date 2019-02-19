@@ -334,23 +334,23 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '<input type = "text" value = "'.$object->note.'" name = "Note">';
         print '</td><td>';
         if (empty($object->userid))$object->userid = $user->id;
-        print $form->select_dolusers($object->userid, 'Userid', 1, '', 0 );
+        print $form->select_dolusers($object->userid, 'Userid', 1, '', 0);
         print '</td><td>';
         //FIXME SOC
         $sql_third_party = array('table'=> 'societe', 'keyfield'=> 'rowid', 'fields'=>'nom', 'join' => '', 'where'=>'', 'tail'=>'');
         $html_third_party = array('name'=>'Thirdparty', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
         $addChoices_third_party = null;
-        print select_sellist($sql_third_party, $html_third_party, $object->third_party, $addChoices_third_party );
+        print select_sellist($sql_third_party, $html_third_party, $object->third_party, $addChoices_third_party);
         print '</td><td>';
         $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
         $html_task = array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
         $addChoices_task = null;
-        print select_sellist($sql_task, $html_task, $object->task, $addChoices_task );
+        print select_sellist($sql_task, $html_task, $object->task, $addChoices_task);
         print '</td><td>';
         $sql_project = array('table'=> 'projet', 'keyfield'=> 'rowid', 'fields'=>'ref, title', 'join' => '', 'where'=>'', 'tail'=>'');// fixme project open
         $html_project = array('name'=>'Project', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
         $addChoices_project = null;
-        print select_sellist($sql_project, $html_project, $object->project, $addChoices_project );
+        print select_sellist($sql_project, $html_project, $object->project, $addChoices_project);
         print '</td><td>';
         print '<input type = "text"  name = "Token">';
         print '</td><td>';
@@ -408,17 +408,17 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 //Search field forthird_party
         print '<td class = "liste_titre" colspan = "1" >';
                 $html_third_party['name'] = 'ls_third_party';
-                print select_sellist($sql_third_party, $html_third_party, $ls_third_party, $addChoices_third_party );
+                print select_sellist($sql_third_party, $html_third_party, $ls_third_party, $addChoices_third_party);
         print '</td>';
 //Search field fortask
         print '<td class = "liste_titre" colspan = "1" >';
                 $html_task['name'] = 'ls_task';
-                print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task );
+                print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task);
         print '</td>';
 //Search field forproject
         print '<td class = "liste_titre" colspan = "1" >';
                 $html_project['name'] = 'ls_project';
-                print select_sellist($sql_project, $html_project, $ls_project, $addChoices_project );
+                print select_sellist($sql_project, $html_project, $ls_project, $addChoices_project);
         print '</td>';
 //Search field fortoken
         //print '<td class = "liste_titre" colspan = "1" >';

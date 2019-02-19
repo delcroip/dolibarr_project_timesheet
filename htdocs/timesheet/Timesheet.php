@@ -49,7 +49,7 @@ if ($whitelistmode == '') {
 $userid = is_object($user)?$user->id:$user;
 $postUserId= GETPOST('userid', 'int');
 // if the user can enter ts for other the user id is diferent
-if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 ) {
+if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
     if (!empty($postUserId)) {
             $newuserid = $postUserId;
     }

@@ -52,7 +52,7 @@ class box_approval extends ModeleBoxes
         $this->info_box_head = array(
                         'text' => $text,
                         'limit'=> dol_strlen($text)
-        );
+      );
         if ($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
            $subordinate = implode(', ', getSubordinates($db, $userid, 2));
@@ -84,36 +84,36 @@ class box_approval extends ModeleBoxes
                     'text' => $langs->trans('team').': ',
                     'text2'=> $langs->trans('nbTsToApprove'),
                     'asis' => 1,
-                );
+              );
                 $this->info_box_contents[0][] = array(
                     'td' => 'align = "right"',
                     'text' => $nbTm,
                     'asis' => 1,
-                );
+              );
                 $this->info_box_contents[1][] = array(
                     'td' => 'align = "left"',
                     'text' => $langs->trans('project').': ',
                     'text2'=> $langs->trans('nbTsToApprove'),
                     'asis' => 1,
-                );
+              );
                 $this->info_box_contents[1][] = array(
                     'td' => 'align = "right"',
                     'text' => $nbPrj,
                     'asis' => 1,
-                );
+              );
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => 'align = "left"',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
-                );
+              );
             }
         } else {
             $this->info_box_contents[0][0] = array(
                 'td' => 'align = "left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
-            );
+          );
         }
     }
     // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed

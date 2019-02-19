@@ -73,12 +73,12 @@ if ($action == 'submit') {
                 }
                 switch (uniordHex($approvals[$id])) {
                     case '2705'://Approved':
-                        $ret = $task_timesheet->approved($user, array_search($role_row, $roles) );
+                        $ret = $task_timesheet->approved($user, array_search($role_row, $roles));
                         if ($ret<0)$errors++;
                         else $tsApproved++;
                         break;
                     case '274C'://'Rejected':
-                        $ret = $task_timesheet->challenged($user, array_search($role_row, $roles) );
+                        $ret = $task_timesheet->challenged($user, array_search($role_row, $roles));
                         if ($ret<0)$errors++;
                         else $tsRejected++;
                         break;
@@ -243,9 +243,9 @@ function getSelectAps($subId, $tasks, $role_key)
         case 'month':
             $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%m/%Y'), '-', pjt.ref) as id, ";
             if ($db->type!='pgsql') {
-                $sql .= " CONCAT(pjt.title, ' (', MONTH(date_start), '/', YEAR(date_start), ' )#' ) as label, ";
+                $sql .= " CONCAT(pjt.title, ' (', MONTH(date_start), '/', YEAR(date_start), ')#') as label, ";
             } else {
-                $sql .= " CONCAT(pjt.title, ' (', date_part('month', date_start), '/', date_part('year', date_start), ' )#' ) as label, ";
+                $sql .= " CONCAT(pjt.title, ' (', date_part('month', date_start), '/', date_part('year', date_start), ')#') as label, ";
             }
             break;
         case 'week':
@@ -253,9 +253,9 @@ function getSelectAps($subId, $tasks, $role_key)
         default:
             $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%v/%Y'), '-', pjt.ref) as id, ";
             if ($db->type!='pgsql') {
-                $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ' )#' ) as label, ";
+                $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', WEEK(ts.date_start, 1), '/', YEAR(ts.date_start), ')#') as label, ";
             } else {
-                $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week', ts.date_start), '/', date_part('year', ts.date_start), ' )#' ) as label, ";
+                $sql .= " CONCAT(pjt.title, ' (".$langs->trans("Week")."', date_part('week', ts.date_start), '/', date_part('year', ts.date_start), ')#') as label, ";
             }
            break;
     }
@@ -267,7 +267,7 @@ function getSelectAps($subId, $tasks, $role_key)
     $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as ts';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk on ts.fk_projet_task = tsk.rowid ';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet as pjt on tsk.fk_projet = pjt.rowid ';
-    $sql .= ' WHERE ts.status in ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.' )';
+    $sql .= ' WHERE ts.status in ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.')';
     $sql .= ' AND recipient='.$role_key;
     if ($subId!='all') {
         $sql .= ' AND ts.fk_userid in ('.implode(', ', $subId).')';

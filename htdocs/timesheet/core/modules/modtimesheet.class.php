@@ -81,7 +81,7 @@ class modTimesheet extends DolibarrModules
                 //                                                        'hooks' => array('hookcontext1', 'hookcontext2')        // Set here all hooks context managed by module
                 //                                                        'dir' => array('output' => 'othermodulename'), // To force the default directories names
                 //                                                        'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@mymodule')) // Set here all workflow context managed by module
-                //                        );
+                //                      );
                 //$this->module_parts = array();
                 //$this->module_parts = array('css' => array('/timesheet/css/timesheet.css'));
                 // Data directories to create when module is enabled.
@@ -101,7 +101,7 @@ class modTimesheet extends DolibarrModules
                 // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
                 // Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
                 //                             1=>array('MYMODULE_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
-                // );
+                //);
                 $r=0;
                 $this->const = array();
                 //$this->const[$r] = array("TIMESHEET_ATTENDANCE", "int", 1, "layout mode of the timesheets");// hours or days
@@ -216,7 +216,7 @@ class modTimesheet extends DolibarrModules
             'tabfieldinsert'=>array("code, label", "code, label", "code, label"),                                                                                                                                                        // List of fields (list of fields for insert)
             'tabrowid'=>array("rowid", "rowid", "rowid"),                                                                                                                                                                                                        // Name of columns with primary key (try to always name it 'rowid')
             'tabcond'=>array($conf->mymodule->enabled, $conf->mymodule->enabled, $conf->mymodule->enabled)                                                                                                // Condition to show each dictionary
-        );
+      );
         */
         // Boxes
                 // Add here list of php file(s) stored in core/boxes that contains class to show a box.
@@ -437,7 +437,7 @@ class modTimesheet extends DolibarrModules
                 $this->import_convertvalue_array[$r]=array(
                                 'ptt.fk_task'=>array('rule'=>'fetchidfromref', 'classfile'=>'/timesheet/class/timesheet.class.php', 'class'=>'Timesheet', 'method'=>'fetch', 'element'=>'ThirdParty'),
                                 'sr.fk_user'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
-                );
+              );
                 $this->import_examplevalues_array[$r]=array('sr.fk_soc'=>"MyBigCompany", 'sr.fk_user'=>"login");*/
                 // Exports
                 //$r=1;
