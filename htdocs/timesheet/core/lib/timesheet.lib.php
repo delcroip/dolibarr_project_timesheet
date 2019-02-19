@@ -519,8 +519,8 @@ function formatTime($duration, $hoursperdays = -1)
     if ($hoursperdays == 0) {
         $TotalSec = $duration%60;
         $TotalMin = (($duration-$TotalSec)/60)%60;
-        $TotalHours = $TotalHours = ($duration-$TotalMin*60- $TotalSec)/3600;
-        return $TotalHours.':'.sprintf("%02s", $TotalMin);
+        $TotalHours = floor(($duration-$TotalSec-$TotalMin*60)/3600);
+        return sprintf("%02s",$TotalHours).':'.sprintf("%02s", $TotalMin);
     } else {
         $totalDay = round($duration/3600/$hoursperdays, 3);
         return strval($totalDay);
