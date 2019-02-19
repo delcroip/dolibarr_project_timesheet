@@ -300,7 +300,7 @@ function writeFile($object, $outputlangs)
             } else {
                 // No pagebreak, commit transaction {
                 $pdf->commitTransaction();
-                $nexY = $pdf->GetY();
+                $nexY =$posyafter;
                 $pageposafter=$pdf->getPage();
             }
         }
@@ -366,19 +366,22 @@ function writeLine(&$pdf, $line, $curY, $outputlangs)
     // Ref of task
     $pdf->SetXY($this->posxref, $curY);
     $pdf->MultiCell($this->posxdate-$this->posxref, 0, $outputlangs->convToOutputCharset($ref), 0, 'L');
+    $nexY=max($nexY,$pdf->GetY());
     // date
     $pdf->SetXY($this->posxdate, $curY);
     $pdf->MultiCell($this->posxlabel-$this->posxdate, 0, $date, 0, 'L');
+    $nexY=max($nexY,$pdf->GetY());
     //label
     $pdf->SetXY($this->posxlabel, $curY);
     $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+    $nexY=max($nexY,$pdf->GetY());
     // Workler
     //$pdf->SetXY($this->posxworker, $curY);
     //$pdf->MultiCell($this->posxlabel-$this->posxworker, 0, $userName?substr($userName, 0, 23):'', 0, 'L');
     // Duration
     $pdf->SetXY($this->posxduration, $curY);
     $pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxduration, 3, $duration, 0, 'R');
-    $nexY=$pdf->GetY();
+    $nexY=max($nexY,$pdf->GetY());
     // Add dash line between entries
     if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES)) {
         //$pdf->setPage($pageposafter);
