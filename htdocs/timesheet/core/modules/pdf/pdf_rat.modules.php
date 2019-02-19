@@ -308,7 +308,7 @@ function writeFile($object, $outputlangs)
         if ($pagenb == 1) {
             $this->tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot -   $heightforfooter, $heightoftitleline, $outputlangs, 0);
         } else {
-            $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot   - $heightforfooter, $heightoftitleline, $outputlangs, 1);
+            $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot   - $heightforfooter, $heightoftitleline, $outputlangs, 0);
         }// show the sign box & total on the last page for the user
         if ($showSign == 1) {
             $pdf->SetFont('', 'B', $default_font_size);
