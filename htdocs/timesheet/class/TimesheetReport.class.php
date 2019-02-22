@@ -63,7 +63,12 @@ class TimesheetReport
      */
     public function initBasic($projectid, $userid, $name, $startDate, $stopDate, $mode, $invoiceableOnly = '0', $taskarray = null)
     {
-    global  $conf;
+    global  $conf,$user;
+    if ($userid && !$user->admin && empty($projectid)){
+        // FIXME check is the $use is a N+1 or specific rights
+    } elseif ($projectid && !$user->admin){
+        //FIXME check that the user has project rights
+    }
     $this->ref = "";
     $first = false;
     $this->invoiceableOnly = $invoiceableOnly;
@@ -81,7 +86,9 @@ class TimesheetReport
         if ($userid) {
             $this->user = new User($this->db);
             $this->user->fetch($userid);
-            //$this->ref.= ($first?'':' - ').$this->user->lastname.' '.$this->user->firstname;
+            if(empty($this->ref)){
+                $this->ref= $this->user->lastname.' '.$this->user->firstname;
+            }
         }
         $this->startDate = $startDate;
         $this->stopDate = $stopDate;
@@ -165,10 +172,10 @@ class TimesheetReport
         $first = true;
         $sql = 'SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid, ';
         if ($db->type!='pgsql') {
-            $sql.= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(CONCAT(usr.firstname, \' \', usr.lastname)) as username, ';
+            $sql.= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(usr.firstname) as firstname, MAX(usr.lastname) as lastname, ';
             $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         } else {
-            $sql.= ' prj.title as projecttitle, prj.ref as projectref, CONCAT(usr.firstname, \'  \', usr.lastname) as username, ';
+            $sql.= ' prj.title as projecttitle, prj.ref as projectref, usr.firstname, usr.lastname, ';
             $sql.= " tsk.ref as taskref, tsk.label as tasktitle, STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         }
         $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
@@ -211,16 +218,24 @@ class TimesheetReport
             {
                 $error = 0;
                 $obj = $this->db->fetch_object($resql);
-                $resArray[$i] = array('projectId' =>$obj->projectid,
-                    'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle,
-                    'taskId' =>$obj->taskid,
-                    'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle,
-                    'date' =>$this->db->jdate($obj->task_date),
-                    'duration' =>$obj->duration,
-                    'userId' =>$obj->userid,
-                    'userName' =>trim($obj->username),
-                    'note'=>$this->db->escape($obj->note),
-                    'invoiceable'=>$obj->invoiceable);
+                $resArray[$i] = array('projectId' => $obj->projectid,
+                    'projectLabel' => (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle,
+                    'projectRef' => $obj->projectref,
+                    'projectTitle' =>$obj->projecttitle,
+                    'taskId' => $obj->taskid,
+                    'taskLabel' => (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle,
+                    'taskRef' => $obj->taskref,
+                    'tasktitle' => $obj->tasktitle,
+                    'date' => $this->db->jdate($obj->task_date),
+                    'duration' => $obj->duration,
+                    'durationHours' => formatTime($obj->duration, $conf->global->TIMESHEET_DAY_DURATION),
+                    'durationDays' => formatTime($obj->duration, 0),
+                    'userId' => $obj->userid,
+                    'userName' => trim($obj->firstname).' '.trim($obj->lastname),
+                    'firstName' => trim($obj->firstname),
+                    'lastName' => trim($obj->lastname),
+                    'note' => $this->db->escape($obj->note),
+                    'invoiceable' => $obj->invoiceable);
                 $i++;
             }
             $this->db->free($resql);
@@ -286,8 +301,8 @@ class TimesheetReport
                    $HTMLRes.= '<th '.(isset($titleWidth[$this->lvl1Title])?'width = "'.$titleWidth[$this->lvl1Title].'"':'').'>'.$item[$this->lvl1Title].'</th>';
                    $HTMLRes .= '<th '.(isset($titleWidth[$this->lvl2Title])?'width = "'.$titleWidth[$this->lvl2Title].'"':'').'>'.$item[$this->lvl2Title].'</th>';
                    $HTMLRes .= '<th '.(isset($titleWidth[$this->lvl3Title])?'width = "'.$titleWidth[$this->lvl3Title].'"':'').'>'.$item[$this->lvl3Title].'</th>';
-                   $HTMLRes .= '<th width = "70px">'.formatTime($item['duration'], 0).'</th>';
-                   $HTMLRes .= '<th width = "70px">'.formatTime($item['duration'], $hoursperdays).'</th></tr>';
+                   $HTMLRes .= '<th width = "70px">'.$item['durationHours'].'</th>';
+                   $HTMLRes .= '<th width = "70px">'.$item['duration*days'].'</th></tr>';
                 }
                 $HTMLRes .= '</table>';
             } else {
@@ -351,8 +366,8 @@ class TimesheetReport
                     if (!$short) {
                         $lvl3HTML .= '<tr class = "oddeven" align = "left"><th></th><th></th><th>'
                             .$resArray[$key][$this->lvl3Title].'</th><th>';
-                        $lvl3HTML .= formatTime($item['duration'], 0).'</th><th>';
-                        $lvl3HTML .= formatTime($item['duration'], $hoursperdays).'</th><th>';
+                        $lvl3HTML .= $item['durationHours'].'</th><th>';
+                        $lvl3HTML .= $item['durationDays'].'</th><th>';
                         $lvl3HTML .= $resArray[$key]['note'];
                         $lvl3HTML .= '</th></tr>';
                        /*
@@ -413,5 +428,77 @@ class TimesheetReport
             } // end else reportfiendly
         } // end is numtasktime
         return $HTMLRes;
+    }
+    /**
+     *
+     * @global object $conf conf object
+     * @global object $langs lang object
+     * @param string $model   file model (excel excel2007 pdf)
+     * @param bool $save    will save the export on the project/user folder or not
+     * @return string   filename
+     */
+    public function buildFile($model = 'excel2017', $save = false)
+    {
+        global $conf,$langs;
+        $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
+        $file = "export_".$model.".modules.php";
+        $classname = "Export".$model;
+        require_once $dir.$file;
+	$objmodel = new $classname($this->db);
+        $arrayTitle = array('projectRef' => 'projectRef', 'projectTitle' => 'projectTitle', 'taskRef' => 'taskRef', 'tasktitle' => 'taskTitle', 'date' => 'Date', 'durationHours' => 'Hours', 'durationDays' => 'Days', 'userId' => 'userId', 'firstName' => 'Firstname', 'lastName' => 'Lastname', 'note' => 'Note', 'invoiceable' => 'Invoiceable');
+        $arrayTypes = array('projectRef' => 'TextAuto', 'projectTitle' => 'TextAuto', 'taskRef' => 'TextAuto', 'tasktitle' => 'TextAuto', 'date' => 'Date', 'durationHours' => 'TextAuto', 'durationDays' => 'Numeric', 'userId' => 'Numeric', 'firstName' => 'TextAuto', 'lastName' => 'TextAuto', 'note' => 'TextAuto', 'invoiceable' => 'Numeric');
+        $arraySelected = array('projectRef' => 'projectRef', 'projectTitle' => 'projectTitle', 'taskRef' => 'taskRef', 'tasktitle' => 'tasktitle', 'userId' => 'userId', 'firstName' => 'firstName', 'lastName' => 'lastName', 'date' => 'date', 'durationHours' => 'durationHours', 'durationDays' => 'durationDays', 'note' => 'note', 'invoiceable' => 'invoiceable');
+
+        $resArray = $this->getReportArray();
+        if (is_array($resArray))
+        {
+            if($save){
+                $dirname = $conf->user->dir_output."/".$this->userid.'/reports/';
+                if($this->projectid>0){
+                    $this->project = new Project($this->db);
+                    $this->project->fetch($projectid);
+                    $dirname = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/reports/';
+                }
+            } else{
+                $dirname=$conf->timesheet->dir_output.'/reports/';
+            }
+            $filename = $this->ref.'.'.$objmodel->getDriverExtension();
+            $outputlangs = clone $langs; // We clone to have an object we can modify (for example to change output charset by csv handler) without changing original value
+            // Open file
+            dol_mkdir($dirname);
+            $result=$objmodel->open_file($dirname."/".$filename, $outputlangs);
+            if ($result >= 0)
+            {
+                // Genere en-tete
+                $objmodel->write_header($outputlangs);
+                // Genere ligne de titre
+                $objmodel->write_title($arrayTitle, $arraySelected, $outputlangs, $arrayTypes);
+                foreach($resArray as $row)
+                {
+                    $object = (object) $row;
+                   /* $object = new stdClass();
+                    foreach($row as $key => $value){
+                        $object->{$key}=$value;
+                    }*/
+                    $objmodel->write_record($arraySelected, $object, $outputlangs, $arrayTypes);
+                }
+                // Genere en-tete
+                $objmodel->write_footer($outputlangs);
+                // Close file
+                $objmodel->close_file();
+                return $filename;
+            }
+            else
+            {
+                $this->error = $objmodel->error;
+                dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
+                return null;
+            }
+        }
+        else
+        {
+            $this->error = $this->db->error()." - sql=".$sql;
+            return null;
+        }
     }
 }

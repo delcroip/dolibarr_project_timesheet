@@ -46,6 +46,7 @@ if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
 }
     $mode = GETPOST('mode', 'alpha');
+    $model = GETPOST('model', 'alpha');
     if (empty($mode))$mode = 'PTD';
     $short = GETPOST('short', 'int');;
     $userSelected = $userList[$userIdSelected];
@@ -53,6 +54,17 @@ if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $month = GETPOST('month', 'int');;//strtotime(str_replace('/', '-', $_POST['Date']));
     $firstDay = ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
 $lastDay = ($month)?strtotime('last day of this month', $firstDay):strtotime('last day of previous month');
+if ($action == 'getExport'){
+    $report = new TimesheetReport($db);
+    $report->initBasic('', $userIdSelected, '', $firstDay, $lastDay, $mode, $invoicabletaskOnly);
+    $name=$report->buildFile($model, false);
+    if(!empty($name)){
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$name);
+        return;
+    }
+    ob_end_flush();
+    exit();
+}
 $_SESSION["dateStart"] = $dateStart ;
 llxHeader('', $langs->trans('userReport'), '');
 //querry to get the project where the user have priviledge;either project responsible or admin
@@ -137,7 +149,9 @@ $Form .= '</select></td>'
         .'> '.$langs->trans('Date').' / '.$langs->trans('Project').' / '.$langs->trans('Task').'<br>'
         .'<td><input type = "submit" value = "'.$langs->trans('getReport').'"></td>
         </tr>
-        </table></form>';
+        </table>';
+if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model=excel2007&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
+$Form .= '</form>';
 if (!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
 // section to generate
 if (!empty($querryRes)) {
