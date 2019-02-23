@@ -373,7 +373,7 @@ function writeLine(&$pdf, $line, $curY, $outputlangs)
     $nexY=max($nexY, $pdf->GetY());
     //label
     $pdf->SetXY($this->posxlabel, $curY);
-    $pdf->MultiCell($this->posxduration-$this->posxlabel, 3,dol_string_nohtmltag($libelleline), 0, 'L');
+    $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, dol_string_nohtmltag($libelleline), 0, 'L');
     $nexY=max($nexY, $pdf->GetY());
     // Workler
     //$pdf->SetXY($this->posxworker, $curY);
