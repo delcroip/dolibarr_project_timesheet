@@ -449,6 +449,9 @@ function getEndDate($datetime)
  */
 function parseDate($day = 0, $month = 0, $year = 0, $date = 0)
 {
+    if($day == 0 && $month == 0 && $year == 0 && $date == 0){
+        return 0;
+    }
     $datetime = time();
     $splitWeek = 0;
     if ($day!=0 && $month!=0 && $year!= 0) {
