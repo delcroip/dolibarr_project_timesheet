@@ -18,6 +18,8 @@
 //$_POST['dol_hide_leftmenu'] = 1;
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
+require_once 'core/lib/timesheet.lib.php';
+
 $role_key = array_search('1', array_slice ($apflows, 1));
 if ($apflows[1] == 0 && $role_key!== false) {
     // redirect to the correct page
