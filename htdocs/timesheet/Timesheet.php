@@ -68,6 +68,7 @@ if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $dateStart = $_SESSION["dateStart"];
 } else {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
+    if($dateStart==0)$dateStart=time();
 }
 $_SESSION["dateStart"] = $dateStart ;
 // Load traductions files requiredby by page
