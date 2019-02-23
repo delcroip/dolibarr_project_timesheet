@@ -36,8 +36,8 @@ $projectSelectedId = GETPOST('projectSelected');
     $month = GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Date']))
 // Load traductions files requiredby by page
 //$langs->load("companies");
-$firstDay = ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
-$lastDay = ($month)?strtotime('last day of this month', $firstDay):strtotime('last day of previous month');
+//$firstDay = ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
+//$lastDay = ($month)?strtotime('last day of this month', $firstDay):strtotime('last day of previous month');
 $langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
@@ -73,6 +73,12 @@ if ($action == 'getpdf') {
 }elseif ($action == 'getExport'){
     $report = new TimesheetReport($db);
     $report->initBasic($projectSelectedId, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
+    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?10:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+    $max_time = @ini_get("max_execution_time");
+    if ($max_time && $max_time < $max_execution_time_for_export)
+    {
+        @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
+    }
     $name=$report->buildFile($model, false);
     if(!empty($name)){
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$name);

@@ -20,6 +20,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once 'core/lib/timesheet.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 class TimesheetReport
 {
     public $db;
@@ -234,7 +238,7 @@ class TimesheetReport
                     'userName' => trim($obj->firstname).' '.trim($obj->lastname),
                     'firstName' => trim($obj->firstname),
                     'lastName' => trim($obj->lastname),
-                    'note' => $this->db->escape($obj->note),
+                    'note' => ($obj->note),
                     'invoiceable' => $obj->invoiceable);
                 $i++;
             }
@@ -439,7 +443,14 @@ class TimesheetReport
      */
     public function buildFile($model = 'excel2017', $save = false)
     {
-        global $conf,$langs;
+        if($model == 'excel2017' || $model == 'excel'){
+            if(!(extension_loaded ('zip') && extension_loaded('xml'))){
+                $this->error = "missing php extention (xml or zip)";
+                dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
+                return -1;
+            }
+        }
+        global $conf,$langs,$user;
         $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
         $file = "export_".$model.".modules.php";
         $classname = "Export".$model;
@@ -452,17 +463,22 @@ class TimesheetReport
         $resArray = $this->getReportArray();
         if (is_array($resArray))
         {
+            $dirname=$conf->timesheet->dir_output.'/reports';
+            //
+            //$dirname=$conf->export->dir_temp.'/'.$user->id;
+            /*
             if($save){
-                $dirname = $conf->user->dir_output."/".$this->userid.'/reports/';
-                if($this->projectid>0){
+                $dirname = $conf->user->dir_output."/".$this->userid.'/reports';
+                if($this->projectid > 0){
                     $this->project = new Project($this->db);
                     $this->project->fetch($projectid);
-                    $dirname = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/reports/';
+                    $dirname = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/reports';
                 }
             } else{
-                $dirname=$conf->timesheet->dir_output.'/reports/';
-            }
-            $filename = $this->ref.'.'.$objmodel->getDriverExtension();
+                $dirname=$conf->timesheet->dir_output.'/reports';
+            }*/
+            $filename = "report.".$objmodel->getDriverExtension();
+                    //str_replace(array('/', ' ', "'", '"', '&', '?'), '_', $this->ref).'.'.$objmodel->getDriverExtension();
             $outputlangs = clone $langs; // We clone to have an object we can modify (for example to change output charset by csv handler) without changing original value
             // Open file
             dol_mkdir($dirname);
@@ -480,6 +496,7 @@ class TimesheetReport
                     foreach($row as $key => $value){
                         $object->{$key}=$value;
                     }*/
+                    $object->date=dol_print_date($object->date);
                     $objmodel->write_record($arraySelected, $object, $outputlangs, $arrayTypes);
                 }
                 // Genere en-tete

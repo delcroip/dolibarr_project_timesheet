@@ -310,7 +310,7 @@ function writeFile($object, $outputlangs)
         } else {
             $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot   - $heightforfooter, $heightoftitleline, $outputlangs, 0);
         }// show the sign box & total on the last page for the user
-        if ($showSign == 1) {
+        //if ($showSign == 1) {
             $pdf->SetFont('', 'B', $default_font_size);
             $txtTotal= $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1, 0, true, 'L');
@@ -328,7 +328,7 @@ function writeFile($object, $outputlangs)
             $pdf->Rect($this->marge_gauche, $bottomlasttab+6, $widthSignBox, $HeightSignBox);
              //draw left rect for provider sign
             $pdf->Rect($this->marge_gauche+$widthSignBox+1, $bottomlasttab+6, $widthSignBox, $HeightSignBox);
-        }
+       // }
         // Pied de page
         //$this->pageFoot($pdf, $object, $outputlangs);
         //$nexY = $tab_top + $heightoftitleline + 1;
@@ -365,7 +365,7 @@ function writeLine(&$pdf, $line, $curY, $outputlangs)
     $duration=formatTime($line['duration'], -2);
     // Ref of task
     $pdf->SetXY($this->posxref, $curY);
-    $pdf->MultiCell($this->posxdate-$this->posxref, 0, $outputlangs->convToOutputCharset($ref), 0, 'L');
+    $pdf->MultiCell($this->posxdate-$this->posxref, 0, dol_string_nohtmltag($ref), 0, 'L');
     $nexY=max($nexY, $pdf->GetY());
     // date
     $pdf->SetXY($this->posxdate, $curY);
@@ -373,7 +373,7 @@ function writeLine(&$pdf, $line, $curY, $outputlangs)
     $nexY=max($nexY, $pdf->GetY());
     //label
     $pdf->SetXY($this->posxlabel, $curY);
-    $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+    $pdf->MultiCell($this->posxduration-$this->posxlabel, 3,dol_string_nohtmltag($libelleline), 0, 'L');
     $nexY=max($nexY, $pdf->GetY());
     // Workler
     //$pdf->SetXY($this->posxworker, $curY);
