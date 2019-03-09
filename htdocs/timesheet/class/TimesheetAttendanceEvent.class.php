@@ -77,7 +77,7 @@ public $date_time_event_start;
      *  @param        DoliDb                $db      Database handler
      *  @param        object          $userid    userid
      */
-    function __construct($db, $userid)
+    public function __construct($db, $userid)
     {
         $this->db = $db;
         $this->userid = $userid;
@@ -90,7 +90,7 @@ public $date_time_event_start;
      *  @param  int                $notrigger   0 = launch triggers after, 1 = disable triggers
      *  @return int                         <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
         global $conf, $langs;
                 $error = 0;
@@ -160,7 +160,7 @@ public $date_time_event_start;
      *  @param        string          $startToken        token used to find the start event
      *  @return int           <0 if KO, >0 if OK
      */
-    function fetch($id, $user = null, $startToken = '')
+    public function fetch($id, $user = null, $startToken = '')
     {
         global $langs;
         $sql = "SELECT";
@@ -224,7 +224,7 @@ public $date_time_event_start;
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return int                         <0 if KO, >0 if OK
      */
-    function update($user, $notrigger = 0)
+    public function update($user, $notrigger = 0)
     {
         $error = 0;
         // Clean parameters
@@ -271,7 +271,7 @@ public $date_time_event_start;
      *        @param                int                        $withpicto                0 = _No picto, 1 = Includes the picto in the linkn, 2 = Picto only
      *        @return                string                                                String with URL
      */
-    function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
+    public function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
     {
         global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;// Force disable tooltips
@@ -326,7 +326,7 @@ public $date_time_event_start;
      *  @param        string                $htmlname      HTML name
      *  @return        string                               html code to select status
      */
-    function selectLibStatut($form, $htmlname = 'Status')
+    public function selectLibStatut($form, $htmlname = 'Status')
     {
         global $attendanceeventStatusPictoArray, $attendanceeventStatusArray;
         return $form->selectarray($htmlname, $attendanceeventStatusArray, $this->status);
@@ -337,7 +337,7 @@ public $date_time_event_start;
     *  @param        int                $mode          0 = libelle long, 1 = libelle court, 2 = Picto + Libelle court, 3 = Picto, 4 = Picto + Libelle long, 5 = Libelle court + Picto
     *  @return        string                               Label of status
     */
-   function getLibStatut($mode = 0)
+   public function getLibStatut($mode = 0)
    {
            return $this->libStatut($this->status, $mode);
    }
@@ -348,7 +348,7 @@ public $date_time_event_start;
      *  @param  int                $mode           0 = long label, 1 = short label, 2 = Picto + short label, 3 = Picto, 4 = Picto + long label, 5 = Short label + Picto, 6 = Long label + Picto
      *  @return string                                Label of status
      */
-    static function libStatut($status, $mode = 0)
+    public static function libStatut($status, $mode = 0)
     {
         global $langs, $attendanceeventStatusPictoArray, $attendanceeventStatusArray;
         if ($mode == 0) {
@@ -381,7 +381,7 @@ public $date_time_event_start;
     *   @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return        int                                         <0 if KO, >0 if OK
      */
-    function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
     {
         //global $conf, $langs;
         if (empty($user)) return -1;
@@ -423,7 +423,7 @@ public $date_time_event_start;
      *        @param        int                $fromid     Id of object to clone
      *        @return        int                                        New id of clone
      */
-    function createFromClone($fromid)
+    public function createFromClone($fromid)
     {
         global $user, $langs;
         $error = 0;
@@ -459,7 +459,7 @@ public $date_time_event_start;
      *
      *        @return        void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         $this->id = 0;
         $this->date_time_event = '';
@@ -485,7 +485,7 @@ public $date_time_event_start;
      *
      *        @return        void
      */
-    function cleanParam()
+    public function cleanParam()
     {
         if (!empty($this->date_time_event)) $this->date_time_event = trim($this->date_time_event);
         if (!empty($this->event_location_ref)) $this->event_location_ref = trim($this->event_location_ref);
@@ -506,7 +506,7 @@ public $date_time_event_start;
      *  @param USER $user user that will update
      *        @return        void
      */
-    function setSQLfields($user)
+    public function setSQLfields($user)
     {
         $sql = '';
         $sql .= ' date_time_event='.(dol_strlen($this->date_time_event)!=0 ? "'".$this->db->idate($this->date_time_event)."'":'null').', ';
@@ -533,7 +533,7 @@ public $date_time_event_start;
      *  @param  int                $task            task id on which the attendance is register
      *  @return        json                                 return the json of the object started
      */
-    function ajaxStart($user, $json = '', $customer = '', $project = '', $task = '')
+    public function ajaxStart($user, $json = '', $customer = '', $project = '', $task = '')
     {
         if (empty($task) && empty($project) && empty($customer)) return '{"errorType":"startError", "error":"no event to start"}';
         $location_ref = '';
@@ -575,7 +575,7 @@ public $date_time_event_start;
      *  @param bool $auto       auto stop, or triggered by user
      *  @return        int                        <0 if KO, >0 if OK
      */
-    function ajaxStop($user, $json = '', $auto = false)
+    public function ajaxStop($user, $json = '', $auto = false)
     {
         global $conf, $langs;
         $location_ref = '';
@@ -646,7 +646,7 @@ public $date_time_event_start;
      *  @param  string                $json         json of the request
      *  @return        int                                         <0 if KO, >0 if OK
      */
-    function ajaxHeartbeat($user, $json)
+    public function ajaxHeartbeat($user, $json)
     {
         global $conf, $langs;
         $location_ref = '';
@@ -702,7 +702,7 @@ public $date_time_event_start;
   * @param string $token   token
   * @return null
   */
-function createTimeSpend($user, $token = '')
+public function createTimeSpend($user, $token = '')
 {
     //if (empty($token))$token = $this->token;
     if (!empty($token)) {
@@ -727,7 +727,7 @@ function createTimeSpend($user, $token = '')
      * @param int $userid   user id
      * @return string   HTML code
      */
-    function printHTMLTaskList($headers, $userid = '')
+    public function printHTMLTaskList($headers, $userid = '')
     {
         $tasksList = $this->fetchTasks($userid);
         $html = '';
@@ -739,7 +739,7 @@ function createTimeSpend($user, $token = '')
     /** Function generate the HTML code to use the clock
     *  @return     html code                                       result
     */
-    function printHTMLClock()
+    public function printHTMLClock()
     {
         global $langs;
         print '<div>';
@@ -765,7 +765,7 @@ function createTimeSpend($user, $token = '')
  *  @param    dataetime               $date                   user id to fetch the timesheets
  *  @return     array(string)                                             array of timesheet (serialized)
  */
- function fetchTasks($userid = '', $date = '')
+ public function fetchTasks($userid = '', $date = '')
  {
     global $conf;
     if (empty($date))$date = time();

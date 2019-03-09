@@ -60,7 +60,7 @@ class AttendanceSystem extends CommonObject
      *
      *  @param        DoliDb                $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
         return 1;
@@ -72,7 +72,7 @@ class AttendanceSystem extends CommonObject
      *  @param  int                $notrigger   0 = launch triggers after, 1 = disable triggers
      *  @return int                         <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
         global $conf, $langs;
                 $error = 0;
@@ -143,7 +143,7 @@ class AttendanceSystem extends CommonObject
      *  @param        string        $ref        Ref
      *  @return int           <0 if KO, >0 if OK
      */
-    function fetch($id, $ref = '')
+    public function fetch($id, $ref = '')
     {
         global $langs;
         $sql = "SELECT";
@@ -192,7 +192,7 @@ class AttendanceSystem extends CommonObject
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return int                         <0 if KO, >0 if OK
      */
-    function update($user, $notrigger = 0)
+    public function update($user, $notrigger = 0)
     {
         $error = 0;
         // Clean parameters
@@ -241,7 +241,7 @@ class AttendanceSystem extends CommonObject
      *        @param                int                        $withpicto                0 = _No picto, 1 = Includes the picto in the linkn, 2 = Picto only
      *        @return                string                                                String with URL
      */
-    function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
+    public function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
     {
         global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;// Force disable tooltips
@@ -296,7 +296,7 @@ class AttendanceSystem extends CommonObject
     *  @param        string                $htmlname      HTML name tag
     *  @return        string                               html code to select status
     */
-   function selectLibStatut($form, $htmlname = 'Status')
+   public function selectLibStatut($form, $htmlname = 'Status')
    {
        global $AttendanceSystemStatusPictoArray, $AttendanceSystemStatusArray;
        return $form->selectarray($htmlname, $AttendanceSystemStatusArray, $this->status);
@@ -307,7 +307,7 @@ class AttendanceSystem extends CommonObject
          *  @param        int                $mode          0 = libelle long, 1 = libelle court, 2 = Picto + Libelle court, 3 = Picto, 4 = Picto + Libelle long, 5 = Libelle court + Picto
          *  @return        string                               Label of status
          */
-        function getLibStatut($mode = 0)
+        public function getLibStatut($mode = 0)
         {
                 return $this->libStatut($this->status, $mode);
         }
@@ -318,7 +318,7 @@ class AttendanceSystem extends CommonObject
          *  @param  int                $mode           0 = long label, 1 = short label, 2 = Picto + short label, 3 = Picto, 4 = Picto + long label, 5 = Short label + Picto, 6 = Long label + Picto
          *  @return string                                Label of status
          */
-        static function libStatut($status, $mode = 0)
+        public static function libStatut($status, $mode = 0)
         {
                 global $langs, $AttendanceSystemStatusPictoArray, $AttendanceSystemStatusArray;
                 if ($mode == 0) {
@@ -351,7 +351,7 @@ class AttendanceSystem extends CommonObject
     *   @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return        int                                         <0 if KO, >0 if OK
      */
-    function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
     {
         //global $conf, $langs;
         if (empty($user)) return -1;
@@ -397,7 +397,7 @@ class AttendanceSystem extends CommonObject
      *        @param        int                $fromid     Id of object to clone
      *        @return        int                                        New id of clone
      */
-    function createFromClone($fromid)
+    public function createFromClone($fromid)
     {
         global $user, $langs;
         $error = 0;
@@ -433,7 +433,7 @@ class AttendanceSystem extends CommonObject
      *
      *        @return        void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         $this->id = 0;
         $this->label = '';
@@ -453,7 +453,7 @@ class AttendanceSystem extends CommonObject
      *
      *        @return        void
      */
-    function cleanParam()
+    public function cleanParam()
     {
         if (!empty($this->label)) $this->label = trim($this->label);
         if (!empty($this->ip)) $this->ip = trim($this->ip);
@@ -472,7 +472,7 @@ class AttendanceSystem extends CommonObject
      *  @param USER $user user updateing the fields
      *        @return        void
      */
-    function setSQLfields($user)
+    public function setSQLfields($user)
     {
         $sql = '';
         $sql .= ' label='.(empty($this->label)!=0 ? 'null':"'".$this->db->escape($this->label)."'").', ';

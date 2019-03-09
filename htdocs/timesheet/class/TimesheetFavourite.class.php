@@ -48,7 +48,7 @@ class TimesheetFavourite extends CommonObject
      *
      *  @param        DoliDb                $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
         return 1;
@@ -59,7 +59,7 @@ class TimesheetFavourite extends CommonObject
      *  @param  int                $notrigger   0 = launch triggers after, 1 = disable triggers
      *  @return int                         <0 if KO, Id of created object if OK
      */
-    function create($notrigger = 0)
+    public function create($notrigger = 0)
     {
         $error = 0;
         // Clean parameters
@@ -120,7 +120,7 @@ class TimesheetFavourite extends CommonObject
     *  @param        date        $datestop        stopdate
      *  @return             array)timesheetFavourite          return the list of the user whiteliste
      */
-    function fetchUserList($userid, $datestart, $datestop)
+    public function fetchUserList($userid, $datestart, $datestop)
     {
         $List = array();
         $Listtask = array();
@@ -178,7 +178,7 @@ class TimesheetFavourite extends CommonObject
      *
      *  @return int           task list
      */
-    function getTaskList()
+    public function getTaskList()
     {
         $sql = "SELECT";
         $sql.= " t.rowid";
@@ -217,7 +217,7 @@ class TimesheetFavourite extends CommonObject
      *  @param        string        $ref        Ref
      *  @return int           <0 if KO, >0 if OK
      */
-    function fetch($id, $ref = '')
+    public function fetch($id, $ref = '')
     {
         $sql = "SELECT";
         $sql.= " t.rowid, ";
@@ -256,7 +256,7 @@ class TimesheetFavourite extends CommonObject
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return int                         <0 if KO, >0 if OK
      */
-    function update($notrigger = 0)
+    public function update($notrigger = 0)
     {
         $error = 0;
         // Clean parameters
@@ -310,7 +310,7 @@ class TimesheetFavourite extends CommonObject
      *        @param                int                        $withpicto                0 = _No picto, 1 = Includes the picto in the linkn, 2 = Picto only
      *        @return                string                                                String with URL
      */
-    function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
+    public function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
     {
         global $langs;
         $result = '';
@@ -352,7 +352,7 @@ class TimesheetFavourite extends CommonObject
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return        int                                         <0 if KO, >0 if OK
      */
-    function delete($notrigger = 0)
+    public function delete($notrigger = 0)
     {
         $error = 0;
         $this->db->begin();
@@ -389,7 +389,7 @@ class TimesheetFavourite extends CommonObject
      *        @param        int                $fromid     Id of object to clone
      *        @return        int                                        New id of clone
      */
-    function createFromClone($fromid)
+    public function createFromClone($fromid)
     {
         global $user, $langs;
         $error = 0;
@@ -425,7 +425,7 @@ class TimesheetFavourite extends CommonObject
      *
      *        @return        void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         $this->id = 0;
         $this->user = '';

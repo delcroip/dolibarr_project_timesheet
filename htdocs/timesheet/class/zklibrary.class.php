@@ -324,7 +324,7 @@ class ZKLibrary
      * @param string $command_string    Data to be sent to the device.
      * @return string   header
      */
-    function createHeader($command, $chksum, $session_id, $reply_id, $command_string)
+    public function createHeader($command, $chksum, $session_id, $reply_id, $command_string)
     {
         $buf = pack('SSSS', $command, $chksum, $session_id, $reply_id).$command_string;
         $buf = unpack('C'.(8+strlen($command_string)).'c', $buf);
@@ -366,7 +366,7 @@ class ZKLibrary
      * @param int $offset_data  Offset data to be returned. The default offset is 8.
      * @return false|string
      */
-    function execCommand($command, $command_string = '', $offset_data = 8)
+    public function execCommand($command, $command_string = '', $offset_data = 8)
     {
         $chksum = 0;
         $session_id = $this->session_id;

@@ -61,7 +61,7 @@ class TimesheetUserTasks extends CommonObject
      * @param   int             $userId if of the user
      * @return null
      */
-    function __construct($db, $userId = 0)
+    public function __construct($db, $userId = 0)
     {
         global $user, $conf;
         $this->db = $db;
@@ -83,7 +83,7 @@ class TimesheetUserTasks extends CommonObject
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return int                         <0 if KO, >0 if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
         global $conf, $langs;
                 $error = 0;
@@ -158,7 +158,7 @@ class TimesheetUserTasks extends CommonObject
      *  @param        string        $ref        Ref
      *  @return int           <0 if KO, >0 if OK
      */
-    function fetch($id, $ref = '')
+    public function fetch($id, $ref = '')
     {
         global $langs;
         $sql = "SELECT";
@@ -204,7 +204,7 @@ class TimesheetUserTasks extends CommonObject
      *
      *  @return int           <0 if KO, >0 if OK
      */
-    function fetchByWeek()
+    public function fetchByWeek()
     {
         global $langs;
         $sql = "SELECT";
@@ -262,7 +262,7 @@ class TimesheetUserTasks extends CommonObject
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return int                         <0 if KO, >0 if OK
      */
-    function update($user, $notrigger = 0)
+    public function update($user, $notrigger = 0)
     {
         global $conf, $langs;
                 $error = 0;
@@ -323,7 +323,7 @@ class TimesheetUserTasks extends CommonObject
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return        int                                         <0 if KO, >0 if OK
      */
-    function delete($notrigger = 0)
+    public function delete($notrigger = 0)
     {
             global $conf, $langs;
             $error = 0;
@@ -366,7 +366,7 @@ class TimesheetUserTasks extends CommonObject
      *        @param        int                $fromid     Id of object to clone
      *        @return        int                                        New id of clone
      */
-    function createFromClone($fromid)
+    public function createFromClone($fromid)
     {
         global $user, $langs;
         $error = 0;
@@ -405,7 +405,7 @@ class TimesheetUserTasks extends CommonObject
     *  @param    string               $startDate            start date in php format
     *  @return     string                                       result
     */
-    function fetchAll($startdate, $whitelistmode = false)
+    public function fetchAll($startdate, $whitelistmode = false)
     {
         global $conf;
         $this->whitelistmode = (is_numeric($whitelistmode)&& !empty($whitelistmode))?$whitelistmode:$conf->global->TIMESHEET_WHITELIST_MODE;
@@ -423,7 +423,7 @@ class TimesheetUserTasks extends CommonObject
     /* Funciton to fect the holiday of a single user for a single week.
     *  @return     string                                       result
     */
-    function fetchUserHoliday()
+    public function fetchUserHoliday()
     {
        $this->holidays = new TimesheetHoliday($this->db);
        $ret = $this->holidays->fetchUserWeek($this->userId, $this->date_start, $this->date_end);
@@ -436,7 +436,7 @@ class TimesheetUserTasks extends CommonObject
      * @param int $id   object id
      * @return null
      */
-   function loadFromSession($timestamp, $id)
+   public function loadFromSession($timestamp, $id)
    {
        $this->fetch($id);
        $this->timestamp = $timestamp;
@@ -451,7 +451,7 @@ class TimesheetUserTasks extends CommonObject
  * function to load the parma from the session
  * @return void
  */
-function saveInSession()
+public function saveInSession()
 {
     $_SESSION['task_timesheet'][$this->timestamp][$this->id]['userId'] = $this->userId;
     $_SESSION['task_timesheet'][$this->timestamp][$this->id]['ref'] = $this->ref;
@@ -466,7 +466,7 @@ function saveInSession()
  *  @param    int               $userid                   user id to fetch the timesheets
  *  @return     array(string)                                             array of timesheet (serialized)
  */
-function fetchTaskTimesheet($userid = '')
+public function fetchTaskTimesheet($userid = '')
 {
     global $conf;
     $res = array();
@@ -553,7 +553,7 @@ function fetchTaskTimesheet($userid = '')
  *  @param    array(int)               $tabPost               array sent by POST with all info about the task
  *  @return     int                                                        number of tasktime creatd/changed
  */
-function updateActuals($tabPost, $notes = array())
+public function updateActuals($tabPost, $notes = array())
 {
      //FIXME, tta should be creted
     if ($this->status == APPROVED)
@@ -589,7 +589,7 @@ function updateActuals($tabPost, $notes = array())
  *  @param    array(int)/int        $userids        array of manager id
   *  @return  array (int => String)                                array(ID => userName)
  */
-function getUserName()
+public function getUserName()
 {
     $sql = "SELECT usr.rowid, CONCAT(usr.firstname, ' ', usr.lastname) as username FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
         $sql .= ' usr.rowid = '.$this->userId;
@@ -620,7 +620,7 @@ function getUserName()
  *  @param    string               $status              to overrule the logic if the status enter has an higher priority
  *  @return     string                         status updated of KO(-1)
  */
-function updateStatus($user, $status = 0)
+public function updateStatus($user, $status = 0)
 {
     if ($this->id<=0)return -1;
     if ($status!='') {
@@ -716,7 +716,7 @@ Public function setStatus($user, $status, $id = 0)
   *  @param    bool           $ajax     ajax of html behaviour
   *  @return     string                                                   html code
  */
-function getHTML($ajax = false, $Approval = false)
+public function getHTML($ajax = false, $Approval = false)
 {
     global $langs;
     $Form = $this->getHTMLHeader();
@@ -742,7 +742,7 @@ function getHTML($ajax = false, $Approval = false)
  *
   *  @return     string                                                   html code
  */
-function getHTMLHeader()
+public function getHTMLHeader()
 {
     global $langs, $conf;
     $weeklength = getDayInterval($this->date_start, $this->date_end);
@@ -781,7 +781,7 @@ function getHTMLHeader()
   *  @param    bool           $ajax     ajax of html behaviour
   *  @return     string                                                   html code
  */
-function getHTMLFormHeader($ajax = false)
+public function getHTMLFormHeader($ajax = false)
 {
      global $langs;
     $html = '<form id = "timesheetForm" name = "timesheet" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
@@ -793,7 +793,7 @@ function getHTMLFormHeader($ajax = false)
   *
   *  @return     string
  */
-function getHTMLTotal()
+public function getHTMLTotal()
 {
     $html .= "<tr class = 'liste_titre'>\n";
     $html .= '<th colspan = "'.(count($this->headers)-1).'" align = "right" > TOTAL </th>';
@@ -811,7 +811,7 @@ function getHTMLTotal()
  *  @param     int               $ajax         enable ajax handling
  *  @return     string                                               html code
  */
-function getHTMLFooter($ajax = false)
+public function getHTMLFooter($ajax = false)
 {
      global $langs, $apflows;
     //form button
@@ -841,7 +841,7 @@ function getHTMLFooter($ajax = false)
  *  @param     int               $timestamp         timestamp
   *  @return     string                                                   html code
  */
-function getHTMLFooterAp($current, $timestamp)
+public function getHTMLFooterAp($current, $timestamp)
 {
      global $langs;
     //form button
@@ -864,7 +864,7 @@ function getHTMLFooterAp($current, $timestamp)
  * function to genegate the timesheet list
  *  @return     string                                                   html code
  */
-function getHTMLtaskLines($ajax = false)
+public function getHTMLtaskLines($ajax = false)
 {
     $i = 1;
     $Lines = '';
@@ -892,7 +892,7 @@ function getHTMLtaskLines($ajax = false)
  *
   *  @return     string                                                   html code
  */
-function getHTMLNote()
+public function getHTMLNote()
 {
      global $langs;
      $isOpenSatus = (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED)));
@@ -912,7 +912,7 @@ function getHTMLNote()
  * function to genegate the timesheet list
  *  @return     string                                                   html code
  */
-function getHTMLHolidayLines($ajax = false)
+public function getHTMLHolidayLines($ajax = false)
 {
     $i = 0;
     $Lines = '';
@@ -929,7 +929,7 @@ function getHTMLHolidayLines($ajax = false)
  *  @param     object              $form                form object
  *  @return     string                                       HTML
  */
-function getHTMLNavigation($optioncss, $ajax = false)
+public function getHTMLNavigation($optioncss, $ajax = false)
 {
     global $langs, $conf;
     $form = new Form($this->db);
@@ -971,7 +971,7 @@ function getHTMLNavigation($optioncss, $ajax = false)
      *        @param                int                        $withpicto                0 = _No picto, 1 = Includes the picto in the linkn, 2 = Picto only
      *        @return                string                                                String with URL
      */
-    function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
+    public function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
     {
         global $langs;
         $result = '';
@@ -1015,7 +1015,7 @@ function getHTMLNavigation($optioncss, $ajax = false)
 *        @param                int                        $admin                 is the user an admin
 *        @return                string                                                String with URL
 */
-function getHTMLGetOtherUserTs($idsList, $selected, $admin)
+public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
 {
     global $langs;
     $form = new Form($this->db);
@@ -1035,7 +1035,7 @@ function getHTMLGetOtherUserTs($idsList, $selected, $admin)
      *  @param bool $test to init test speciemen
      *        @return        void
      */
-    function initAsSpecimen($test = false)
+    public function initAsSpecimen($test = false)
     {
         $this->id = 0;
 
@@ -1073,7 +1073,7 @@ function getHTMLGetOtherUserTs($idsList, $selected, $admin)
  *  @return     string                                         XML result containing the timesheet info
  */
         /*
-function GetTimeSheetXML()
+public function GetTimeSheetXML()
 {
     global $langs, $conf;
     $xml.= "<timesheet dateStart = \"{$this->date_start}\" timestamp = \"{$this->timestamp}\" timetype = \"".$conf->global->TIMESHEET_TIME_TYPE."\"";
@@ -1126,7 +1126,7 @@ function GetTimeSheetXML()
  *
  *        @return        void
  */
-function sendApprovalReminders()
+public function sendApprovalReminders()
 {
     global $langs;
     $sql = 'SELECT';
@@ -1178,7 +1178,7 @@ function sendApprovalReminders()
          * @param    Doliuser   $user       objet
          * @return        void
          */
-    function sendRejectedReminders($user)
+    public function sendRejectedReminders($user)
     {
         global $langs, $db, $dolibarr_main_url_root, $dolibarr_main_url_root_alt;
         $tsUser = new User($db);

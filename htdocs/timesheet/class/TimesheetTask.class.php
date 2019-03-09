@@ -103,7 +103,7 @@ class TimesheetTask extends Task
      *  @param        int                $notrigger        block triggers
      *  @return int           <0 if KO, >0 if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
         $error = 0;
         // Clean parameters
@@ -206,7 +206,7 @@ class TimesheetTask extends Task
     *  @param        int                $loadparentdata                Also load parent data
     *  @return int                                 <0 if KO, 0 if not found, >0 if OK
      */
-    function fetch($id, $ref = '', $loadparentdata = 1)
+    public function fetch($id, $ref = '', $loadparentdata = 1)
     {
         if (!empty($ref) && empty($id)) {
             $temp= explode('_', $ref);
@@ -280,7 +280,7 @@ class TimesheetTask extends Task
      *
      *  @return int           <0 if KO, >0 if OK
      */
-    function fetchByWeek()
+    public function fetchByWeek()
     {
         global $langs;
         $sql = "SELECT";
@@ -369,7 +369,7 @@ class TimesheetTask extends Task
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return int                         <0 if KO, >0 if OK
      */
-    function update($user = null, $notrigger = 0)
+    public function update($user = null, $notrigger = 0)
     {
         global $conf, $langs, $user;
         $error = 0;
@@ -448,7 +448,7 @@ class TimesheetTask extends Task
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return        int                                         <0 if KO, >0 if OK
      */
-    function delete($notrigger = 0)
+    public function delete($notrigger = 0)
     {
         global $conf, $langs;
         $error = 0;
@@ -951,7 +951,7 @@ class TimesheetTask extends Task
     * function to save a time sheet as a string
     * @return   string       serialized object
     */
-    function serialize()
+    public function serialize()
     {
         $arRet = array();
         $arRet['id'] = $this->id;//task id
@@ -985,7 +985,7 @@ class TimesheetTask extends Task
      * @param   string    $str   serialized object
      * @return  int              OK
      */
-    function unserialize($str)
+    public function unserialize($str)
     {
         $arRet = unserialize($str);
         $this->id = $arRet['id'];
@@ -1064,7 +1064,7 @@ class TimesheetTask extends Task
      * @param   int     $taskTime   seconds
      * @return  string              in a format "00:00"
      */
-    function parseTaskTime($taskTime)
+    public function parseTaskTime($taskTime)
     {
         $ret = floor($taskTime/3600).":".str_pad (floor($taskTime%3600/60), 2, "0", STR_PAD_LEFT);
         return $ret;
@@ -1132,7 +1132,7 @@ class TimesheetTask extends Task
         *  @param     string              $note        notes
     *  @return     int                                                       1 => succes, 0 => Failure
     */
-    function postTaskTimeActual($timesheetPost, $userId, $Submitter, $timestamp, $note = '')
+    public function postTaskTimeActual($timesheetPost, $userId, $Submitter, $timestamp, $note = '')
     {
         global $conf, $user;
         $ret = 0;
@@ -1185,7 +1185,7 @@ class TimesheetTask extends Task
      * @param type $addmode to add the note and duration to existing one isntead of replacing them
      * @return array eventmesage array
      */
-    function saveTaskTime($Submitter, $duration, $daynote, $dayKey, $addmode = false)
+    public function saveTaskTime($Submitter, $duration, $daynote, $dayKey, $addmode = false)
     {
             $item = $this->tasklist[$dayKey];
             dol_syslog(__METHOD__."   duration Old=".$item['duration']." New=".$duration." Id=".$item['id'].", date=".$item['date'], LOG_DEBUG);
@@ -1243,7 +1243,7 @@ class TimesheetTask extends Task
          *        @return        void
          */
     /*
-    function sendApprovalReminders()
+    public function sendApprovalReminders()
 {
             global $langs;
             $sql = 'SELECT';
