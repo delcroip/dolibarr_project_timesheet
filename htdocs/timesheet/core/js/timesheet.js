@@ -29,24 +29,18 @@ function submitTs(){
 
   function regexEvent(object,evt,type)
   {
-
+        evt = evt||window.event; // IE support
+        var charCode = evt.charCode;
+        var ctrlDown = evt.ctrlKey||evt.metaKey; // Mac support
               //var regex= /^[0-9:]{1}$/;
               //alert(event.charCode);
-              var charCode = (evt.which) ? evt.which : event.keyCode;
-
-              if(((charCode >= 48) && (charCode <= 57)) || //num
-                    (charCode===46) || (charCode===8)||// comma & periode
-                    (charCode === 58) || (charCode==44))// : & all charcode
-              {
-                  // ((charCode>=96) && (charCode<=105)) || //numpad
-                return true;
-
-              }else
-              {
-                  return false;
-              }
-
-
+              //var charCode = (evt.which) ? evt.which : event.keyCode;
+        if((charCode >= 48) && (charCode <= 57)) return true;
+        else if(charCode===46) return true; // comma
+        else if(charCode===8) return true;// periode
+        else if(charCode === 58)  return true; // : 
+        else if(ctrlDown && c == 86) return true; //Ctrl + V
+        else return false;      
 
   }
 
