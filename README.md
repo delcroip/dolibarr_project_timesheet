@@ -34,7 +34,8 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
  - User report by month
  - Project report between dates
  - create invoice from the project report
-
+ - chrono for task
+ - export report in xlsx 
  
 ## Functionnalities eligible for removal
 
@@ -47,7 +48,7 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
 # Next dev under analysis
 - Ressource planning  (planning for TL and PM + weekly summary by email to user)
     - non-project related TS 
-    - simple attendance logging
+   
 
 # Next developement for other release
 - finetune the modules rights management (admin ...) 
