@@ -227,8 +227,11 @@ jQuery(document).ready(function()
     $sql .= ' t.fk_task, ';
     $sql .= ' t.fk_project, ';
     $sql .= ' t.token, ';
-    $sql .= ' t.status';
+    $sql .= ' t.status, ';
+    $sql .= '  st.date_time_event  as date_time_event_start ';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_event as t';
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."attendance_event as st ON t.token = st.token AND ABS(st.event_type = 2)";
+
     $sqlwhere = '';
     if (isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
@@ -379,6 +382,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print_liste_field_titre('Token', $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
         print "\n";
         print_liste_field_titre('Status', $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Duration', '', '', '', '', '', '', '');
         print "\n";
         print '</tr>';
         //SEARCH FIELDS
@@ -428,6 +432,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '<td class = "liste_titre" colspan = "1" >';
         print '<input class = "flat" size = "16" type = "text" name = "ls_status" value = "'.$ls_status.'">';//FIXME Array
         print '</td>';
+         print '<td class = "liste_titre" colspan = "1" />';
         print '<td width = "15px">';
         print '<input type = "image" class = "liste_titre" name = "search" src = "'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value = "'.dol_escape_htmltag($langs->trans("Search")).'" title = "'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '<input type = "image" class = "liste_titre" name = "removefilter" src = "'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value = "'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title = "'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -479,6 +484,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
                 //print "<td>".print_generic('projet', 'rowid', $obj->fk_project, 'ref', 'title')."</td>";
                 print "<td>".$obj->token."</td>";
                 print "<td>".$obj->status."</td>";
+                $duration=($obj->date_time_event_start<>"")?$db->jdate($obj->date_time_event)-$db->jdate($obj->date_time_event_start):'';
+                print "<td>".$duration."</td>";
                 print '<td><a href = "AttendanceEventAdmin.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
                 print "</tr>";
             }

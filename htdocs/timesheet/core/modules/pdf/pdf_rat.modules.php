@@ -109,7 +109,7 @@ function writeFile($object, $outputlangs)
 
     //get save dir
     if ($conf->projet->dir_output) {
-        $objectref =  dol_sanitizeFileName($object->ref);
+        $objectref =  dol_sanitizeFileName($object->name);
         $dir = $conf->timesheet->dir_output.'/reports/';
         $file = $dir . "/" . $objectref . ".pdf";
         if (! file_exists($dir)) {
@@ -148,12 +148,17 @@ function writeFile($object, $outputlangs)
             $userTaskArray=array();
             //order data per user id and calc total per user
             foreach ($tasktimearray as $line) {
-                $userTaskArray[$line['userId']]['lines'][]=$line;
-                $TotalLines[$line['userId']]+=$line['duration'];
+                $projectid=$line['projectId'];
+                $userTaskArray[$projectid][$line['userId']]['lines'][]=$line;
+                $TotalLines[$projectid][$line['userId']]+=$line['duration'];
+                $TotalLines[$projectid]['Total']+=$line['duration'];
             }
            /* add a line with the total*/
-            foreach ($userTaskArray as $userid => $taskArray) {
-                $userTaskArray[$userid]['Total']=formatTime($TotalLines[$userid], -1);
+            foreach ($userTaskArray as $projectid => $userArray){
+                foreach ($userArray as $userid => $taskArray) {
+                    $userTaskArray[$projectid][$userid]['Total']=formatTime($TotalLines[$projectid][$userid], -2);
+                }
+                //$userTaskArray[$projectid]['Total']=formatTime($TotalLines[$projectid]['Total'], -2);
             }
             //init the pdf
             $pdf->Open();
@@ -163,14 +168,17 @@ function writeFile($object, $outputlangs)
             $pdf->SetSubject($outputlangs->transnoentities("ProjectTimeReport"));
             $pdf->SetCreator("Dolibarr ".DOL_VERSION);
             $pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-            $pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref));
+            $pdf->SetKeyWords(implode(',', $object->ref));//FIXME add all project refs
             if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
             $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);// Left, Top, Right
             //generate pages per userid
-            foreach ($userTaskArray as $userid => $tasktimearray) {
+            foreach ($userTaskArray as $projectid => $userArray){
+                //if($pagenb!=0)
+                foreach ($userArray as $userid => $taskArray) {
                   // New page
-                $pagenb++;
-                $pagenb=$this->writeUser($pdf, $tplidx, $object, $outputlangs, $pagenb, $tasktimearray);
+                    $pagenb++;
+                    $pagenb=$this->writeUser($pdf, $tplidx, $object, $outputlangs, $pagenb, $taskArray, $projectid);
+                }
             }
             //if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
             //close pdf
@@ -200,9 +208,10 @@ function writeFile($object, $outputlangs)
      * @param LANGS $outputlangs language object
      * @param int $pagenb   page start
      * @param array $tasktimearray data to dispaly
+     *  @param  int             $projectid project of the page
      * @return int  number of pages at the end
      */
-    function writeUser(&$pdf, $tplidx, $object, $outputlangs, $pagenb, $tasktimearray)
+    function writeUser(&$pdf, $tplidx, $object, $outputlangs, $pagenb, $tasktimearray, $projectid)
     {
         global $conf;
         //constant
@@ -228,7 +237,7 @@ function writeFile($object, $outputlangs)
         $pdf->setPage($pagenb);
         if (! empty($tplidx)) $pdf->useTemplate($tplidx);
         $pdf->setPageOrientation('', 1, $heightforfooter);        // The only function to edit the bottom margin of current page to set it.
-        $this->pageHead($pdf, $object, 1, $outputlangs, $tasktimearray['lines'][0]['userName']);
+        $this->pageHead($pdf, $object, 1, $outputlangs, $projectid, $tasktimearray['lines'][0]['userName']);
         $pdf->SetFont('', '', $default_font_size - 1);
         $pdf->MultiCell(0, 3, '');                // Set interline to 3
         $pdf->SetTextColor(0, 0, 0);
@@ -274,7 +283,7 @@ function writeFile($object, $outputlangs)
                 // init page
                 if (! empty($tplidx)) $pdf->useTemplate($tplidx);
                 $pdf->setPage($pageposafter);
-                if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->pageHead($pdf, $object, 1, $outputlangs, $tasktimearray['lines'][0]['userName']);
+                if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->pageHead($pdf, $object, 1, $outputlangs, $projectid, $tasktimearray['lines'][0]['userName']);
                 $pdf->SetFont('', '', $default_font_size - 1);// On repositionne la police par defaut
                 $pdf->MultiCell(0, 3, '');                // Set interline to 3
                 $pdf->SetTextColor(0, 0, 0);
@@ -293,7 +302,7 @@ function writeFile($object, $outputlangs)
                 //$this->pageFoot($pdf, $object, $outputlangs, 1);
                 $pdf->setPage($pagenb);
                 $pdf->setPageOrientation('', 1, 0);        // The only function to edit the bottom margin of current page to set it.
-                if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->pageHead($pdf, $object, 0, $outputlangs, $startday, $stopday);
+                if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->pageHead($pdf, $object, 0, $outputlangs, $startday, $stopday, $projectid);
                 $pagenb++;
                 $pdf->setPage($pageposafter);
                 $pageposafter=$pdf->getPage();
@@ -457,9 +466,10 @@ function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outputlangs,
  *  @param  int                $showaddress    0=no, 1=yes
  *  @param  Translate        $outputlangs        Object lang for output
  *  @param  string        $userName    user name to be displayed
+ *  @param  int             $projectid project of the page
  *  @return        void
  */
-function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName = "")
+function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid, $userName = "")
 {
     global $langs, $conf, $mysoc;
     $default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -493,15 +503,11 @@ function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName = "")
             $pdf->MultiCell(100, 4+$height*2, $outputlangs->transnoentities($mysoc->zip.' - '.$mysoc->town), 0, 'L');
         }
     }
-
-
-
-
 //pdf title
     $pdf->SetFont('', 'B', $default_font_size +1);
     $pdf->SetXY($this->marge_gauche+$logoWidth, $posy);
     $pdf->SetTextColor(0, 0, 60);
-    $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->name), '', 'R');
+    $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->ref[$projectid]), '', 'R');
     //worke name
     if (!empty($userName) && !$conf->global->TIMESHEET_HIDE_NAME) {
         $pdf->SetXY($this->marge_gauche, $height+$default_font_size + 3);
@@ -518,10 +524,10 @@ function pageHead(&$pdf, $object, $showaddress, $outputlangs, $userName = "")
     $pdf->SetXY($posx, $posy);
     $pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->stopDate, 'day', false, $outputlangs, true), '', 'R');
     // third party name
-    if (is_object($object->thirdparty)) {
+    if (is_object($object->thirdparty[$projectid])) {
             $posy+=5;
             $pdf->SetXY($posx, $posy);
-            $pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $object->thirdparty->getFullName($outputlangs), '', 'R');
+            $pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $object->thirdparty[$projectid]->getFullName($outputlangs), '', 'R');
     }
     $pdf->SetTextColor(0, 0, 60);
 }

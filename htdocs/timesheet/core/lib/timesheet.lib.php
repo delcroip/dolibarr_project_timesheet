@@ -457,9 +457,9 @@ function parseDate($day = 0, $month = 0, $year = 0, $date = 0)
     if ($day!=0 && $month!=0 && $year!= 0) {
         $datetime = dol_mktime(0, 0, 0, $month, $day, $year);
     // the date is already in linux format
-    } elseif (is_numeric($date) && $date!=0) {  // if date is a datetime
+    }elseif (is_numeric($date) && $date!=0) {  // if date is a datetime
         $datetime = $date;
-    } elseif (is_string($date)&& $date!="") {  // if date is a string
+    }elseif (is_string($date)&& $date!="") {  // if date is a string
         //foolproof: incase the yearweek in passed in date
         if (strlen($date)>3 && substr($date, -3, 2) == "_H") {
               if (substr($date, -1, 1) == 1) {

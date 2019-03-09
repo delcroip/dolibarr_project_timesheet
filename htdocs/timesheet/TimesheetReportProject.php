@@ -30,10 +30,13 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $short = GETPOST('short', 'int');
 $mode = GETPOST('mode', 'alpha');
 $model = GETPOST('model', 'alpha');
-if (!$mode)$mode = 'UTD';
+if (empty($mode)){
+    $mode = 'UTD';
+}
+
 $projectSelectedId = GETPOST('projectSelected');
-    $year = GETPOST('year', 'int');
-    $month = GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Date']))
+$year = GETPOST('year', 'int');
+$month = GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Date']))
 // Load traductions files requiredby by page
 //$langs->load("companies");
 //$firstDay = ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
@@ -59,36 +62,6 @@ if (empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
 }
-if ($action == 'getpdf') {
-    $report = new TimesheetReport($db);
-    $report->initBasic($projectSelectedId, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
-    $pdf = new pdf_rat($db);
-    //$outputlangs = $langs;
-    if ($pdf->writeFile($report, $langs)>0) {
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$report->ref.".pdf");
-        return;
-    }
-    ob_end_flush();
-    exit();
-}elseif ($action == 'getExport'){
-    $report = new TimesheetReport($db);
-    $report->initBasic($projectSelectedId, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
-    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?10:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
-    $max_time = @ini_get("max_execution_time");
-    if ($max_time && $max_time < $max_execution_time_for_export)
-    {
-        @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
-    }
-    $name=$report->buildFile($model, false);
-    if(!empty($name)){
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$name);
-        return;
-    }
-    ob_end_flush();
-    exit();
-}
-//$_SESSION["dateStart"] = $dateStart ;
-llxHeader('', $langs->trans('projectReport'), '');
 $userid = is_object($user)?$user->id:$user;
 //querry to get the project where the user have priviledge;either project responsible or admin
 $sql = 'SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
@@ -113,31 +86,60 @@ if ($resql) {
         {
                 $error = 0;
                 $obj = $db->fetch_object($resql);
-                $projectList[$obj->rowid] = new TimesheetReport($db);
-                $projectList[$obj->rowid]->initBasic($obj->rowid, '', $obj->ref.' - '.$obj->title, $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
+                $projectList[$obj->rowid]=array('value' => $obj->rowid, "label" =>  $obj->ref.' - '.$obj->title);
+                //$projectList[$obj->rowid] = new TimesheetReport($db);
+                //$projectList[$obj->rowid]->initBasic($obj->rowid, '', $obj->ref.' - '.$obj->title, $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
                 $i++;
         }
         $db->free($resql);
 } else {
         dol_print_error($db);
 }
+$projectIdlist=array();
+$reportName=$langs->trans('ReportProject');
+if($projectSelectedId<>-999){
+    $projectIdlist[]=$projectSelectedId;
+    $reportName=$projectList[$projectSelectedId]['value'];
+} else {
+    $projectIdlist= array_keys($projectList);
+}
+$reportStatic = new TimesheetReport($db);
+$reportStatic->initBasic($projectIdlist, '', '' , $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
+if ($action == 'getpdf') {
+    $pdf = new pdf_rat($db);
+    //$outputlangs = $langs;
+    if ($pdf->writeFile($reportStatic, $langs)>0) {
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$reportStatic->name.".pdf");
+        return;
+    }
+    ob_end_flush();
+    exit();
+}elseif ($action == 'getExport'){
+    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?10:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+    $max_time = @ini_get("max_execution_time");
+    if ($max_time && $max_time < $max_execution_time_for_export)
+    {
+        @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
+    }
+    $name=$reportStatic->buildFile($model, false);
+    if(!empty($name)){
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$name);
+        return;
+    }
+    ob_end_flush();
+    exit();
+}
+//$_SESSION["dateStart"] = $dateStart ;
+llxHeader('', $langs->trans('projectReport'), '');
+
 $querryRes = '';
 if ($projectSelectedId   &&!empty($dateStart)) {
-    $projectSelected = $projectList[$projectSelectedId];
-    if ($projectSelectedId == '-999') {
-        foreach ($projectList as $project) {
-            $querryRes .= $project->getHTMLreport($short,
-                dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
-                $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
-        }
-    } else{
-        $querryRes = $projectSelected->getHTMLreport($short,
-            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'),
-            $conf->global->TIMESHEET_DAY_DURATION, $exportfriendly);
+    if($exportfriendly){
+        $querryRes .= $reportStatic->getHTMLreportExport();
+    }else {
+        $querryRes .= $reportStatic->getHTMLreport($short,
+            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'));
     }
-} else {
-    $year = date('Y', $dateStart);
-    $month = date('m', $dateStart);
 }
 $Form = '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
         <table class = "noborder"  width = "100%">
@@ -156,7 +158,7 @@ $Form = '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncs
         ';
 // select project
 foreach ($projectList as $pjt) {
-    $Form .= '<option value = "'.$pjt->projectid.'" '.(($projectSelectedId == $pjt->projectid)?"selected":'').' >'.$pjt->name.'</option>'."\n";
+    $Form .= '<option value = "'.$pjt["value"].'" '.(($projectSelectedId == $pjt["value"])?"selected":'').' >'.$pjt["label"].'</option>'."\n";
 }
 $Form .= '<option value = "-999" '.(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
 
@@ -187,8 +189,9 @@ $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->tr
  //submit
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
 if (!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
-if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&model=excel2007&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
+if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
+if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&model=excel2007&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
+if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=reportproject&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&model=excel2007&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Refresh').'</a>';
  $Form .= '</form>';
 if (!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
 echo $querryRes;

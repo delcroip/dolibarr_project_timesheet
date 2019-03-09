@@ -660,7 +660,6 @@ public $date_time_event_start;
             $tokenJson = $this->token;
         }
         $this->fetch('', $user);
-        //var_dump($this->event_type);
         $tokenDb = $this->token;
         if ((empty($tokenJson) && empty($tokenDb))||
                 (!empty($tokenDb) && $this->event_type>=EVENT_STOP))
@@ -714,7 +713,6 @@ function createTimeSpend($user, $token = '')
             $duration = $this->date_time_event -$this->date_time_event_start;
             $tta = new TimesheetTask($this->db, $this->task);
             $tta->getActuals($start, $end, $this->userid);
-            //var_dump($tta->getTaskTab());
             $arrayRes = $tta->saveTaskTime($user, $duration, $this->note, 0, true);
             $this->status = TimesheetsetEventMessage($arrayRes, true);
             if (is_array($arrayRes) && array_sum($arrayRes)-$arrayRes['updateError']>0) $tta->updateTimeUsed();
