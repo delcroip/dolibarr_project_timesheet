@@ -23,17 +23,17 @@
  *                \brief      This file is an example of a php page
  *                                        Initialy built by build_class_from_table on 2019-01-30 16:24
  */
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');                        // Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');                        // Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');                // Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');                        // If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');                        // If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');                                // If this page is public (can be called outside logged session)
+//if(! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+//if(! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+//if(! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+//if(! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+//if(! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');                        // Do not check anti CSRF attack test
+//if(! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');                        // Do not check style html tag into posted data
+//if(! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');                // Do not check anti POST attack test
+//if(! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');                        // If there is no need to load and show top and left menu
+//if(! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');                        // If we don't need to load the html.form.class.php
+//if(! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+//if(! defined("NOLOGIN"))        define("NOLOGIN", '1');                                // If this page is public (can be called outside logged session)
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 // Change this following line to use the correct relative path from htdocs
@@ -66,7 +66,7 @@ $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
-if (!$removefilter) {
+if(!$removefilter) {
     // Both test must be present to be compatible with all browsers {
     $ls_label = GETPOST('ls_label', 'alpha');
     $ls_ip = GETPOST('ls_ip', 'alpha');
@@ -78,7 +78,7 @@ if (!$removefilter) {
     $ls_status = GETPOST('ls_status', 'int');
 }
 $page = GETPOST('page', 'int');
-if ($page == -1) {
+if($page == -1) {
     $page = 0;
 }
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -86,14 +86,14 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
  // uncomment to avoid resubmision
-//if (isset($_SESSION['AttendanceSystem_class'][$tms]))
+//if(isset($_SESSION['AttendanceSystem_class'][$tms]))
 //{
  //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
 //}
 // Right Management
  /*
-if ($user->societe_id > 0 ||
+if($user->societe_id > 0 ||
        (!$user->rights->timesheet->add && ($action == 'add' || $action = 'create')) ||
        (!$user->rights->timesheet->view && ($action == 'list' || $action = 'view')) ||
        (!$user->rights->timesheet->delete && ($action == 'confirm_delete')) ||
@@ -104,12 +104,12 @@ if ($user->societe_id > 0 ||
 */
 // create object and set id or ref if provided as parameter
 $object = new AttendanceSystem($db);
-if ($id>0) {
+if($id>0) {
     $object->id = $id;
     $object->fetch($id);
     $ref = dol_sanitizeFileName($object->ref);
 }
-if (!empty($ref)) {
+if(!empty($ref)) {
     $object->ref = $ref;
     $object->id = $id;
     $object->fetch($id, $ref);
@@ -121,22 +121,22 @@ if (!empty($ref)) {
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 // Action to remove record
-switch ($action) {
+switch($action) {
     case 'confirm_delete':
        $result = ($confirm == 'yes')?$object->delete($user):0;
-       if ($result > 0) {
+       if($result > 0) {
                // Delete OK
                setEventMessage($langs->trans('RecordDeleted'), 'mesgs');
        } else {
                // Delete NOK
-               if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+               if(! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
                else setEventMessage('RecordNotDeleted', 'errors');
        }
        break;
     case 'delete':
-        if ($action == 'delete' && ($id>0 || $ref!="")) {
+        if($action == 'delete' && ($id>0 || $ref!="")) {
          $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemCard.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystem'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
-         if ($ret == 'html') print '<br />';
+         if($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
         break;
@@ -181,61 +181,61 @@ jQuery(document).ready(function()
         $sql .= ' t.status';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_system as t';
     $sqlwhere = '';
-    if (isset($object->entity))
+    if(isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
-    if ($filter && $filter != -1) {
+    if($filter && $filter != -1) {
         // GETPOST('filtre') may be a string {
         $filtrearr = explode(', ', $filter);
-        foreach ($filtrearr as $fil) {
+        foreach($filtrearr as $fil) {
                 $filt = explode(':', $fil);
                 $sqlwhere .= ' AND ' . $filt[0] . ' = ' . $filt[1];
         }
     }
     //pass the search criteria
-        if ($ls_label) $sqlwhere .= natural_search('t.label', $ls_label);
-        if ($ls_ip) $sqlwhere .= natural_search('t.ip', $ls_ip);
-        if ($ls_port) $sqlwhere .= natural_search(array('t.port'), $ls_port);
-        if ($ls_note) $sqlwhere .= natural_search('t.note', $ls_note);
-        if ($ls_third_party) $sqlwhere .= natural_search(array('t.fk_third_party'), $ls_third_party);
-        if ($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
-        if ($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
-        if ($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
+        if($ls_label) $sqlwhere .= natural_search('t.label', $ls_label);
+        if($ls_ip) $sqlwhere .= natural_search('t.ip', $ls_ip);
+        if($ls_port) $sqlwhere .= natural_search(array('t.port'), $ls_port);
+        if($ls_note) $sqlwhere .= natural_search('t.note', $ls_note);
+        if($ls_third_party) $sqlwhere .= natural_search(array('t.fk_third_party'), $ls_third_party);
+        if($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
+        if($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
+        if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
     //list limit
-    if (!empty($sqlwhere))
-        $sql .= ' WHERE '.substr ($sqlwhere, 5);
+    if(!empty($sqlwhere))
+        $sql .= ' WHERE '.substr($sqlwhere, 5);
 // Count total nb of records
 $nbtotalofrecords = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'attendance_system as t';
-        if (!empty($sqlwhere))
-            $sqlcount .= ' WHERE '.substr ($sqlwhere, 5);
+        if(!empty($sqlwhere))
+            $sqlcount .= ' WHERE '.substr($sqlwhere, 5);
         $result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if (!empty($sortfield)) {
+    if(!empty($sortfield)) {
         $sql.= $db->order($sortfield, $sortorder);
     } else{
         $sortorder = 'ASC';
     }
-    if (!empty($limit)) {
+    if(!empty($limit)) {
             $sql.= $db->plimit($limit+1, $offset);
     }
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
     $resql = $db->query($sql);
-    if ($resql) {
+    if($resql) {
         $param = '';
-        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-        if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-         if (!empty($ls_label))        $param .= '&ls_label='.urlencode($ls_label);
-        if (!empty($ls_ip))        $param .= '&ls_ip='.urlencode($ls_ip);
-        if (!empty($ls_port))        $param .= '&ls_port='.urlencode($ls_port);
-        if (!empty($ls_note))        $param .= '&ls_note='.urlencode($ls_note);
-        if (!empty($ls_third_party))        $param .= '&ls_third_party='.urlencode($ls_third_party);
-        if (!empty($ls_task))        $param .= '&ls_task='.urlencode($ls_task);
-        if (!empty($ls_project))        $param .= '&ls_project='.urlencode($ls_project);
-        if (!empty($ls_status))        $param .= '&ls_status='.urlencode($ls_status);
-        if ($filter && $filter != -1) $param .= '&filtre='.urlencode($filter);
+        if(! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+        if($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+         if(!empty($ls_label))        $param .= '&ls_label='.urlencode($ls_label);
+        if(!empty($ls_ip))        $param .= '&ls_ip='.urlencode($ls_ip);
+        if(!empty($ls_port))        $param .= '&ls_port='.urlencode($ls_port);
+        if(!empty($ls_note))        $param .= '&ls_note='.urlencode($ls_note);
+        if(!empty($ls_third_party))        $param .= '&ls_third_party='.urlencode($ls_third_party);
+        if(!empty($ls_task))        $param .= '&ls_task='.urlencode($ls_task);
+        if(!empty($ls_project))        $param .= '&ls_project='.urlencode($ls_project);
+        if(!empty($ls_status))        $param .= '&ls_status='.urlencode($ls_status);
+        if($filter && $filter != -1) $param .= '&filtre='.urlencode($filter);
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
         print_barre_liste($langs->trans("AttendanceSystem"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
@@ -309,10 +309,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '</tr>'."\n";
         $i = 0;
         $basedurl = dirname($PHP_SELF).'/AttendanceSystemCard.php?action=view&id=';
-        while ($i < $num && $i<$limit)
+        while($i < $num && $i<$limit)
         {
             $obj = $db->fetch_object($resql);
-            if ($obj) {
+            if($obj) {
                 // You can use here results
                  print "<tr class = \"oddeven\"  onclick = \"location.href='";
         print $basedurl.$obj->rowid."'\" >";
@@ -320,19 +320,19 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print "<td>".$obj->ip."</td>";
         print "<td>".$obj->port."</td>";
         print "<td>".$obj->note."</td>";
-        if (class_exist('Societe')) {
+        if(class_exist('Societe')) {
                 $StaticObject = New Societe($db);
                 print "<td>".$StaticObject->getNomUrl('1', $obj->fk_third_party)."</td>";
         } else{
                 print print_sellist($sql_third_party, $obj->fk_third_party);
         }
-        if (class_exist('Task')) {
+        if(class_exist('Task')) {
                 $StaticObject = New Task($db);
                 print "<td>".$StaticObject->getNomUrl('1', $obj->fk_task)."</td>";
         } else{
                 print print_sellist($sql_task, $obj->fk_task);
         }
-        if (class_exist('Project')) {
+        if(class_exist('Project')) {
                 $StaticObject = New Project($db);
                 print "<td>".$StaticObject->getNomUrl('1', $obj->fk_project)."</td>";
         } else{

@@ -1,4 +1,4 @@
-t/* 
+t/*
  *Copyright (C) 2015-2016 delcroip <patrick@pmpd.eu>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ function refreshTimesheet(Wlmode,hidezero){
       try{
 	// extrat important info from XML
         var timesheet=xmlDoc.getElementsByTagName("timesheet");
-        if (timesheet.length==0)throw "Bad XML: no timesheet Node";
+        if(timesheet.length==0)throw "Bad XML: no timesheet Node";
         var timestamp=timesheet[0].getAttribute('timestamp');
         var dateStart=timesheet[0].getAttribute('dateStart');
         var id=timesheet[0].getAttribute('id');/*FIXME not returned yet*/
@@ -47,14 +47,14 @@ function refreshTimesheet(Wlmode,hidezero){
                     $.jnotify(msg,'warning',true);
                     break;
                 default: //inc 'ok'
-                    $.jnotify(msg,'ok');     
+                    $.jnotify(msg,'ok');
             }
         }
         //update the header
 	MT.rows[0].innerHTML=generateHeader(headers,days);
         // update the hidden param
         MT.rows[1].cells[0].innerHTML=generateHiddenParam(timestamp,dateStart);
-        
+
 	//delete the old lines /*FIXME, not woking anymore*/
 	var idxT = document.getElementById("totalT").rowIndex;
 	var idxB = document.getElementById("totalB").rowIndex;
@@ -65,8 +65,8 @@ function refreshTimesheet(Wlmode,hidezero){
         //generate teh task line
         for (j=0;j<tasks.length;j++)
 	{
-            
-            for (i=0;i<tasks[j].childNodes.length;i++)    
+
+            for (i=0;i<tasks[j].childNodes.length;i++)
             {
                     var CurRow = MT.insertRow(idxT+1);
                     //FIXME mode whitelist
@@ -74,7 +74,7 @@ function refreshTimesheet(Wlmode,hidezero){
                     var rowContent=generateTaskLine(headers[0],tasks[j].childNodes[i],timetype);
                     CurRow.innerHTML=rowContent;
                     // document.getElementById("timesheetTable").innerHTML = table;
-                
+
             }
             if(tasks.length>1){
                 var nameRow=MT.insertRow(idxT+1);
@@ -86,8 +86,8 @@ function refreshTimesheet(Wlmode,hidezero){
     }
         UpdateNavigation(nextDate,prevDate);
         updateAll(hidezero);
-        
-        
+
+
 }
 
 function generateHeader(headers,days){
@@ -106,7 +106,7 @@ function generateHeader(headers,days){
 
 function generateHiddenParam(timestamp,dateStart){
     var hiddenParam='<input type="hidden" id="timestamp" name="timestamp" value="'+timestamp+"\"/>\n";
-    hiddenParam+= '<input type="hidden" name="dateStart" value="'+dateStart+'" />';      
+    hiddenParam+= '<input type="hidden" name="dateStart" value="'+dateStart+'" />';
     return hiddenParam;
 }
 
@@ -189,7 +189,7 @@ $.ajax({
 //using Ajax to submit timesheet
 function loadXMLTimesheetFromSubmit(user)
 {
-    
+
     var Url="timesheet.php?action=submit&xml=1";
     //var postData=document.getElementById('timesheetForm');
     if(user!==0) Url+="&user="+user;

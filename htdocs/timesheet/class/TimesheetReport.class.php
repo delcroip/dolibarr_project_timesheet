@@ -70,9 +70,9 @@ class TimesheetReport
     public function initBasic($projectid, $userid, $name, $startDate, $stopDate, $mode, $invoiceableOnly = '0', $taskarray = null)
     {
         global  $conf,$user,$langs;
-        if ($userid && !$user->admin && empty($projectid)){
+        if($userid && !$user->admin && empty($projectid)){
             // FIXME check is the $use is a N+1 or specific rights
-        } elseif ($projectid && !$user->admin){
+        } elseif($projectid && !$user->admin){
             //FIXME check that the user has project rights
         }
         $first = false;
@@ -80,14 +80,14 @@ class TimesheetReport
         $this->invoiceableOnly = $invoiceableOnly;
         $this->taskarray = $taskarray;
         $this->projectid = $projectid;// coul
-        if ($projectid && !is_array($projectid)) {
+        if($projectid && !is_array($projectid)) {
             $this->project[$projectid] = new Project($this->db);
             $this->project[$projectid]->fetch($projectid);
             $this->ref[$projectid] = (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project[$projectid]->ref.' - ').$this->project[$projectid]->title;
             $first = true;
             $this->thirdparty[$projectid] = new Societe($this->db);
             $this->thirdparty[$projectid]->fetch($this->project[$projectid]->socid);
-        }elseif (is_array($projectid)){
+        }elseif(is_array($projectid)){
             foreach($projectid as $id){
                 $this->project[$id] = new Project($this->db);
                 $this->project[$id]->fetch($id);
@@ -99,13 +99,13 @@ class TimesheetReport
             $first = true;
         }
         $this->userid = $userid;// coul
-        if ($userid && !is_array($userid)) {
+        if($userid && !is_array($userid)) {
             $this->user[$userid] = new User($this->db);
             $this->user[$userid]->fetch($userid);
             if(empty($this->ref)){
                 $this->ref[$userid]= $this->user->lastname.' '.$this->user->firstname;
             }
-        }elseif (is_array($userid)) {
+        }elseif(is_array($userid)) {
             foreach($userid as $id){
                 $this->user[$id] = new User($this->db);
                 $this->user[$id]->fetch($id);
@@ -121,9 +121,9 @@ class TimesheetReport
             $this->name = reset($this->ref);
         }else{
             $this->name = $langs->trans("ProjectReport");
-            }
+        }
         $this->name .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
-        switch ($mode){
+        switch($mode){
             case 'PDT': //project  / task / Days //FIXME dayoff missing
                 $this->modeSQLOrder = 'ORDER BY usr.rowid,prj.rowid, ptt.task_date, tsk.rowid ASC   ';
                 //title
@@ -211,7 +211,7 @@ class TimesheetReport
         $resArray = array();
         $first = true;
         $sql = 'SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid, ';
-        if ($db->type!='pgsql') {
+        if($db->type!='pgsql') {
             $sql.= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(usr.firstname) as firstname, MAX(usr.lastname) as lastname, ';
             $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         } else {
@@ -225,45 +225,45 @@ class TimesheetReport
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user = usr.rowid ';
         $sql.= ' WHERE ';
-        if (!empty($this->userid)) {
+        if(!empty($this->userid)) {
             $sql .= ' ptt.fk_user IN (\''.implode("','", $this->userid).'\') ';
             $first = false;
         }
-        if (!empty($this->projectid)) {
+        if(!empty($this->projectid)) {
             $sql .= ($first?'':'AND ').'tsk.fk_projet IN (\''.implode("','", $this->projectid).'\') ';
             $first = false;
         }
-        if (is_array($this->taskarray) && count($this->taskarray)>1) {
+        if(is_array($this->taskarray) && count($this->taskarray)>1) {
             $sql .= ($first?'':'AND ').'tsk.rowid in ('.explode($taskarray, ', ').') ';
         }
-        if ($this->invoiceableOnly == 1) {
+        if($this->invoiceableOnly == 1) {
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
-         /*if (!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
+         /*if(!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
           else */$sql .= 'AND task_date>=\''.$this->db->idate($this->startDate).'\'';
-          /*if (!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
+          /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
           else */$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
          $sql .= ' GROUP BY usr.rowid, ptt.task_date, tsk.rowid, prj.rowid ';
-        /*if (!empty($sqltail)) {
+        /*if(!empty($sqltail)) {
             $sql .= $sqltail;
         }*/
         $sql .= $this->modeSQLOrder;
         dol_syslog("timesheet::userreport::tasktimeList", LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if ($resql) {
+        if($resql) {
             $numTaskTime = $this->db->num_rows($resql);
             $i = 0;
             // Loop on each record found,
-            while ($i < $numTaskTime)
+            while($i < $numTaskTime)
             {
                 $error = 0;
                 $obj = $this->db->fetch_object($resql);
                 $resArray[$i] = array('projectId' => $obj->projectid,
-                    'projectLabel' => (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle,
+                    'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle,
                     'projectRef' => $obj->projectref,
                     'projectTitle' =>$obj->projecttitle,
                     'taskId' => $obj->taskid,
-                    'taskLabel' => (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle,
+                    'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle,
                     'taskRef' => $obj->taskref,
                     'tasktitle' => $obj->tasktitle,
                     'date' => $this->db->jdate($obj->task_date),
@@ -275,7 +275,7 @@ class TimesheetReport
                     'userName' => trim($obj->firstname).' '.trim($obj->lastname),
                     'firstName' => trim($obj->firstname),
                     'lastName' => trim($obj->lastname),
-                    'note' => ($obj->note),
+                    'note' =>($obj->note),
                     'invoiceable' => $obj->invoiceable);
                 $i++;
             }
@@ -296,14 +296,14 @@ class TimesheetReport
     * @return string
     * mode layout PTD project/task /day, PDT, DPT
     * periodeTitle give a name to the report
-    * timemode show time using day or hours (== 0)
+    * timemode show time using day or hours(== 0)
     */
     public function getHTMLreportExport()
     {
         $resArray = $this->getReportArray();
         $HTMLRes = '<h1>'.$this->name.'</h1>';
         $HTMLRes .= $this->getHTMLReportHeaders();
-        foreach ($resArray as $key => $item) {
+        foreach($resArray as $key => $item) {
            $item['date'] = dol_print_date($item['date'], 'day');
            $HTMLRes .= '<tr class = "oddeven" align = "left">';//<th width = "200px">'.$this->name.'</th>';
            $HTMLRes .= '<th '.(isset($titleWidth[$this->lvl0Title])?'width = "'.$titleWidth[$this->lvl0Title].'"':'').'>'.$item[$this->lvl0Title].'</th>';
@@ -317,7 +317,7 @@ class TimesheetReport
         $HTMLRes .= '</table>';
         return $HTMLRes;
     }
-    
+
     /** function to generate HTML headers
      *
      * @return string
@@ -339,7 +339,7 @@ class TimesheetReport
         $HTMLHeaders .= '<th>'.$langs->trans('Note').'</th></tr>';
         return $HTMLHeaders;
     }
-    
+
     /**
     *  Function to generate HTML for the report
     * @param   string   $short       show or hide the lvl3 detail
@@ -347,7 +347,7 @@ class TimesheetReport
     * @return string
     * mode layout PTD project/task /day, PDT, DPT
     * periodeTitle give a name to the report
-    * timemode show time using day or hours (== 0)
+    * timemode show time using day or hours(== 0)
     */
     public function getHTMLreport($short, $periodTitle)
     {
@@ -361,17 +361,17 @@ class TimesheetReport
         $sqltail = '';
         $resArray = $this->getReportArray();
         $numTaskTime = count($resArray);
-        if ($numTaskTime>0){
+        if($numTaskTime>0){
             // current
-            foreach ($resArray as $key => $item) {
-                if ($Curlvl0 == 0) {
+            foreach($resArray as $key => $item) {
+                if($Curlvl0 == 0) {
                     $Curlvl0 = $key;
                     $Curlvl1 = $key;
                     $Curlvl2 = $key;
                 }
                 // reformat date to avoid UNIX time
                 //add the LVL 2 total when  change detected in Lvl 2 & 1 &0
-                if (($resArray[$Curlvl2][$this->lvl2Key]!=$item[$this->lvl2Key])
+                if(($resArray[$Curlvl2][$this->lvl2Key]!=$item[$this->lvl2Key])
                         ||($resArray[$Curlvl1][$this->lvl1Key]!=$item[$this->lvl1Key])
                         ||($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key]))
                 {
@@ -388,7 +388,7 @@ class TimesheetReport
                     // save the new lvl2 ref
                     $Curlvl2 = $key;
                     //creat the LVL 1 Title line when lvl 1 or 0 change detected
-                    if (($resArray[$Curlvl1][$this->lvl1Key]!=$item[$this->lvl1Key])
+                    if(($resArray[$Curlvl1][$this->lvl1Key]!=$item[$this->lvl1Key])
                             ||($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key])) {
                         $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
                         //addlvl 2 total to lvl1
@@ -399,7 +399,7 @@ class TimesheetReport
                         // save the new lvl1 ref
                         $Curlvl1 = $key;
                         //creat the LVL 0 Title line when lvl  0 change detected
-                        if (($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key])) {
+                        if(($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key])) {
                            $lvl0HTML .= $this->getLvl0HTML($resArray[$Curlvl0][$this->lvl0Title], $lvl1Total, $lvl1HTML, $short);
                            //addlvl 2 total to lvl1
                            $lvl0Total+=$lvl1Total;
@@ -412,9 +412,9 @@ class TimesheetReport
                     }
                 }
                 // show the LVL 3 only if not short
-                if (!$short) {
+                if(!$short) {
                     $lvl3HTML .= $this->getLvl3HTML($item);
-                } elseif (!empty ($item['note'])) {
+                } elseif(!empty($item['note'])) {
                     $lvl3Notes .= "<br>".$item['note'];
                 }
                 $lvl3Total+=$item['duration'];
@@ -439,15 +439,15 @@ class TimesheetReport
      *
      * @global object $conf conf object
      * @global object $langs lang object
-     * @param string $model   file model (excel excel2007 pdf)
+     * @param string $model   file model(excel excel2007 pdf)
      * @param bool $save    will save the export on the project/user folder or not
      * @return string   filename
      */
     public function buildFile($model = 'excel2017', $save = false)
     {
         if($model == 'excel2017' || $model == 'excel'){
-            if(!(extension_loaded ('zip') && extension_loaded('xml'))){
-                $this->error = "missing php extention (xml or zip)";
+            if(!(extension_loaded('zip') && extension_loaded('xml'))){
+                $this->error = "missing php extention(xml or zip)";
                 dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
                 return -1;
             }
@@ -456,15 +456,15 @@ class TimesheetReport
         $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
         $file = "export_".$model.".modules.php";
         $classname = "Export".ucfirst($model);
-        require_once $dir.$file;   
-	$objmodel = new $classname($this->db);      
+        require_once $dir.$file;
+	$objmodel = new $classname($this->db);
         $arrayTitle = array('projectRef' => 'projectRef', 'projectTitle' => 'projectTitle', 'taskRef' => 'taskRef', 'tasktitle' => 'taskTitle', 'dateDisplay' => 'Date', 'durationHours' => 'Hours', 'durationDays' => 'Days', 'userId' => 'userId', 'firstName' => 'Firstname', 'lastName' => 'Lastname', 'note' => 'Note', 'invoiceable' => 'Invoiceable');
         $arrayTypes = array('projectRef' => 'TextAuto', 'projectTitle' => 'TextAuto', 'taskRef' => 'TextAuto', 'tasktitle' => 'TextAuto', 'dateDisplay' => 'Date', 'durationHours' => 'TextAuto', 'durationDays' => 'Numeric', 'userId' => 'Numeric', 'firstName' => 'TextAuto', 'lastName' => 'TextAuto', 'note' => 'TextAuto', 'invoiceable' => 'Numeric');
         $arraySelected = array('projectRef' => 'projectRef', 'projectTitle' => 'projectTitle', 'taskRef' => 'taskRef', 'tasktitle' => 'tasktitle', 'userId' => 'userId', 'firstName' => 'firstName', 'lastName' => 'lastName', 'dateDisplay' => 'date', 'durationHours' => 'durationHours', 'durationDays' => 'durationDays', 'note' => 'note', 'invoiceable' => 'invoiceable');
 
         $resArray = $this->getReportArray();
-        
-        if (is_array($resArray))
+
+        if(is_array($resArray))
         {
             $dirname=$conf->timesheet->dir_output.'/reports';
             //
@@ -482,13 +482,13 @@ class TimesheetReport
             }*/
             $filename = "report.".$objmodel->getDriverExtension();
                     //str_replace(array('/', ' ', "'", '"', '&', '?'), '_', $this->ref).'.'.$objmodel->getDriverExtension();
-            $outputlangs = clone $langs; // We clone to have an object we can modify (for example to change output charset by csv handler) without changing original value
+            $outputlangs = clone $langs; // We clone to have an object we can modify(for example to change output charset by csv handler) without changing original value
             // Open file
             dol_mkdir($dirname);
-            $result = $objmodel->open_file($dirname."/".$filename, $outputlangs);//FIXME      
-            if ($result >= 0)
+            $result = $objmodel->open_file($dirname."/".$filename, $outputlangs);//FIXME
+            if($result >= 0)
             {
-                
+
                 // Genere en-tete
                 $objmodel->write_header($outputlangs);
                 // Genere ligne de titre
@@ -535,17 +535,17 @@ class TimesheetReport
     {
         $lvl2HTML .= '<tr class = "oddeven" align = "left"><td colspan="2"></td><td>'
             .$lvl2title.'</td>';
-        // add an empty cell on row if short version (in none short mode tdere is an additionnal column
-        if (!$short)$lvl2HTML .= '<td></td>';
+        // add an empty cell on row if short version(in none short mode tdere is an additionnal column
+        if(!$short)$lvl2HTML .= '<td></td>';
         // add tde LVL 3 total hours on tde LVL 2 title
         $lvl2HTML .= '<td>'.formatTime($lvl3Total, 0).'</td>';
         // add tde LVL 3 total day on tde LVL 2 title
         $lvl2HTML .= '<td>'.formatTime($lvl3Total, -1).'</td><td>';
-        if ($short) {
+        if($short) {
             $lvl2HTML .= $lvl3Notes;
         }
         $lvl2HTML .= '</td></tr>';
-        //add the LVL 3 content (details)
+        //add the LVL 3 content(details)
         $lvl2HTML .= $lvl3HTML;
         return $lvl2HTML;
     }
@@ -561,8 +561,8 @@ class TimesheetReport
     {
         $lvl1HTML .= '<tr class = "oddeven" align = "left"><th colspan="1"></th><th >'
             .$lvl1title.'</th><th></th>';
-        // add an empty cell on row if short version (in none short mode there is an additionnal column
-        if (!$short)$lvl1HTML .= '<th></th>';
+        // add an empty cell on row if short version(in none short mode there is an additionnal column
+        if(!$short)$lvl1HTML .= '<th></th>';
         $lvl1HTML .= '<th>'.formatTime($lvl2Total, 0).'</th>';
         $lvl1HTML .= '<th>'.formatTime($lvl2Total, -1).'</th></th><th></tr>';
         //add the LVL 3 HTML content in lvl1
@@ -591,7 +591,7 @@ class TimesheetReport
             $lvl0HTML .= '</table>';
         return $lvl0HTML;
     }
-    
+
 /** Generate LVL HTML report
  *
  * @param array $item value to display

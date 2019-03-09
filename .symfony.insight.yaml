@@ -11,7 +11,7 @@ working_directory: htdocs
 php.class_too_long:
     max_length: 2000
     threshold:  10
-pre_composer_script: |    
+pre_composer_script: |
     git clone --depth 1 -b develop https://github.com/Dolibarr/dolibarr.git
     rsync -r dolibarr/ delcroip/dolibarr_project_timesheet/
     rm dolibarr -rf

@@ -28,9 +28,9 @@ note                  VARCHAR(1024),
 fk_third_party        integer DEFAULT NULL, -- null means time for the company
 fk_task               integer DEFAULT NULL,
 fk_project            integer DEFAULT NULL,
-status               integer DEFAULT NULL,  
+status               integer DEFAULT NULL,
 date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,       -- timesheet user (redondant)
 fk_user_modification  integer  DEFAULT NULL,
 PRIMARY KEY (rowid)
-) 
+)
 ENGINE=innodb;

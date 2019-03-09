@@ -32,11 +32,11 @@
  */
 function AttendanceSystemReloadPage($backtopage, $id, $ref)
 {
-    if (!empty($backtopage)) {
+    if(!empty($backtopage)) {
         header("Location: ".$backtopage);
-    } elseif (!empty($ref)) {
+    } elseif(!empty($ref)) {
         header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?ref='.$ref);
-    } elseif ($id>0) {
+    } elseif($id>0) {
         header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?id='.$id);
     } else {
         header("Location: ".dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1));
@@ -60,13 +60,13 @@ function AttendanceSystemPrepareHead($object)
         $head[$h][1] = $langs->trans("Card");
         $head[$h][2] = 'card';
         $h++;
-        if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
+        if(isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
                 $nbNote = 0;
-                if (!empty($object->note_private)) $nbNote++;
-                if (!empty($object->note_public)) $nbNote++;
+                if(!empty($object->note_private)) $nbNote++;
+                if(!empty($object->note_public)) $nbNote++;
                 $head[$h][0] = dol_buildpath('/timesheet/AttendanceSystem_note.php', 1).'?id='.$object->id;
                 $head[$h][1] = $langs->trans('Notes');
-                if ($nbNote > 0) $head[$h][1].= ' <span class = "badge">'.$nbNote.'</span>';
+                if($nbNote > 0) $head[$h][1].= ' <span class = "badge">'.$nbNote.'</span>';
                 $head[$h][2] = 'note';
                 $h++;
         }
@@ -77,7 +77,7 @@ function AttendanceSystemPrepareHead($object)
         $nbLinks = Link::count($db, $object->element, $object->id);
         $head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemDoc.php", 1).'?id='.$object->id;
         $head[$h][1] = $langs->trans('Documents');
-        if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class = "badge">'.($nbFiles+$nbLinks).'</span>';
+        if(($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class = "badge">'.($nbFiles+$nbLinks).'</span>';
         $head[$h][2] = 'document';
         $h++;
 /*

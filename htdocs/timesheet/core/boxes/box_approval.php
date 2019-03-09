@@ -29,21 +29,21 @@ $res = 0;
  */
 class box_approval extends ModeleBoxes
 {
-    var $boxcode = "nbTsToApprove";
-    var $boximg = "timesheet";
-    var $boxlabel = "BoxApproval";
-    var $depends = array("timesheet");
-    var $db;
-    var $param;
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $boxcode = "nbTsToApprove";
+    public $boximg = "timesheet";
+    public $boxlabel = "BoxApproval";
+    public $depends = array("timesheet");
+    private $db;
+    public $param;
+    public $info_box_head = array();
+    public $info_box_contents = array();
     /**
      *  Load data into info_box_contents array to show array later.
      *
      *  @param        int                $max        Maximum number of records to load
      *  @return        void
      */
-    function loadBox($max = 5)
+    public function loadBox($max = 5)
     {
         global $conf, $user, $langs, $db;
         $this->max = $max;
@@ -53,12 +53,12 @@ class box_approval extends ModeleBoxes
                         'text' => $text,
                         'limit'=> dol_strlen($text)
       );
-        if ($user->rights->timesheet->approval) {
+        if($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
            $subordinate = implode(', ', getSubordinates($db, $userid, 2));
-           if ($subordinate == '')$subordinate = 0;
+           if($subordinate == '')$subordinate = 0;
            $tasks = implode(', ', array_keys(getTasks($db, $userid)));
-           if ($tasks == '')$tasks = 0;
+           if($tasks == '')$tasks = 0;
            // $sql .= ' COUNT(t.rowid) as nb, ';
             $sql .= ' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
@@ -67,14 +67,14 @@ class box_approval extends ModeleBoxes
             $sql.= ' OR (t.recipient='.PROJECT.' and fk_projet_task in ('.$tasks.')))';
             $sql.= '  GROUP BY t.recipient ';
             $result = $db->query($sql);
-            if ($result) {
+            if($result) {
                 $num = $db->num_rows($result);
-                while ($num>0)
+                while($num>0)
                 {
                     $obj = $db->fetch_object($result);
-                    if ($obj->recipient == 'project') {
+                    if($obj->recipient == 'project') {
                         $nbPrj = $obj->nbtsk;
-                    } elseif ($obj->recipient == 'team') {
+                    } elseif($obj->recipient == 'team') {
                         $nbTm = $obj->nbtm;
                     }
                     $num--;
@@ -106,7 +106,7 @@ class box_approval extends ModeleBoxes
                 $this->info_box_contents[0][0] = array(
                     'td' => 'align = "left"',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' =>($db->error().' sql='.$sql),
               );
             }
         } else {
@@ -125,7 +125,7 @@ class box_approval extends ModeleBoxes
      *  @param  INT   $nooutput   BLOCK OUTPUT
      *  @return void
      */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         Parent::showBox($this->info_box_head, $this->info_box_contents);
     }

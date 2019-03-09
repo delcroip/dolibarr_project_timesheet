@@ -28,7 +28,7 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetAttendanceEvent.class.php';
 require_once 'class/TimesheetTask.class.php';
-if (!$user->rights->timesheet->attendance->user) {
+if(!$user->rights->timesheet->attendance->user) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");
 }
 $tms = GETPOST('tms', 'alpha');
@@ -52,7 +52,7 @@ $timesheet_attendance = new Attendanceevent($db, $userid);
 ********************************************************************/
 $status = '';
 $update = false;
-switch ($action) {
+switch($action) {
     case 'start':
         $json = $timesheet_attendance->ajaxStart($user, $json, $customer, $project, $task);
        // ob_clean();
@@ -77,7 +77,7 @@ switch ($action) {
     default:
         break;
 }
-if (!empty($tms)) {
+if(!empty($tms)) {
     unset($_SESSION['timesheet_attendance'][$tms]);
 }
 //$timesheet_attendance->fetchAll($today);//FIXME: fetcht the list project/task
@@ -95,7 +95,7 @@ $timesheet_attendance->fetch('', $user);
 $timesheet_attendance->printHTMLClock();
 //tmstp = time();
 //fetch ts for others
-if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin)) {
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin)) {
     //print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 $headers = explode('||', $conf->global->TIMESHEET_HEADERS);
@@ -104,9 +104,9 @@ $ajax = false;
 //headers
 $html .= "<table class = \"noborder\" width = \"100%\">";
 $html .= "<tr>";
-foreach ($headers as $key => $value) {
+foreach($headers as $key => $value) {
     $html .= "\t<th ";
-    if (count($headers) == 1) {
+    if(count($headers) == 1) {
            $html .= 'colspan = "2" ';
     }
     $html .= ">".$langs->trans($value)."</th>\n";

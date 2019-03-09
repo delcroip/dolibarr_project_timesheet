@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) Billy Brown <https://codepen.io/_Billy_Brown/pen/dbJeh>
  * Copyright (C) 2018 delcroip <patrick@pmpd.eu>
  *
@@ -30,7 +30,7 @@ class event{
 	this.task='';
 	this.project='';
 	this.token='';
-	this.status='';       
+	this.status='';
         // working var
         this.taskLabel='';
         this.projectLabel='';
@@ -57,23 +57,23 @@ class Stopwatch {
        if( typeof data.event_type !== 'undefined'){
         this.event =data;
 
-        
+
         //var date_now.setTime(performance.now());
          this.timestampHeartbeart=performance.now();
          this.timestampClock=performance.now();
          this.time =performance.now()+ (this.event.date_time_event_start-this.event.processedTime)*1000;
-        
-        if (this.event.event_type<3  && this.event.event_type!=0) { // launch the clock for heartbeat and 
+
+        if(this.event.event_type<3  && this.event.event_type!=0) { // launch the clock for heartbeat and
              this.running = true;
-             this.updatePlayStopIcon(this.running,this.event.task);  
+             this.updatePlayStopIcon(this.running,this.event.task);
              this.animationframeID=requestAnimationFrame(this.step.bind(this));
-         }else if (this.event.event_type>=3 || this.event.event_type==0){ // stop the clock 
+         }else if(this.event.event_type>=3 || this.event.event_type==0){ // stop the clock
 
              this.running = false;
              this.reset();
              this.updatePlayStopIcon(this.running,this.event.task);
              cancelAnimationFrame(this.animationframeID);
-          
+
          }
          document.getElementById('project').innerText = this.event.projectLabel;
          document.getElementById('customer').innerText = this.event.third_partyLabel;
@@ -85,7 +85,7 @@ class Stopwatch {
           this.reset();
           this.updatePlayStopIcon(this.running,this.event.task);
      }
-     
+
 
      if(typeof data.status!== 'undefined' && data.status!=""){ //  display status
                 var obj=JSON.parse(data.status);
@@ -94,18 +94,18 @@ class Stopwatch {
         });
      }
      this.event.status="";
-     
+
     }
      // funciton to handle error while parsing the Json answer
     loadError(ErrMsg){
          $.jnotify("Error:"+ErrMsg,'error',true);
 	// location = location.href;
      }
-     // place the play Icone 
+     // place the play Icone
     updatePlayStopIcon(play,taskid){
         //update the main play
-        if (play==false){
-             
+        if(play==false){
+
              if(this.event.project==0 && this.event.third_party==0 && this.event.task==0)
                  document.getElementById("mainPlayStop").src= 'img/tinyblack.gif';
              else
@@ -115,9 +115,9 @@ class Stopwatch {
          }
          //set all the task  button to play then put the related to the playing task to stop
          var buttons=document.getElementsByClassName('playStopButton');
-        var i; 
+        var i;
         for (i = 0; i < buttons.length; i++) {
-             if (buttons[i].id!= 'playStop_'+taskid || play==false){
+             if(buttons[i].id!= 'playStop_'+taskid || play==false){
                  buttons[i].src='img/play-arrow.png';
              }else{
                  buttons[i].src='img/stop-square.png';
@@ -162,7 +162,7 @@ class Stopwatch {
         //this.event.token=document.getElementById('eventToken').value;
         this.save();
     }
-        
+
     // fucntion to update the js object and the serialize it in json
     serialize(){
         //save the note
@@ -185,18 +185,18 @@ class Stopwatch {
             success: loadSuccess,
             error: this.loadError
        });
-        
+
     }
     //code that will run to update the clock, called by the browser
      step(timestamp) {
-        if (!this.running) return;
+        if(!this.running) return;
         if(timestamp-this.timestampClock>300) {
             this.calculate(timestamp);
             this.time = timestamp;
             this.timestampClock=timestamp;
             this.print();
         }
-        
+
         if(timestamp-this.timestampHeartbeart>60000) {
             this.save('');
             this.timestampHeartbeart=timestamp;
@@ -211,17 +211,17 @@ class Stopwatch {
         this.times[3] += diff / 10;
         while(this.times[3]>100){
             // Seconds are 100 hundredths of a second
-            if (this.times[3] >= 100) {
+            if(this.times[3] >= 100) {
                 this.times[2] += 1;
                 this.times[3] -= 100;
             }
             // Minutes are 60 seconds
-            if (this.times[2] >= 60) {
+            if(this.times[2] >= 60) {
                 this.times[1] += 1;
                 this.times[2] -= 60;
             }
                   // hours are 60 minutes
-            if (this.times[1] >= 60) {
+            if(this.times[1] >= 60) {
                 this.times[0] += 1;
                 this.times[1] -= 60;
             }
@@ -231,7 +231,7 @@ class Stopwatch {
     print() {
         this.display.innerText = this.format(this.times);
 
-        
+
     }
     // Format the time for display
     format(times) {
@@ -248,7 +248,7 @@ function pad0(value, count) {
 }
 // start stop fuction
 function startStop(evt,user,tsk){
-    if (evt.target.src.indexOf('img/stop-square.png')>0){
+    if(evt.target.src.indexOf('img/stop-square.png')>0){
         stopwatch.stop();
     }else{
         stopwatch.start(tsk);

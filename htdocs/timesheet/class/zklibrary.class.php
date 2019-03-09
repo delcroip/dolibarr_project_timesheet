@@ -80,10 +80,10 @@ class ZKLibrary
      */
     public function __construct($ip = null, $port = null)
     {
-        if ($ip != null) {
+        if($ip != null) {
             $this->ip = $ip;
         }
-        if ($port != null) {
+        if($port != null) {
             $this->port = $port;
         }
         $this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
@@ -106,13 +106,13 @@ class ZKLibrary
      */
     public function connect($ip = null, $port = 4370)
     {
-        if ($ip != null) {
+        if($ip != null) {
             $this->ip = $ip;
         }
-        if ($port != null) {
+        if($port != null) {
             $this->port = $port;
         }
-        if ($this->ip == null || $this->port == null) {
+        if($this->ip == null || $this->port == null) {
             return false;
         }
         $command = CMD_CONNECT;
@@ -125,7 +125,7 @@ class ZKLibrary
         try
         {
             socket_recvfrom($this->socket, $this->received_data, 1024, 0, $this->ip, $this->port);
-            if (strlen($this->received_data)>0) {
+            if(strlen($this->received_data)>0) {
                 $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8));
                 $this->session_id = hexdec($u['h6'].$u['h5']);
                 return $this->checkValid($this->received_data);
@@ -148,7 +148,7 @@ class ZKLibrary
      */
     public function disconnect()
     {
-        if ($this->ip == null || $this->port == null) {
+        if($this->ip == null || $this->port == null) {
             return false;
         }
         $command = CMD_EXIT;
@@ -181,10 +181,10 @@ class ZKLibrary
      */
     public function setTimeout($sec = 0, $usec = 0)
     {
-        if ($sec != 0) {
+        if($sec != 0) {
             $this->timeout_sec = $sec;
         }
-        if ($usec != 0) {
+        if($usec != 0) {
             $this->timeout_usec = $usec;
         }
         $timeout = array('sec'=>$this->timeout_sec, 'usec'=>$this->timeout_usec);
@@ -199,14 +199,14 @@ class ZKLibrary
     {
         $time1 = microtime(true);
         $pfile = fsockopen($this->ip, $this->port, $errno, $errstr, $timeout);
-        if (!$pfile) {
+        if(!$pfile) {
             return 'down';
         }
         $time2 = microtime(true);
         fclose($pfile);
         return round((($time2 - $time1) * 1000), 0);
     }
-    /**  reverse the char of an hexadecimal (IP stack function)
+    /**  reverse the char of an hexadecimal(IP stack function)
      *
      * @param string $input HEX to reverse
      * @return string
@@ -221,14 +221,14 @@ class ZKLibrary
         }
         return $output;
     }
-    /** encode the time in ZKTECO binary format (IP stack function)
+    /** encode the time in ZKTECO binary format(IP stack function)
      *
      * @param string $time  YYYY-MM-DD HH:II:SS or UNIX
      * @return int
      */
     private function encodeTime($time)
     {
-        if (is_numeric($time)){
+        if(is_numeric($time)){
             $year = date('y', $time);
             $month = date('n', $time);
             $day = date('j', $time);
@@ -245,10 +245,10 @@ class ZKLibrary
             $minute = ltrim(@$arr[4], '0')*1;
             $second = ltrim(@$arr[5], '0')*1;
         }
-        $data = (($year % 100) * 12 * 31 + (($month - 1) * 31) + $day - 1) * (24 * 60 * 60) + ($hour * 60 + $minute) * 60 + $second;
+        $data = (($year % 100) * 12 * 31 +(($month - 1) * 31) + $day - 1) * (24 * 60 * 60) +($hour * 60 + $minute) * 60 + $second;
         return $data;
     }
-    /** decode the time in ZKTECO format (IP stack function)
+    /** decode the time in ZKTECO format(IP stack function)
      *
      * @param int $data     Binary data from device.
      * @param bool $unix unix format
@@ -267,14 +267,14 @@ class ZKLibrary
         $month = $data % 12+1;
         $data = $data / 12;
         $year = floor($data + 2000);
-        if ($unix === true){
+        if($unix === true){
         $d = mktime($hour, $minute, $second, $month, $day, $year);
         } else{
         $d = date("Y-m-d H:i:s", strtotime($year.'-'.$month.'-'.$day.' '.$hour.':'.$minute.':'.$second));
         }
         return $d;
     }
-    /** This function calculates the chksum of the packet to be sent to the time clock. (IP stack function)
+    /** This function calculates the chksum of the packet to be sent to the time clock.(IP stack function)
      *
      * @param string $p     Packet to be checked.
      * @return int checksum
@@ -290,32 +290,32 @@ class ZKLibrary
         {
             $u = unpack('S', pack('C2', $p['c'.$j], $p['c'.($j+1)]));
             $chksum += $u[1];
-            if ($chksum > USHRT_MAX) {
+            if($chksum > USHRT_MAX) {
                 $chksum -= USHRT_MAX;
             }
             $i-=2;
             $j+=2;
         }
-        if ($i) {
+        if($i) {
             $chksum = $chksum + $p['c'.strval(count($p))];
         }
-        while ($chksum > USHRT_MAX)
+        while($chksum > USHRT_MAX)
         {
             $chksum -= USHRT_MAX;
         }
-        if ($chksum > 0) {
+        if($chksum > 0) {
             $chksum = -($chksum);
         } else {
             $chksum = abs($chksum);
         }
         $chksum -= 1;
-        while ($chksum < 0)
+        while($chksum < 0)
         {
             $chksum += USHRT_MAX;
         }
         return pack('S', $chksum);
     }
-    /** Create data header to be sent to the device. (IP stack function)
+    /** Create data header to be sent to the device.(IP stack function)
      *
      * @param int $command  Command to the device in integer.
      * @param int $chksum   checksum of the packet
@@ -329,7 +329,7 @@ class ZKLibrary
         $buf = pack('SSSS', $command, $chksum, $session_id, $reply_id).$command_string;
         $buf = unpack('C'.(8+strlen($command_string)).'c', $buf);
         $u = unpack('S', $this->checkSum($buf));
-        if (is_array($u)) {
+        if(is_array($u)) {
             while(list($key) = each($u))
             {
                 $u = $u[$key];
@@ -338,7 +338,7 @@ class ZKLibrary
         }
         $chksum = $u;
         $reply_id += 1;
-        if ($reply_id >= USHRT_MAX) {
+        if($reply_id >= USHRT_MAX) {
             $reply_id -= USHRT_MAX;
         }
         $buf = pack('SSSS', $command, $chksum, $session_id, $reply_id);
@@ -353,7 +353,7 @@ class ZKLibrary
     {
         $u = unpack('H2h1/H2h2', substr($reply, 0, 8));
         $command = hexdec($u['h2'].$u['h1']);
-        if ($command == CMD_ACK_OK) {
+        if($command == CMD_ACK_OK) {
             return true;
         } else {
             return false;
@@ -398,7 +398,7 @@ class ZKLibrary
     {
         $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
         $command = hexdec($u['h2'].$u['h1']);
-        if ($command == CMD_PREPARE_DATA) {
+        if($command == CMD_PREPARE_DATA) {
             $u = unpack('H2h1/H2h2/H2h3/H2h4', substr($this->received_data, 8, 4));
             $size = hexdec($u['h4'].$u['h3'].$u['h2'].$u['h1']);
             return $size;
@@ -414,7 +414,7 @@ class ZKLibrary
     {
         $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
         $command = hexdec($u['h2'].$u['h1']);
-        if ($command == CMD_PREPARE_DATA) {
+        if($command == CMD_PREPARE_DATA) {
             $u = unpack('H2h1/H2h2/H2h3/H2h4', substr($this->received_data, 8, 4));
             $size = hexdec($u['h4'].$u['h3'].$u['h2'].$u['h1']);
             return $size;
@@ -422,7 +422,7 @@ class ZKLibrary
             return false;
         }
     }
-    /**  get the  number  of template (TBC)
+    /**  get the  number  of template(TBC)
      *
      * @return int|false
      */
@@ -430,7 +430,7 @@ class ZKLibrary
     {
         $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->received_data, 0, 8));
         $command = hexdec($u['h2'].$u['h1']);
-        if ($command == CMD_PREPARE_DATA) {
+        if($command == CMD_PREPARE_DATA) {
             $u = unpack('H2h1/H2h2/H2h3/H2h4', substr($this->received_data, 8, 4));
             $size = hexdec($u['h4'].$u['h3'].$u['h2'].$u['h1']);
             return $size;
@@ -480,12 +480,12 @@ class ZKLibrary
     }
     /** Change transfer speed of the device. 0 = slower. 1 = faster.
      *
-     * @param int $speed Transfer speed of packet when the device comunicate to other device, i.e server. (not always supported)
+     * @param int $speed Transfer speed of packet when the device comunicate to other device, i.e server.(not always supported)
      * @return false|string exec output
      */
     public function changeSpeed($speed = 0)
     {
-        if ($speed != 0) {
+        if($speed != 0) {
             $speed = 1;
         }
         $command = CMD_CHANGE_SPEED;
@@ -550,7 +550,7 @@ class ZKLibrary
         $command = CMD_OPTIONS_RRQ;
         $command_string = '~OS';
         $return = $this->execCommand($command, $command_string);
-        if ($net) {
+        if($net) {
             $arr = explode(" = ", $return, 2);
             return $arr[1];
         } else {
@@ -578,7 +578,7 @@ class ZKLibrary
         $command = CMD_OPTIONS_RRQ;
         $command_string = '~Platform';
         $return = $this->execCommand($command, $command_string);
-        if ($net) {
+        if($net) {
             $arr = explode(" = ", $return, 2);
             return $arr[1];
         } else {
@@ -606,7 +606,7 @@ class ZKLibrary
         $command = CMD_OPTIONS_RRQ;
         $command_string = '~ZKFPVersion';
         $return = $this->execCommand($command, $command_string);
-        if ($net) {
+        if($net) {
             $arr = explode(" = ", $return, 2);
             return $arr[1];
         } else {
@@ -634,7 +634,7 @@ class ZKLibrary
         $command = CMD_OPTIONS_RRQ;
         $command_string = 'WorkCode';
         $return = $this->execCommand($command, $command_string);
-        if ($net) {
+        if($net) {
             $arr = explode(" = ", $return, 2);
             return $arr[1];
         } else {
@@ -662,16 +662,16 @@ class ZKLibrary
         $command = CMD_OPTIONS_PRQ;
         $command_string = '~SSR';
         $return = $this->execCommand($command, $command_string);
-        if ($net) {
+        if($net) {
             $arr = explode(" = ", $return, 2);
             return $arr[1];
         } else {
             return $return;
         }
     }
-    /** Set Self-Service-Recoreder name (TBC)
+    /** Set Self-Service-Recoreder name(TBC)
      *
-     * @param string  $ssr (Self-Service-Recoreder)
+     * @param string  $ssr  (Self-Service-Recoreder)
      * @return false|string|string[] exec output
      */
     public function setSSR($ssr)
@@ -690,7 +690,7 @@ class ZKLibrary
         $command = CMD_OPTIONS_PRQ;
         $command_string = '~PIN2Width';
         $return = $this->execCommand($command, $command_string);
-        if ($net) {
+        if($net) {
             $arr = explode(" = ", $return, 2);
             return $arr[1];
         } else {
@@ -718,7 +718,7 @@ class ZKLibrary
         $command = CMD_OPTIONS_RRQ;
         $command_string = 'FaceFunOn';
         $return = $this->execCommand($command, $command_string);
-        if ($net) {
+        if($net) {
             $arr = explode(" = ", $return, 2);
             return $arr[1];
         } else {
@@ -746,7 +746,7 @@ class ZKLibrary
         $command = CMD_OPTIONS_RRQ;
         $command_string = '~SerialNumber';
         $return = $this->execCommand($command, $command_string);
-        if ($net) {
+        if($net) {
             $arr = explode(" = ", $return, 2);
             return $arr[1];
         } else {
@@ -774,7 +774,7 @@ class ZKLibrary
         $command = CMD_OPTIONS_RRQ;
         $command_string = '~DeviceName';
         $return = $this->execCommand($command, $command_string);
-        if ($net) {
+        if($net) {
             $arr = explode(" = ", $return, 2);
             return $arr[1];
         } else {
@@ -792,7 +792,7 @@ class ZKLibrary
         $command_string = '~DeviceName='.$deviceName;
         return $this->execCommand($command, $command_string);
     }
-    /** Get time of device from real time clock (RTC). The time resolution is one minute.
+    /** Get time of device from real time clock(RTC). The time resolution is one minute.
      *
      * @param bool $unix     true retun unix time, false     YYYY-MM-DD HH:II:SS.
      * @return dateime|string  RTC of the device
@@ -816,7 +816,7 @@ class ZKLibrary
         return $this->execCommand($command, $command_string);
     }
     /** Ensure the machine to be at in the normal work condition,
-     * generally when data communication shields the machine auxiliary equipment (keyboard, LCD, sensor),
+     * generally when data communication shields the machine auxiliary equipment(keyboard, LCD, sensor),
      * this order restores the auxiliary equipment to be at the normal work condition.
      *
      * @return false|string exec output
@@ -837,7 +837,7 @@ class ZKLibrary
         $command_string = chr(0).chr(0);
         return $this->execCommand($command, $command_string);
     }
-    /**Set the LCD dot (to glitter ‘:’) the packet data part transmit 0 to stop glittering,
+    /**Set the LCD dot(to glitter ‘:’) the packet data part transmit 0 to stop glittering,
      * 1 start to glitter.
      * After this order carries out successfully, the firmware will refresh LCD.
      *
@@ -852,7 +852,7 @@ class ZKLibrary
     }
     /** //FIXME
      *
-     * @param int $uid Serial number of the user (2 bytes)
+     * @param int $uid Serial number of the user(2 bytes)
      * @param int $finger finger to select
      * @return false|string exec output
      */
@@ -883,7 +883,7 @@ class ZKLibrary
             socket_recvfrom($this->socket, $this->received_data, 1024, 0, $this->ip, $this->port);
             $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8));
             $bytes = $this->getSizeUser();
-            if ($bytes) {
+            if($bytes) {
             while($bytes > 0)
             {
                 socket_recvfrom($this->socket, $received_data, 1032, 0, $this->ip, $this->port);
@@ -894,11 +894,11 @@ class ZKLibrary
             socket_recvfrom($this->socket, $received_data, 1024, 0, $this->ip, $this->port);
             }
             $users = array();
-            if (count($this->user_data) > 0) {
+            if(count($this->user_data) > 0) {
             $num = count($this->user_data);
             for($x = 0; $x < $num; $x++)
             {
-                if ($x > 0) {
+                if($x > 0) {
                     $this->user_data[$x] = substr($this->user_data[$x], 8);
                 }
             }
@@ -920,7 +920,7 @@ class ZKLibrary
                 $userid = $useridArr[0];// get user ID
                 $nameArr = explode(chr(0), $name, 3);// explode to array
                 $name = $nameArr[0];// get name
-                if ($name == "") {
+                if($name == "") {
                     $name = $uid;
                 }
                 $users[$uid] = array($userid, $name, intval($role), $password);
@@ -940,7 +940,7 @@ class ZKLibrary
     }
     /** Get all finger print data from the device for one user.
      *
-     * @param int $uid Serial number of the user (2 bytes)
+     * @param int $uid Serial number of the user(2 bytes)
      * @return array[U16 size, U16 PIn, char FingerID, int valid, char|array(template data)]
      */
     public function getUserTemplateAll($uid)
@@ -959,7 +959,7 @@ class ZKLibrary
     }
     /** Get finger print data from the device.
      *
-     * @param int $uid Serial number of the user (2 bytes)
+     * @param int $uid Serial number of the user(2 bytes)
      * @param int  $finger  finger(0-9)
      * @return bool|string  array[U16 size, U16 PIn, char FingerID, char valid, array(template data)]
      */
@@ -982,7 +982,7 @@ class ZKLibrary
             socket_recvfrom($this->socket, $this->received_data, 1024, 0, $this->ip, $this->port);
             $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8));
             $bytes = $this->getSizeTemplate();
-            if ($bytes) {
+            if($bytes) {
                 while($bytes > 0)
                 {
                     socket_recvfrom($this->socket, $received_data, 1032, 0, $this->ip, $this->port);
@@ -993,11 +993,11 @@ class ZKLibrary
                 socket_recvfrom($this->socket, $received_data, 1024, 0, $this->ip, $this->port);
             }
             $template_data = array();
-            if (count($this->user_data) > 0) {
+            if(count($this->user_data) > 0) {
             $num = count($this->user_data);
             for($x = 0; $x < $num; $x++)
             {
-                if ($x == 0) {
+                if($x == 0) {
                 $this->user_data[$x] = substr($this->user_data[$x], 8);
                 } else {
                 $this->user_data[$x] = substr($this->user_data[$x], 8);
@@ -1007,7 +1007,7 @@ class ZKLibrary
             $template_size = strlen($user_data)+6;
             $prefix = chr($template_size%256).chr(round($template_size/256)).$byte1.$byte2.chr($finger).chr(1);
             $user_data = $prefix.$user_data;
-            if (strlen($user_data) > 6) {
+            if(strlen($user_data) > 6) {
                 $valid = 1;
                 $template_data = array($template_size, $uid, $finger, $valid, $user_data);
             }
@@ -1043,7 +1043,7 @@ class ZKLibrary
             socket_recvfrom($this->socket, $this->received_data, 1024, 0, $this->ip, $this->port);
             $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->received_data, 0, 8));
             $bytes = $this->getSizeUser();
-            if ($bytes) {
+            if($bytes) {
                 while($bytes > 0)
                 {
                     socket_recvfrom($this->socket, $received_data, 1032, 0, $this->ip, $this->port);
@@ -1055,14 +1055,14 @@ class ZKLibrary
             }
             $users = array();
             $retdata = "";
-            if (count($this->user_data) > 0) {
+            if(count($this->user_data) > 0) {
             $num = count($this->user_data);
             for($x = 0; $x < $num; $x++)
             {
-                if ($x > 0) {
+                if($x > 0) {
                 $this->user_data[$x] = substr($this->user_data[$x], 8);
                 }
-                if ($x > 0) {
+                if($x > 0) {
                 $retdata .= substr($this->user_data[$x], 0);
                 } else {
                 $retdata .= substr($this->user_data[$x], 12);
@@ -1082,7 +1082,7 @@ class ZKLibrary
     }
     /** Write user to the device.
      *
-     * @param int $uid Serial number of the user (2 bytes)
+     * @param int $uid Serial number of the user(2 bytes)
      * @param int $userid user id
      * @param sting $name user name
      * @param sting $password user password
@@ -1093,10 +1093,10 @@ class ZKLibrary
     {
         $uid = (int) $uid;
         $role = (int) $role;
-        if ($uid > USHRT_MAX) {
+        if($uid > USHRT_MAX) {
             return false;
         }
-        if ($role > 255) $role = 255;
+        if($role > 255) $role = 255;
         $name = substr($name, 0, 28);
         $command = CMD_USER_WRQ;
         $byte1 = chr((int) ($uid % 256));
@@ -1158,7 +1158,7 @@ class ZKLibrary
     }
     /**
      *
-     * @param int $uid Serial number of the user (2 bytes)
+     * @param int $uid Serial number of the user(2 bytes)
      * @return false|string exec output
      */
     public function deleteUser($uid)
@@ -1171,7 +1171,7 @@ class ZKLibrary
     }
     /**
      *
-     * @param int $uid Serial number of the user (2 bytes)
+     * @param int $uid Serial number of the user(2 bytes)
      * @param int $finger finger to delete
      * @return false|string exec output
      */
@@ -1194,7 +1194,7 @@ class ZKLibrary
     }
     /**
      *
-     * @param int $uid Serial number of the user (2 bytes)
+     * @param int $uid Serial number of the user(2 bytes)
      * @param int $finger   finger to test
      * @return false|string exec output
      */
@@ -1206,11 +1206,11 @@ class ZKLibrary
         $command_string = $byte1.$byte2.chr($finger);
         $u = unpack('H2h1/H2h2', $this->execCommand($command, $command_string));
         $ret = hexdec($u['h2'].$u['h1']);
-        return ($ret == CMD_ACK_OK)?1:0;
+        return($ret == CMD_ACK_OK)?1:0;
     }
     /** start verify //fixme
      *
-     * @param int $uid Serial number of the user (2 bytes)
+     * @param int $uid Serial number of the user(2 bytes)
      * @return false|string exec output
      */
     public function startVerify($uid)
@@ -1263,7 +1263,7 @@ class ZKLibrary
         {
             socket_recvfrom($this->socket, $this->received_data, 1024, 0, $this->ip, $this->port);
             $bytes = $this->getSizeAttendance();
-            if ($bytes) {
+            if($bytes) {
                 while($bytes > 0)
                 {
                     socket_recvfrom($this->socket, $received_data, 1032, 0, $this->ip, $this->port);
@@ -1274,11 +1274,11 @@ class ZKLibrary
                 socket_recvfrom($this->socket, $received_data, 1024, 0, $this->ip, $this->port);
             }
             $attendance = array();
-            if (count($this->attendance_data) > 0) {
+            if(count($this->attendance_data) > 0) {
             $num = count($this->attendance_data);
             for($x = 0; $x < $num; $x++)
             {
-                if ($x > 0) {
+                if($x > 0) {
                 $this->attendance_data[$x] = substr($this->attendance_data[$x], 8);
                 }
             }

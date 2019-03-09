@@ -1,4 +1,4 @@
-/* 
+/*
  *Copyright (C) 2014 delcroip <patrick@pmpd.eu>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,34 +22,34 @@ function submitTs(){
     element.setAttribute("name", "submitTs");
     element.setAttribute("value", "1");
     form.appendChild(element);
-           
-            
+
+
     return true;
 }
-  
+
   function regexEvent(object,evt,type)
   {
 
               //var regex= /^[0-9:]{1}$/;
               //alert(event.charCode);
               var charCode = (evt.which) ? evt.which : event.keyCode;
-              
+
               if(((charCode >= 48) && (charCode <= 57)) || //num
                     (charCode===46) || (charCode===8)||// comma & periode
                     (charCode === 58) || (charCode==44))// : & all charcode
               {
                   // ((charCode>=96) && (charCode<=105)) || //numpad
                 return true;
-         
+
               }else
               {
                   return false;
               }
-                
 
-  
-  }    
-  
+
+
+  }
+
 
 function pad(n) {
     return (n < 10) ? ("0" + n) : n;
@@ -59,12 +59,12 @@ function pad(n) {
 
 //function from http://www.timlabonne.com/2013/07/parsing-a-time-string-with-javascript/
 function parseTime(timeStr, dt) {
-    if (!dt) {
+    if(!dt) {
         dt = new Date();
     }
- 
+
     var time = timeStr.match(/(\d+)(?::(\d\d))?\s*((p|a)?)/i);
-    if (!time) {
+    if(!time) {
         dt.setHours(0);
         return NaN;
     }
@@ -82,7 +82,7 @@ function validateTotal(col_id){
     var total=0;
     try
     {
-        var Total =document.getElementsByClassName('TotalColumn_'+col_id);    
+        var Total =document.getElementsByClassName('TotalColumn_'+col_id);
         var lines =document.getElementsByClassName('column_'+col_id);
         total=getTotal(lines);
         if(Total[0].innerHTML!=minutesToHTML(total)){
@@ -91,8 +91,8 @@ function validateTotal(col_id){
                $.jnotify(err_msg_max_hours_exceded ,'error',false);   //
                 return -1;
             }else if(hours>day_hours){
-               $.jnotify(wng_msg_hours_exceded ,'warning',false); 
-            }   
+               $.jnotify(wng_msg_hours_exceded ,'warning',false);
+            }
         }
     }
     catch(err) {
@@ -103,7 +103,7 @@ function validateTotal(col_id){
 
 //function to update all the totals
 /*
- * 
+ *
  * @returns {undefined}
  */
 function updateAll(){
@@ -121,9 +121,9 @@ function updateAll(){
         var TotalList=document.getElementsByClassName('TotalUser_'+tsUser[j].value);
         var nblineTotal = TotalList.length;
           for (var i=0;i<nblineTotal;i++)
-          {                 
+          {
               TotalList[i].innerHTML = minutesToHTML(total);
-          }          
+          }
 	}
         updateAllLinesTotal();
 }
@@ -131,7 +131,7 @@ function updateAll(){
 
 
 /* function to update the totals
- * 
+ *
  * @param {type} classSource
  * @param {type} classTarget
  * @returns {undefined}
@@ -141,15 +141,15 @@ function updateTotals(classSource,classTarget){
     var total= getTotal(source);
     var TotalList=document.getElementsByClassName(classTarget);
     for (var i=0;i<TotalList.length;i++)
-    {                 
+    {
         TotalList[i].innerHTML = minutesToHTML(total);
-    } 
+    }
     return total;
 }
 
 
 /*
- * 
+ *
  * @param {type} object where the data has to e validated
  * @param {type} ts     timesheet id
  * @param {type} day    day to update total
@@ -163,15 +163,15 @@ function validateTime(object,col_id){
     switch(time_type)
       {
           case 'days':
-                object.style.backgroundColor = "lightgreen";       
+                object.style.backgroundColor = "lightgreen";
                 object.value=object.value.replace(',','.');
                 var regex=/^([0-5]{1}([.,]{1}[0-9]{1,3})?|[.,]{1}[0-9]{1,3}|)$/;
-                if(!regex.test(object.value)){      
+                if(!regex.test(object.value)){
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
-                  }      
+                  }
                 if(hide_zero && object.value=='0')object.value='';
-          break;  
+          break;
           case 'hours':
           default:
                   object.style.backgroundColor = "lightgreen";
@@ -179,11 +179,11 @@ function validateTime(object,col_id){
                   var regex2=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1})$/;
                   var regex3=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1}):[0-9]{1}$/;
                   if(!regex.test(object.value))
-                  { 
+                  {
                     if(regex2.test(object.value)){ // simple number will assume hours
-                        object.value=object.value+':00';     
+                        object.value=object.value+':00';
                     }else if(regex3.test(object.value)){ //missing 0 will assume ten of min
-                        object.value=object.value+'0'; 
+                        object.value=object.value+'0';
                     }else if(!object.value){
                         object.value='0:00';
                     }
@@ -191,7 +191,7 @@ function validateTime(object,col_id){
                         object.value=object.defaultValue;
                         object.style.backgroundColor = "red";
                     }
-                  } 
+                  }
                   if(hide_zero && object.value=='0:00')object.value='';
 //              }
             break;
@@ -208,24 +208,24 @@ function validateTime(object,col_id){
 }
 /*
  * Function to update the line Total when there is any
- * @param   
+ * @param
  * @returns None
  */
 function updateAllLinesTotal(){
-        
-        
+
+
     var TotalList=document.getElementsByClassName('lineTotal');
         var nblineTotal = TotalList.length;
         for(i=0;i<nblineTotal;i++){
-            var classLine='line_'+ TotalList[i].id;          
+            var classLine='line_'+ TotalList[i].id;
             var dayList=document.getElementsByClassName(classLine);
             TotalList[i].innerHTML=minutesToHTML(getTotal(dayList));
         }
-    
+
 }
 
 /*
- * Function to generate a total 
+ * Function to generate a total
  * @param {table of elm} daylist   list of the day element to sumup
  * @param {string} daytype hour or day
  * @returns {undefined}
@@ -236,12 +236,12 @@ function getTotal(dayList){
     if(time_type=="hours")
     {
         for (var i=0;i<nbline;i++)
-        {  
+        {
             var taskTime= new Date(0);
             var element=dayList[i];
             if(element)
             {
-                if (element.value){   
+                if(element.value){
                     parseTime(element.value,taskTime);
                 }else if(element.innerHTML){
                     parseTime(element.innerHTML,taskTime);
@@ -250,28 +250,28 @@ function getTotal(dayList){
                 }
                 total+=taskTime.getMinutes()+60*taskTime.getHours();
             }
-        }       
+        }
     }else{
         for (var i=0;i<nbline;i++)
-        {  
+        {
                 var element=dayList[i];
                 if(element)
                 {
-                    if (element.value){   
+                    if(element.value){
                         total+=parseFloat(element.value);
                     }else if(element.innerHTML){
                         total+=parseFloat(element.innerHTML);
                     }else{
                         total+=0;
                     }
-                }    
-        } 
+                }
+        }
         total=total*day_hours*60;
     }
     return total;
 }
 
-function minutesToHTML(total){ 
+function minutesToHTML(total){
     var retVal='';
     if(time_type=="hours")
     {
@@ -283,7 +283,7 @@ function minutesToHTML(total){
     }
     return retVal;
 }
-            
+
 function openTab(evt, tabName) {
     // Declare all variables
     var i, tabcontent, tablinks;
@@ -320,12 +320,12 @@ function searchTask(evt){
     var search= new RegExp(evt.value,"i");
     tslist = document.getElementsByClassName("timesheet_line");
     tsNote = document.getElementsByClassName("timesheet_note");
-    //hide all notes without the search 
+    //hide all notes without the search
     for (i = 0; i < tsNote.length; i++) {
                tsNote[i].style.display = "none";
     }
-    //hide all 
-    
+    //hide all
+
     for (i = 0; i < tslist.length; i++) {
         tslist[i].style.display = "";
         fields=tslist[i].children;
@@ -339,7 +339,7 @@ function searchTask(evt){
         }
         if(!displayLine)tslist[i].style.display = "none";
     }
-    
+
 }
 // function use to switch between tabs
 function showFavoris(evt, tabName) {
@@ -365,7 +365,7 @@ function showFavoris(evt, tabName) {
         for (i = 0; i < tslist.length; i++) {
                tslist[i].style.display = "none";
         }
-        
+
         if(tabName=='whitelist'){
             wlist = document.getElementsByClassName("timesheet_whitelist");
             for (i = 0; i < wlist.length; i++) {
@@ -399,19 +399,19 @@ function checkEmptyFormFields(even,Myform,msg){
     var fields=curform.getElementsByTagName("input");
     var error=0;
     for(field in fields){
-        if (fields[field].value=='' && fields[field].name!='')error++;
+        if(fields[field].value=='' && fields[field].name!='')error++;
     }
     var selects=curform.getElementsByTagName("select");
     for(select in selects){
-        if (selects[select].value=='-1' && fields[field].name!='')error++;
+        if(selects[select].value=='-1' && fields[field].name!='')error++;
     }
-    
-    if (error){
+
+    if(error){
         $.jnotify(msg,'error',true);
         return false
     }
-           
-    
+
+
 }
 
   function tristate(control, value1, value2, value3) {
@@ -447,7 +447,7 @@ function checkEmptyFormFields(even,Myform,msg){
   }
 /*
  * Funciton that changed the hidden status off the element with id="id"
- * @param   string      id      id of the target element 
+ * @param   string      id      id of the target element
  */
 function ShowHide(id){
     elmt=document.getElementById(id);
@@ -458,7 +458,7 @@ function ShowHide(id){
        /// elmt.hidden=true;
         elmt.style.display = "none";
     }
-} 
+}
 /*
  * function to add/remove this task as favoris
  */
@@ -472,14 +472,14 @@ function favOnOff(evt, prjtId, tskId){
 function httpGetAsync(theUrl, callback, callbackParam)
 {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+    xmlHttp.onreadystatechange = function() {
+        if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback(callbackParam,xmlHttp.responseText);
     }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous
     xmlHttp.send(null);
 }
-    
+
 function setId(evt, JsonStr){
     var obj = JSON.parse(JsonStr);
      evt.target.id=obj.id;
@@ -501,7 +501,7 @@ function setId(evt, JsonStr){
 function openNote(noteid){
     var modal = document.getElementById(noteid);
     modal.style.display = "block";
-    
+
 
 }
 
@@ -516,8 +516,8 @@ function closeNotes(){
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
-    
-    if (!event.target.classList.contains('modal')) {
+
+    if(!event.target.classList.contains('modal')) {
         //closeNotes();
     }
 }

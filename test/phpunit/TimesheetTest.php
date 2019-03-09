@@ -25,7 +25,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/timesheet/class/TimesheetUserTasks.class.php';
-if (empty($user->id)) {
+if(empty($user->id)) {
         print "Load permissions for admin user nb 1\n";
         $user->fetch(1);
         $user->getrights();
@@ -50,7 +50,7 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
          *
          * @return TimesheetUserTasksTest
          */
-        function __construct()
+        public function __construct()
         {
                 parent::__construct();
                 //$this->sharedFixture

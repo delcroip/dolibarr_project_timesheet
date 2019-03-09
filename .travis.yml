@@ -112,9 +112,9 @@ install:
     echo "Downloading dolibarr"
     #wget -O dolibarr.tgz https://github.com/Dolibarr/dolibarr/archive/develop.zip
     git clone --depth 1 -b develop https://github.com/Dolibarr/dolibarr.git /tmp/dolibarr
-    rsync -r /tmp/dolibarr/dev/ $TRAVIS_BUILD_DIR/dev 
-    rsync -r /tmp/dolibarr/build/ $TRAVIS_BUILD_DIR/build 
-    rsync -r /tmp/dolibarr/include/ $TRAVIS_BUILD_DIR/include 
+    rsync -r /tmp/dolibarr/dev/ $TRAVIS_BUILD_DIR/dev
+    rsync -r /tmp/dolibarr/build/ $TRAVIS_BUILD_DIR/build
+    rsync -r /tmp/dolibarr/include/ $TRAVIS_BUILD_DIR/include
     echo
 - |
   echo "Updating Composer"
@@ -219,7 +219,7 @@ before_script:
   - |
     export CONF_FILE=htdocs/conf/conf.php
     echo "Setting up Dolibarr $CONF_FILE"
-    echo '<?php' > $CONF_FILE 
+    echo '<?php' > $CONF_FILE
     echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
     echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
     echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE

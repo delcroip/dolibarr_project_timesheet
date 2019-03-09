@@ -28,9 +28,9 @@ date_end               DATE        NOT NULL, -- start date of the period
 status                   integer default 1, -- enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
 note                  VARCHAR(1024), -- in case target is not team, querry on task
 date_creation         DATETIME      NOT NULL,
-date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
+date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 fk_userid               integer     NOT NULL,          -- timesheet user
 fk_user_modification  integer  default NULL,
 PRIMARY KEY (rowid)
-) 
+)
 ENGINE=innodb;

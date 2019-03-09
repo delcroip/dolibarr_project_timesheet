@@ -35,47 +35,47 @@ class modTimesheet extends DolibarrModules
          *
          *   @param      DoliDB                $db      Database handler
          */
-        function __construct($db)
+        public function __construct($db)
         {
         global $langs, $conf;
         $this->db = $db;
-                // Id for module (must be unique).
-                // Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
+                // Id for module(must be unique).
+                // Use here a free id(See in Home -> System information -> Dolibarr for list of used modules id).
                 $this->numero = 861002;
-                // Key text used to identify module (for permissions, menus, etc...)
+                // Key text used to identify module(for permissions, menus, etc...)
                 $this->rights_class = 'timesheet';
                 // Family can be 'crm', 'financial', 'hr', 'projects', 'products', 'ecm', 'technic', 'other'
                 // It is used to group modules in module setup page
                 $this->family = "projects";
-                // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+                // Module label(no space allowed), used if translation string 'ModuleXXXName' not found(where XXX is value of numeric property 'numero' of module)
                 $this->name = preg_replace('/^mod/i', '', get_class($this));
-                // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
+                // Module description, used if translation string 'ModuleXXXDesc' not found(where XXX is value of numeric property 'numero' of module)
                 $this->description = "TimesheetView";
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
                 $this->version = '4.0.4';
-                // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
+                // Key used in llx_const table to save module status enabled/disabled(where MYMODULE is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-                // Where to store the module in setup page (0=common, 1=interface, 2=others, 3=very specific)
+                // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
                 $this->special = 0;
                 // Name of image file used for this module.
                 // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
                 // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
                 $this->picto='timesheet@timesheet';
-                // Defined all module parts (triggers, login, substitutions, menus, css, etc...)
+                // Defined all module parts(triggers, login, substitutions, menus, css, etc...)
                 // for default path (eg: /mymodule/core/xxxxx) (0=disable, 1=enable)
-                // for specific path of parts (eg: /mymodule/core/modules/barcode)
-                // for specific css file (eg: /mymodule/css/mymodule.css.php)
+                // for specific path of parts(eg: /mymodule/core/modules/barcode)
+                // for specific css file(eg: /mymodule/css/mymodule.css.php)
                 $this->module_parts = array('triggers' => 0,
                                             'css' => array('/timesheet/core/css/timesheet.css'));
                 ////$this->module_parts = array(
-                //                         'triggers' => 0,        // Set this to 1 if module has its own trigger directory (core/triggers)
-                //                                                        'login' => 0,        // Set this to 1 if module has its own login method directory (core/login)
-                //                                                        'substitutions' => 0,        // Set this to 1 if module has its own substitution function file (core/substitutions)
-                //                                                        'menus' => 0,        // Set this to 1 if module has its own menus handler directory (core/menus)
-                //                                                        'theme' => 0,        // Set this to 1 if module has its own theme directory (theme)
-                //                         'tpl' => 0,        // Set this to 1 if module overwrite template dir (core/tpl)
-                //                                                        'barcode' => 0,        // Set this to 1 if module has its own barcode directory (core/modules/barcode)
-                //                                                        'models' => 0,        // Set this to 1 if module has its own models directory (core/modules/xxx)
+                //                         'triggers' => 0,        // Set this to 1 if module has its own trigger directory(core/triggers)
+                //                                                        'login' => 0,        // Set this to 1 if module has its own login method directory(core/login)
+                //                                                        'substitutions' => 0,        // Set this to 1 if module has its own substitution function file(core/substitutions)
+                //                                                        'menus' => 0,        // Set this to 1 if module has its own menus handler directory(core/menus)
+                //                                                        'theme' => 0,        // Set this to 1 if module has its own theme directory(theme)
+                //                         'tpl' => 0,        // Set this to 1 if module overwrite template dir(core/tpl)
+                //                                                        'barcode' => 0,        // Set this to 1 if module has its own barcode directory(core/modules/barcode)
+                //                                                        'models' => 0,        // Set this to 1 if module has its own models directory(core/modules/xxx)
                 //                                                        'css' => array('/mymodule/css/mymodule.css.php'),        // Set this to relative path of css file if module has its own css file
                 //                                                        'js' => array('/mymodule/js/mymodule.js'), // Set this to relative path of js file if module must load a js on all pages
                 //                                                        'hooks' => array('hookcontext1', 'hookcontext2')        // Set here all hooks context managed by module
@@ -98,7 +98,7 @@ class modTimesheet extends DolibarrModules
                 $this->need_dolibarr_version = array(3, 5);        // Minimum version of Dolibarr required by module
                 $this->langfiles = array("timesheet@timesheet");
                 // Constants
-                // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
+                // List of particular constants to add when module is enabled(key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
                 // Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
                 //                             1=>array('MYMODULE_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
                 //);
@@ -108,7 +108,7 @@ class modTimesheet extends DolibarrModules
                 //$r++;
                 $this->const[$r] = array("TIMESHEET_TIME_TYPE", "chaine", "hours", "layout mode of the timesheets");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_DAY_DURATION", "int", 8, "number of hour per day (used for the layout per day)");
+                $this->const[$r] = array("TIMESHEET_DAY_DURATION", "int", 8, "number of hour per day(used for the layout per day)");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_HIDE_DRAFT", "int", 0, "option to mask to task belonging to draft project");
                 $r++;
@@ -194,27 +194,27 @@ class modTimesheet extends DolibarrModules
                 // 'contact'          to add a tab in contact view
                 // 'payment'                  to add a tab in payment view
                 // 'payment_supplier' to add a tab in supplier payment view
-                // 'categories_x'          to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
+                // 'categories_x'          to add a tab in category view(replace 'x' by type of category(0=product, 1=supplier, 2=customer, 3=member)
                 // 'opensurveypoll'          to add a tab in opensurvey poll view
         $this->tabs = array();
         // Dictionaries
-        if (! isset($conf->mymodule->enabled)) {
+        if(! isset($conf->mymodule->enabled)) {
             $conf->mymodule=new stdClass();
             $conf->mymodule->enabled=0;
         }
                 $this->dictionaries=array();
         /* Example:
-        if (! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;        // This is to avoid warnings
+        if(! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;        // This is to avoid warnings
         $this->dictionaries=array(
             'langs'=>'mylangfile@mymodule',
             'tabname'=>array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),                // List of tables we want to see into dictonnary editor
             'tablib'=>array("Table1", "Table2", "Table3"),                                                                                                        // Label of tables
             'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),        // Request to select fields
             'tabsqlsort'=>array("label ASC", "label ASC", "label ASC"),                                                                                                                                                                        // Sort order
-            'tabfield'=>array("code, label", "code, label", "code, label"),                                                                                                                                                                        // List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code, label", "code, label", "code, label"),                                                                                                                                                                // List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code, label", "code, label", "code, label"),                                                                                                                                                        // List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid", "rowid", "rowid"),                                                                                                                                                                                                        // Name of columns with primary key (try to always name it 'rowid')
+            'tabfield'=>array("code, label", "code, label", "code, label"),                                                                                                                                                                        // List of fields(result of select to show dictionary)
+            'tabfieldvalue'=>array("code, label", "code, label", "code, label"),                                                                                                                                                                // List of fields(list of fields to edit a record)
+            'tabfieldinsert'=>array("code, label", "code, label", "code, label"),                                                                                                                                                        // List of fields(list of fields for insert)
+            'tabrowid'=>array("rowid", "rowid", "rowid"),                                                                                                                                                                                                        // Name of columns with primary key(try to always name it 'rowid')
             'tabcond'=>array($conf->mymodule->enabled, $conf->mymodule->enabled, $conf->mymodule->enabled)                                                                                                // Condition to show each dictionary
       );
         */
@@ -230,50 +230,50 @@ class modTimesheet extends DolibarrModules
                 // Permissions
                 $this->rights = array();                // Permission array used by this module
                 $r=0;
-                 $this->rights[$r][0] = 86100200;                                // Permission id (must not be already used)
+                 $this->rights[$r][0] = 86100200;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'TimesheetUser';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user (0/1)
-                 $this->rights[$r][4] = 'user';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                 $this->rights[$r][4] = 'user';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
                  $r++;
                 //$r=0;
-                 $this->rights[$r][0] = 86100201;                                // Permission id (must not be already used)
+                 $this->rights[$r][0] = 86100201;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'TeamApprover';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user (0/1)
-                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
                  $r++;
-                 $this->rights[$r][0] = 86100202;                                // Permission id (must not be already used)
+                 $this->rights[$r][0] = 86100202;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'ApprovalAdmin';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user (0/1)
-                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
 
                  $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
-                 $this->rights[$r][0] = 86100203;                                // Permission id (must not be already used)
+                 $this->rights[$r][0] = 86100203;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'ExportRead';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user (0/1)
-                 $this->rights[$r][4] = 'read';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 //$this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                 $this->rights[$r][4] = 'read';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 //$this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
                  $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
-                 $this->rights[$r][0] = 86100205;                                // Permission id (must not be already used)
+                 $this->rights[$r][0] = 86100205;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'AttendanceUser';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user (0/1)
-                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'user';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][5] = 'user';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
                  $r++;
-                 $this->rights[$r][0] = 86100206;                                // Permission id (must not be already used)
+                 $this->rights[$r][0] = 86100206;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'AttendanceAdmin';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user (0/1)
-                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
                  $r++;
 // Example:
-                // $this->rights[$r][0] = 2000;                                // Permission id (must not be already used)
+                // $this->rights[$r][0] = 2000;                                // Permission id(must not be already used)
                 // $this->rights[$r][1] = 'Permision label';        // Permission label
-                // $this->rights[$r][3] = 1;                                        // Permission by default for new user (0/1)
-                // $this->rights[$r][4] = 'level1';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                // $this->rights[$r][5] = 'level2';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                // $this->rights[$r][3] = 1;                                        // Permission by default for new user(0/1)
+                // $this->rights[$r][4] = 'level1';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                // $this->rights[$r][5] = 'level2';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
                 // $r++;
                 // Main menu entries
                 $this->menu = array();                        // List of menus to add
@@ -287,7 +287,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'timesheet',
                                                                         'url'=>'/timesheet/Timesheet.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>100,
                                                                         'enabled'=>'$user->rights->timesheet->user && !($user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE)',        // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -301,7 +301,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'attendance',
                                                                         'url'=>'/timesheet/AttendanceClock.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>100,
                                                                         'enabled'=>'$user->rights->timesheet->user && $user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE',
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -314,7 +314,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'timesheet',
                                                                         'url'=>'/timesheet/Timesheet.php?#',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>100,
                                                                         'enabled'=>'$conf->timesheet->enabled',        // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -328,7 +328,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'attendance',
                                                                         'url'=>'/timesheet/AttendanceClock.php?#',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>200,
                                                                         'enabled'=>'$user->rights->timesheet->attendance->user',
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -341,7 +341,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'attendance',
                                                                         'url'=>'/timesheet/AttendanceEventAdmin.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>210,
                                                                         'enabled'=>'$user->rights->timesheet->attendance->admin',
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -354,7 +354,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'timesheet',
                                                                         'url'=>'/timesheet/TimesheetReportUser.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>130,
                                                                         'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -367,7 +367,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'Timesheet',
                                                                         'url'=>'/timesheet/TimesheetFavouriteAdmin.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>110,
                                                                         'enabled'=>'$conf->global->TIMESHEET_WHITELIST == 1', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -380,7 +380,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'project',
                                                                         'leftmenu'=>'projectReport',
                                                                         'url'=>'/timesheet/TimesheetReportProject.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>120,
                                                                         'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -393,7 +393,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'project',
                                                                         'leftmenu'=>'projectInvoice',
                                                                         'url'=>'/timesheet/TimesheetProjectInvoice.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>121,
                                                                         'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                                                                         'perms'=>'$user->rights->facture->creer',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -406,7 +406,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'Timesheetapproval',
                                                                         'url'=>'/timesheet/TimesheetTeamApproval.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>130,
                                                                         'enabled'=>'$user->rights->timesheet->approval', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                                                                         'perms'=>'$user->rights->timesheet->approval',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -419,7 +419,7 @@ class modTimesheet extends DolibarrModules
                                                                         'mainmenu'=>'timesheet',
                                                                         'leftmenu'=>'Adminapproval',
                                                                         'url'=>'/timesheet/TimesheetUserTasksAdmin.php?action=list&sortfield=t.date_start&sortorder=desc',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>131,
                                                                         'enabled'=>'$user->rights->timesheet->approval->admin', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                                                                         'perms'=>'$user->rights->timesheet->approval->admin',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -443,17 +443,17 @@ class modTimesheet extends DolibarrModules
                 //$r=1;
                 // Example:
                 // $this->export_code[$r]=$this->rights_class.'_'.$r;
-                // $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';        // Translation key (used only if key ExportDataset_xxx_z not found)
+                // $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';        // Translation key(used only if key ExportDataset_xxx_z not found)
         }
         /**
          *                Function called when module is enabled.
-         *                The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+         *                The init function add constants, boxes, permissions and menus(defined in constructor) into Dolibarr database.
          *                It also creates data directories
          *
-         *      @param      string        $options    Options when enabling module ('', 'noboxes')
+         *      @param      string        $options    Options when enabling module('', 'noboxes')
          *      @return     int              1 if OK, 0 if KO
          */
-        function init($options = '')
+        public function init($options = '')
         {
             global $db, $conf;
             $result=$this->_load_tables('/timesheet/sql/');
@@ -461,7 +461,7 @@ class modTimesheet extends DolibarrModules
             $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql[0].= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
             $sql[1] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'rat' AND type='timesheetReport' AND entity = ".$conf->entity;
-            $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.")";
+            $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."document_model(nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.")";
             dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
             include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
@@ -475,10 +475,10 @@ class modTimesheet extends DolibarrModules
          *      Remove from database constants, boxes and permissions from Dolibarr database.
          *                Data directories are not deleted
          *
-     *      @param      string        $options    Options when enabling module ('', 'noboxes')
+     *      @param      string        $options    Options when enabling module('', 'noboxes')
          *      @return     int              1 if OK, 0 if KO
          */
-        function remove($options = '')
+        public function remove($options = '')
         {
                 return $this->_remove($sql, $options);
         }

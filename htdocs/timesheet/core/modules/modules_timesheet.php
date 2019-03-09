@@ -30,8 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';      
  */
 abstract class ModelPDFTimesheetReport extends CommonDocGenerator
 {
-    var $error='';
+    public $error='';
     //phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    //phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of active generation models
      *
@@ -39,7 +40,7 @@ abstract class ModelPDFTimesheetReport extends CommonDocGenerator
      *  @param  integer        $maxfilenamelength  Max length of value to show
      *  @return        array                                                List of numbers
      */
-    static function liste_modeles($db, $maxfilenamelength = 0)
+    public static function liste_modeles($db, $maxfilenamelength = 0)
     {
         global $conf;
         $type='timesheetReport';

@@ -25,14 +25,14 @@ date_time_event          DATETIME        NOT NULL , -- start date of the period
 event_location_ref      VARCHAR(1024) DEFAULT NULL, -- IP or equipment of loggin
 event_type              integer default 1,-- (1-->'heartbeat','sign-in','sign-out,auto-sign-in, auto-sign-out) DEFAULT 'heartbeat',
 note                  VARCHAR(1024),
-date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
+date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 fk_userid             integer  NOT NULL,          -- timesheet user (redondant)
 fk_user_modification  integer  default NULL,
 fk_third_party        integer DEFAULT NULL, -- null means time for the company
 fk_task               integer DEFAULT NULL,
 fk_project            integer DEFAULT NULL,
 token                   varchar(64) DEFAULT NULL,  -- to assign time on a finacial code (future proof) or token
-status               integer DEFAULT NULL,  
+status               integer DEFAULT NULL,
 PRIMARY KEY (rowid)
-) 
+)
 ENGINE=innodb;

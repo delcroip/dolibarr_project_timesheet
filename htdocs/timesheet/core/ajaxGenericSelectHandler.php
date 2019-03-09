@@ -20,7 +20,7 @@ include 'lib/includeMain.lib.php';
  top_httphead();
 //get the token, exit if
 $token = GETPOST('token', 'apha');
-if (!isset($_SESSION['ajaxQuerry'][$token])) {
+if(!isset($_SESSION['ajaxQuerry'][$token])) {
     ob_end_flush();
     exit();
 }
@@ -32,7 +32,7 @@ $separator = isset($htmlarray['separator'])?$htmlarray['separator']:' ';
  $search = GETPOST($htmlName, 'alpha');
 //find if barckets
 $posBs = strpos($htmlName, '[');
-if ($posBs>0) {
+if($posBs>0) {
     $subStrL1 = substr($htmlName, 0, $posBs);
     $search = $_GET[$subStrL1];
     while(is_array($search))
@@ -46,11 +46,11 @@ if ($posBs>0) {
     $sql .= $sqlarray['keyfield'];
     $sql .= ', '.$sqlarray['fields'];
     $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
-    if (isset($sqlarray['join']) && !empty($sqlarray['join']))
+    if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql .= ' '.$sqlarray['join'];
-    if (isset($sqlarray['where']) && !empty($sqlarray['where']))
+    if(isset($sqlarray['where']) && !empty($sqlarray['where']))
             $sql .= ' WHERE '.$sqlarray['where'];
-    if (isset($sqlarray['tail']) && !empty($sqlarray['tail']))
+    if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
             $sql .= ' '.$sqlarray['tail'];
     dol_syslog('form::ajax_select_generic ', LOG_DEBUG);
     $return_arr = array();
@@ -58,18 +58,18 @@ if ($posBs>0) {
    //remove the 't. from key fields
     $startkey = strpos($sqlarray['keyfield'], '.');
     $labelKey = ($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
-    if ($resql) {
+    if($resql) {
           // support AS in the fields ex $field1 = 'CONTACT(u.firstname, ' ', u.lastname) AS fullname'
         // with sqltail = 'JOIN llx_user as u ON t.fk_user = u.rowid'
         $listFields = explode(', ', $sqlarray['fields']);
         $fields = array();
-    foreach ($listFields as $item) {
+    foreach($listFields as $item) {
         $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
         $start2 = strpos($item, '.');
         $label = $item;
-        if ($start) {
+        if($start) {
             $label = substr($item, $start+4);
-        } elseif ($start2) {
+        } elseif($start2) {
             $label = substr($item, $start2+1);
         }
         $fields[] = array('select' => $item, 'label'=>trim($label));
@@ -77,13 +77,13 @@ if ($posBs>0) {
         $i = 0;
          //return $table."this->db".$field;
         $num = $db->num_rows($resql);
-        while ($i < $num)
+        while($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            if ($obj) {
+            if($obj) {
                 $label = '';
-                foreach ($fields as $item) {
-                    if (!empty($label))$label .= $separator;
+                foreach($fields as $item) {
+                    if(!empty($label))$label .= $separator;
                     $label .= $obj->{$item['label']};
                 }
                 $row_array['label'] = $label;
@@ -95,7 +95,7 @@ if ($posBs>0) {
             }
             $i++;
         }
-        if ($addtionnalChoices)foreach ($addtionnalChoices as $value => $label) {
+        if($addtionnalChoices)foreach($addtionnalChoices as $value => $label) {
                 $row_array['label'] = $label;
                 $row_array['value'] = $label;
                 $row_array['key'] = $value;

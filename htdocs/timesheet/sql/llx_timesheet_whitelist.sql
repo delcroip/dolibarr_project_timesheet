@@ -20,15 +20,15 @@
 
 -- this tqble is used to store the data of an employee contract
 
-CREATE TABLE llx_timesheet_whitelist 
+CREATE TABLE llx_timesheet_whitelist
 (
 rowid                 serial ,
 fk_user               integer NOT NULL,
-fk_project            integer NOT NULL,   
-fk_project_task       integer,               
+fk_project            integer NOT NULL,
+fk_project_task       integer,
 subtask               BOOLEAN default FALSE,
 date_start            date default NULL,
 date_end              date default NULL,
 PRIMARY KEY (rowid)
-) 
+)
 ENGINE=innodb;

@@ -27,7 +27,7 @@ $id                 = GETPOST('id', 'int');
 $action                 = GETPOST('action', 'alpha');
 $userIdSelected = GETPOST('userSelected', 'int');
 $exportFriendly = GETPOST('exportFriendly', 'alpha');
-if (empty($userIdSelected))$userIdSelected = $userid;
+if(empty($userIdSelected))$userIdSelected = $userid;
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 // Load traductions files requiredby by page
@@ -42,7 +42,7 @@ $langs->load('timesheet@timesheet');
 //$toDateyear = GETPOST('toDateyear', 'int');
 $mode = GETPOST('mode', 'alpha');
 $model = GETPOST('model', 'alpha');
-if (empty($mode))$mode = 'PTD';
+if(empty($mode))$mode = 'PTD';
 $short = GETPOST('short', 'int');;
 //$userSelected = $userList[$userIdSelected];
 $year = GETPOST('year', 'int');;
@@ -60,7 +60,7 @@ $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
-if (empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
+if(empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
     $step = 0;
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
@@ -72,7 +72,7 @@ $sql .= 'JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
      .' ON ec.fk_socpeople = usr.rowid '
      .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact'
      .' WHERE ctc.element in (\'project_task\', \'project\') AND ctc.active = \'1\' ';
-if (!$user->admin) {
+if(!$user->admin) {
     $list = getSubordinates($db, $userid, 3);
     $list[] = $userid;
     $sql .= ' AND (usr.rowid in ('.implode(', ', $list).'))';
@@ -83,11 +83,11 @@ $resql = $db->query($sql);
 $numUser = 0;
 $userList = array();
 
-if ($resql) {
+if($resql) {
     $numUser = $db->num_rows($resql);
     $i = 0;
     // Loop on each record found, so each couple (project id, task id)
-    while ($i < $numUser)
+    while($i < $numUser)
     {
         $error = 0;
         $obj = $db->fetch_object($resql);
@@ -110,19 +110,19 @@ if($userIdSelected<>-999){
 }
 $reportStatic = new TimesheetReport($db);
 $reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, $mode);
-if ($action == 'getpdf') {
+if($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
-    if ($pdf->writeFile($reportStatic, $langs)>0) {
+    if($pdf->writeFile($reportStatic, $langs)>0) {
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$report->ref.".pdf");
         return;
     }
     ob_end_flush();
     exit();
-}elseif ($action == 'getExport'){
+}elseif($action == 'getExport'){
     $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?10:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
     $max_time = @ini_get("max_execution_time");
-    if ($max_time && $max_time < $max_execution_time_for_export)
+    if($max_time && $max_time < $max_execution_time_for_export)
     {
         @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
     }
@@ -152,14 +152,14 @@ $Form = '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncs
         <tr >
         <td><select  name = "userSelected">
         ';
-foreach ($userList as $usr) {
+foreach($userList as $usr) {
    // $Form .= '<option value = "'.$usr->id.'">'.$usr->name.'</option> ';
     $Form .= '<option value = "'.$usr['value'].'" '.(($userIdSelected == $usr['value'])?"selected":'').' >'.$usr['label'].'</option>'."\n";
 }
 $Form .= '<option value = "-999" '.(($userIdSelected == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
 //$mode = 'PTD';
 $querryRes = '';
-if (!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
+if(!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         &&!empty($dateEnd) && !empty($dateStart))
 {
     if($exportfriendly){
@@ -191,12 +191,12 @@ $Form.= '<input type = "radio" name = "mode" value = "DUT" '.($mode == 'DUT'?'ch
 $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
  $Form .= '</td></tr></table>';
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
-//if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model=excel2007&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
+//if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
+if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model=excel2007&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
 $Form .= '</form>';
-if (!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
+if(!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
 // section to generate
-if (!empty($querryRes)) {
+if(!empty($querryRes)) {
     echo $querryRes;
 }
 llxFooter();

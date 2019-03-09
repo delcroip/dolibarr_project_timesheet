@@ -16,7 +16,7 @@
  - new: invoice project between dates instead of per month
  - new: show the cusror pointer when the favourite start is hoovered
  - fix: fix pdf layout issue when there is too many time for an user
- 
+
 3.1.7 change log from 3.1.2
  - fix: date were sometime displayed on two lines
  - fix: avoid max approval to be set at 0 (was genereating issues elsewhere)
@@ -39,7 +39,7 @@
 
 2.2.11 change log from 2.2.10
  - fix: background color missing with approval status
- - clean: total calculation improvments 
+ - clean: total calculation improvments
  - clean: add new trads
  - clean: remove display error
 
@@ -56,7 +56,7 @@
  - clean: use oddeven instead of pair/impair as list class
 
 2.2.8 change log from 2.2.7
- - new: add a super total: total of every day present on the timesheet screen 
+ - new: add a super total: total of every day present on the timesheet screen
 
 2.2.7 change log from 2.2.6
  - fix: error in pgsql while generating the invoice
@@ -80,7 +80,7 @@
  - fix: sql error in approvals
 
 2.2.2 Change log from 2.2
- - new: deletion of draft timsheet when switching between time span (no impact on time entered) 
+ - new: deletion of draft timsheet when switching between time span (no impact on time entered)
  - fix: issue with winter time
 
 2.2 Change log from 2.1.3
@@ -112,7 +112,7 @@
 - fix: weeks with a 8th day
 - fix: dolibarr 6.0 compatibility
 - change:"New" button removed from the admin page,
-- change: end date showed on the admin card page 
+- change: end date showed on the admin card page
 
 2.0.1 Change log from 2.0
  - fix: Project approval corrected (for non admin no approval was shown)
@@ -120,9 +120,9 @@
  - fix: Home timesheet box correted (was not showing the # of timesheet to approve)
  - new: send email over TS rejection
 
-2.0 Change log from 1.5.1:   
+2.0 Change log from 1.5.1:
  - new: Week over two month can be splited in 2 so an approval per month is possible.
- - new: note availale for each task (also in the approval flow)    
+ - new: note availale for each task (also in the approval flow)
  - new: chained approval for project
  - new: create invoice from the project report
  - new: reports shows time in hours and days
@@ -136,23 +136,23 @@
 
 Change log from 1.4.3:
 
- - Timesheet approval by N+1, 
- - Reminder (email) for to be approved timesheet possible through dolibarr planned tasks 
+ - Timesheet approval by N+1,
+ - Reminder (email) for to be approved timesheet possible through dolibarr planned tasks
  - admin wiew for the Approval (change a approval status outside the normal approval flow)
  - Home box with the pending timesheet to be approved
  - Blocking some weekdays (e.g week ends)
  - Holiday showed in the timesheet
  - Holiday time can be included in the timesheet totals
  - Typo correction for French.
- 
-Change log from 1.4.1: 
+
+Change log from 1.4.1:
 
  - correction of the Spanish language (thanks to vinclar)
- - possible to deactivate the dolibarr Ajax for the dropdown list for the setup page (in case of issue to add whitelist) 
+ - possible to deactivate the dolibarr Ajax for the dropdown list for the setup page (in case of issue to add whitelist)
  - keep the whitlistmode after submit / go to date / next / previsous week
 
 
-Change log from 1.4: 
+Change log from 1.4:
 
 - bugfix for the tasktime date in the project page
 - link to have the different whitelist behaviour (black list, and none)
@@ -165,10 +165,10 @@ Change log from 1.3.7:
 
 - layout improvement: timesheet, setup page, reports
 - whitelist to show only some project/task
-- taslk column customisation 
+- taslk column customisation
 - new task column: company, parent task
 - new report option: report all, export friendly layout
-- user report available for the N-2, N-3 
+- user report available for the N-2, N-3
 
 Change log from 1.3.6:
 

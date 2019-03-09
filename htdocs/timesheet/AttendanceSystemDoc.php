@@ -21,7 +21,7 @@
  *  \ingroup    timesheet
  *  \brief      Tab for documents linked to AttendanceSystem
  */
-if ($_SERVER['SCRIPT_FILENAME'])include 'core/lib/includeMain.lib.php';
+if($_SERVER['SCRIPT_FILENAME'])include 'core/lib/includeMain.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -35,11 +35,11 @@ $confirm = GETPOST('confirm');
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if($user->societe_id > 0) access_forbidden();
+//if($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'timesheet', $id);
 $page = GETPOST('page', 'int');
-if ($page == -1) {
+if($page == -1) {
     $page = 0;
 }
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -55,8 +55,8 @@ $hookmanager->initHooks(array('AttendanceSystemdocument'));// Note that conf->ho
 $extralabels = $extrafields->fetch_name_optionals_label('AttendanceSystem');
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';// Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-//if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->id);
-if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->ref);
+//if($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->id);
+if($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->ref);
 /*
  * Actions
  */
@@ -69,22 +69,22 @@ $title = $langs->trans("AttendanceSystem").' - '.$langs->trans("Files");
 $help_url = '';
 //$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
-if ($object->id) {
+if($object->id) {
         /*
          * Show tabs
          */
-        if (! empty($conf->notification->enabled)) $langs->load("mails");
+        if(! empty($conf->notification->enabled)) $langs->load("mails");
         $head = AttendanceSystemPrepareHead($object);
         dol_fiche_head($head, 'document', $langs->trans("AttendanceSystem"), -1, 'AttendanceSystem@timesheet');
         // Construit liste des fichiers
         $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc'?SORT_DESC:SORT_ASC), 1);
         $totalsize = 0;
-        foreach ($filearray as $key => $file) {
+        foreach($filearray as $key => $file) {
                 $totalsize+=$file['size'];
         }
         // Object card
         // ------------------------------------------------------------
-        $linkback = '<a href = "' .dol_buildpath('/timesheet/AttendanceSystemAdmin.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+        $linkback = '<a href = "' .dol_buildpath('/timesheet/AttendanceSystemAdmin.php', 1) . '?restore_lastsearch_values=1' .(! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
         dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
     print '<div class = "fichecenter">';
     print '<div class = "underbanner clearboth"></div>';

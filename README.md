@@ -35,8 +35,8 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
  - Project report between dates
  - create invoice from the project report
  - chrono for task
- - export report in xlsx 
- 
+ - export report in xlsx
+
 ## Functionnalities eligible for removal
 
 ## Functionnalities not maintained
@@ -47,12 +47,12 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
 
 # Next dev under analysis
 - Ressource planning  (planning for TL and PM + weekly summary by email to user)
-    - non-project related TS 
-   
+    - non-project related TS
+
 
 # Next developement for other release
-- finetune the modules rights management (admin ...) 
-- handle the right for cust /  supplier / other approval  
+- finetune the modules rights management (admin ...)
+- handle the right for cust /  supplier / other approval
 - show the Quantity in the step 2 of invoicing (js)
 - my timesheet page to see the status of the TS
     - add automatic reminder for the approval
