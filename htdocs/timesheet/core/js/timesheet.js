@@ -39,7 +39,7 @@ function submitTs(){
         else if(charCode===46) return true; // comma
         else if(charCode===8) return true;// periode
         else if(charCode === 58)  return true; // : 
-        else if(ctrlDown && c == 86) return true; //Ctrl + V
+        else if(ctrlDown && charCode == 86) return true; //Ctrl + V
         else return false;      
 
   }
@@ -159,16 +159,35 @@ function validateTime(object,col_id){
           case 'days':
                 object.style.backgroundColor = "lightgreen";
                 object.value=object.value.replace(',','.');
-                var regex=/^([0-5]{1}([.,]{1}[0-9]{1,3})?|[.,]{1}[0-9]{1,3}|)$/;
-                if(!regex.test(object.value)){
+                //var regex=/^([0-5]{1}([.,]{1}[0-9]{1,3})?|[.,]{1}[0-9]{1,3}|)$/;
+                var regex=/^([0-2]{0,1})?([:,.]([0-9]{0,3}))?$/
+                if(regex.test(object.value)){
+                    object.value=object.value.replace(/:|\,/g,'.'); //fixme
+                }else {
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
-                  }
+                }
                 if(hide_zero && object.value=='0')object.value='';
           break;
           case 'hours':
           default:
                   object.style.backgroundColor = "lightgreen";
+                  var regex= /^(([0-1]{0,1}[0-9]{1})|([2]{1}[0-4]{0,1}))?([:,.]([0-9]{0,2}))?$/;
+                  var regex_format= /^0*([0-9]{2,}):([0-9]{2})0*$/;
+                  
+                  if(regex.test(object.value))
+                  {
+                      tmp=object.value.replace(regex,'00$01:$0500');
+                      object.value=tmp.replace(regex_format,'$1:$2');
+                  }else if(!object.value){
+                        object.value='0:00';
+                }
+                else{
+                    object.value=object.defaultValue;
+                    object.style.backgroundColor = "red";
+                }
+                if(hide_zero && object.value=='00:00')object.value='';
+                /*
                   var regex= /^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1}):[0-9]{2}$/;
                   var regex2=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1})$/;
                   var regex3=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1}):[0-9]{1}$/;
@@ -185,7 +204,7 @@ function validateTime(object,col_id){
                         object.value=object.defaultValue;
                         object.style.backgroundColor = "red";
                     }
-                  }
+                  }*/
                   if(hide_zero && object.value=='0:00')object.value='';
 //              }
             break;
