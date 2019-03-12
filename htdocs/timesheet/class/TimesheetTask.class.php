@@ -444,13 +444,12 @@ class TimesheetTask extends Task
     }
     /**
      *  Delete object in database
-     *
+     *  @param  object             $user user that delete
      *  @param  int                $notrigger         0 = launch triggers after, 1 = disable triggers
      *  @return        int                                         <0 if KO, >0 if OK
      */
-    public function delete($notrigger = 0)
+    public function delete($user, $notrigger = 0)
     {
-        global $conf, $langs;
         $error = 0;
         $this->db->begin();
         if(! $error) {
@@ -696,6 +695,7 @@ class TimesheetTask extends Task
          */
         $html = '<tr class = "'.$Class.'" '.((!empty($linestyle))?'style = "'.$linestyle.'"':'');
         if(!empty($this->note))$html .= ' title = "'.htmlentities($this->note).'"';
+        $html.=  ' id="userTask_'.$this->userId>'_'.$this->id.'" ';
         $html.=  '>'."\n";
         //title section
         $html .= $this->getHTMLlineInfoCell($headers);
