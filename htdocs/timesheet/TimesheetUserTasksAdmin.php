@@ -86,7 +86,7 @@ if(!$removefilter) {
     if($ls_note == -1)$ls_note = '';
 }
 $page = GETPOST('page', 'int');//FIXME, need to use for all the list
-if($page == -1) {
+if($page <= 0){
     $page = 0;
 }
 $limit = $conf->liste_limit;
