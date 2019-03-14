@@ -33,7 +33,7 @@ class box_approval extends ModeleBoxes
     public $boximg = "timesheet";
     public $boxlabel = "BoxApproval";
     public $depends = array("timesheet");
-    private $db;
+    public $db;
     public $param;
     public $info_box_head = array();
     public $info_box_contents = array();
