@@ -676,7 +676,7 @@ class TimesheetTask extends Task
         if(($dayelapsed<1)||empty($headers))
            return '<tr>ERROR: wrong parameters for getTimesheetLine|'.$headers.'</tr>';
         if($tsUserId!=0)$this->userId = $tsUserId;
-        $Class = 'oddeven '.(($this->listed)?'timesheet_whitelist':'timesheet_blacklist').' timesheet_line ';
+        $Class = 'oddeven '.(($this->listed)?'timesheet_whitelist':'timesheet_blacklist').' timesheet_line line_'.$tsUserId;
         $htmltail = '';
         $linestyle = '';
         if(($this->pStatus == "2")) {
@@ -695,7 +695,7 @@ class TimesheetTask extends Task
          */
         $html = '<tr class = "'.$Class.'" '.((!empty($linestyle))?'style = "'.$linestyle.'"':'');
         if(!empty($this->note))$html .= ' title = "'.htmlentities($this->note).'"';
-        $html.=  ' id="userTask_'.$this->userId>'_'.$this->id.'" ';
+        $html.=  ' id="userTask_'.$tsUserId.'_'.$this->id.'" ';
         $html.=  '>'."\n";
         //title section
         $html .= $this->getHTMLlineInfoCell($headers);
