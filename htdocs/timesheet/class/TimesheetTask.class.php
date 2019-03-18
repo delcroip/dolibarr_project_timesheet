@@ -275,93 +275,7 @@ class TimesheetTask extends Task
             return -1;
         }
     }
-    /**
-     *  Load object in memory from the database
-     *
-     *  @return int           <0 if KO, >0 if OK
-     */
-    public function fetchByWeek()
-    {
-        global $langs;
-        $sql = "SELECT";
-        $sql.= " t.rowid, ";
-        $sql .= ' t.fk_userid, ';
-        $sql .= ' t.date_start, ';
-        $sql .= ' t.date_end, ';
-        $sql .= ' t.status, ';
-        $sql .= ' t.sender, ';
-        $sql .= ' t.recipient, ';
-        $sql .= ' t.planned_workload, ';
-        $sql.= 't.fk_user_app_team, ';
-        $sql.= 't.fk_user_app_project, ';
-        $sql.= 't.fk_user_app_customer, ';
-        $sql.= 't.fk_user_app_supplier, ';
-        $sql.= 't.fk_user_app_other, ';
-        $sql .= ' t.date_creation, ';
-        $sql .= ' t.date_modification, ';
-        $sql .= ' t.fk_user_creation, ';
-        $sql .= ' t.fk_user_modification, ';
-        $sql .= ' t.fk_projet_task, ';
-        $sql .= ' t.fk_project_task_timesheet, ';
-        $sql .= ' t.note';
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        $sql.= " WHERE t.date_start = '".$this->db->idate($this->date_start_approval)."'";
-        $sql.= " AND t.fk_userid = '".$this->userId."'";
-        //$sql.= " AND t.rowid = ".$id;
-        dol_syslog(get_class($this)."::fetchByWeek");
-        $resql = $this->db->query($sql);
-        if($resql) {
-            if($this->db->num_rows($resql)) {
-                $obj = $this->db->fetch_object($resql);
-                $this->appId = $obj->rowid;
-                $this->userId = $obj->fk_userid;
-                $this->date_start_approval = $this->db->jdate($obj->date_start);
-                $this->date_end_approval = $this->db->jdate($obj->date_end);
-                $this->status = $obj->status;
-                $this->sender = $obj->sender;
-                $this->recipient = $obj->recipient;
-                $this->user_app[TEAM] = $obj->fk_user_app_team;
-                $this->user_app[OTHER] = $obj->fk_user_app_other;
-                $this->user_app[SUPPLIER] = $obj->fk_user_app_supplier;
-                $this->user_app[CUSTOMER] = $obj->fk_user_app_customer;
-                $this->user_app[PROJECT] = $obj->fk_user_app_project;
-                $this->date_creation = $this->db->jdate($obj->date_creation);
-                $this->date_modification = $this->db->jdate($obj->date_modification);
-                $this->user_creation = $obj->fk_user_creation;
-                $this->user_modification = $obj->fk_user_modification;
-                $this->id = $obj->fk_projet_task;
-                $this->task_timesheet = $obj->fk_project_task_timesheet;
-                $this->note = $obj->note;
-            } else {
-                unset($this->status) ;
-                unset($this->sender) ;
-                unset($this->recipient) ;
-                unset($this->planned_workload_approvals) ;
-                unset($this->tracking) ;
-                unset($this->tracking_ids) ;
-                unset($this->date_modification);
-                unset($this->user_app[TEAM]);
-                unset($this->user_app[PROJECT]);
-                unset($this->user_app[CUSTOMER]);
-                unset($this->user_app[SUPPLIER]);
-                unset($this->user_app[OTHER]);
-                unset($this->user_creation);
-                unset($this->user_modification);
-                unset($this->id);
-                unset($this->note);
-                unset($this->task_timesheet);
-                unset($this->date_creation);
-                $this->create($this->user);
-                $this->fetch($this->appId);
-            }
-            $this->db->free($resql);
-            $this->getTaskInfo();
-            return 1;
-        } else {
-            $this->error = "Error ".$this->db->lasterror();
-            return -1;
-        }
-    }
+ 
     /**
      *  Update object into database
      *
@@ -720,20 +634,29 @@ class TimesheetTask extends Task
         $hidezeros = $conf->global->TIMESHEET_HIDE_ZEROS;
         $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
         $hidden = false;
+        $default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);
+        $timezoneoffset=get_timezone_offset($default_timezone,'UTC');
         for($dayCur = 0;$dayCur<$dayelapsed;$dayCur++)
         {
             //$shrinkedStyle = (!$opendays[$dayCur+1] && $shrinked)?'display:none;':'';
-            $today = $this->date_start_approval+SECINDAY*$dayCur +SECINDAY/4;
+
+            $today = $this->date_start_approval+SECINDAY*$dayCur ;
+            $today_end = $today + SECINDAY-1 ;
             // to avoid editing if the task is closed
             $dayWorkLoadSec = isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
             $dayWorkLoad = formatTime($dayWorkLoadSec, -1);
-            $startDates = ($this->date_start>$this->startDatePjct)?$this->date_start:$this->startDatePjct;
+            $startDates = ($this->date_start>$this->startDatePjct)?$this->date_start:$this->startDatePjct; 
+
             $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct == 0)?$this->date_end:$this->stopDatePjct;
+            //take the end of the day
+        
+            
             if($isOpenStatus) {
-                $isOpen = $isOpenStatus && (($startDates == 0) || ($startDates < $today +SECINDAY/4));
+                $isOpen = $isOpenStatus && (($startDates == 0) || ($startDates <= $today_end ));
                 $isOpen = $isOpen && (($stopDates == 0) ||($stopDates >= $today));
                 $isOpen = $isOpen && ($this->pStatus < "2") ;
                 $isOpen = $isOpen  && $opendays[date("N", $today)];
+
                 $bkcolor = '';
                 if($isOpen) {
                     $bkcolor = 'background:#'.$statusColor[$this->status];
