@@ -25,7 +25,7 @@ define('$conf->global->TIMESHEET_INVOICE_SHOW_USER', '1');
 include 'core/lib/includeMain.lib.php';
 include 'core/lib/generic.lib.php';
 include 'core/lib/timesheet.lib.php';
-//require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 //get param
@@ -168,7 +168,14 @@ $langs->load('timesheet@timesheet');
             $resArray = $_POST['userTask'];
             $hoursPerDay = $conf->global->TIMESHEET_DAY_DURATION;
             $task_time_array = array();
-            if(is_array($resArray)) {
+                
+
+            if($id > 0  && is_array($resArray)) {
+                $db->commit();
+                $invoicecard=str_replace(
+                                array("require '../../main.inc.php';","<?php"),
+                                "",
+                                file_get_contents(DOL_DOCUMENT_ROOT.'/compta/facture/card.php'));
                 foreach($resArray as $uId =>$userTaskService) {
                         //$userTaskService[$user][$task] = array('duration', 'VAT', 'Desc', 'PriceHT', 'Service', 'unit_duration', 'unit_duration_unit');
                     if(is_array($userTaskService))foreach($userTaskService as  $tId => $service) {
@@ -180,42 +187,78 @@ $langs->load('timesheet@timesheet');
                         $result = '';
                         if(($tId!='any') && $conf->global->TIMESHEET_INVOICE_SHOW_TASK)$details = "\n".$service['taskLabel'];
                         if(($uId!='any')&& $conf->global->TIMESHEET_INVOICE_SHOW_USER)$details .= "\n".$service['userName'];
+                        //prepare the CURL params
+                        $postdata=array();
+                        $postdata['action']='addline';
+                        $postdata['id']=$object->id;
+                        $postdata['date_startday']=date('d',$dateStart);
+                        $postdata['date_startmonth']=date('m',$dateStart);
+                        $postdata['date_startyear']=date('Y',$dateStart);
+                        $postdata['date_endday']=date('d',$dateEnd);
+                        $postdata['date_endmonth']=date('m',$dateEnd);
+                        $postdata['date_endyear']=date('Y',$dateEnd);
+                        $postdata['addline']='Add';
+
                         if($service['Service']>0) {
+                            /*$localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
+                            $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $product = new Product($db);
                             $product->fetch($service['Service']);
+                            */
                             $unit_duration_unit = substr($product->duration, -1);
                             $unit_factor = ($unit_duration_unit == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
                             $factor = intval(substr($product->duration, 0, -1));
                             if($factor == 0)$factor = 1;//to avoid divided by $factor0
                             $quantity = $duration/($factor*$unit_factor);
-                            $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
+                            $postdata['type'] = -1;
+                            $postdata['prod_entry_mode'] = 'predef';
+                            $postdata['idprod'] = $service['Service'];
+                            $postdata['qty'] = (float) $quantity;
+
+                            //$result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $localtax1_tx, $localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
                         } elseif($service['Service']<>-999) {
                             $factor = ($service['unit_duration_unit'] == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
                             $factor = $factor*intval($service['unit_duration']);
                             $quantity = $duration/$factor;
-                            $result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], '', '', '', 0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
+                            $postdata['type'] = 1;
+                            $postdata['prod_entry_mode'] = 'free';
+                            $postdata['dp_desc'] = $service['Desc'];
+                            $postdata['tva_tx'] = $service['VAT'];
+                            $postdata['price_ht'] = $service['PriceHT'];
+                            $postdata['qty'] = $quantity;
+                            //$result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], $localtax1_tx, $localtax2_tx, '', 0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
                         }
+                        //add_invoice_line($postdata);
+                        $post_temp = $_POST;
+                        $_POST = $postdata;
+                        ob_start();
+                        //eval used instead of include because the main.in.php cannot be included twice so it had to be removed from 
+                        eval($invoicecard);
+                        ob_end_clean();
+                        $_POST = $post_temp;
                         if($service['taskTimeList']<>'' &&  $result>0)$task_time_array[$result] = $service['taskTimeList'];
                     } else $error++;
                 }
-            } else $error++;
-            // End of object creation, we show it
-            if($id > 0 && ! $error) {
-                $db->commit();
-                if(version_compare(DOL_VERSION, "4.9.9")>=0) {
-                    foreach($task_time_array AS $idLine=> $task_time_list) {
-                            //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
-                        Update_task_time_invoice($id, $idLine, $task_time_list);
+                // End of object creation, we show it
+                if(1) {
+                    if(version_compare(DOL_VERSION, "4.9.9")>=0) {
+                        foreach($task_time_array AS $idLine=> $task_time_list) {
+                                //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
+                            Update_task_time_invoice($id, $idLine, $task_time_list);
+                        }
                     }
+                    ob_start();
+                    header('Location: ' . $object->getNomUrl(0, '', 0, 1, ''));
+                    ob_end_flush();
+                    exit();
                 }
-                header('Location: ' . $object->getNomUrl(0, '', 0, 1, ''));
-                ob_end_flush();
-                exit();
             } else {
                 $db->rollback();
                 //header('Location: ' . $_SERVER["PHP_SELF"] . '?step=0');
                 setEventMessages($object->error, $object->errors, 'errors');
             }
+
+           
             break;
         case 1:
             $edit = 0;
@@ -242,9 +285,9 @@ $langs->load('timesheet@timesheet');
             $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'t.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
             $Form .= select_sellist($sqlProjectArray, $htmlProjectArray, $projectId);
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('DateStart').'</th>';
-            $Form.=   '<th align = "left" width = "80%">'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
+            $Form .= '<th align = "left" width = "80%">'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('DateEnd').'</th>';
-            $Form.=   '<th align = "left" width = "80%">'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
+            $Form .= '<th align = "left" width = "80%">'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('invoicingMethod').'</th><th align = "left"><input type = "radio" name = "invoicingMethod" value = "task" ';
             $Form .= ($invoicingMethod == "task"?"checked":"").'> '.$langs->trans("Tasks").'<br> ';
             $Form .= '<input type = "radio" name = "invoicingMethod" value = "user" ';

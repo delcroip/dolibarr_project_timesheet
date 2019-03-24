@@ -41,6 +41,9 @@ $xml = GETPOST('xml', 'int');
 if(!is_numeric($offset))$offset = 0;
 $print = (GETPOST('optioncss', 'alpha') == 'print')?true:false;
 $current = GETPOST('target', 'int');
+if($current == ''){
+    $current = 0;
+}
 //$toDate = GETPOST('toDate');
 $timestamp = GETPOST('timestamp', 'alpha');
 //$userid = is_object($user)?$user->id:$user;

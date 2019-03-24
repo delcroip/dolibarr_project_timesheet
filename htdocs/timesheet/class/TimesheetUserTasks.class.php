@@ -784,7 +784,7 @@ public function getHTMLHeader()
 public function getHTMLFormHeader($ajax = false)
 {
      global $langs;
-    $html = '<form id = "timesheetForm" name = "timesheet" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
+    $html = '<form id = "timesheetForm" name = "timesheet" onSubmit="removeUnchanged();" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
     if($ajax)$html .= ' onsubmit = " return submitTimesheet(0);"';
     $html .= '>';
      return $html;
@@ -818,10 +818,10 @@ public function getHTMLFooter($ajax = false)
     $html .= '<div class = "tabsAction">';
      $isOpenSatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED));
     if($isOpenSatus) {
-        $html .= '<input type = "submit" class = "butAction" name = "save" value = "'.$langs->trans('Save')."\" />\n";
+        $html .= '<input type = "submit"   class = "butAction" name = "save" value = "'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type = "submit" class = "butAction" name = "submit" onClick = "return submitTs();" value = "'.$langs->trans('Submit')."\" />\n";
         if(in_array('1', array_slice($apflows, 1))) {
-            $html .= '<input type = "submit" class = "butAction" name = "submit"  value = "'.$langs->trans('Submit')."\" />\n";
+            $html .= '<input type = "submit"  class = "butAction" name = "submit"  value = "'.$langs->trans('Submit')."\" />\n";
         }
         $html .= '<a class = "butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
     } elseif($this->status == SUBMITTED)$html .= '<input type = "submit" class = "butAction" name = "recall" " value = "'.$langs->trans('Recall')."\" />\n";

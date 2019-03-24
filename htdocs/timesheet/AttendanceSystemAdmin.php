@@ -78,7 +78,7 @@ if(!$removefilter) {
     $ls_status = GETPOST('ls_status', 'int');
 }
 $page = GETPOST('page', 'int');
-if($page == -1) {
+if($page <= 0){
     $page = 0;
 }
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;

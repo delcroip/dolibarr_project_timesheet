@@ -11,7 +11,7 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
 ## Useful links
 * Manual (English): https://cloud.pmpd.eu/index.php/s/MArFKsQxCcTGxKM
 * DoliStore: https://www.dolistore.com/fr/gestion-produits-ou-services/419-Feuille-de-temps.html
-* Free version: https://sourceforge.net/projects/dolibarr-timesheet
+* Free download: https://sourceforge.net/projects/dolibarr-timesheet
 * Github: https://github.com/delcroip/dolibarr_project_timesheet
 * FR development thread: https://www.dolibarr.fr/forum/11-suggestionsnouvelles-fonctionnalites/49379-timesheet-vue-pour-les-projets
 

@@ -118,8 +118,8 @@ function updateAll(){
           {
               TotalList[i].innerHTML = minutesToHTML(total);
           }
-	}
-        updateAllLinesTotal();
+    }
+    updateAllLinesTotal();
 }
 
 
@@ -141,6 +141,38 @@ function updateTotals(classSource,classTarget){
     return total;
 }
 
+/** function to remove the task not changed
+ * 
+ * @returns {undefined}
+ */
+function removeUnchanged(){
+    var tsUser = document.getElementsByName('tsUserId');
+    err=false;
+    total=0;
+    var nbUser=tsUser.length;
+    for(j=0;j<nbUser;j++){
+        
+        var lineClass="line_"+tsUser[j].value;
+        //foreach task
+        var task= document.getElementsByClassName(lineClass);
+        var nbTask=task.length;
+        for(i=0;i<nbTask;i++){  
+            changed=0;
+            var inputs=task[i].getElementsByTagName( 'input' );
+            var nbInputs=inputs.length;
+            for(k=0;k<nbInputs;k++){
+                if(inputs[k].defaultValue!=inputs[k].value)changed++
+            }   
+            if(changed==0){
+                task[i].parentNode.removeChild(task[i]);
+                i--;
+                nbUser--;
+            }
+        }
+        
+
+    }
+}
 
 /*
  *
