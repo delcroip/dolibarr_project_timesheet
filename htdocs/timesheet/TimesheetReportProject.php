@@ -21,7 +21,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once './core/lib/timesheet.lib.php';
 require_once './class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
+//require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $htmlother = new FormOther($db);
+//$objmodelexport=new ModeleExports($db);
 $id                 = GETPOST('id', 'int');
 $action                 = GETPOST('action', 'alpha');
 //$dateStart         = GETPOST('dateStart', 'alpha');
@@ -117,7 +119,7 @@ if($action == 'getpdf') {
     ob_end_flush();
     exit();
 }elseif($action == 'getExport'){
-    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?10:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
     $max_time = @ini_get("max_execution_time");
     if($max_time && $max_time < $max_execution_time_for_export)
     {
@@ -125,7 +127,7 @@ if($action == 'getpdf') {
     }
     $name=$reportStatic->buildFile($model, false);
     if(!empty($name)){
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$name);
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=export&file=".$name);
         return;
     }
     ob_end_flush();
@@ -197,5 +199,34 @@ if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=reportproje
  $Form .= '</form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
 echo $querryRes;
+/*
+// List of available export formats
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td class="titlefield">'.$langs->trans("AvailableFormats").'</td>';
+print '<td>'.$langs->trans("LibraryUsed").'</td>';
+print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
+print '</tr>'."\n";
+
+$liste=$objmodelexport->liste_modeles($db);
+$listeall=$liste;
+foreach($listeall as $key => $val)
+{
+    if (preg_match('/__\(Disabled\)__/',$listeall[$key]))
+    {
+        $listeall[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$listeall[$key]);
+        unset($liste[$key]);
+    }
+
+    print '<tr class="oddeven">';
+    print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';
+    $text=$objmodelexport->getDriverDescForKey($key);
+    $label=$listeall[$key];
+    print $form->textwithpicto($label,$text).'</td>';
+    print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
+    print '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
+    print '</tr>'."\n";
+}
+print '</table>';*/
 llxFooter();
 $db->close();

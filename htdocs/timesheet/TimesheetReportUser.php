@@ -21,6 +21,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $htmlother = new FormOther($db);
 $userid = is_object($user)?$user->id:$user;
 $id                 = GETPOST('id', 'int');
@@ -120,7 +121,8 @@ if($action == 'getpdf') {
     ob_end_flush();
     exit();
 }elseif($action == 'getExport'){
-    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?10:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+    $max_execution_time_for_export = 10;
     $max_time = @ini_get("max_execution_time");
     if($max_time && $max_time < $max_execution_time_for_export)
     {
@@ -128,7 +130,7 @@ if($action == 'getpdf') {
     }
     $name=$reportStatic->buildFile($model, false);
     if(!empty($name)){
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$name);
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=export&file=".$name);
         return;
     }
     ob_end_flush();
