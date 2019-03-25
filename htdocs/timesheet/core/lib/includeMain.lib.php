@@ -18,22 +18,24 @@
 //global $db;
 // FIXME Ver. 3
 // Define status
+
+
 $res = 0;
-$path = dirname(__FILE__);
-if(! $res && file_exists($path."/dev.inc.php")) {
-    $res = @include $path.'/dev.inc.php';
+$currentTimesheetPath = dirname(__FILE__);
+if(! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
+    include $currentTimesheetPath.'/dev.inc.php';
 }
-if(! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-if(! $res && file_exists($path."/../../../main.inc.php")) {
-    $res = @include $path.'/../../../main.inc.php';// in HTdocs
-    $_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($path."/../../../");
+//if(! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+if(! $res && file_exists($currentTimesheetPath."/../../../main.inc.php")) {
+    $res = @include $currentTimesheetPath.'/../../../main.inc.php';// in HTdocs
+    //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../../");
 }
-if(! $res && file_exists($path."/../../../../main.inc.php")) {
-    $res = @include $path.'/../../../../main.inc.php';//in custom
-    $_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($path."/../../../../");
+if(! $res && file_exists($currentTimesheetPath."/../../../../main.inc.php")) {
+    $res = @include $currentTimesheetPath.'/../../../../main.inc.php';//in custom
+    //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../../../");
 }
-if(! $res && file_exists($path."/../../../../../main.inc.php")) {
-    $res = @include $path.'/../../../../../main.inc.php';//in custom
-    $_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($path."/../../");
+if(! $res && file_exists($currentTimesheetPath."/../../../../../main.inc.php")) {
+    $res = @include $currentTimesheetPath.'/../../../../../main.inc.php';//in custom
+    //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../");
 }
 if(! $res) die("Include of main fails") ;
