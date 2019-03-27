@@ -68,7 +68,7 @@ if($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $dateStart = $_SESSION["dateStart"];
 } else {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
-    if($dateStart==0)$dateStart=getStartDate(time(),0);
+    if($dateStart==0)$dateStart=getStartDate(time(), 0);
 }
 $_SESSION["dateStart"] = $dateStart ;
 // Load traductions files requiredby by page
@@ -129,7 +129,7 @@ switch($action) {
                 } else {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"), 'errors');
                 }
-            }else if(is_array($_SESSION['task_timesheet'][$timestamp])){
+            }elseif(is_array($_SESSION['task_timesheet'][$timestamp])){
                     setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warnings');
             }else{
                     setEventMessage($langs->transnoentitiesnoconv("NoTaskToUpdate"), 'errors');

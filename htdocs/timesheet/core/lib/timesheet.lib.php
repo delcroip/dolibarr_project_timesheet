@@ -569,11 +569,12 @@ function formatTime($duration, $hoursperdays = -1)
     }
 
     /**    Returns the offset from the origin timezone to the remote timezone, in seconds.
-*    @param $remote_tz;
-*    @param $origin_tz; If null the servers current timezone is used as the origin.
+*    @param string $remote_tz timezone
+*    @param string|null $origin_tz timezone 2; If null the servers current timezone is used as the origin.
 *    @return int;
 */
-function get_timezone_offset($remote_tz, $origin_tz = null) {
+function get_timezone_offset($remote_tz, $origin_tz = null)
+{
     if($origin_tz === null) {
         if(!is_string($origin_tz = date_default_timezone_get())) {
             return false; // A UTC timestamp was returned -- bail out!

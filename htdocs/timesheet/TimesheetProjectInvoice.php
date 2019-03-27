@@ -191,12 +191,12 @@ $langs->load('timesheet@timesheet');
                         $postdata=array();
                         $postdata['action'] = 'addline';
                         $postdata['id'] = $object->id;
-                        $postdata['date_startday'] = date('d',$dateStart);
-                        $postdata['date_startmonth'] = date('m',$dateStart);
-                        $postdata['date_startyear'] = date('Y',$dateStart);
-                        $postdata['date_endday'] = date('d',$dateEnd);
-                        $postdata['date_endmonth'] = date('m',$dateEnd);
-                        $postdata['date_endyear'] = date('Y',$dateEnd);
+                        $postdata['date_startday'] = date('d', $dateStart);
+                        $postdata['date_startmonth'] = date('m', $dateStart);
+                        $postdata['date_startyear'] = date('Y', $dateStart);
+                        $postdata['date_endday'] = date('d', $dateEnd);
+                        $postdata['date_endmonth'] = date('m', $dateEnd);
+                        $postdata['date_endyear'] = date('Y', $dateEnd);
                         $postdata['addline']='Add';
 
                         if($service['Service']>0) {
@@ -236,7 +236,7 @@ $langs->load('timesheet@timesheet');
                         //add_invoice_line($postdata);
                         
                         
-                        //eval used instead of include because the main.in.php cannot be included twice so it had to be removed from 
+                        //eval used instead of include because the main.in.php cannot be included twice so it had to be removed from
                         if($conf->global->TIMESHEET_EVAL_ADDLINE){
                             $post_temp = $_POST;
                             $_POST = $postdata;

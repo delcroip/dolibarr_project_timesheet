@@ -646,7 +646,7 @@ dol_fiche_end();
  * @param string $ref             ref of the object}
  * @return void
  */
-function reloadpage($backtopage="", $id="", $ref="")
+function reloadpage($backtopage = "", $id = "", $ref = "")
 {
         if(!empty($backtopage)) {
             header("Location: ".$backtopage);

@@ -634,8 +634,8 @@ class TimesheetTask extends Task
         $hidezeros = $conf->global->TIMESHEET_HIDE_ZEROS;
         $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
         $hidden = false;
-        $default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);
-        $timezoneoffset=get_timezone_offset($default_timezone,'UTC');
+        $default_timezone = (empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);
+        $timezoneoffset = get_timezone_offset($default_timezone, 'UTC');
         for($dayCur = 0;$dayCur<$dayelapsed;$dayCur++)
         {
             //$shrinkedStyle = (!$opendays[$dayCur+1] && $shrinked)?'display:none;':'';
@@ -645,7 +645,7 @@ class TimesheetTask extends Task
             // to avoid editing if the task is closed
             $dayWorkLoadSec = isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
             $dayWorkLoad = formatTime($dayWorkLoadSec, -1);
-            $startDates = ($this->date_start>$this->startDatePjct)?$this->date_start:$this->startDatePjct; 
+            $startDates = ($this->date_start>$this->startDatePjct)?$this->date_start:$this->startDatePjct;
 
             $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct == 0)?$this->date_end:$this->stopDatePjct;
             //take the end of the day
