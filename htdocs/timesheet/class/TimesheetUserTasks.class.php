@@ -868,8 +868,9 @@ public function getHTMLtaskLines($ajax = false)
 {
     $i = 1;
     $Lines = '';
-    $nbline = count($this->taskTimesheet);
+    $nbline = 0;
     if(!$ajax & is_array($this->taskTimesheet)) {
+        $nbline = count($this->taskTimesheet);
         foreach($this->taskTimesheet as $timesheet) {
             $row = new TimesheetTask($this->db);
             $row->unserialize($timesheet);
