@@ -466,9 +466,9 @@ class TimesheetReport
 
         if(is_array($resArray))
         {
-            $dirname=$conf->timesheet->dir_output.'/reports';
+            //$dirname=$conf->timesheet->dir_output.'/reports';
             //
-            //$dirname=$conf->export->dir_temp.'/'.$user->id;
+            $dirname=$conf->export->dir_temp.'/'.$user->id;
             /*
             if($save){
                 $dirname = $conf->user->dir_output."/".$this->userid.'/reports';
