@@ -774,7 +774,7 @@ public function createTimeSpend($user, $token = '')
     $sql = 'SELECT DISTINCT element_id as taskid, prj.fk_soc, prj.ref, tsk.ref';
     $sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact  AND ctc.active = \'1\') ';
-    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = ec.element_id ';
+    $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = ec.element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
     $sql .= " WHERE ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task' ";
     if($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
