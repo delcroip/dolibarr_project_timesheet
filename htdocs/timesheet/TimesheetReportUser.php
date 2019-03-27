@@ -192,8 +192,9 @@ $Form.= '<input type = "radio" name = "mode" value = "DUT" '.($mode == 'DUT'?'ch
 $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
  $Form .= '</td></tr></table>';
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
+ $model=$conf->global->TIMESHEET_EXPORT_FORMAT;
 //if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model=excel2007&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
+if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
 $Form .= '</form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
 // section to generate
