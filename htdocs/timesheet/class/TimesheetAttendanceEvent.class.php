@@ -422,7 +422,7 @@ public $date_time_event_start;
     {
         global $user, $langs;
         $error = 0;
-        $object = new Attendanceevent($this->db);
+        $object = new Attendanceevent($this->db,$this->userid);
         $this->db->begin();
         // Load source object
         $object->fetch($fromid);
