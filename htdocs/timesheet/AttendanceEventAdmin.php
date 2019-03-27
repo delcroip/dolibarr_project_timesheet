@@ -230,7 +230,7 @@ jQuery(document).ready(function()
     $sql .= ' t.status, ';
     $sql .= '  st.date_time_event  as date_time_event_start ';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_event as t';
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."attendance_event as st ON t.token = st.token AND ABS(st.event_type = 2)";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."attendance_event as st ON t.token = st.token AND ABS(st.event_type)=2";
 
     $sqlwhere = '';
     if(isset($object->entity))
