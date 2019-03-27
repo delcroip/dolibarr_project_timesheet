@@ -255,19 +255,19 @@ if(is_array($userids)) {
       //$select .= "\n";
     return $list;
 }
-if(!is_callable(GETPOSTISSET)) {
+if(!is_callable("GETPOSTISSET")) {
 /**
  * Return true if we are in a context of submitting a parameter
  *
  * @param        string        $paramname                Name or parameter to test
  * @return        boolean                                        True if we have just submit a POST or GET request with the parameter provided(even if param is empty)
  */
-function GETPOSTISSET($paramname)
-{
-        return(isset($_POST[$paramname]) || isset($_GET[$paramname]));
+    function GETPOSTISSET($paramname)
+    {
+            return(isset($_POST[$paramname]) || isset($_GET[$paramname]));
+    }
 }
-}
-if(!is_callable(setEventMessages)) {
+if(!is_callable("setEventMessages")) {
     // function from /htdocs/core/lib/function.lib.php in Dolibarr 3.8
     function setEventMessages($mesg, $mesgs, $style = 'mesgs')
     {
