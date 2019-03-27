@@ -200,11 +200,11 @@ $langs->load('timesheet@timesheet');
                         $postdata['addline']='Add';
 
                         if($service['Service']>0) {
-                            /*$localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
+                            $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $product = new Product($db);
                             $product->fetch($service['Service']);
-                            */
+                            
                             $unit_duration_unit = substr($product->duration, -1);
                             $unit_factor = ($unit_duration_unit == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
                             $factor = intval(substr($product->duration, 0, -1));
@@ -214,9 +214,12 @@ $langs->load('timesheet@timesheet');
                             $postdata['prod_entry_mode'] = 'predef';
                             $postdata['idprod'] = $service['Service'];
                             $postdata['qty'] = (float) $quantity;
-
-                            //$result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $localtax1_tx, $localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
+                            if(!$conf->global->TIMESHEET_EVAL_ADDLINE){
+                                $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $localtax1_tx, $localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
+                            }
                         } elseif($service['Service']<>-999) {
+                            $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
+                            $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $factor = ($service['unit_duration_unit'] == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
                             $factor = $factor*intval($service['unit_duration']);
                             $quantity = $duration/$factor;
@@ -226,16 +229,24 @@ $langs->load('timesheet@timesheet');
                             $postdata['tva_tx'] = $service['VAT'];
                             $postdata['price_ht'] = $service['PriceHT'];
                             $postdata['qty'] = $quantity;
-                            //$result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], $localtax1_tx, $localtax2_tx, '', 0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
+                            $postdata['qty'] = (float) $quantity;
+                            if(!$conf->global->TIMESHEET_EVAL_ADDLINE){
+                                $result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], $localtax1_tx, $localtax2_tx, '', 0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
+                            }
                         }
                         //add_invoice_line($postdata);
-                        $post_temp = $_POST;
-                        $_POST = $postdata;
-                        ob_start();
+                        
+                        
                         //eval used instead of include because the main.in.php cannot be included twice so it had to be removed from 
-                        eval($invoicecard);
-                        ob_end_clean();
-                        $_POST = $post_temp;
+                        if($conf->global->TIMESHEET_EVAL_ADDLINE){
+                            $post_temp = $_POST;
+                            $_POST = $postdata;
+                            ob_start();
+                            eval($invoicecard);
+                            ob_end_clean();
+                            $_POST = $post_temp;
+                        }
+                        
                         if($service['taskTimeList']<>'' &&  $result>0)$task_time_array[$result] = $service['taskTimeList'];
                     } else $error++;
                 }
