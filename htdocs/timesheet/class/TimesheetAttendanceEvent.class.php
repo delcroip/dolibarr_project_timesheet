@@ -30,11 +30,6 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once 'class/TimesheetTask.class.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-define(EVENT_AUTO_START, -2);
-DEFINE(EVENT_HEARTBEAT, 1);
-define(EVENT_START, 2);
-define(EVENT_STOP, 3);
-define(EVENT_AUTO_STOP, 4);
 $attendanceeventStatusPictoArray = array(-2=> 'status7', 3=> 'statut3', 1=>'statut3', 2=>'statut3', 4=>'statut7');
 $attendanceeventStatusArray = array(-2=> $langs->trans('AutoCheckin'), 1=>$langs->trans('Heartbeat'), 2=>$langs->trans('Checkin'), 3=>$langs->trans('Checkout'), 4=>$langs->trans('AutoCheckout'));
 /**

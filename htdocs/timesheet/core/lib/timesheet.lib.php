@@ -39,6 +39,13 @@ Define("ROLEMAX", 6);
 // back ground colors
 define('TIMESHEET_BC_FREEZED', '909090');
 define('TIMESHEET_BC_VALUE', 'f0fff0');
+// attendance
+define('EVENT_AUTO_START', -2);
+define('EVENT_HEARTBEAT', 1);
+define('EVENT_START', 2);
+define('EVENT_STOP', 3);
+define('EVENT_AUTO_STOP', 4);
+
 // number of second in a day, used to make the code readable
 define('SECINDAY', 86400);
 // for display trads
