@@ -52,7 +52,7 @@ class modTimesheet extends DolibarrModules
                 // Module description, used if translation string 'ModuleXXXDesc' not found(where XXX is value of numeric property 'numero' of module)
                 $this->description = "TimesheetView";
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.0.5';
+                $this->version = '4.0.6';
                 // Key used in llx_const table to save module status enabled/disabled(where MYMODULE is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -471,7 +471,7 @@ class modTimesheet extends DolibarrModules
             $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'user', 0, 0, '', array('options'=>array("product:ref|label:rowid::tosell='1' AND fk_product_type='1'"=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
             // add the "Default server" select list to the task
             $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'projet_task', 0, 0, '', array('options'=>array("product:ref|label:rowid::tosell='1' AND fk_product_type='1'"=>'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
-            // allow ext id of 32 char 
+            // allow ext id of 32 char
            // $extrafields->addExtraField('external_id', "ExternalId", 'varchar', 100, 32, 'user', 1, 0, '', '', 1, '$user->rights->timesheet->AttendanceAdmin', 3, 'specify the id of the external system', '', 0, 'timesheet@ptimesheet', '$conf->global->ATTENDANCE_EXT_SYSTEM');
             // add the "invoicable" bool to the task
             $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean', 1, '', 'projet_task', 0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');

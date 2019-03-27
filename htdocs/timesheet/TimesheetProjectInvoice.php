@@ -180,7 +180,7 @@ $langs->load('timesheet@timesheet');
                         //$userTaskService[$user][$task] = array('duration', 'VAT', 'Desc', 'PriceHT', 'Service', 'unit_duration', 'unit_duration_unit');
                     if(is_array($userTaskService))foreach($userTaskService as  $tId => $service) {
                         $durationTab = explode(':', $service['duration']);
-                        $duration = $durationTab[1]*60+$durationTab[0]*3600;
+                        $duration = $durationTab[1]*60 + $durationTab[0]*3600;
                         //$startday = dol_mktime(12, 0, 0, $month, 1, $year);
                         //$endday = dol_mktime(12, 0, 0, $month, date('t', $startday), $year);
                         $details = '';
@@ -189,14 +189,14 @@ $langs->load('timesheet@timesheet');
                         if(($uId!='any')&& $conf->global->TIMESHEET_INVOICE_SHOW_USER)$details .= "\n".$service['userName'];
                         //prepare the CURL params
                         $postdata=array();
-                        $postdata['action']='addline';
-                        $postdata['id']=$object->id;
-                        $postdata['date_startday']=date('d',$dateStart);
-                        $postdata['date_startmonth']=date('m',$dateStart);
-                        $postdata['date_startyear']=date('Y',$dateStart);
-                        $postdata['date_endday']=date('d',$dateEnd);
-                        $postdata['date_endmonth']=date('m',$dateEnd);
-                        $postdata['date_endyear']=date('Y',$dateEnd);
+                        $postdata['action'] = 'addline';
+                        $postdata['id'] = $object->id;
+                        $postdata['date_startday'] = date('d',$dateStart);
+                        $postdata['date_startmonth'] = date('m',$dateStart);
+                        $postdata['date_startyear'] = date('Y',$dateStart);
+                        $postdata['date_endday'] = date('d',$dateEnd);
+                        $postdata['date_endmonth'] = date('m',$dateEnd);
+                        $postdata['date_endyear'] = date('Y',$dateEnd);
                         $postdata['addline']='Add';
 
                         if($service['Service']>0) {
@@ -204,7 +204,6 @@ $langs->load('timesheet@timesheet');
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $product = new Product($db);
                             $product->fetch($service['Service']);
-                            
                             $unit_duration_unit = substr($product->duration, -1);
                             $unit_factor = ($unit_duration_unit == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
                             $factor = intval(substr($product->duration, 0, -1));
@@ -247,7 +246,7 @@ $langs->load('timesheet@timesheet');
                             $_POST = $post_temp;
                         }
                         
-                        if($service['taskTimeList']<>'' &&  $result>0)$task_time_array[$result] = $service['taskTimeList'];
+                        if($service['taskTimeList'] <> '' &&  $result>0)$task_time_array[$result] = $service['taskTimeList'];
                     } else $error++;
                 }
                 // End of object creation, we show it
