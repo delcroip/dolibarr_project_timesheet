@@ -601,8 +601,8 @@ class TimesheetReport
     {
         $lvl3HTML .= '<tr class = "oddeven" align = "left"><td colspan="3" ></td><td>'
             .$item[$this->lvl3Title].'</td><td>';
-        $lvl3HTML .= $item['durationDays'].'</td><td>';
         $lvl3HTML .= $item['durationHours'].'</td><td>';
+        $lvl3HTML .= $item['durationDays'].'</td><td>';
         $lvl3HTML .= $item['note'];
         $lvl3HTML .= '</td></tr>';
         return $lvl3HTML;
