@@ -1105,7 +1105,7 @@ class TimesheetTask extends Task
      * @param int       $duration duration in sec
      * @param string $daynote note to save
      * @param int $dayKey  day to update(start at 0 based on the get querry)
-     * @param type $addmode to add the note and duration to existing one isntead of replacing them
+     * @param type $addmode to add the note and duration to existing one instead of replacing them
      * @return array eventmesage array
      */
     public function saveTaskTime($Submitter, $duration, $daynote, $dayKey, $addmode = false)
@@ -1121,7 +1121,9 @@ class TimesheetTask extends Task
                 $this->timespent_old_duration = $item['duration'];
                 $this->timespent_note .= $item['note'];
                 if($addmode) {
-                    $this->timespent_note .= $daynote.". ";
+                    if(!empty($daynote)){
+                        $this->timespent_note .= " ".$daynote.".";
+                    }
                     $this->timespent_duration = $duration+$this->timespent_old_duration;
                 } else{
                     $this->timespent_note = $daynote;
