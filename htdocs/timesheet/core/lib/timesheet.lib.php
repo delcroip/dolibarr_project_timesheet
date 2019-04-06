@@ -48,6 +48,10 @@ define('EVENT_AUTO_STOP', 4);
 
 // number of second in a day, used to make the code readable
 define('SECINDAY', 86400);
+
+$conf->global->TIMESHEET_ROUND = 3;
+
+
 // for display trads
 global $langs;
 $roles = array(0=> 'user', 1=> 'team', 2=> 'project', 3=>'customer', 4=>'supplier', 5=>'other');
@@ -534,7 +538,7 @@ function formatTime($duration, $hoursperdays = -1)
         $TotalHours = floor(($duration-$TotalSec-$TotalMin*60)/3600);
         return sprintf("%02s", $TotalHours).':'.sprintf("%02s", $TotalMin);
     } else {
-        $totalDay = round($duration/3600/$hoursperdays, 3);
+        $totalDay = round($duration/3600/$hoursperdays, $conf->global->TIMESHEET_ROUND);
         return strval($totalDay);
     }
 }
