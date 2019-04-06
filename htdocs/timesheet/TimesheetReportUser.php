@@ -110,7 +110,7 @@ if($userIdSelected<>-999){
     $userIdlist=array_keys($userList);
 }
 $reportStatic = new TimesheetReport($db);
-$reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, $mode);
+$reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
 if($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
