@@ -58,6 +58,7 @@ $adddocs = $conf->global->TIMESHEET_ADD_DOCS;
 $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
 $addForOther = $conf->global->TIMESHEET_ADD_FOR_OTHER;
 $noteOnPDF = $conf->global->TIMESHEET_PDF_NOTEISOTASK;
+$hidesignbox = $conf->global->TIMESHEET_PDF_HIDE_SIGNBOX;
 $showTimespentNote = $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE;
 //Invoice part
 $invoicetasktime = $conf->global->TIMESHEET_INVOICE_TASKTIME;
@@ -200,6 +201,8 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_SHOW_TIMESPENT_NOTE", $showTimespentNote, 'int', 0, '', $conf->entity);
         $noteOnPDF = getpost('noteOnPDF', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_PDF_NOTEISOTASK", $noteOnPDF, 'chaine', 0, '', $conf->entity);
+        $pdfhideSignbox = getpost('pdfHideSignbox', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_PDF_HIDE_SIGNBOX", $pdfhideSignbox, 'chaine', 0, '', $conf->entity);
         // serach box
         $searchbox = getpost('searchBox', 'int');
         dolibarr_set_const($db, "TIMESHEET_SEARCHBOX", $searchbox, 'int', 0, '', $conf->entity);
@@ -582,6 +585,12 @@ echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("invoiceShowTask
 echo '</td><td align = "left">'.$langs->trans("invoiceShowTaskDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "invoiceShowTask" value = "1" ';
 echo (($invoiceshowuser == '1')?'checked':'')."></td></tr>\n\t\t";
+//hide signbox
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("pdfHideSignbox");
+echo '</td><td align = "left">'.$langs->trans("pdfHideSignboxDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "pdfHideSignbox" value = "1" ';
+echo (($pdfhidesignbox == '1')?'checked':'')."></td></tr>\n\t\t";
+
 // Show note on PDF
 echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("NoteOnPDF").'</td><td align = "left">'.$langs->trans("NoteOnPDFDesc").'</td>';
 echo '<td align = "left"><input type = "radio" name = "noteOnPDF" value = "0" ';
