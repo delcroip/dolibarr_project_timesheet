@@ -394,7 +394,7 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['.$user.']['.$task.'][unit_duration]" value = "1" >';
     $html .= '<br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "h" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'':'checked').'>'.$langs->trans('Hour');
     $html .= '<br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "d" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'checked':'').'>'.$langs->trans('Days').'</th>';
-    $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['.$user.']['.$task.'][duration]" value = "'.$duration.'" >';
+    $html .= '<th><input type = "text" size = "2" onkeypress="return regexEvent(this,event,\'timeChr\')" maxlength = "5" name = "userTask['.$user.']['.$task.'][duration]" value = "'.$duration.'" >';
     $html .= '</th</tr>';
     return $html;
 }
