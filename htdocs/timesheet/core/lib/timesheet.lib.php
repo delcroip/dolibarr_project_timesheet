@@ -50,7 +50,7 @@ define('EVENT_AUTO_STOP', 4);
 define('SECINDAY', 86400);
 
 $conf->global->TIMESHEET_ROUND = 3;
-$conf->global->TIMESHEET_EVENT_MIN_DURATION = 0;
+
 
 // for display trads
 global $langs;

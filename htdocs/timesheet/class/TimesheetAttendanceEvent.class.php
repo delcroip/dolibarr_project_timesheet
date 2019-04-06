@@ -596,7 +596,7 @@ public $date_time_event_start;
                    'type'=>'errors',
                    'param'=>'');
             // AUTO START ?
-        } elseif($this->event_type>=EVENT_STOP) { // found but already stopped
+        } elseif($this->event_type >= EVENT_STOP) { // found but already stopped
             $this->initAsSpecimen();
             $this->status = array(
                    'text'=>$langs->trans('EventNotActive'),
@@ -609,16 +609,20 @@ public $date_time_event_start;
             }
             $this->event_type = EVENT_STOP;
             $this->date_time_event = mktime();
+            $duration = $this->date_time_event-$this->date_time_event_start;
             //if the max time is breach
             if(($conf->global->TIMESHEET_EVENT_MAX_DURATION>0 &&
-                $this->date_time_event-$this->date_time_event_start>$conf->global->TIMESHEET_EVENT_MAX_DURATION*3600))
+                $duration>$conf->global->TIMESHEET_EVENT_MAX_DURATION*3600))
                 {
                 // put the max time per default
                     $this->date_time_event = $conf->global->TIMESHEET_EVENT_DEFAULT_DURATION*3600+$this->date_time_event_start;
                     if(empty($tokenJson) && $auto) { // if it's auto close but without json sent
                         $this->event_type = EVENT_AUTO_STOP;
                     }
-            } else { //there is a start time and it's in the acceptable limit
+            }else { //there is a start time and it's in the acceptable limit
+                if($duration < $conf->global->TIMESHEET_EVENT_MIN_DURATION){
+                    $this->date_time_event = $this->date_time_event_start + $conf->global->TIMESHEET_EVENT_MIN_DURATION;
+                }
                 $this->event_type = EVENT_STOP;
             }
             $ret = $this->create($user);
