@@ -1,0 +1,1 @@
+docker run -e DOLI_DB_HOST=192.168.0.225 -e DOLI_DB_USER=dolibarr -e DOLI_DB_PASSWORD=dolibarr -e DOLI_DB_NAME=dolibarr -e DOLI_URL_ROOT='http://0.0.0.0' -e PHP_INI_DATE_TIMEZONE='Europe/Paris' -p 80:80 -v Z:\git\dolibarr_project_timesheet\htdocs:/var/www/html/custom -e DOLI_MODULES=modtimesheet monogramm/docker-dolibarr
