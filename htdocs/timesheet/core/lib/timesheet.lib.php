@@ -447,7 +447,7 @@ function getEndDate($datetime)
             }
             break;
     }
-    return $endDate-1;
+    return $endDate;
 }
 /*
  * function to make the Date in PHP format
