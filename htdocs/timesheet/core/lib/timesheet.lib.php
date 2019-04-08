@@ -529,7 +529,7 @@ function formatTime($duration, $hoursperdays = -1)
         $hoursperdays = ($conf->global->TIMESHEET_TIME_TYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
     } elseif($hoursperdays == -2) {
         $hoursperdays = ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
-    } else if($hoursperdays == -3) {
+    } elseif($hoursperdays == -3) {
         $hoursperdays = $conf->global->TIMESHEET_DAY_DURATION;
     }
     if($hoursperdays == 0) {

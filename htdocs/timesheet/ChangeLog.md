@@ -1,4 +1,25 @@
 # dolibarr_project_timesheet changelog
+4.0.7 change log from 4.0.3
+ - new: xlsx, csv, tsv report export for several projects
+ - new: more flexibility in time enter (support .5, 0 ... ctr+v ) 
+ - new: (EXPERIMENTAL) support multiple taxes in invoice (TIMESHEET_EVAL_ADDLINE must be set to 1)
+ - fix: selllist condition compatible with pgsql
+ - fix: php warnings displayed
+ - fix: only line modified are sent to the servers (support more task lines)
+
+4.0.3 change log from 4.0.0
+ - new: chrono status (auto stop)
+ - new: max value for chrono
+ - new: default value for chrono (when max is reached)
+ - new: xlsx, csv, tsv report export 
+ - new: remove signbox from pdf
+ - fix: multi line comment in comment display in pdf
+ - fix: pgsql error of wrong column
+ - fix: project approval without team approval
+ - fix: sellect sellist without space between column names
+ - fix: time display issue
+ - fix: tabletop display issue on pdf
+
 4.0.0 change log from 3.2
  - new chrono pages per task
  - new time type in pdf can differt frm timesheet page

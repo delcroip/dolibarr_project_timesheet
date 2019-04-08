@@ -236,14 +236,14 @@ $langs->load('timesheet@timesheet');
                         
                         
                         //eval used instead of include because the main.in.php cannot be included twice so it had to be removed from
-                       // if($conf->global->TIMESHEET_EVAL_ADDLINE){
+                        if($conf->global->TIMESHEET_EVAL_ADDLINE){
                             $post_temp = $_POST;
                             $_POST = $postdata;
                             ob_start();
                             eval($invoicecard);
                             ob_end_clean();
                             $_POST = $post_temp;
-                       // }
+                        }
                         
                         if($service['taskTimeList'] <> '' &&  $result>0)$task_time_array[$result] = $service['taskTimeList'];
                     } else $error++;

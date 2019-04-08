@@ -69,6 +69,8 @@ $invoiceservice = $conf->global->TIMESHEET_INVOICE_SERVICE;
 $invoiceshowtask = $conf->global->TIMESHEET_INVOICE_SHOW_TASK;
 $invoiceshowuser = $conf->global->TIMESHEET_INVOICE_SHOW_USER;
 $searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
+$pdfhidesignbox = intval($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX);
+        
 if(count($opendays)!=8) {
     $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
 }
@@ -204,8 +206,8 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_SHOW_TIMESPENT_NOTE", $showTimespentNote, 'int', 0, '', $conf->entity);
         $noteOnPDF = getpost('noteOnPDF', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_PDF_NOTEISOTASK", $noteOnPDF, 'chaine', 0, '', $conf->entity);
-        $pdfhideSignbox = getpost('pdfHideSignbox', 'alpha');
-        dolibarr_set_const($db, "TIMESHEET_PDF_HIDE_SIGNBOX", $pdfhideSignbox, 'chaine', 0, '', $conf->entity);
+        $pdfhidesignbox = getpost('pdfHideSignbox', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_PDF_HIDE_SIGNBOX", $pdfhidesignbox, 'chaine', 0, '', $conf->entity);
         // serach box
         $searchbox = getpost('searchBox', 'int');
         dolibarr_set_const($db, "TIMESHEET_SEARCHBOX", $searchbox, 'int', 0, '', $conf->entity);

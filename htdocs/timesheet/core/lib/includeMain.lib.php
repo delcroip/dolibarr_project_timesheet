@@ -39,3 +39,7 @@ if(! $res && file_exists($currentTimesheetPath."/../../../../../main.inc.php")) 
     //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../");
 }
 if(! $res) die("Include of main fails") ;
+
+if($conf->global->TIMESHEET_VERSION<>"4.0.7"){
+    setEventMessage("Version of timesheet updated, please deactivate then reactivate the module", 'warnings');
+}
