@@ -872,9 +872,10 @@ class TimesheetTask extends Task
     */
     /**
     * function to save a time sheet as a string
+    * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
     * @return   string       serialized object
     */
-    public function serialize()
+    public function serialize($mode = 0)
     {
         $arRet = array();
         $arRet['id'] = $this->id;//task id
@@ -896,46 +897,55 @@ class TimesheetTask extends Task
         $arRet['taskParentDesc'] = $this->taskParentDesc ;
         $arRet['companyName'] = $this->companyName  ;
         $arRet['companyId'] = $this->companyId;
-        $arRet['pSatus'] = $this->pStatus;
+        $arRet['pStatus'] = $this->pStatus;
         $arRet['status'] = $this->status;
         $arRet['recipient'] = $this->recipient;
         $arRet['sender'] = $this->sender;
         $arRet['task_timesheet'] = $this->task_timesheet;
-        return serialize($arRet);
+        switch($mode) {
+            default:
+            case 0:
+                $ret = serialize($arRet);
+                break;
+            case 1:
+                $ret = json_encode($arRet);
+                break;
+            case 2:
+                $ret = json_encode($arRet, JSON_PRETTY_PRINT);
+                break;
+        }
+        return $ret;
     }
-    /**
-     * function to load a time sheet as a string
+    
+  /** function to load a skeleton as a string
      * @param   string    $str   serialized object
+     * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */
-    public function unserialize($str)
+    public function unserialize($str, $mode = 0)
     {
-        $arRet = unserialize($str);
-        $this->id = $arRet['id'];
-        $this->listed = $arRet['listed'];
-        $this->description = $arRet['description'];
-        $this->appId = $arRet['appId'];
-        $this->userId = $arRet['userId'];
-        $this->tasklist = $arRet['tasklist'];
-        $this->note = $arRet['note'];
-        $this->fk_project = $arRet['fk_project'] ;
-        $this->ProjectTitle = $arRet['ProjectTitle'];
-        $this->date_start_approval = $arRet['date_start_approval'];
-        $this->date_end_approval = $arRet['date_end_approval']        ;
-        $this->date_start = $arRet['date_start'];
-        $this->date_end = $arRet['date_end']        ;
-        $this->duration_effective = $arRet['duration_effective'] ;
-        $this->planned_workload = $arRet['planned_workload'] ;
-        $this->fk_projet_task_parent = $arRet['fk_projet_task_parent'] ;
-        $this->taskParentDesc = $arRet['taskParentDesc'] ;
-        $this->companyName = $arRet['companyName']  ;
-        $this->companyId = $arRet['companyId'];
-        $this->status = $arRet['status'];
-        $this->sender = $arRet['sender'];
-        $this->recipient = $arRet['recipient'];
-        $this->pStatus = $arRet['pSatus'];
-        $this->task_timesheet = $arRet['task_timesheet'];
-        return 1;
+        $ret = '';
+        if(empty($str))return -1;
+        $array = array();
+        switch($mode) {
+            default:
+            case 0:
+                $array = unserialize($str);
+                break;
+            case 1:
+            case 2:
+                $array = json_decode($str, JSON_OBJECT_AS_ARRAY);
+                break;
+ /*           case 3:
+                $array = $str;
+                break;*/
+        }
+        // automatic unserialisation based on match between property name and key value
+        foreach($array as $key => $value) {
+            if(property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }
+        }
     }
     /** return the task list
      *
