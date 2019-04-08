@@ -269,8 +269,8 @@ class TimesheetReport
                     'date' => $this->db->jdate($obj->task_date),
                     'dateDisplay' => dol_print_date($this->db->jdate($obj->task_date), 'day'),
                     'duration' => $obj->duration,
-                    'durationHours' => formatTime($obj->duration, $conf->global->TIMESHEET_DAY_DURATION),
-                    'durationDays' => formatTime($obj->duration, 0),
+                    'durationHours' => formatTime($obj->duration, 0),
+                    'durationDays' => formatTime($obj->duration, -3),
                     'userId' => $obj->userid,
                     'userName' => trim($obj->firstname).' '.trim($obj->lastname),
                     'firstName' => trim($obj->firstname),
@@ -540,7 +540,7 @@ class TimesheetReport
         // add tde LVL 3 total hours on tde LVL 2 title
         $lvl2HTML .= '<td>'.formatTime($lvl3Total, 0).'</td>';
         // add tde LVL 3 total day on tde LVL 2 title
-        $lvl2HTML .= '<td>'.formatTime($lvl3Total, -1).'</td><td>';
+        $lvl2HTML .= '<td>'.formatTime($lvl3Total, -3).'</td><td>';
         if($short) {
             $lvl2HTML .= $lvl3Notes;
         }
@@ -564,7 +564,7 @@ class TimesheetReport
         // add an empty cell on row if short version(in none short mode there is an additionnal column
         if(!$short)$lvl1HTML .= '<th></th>';
         $lvl1HTML .= '<th>'.formatTime($lvl2Total, 0).'</th>';
-        $lvl1HTML .= '<th>'.formatTime($lvl2Total, -1).'</th></th><th></tr>';
+        $lvl1HTML .= '<th>'.formatTime($lvl2Total, -3).'</th></th><th></tr>';
         //add the LVL 3 HTML content in lvl1
         $lvl1HTML .= $lvl2HTML;
          //empty lvl 3 HTML to start anew
@@ -585,7 +585,7 @@ class TimesheetReport
             $lvl0HTML .= '<tr class = "liste_titre"><th>'.$lvl0title.'<th>';
             $lvl0HTML .=((!$short)?'<th></th>':'').'<th > TOTAL</th>';
             $lvl0HTML .= '<th>'.formatTime($lvl1Total, 0).'</th>';
-            $lvl0HTML .= '<th>'.formatTime($lvl1Total, -1).'</th><th></th></tr>';
+            $lvl0HTML .= '<th>'.formatTime($lvl1Total, -3).'</th><th></th></tr>';
            //add the LVL 3 HTML content in lvl1
             $lvl0HTML .= $lvl1HTML;
             $lvl0HTML .= '</table>';
@@ -601,8 +601,8 @@ class TimesheetReport
     {
         $lvl3HTML .= '<tr class = "oddeven" align = "left"><td colspan="3" ></td><td>'
             .$item[$this->lvl3Title].'</td><td>';
-        $lvl3HTML .= $item['durationDays'].'</td><td>';
         $lvl3HTML .= $item['durationHours'].'</td><td>';
+        $lvl3HTML .= $item['durationDays'].'</td><td>';
         $lvl3HTML .= $item['note'];
         $lvl3HTML .= '</td></tr>';
         return $lvl3HTML;

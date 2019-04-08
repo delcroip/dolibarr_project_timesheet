@@ -208,7 +208,7 @@ $langs->load('timesheet@timesheet');
                             $unit_factor = ($unit_duration_unit == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
                             $factor = intval(substr($product->duration, 0, -1));
                             if($factor == 0)$factor = 1;//to avoid divided by $factor0
-                            $quantity = $duration/($factor*$unit_factor);
+                            $quantity = round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);
                             $postdata['type'] = -1;
                             $postdata['prod_entry_mode'] = 'predef';
                             $postdata['idprod'] = $service['Service'];
@@ -221,13 +221,12 @@ $langs->load('timesheet@timesheet');
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $factor = ($service['unit_duration_unit'] == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
                             $factor = $factor*intval($service['unit_duration']);
-                            $quantity = $duration/$factor;
+                            $quantity = round($duration/$factor, $conf->global->TIMESHEET_ROUND);
                             $postdata['type'] = 1;
                             $postdata['prod_entry_mode'] = 'free';
                             $postdata['dp_desc'] = $service['Desc'];
                             $postdata['tva_tx'] = $service['VAT'];
                             $postdata['price_ht'] = $service['PriceHT'];
-                            $postdata['qty'] = $quantity;
                             $postdata['qty'] = (float) $quantity;
                             if(!$conf->global->TIMESHEET_EVAL_ADDLINE){
                                 $result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], $localtax1_tx, $localtax2_tx, '', 0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
@@ -395,7 +394,7 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['.$user.']['.$task.'][unit_duration]" value = "1" >';
     $html .= '<br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "h" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'':'checked').'>'.$langs->trans('Hour');
     $html .= '<br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "d" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'checked':'').'>'.$langs->trans('Days').'</th>';
-    $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['.$user.']['.$task.'][duration]" value = "'.$duration.'" >';
+    $html .= '<th><input type = "text" size = "2" onkeypress="return regexEvent(this,event,\'timeChr\')" maxlength = "5" name = "userTask['.$user.']['.$task.'][duration]" value = "'.$duration.'" >';
     $html .= '</th</tr>';
     return $html;
 }

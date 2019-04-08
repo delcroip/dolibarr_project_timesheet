@@ -99,6 +99,12 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
     //print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 $headers = explode('||', $conf->global->TIMESHEET_HEADERS);
+// remove tta note as it is useless there
+$key = array_search('Note',$headers);
+if($key !== false){
+    unset($headers[$key]);
+}
+
 $ajax = false;
  // $timesheet_attendance->fetchStarted();//FIXMED
 //headers
