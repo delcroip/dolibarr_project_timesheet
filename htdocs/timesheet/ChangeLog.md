@@ -1,4 +1,8 @@
 # dolibarr_project_timesheet changelog
+4.0.8 change log from 4.0.7
+ - fix: add missing trad 
+ - fix: line where only the note was modified were not sent to the server in 4.0.7
+
 4.0.7 change log from 4.0.3
  - new: xlsx, csv, tsv report export for several projects
  - new: more flexibility in time enter (support .5, 0 ... ctr+v ) 
