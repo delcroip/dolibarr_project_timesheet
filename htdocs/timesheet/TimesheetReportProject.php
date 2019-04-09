@@ -103,7 +103,7 @@ $projectIdlist=array();
 $reportName=$langs->trans('ReportProject');
 if($projectSelectedId<>-999){
     $projectIdlist[]=$projectSelectedId;
-    $reportName=$projectList[$projectSelectedId]['value'];
+    $reportName=$projectList[$projectSelectedId]['label'];
 } else {
     $projectIdlist= array_keys($projectList);
 }
