@@ -107,7 +107,7 @@ function updateAll(){
     for(j=0;j<tsUser.length;j++){
         total=0;
         var daysClass="days_"+tsUser[j].value;
-        var days= document.getElementsByClassName(daysClass);
+        var days= document.getElementsByClassName('daysClass');
         var nbDays=days.length;
         for(i=0;i<nbDays;i++){
             total+=updateTotals('column_'+days[i].id,'TotalColumn_'+days[i].id);
@@ -159,10 +159,15 @@ function removeUnchanged(){
         for(i=0;i<nbTask;i++){  
             changed=0;
             var inputs=task[i].getElementsByTagName( 'input' );
+            var textarea=task[i].getElementsByTagName( 'textarea' );
             var nbInputs=inputs.length;
+            var nbTextarea=textarea.length;
             for(k=0;k<nbInputs;k++){
                 if(inputs[k].defaultValue!=inputs[k].value)changed++
-            }   
+            }
+            for(k=0;k<nbTextarea;k++){
+                if(textarea[k].defaultValue!=textarea[k].value)changed++
+            }
             if(changed==0){
                 task[i].parentNode.removeChild(task[i]);
                 i--;
