@@ -406,7 +406,9 @@ function getStartDate($datetime, $prevNext = 0)
                 $startDatePrevWeek = strtotime('monday previous week  midnight', $datetime);
                 if($startDateMonth>$startDateWeek) {
                     $startDate = $startDateWeek;
-                } else{
+                } elseif ($startDateMonth==$startDateWeek){
+                    $startDate = $startDatePrevWeek;
+                } else {
                     $startDate = ($startDateMonth<$startDatePrevWeek)?$startDatePrevWeek:$startDateMonth;
                 }
             }
