@@ -626,8 +626,8 @@ public $date_time_event_start;
                 $this->event_type = EVENT_STOP;
             }
             $ret = $this->create($user);
-            if($ret>0 && $conf->global->TIMESHEET_EVENT_NOT_CREATE_TIMESPENT) {
-                $this->createTimeSpend($user, $tokenDb);//FIXME
+            if($ret>0 && $conf->global->TIMESHEET_EVENT_NOT_CREATE_TIMESPENT == 0) {
+                $this->createTimeSpend($user, $tokenDb);
             } else{
                 $this->initAsSpecimen();
                 $this->status = array(
