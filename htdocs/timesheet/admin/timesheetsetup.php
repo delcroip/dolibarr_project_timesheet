@@ -491,10 +491,10 @@ echo '<td align = "left"><input type = "text" name = "defaulthoursperevent" valu
 echo "\" size = \"4\" ></td></tr>\n\t\t";
 
 // block creation of timespent
-echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("blockTimespent");//FIXTRAD
-echo '</td><td align = "left">'.$langs->trans("blockTimespentDesc").'</td>';// FIXTRAD
-echo '<td align = "left"><input type = "text" name = "blockTimespent" value = "'.$blockTimespent;
-echo "\" size = \"4\" ></td></tr>\n\t\t";
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("blockTimespent");
+echo '</td><td align = "left">'.$langs->trans("blockTimespentDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "blockTimespent" value = "1" ';
+echo (($blockTimespent == '1')?'checked':'')."></td></tr>\n\t\t";
 
 echo "</table><br>\n";
 //Color
