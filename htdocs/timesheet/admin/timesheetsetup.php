@@ -70,7 +70,7 @@ $invoiceshowtask = $conf->global->TIMESHEET_INVOICE_SHOW_TASK;
 $invoiceshowuser = $conf->global->TIMESHEET_INVOICE_SHOW_USER;
 $searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
 $pdfhidesignbox = intval($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX);
-        
+$blockTimespent = $conf->global->TIMESHEET_EVENT_NOT_CREATE_TIMESPENT;
 if(count($opendays)!=8) {
     $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
 }
@@ -212,6 +212,9 @@ switch($action) {
         $searchbox = getpost('searchBox', 'int');
         dolibarr_set_const($db, "TIMESHEET_SEARCHBOX", $searchbox, 'int', 0, '', $conf->entity);
         setEventMessage($langs->transnoentitiesnoconv("ConfigurationSaved"));
+        $blockTimespent = getpost('blockTimespent', 'int');
+        dolibarr_set_const($db, "TIMESHEET_EVENT_NOT_CREATE_TIMESPENT", $blockTimespent, 'chaine', 0, '', $conf->entity);
+
         break;
     default:
         break;
@@ -485,6 +488,12 @@ echo "\" size = \"4\" ></td></tr>\n\t\t";
 echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("defaultHoursPerEvent");//FIXTRAD
 echo '</td><td align = "left">'.$langs->trans("defaultHoursPerEventDesc").'</td>';// FIXTRAD
 echo '<td align = "left"><input type = "text" name = "defaulthoursperevent" value = "'.$defaulthoursperevent;
+echo "\" size = \"4\" ></td></tr>\n\t\t";
+
+// block creation of timespent
+echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("blockTimespent");//FIXTRAD
+echo '</td><td align = "left">'.$langs->trans("blockTimespentDesc").'</td>';// FIXTRAD
+echo '<td align = "left"><input type = "text" name = "blockTimespent" value = "'.$blockTimespent;
 echo "\" size = \"4\" ></td></tr>\n\t\t";
 
 echo "</table><br>\n";
