@@ -2,6 +2,8 @@
 4.0.8 change log from 4.0.7
  - fix: add missing trad 
  - fix: line where only the note was modified were not sent to the server in 4.0.7
+ - fix: previous week link not working on slitted week if the first day of the month was a monday
+ - fix: display hours iso seconds
 
 4.0.7 change log from 4.0.3
  - new: xlsx, csv, tsv report export for several projects
