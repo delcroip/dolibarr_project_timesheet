@@ -100,6 +100,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $role = TEAM, $entity = '1')
 {
     //FIX ME handle multicompany
+    if($role == TEAM){
+      global $user;
+        return $user->getAllChildIds();
+    }
     if($userid == "") {
         return array();
     }
@@ -111,10 +115,10 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
     $sql[PROJECT][0] .= ' AND fk_socpeople in (';
     $sql[PROJECT][2] = ')) AND fk_socpeople not in (';
     $sql[PROJECT][4] = ')';
-    $sql[TEAM][0] = 'SELECT usr.rowid as userid FROM '.MAIN_DB_PREFIX.'user AS usr WHERE';
+   /* $sql[TEAM][0] = 'SELECT usr.rowid as userid FROM '.MAIN_DB_PREFIX.'user AS usr WHERE';
     $sql[TEAM][0] .= ' usr.fk_user in (';
     $sql[TEAM][2] = ') AND usr.rowid not in (';
-    $sql[TEAM][4] = ')';
+    $sql[TEAM][4] = ')';*/
     $idlist = '';
     if(is_array($userid)) {
         $ecludeduserid = array_merge($userid, $ecludeduserid);
@@ -130,7 +134,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
     } elseif(!empty($ecludeduserid)) {
         $idlist = $ecludeduserid;
     }
-   $sql[$role][3] = $idlist;
+    $sql[$role][3] = $idlist;
     ksort($sql[$role], SORT_NUMERIC);
     $sqlused = implode($sql[$role]);
     dol_syslog('form::get_subordinate role='.$role, LOG_DEBUG);
