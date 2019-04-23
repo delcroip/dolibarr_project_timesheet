@@ -4,6 +4,7 @@
 
 [![License: AGPL v3][uri_license_image]][uri_license]
 ![Build status](https://travis-ci.org/delcroip/dolibarr_project_timesheet.svg?branch=master)
+![Downloads per day] https://img.shields.io/sourceforge/dw/dolibarr.svg
 # dolibarr_project_timesheet
 Module to increase time registration efficiency for Dolibarr, well suited for counsulting firm but not only.
 DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, also it keep changing (it's a dev respo) and it might not work at all.
