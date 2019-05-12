@@ -492,7 +492,7 @@ switch($action) {
         }
     }
     //pass the search criteria
-    if($ls_userId) $sqlwhere .= natural_search(array('t.fk_userid'), $ls_userId);
+    if($ls_userId) $sqlwhere .= natural_search(array('t.fk_userid'), $ls_userId, 2);
     if($ls_date_start_month)$sqlwhere .= ' AND MONTH(t.date_start) = \''.$ls_date_start_month.'\'';
     if($ls_date_start_year)$sqlwhere .= ' AND YEAR(t.date_start) = \''.$ls_date_start_year.'\'';
     if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
