@@ -105,9 +105,9 @@ switch($action) {
                 $ret = 0;
                 $notesTask = GETPOST('notesTask', 'array');
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
-                $tasks = GETPOST('task', 'array');
+                $tasktab = GETPOST('task', 'array')[$tsUserId];
                 $task_timesheet->loadFromSession($timestamp, $tsUserId);
-                if($task_timesheet->note!=$notesTaskApproval[$key]) {
+                if($task_timesheet->note != $notesTaskApproval[$key]) {
                     $update = true;
                     $task_timesheet->note = $notesTaskApproval[$key];
                     $task_timesheet->update($user);
