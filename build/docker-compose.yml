@@ -1,0 +1,35 @@
+version: "3"
+services:
+  web:
+    image: monogramm/docker-dolibarr
+    container_name: dolibarr_web
+#    build: 
+#      context: ../
+#      dockerfile: ./build/Dockerfile
+    volumes:
+      - ../htdocs:/var/www/html/custom:rw
+    ports:
+      - 8099:80
+    env_file:
+      .env
+    links:
+      - database
+  database:
+    image: mariadb:10.3
+    container_name: dolibarr_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    #  - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+# demo dump can be found:https://github.com/Dolibarr/dolibarr/tree/develop/dev/initdemo
+# password admin adminadmin
+    env_file:
+      .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DOLI_DB_PASSWORD}
+      MYSQL_DATABASE: ${DOLI_DB_NAME}
+      MYSQL_USER: ${DOLI_DB_USER}
+      MYSQL_PASSWORD: ${DOLI_DB_PASSWORD}
+    ports:
+      - 3306:3306
+volumes:
+  mysql_data:
