@@ -772,7 +772,7 @@ public function getHTMLHeader()
     {
         $curDay = $this->date_start+ SECINDAY*$i+SECINDAY/4;
         $htmlDay = ($conf->global->TIMESHEET_TIME_SPAN == "month")?substr($langs->trans(date('l', $curDay)), 0, 3):$langs->trans(date('l', $curDay));
-        $html .= "\t".'<th class = "days_'.$this->id.'" id = "'.$this->id.'_'.$i.'" width = "35px" style = "text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
+        $html .= "\t".'<th class = "daysClass days_'.$this->id.'" id = "'.$this->id.'_'.$i.'" width = "35px" style = "text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
     }
     return $html;
 }
