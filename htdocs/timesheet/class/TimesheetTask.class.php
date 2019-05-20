@@ -19,6 +19,7 @@
 
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once 'class/TimesheetUserTasks.class.php';
 class TimesheetTask extends Task
 {
@@ -206,7 +207,7 @@ class TimesheetTask extends Task
     *  @param        int                $loadparentdata                Also load parent data
     *  @return int                                 <0 if KO, 0 if not found, >0 if OK
      */
-    public function fetch($id, $ref = '', $loadparentdata = 1)
+    public function fetch($id, $ref = '', $loadparentdata = 0)
     {
         if(!empty($ref) && empty($id)) {
             $temp= explode('_', $ref);
@@ -713,18 +714,20 @@ class TimesheetTask extends Task
             $html = '';
             switch($title) {
                 case 'Project':
-                    if(version_compare(DOL_VERSION, "3.7")>=0) {
-                        $html .= '<a href = "'.DOL_URL_ROOT.'/projet/card.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
-                    } else {
-                        $html .= '<a href = "'.DOL_URL_ROOT.'/projet/fiche.php?mainmenu=project&id='.$this->fk_project.'">'.$this->ProjectTitle.'</a>';
-                    }
+                    $objtemp = new Project($this->db);
+                    $objtemp->fetch($this->fk_project);
+                    $html .=$objtemp->getNomUrl();
                     break;
                 case 'TaskParent':
-                    $html .= '<a href = "'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->fk_projet_task_parent.'&withproject='.$this->fk_project.'">'.$this->taskParentDesc.'</a>';
+                    $objtemp = new Task($this->db);
+                    $objtemp->fetch($this->fk_projet_task_parent);
+                    $html .=$objtemp->getNomUrl();
                     break;
                 case 'Tasks':
                     if($conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'.$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick = favOnOff(event,'.$this->fk_project.','.$this->id.') style = "cursor:pointer;">  ';
-                    $html .= '<a href = "'.DOL_URL_ROOT.'/projet/tasks/task.php?mainmenu=project&id='.$this->id.'&withproject='.$this->fk_project.'"> '.$this->description.'</a>';
+                    $objtemp = new Task($this->db);
+                    $objtemp->fetch($this->id);
+                    $html .=$objtemp->getNomUrl();
                     break;
                 case 'DateStart':
                     $html .= $this->date_start?dol_print_date($this->date_start, 'day'):'';
@@ -733,7 +736,10 @@ class TimesheetTask extends Task
                     $html .= $this->date_end?dol_print_date($this->date_end, 'day'):'';
                     break;
                 case 'Company':
-                    $html .= '<a href = "'.DOL_URL_ROOT.'/societe/soc.php?mainmenu=companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
+                    $soc = new Societe($this->db);
+                    $soc->fetch($this->companyId);
+                    $html .=$soc->getNomUrl();
+                    //$html .= '<a href = "'.DOL_URL_ROOT.'/societe/card.php?mainmenu=companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
                     break;
                 case 'Progress':
                     $html .= $this->parseTaskTime($this->duration_effective).'/';

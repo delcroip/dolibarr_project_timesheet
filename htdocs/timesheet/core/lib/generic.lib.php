@@ -343,3 +343,76 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
         $selected,
         $separator);
 }
+
+function getNomUrl($type, $htmlcontent='1', $id=0,$ref=''){
+    global $db;
+    $object=null;
+    $link='';
+    switch (strtolower(str_replace('_', '', $type))){
+        case "supplier":
+        case "fournisseur":
+            $type="Fournisseur";
+            if (!class_exists($type)) break;
+        case "customer":
+        case "Company":
+        case "societe":
+           $type="Societe";
+            break;
+        case "invoice":
+        case "facture":
+        case "invoicecustomer":
+        case "customerinvoice":
+           $type="Facture";
+            break;
+        case "invoicesupplier":
+        case "supplierinvoice":
+        case "facturefourn":
+            $type="FactureFournisseur";
+            break;
+        case "expense":
+            break;
+        case "bankaccount":
+            $type="Account";
+            break;
+        case "salary":
+            $type="PaymentSalary";
+            break;
+        case "order":
+        case "customerorder":
+        case "ordercustomer":
+            $type="Commande";
+            break;
+        case "supplierorder":
+        case "ordersupplier":
+            $type="FactureFournisseur";
+            break;
+        case "subscriber":
+            $type="Adherent";
+            break;
+        case "donation":
+            $type="Don";
+            break;
+        case "charge":
+        case "healthcareexpense":
+        case "socialcontributions":
+            $type="Chargesociales";
+           break;
+        case "payment":
+            $type= "Paiement";
+            break;
+        case "vat":
+            $type="TVA";
+        case "expense":
+            $type="ExpenseReport";
+        default:
+            break;
+    }
+    if (class_exists($type)){
+        $object = new $type($db);
+        $object->fetch($id);
+        $link = $object->getNomUrl();
+    }else{
+        $link="ERROR: type:${$type} not supported or class not loaded";
+    }
+    return $link;
+}
