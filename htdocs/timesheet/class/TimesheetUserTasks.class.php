@@ -568,11 +568,13 @@ public function updateActuals($tabPost, $notes = array())
         /*
          * For each task store in matching the session timestamp
          */
-        foreach($this->taskTimesheet as $key  => $row) {
-            $tasktime = new TimesheetTask($this->db);
-            $tasktime->unserialize($row);
-            $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->appId]);
-            $this->taskTimesheet[$key] = $tasktime->serialize();
+        if(is_array($this->taskTimesheet)){
+            foreach($this->taskTimesheet as $key  => $row) {
+                $tasktime = new TimesheetTask($this->db);
+                $tasktime->unserialize($row);
+                $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->appId]);
+                $this->taskTimesheet[$key] = $tasktime->serialize();
+            }
         }
         /*
     if(!empty($idList)) {
