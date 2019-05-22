@@ -467,7 +467,7 @@ class TimesheetTask extends Task
         $taskParent = strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')!== false;
         $sql = 'SELECT p.rowid, p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo, pt.dateo, pt.datee, pt.planned_workload, pt.duration_effective';
         if($conf->global->TIMESHEET_HIDE_REF == 1) {
-            $sql .= ', p.title as title, pt.label as label, pt.planned_workload';
+            $sql .= ', p.ref as title, pt.ref as label, pt.planned_workload';
             if($taskParent) $sql .= ', pt.fk_task_parent, ptp.label as taskParentLabel';
         } else {
             $sql .= ", CONCAT(p.ref, ' - ', p.title) as title";
@@ -716,18 +716,18 @@ class TimesheetTask extends Task
                 case 'Project':
                     $objtemp = new Project($this->db);
                     $objtemp->fetch($this->fk_project);
-                    $html .=$objtemp->getNomUrl();
+                    $html .= $objtemp->getNomUrl(0, '', $conf->global->TIMESHEET_HIDE_REF);
                     break;
                 case 'TaskParent':
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->fk_projet_task_parent);
-                    $html .=$objtemp->getNomUrl();
+                    $html .= $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF);
                     break;
                 case 'Tasks':
                     if($conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'.$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick = favOnOff(event,'.$this->fk_project.','.$this->id.') style = "cursor:pointer;">  ';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->id);
-                    $html .=$objtemp->getNomUrl();
+                    $html .= $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF);
                     break;
                 case 'DateStart':
                     $html .= $this->date_start?dol_print_date($this->date_start, 'day'):'';
@@ -738,8 +738,7 @@ class TimesheetTask extends Task
                 case 'Company':
                     $soc = new Societe($this->db);
                     $soc->fetch($this->companyId);
-                    $html .=$soc->getNomUrl();
-                    //$html .= '<a href = "'.DOL_URL_ROOT.'/societe/card.php?mainmenu=companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
+                    $html .= $soc->getNomUrl();
                     break;
                 case 'Progress':
                     $html .= $this->parseTaskTime($this->duration_effective).'/';

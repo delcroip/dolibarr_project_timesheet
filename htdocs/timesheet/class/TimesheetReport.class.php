@@ -83,7 +83,7 @@ class TimesheetReport
         if($projectid && !is_array($projectid)) {
             $this->project[$projectid] = new Project($this->db);
             $this->project[$projectid]->fetch($projectid);
-            $this->ref[$projectid] = (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project[$projectid]->ref.' - ').$this->project[$projectid]->title;
+            $this->ref[$projectid] = $this->project[$projectid]->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$this->project[$projectid]->title);
             $first = true;
             $this->thirdparty[$projectid] = new Societe($this->db);
             $this->thirdparty[$projectid]->fetch($this->project[$projectid]->socid);
@@ -91,7 +91,7 @@ class TimesheetReport
             foreach($projectid as $id){
                 $this->project[$id] = new Project($this->db);
                 $this->project[$id]->fetch($id);
-                $this->ref[$id] = (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project[$id]->ref.' - ').$this->project[$id]->title;
+                $this->ref[$id] = $this->project[$id]->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$this->project[$id]->title);
                 $this->thirdparty[$id] = new Societe($this->db);
                 $this->thirdparty[$id]->fetch($this->project[$id]->socid);
             }
@@ -259,11 +259,11 @@ class TimesheetReport
                 $error = 0;
                 $obj = $this->db->fetch_object($resql);
                 $resArray[$i] = array('projectId' => $obj->projectid,
-                    'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle,
+                    'projectLabel' => $obj->projectref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$obj->projecttitle),
                     'projectRef' => $obj->projectref,
-                    'projectTitle' =>$obj->projecttitle,
+                    'projectTitle' => $obj->projecttitle,
                     'taskId' => $obj->taskid,
-                    'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle,
+                    'taskLabel' => $obj->taskref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$obj->tasktitle),
                     'taskRef' => $obj->taskref,
                     'tasktitle' => $obj->tasktitle,
                     'date' => $this->db->jdate($obj->task_date),

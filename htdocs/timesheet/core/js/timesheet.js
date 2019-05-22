@@ -382,7 +382,7 @@ function searchTask(evt){
         var displayLine=(tslist[i].id=="searchline")?true:false;
         for (j=0; j<fields.length;j++){
            var found=0;
-           found+=fields[j].innerText.search(search);
+           found+=fields[j].innerHTML.search(search);
            if(found>=0){
              displayLine=true;
             }

@@ -116,7 +116,7 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_HEADERS", "chaine", "Tasks", "list of headers to show inthe timesheets");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HIDE_REF", "int", 0, "option to hide the ref in the timesheets");
+                $this->const[$r] = array("TIMESHEET_HIDE_REF", "int", 0, "option to hide the title in the timesheets");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_WHITELIST_MODE", "int", 0, "Option to change the behaviour of the whitelist:-whiteliste, 1-blackliste, 2-no impact ");
                 $r++;
