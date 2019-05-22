@@ -125,7 +125,7 @@ class TimesheetReport
         $this->name .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
         switch($mode){
             case 'PDT': //project  / task / Days //FIXME dayoff missing
-                $this->modeSQLOrder = 'ORDER BY usr.rowid,prj.rowid, ptt.task_date, tsk.rowid ASC   ';
+                $this->modeSQLOrder = 'ORDER BY usr.rowid,prj.rowid, DATE(ptt.task_datehour), tsk.rowid ASC   ';
                 //title
                 $this->lvl0Title='userName';
                 $this->lvl1Title = 'projectLabel';
@@ -137,7 +137,7 @@ class TimesheetReport
                 $this->lvl2Key = 'dateDisplay';
                 break;
             case 'DPT'://day /project /task
-                $this->modeSQLOrder = 'ORDER BY usr.rowid,ptt.task_date, prj.rowid, tsk.rowid ASC   ';
+                $this->modeSQLOrder = 'ORDER BY usr.rowid,DATE(ptt.task_datehour), prj.rowid, tsk.rowid ASC   ';
                 //title
                 $this->lvl0Title='userName';
                 $this->lvl1Title = 'dateDisplay';
@@ -149,7 +149,7 @@ class TimesheetReport
                 $this->lvl2Key = 'projectId';
                 break;
             case 'PTD'://day /project /task
-                $this->modeSQLOrder = 'ORDER BY usr.rowid,prj.rowid, tsk.rowid, ptt.task_date ASC   ';
+                $this->modeSQLOrder = 'ORDER BY usr.rowid,prj.rowid, tsk.rowid, DATE(ptt.task_datehour) ASC   ';
                 //title
                 $this->lvl0Title='userName';
                 $this->lvl1Title = 'projectLabel';
@@ -161,7 +161,7 @@ class TimesheetReport
                 $this->lvl2Key = 'taskId';
                 break;
             case 'UDT': //project  / task / Days //FIXME dayoff missing
-                $this->modeSQLOrder = 'ORDER BY prj.rowid,usr.rowid, ptt.task_date, tsk.rowid ASC   ';
+                $this->modeSQLOrder = 'ORDER BY prj.rowid,usr.rowid, DATE(ptt.task_datehour), tsk.rowid ASC   ';
                 //title
                 $this->lvl0Title='projectLabel';
                 $this->lvl1Title = 'userName';
@@ -173,7 +173,7 @@ class TimesheetReport
                 $this->lvl2Key = 'dateDisplay';
                 break;
             case 'DUT'://day /project /task
-                $this->modeSQLOrder = 'ORDER BY prj.rowid,ptt.task_date, usr.rowid, tsk.rowid ASC   ';
+                $this->modeSQLOrder = 'ORDER BY prj.rowid,DATE(ptt.task_datehour), usr.rowid, tsk.rowid ASC   ';
                 //title
                 $this->lvl0Title='projectLabel';
                 $this->lvl1Title = 'dateDisplay';
@@ -185,7 +185,7 @@ class TimesheetReport
                 $this->lvl2Key = 'userId';
                 break;
             case 'UTD'://day /project /task
-                $this->modeSQLOrder = ' ORDER BY prj.rowid,usr.rowid, tsk.rowid, ptt.task_date ASC   ';
+                $this->modeSQLOrder = ' ORDER BY prj.rowid,usr.rowid, tsk.rowid, DATE(ptt.task_datehour) ASC   ';
                 $this->lvl0Title='projectLabel';
                 $this->lvl1Title = 'userName';
                 $this->lvl2Title = 'taskLabel';
@@ -218,7 +218,7 @@ class TimesheetReport
             $sql.= ' prj.title as projecttitle, prj.ref as projectref, usr.firstname, usr.lastname, ';
             $sql.= " tsk.ref as taskref, tsk.label as tasktitle, STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         }
-        $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
+        $sql.= ' DATE(ptt.task_datehour) AS task_date, SUM(ptt.task_duration) as duration ';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = fk_task ';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = tsk.rowid ';
@@ -240,10 +240,10 @@ class TimesheetReport
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
          /*if(!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
-          else */$sql .= 'AND task_date>=\''.$this->db->idate($this->startDate).'\'';
+          else */$sql .= 'AND task_datehour>=\''.$this->db->idate($this->startDate).'\'';
           /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
-          else */$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
-         $sql .= ' GROUP BY usr.rowid, ptt.task_date, tsk.rowid, prj.rowid ';
+          else */$sql.= ' AND task_datehour<=\''.$this->db->idate($this->stopDate).'\'';
+         $sql .= ' GROUP BY usr.rowid, DATE(ptt.task_datehour),  prj.rowid, tsk.rowid ';
         /*if(!empty($sqltail)) {
             $sql .= $sqltail;
         }*/

@@ -537,7 +537,7 @@ class TimesheetTask extends Task
         $this->timespent_fk_user = $userid;
         $dayelapsed = getDayInterval($timeStart, $timeEnd);
         if($dayelapsed<1)return -1;
-        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date, ptt.note";
+        $sql = "SELECT ptt.rowid, ptt.task_duration, DATE(ptt.task_datehour), ptt.note";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ";
         if(in_array($this->status, array(SUBMITTED, UNDERAPPROVAL, APPROVED, CHALLENGED, INVOICED))) {
@@ -545,8 +545,8 @@ class TimesheetTask extends Task
         } else {
             $sql .= " ptt.fk_task = '".$this->id."' ";
             $sql .= " AND (ptt.fk_user = '".$userid."') ";
-            $sql .= " AND (ptt.task_date>='".$this->db->idate($timeStart)."') ";
-            $sql .= " AND (ptt.task_date<'".$this->db->idate($timeEnd)."')";
+            $sql .= " AND (DATE(ptt.task_datehour)>='".$this->db->idate($timeStart)."') ";
+            $sql .= " AND (DATE(ptt.task_datehour)<'".$this->db->idate($timeEnd)."')";
         }
         dol_syslog(__METHOD__, LOG_DEBUG);
         for($i = 0;$i<$dayelapsed;$i++)
