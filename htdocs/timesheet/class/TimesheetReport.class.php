@@ -361,7 +361,8 @@ class TimesheetReport
         $sqltail = '';
         $resArray = $this->getReportArray();
         $numTaskTime = count($resArray);
-        if($numTaskTime>0){
+        $i = 0;
+        if($numTaskTime > 0){
             // current
             foreach($resArray as $key => $item) {
                 if($Curlvl0 == 0) {
@@ -371,9 +372,9 @@ class TimesheetReport
                 }
                 // reformat date to avoid UNIX time
                 //add the LVL 2 total when  change detected in Lvl 2 & 1 &0
-                if(($resArray[$Curlvl2][$this->lvl2Key]!=$item[$this->lvl2Key])
-                        ||($resArray[$Curlvl1][$this->lvl1Key]!=$item[$this->lvl1Key])
-                        ||($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key]))
+                if(($resArray[$Curlvl2][$this->lvl2Key] != $item[$this->lvl2Key])
+                        || ($resArray[$Curlvl1][$this->lvl1Key] != $item[$this->lvl1Key])
+                        || ($resArray[$Curlvl0][$this->lvl0Key] != $item[$this->lvl0Key]))
                 {
                     //title, total,short, lvl3Html, lvl3 notes
                     $lvl2HTML .= $this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Title], $lvl3Total, $lvl3HTML, $short, $lvl3Notes);
@@ -388,8 +389,9 @@ class TimesheetReport
                     // save the new lvl2 ref
                     $Curlvl2 = $key;
                     //creat the LVL 1 Title line when lvl 1 or 0 change detected
-                    if(($resArray[$Curlvl1][$this->lvl1Key]!=$item[$this->lvl1Key])
-                            ||($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key])) {
+                    if(($resArray[$Curlvl1][$this->lvl1Key] != $item[$this->lvl1Key])
+                            ||($resArray[$Curlvl0][$this->lvl0Key] != $item[$this->lvl0Key])) 
+                    {
                         $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
                         //addlvl 2 total to lvl1
                         $lvl1Total+=$lvl2Total;
@@ -399,7 +401,8 @@ class TimesheetReport
                         // save the new lvl1 ref
                         $Curlvl1 = $key;
                         //creat the LVL 0 Title line when lvl  0 change detected
-                        if(($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key])) {
+                        if(($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key])) 
+                        {
                            $lvl0HTML .= $this->getLvl0HTML($resArray[$Curlvl0][$this->lvl0Title], $lvl1Total, $lvl1HTML, $short);
                            //addlvl 2 total to lvl1
                            $lvl0Total+=$lvl1Total;
@@ -418,16 +421,26 @@ class TimesheetReport
                     $lvl3Notes .= "<br>".$item['note'];
                 }
                 $lvl3Total+=$item['duration'];
+                $i++;
+                if ($i == 1 || $i == $numTaskTime){
+                    $lvl2HTML .=$this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Title], $lvl3Total, $lvl3HTML, $short, $lvl3Notes);
+                    //empty lvl 3 Notes to start anew
+                    $lvl3Notes = '';
+                    //empty lvl 3 HTML to start anew
+                    $lvl3HTML = '';
+                    //add the LVL 3 total to LVL3
+                    $lvl2Total+=$lvl3Total;
+                    //empty lvl 3 total to start anew
+                    $lvl3Total = 0;
+                  //creat the LVL 1 Title line
+                    $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
+                    //addlvl 2 total to lvl1
+                    $lvl1Total+=$lvl2Total;
+                    //empty lvl 2 total tyo start anew
+                    $lvl2HTML = '';
+                    $lvl2Total = 0;             }
             }
-            $lvl2HTML .=$this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Title], $lvl3Total, $lvl3HTML, $short, $lvl3Notes);
-            //add the LVL 3 total to LVL3
-            $lvl2Total+=$lvl3Total;
-            //creat the LVL 1 Title line
-            $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
-            //empty lvl 3 HTML to start anew
-            $lvl2HTML = '';
-            //addlvl 2 total to lvl1
-            $lvl1Total+=$lvl2Total;
+            
             $lvl0HTML .= $this->getLvl0HTML($resArray[$Curlvl0][$this->lvl0Title], $lvl1Total, $lvl1HTML, $short);
             $lvl0Total+=$lvl1Total;
 // make the whole result

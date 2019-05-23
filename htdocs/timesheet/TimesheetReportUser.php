@@ -184,12 +184,12 @@ $Form .= (($invoicabletaskOnly == 1)?'checked>':'>').'</td>';
 $Form .= '<td><input type = "checkbox" name = "exportfriendly" value = "1" ';
 $Form .= (($exportfriendly == 1)?'checked>':'>').'</td>';
 // Select mode
-$Form.= '<td><input type = "radio" name = "mode" value = "UTD" '.($mode == 'UTD'?'checked':'');
-$Form .= '> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>';
-$Form.= '<input type = "radio" name = "mode" value = "UDT" '.($mode == 'UDT'?'checked':'');
-$Form .= '> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>';
-$Form.= '<input type = "radio" name = "mode" value = "DUT" '.($mode == 'DUT'?'checked':'');
-$Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
+$Form.= '<td><input type = "radio" name = "mode" value = "PTD" '.($mode == 'PTD'?'checked':'');
+$Form .= '> '.$langs->trans('Project').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>';
+$Form.= '<input type = "radio" name = "mode" value = "PDT" '.($mode == 'PDT'?'checked':'');
+$Form .= '> '.$langs->trans('Project').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>';
+$Form.= '<input type = "radio" name = "mode" value = "DPT" '.($mode == 'DPT'?'checked':'');
+$Form .= '> '.$langs->trans('Date').' / '.$langs->trans('Project').' / '.$langs->trans('Task').'<br>';
  $Form .= '</td></tr></table>';
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
  $model=$conf->global->TIMESHEET_EXPORT_FORMAT;
