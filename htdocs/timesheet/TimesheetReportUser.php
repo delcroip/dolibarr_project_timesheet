@@ -167,7 +167,7 @@ if(!empty($_POST['userSelected']) && is_numeric($_POST['userSelected'])
         $querryRes .= $reportStatic->getHTMLreportExport();
     }else {
         $querryRes .= $reportStatic->getHTMLreport($short,
-            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'));
+            "User report ".dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'));
     }
 }
 $Form .= '</select></td>';

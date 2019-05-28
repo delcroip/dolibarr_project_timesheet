@@ -240,9 +240,9 @@ class TimesheetReport
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
          /*if(!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
-          else */$sql .= 'AND task_datehour>=\''.$this->db->idate($this->startDate).'\'';
+          else */$sql .= 'AND DATE(task_datehour)>=\''.$this->db->idate($this->startDate).'\'';
           /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
-          else */$sql.= ' AND task_datehour<=\''.$this->db->idate($this->stopDate).'\'';
+          else */$sql.= ' AND DATE(task_datehour)<=\''.$this->db->idate($this->stopDate).'\'';
          $sql .= ' GROUP BY usr.rowid, DATE(ptt.task_datehour),  prj.rowid, tsk.rowid ';
         /*if(!empty($sqltail)) {
             $sql .= $sqltail;

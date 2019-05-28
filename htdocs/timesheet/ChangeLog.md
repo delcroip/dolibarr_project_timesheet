@@ -1,7 +1,16 @@
 # dolibarr_project_timesheet changelog
+4.0.13
+- fix: report take now into account time in the end date
+
+4.0.12
+- fix: correct the reports (first line was always wrong)
+
 4.0.11
+- clean: use task_datehour iso task_date to retrieve time spent
+- new: hide ref become hide title
 - fix company link not working
-- new: add export button on the user report
+- fix warning when reopening an empty approval submission
+- fix #83 version compare issue on php 5
 
 4.0.10
  - fix total not display in timesheet page
