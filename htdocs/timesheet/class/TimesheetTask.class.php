@@ -766,10 +766,10 @@ class TimesheetTask extends Task
                     $html .= " onfocus = 'this.blur()' readonly = 'true' size = '1' value = '&#x2753;' onclick = 'tristate_Marks(this)' />\n";
                     break;
                 case 'Note':
-                    $html .= img_object('', 'generic', ' onClick = "openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\')"');
+                    $html .= img_object('', 'generic', ' onClick = "openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\');"');
                     $html .= '<div class = "modal" id = "noteTask_'.$this->userId.'_'.$this->id.'" >';
                     $html .= '<div class = "modal-content">';
-                    $html .= '<span class = "close " onclick = "closeNotes()">&times;</span>';
+                    $html .= '<span class = "close " onclick = "closeNotes();">&times;</span>';
                     $html .= '<a align = "left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.")".'</a><br>';
                     $html.= '<textarea class = "flat"  rows = "3" style = "width:350px;top:10px"';
                     $html.= ' name = "notesTask['.$this->appId.']" ';
