@@ -79,7 +79,7 @@ $langs->load('timesheet@timesheet');
             $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task = t.rowid';
             if($invoicabletaskOnly == 1)$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
             $sql .= ' WHERE t.fk_projet='.$projectId;
-                $sql .= " AND DATE(ptt.task_datehour) BETWEEN '".$db->idate($dateStart);
+                $sql .= " AND DATE(tt.task_datehour) BETWEEN '".$db->idate($dateStart);
                 $sql .= "' AND '".$db->idate($dateEnd)."'";
              if($invoicabletaskOnly == 1)$sql .= ' AND tske.invoiceable = \'1\'';
             if($ts2Invoice!='all') {
