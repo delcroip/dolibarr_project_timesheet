@@ -202,7 +202,7 @@ $Form .= '<script>document.getElementById("defaultOpen").click()</script>';
 //Javascript
 //$Form .= ' <script type = "text/javascript" src = "core/js/timesheet.js"></script>'."\n";
 $Form .= '<script type = "text/javascript">'."\n\t";
-$Form .= 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');';
+$Form .= 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');closeNotes();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $Form;
