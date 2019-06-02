@@ -210,3 +210,7 @@ pdfHideSignbox = Hide PDF signbox
 pdfHideSignboxDesc = Hide the signbox in the PDF
 blockTimespent = Block timespent creation
 blockTimespentDesc = Doesn't create timespent when an event is stopped
+thisWeek = This week
+thisMonth = This month
+lastWeek = Last Week
+lastMonth = Last month

@@ -210,3 +210,7 @@ pdfHideSignbox = Ocultar el buzón de PDF
 pdfHideSignboxDesc = Oculta el buzón en el PDF
 blockTimespent = Bloquear la creación de tiempo
 blockTimespentDesc = No crea timepent cuando se detiene un evento
+thisWeek = Esta semana
+thisMonth = Este mes
+lastWeek = semana pasada
+lastMonth = Último mes

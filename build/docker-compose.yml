@@ -1,7 +1,7 @@
 version: "3"
 services:
   web:
-    image: monogramm/docker-dolibarr
+    image: monogramm/docker-dolibarr:8.0
     container_name: dolibarr_web
 #    build: 
 #      context: ../
@@ -9,7 +9,7 @@ services:
     volumes:
       - ../htdocs:/var/www/html/custom:rw
     ports:
-      - 8099:80
+      - 801:80
     env_file:
       .env
     links:
@@ -18,10 +18,15 @@ services:
     image: mariadb:10.3
     container_name: dolibarr_db
     volumes:
-      - mysql_data:/var/lib/mysql
-    #  - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
-# demo dump can be found:https://github.com/Dolibarr/dolibarr/tree/develop/dev/initdemo
-# password admin adminadmin
+#      - mysql_data:/var/lib/mysql
+      - ./dump.sql:/var/www/html/dump.sql
+## How to reset database
+# 1 on the host download the right db (ver 9 bellow) because  the container doesn't have wget
+#wget https://github.com/Dolibarr/dolibarr/raw/develop/dev/initdemo/mysqldump_dolibarr_9.0.0.sql -o dump.sql
+# 2 uncomment the line - ./dump.sql:/var/www/html/dump.sql
+# 3 Attach shell to db containter and run those two commands
+#mysql -u root -p -e "SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;') FROM information_schema.tables WHERE table_schema = 'dolibarr';"
+#mysql -u root -p dolibarr < /var/www/html/dump.sql
     env_file:
       .env
     environment:
@@ -29,7 +34,8 @@ services:
       MYSQL_DATABASE: ${DOLI_DB_NAME}
       MYSQL_USER: ${DOLI_DB_USER}
       MYSQL_PASSWORD: ${DOLI_DB_PASSWORD}
-    ports:
-      - 3306:3306
+#    ports:
+#      - 3306:3306
 volumes:
   mysql_data:
+  # password admin adminadmin

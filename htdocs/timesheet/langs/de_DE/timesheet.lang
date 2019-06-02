@@ -210,3 +210,7 @@ pdfHideSignbox = PDF-Signbox ausblenden
 pdfHideSignboxDesc = Blenden Sie die Signbox im PDF aus
 blockTimespent = Erstellung von Zeiträumen blockieren
 blockTimespentDesc = Erzeugt keine Zeitspanne, wenn ein Ereignis angehalten wird
+thisWeek = Diese Woche
+thisMonth = Dieser Monat
+lastWeek = Letzte Woche
+lastMonth = Letzter Monat
