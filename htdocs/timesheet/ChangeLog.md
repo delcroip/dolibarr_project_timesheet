@@ -1,4 +1,12 @@
 # dolibarr_project_timesheet changelog
+4.0.15
+- new filter on task info 
+- new: note icon changes if the note is filled
+- new: quick link for report (this week ...)
+- fix: error in 4.0.14 change for project report
+
+4.0.14
+- fix: error in project report from 4.0.11
 4.0.13
 - fix: report take now into account time in the end date
 
