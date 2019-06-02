@@ -668,7 +668,7 @@ class TimesheetTask extends Task
                 $html .= "<td>\n";
                 // add note popup
                 if($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE) {
-                $html .= img_object('Note', 'generic', ' style = "display:inline-block;float:right;" onClick = "openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
+                $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
                 //note code
                 $html .= '<div class = "modal" id = "note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';
                 $html .= '<div class = "modal-content">';
@@ -766,7 +766,7 @@ class TimesheetTask extends Task
                     $html .= " onfocus = 'this.blur()' readonly = 'true' size = '1' value = '&#x2753;' onclick = 'tristate_Marks(this)' />\n";
                     break;
                 case 'Note':
-                    $html .= img_object('', 'generic', ' onClick = "openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\');"');
+                    $html .= img_picto('Note', empty($this->note)?'filenew':'file', ' id="img_noteTask_'.$this->userId.'_'.$this->id.'" onClick = "openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\');"');
                     $html .= '<div class = "modal" id = "noteTask_'.$this->userId.'_'.$this->id.'" >';
                     $html .= '<div class = "modal-content">';
                     $html .= '<span class = "close " onclick = "closeNotes();">&times;</span>';
@@ -1105,7 +1105,7 @@ class TimesheetTask extends Task
             if($retNote) {
                 $_SESSION['task_timesheet'][$timestamp]['NoteUpdated']++;
             } else{
-                 $_SESSION['task_timesheet'][$timestamp]['updateError']++;
+                $_SESSION['task_timesheet'][$timestamp]['updateError']++;
             }
         }
         $ret = 0;

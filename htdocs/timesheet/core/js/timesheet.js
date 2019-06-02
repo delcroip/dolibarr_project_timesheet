@@ -154,13 +154,13 @@ function removeUnchanged(){
         
         var lineClass="line_"+tsUser[j].value;
         //foreach task
-        var task= document.getElementsByClassName(lineClass);
-        var nbTask=task.length;
+        var task = document.getElementsByClassName(lineClass);
+        var nbTask = task.length;
         for(i=0;i<nbTask;i++){  
             changed=0;
-            var inputs=task[i].getElementsByTagName( 'input' );
-            var textarea=task[i].getElementsByTagName( 'textarea' );
-            var nbInputs=inputs.length;
+            var inputs = task[i].getElementsByTagName( 'input' );
+            var textarea = task[i].getElementsByTagName( 'textarea' );
+            var nbInputs = inputs.length;
             var nbTextarea=textarea.length;
             for(k=0;k<nbInputs;k++){
                 if(inputs[k].defaultValue!=inputs[k].value)changed++
@@ -558,8 +558,13 @@ function openNote(noteid){
 //function to close note
 function closeNotes(){
     var modals = document.getElementsByClassName("modal");
-    for(var modal in modals){
-        (modals[modal]).style.display = "none";
+    var patt = /(\w+)\.png$/gi 
+    for(var i=0;i<modals.length;i+=1){
+        var modalbox = modals[i];
+        modalbox.style.display = "none";
+        var icon = (modalbox.firstChild.lastChild.value.length>0)?"file":"filenew";
+        var imgnote = document.getElementById("img_"+modalbox.id);
+        imgnote.src = imgnote.src.replace(patt,"$'"+icon+".png");
     };
 }
 
