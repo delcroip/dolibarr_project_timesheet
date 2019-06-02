@@ -104,18 +104,22 @@ $key = array_search('Note', $headers);
 if($key !== false){
     unset($headers[$key]);
 }
-
+// remove total
+$key = array_search('Total', $headers);
+if($key !== false){
+    unset($headers[$key]);
+}
 $ajax = false;
  // $timesheet_attendance->fetchStarted();//FIXMED
 //headers
-$html .= "<table class = \"noborder\" width = \"100%\">";
+$html .= "<table id='chronoTable' class = 'noborder' width = '100%'>";
 $html .= "<tr>";
 foreach($headers as $key => $value) {
     $html .= "\t<th ";
     if(count($headers) == 1) {
            $html .= 'colspan = "2" ';
     }
-    $html .= ">".$langs->trans($value)."</th>\n";
+    $html .= "> <a onclick=\"sortTable('chronoTable','col{$value}','asc');\">".$langs->trans($value)."</a></th>\n";
 }
 $html .= "<th>".$langs->trans("Action")."</th></tr>";
 // show the filter

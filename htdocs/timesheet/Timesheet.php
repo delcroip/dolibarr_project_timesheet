@@ -48,6 +48,9 @@ if($whitelistmode == '') {
 }
 $userid = is_object($user)?$user->id:$user;
 $postUserId= GETPOST('userid', 'int');
+$submitted = GETPOST('submit', 'alpha');
+$tsUserId = GETPOST('tsUserId', 'int');
+
 // if the user can enter ts for other the user id is diferent
 if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
     if(!empty($postUserId)) {
@@ -71,6 +74,7 @@ if($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     if($dateStart==0)$dateStart=getStartDate(time(), 0);
 }
 $_SESSION["dateStart"] = $dateStart ;
+
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("main");
@@ -97,29 +101,27 @@ $update = false;
 switch($action) {
     case 'submit':
         if(isset($_SESSION['task_timesheet'][$timestamp])) {
-            if(GETPOSTISSET('task')) {
+            if($tsUserId>0) {
                 $ret = 0;
-                $notesTask = GETPOST('notesTask', 'array');
+                $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
-                $tasks = GETPOST('task', 'array');
-                foreach($tasks as $key => $tasktab) {
-                    $task_timesheet->loadFromSession($timestamp, $key);
-                    if($task_timesheet->note!=$notesTaskApproval[$key]) {
-                       $update = true;
-                       $task_timesheet->note = $notesTaskApproval[$key];
-                       $task_timesheet->update($user);
-                    }
-                    $ret = $task_timesheet->updateActuals($tasktab, $notesTask);
-                    if(GETPOSTISSET('submit')) {
-                           $task_timesheet->setStatus($user, SUBMITTED);
-                           $ret++;
-                        //$task_timesheet->status = "SUBMITTED";
-                    } else {
-                        $task_timesheet->setStatus($user, DRAFT);
-                    }
-           //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
-                     TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
+                $tasktab = GETPOST('task', 'array')[$tsUserId];
+                $task_timesheet->loadFromSession($timestamp, $tsUserId);
+                if($task_timesheet->note != $notesTaskApproval[$key]) {
+                    $update = true;
+                    $task_timesheet->note = $notesTaskApproval[$key];
+                    $task_timesheet->update($user);
                 }
+                $ret = $task_timesheet->updateActuals($tasktab, $notesTask);
+                if($submitted) {
+                        $task_timesheet->setStatus($user, SUBMITTED);
+                        $ret++;
+                    //$task_timesheet->status = "SUBMITTED";
+                } else {
+                    $task_timesheet->setStatus($user, DRAFT);
+                }
+        //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
+                TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
             } elseif(GETPOSTISSET('recall')) {
                 $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
                 //$task_timesheet->status = "DRAFT";
@@ -199,7 +201,7 @@ $Form .= '<script>document.getElementById("defaultOpen").click()</script>';
 //Javascript
 //$Form .= ' <script type = "text/javascript" src = "core/js/timesheet.js"></script>'."\n";
 $Form .= '<script type = "text/javascript">'."\n\t";
-$Form .= 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');';
+$Form .= 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');closeNotes();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $Form;

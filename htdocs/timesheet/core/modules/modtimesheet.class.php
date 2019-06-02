@@ -52,7 +52,7 @@ class modTimesheet extends DolibarrModules
                 // Module description, used if translation string 'ModuleXXXDesc' not found(where XXX is value of numeric property 'numero' of module)
                 $this->description = "TimesheetView";
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.0.9';
+                $this->version = '4.0.15';
                 // Key used in llx_const table to save module status enabled/disabled(where MYMODULE is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -116,7 +116,7 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_HEADERS", "chaine", "Tasks", "list of headers to show inthe timesheets");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HIDE_REF", "int", 0, "option to hide the ref in the timesheets");
+                $this->const[$r] = array("TIMESHEET_HIDE_REF", "int", 0, "option to hide the title in the timesheets");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_WHITELIST_MODE", "int", 0, "Option to change the behaviour of the whitelist:-whiteliste, 1-blackliste, 2-no impact ");
                 $r++;

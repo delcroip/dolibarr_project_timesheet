@@ -26,20 +26,20 @@ if(! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
     include $currentTimesheetPath.'/dev.inc.php';
 }
 //if(! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-if(! $res && file_exists($currentTimesheetPath."/../../../main.inc.php")) {
+if (! $res && file_exists($currentTimesheetPath."/../../../main.inc.php")) {
     $res = @include $currentTimesheetPath.'/../../../main.inc.php';// in HTdocs
     //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../../");
 }
-if(! $res && file_exists($currentTimesheetPath."/../../../../main.inc.php")) {
+if (! $res && file_exists($currentTimesheetPath."/../../../../main.inc.php")) {
     $res = @include $currentTimesheetPath.'/../../../../main.inc.php';//in custom
     //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../../../");
 }
-if(! $res && file_exists($currentTimesheetPath."/../../../../../main.inc.php")) {
+if (! $res && file_exists($currentTimesheetPath."/../../../../../main.inc.php")) {
     $res = @include $currentTimesheetPath.'/../../../../../main.inc.php';//in custom
     //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../");
 }
-if(! $res) die("Include of main fails") ;
+if (! $res) die("Include of main fails") ;
 
-if($user->admin && $conf->global->TIMESHEET_VERSION<"4.0.8"){
+if ($user->admin && version_compare("4.0.8", $conf->global->TIMESHEET_VERSION) > 0){
     setEventMessage("Version of timesheet updated, please deactivate then reactivate the module", 'warnings');
 }

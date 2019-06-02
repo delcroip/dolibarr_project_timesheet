@@ -83,7 +83,7 @@ class TimesheetReport
         if($projectid && !is_array($projectid)) {
             $this->project[$projectid] = new Project($this->db);
             $this->project[$projectid]->fetch($projectid);
-            $this->ref[$projectid] = (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project[$projectid]->ref.' - ').$this->project[$projectid]->title;
+            $this->ref[$projectid] = $this->project[$projectid]->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$this->project[$projectid]->title);
             $first = true;
             $this->thirdparty[$projectid] = new Societe($this->db);
             $this->thirdparty[$projectid]->fetch($this->project[$projectid]->socid);
@@ -91,7 +91,7 @@ class TimesheetReport
             foreach($projectid as $id){
                 $this->project[$id] = new Project($this->db);
                 $this->project[$id]->fetch($id);
-                $this->ref[$id] = (($conf->global->TIMESHEET_HIDE_REF == 1)?'':$this->project[$id]->ref.' - ').$this->project[$id]->title;
+                $this->ref[$id] = $this->project[$id]->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$this->project[$id]->title);
                 $this->thirdparty[$id] = new Societe($this->db);
                 $this->thirdparty[$id]->fetch($this->project[$id]->socid);
             }
@@ -125,7 +125,7 @@ class TimesheetReport
         $this->name .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
         switch($mode){
             case 'PDT': //project  / task / Days //FIXME dayoff missing
-                $this->modeSQLOrder = 'ORDER BY usr.rowid,prj.rowid, ptt.task_date, tsk.rowid ASC   ';
+                $this->modeSQLOrder = 'ORDER BY usr.rowid,prj.rowid, DATE(ptt.task_datehour), tsk.rowid ASC   ';
                 //title
                 $this->lvl0Title='userName';
                 $this->lvl1Title = 'projectLabel';
@@ -137,7 +137,7 @@ class TimesheetReport
                 $this->lvl2Key = 'dateDisplay';
                 break;
             case 'DPT'://day /project /task
-                $this->modeSQLOrder = 'ORDER BY usr.rowid,ptt.task_date, prj.rowid, tsk.rowid ASC   ';
+                $this->modeSQLOrder = 'ORDER BY usr.rowid,DATE(ptt.task_datehour), prj.rowid, tsk.rowid ASC   ';
                 //title
                 $this->lvl0Title='userName';
                 $this->lvl1Title = 'dateDisplay';
@@ -149,7 +149,7 @@ class TimesheetReport
                 $this->lvl2Key = 'projectId';
                 break;
             case 'PTD'://day /project /task
-                $this->modeSQLOrder = 'ORDER BY usr.rowid,prj.rowid, tsk.rowid, ptt.task_date ASC   ';
+                $this->modeSQLOrder = 'ORDER BY usr.rowid,prj.rowid, tsk.rowid, DATE(ptt.task_datehour) ASC   ';
                 //title
                 $this->lvl0Title='userName';
                 $this->lvl1Title = 'projectLabel';
@@ -161,7 +161,7 @@ class TimesheetReport
                 $this->lvl2Key = 'taskId';
                 break;
             case 'UDT': //project  / task / Days //FIXME dayoff missing
-                $this->modeSQLOrder = 'ORDER BY prj.rowid,usr.rowid, ptt.task_date, tsk.rowid ASC   ';
+                $this->modeSQLOrder = 'ORDER BY prj.rowid,usr.rowid, DATE(ptt.task_datehour), tsk.rowid ASC   ';
                 //title
                 $this->lvl0Title='projectLabel';
                 $this->lvl1Title = 'userName';
@@ -173,7 +173,7 @@ class TimesheetReport
                 $this->lvl2Key = 'dateDisplay';
                 break;
             case 'DUT'://day /project /task
-                $this->modeSQLOrder = 'ORDER BY prj.rowid,ptt.task_date, usr.rowid, tsk.rowid ASC   ';
+                $this->modeSQLOrder = 'ORDER BY prj.rowid,DATE(ptt.task_datehour), usr.rowid, tsk.rowid ASC   ';
                 //title
                 $this->lvl0Title='projectLabel';
                 $this->lvl1Title = 'dateDisplay';
@@ -185,7 +185,7 @@ class TimesheetReport
                 $this->lvl2Key = 'userId';
                 break;
             case 'UTD'://day /project /task
-                $this->modeSQLOrder = ' ORDER BY prj.rowid,usr.rowid, tsk.rowid, ptt.task_date ASC   ';
+                $this->modeSQLOrder = ' ORDER BY prj.rowid,usr.rowid, tsk.rowid, DATE(ptt.task_datehour) ASC   ';
                 $this->lvl0Title='projectLabel';
                 $this->lvl1Title = 'userName';
                 $this->lvl2Title = 'taskLabel';
@@ -218,7 +218,7 @@ class TimesheetReport
             $sql.= ' prj.title as projecttitle, prj.ref as projectref, usr.firstname, usr.lastname, ';
             $sql.= " tsk.ref as taskref, tsk.label as tasktitle, STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         }
-        $sql.= ' ptt.task_date, SUM(ptt.task_duration) as duration ';
+        $sql.= ' DATE(ptt.task_datehour) AS task_date, SUM(ptt.task_duration) as duration ';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
         $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = fk_task ';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = tsk.rowid ';
@@ -240,10 +240,10 @@ class TimesheetReport
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
          /*if(!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
-          else */$sql .= 'AND task_date>=\''.$this->db->idate($this->startDate).'\'';
+          else */$sql .= ($first?'':'AND ').' DATE(task_datehour)>=\''.$this->db->idate($this->startDate).'\'';
           /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
-          else */$sql.= ' AND task_date<=\''.$this->db->idate($this->stopDate).'\'';
-         $sql .= ' GROUP BY usr.rowid, ptt.task_date, tsk.rowid, prj.rowid ';
+          else */$sql.= ' AND DATE(task_datehour)<=\''.$this->db->idate($this->stopDate).'\'';
+         $sql .= ' GROUP BY usr.rowid, DATE(ptt.task_datehour),  prj.rowid, tsk.rowid ';
         /*if(!empty($sqltail)) {
             $sql .= $sqltail;
         }*/
@@ -259,11 +259,11 @@ class TimesheetReport
                 $error = 0;
                 $obj = $this->db->fetch_object($resql);
                 $resArray[$i] = array('projectId' => $obj->projectid,
-                    'projectLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->projectref.' - ').$obj->projecttitle,
+                    'projectLabel' => $obj->projectref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$obj->projecttitle),
                     'projectRef' => $obj->projectref,
-                    'projectTitle' =>$obj->projecttitle,
+                    'projectTitle' => $obj->projecttitle,
                     'taskId' => $obj->taskid,
-                    'taskLabel' =>(($conf->global->TIMESHEET_HIDE_REF == 1)?'':$obj->taskref.' - ').$obj->tasktitle,
+                    'taskLabel' => $obj->taskref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$obj->tasktitle),
                     'taskRef' => $obj->taskref,
                     'tasktitle' => $obj->tasktitle,
                     'date' => $this->db->jdate($obj->task_date),
@@ -361,7 +361,8 @@ class TimesheetReport
         $sqltail = '';
         $resArray = $this->getReportArray();
         $numTaskTime = count($resArray);
-        if($numTaskTime>0){
+        $i = 0;
+        if($numTaskTime > 0){
             // current
             foreach($resArray as $key => $item) {
                 if($Curlvl0 == 0) {
@@ -371,9 +372,9 @@ class TimesheetReport
                 }
                 // reformat date to avoid UNIX time
                 //add the LVL 2 total when  change detected in Lvl 2 & 1 &0
-                if(($resArray[$Curlvl2][$this->lvl2Key]!=$item[$this->lvl2Key])
-                        ||($resArray[$Curlvl1][$this->lvl1Key]!=$item[$this->lvl1Key])
-                        ||($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key]))
+                if(($resArray[$Curlvl2][$this->lvl2Key] != $item[$this->lvl2Key])
+                        || ($resArray[$Curlvl1][$this->lvl1Key] != $item[$this->lvl1Key])
+                        || ($resArray[$Curlvl0][$this->lvl0Key] != $item[$this->lvl0Key]))
                 {
                     //title, total,short, lvl3Html, lvl3 notes
                     $lvl2HTML .= $this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Title], $lvl3Total, $lvl3HTML, $short, $lvl3Notes);
@@ -388,8 +389,9 @@ class TimesheetReport
                     // save the new lvl2 ref
                     $Curlvl2 = $key;
                     //creat the LVL 1 Title line when lvl 1 or 0 change detected
-                    if(($resArray[$Curlvl1][$this->lvl1Key]!=$item[$this->lvl1Key])
-                            ||($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key])) {
+                    if(($resArray[$Curlvl1][$this->lvl1Key] != $item[$this->lvl1Key])
+                            ||($resArray[$Curlvl0][$this->lvl0Key] != $item[$this->lvl0Key]))
+                    {
                         $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
                         //addlvl 2 total to lvl1
                         $lvl1Total+=$lvl2Total;
@@ -399,7 +401,8 @@ class TimesheetReport
                         // save the new lvl1 ref
                         $Curlvl1 = $key;
                         //creat the LVL 0 Title line when lvl  0 change detected
-                        if(($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key])) {
+                        if(($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key]))
+                        {
                            $lvl0HTML .= $this->getLvl0HTML($resArray[$Curlvl0][$this->lvl0Title], $lvl1Total, $lvl1HTML, $short);
                            //addlvl 2 total to lvl1
                            $lvl0Total+=$lvl1Total;
@@ -418,16 +421,26 @@ class TimesheetReport
                     $lvl3Notes .= "<br>".$item['note'];
                 }
                 $lvl3Total+=$item['duration'];
+                $i++;
+                if ($i == 1 || $i == $numTaskTime){
+                    $lvl2HTML .=$this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Title], $lvl3Total, $lvl3HTML, $short, $lvl3Notes);
+                    //empty lvl 3 Notes to start anew
+                    $lvl3Notes = '';
+                    //empty lvl 3 HTML to start anew
+                    $lvl3HTML = '';
+                    //add the LVL 3 total to LVL3
+                    $lvl2Total+=$lvl3Total;
+                    //empty lvl 3 total to start anew
+                    $lvl3Total = 0;
+                  //creat the LVL 1 Title line
+                    $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
+                    //addlvl 2 total to lvl1
+                    $lvl1Total+=$lvl2Total;
+                    //empty lvl 2 total tyo start anew
+                    $lvl2HTML = '';
+                    $lvl2Total = 0;             }
             }
-            $lvl2HTML .=$this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Title], $lvl3Total, $lvl3HTML, $short, $lvl3Notes);
-            //add the LVL 3 total to LVL3
-            $lvl2Total+=$lvl3Total;
-            //creat the LVL 1 Title line
-            $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
-            //empty lvl 3 HTML to start anew
-            $lvl2HTML = '';
-            //addlvl 2 total to lvl1
-            $lvl1Total+=$lvl2Total;
+            
             $lvl0HTML .= $this->getLvl0HTML($resArray[$Curlvl0][$this->lvl0Title], $lvl1Total, $lvl1HTML, $short);
             $lvl0Total+=$lvl1Total;
 // make the whole result
