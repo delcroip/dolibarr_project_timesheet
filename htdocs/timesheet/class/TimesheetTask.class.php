@@ -772,7 +772,7 @@ class TimesheetTask extends Task
                     $html .= '<span class = "close " onclick = "closeNotes();">&times;</span>';
                     $html .= '<a align = "left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.")".'</a><br>';
                     $html.= '<textarea class = "flat"  rows = "3" style = "width:350px;top:10px"';
-                    $html.= ' name = "notesTask['.$this->appId.']" ';
+                    $html.= ' name = "notesTask['.$this->userId.']['.$this->id.']" ';
                     $html .= '>'.$this->note.'</textarea>';
                     $html .= '</div></div>';
             }
@@ -1077,9 +1077,9 @@ class TimesheetTask extends Task
         $noteUpdate = 0;
         dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user = $userId;
-        if(!empty($note) && $note!=$this->note) {
+        if(!empty($note) && $note != $this->note) {
             $this->note = $note;
-            $noteUpdate++;
+            $noteUpdate = true;
         }
         if(is_array($timesheetPost))foreach($timesheetPost as $dayKey => $dayData) {
             $wkload = $dayData[0];
@@ -1101,7 +1101,7 @@ class TimesheetTask extends Task
             $this->updateTimeUsed();// needed upon delete
         }
         if($noteUpdate) {
-            $retNote = $this->update($user);
+            $retNote = ($this->appId>0)?$this->update($user):$this->create($user);
             if($retNote) {
                 $_SESSION['task_timesheet'][$timestamp]['NoteUpdated']++;
             } else{

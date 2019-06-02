@@ -572,7 +572,7 @@ public function updateActuals($tabPost, $notes = array())
             foreach($this->taskTimesheet as $key  => $row) {
                 $tasktime = new TimesheetTask($this->db);
                 $tasktime->unserialize($row);
-                $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->appId]);
+                $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->id]);
                 $this->taskTimesheet[$key] = $tasktime->serialize();
             }
         }

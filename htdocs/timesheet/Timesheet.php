@@ -103,7 +103,7 @@ switch($action) {
         if(isset($_SESSION['task_timesheet'][$timestamp])) {
             if($tsUserId>0) {
                 $ret = 0;
-                $notesTask = GETPOST('notesTask', 'array');
+                $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
                 $tasktab = GETPOST('task', 'array')[$tsUserId];
                 $task_timesheet->loadFromSession($timestamp, $tsUserId);
