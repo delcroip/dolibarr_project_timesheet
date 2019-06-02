@@ -28,6 +28,12 @@ echo 'var hide_zero ='.null2zero($conf->global->TIMESHEET_HIDE_ZEROS).";\n";
 echo 'var err_msg_max_hours_exceded = "'.rtrim($langs->transnoentitiesnoconv('errMsgMaxHoursExceded'))."\";\n";//FIXTRAD
 echo 'var wng_msg_hours_exceded = "'.rtrim($langs->transnoentitiesnoconv('wngMsgHoursExceded'))."\";\n";//FIXTRAD
 
-function null2zero($value=''){
+/** function to avoid null returned for an int
+ *
+ * @param int $value int to check
+ * @return int int value or 0 if int is null
+ */
+function null2zero($value = '')
+{
     return (empty($value))?0:$value;
 }

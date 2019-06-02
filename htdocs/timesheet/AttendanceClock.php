@@ -120,7 +120,6 @@ foreach($headers as $key => $value) {
            $html .= 'colspan = "2" ';
     }
     $html .= "> <a onclick=\"sortTable('chronoTable','col{$value}','asc');\">".$langs->trans($value)."</a></th>\n";
-
 }
 $html .= "<th>".$langs->trans("Action")."</th></tr>";
 // show the filter

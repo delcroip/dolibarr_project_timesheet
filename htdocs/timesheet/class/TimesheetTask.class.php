@@ -717,21 +717,21 @@ class TimesheetTask extends Task
                     $html .= '<div class="colProject">';
                     $objtemp = new Project($this->db);
                     $objtemp->fetch($this->fk_project);
-                    $html .= str_replace('classfortooltip', 'classfortooltip colProject',$objtemp->getNomUrl(0, '', $conf->global->TIMESHEET_HIDE_REF));
+                    $html .= str_replace('classfortooltip', 'classfortooltip colProject', $objtemp->getNomUrl(0, '', $conf->global->TIMESHEET_HIDE_REF));
                     $html .= '</div>';
                     break;
                 case 'TaskParent':
                     $html .= '<div class="colTaskParent">';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->fk_projet_task_parent);
-                    $html .= str_replace('classfortooltip', 'classfortooltip colTaskParent',$objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
+                    $html .= str_replace('classfortooltip', 'classfortooltip colTaskParent', $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
                     $html .= '</div>';
                     break;
                 case 'Tasks':
                     if($conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'.$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick = favOnOff(event,'.$this->fk_project.','.$this->id.') style = "cursor:pointer;">  ';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->id);
-                    $html .= str_replace('classfortooltip', 'classfortooltip colTasks',$objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
+                    $html .= str_replace('classfortooltip', 'classfortooltip colTasks', $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
                     break;
                 case 'DateStart':
                     $html .= '<div class="colDateStart">';
@@ -746,7 +746,7 @@ class TimesheetTask extends Task
                 case 'Company':
                     $soc = new Societe($this->db);
                     $soc->fetch($this->companyId);
-                    $html .= str_replace('classfortooltip', 'classfortooltip colCompany',$soc->getNomUrl());
+                    $html .= str_replace('classfortooltip', 'classfortooltip colCompany', $soc->getNomUrl());
                     break;
                 case 'Progress':
                     $html .= $this->parseTaskTime($this->duration_effective).'/';

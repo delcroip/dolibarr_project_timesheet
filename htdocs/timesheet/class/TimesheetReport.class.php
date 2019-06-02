@@ -390,7 +390,7 @@ class TimesheetReport
                     $Curlvl2 = $key;
                     //creat the LVL 1 Title line when lvl 1 or 0 change detected
                     if(($resArray[$Curlvl1][$this->lvl1Key] != $item[$this->lvl1Key])
-                            ||($resArray[$Curlvl0][$this->lvl0Key] != $item[$this->lvl0Key])) 
+                            ||($resArray[$Curlvl0][$this->lvl0Key] != $item[$this->lvl0Key]))
                     {
                         $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
                         //addlvl 2 total to lvl1
@@ -401,7 +401,7 @@ class TimesheetReport
                         // save the new lvl1 ref
                         $Curlvl1 = $key;
                         //creat the LVL 0 Title line when lvl  0 change detected
-                        if(($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key])) 
+                        if(($resArray[$Curlvl0][$this->lvl0Key]!=$item[$this->lvl0Key]))
                         {
                            $lvl0HTML .= $this->getLvl0HTML($resArray[$Curlvl0][$this->lvl0Title], $lvl1Total, $lvl1HTML, $short);
                            //addlvl 2 total to lvl1

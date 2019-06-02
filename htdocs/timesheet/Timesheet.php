@@ -122,7 +122,6 @@ switch($action) {
                 }
         //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
                 TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
-            
             } elseif(GETPOSTISSET('recall')) {
                 $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
                 //$task_timesheet->status = "DRAFT";
