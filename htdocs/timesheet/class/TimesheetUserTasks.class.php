@@ -767,7 +767,7 @@ public function getHTMLHeader()
         if(count($this->headers) == 1) {
                 $html .= 'colspan = "2" ';
         }
-        $html .= ">".$langs->trans($value)."</th>\n";
+        $html .= "> <a onclick=\"sortTable('timesheetTable_{$this->id}','col{$value}','asc');\">".$langs->trans($value)."</a></th>\n";
     }
     $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
     for ($i = 0;$i<$weeklength;$i++)

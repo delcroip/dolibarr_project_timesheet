@@ -714,31 +714,39 @@ class TimesheetTask extends Task
             $html = '';
             switch($title) {
                 case 'Project':
+                    $html .= '<div class="colProject">';
                     $objtemp = new Project($this->db);
                     $objtemp->fetch($this->fk_project);
-                    $html .= $objtemp->getNomUrl(0, '', $conf->global->TIMESHEET_HIDE_REF);
+                    $html .= str_replace('classfortooltip', 'classfortooltip colProject',$objtemp->getNomUrl(0, '', $conf->global->TIMESHEET_HIDE_REF));
+                    $html .= '</div>';
                     break;
                 case 'TaskParent':
+                    $html .= '<div class="colTaskParent">';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->fk_projet_task_parent);
-                    $html .= $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF);
+                    $html .= str_replace('classfortooltip', 'classfortooltip colTaskParent',$objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
+                    $html .= '</div>';
                     break;
                 case 'Tasks':
                     if($conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'.$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick = favOnOff(event,'.$this->fk_project.','.$this->id.') style = "cursor:pointer;">  ';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->id);
-                    $html .= $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF);
+                    $html .= str_replace('classfortooltip', 'classfortooltip colTasks',$objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
                     break;
                 case 'DateStart':
+                    $html .= '<div class="colDateStart">';
                     $html .= $this->date_start?dol_print_date($this->date_start, 'day'):'';
+                    $html .= '</div>';
                     break;
                 case 'DateEnd':
+                    $html .= '<div class="colDateEnd">';
                     $html .= $this->date_end?dol_print_date($this->date_end, 'day'):'';
+                    $html .= '</div>';
                     break;
                 case 'Company':
                     $soc = new Societe($this->db);
                     $soc->fetch($this->companyId);
-                    $html .= $soc->getNomUrl();
+                    $html .= str_replace('classfortooltip', 'classfortooltip colCompany',$soc->getNomUrl());
                     break;
                 case 'Progress':
                     $html .= $this->parseTaskTime($this->duration_effective).'/';
@@ -754,10 +762,12 @@ class TimesheetTask extends Task
                     break;
                 case 'User':
                     $userName = getUsersName($this->userId);
+                    $html .= '<div class="colUser">';
                     $html .=  $userName[$this->userId];
+                    $html .= '</div>';
                     break;
                 case 'Total':
-                    $html = '<div class = "lineTotal" id = "'.$this->userId.'_'.$this->id.'">&nbsp;</div>';
+                    $html .= '<div class = "lineTotal colTotal" id = "'.$this->userId.'_'.$this->id.'">&nbsp;</div>';
                     break;
                 case 'Approval':
                     $html .= "<input type = 'text' style = 'border: none;' class = 'approval_switch'";
@@ -771,7 +781,7 @@ class TimesheetTask extends Task
                     $html .= '<div class = "modal-content">';
                     $html .= '<span class = "close " onclick = "closeNotes();">&times;</span>';
                     $html .= '<a align = "left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.")".'</a><br>';
-                    $html.= '<textarea class = "flat"  rows = "3" style = "width:350px;top:10px"';
+                    $html.= '<textarea class = "flat colNote"  rows = "3" style = "width:350px;top:10px"';
                     $html.= ' name = "notesTask['.$this->userId.']['.$this->id.']" ';
                     $html .= '>'.$this->note.'</textarea>';
                     $html .= '</div></div>';
