@@ -1,4 +1,7 @@
 # dolibarr_project_timesheet changelog
+4.0.16
+- fix favorite not wworking
+
 4.0.15
 - new filter on task info 
 - new: note icon changes if the note is filled
