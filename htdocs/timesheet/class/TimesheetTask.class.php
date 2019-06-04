@@ -27,6 +27,7 @@ class TimesheetTask extends Task
     public $table_element = 'project_task_time_approval';//!< Name of table without prefix where object is stored
     public $ProjectTitle = "Not defined";
     public $tasklist;
+    public $listed;
     // private $fk_project;
     private $taskParentDesc;
     //company info
@@ -60,6 +61,7 @@ class TimesheetTask extends Task
     public $duration;
     public $weekDays;
     public $userName;
+    
     /**
      *  init the static variable
      *

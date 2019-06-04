@@ -363,7 +363,7 @@ switch($action) {
             }
             $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             $htmlProjectArray = array('name'=>'Project', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
-            $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
+            $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);
             if($ajaxNbChar>=0) print "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
   //FIXME best to feed additionnal param to the search generic
@@ -385,7 +385,7 @@ switch($action) {
             }
             $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
             $htmlProjectTaskArray = array('name'=>'Projecttask', 'ajaxNbChar'=>$ajaxNbChar);
-            $sqlProjectTaskArray = array('table'=>'projet_task', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
+            $sqlProjectTaskArray = array('table'=>'projet_task', 'keyfield'=>'t.rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
         } else {
             print print_generic('projet_task', 'rowid', $object->project_task, 'ref', 'label');
