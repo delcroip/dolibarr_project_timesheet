@@ -205,6 +205,9 @@ class modTimesheet extends DolibarrModules
                 // 'categories_x'          to add a tab in category view(replace 'x' by type of category(0=product, 1=supplier, 2=customer, 3=member)
                 // 'opensurveypoll'          to add a tab in opensurvey poll view
         $this->tabs = array();
+		// Example:
+		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@project_cost:$user->rights->project_cost->read:/project_cost/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
+        $this->tabs[] = array('data'=>'project:+invoice:projectInvoice:timesheet@timesheet:$user->rights->facture->creer:/timesheet/TimesheetProjectInvoice.php?projectid=__ID__');  					// To add a new tab identified by code tabname1
         // Dictionaries
         if(! isset($conf->mymodule->enabled)) {
             $conf->mymodule=new stdClass();
@@ -395,7 +398,7 @@ class modTimesheet extends DolibarrModules
                                                                         'target'=>'',
                                                                         'user'=>2);
                    $r++;
-                  $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+               /*   $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
                                                                         'type'=>'left',                                        // This is a Left menu entry
                                                                         'titre'=>'projectInvoice',
                                                                         'mainmenu'=>'project',
@@ -406,7 +409,7 @@ class modTimesheet extends DolibarrModules
                                                                         'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                                                                         'perms'=>'$user->rights->facture->creer',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
                                                                         'target'=>'',
-                                                                        'user'=>2);
+                                                                        'user'=>2);*/
                   $r++;
                     $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
                                                                         'type'=>'left',                                        // This is a Left menu entry
