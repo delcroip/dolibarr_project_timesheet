@@ -210,3 +210,4 @@ blockTimespentDesc = Doesn't create timespent when an event is stopped
 thisMonth = This month
 lastWeek = Last week
 lastMonth = Last month
+thisWeek = This week
