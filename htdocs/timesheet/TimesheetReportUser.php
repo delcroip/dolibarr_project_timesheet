@@ -140,14 +140,14 @@ if($action == 'getpdf') {
 llxHeader('', $langs->trans('userReport'), '');
 $Form .= "<div id='quicklinks'>";
 //This week quick link
-$Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of this week"), 'dayxcard');
-$Form .= "&dateEnd=".dol_print_date(strtotime("last day of this week"), 'dayxcard')."'>".$langs->trans('thisWeek')."</a>";
+$Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard')."'>".$langs->trans('thisWeek')."</a>";
 //This month quick link
 $Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard')."'>".$langs->trans('thisMonth')."</a>";
 //last week quick link
-$Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of previous week"), 'dayxcard');
-$Form .= "&dateEnd=".dol_print_date(strtotime("last day of previous week"), 'dayxcard')."'>".$langs->trans('lastWeek')."</a>";
+$Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard')."'>".$langs->trans('lastWeek')."</a>";
 //Last month quick link
 $Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("last day of previous month"), 'dayxcard')."'>".$langs->trans('lastMonth')."</a>";
