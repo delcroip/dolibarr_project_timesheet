@@ -388,7 +388,7 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
         $objtemp = new Task($db);
         $objtemp->fetch($task);
         $taskLabel = $objtemp->label ;
-        $taskHTML .= str_replace('classfortooltip', 'classfortooltip colTasks', $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));    
+        $taskHTML .= str_replace('classfortooltip', 'classfortooltip colTasks', $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
     }
 
     $html = '<tr class = "'.$class.'"><th align = "left" width = "20%">'.$userName;
