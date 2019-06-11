@@ -208,6 +208,7 @@ class modTimesheet extends DolibarrModules
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@project_cost:$user->rights->project_cost->read:/project_cost/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
         $this->tabs[] = array('data'=>'project:+invoice:projectInvoice:timesheet@timesheet:$user->rights->facture->creer:/timesheet/TimesheetProjectInvoice.php?projectid=__ID__');  					// To add a new tab identified by code tabname1
+        $this->tabs[] = array('data'=>'project:+report:projectReport:timesheet@timesheet:true:/timesheet/TimesheetReportProject.php?projectSelected=__ID__');  					// To add a new tab identified by code tabname1
         // Dictionaries
         if(! isset($conf->mymodule->enabled)) {
             $conf->mymodule=new stdClass();
