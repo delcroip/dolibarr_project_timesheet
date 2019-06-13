@@ -27,6 +27,7 @@ class TimesheetTask extends Task
     public $table_element = 'project_task_time_approval';//!< Name of table without prefix where object is stored
     public $ProjectTitle = "Not defined";
     public $tasklist;
+    public $listed;
     // private $fk_project;
     private $taskParentDesc;
     //company info
@@ -60,6 +61,7 @@ class TimesheetTask extends Task
     public $duration;
     public $weekDays;
     public $userName;
+    
     /**
      *  init the static variable
      *
@@ -467,7 +469,7 @@ class TimesheetTask extends Task
         $taskParent = strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')!== false;
         $sql = 'SELECT p.rowid, p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo, pt.dateo, pt.datee, pt.planned_workload, pt.duration_effective';
         if($conf->global->TIMESHEET_HIDE_REF == 1) {
-            $sql .= ', p.title as title, pt.label as label, pt.planned_workload';
+            $sql .= ', p.ref as title, pt.ref as label, pt.planned_workload';
             if($taskParent) $sql .= ', pt.fk_task_parent, ptp.label as taskParentLabel';
         } else {
             $sql .= ", CONCAT(p.ref, ' - ', p.title) as title";
@@ -537,7 +539,7 @@ class TimesheetTask extends Task
         $this->timespent_fk_user = $userid;
         $dayelapsed = getDayInterval($timeStart, $timeEnd);
         if($dayelapsed<1)return -1;
-        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date, ptt.note";
+        $sql = "SELECT ptt.rowid, ptt.task_duration, DATE(ptt.task_datehour) AS task_date, ptt.note";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ";
         if(in_array($this->status, array(SUBMITTED, UNDERAPPROVAL, APPROVED, CHALLENGED, INVOICED))) {
@@ -545,8 +547,8 @@ class TimesheetTask extends Task
         } else {
             $sql .= " ptt.fk_task = '".$this->id."' ";
             $sql .= " AND (ptt.fk_user = '".$userid."') ";
-            $sql .= " AND (ptt.task_date>='".$this->db->idate($timeStart)."') ";
-            $sql .= " AND (ptt.task_date<'".$this->db->idate($timeEnd)."')";
+            $sql .= " AND (DATE(ptt.task_datehour)>='".$this->db->idate($timeStart)."') ";
+            $sql .= " AND (DATE(ptt.task_datehour)<'".$this->db->idate($timeEnd)."')";
         }
         dol_syslog(__METHOD__, LOG_DEBUG);
         for($i = 0;$i<$dayelapsed;$i++)
@@ -668,7 +670,7 @@ class TimesheetTask extends Task
                 $html .= "<td>\n";
                 // add note popup
                 if($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE) {
-                $html .= img_object('Note', 'generic', ' style = "display:inline-block;float:right;" onClick = "openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
+                $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
                 //note code
                 $html .= '<div class = "modal" id = "note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';
                 $html .= '<div class = "modal-content">';
@@ -714,32 +716,39 @@ class TimesheetTask extends Task
             $html = '';
             switch($title) {
                 case 'Project':
+                    $html .= '<div class="colProject">';
                     $objtemp = new Project($this->db);
                     $objtemp->fetch($this->fk_project);
-                    $html .=$objtemp->getNomUrl();
+                    $html .= str_replace('classfortooltip', 'classfortooltip colProject', $objtemp->getNomUrl(0, '', $conf->global->TIMESHEET_HIDE_REF));
+                    $html .= '</div>';
                     break;
                 case 'TaskParent':
+                    $html .= '<div class="colTaskParent">';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->fk_projet_task_parent);
-                    $html .=$objtemp->getNomUrl();
+                    $html .= str_replace('classfortooltip', 'classfortooltip colTaskParent', $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
+                    $html .= '</div>';
                     break;
                 case 'Tasks':
                     if($conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'.$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick = favOnOff(event,'.$this->fk_project.','.$this->id.') style = "cursor:pointer;">  ';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->id);
-                    $html .=$objtemp->getNomUrl();
+                    $html .= str_replace('classfortooltip', 'classfortooltip colTasks', $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
                     break;
                 case 'DateStart':
+                    $html .= '<div class="colDateStart">';
                     $html .= $this->date_start?dol_print_date($this->date_start, 'day'):'';
+                    $html .= '</div>';
                     break;
                 case 'DateEnd':
+                    $html .= '<div class="colDateEnd">';
                     $html .= $this->date_end?dol_print_date($this->date_end, 'day'):'';
+                    $html .= '</div>';
                     break;
                 case 'Company':
                     $soc = new Societe($this->db);
                     $soc->fetch($this->companyId);
-                    $html .=$soc->getNomUrl();
-                    //$html .= '<a href = "'.DOL_URL_ROOT.'/societe/card.php?mainmenu=companies&socid='.$this->companyId.'">'.$this->companyName.'</a>';
+                    $html .= str_replace('classfortooltip', 'classfortooltip colCompany', $soc->getNomUrl());
                     break;
                 case 'Progress':
                     $html .= $this->parseTaskTime($this->duration_effective).'/';
@@ -755,10 +764,12 @@ class TimesheetTask extends Task
                     break;
                 case 'User':
                     $userName = getUsersName($this->userId);
+                    $html .= '<div class="colUser">';
                     $html .=  $userName[$this->userId];
+                    $html .= '</div>';
                     break;
                 case 'Total':
-                    $html = '<div class = "lineTotal" id = "'.$this->userId.'_'.$this->id.'">&nbsp;</div>';
+                    $html .= '<div class = "lineTotal colTotal" id = "'.$this->userId.'_'.$this->id.'">&nbsp;</div>';
                     break;
                 case 'Approval':
                     $html .= "<input type = 'text' style = 'border: none;' class = 'approval_switch'";
@@ -767,13 +778,13 @@ class TimesheetTask extends Task
                     $html .= " onfocus = 'this.blur()' readonly = 'true' size = '1' value = '&#x2753;' onclick = 'tristate_Marks(this)' />\n";
                     break;
                 case 'Note':
-                    $html .= img_object('', 'generic', ' onClick = "openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\')"');
+                    $html .= img_picto('Note', empty($this->note)?'filenew':'file', ' id="img_noteTask_'.$this->userId.'_'.$this->id.'" onClick = "openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\');"');
                     $html .= '<div class = "modal" id = "noteTask_'.$this->userId.'_'.$this->id.'" >';
                     $html .= '<div class = "modal-content">';
-                    $html .= '<span class = "close " onclick = "closeNotes()">&times;</span>';
+                    $html .= '<span class = "close " onclick = "closeNotes();">&times;</span>';
                     $html .= '<a align = "left">'.$langs->trans('Note').' ('.$this->ProjectTitle.', '.$this->description.")".'</a><br>';
-                    $html.= '<textarea class = "flat"  rows = "3" style = "width:350px;top:10px"';
-                    $html.= ' name = "notesTask['.$this->appId.']" ';
+                    $html.= '<textarea class = "flat colNote"  rows = "3" style = "width:350px;top:10px"';
+                    $html.= ' name = "notesTask['.$this->userId.']['.$this->id.']" ';
                     $html .= '>'.$this->note.'</textarea>';
                     $html .= '</div></div>';
             }
@@ -1078,9 +1089,9 @@ class TimesheetTask extends Task
         $noteUpdate = 0;
         dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user = $userId;
-        if(!empty($note) && $note!=$this->note) {
+        if(!empty($note) && $note != $this->note) {
             $this->note = $note;
-            $noteUpdate++;
+            $noteUpdate = true;
         }
         if(is_array($timesheetPost))foreach($timesheetPost as $dayKey => $dayData) {
             $wkload = $dayData[0];
@@ -1102,11 +1113,11 @@ class TimesheetTask extends Task
             $this->updateTimeUsed();// needed upon delete
         }
         if($noteUpdate) {
-            $retNote = $this->update($user);
+            $retNote = ($this->appId>0)?$this->update($user):$this->create($user);
             if($retNote) {
                 $_SESSION['task_timesheet'][$timestamp]['NoteUpdated']++;
             } else{
-                 $_SESSION['task_timesheet'][$timestamp]['updateError']++;
+                $_SESSION['task_timesheet'][$timestamp]['updateError']++;
             }
         }
         $ret = 0;

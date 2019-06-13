@@ -28,6 +28,7 @@ include 'core/lib/timesheet.lib.php';
 require_once DOL_DOCUMENT_ROOT .'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 //get param
 $staticProject = new Project($db);
 $projectId = GETPOST('projectid', 'int');
@@ -79,7 +80,7 @@ $langs->load('timesheet@timesheet');
             $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task = t.rowid';
             if($invoicabletaskOnly == 1)$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
             $sql .= ' WHERE t.fk_projet='.$projectId;
-                $sql .= " AND tt.task_date BETWEEN '".$db->idate($dateStart);
+                $sql .= " AND DATE(tt.task_datehour) BETWEEN '".$db->idate($dateStart);
                 $sql .= "' AND '".$db->idate($dateEnd)."'";
              if($invoicabletaskOnly == 1)$sql .= ' AND tske.invoiceable = \'1\'';
             if($ts2Invoice!='all') {
@@ -276,23 +277,24 @@ $langs->load('timesheet@timesheet');
             require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
             $htmlother = new FormOther($db);
             $sqlTail = '';
-            if(!$user->admin) {
-                $sqlTailJoin = ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON t.rowid = element_id ';
-                $sqlTailJoin .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
-                $sqlTailWhere = ' ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active = \'1\'  ';
-                $sqlTailWhere .= ' AND fk_socpeople = \''.$userid.'\' and t.fk_statut = \'1\'';
-            }
+            //if(!$user->admin) {
+            //    $sqlTailJoin = ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON t.rowid = element_id ';
+            //    $sqlTailJoin .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
+            //    $sqlTailWhere = ' ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active = \'1\'  ';
+            //    $sqlTailWhere .= ' AND fk_socpeople = \''.$userid.'\' and t.fk_statut = \'1\'';
+            //}
             $Form = '<form name = "settings" action="?step=2" method = "POST" >'."\n\t";
             $Form .= '<table class = "noborder" width = "100%">'."\n\t\t";
             $Form .= '<tr class = "liste_titre" width = "100%" ><th colspan = "2">'.$langs->trans('generalInvoiceProjectParam').'</th></tr>';
             $invoicingMethod = $conf->global->TIMESHEET_INVOICE_METHOD;
-            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('Project').'</th><th align = "left" width = "80%" >';
+            //$Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('Project').'</th><th align = "left" width = "80%" >';
             //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL'=>'NULL'), $sqlTailTable = '', $ajaxUrl = '')
-            $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
+            //$ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             //$Form .= select_generic('projet', 'rowid', 'projectid', 'ref', 'title', $projectId, ' - ', $sqlTailWhere, '', null, , $ajaxNbChar);
-            $htmlProjectArray = array('name'=>'projectid', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
-            $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'t.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
-            $Form .= select_sellist($sqlProjectArray, $htmlProjectArray, $projectId);
+            //$htmlProjectArray = array('name'=>'projectid', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
+            //$sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'t.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
+            //$Form .= select_sellist($sqlProjectArray, $htmlProjectArray, $projectId);
+            $Form .= '<input type = "hidden" name = "projectid" value = "'.$projectId.'">';
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('DateStart').'</th>';
             $Form .= '<th align = "left" width = "80%">'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('DateEnd').'</th>';
@@ -337,6 +339,11 @@ $langs->load('timesheet@timesheet');
 ****************************************************/
 $morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader('', $langs->trans('TimesheetToInvoice'), '', '', '', '', $morejs);
+print "<div> <!-- module body-->";
+$project= new Project($db);
+$project->fetch($projectId);
+$headProject=project_prepare_head($project);
+dol_fiche_head($headProject, 'invoice', $langs->trans("Project"), 0, 'project');
 print $Form;
 //javascript to reload the page with the poject selected
 print '
@@ -370,16 +377,27 @@ $db->close();
  */
 function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, $seller, $buyer)
 {
-    global $form, $langs, $conf;
+    global $form, $langs, $conf, $db;
+    $taskLabel = '';
     $userName = ($user == 'any')?(' - '):print_generic('user', 'rowid', $user, 'lastname', 'firstname', ' ');
-    $taskLabel = ($task == 'any')?(' - '):print_generic('projet_task', 'rowid', $task, 'ref', 'label', ' ');
+    if($task == 'any'){
+        $taskLabel = ' - ';
+        $taskHTML = ' - ';
+    } else {
+        require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+        $objtemp = new Task($db);
+        $objtemp->fetch($task);
+        $taskLabel = $objtemp->label ;
+        $taskHTML .= str_replace('classfortooltip', 'classfortooltip colTasks', $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
+    }
+
     $html = '<tr class = "'.$class.'"><th align = "left" width = "20%">'.$userName;
-    $html .= '</th><th align = "left" width = "20%">'.$taskLabel;
+    $html .= '</th><th align = "left" width = "20%">'.$taskHTML;
     $html .= '<input type = "hidden"   name = "userTask['.$user.']['.$task.'][userName]" value = "'.$userName.'">';
     $html .= '<input type = "hidden"   name = "userTask['.$user.']['.$task.'][taskLabel]"  value = "'. $taskLabel.'">';
     $html .= '<input type = "hidden"   name = "userTask['.$user.']['.$task.'][taskTimeList]"  value = "'. $tasktimelist.'">';
     $defaultService = getDefaultService($user, $task);
-    $addchoices = array('-999'=> $langs->transnoentities('not2invoice'), -1=> $langs->transnoentities('Custom'));
+    $addchoices = array(0 => $langs->transnoentities('Custom').': '.$taskLabel, '-999'=> $langs->transnoentities('not2invoice'));
     $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
     $html .= '</th><th >';
     $html .= select_sellist(array('table'=> 'product', 'keyfield'=> 'rowid', 'fields'=>'ref,label', 'where'=>' tosell = 1 AND fk_product_type = 1'),

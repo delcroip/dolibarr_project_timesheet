@@ -1,7 +1,27 @@
 # dolibarr_project_timesheet changelog
+4.0.16
+- fix favorite not wworking
+
+4.0.15
+- new filter on task info 
+- new: note icon changes if the note is filled
+- new: quick link for report (this week ...)
+- fix: error in 4.0.14 change for project report
+
+4.0.14
+- fix: error in project report from 4.0.11
+4.0.13
+- fix: report take now into account time in the end date
+
+4.0.12
+- fix: correct the reports (first line was always wrong)
+
 4.0.11
+- clean: use task_datehour iso task_date to retrieve time spent
+- new: hide ref become hide title
 - fix company link not working
-- new: add export button on the user report
+- fix warning when reopening an empty approval submission
+- fix #83 version compare issue on php 5
 
 4.0.10
  - fix total not display in timesheet page

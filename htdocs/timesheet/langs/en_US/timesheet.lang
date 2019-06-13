@@ -1,6 +1,3 @@
-# Dolibarr language file - English - timesheet
-# Translators
-# (6),  (403)
 adddocs = attached documents
 adddocsDesc = Enable to add documents attached to the timesheets
 addForOther = register time spent for others.
@@ -68,8 +65,8 @@ GoTo = Go to
 Heartbeat = Heartbeat
 hidedraft = Hide draft
 hideDraftDesc = Hide the tasks related to draft projects
-hideref = hide references
-hideRefDesc = hide or not the references of the tasks and projects
+hideref = hide label
+hideRefDesc = hide or not the tasks label and projects title
 hidezeros = Hide Zeros
 hideZerosDesc = Hide the duration of the task when it's null (0 or 00:00)
 Holiday = Holiday
@@ -137,7 +134,7 @@ ProgressColDesc = Shows the progress of the task against the estimated time
 project = Project
 ProjectApprovalDesc = The project manager will have to approve the timesheets concerning his projects.
 ProjectColDesc = Shows the project's reference and  title linked to the task
-projectInvoice = Invoice project.
+projectInvoice = Invoice the time
 projectReport = Project report
 Projecttasktimelist = Tasktime id list
 ProjectTimeReport = Project timesheet report
@@ -210,3 +207,7 @@ pdfHideSignbox = Hide PDF signbox
 pdfHideSignboxDesc = Hide the signbox in the PDF
 blockTimespent = Block timespent creation
 blockTimespentDesc = Doesn't create timespent when an event is stopped
+thisMonth = This month
+lastWeek = Last week
+lastMonth = Last month
+thisWeek = This week

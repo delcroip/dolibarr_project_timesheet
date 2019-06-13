@@ -145,7 +145,25 @@ if($projectSelectedId   &&!empty($dateStart)) {
             dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'));
     }
 }
-$Form = '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
+$Form .= "<div id='quicklinks'>";
+//This week quick link
+$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard')."'>".$langs->trans('thisWeek')."</a>";
+//This month quick link
+$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard')."'>".$langs->trans('thisMonth')."</a>";
+//last week quick link
+$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard')."'>".$langs->trans('lastWeek')."</a>";
+//Last month quick link
+$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("last day of previous month"), 'dayxcard')."'>".$langs->trans('lastMonth')."</a>";
+//today
+$today = dol_print_date(mktime(), 'dayxcard');
+$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".$today;
+$Form .= "&dateEnd=".$today."'>".$langs->trans('today')."</a> ";
+$Form .= "</div>";
+$Form .= '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
         <table class = "noborder"  width = "100%">
         <tr>
         <td>'.$langs->trans('Project').'</td>

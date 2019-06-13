@@ -103,7 +103,7 @@ switch($action) {
         if(isset($_SESSION['task_timesheet'][$timestamp])) {
             if($tsUserId>0) {
                 $ret = 0;
-                $notesTask = GETPOST('notesTask', 'array');
+                $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
                 $tasktab = GETPOST('task', 'array')[$tsUserId];
                 $task_timesheet->loadFromSession($timestamp, $tsUserId);
@@ -122,7 +122,6 @@ switch($action) {
                 }
         //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
                 TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
-            
             } elseif(GETPOSTISSET('recall')) {
                 $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
                 //$task_timesheet->status = "DRAFT";
@@ -202,7 +201,7 @@ $Form .= '<script>document.getElementById("defaultOpen").click()</script>';
 //Javascript
 //$Form .= ' <script type = "text/javascript" src = "core/js/timesheet.js"></script>'."\n";
 $Form .= '<script type = "text/javascript">'."\n\t";
-$Form .= 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');';
+$Form .= 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');closeNotes();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $Form;

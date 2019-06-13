@@ -344,11 +344,22 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
         $separator);
 }
 
-function getNomUrl($type, $htmlcontent='1', $id=0,$ref=''){
+/** generic function to call getNoimUrl
+ *
+ * @global DoliDB $db database object or alias
+ * @param string $type object name
+ * @param int $htmlcontent show or not htmlcontent
+ * @param int  $id  id of the object
+ * @param string $ref   ref of the object
+ * @return string   getNomUrl HTML code
+ */
+function getNomUrl($type, $htmlcontent = '1', $id = 0, $ref = '')
+{
     global $db;
     $object=null;
     $link='';
-    switch (strtolower(str_replace('_', '', $type))){
+    switch (strtolower(str_replace('_', '', $type)))
+    {
         case "supplier":
         case "fournisseur":
             $type="Fournisseur";
@@ -402,17 +413,20 @@ function getNomUrl($type, $htmlcontent='1', $id=0,$ref=''){
             break;
         case "vat":
             $type="TVA";
+            break;
         case "expense":
             $type="ExpenseReport";
         default:
             break;
     }
-    if (class_exists($type)){
+    if (class_exists($type))
+    {
         $object = new $type($db);
         $object->fetch($id);
         $link = $object->getNomUrl();
-    }else{
-        $link="ERROR: type:${$type} not supported or class not loaded";
+    }else
+    {
+        $link = "ERROR: type:${$type} not supported or class not loaded";
     }
     return $link;
 }
