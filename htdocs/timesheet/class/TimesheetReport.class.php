@@ -362,14 +362,14 @@ class TimesheetReport
         $resArray = $this->getReportArray();
         $numTaskTime = count($resArray);
         $i = 0;
+        $Curlvl0 = 0; // related to get array
+        $Curlvl1 = 0;
+        $Curlvl2 = 0;
         if($numTaskTime > 0){
             // current
+
             foreach($resArray as $key => $item) {
-                if($Curlvl0 == 0) {
-                    $Curlvl0 = $key;
-                    $Curlvl1 = $key;
-                    $Curlvl2 = $key;
-                }
+
                 // reformat date to avoid UNIX time
                 //add the LVL 2 total when  change detected in Lvl 2 & 1 &0
                 if(($resArray[$Curlvl2][$this->lvl2Key] != $item[$this->lvl2Key])
@@ -422,7 +422,7 @@ class TimesheetReport
                 }
                 $lvl3Total+=$item['duration'];
                 $i++;
-                if ($i == 1 || $i == $numTaskTime){
+                if ( $i == $numTaskTime){
                     $lvl2HTML .=$this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Title], $lvl3Total, $lvl3HTML, $short, $lvl3Notes);
                     //empty lvl 3 Notes to start anew
                     $lvl3Notes = '';
