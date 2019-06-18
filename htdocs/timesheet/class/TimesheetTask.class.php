@@ -762,6 +762,11 @@ class TimesheetTask extends Task
                         $html .= '('.$this->parseTaskTime($this->planned_workload_approval).')';
                     }
                     break;
+                case 'ProgressDeclared':
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+                    $formother = new FormOther($db);
+                    $html.= $formother->select_percent($this->progress, 'progressTask['.$this->userId.']['.$this->id.']', 0, 5, 0, 100, 1);
+                    break;
                 case 'User':
                     $userName = getUsersName($this->userId);
                     $html .= '<div class="colUser">';
@@ -919,6 +924,7 @@ class TimesheetTask extends Task
         $arRet['recipient'] = $this->recipient;
         $arRet['sender'] = $this->sender;
         $arRet['task_timesheet'] = $this->task_timesheet;
+        $arRet['progress'] = $this->progress;
         switch($mode) {
             default:
             case 0:
@@ -981,11 +987,12 @@ class TimesheetTask extends Task
     {
         $this->db->begin();
         $error = 0;
-        $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task AS pt "
-            ."SET duration_effective = (SELECT SUM(ptt.task_duration) "
-            ."FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt "
-            ."WHERE ptt.fk_task = '".$this->id."') "
-            ."WHERE pt.rowid = '".$this->id."' ";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task AS pt ";
+        $sql .= "SET duration_effective = (SELECT SUM(ptt.task_duration) ";
+        $sql .= "FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt ";
+        $sql .= "WHERE ptt.fk_task = '".$this->id."'), ";
+        $sql .= " progress = '".$this->progress."' ";
+        $sql .= "WHERE pt.rowid = '".$this->id."' ";
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
@@ -1079,10 +1086,11 @@ class TimesheetTask extends Task
     *  @param    object              $Submitter             user who submit
     *  @param    array(int)               $tasktimeid          the id of the tasktime if any
     *  @param     int               $timestamp          timesheetweek
-        *  @param     string              $note        notes
+    *  @param     string              $note        notes
+    *  @param     string              $progress        stated progress
     *  @return     int                                                       1 => succes, 0 => Failure
     */
-    public function postTaskTimeActual($timesheetPost, $userId, $Submitter, $timestamp, $note = '')
+    public function postTaskTimeActual($timesheetPost, $userId, $Submitter, $timestamp, $note = '', $progress = '')
     {
         global $conf, $user;
         $ret = 0;
@@ -1092,6 +1100,10 @@ class TimesheetTask extends Task
         if(!empty($note) && $note != $this->note) {
             $this->note = $note;
             $noteUpdate = true;
+        }
+        if(!empty($progress) && $progress != $this->progress) {
+            $this->progress = $progress;
+            $progressUpdate = true;
         }
         if(is_array($timesheetPost))foreach($timesheetPost as $dayKey => $dayData) {
             $wkload = $dayData[0];
@@ -1109,10 +1121,10 @@ class TimesheetTask extends Task
             $_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']+=$lineresult['timeSpendDeleted'];
             $_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']+=$lineresult['timeSpendCreated'];
         }
-        if(is_array($_SESSION['task_timesheet'][$timestamp]) && array_sum($_SESSION['task_timesheet'][$timestamp])>$_SESSION['task_timesheet'][$timestamp]['updateError']) {
+        if($progressUpdate || (is_array($_SESSION['task_timesheet'][$timestamp]) && array_sum($_SESSION['task_timesheet'][$timestamp])>$_SESSION['task_timesheet'][$timestamp]['updateError'])) {
             $this->updateTimeUsed();// needed upon delete
         }
-        if($noteUpdate) {
+        if($noteUpdate ) {
             $retNote = ($this->appId>0)?$this->update($user):$this->create($user);
             if($retNote) {
                 $_SESSION['task_timesheet'][$timestamp]['NoteUpdated']++;
@@ -1120,6 +1132,7 @@ class TimesheetTask extends Task
                 $_SESSION['task_timesheet'][$timestamp]['updateError']++;
             }
         }
+
         $ret = 0;
         if(is_array($_SESSION['task_timesheet'][$timestamp]))
             $ret = array_sum($_SESSION['task_timesheet'][$timestamp])-$_SESSION['task_timesheet'][$timestamp]['updateError'];

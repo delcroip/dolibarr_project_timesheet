@@ -217,7 +217,6 @@ class TimesheetUserTasks extends CommonObject
                 $sql .= ' t.date_creation, ';
                 $sql .= ' t.date_modification, ';
                 $sql .= ' t.fk_user_modification, ';
-                //$sql .= ' t.fk_task, ';
                 $sql .= ' t.note';
 
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
@@ -481,7 +480,7 @@ public function fetchTaskTimesheet($userid = '')
      // Save the param in the SeSSION
      $tasksList = array();
      $sqlwhiteList = '';
-    $sql = 'SELECT DISTINCT element_id as taskid, prj.fk_soc, tsk.fk_projet, ';
+    $sql = 'SELECT DISTINCT element_id as taskid, prj.fk_soc, tsk.fk_projet, tsk.progress, ';
     $sql .= 'tsk.fk_task_parent, tsk.rowid, app.rowid as appid, prj.ref as prjRef, tsk.ref as tskRef';
     $sql .= $sqlwhiteList;
     $sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
@@ -527,7 +526,7 @@ public function fetchTaskTimesheet($userid = '')
                     $tasksList[$i]->date_start_approval = $this->date_start;
                     $tasksList[$i]->date_end_approval = $this->date_end;
                     $tasksList[$i]->task_timesheet = $this->id;
-                    //$tasksList[$i]->listed = $obj->listed;
+                    $tasksList[$i]->progress = $obj->progress;
                     $tasksList[$i]->listed = $whiteList[$obj->taskid];
                     $i++;
                     $ret[$obj->appid] = 1;
@@ -551,9 +550,11 @@ public function fetchTaskTimesheet($userid = '')
  * function to post the all actual submitted
  *
  *  @param    array(int)               $tabPost               array sent by POST with all info about the task
+ *  @param    array(int)               $notes                  array sent by POST with the task notes
+ *  @param    array(int)               $progress               array sent by POST with the task dstated progress
  *  @return     int                                                        number of tasktime creatd/changed
  */
-public function updateActuals($tabPost, $notes = array())
+public function updateActuals($tabPost, $notes = array(), $progress = array())
 {
      //FIXME, tta should be creted
     if($this->status == APPROVED)
@@ -572,7 +573,7 @@ public function updateActuals($tabPost, $notes = array())
             foreach($this->taskTimesheet as $key  => $row) {
                 $tasktime = new TimesheetTask($this->db);
                 $tasktime->unserialize($row);
-                $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->id]);
+                $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->id], $progress[$tasktime->id]);
                 $this->taskTimesheet[$key] = $tasktime->serialize();
             }
         }

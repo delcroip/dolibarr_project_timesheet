@@ -104,6 +104,7 @@ switch($action) {
             if($tsUserId>0) {
                 $ret = 0;
                 $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
+                $progressTask = GETPOST('progressTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
                 $tasktab = GETPOST('task', 'array')[$tsUserId];
                 $task_timesheet->loadFromSession($timestamp, $tsUserId);
@@ -112,7 +113,7 @@ switch($action) {
                     $task_timesheet->note = $notesTaskApproval[$key];
                     $task_timesheet->update($user);
                 }
-                $ret = $task_timesheet->updateActuals($tasktab, $notesTask);
+                $ret = $task_timesheet->updateActuals($tasktab, $notesTask, $progressTask);
                 if($submitted) {
                         $task_timesheet->setStatus($user, SUBMITTED);
                         $ret++;

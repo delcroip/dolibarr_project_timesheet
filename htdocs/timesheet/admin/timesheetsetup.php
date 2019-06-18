@@ -150,6 +150,7 @@ switch($action) {
         $showCompany = getpost('showCompany', 'int');
         $showNote = getpost('showNote', 'int');
         $showTotal = getpost('showTotal', 'int');
+        $showProgressDeclared = getpost('showProgressDeclared', 'int');
         $headers = $showNote?'Note':'';
         $headers .= $showCompany?(empty($headers)?'':'||').'Company':'';
         $headers .= $showProject?(empty($headers)?'':'||').'Project':'';
@@ -158,6 +159,7 @@ switch($action) {
         $headers .= $showDateStart?(empty($headers)?'':'||').'DateStart':'';
         $headers .= $showDateEnd?(empty($headers)?'':'||').'DateEnd':'';
         $headers .= $showProgress?(empty($headers)?'':'||').'Progress':'';
+        $headers .= $showProgressDeclared?(empty($headers)?'':'||').'ProgressDeclared':'';
         $headers .= $showTotal?(empty($headers)?'':'||').'Total':'';
         dolibarr_set_const($db, "TIMESHEET_HEADERS", $headers, 'chaine', 0, '', $conf->entity);
         //color handling
@@ -248,6 +250,9 @@ foreach($headersT as $header) {
             break;
         case 'Total':
             $showTotal = 1;
+            break;
+        case 'ProgressDeclared':
+            $showProgressDeclared = 1;
             break;
         default:
             break;
@@ -398,6 +403,11 @@ echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("Progress");
 echo '</td><td align = "left">'.$langs->trans("ProgressColDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "showProgress" value = "1" ';
 echo (($showProgress == '1')?'checked':'')."></td></tr>\n\t\t";
+// ProgresD
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("ProgressDeclared");
+echo '</td><td align = "left">'.$langs->trans("ProgressDeclaredColDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "showProgressDeclared" value = "1" ';
+echo (($showProgressDeclared == '1')?'checked':'')."></td></tr>\n\t\t";
 // Company
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("Company");
 echo '</td><td align = "left">'.$langs->trans("CompanyColDesc").'</td>';
