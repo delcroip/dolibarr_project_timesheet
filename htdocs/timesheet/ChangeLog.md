@@ -1,4 +1,14 @@
 # dolibarr_project_timesheet changelog
+
+4.0.18
+- fix report issue (first group splited in two)
+- new: update task progress declared from timesheet
+
+4.0.17
+- new keeping project when moving to report
+- fix last week/month report short links
+- clean: project invoice as a project tab
+
 4.0.16
 - fix favorite not wworking
 
