@@ -15,6 +15,7 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
 * Free download: https://sourceforge.net/projects/dolibarr-timesheet
 * Github: https://github.com/delcroip/dolibarr_project_timesheet
 * FR development thread: https://www.dolibarr.fr/forum/11-suggestionsnouvelles-fonctionnalites/49379-timesheet-vue-pour-les-projets
+* Translation project https://lokalise.co/public/761399855cb829e995d448.06757516/
 
 # Installation
 * Download and unzip the module
