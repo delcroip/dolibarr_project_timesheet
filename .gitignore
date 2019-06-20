@@ -1,4 +1,5 @@
-/nbproject/0
-/nbproject/
-/htdocs/timesheet/php_errors.log
-build/dump.sql
+nbproject/0
+nbproject/
+htdocs/timesheet/php_errors.log
+htdocs/timesheet/core/lib/dev.inc.php
+build/*
