@@ -634,7 +634,7 @@ public function updateStatus($user, $status = 0)
     } else{ // no status
         $updatedStatus = 2;
     }
-    if(count($this->taskTimesheet)<1)$this->fetchTaskTimesheet();
+    if(!is_array($this->taskTimesheet) || count($this->taskTimesheet)<1)$this->fetchTaskTimesheet();
     if($status == $this->status) { // to avoid eternal loop
         return 1;
     }
