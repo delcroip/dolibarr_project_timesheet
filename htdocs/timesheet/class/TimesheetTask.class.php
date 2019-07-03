@@ -1110,7 +1110,7 @@ class TimesheetTask extends Task
             $daynote = $dayData[1];
             $duration = 0;
             if($conf->global->TIMESHEET_TIME_TYPE == "days") {
-                $duration = $wkload*$conf->global->TIMESHEET_DAY_DURATION*3600;
+                $duration = (float) $wkload*$conf->global->TIMESHEET_DAY_DURATION*3600;
             } else {
                 $durationTab = date_parse($wkload);
                 $duration = $durationTab['minute']*60+$durationTab['hour']*3600;
