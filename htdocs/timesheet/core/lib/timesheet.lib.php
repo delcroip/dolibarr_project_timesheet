@@ -59,8 +59,6 @@ define('EVENT_AUTO_STOP', 4);
 // number of second in a day, used to make the code readable
 define('SECINDAY', 86400);
 
-$conf->global->TIMESHEET_ROUND = 3;
-
 
 // for display trads
 global $langs;

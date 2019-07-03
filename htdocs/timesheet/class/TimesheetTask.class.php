@@ -541,7 +541,7 @@ class TimesheetTask extends Task
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, DATE(ptt.task_datehour) AS task_date, ptt.note";
         if(version_compare(DOL_VERSION, "4.9.9")>=0) {
-            $sql .=', (ptt.invoice_id < 0)  AS invoiced';
+            $sql .=', (ptt.invoice_id > 0)  AS invoiced';
         }else{
             $sql .=', 0 AS invoiced'; 
         }
@@ -638,8 +638,8 @@ class TimesheetTask extends Task
         $html = '';
         $dayelapsed = getDayInterval($this->date_start_approval, $this->date_end_approval);
         // day section
-        $timetype = $conf->global->TIMESHEET_TIME_TYPE;
-        $dayshours = $conf->global->TIMESHEET_DAY_DURATION;
+        $unblockInvoiced = $conf->global->TIMESHEET_UNBLOCK_INVOICED;
+        $unblockClosedDay = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
         $hidezeros = $conf->global->TIMESHEET_HIDE_ZEROS;
         $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
         $hidden = false;
@@ -665,21 +665,23 @@ class TimesheetTask extends Task
                 $isOpen = $isOpen && (($stopDates == 0) ||($stopDates >= $today));
                 $isOpen = $isOpen && ($this->pStatus < "2") ;
                 $isOpenDay = $opendays[date("N", $today)];
-                //FIXME add a condition to allow time entry on closed day
-                $isOpen = $isOpen  && $isOpenDay;
+                $isInvoiced = $this->tasklist[$dayCur]['invoiced'];
+                if($unblockClosedDay == 0) $isOpen = $isOpen  && $isOpenDay;
+                if($unblockInvoiced == 0) $isOpen = $isOpen  && !$isInvoiced;
 
                 $bkcolor = '';
-                if($isOpen) {
+                if(!$isOpenDay){
+                    $bkcolor = 'background:#'.$statusColor['FROZEN'];
+                }elseif($isOpen) {
                     $bkcolor = 'background:#'.$statusColor[$this->status];
-                    if($this->tasklist[$dayCur]['invoiced']){
-                        $bkcolor = 'background:#'.$statusColor[INVOICED];
-                    }elseif(!$isOpenDay){
-                        $bkcolor = 'background:#'.$statusColor['FROZEN'];
-                    }elseif($dayWorkLoadSec!=0 && $this->status == DRAFT){
+                    if($dayWorkLoadSec!=0 && $this->status == DRAFT){
                         $bkcolor = 'background:#'.$statusColor['VALUE'];
                     }
-                } else {
+                }else {
                     $bkcolor = 'background:#'.$statusColor['FROZEN'];
+                }
+                if($isInvoiced){
+                    $bkcolor = 'background:#'.$statusColor[INVOICED];
                 }
                 $html .= "<td>\n";
                 // add note popup

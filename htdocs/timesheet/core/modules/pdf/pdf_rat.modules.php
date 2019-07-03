@@ -509,7 +509,7 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
     $pdf->SetTextColor(0, 0, 60);
     $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->ref[$projectid]), '', 'R');
     //worke name
-    if(!empty($userName) && !$conf->global->TIMESHEET_HIDE_NAME) {
+    if(!empty($userName) && !$conf->global->TIMESHEET_PDF_HIDE_NAME) {
         $pdf->SetXY($this->marge_gauche, $height+$default_font_size + 3);
         $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
     }

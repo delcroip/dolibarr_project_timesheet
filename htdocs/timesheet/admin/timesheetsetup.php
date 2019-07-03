@@ -34,52 +34,70 @@ if(!$user->admin) {
 $action = getpost('action', 'alpha');
 $attendance = $conf->global->TIMESHEET_ATTENDANCE;
 $timetype = $conf->global->TIMESHEET_TIME_TYPE;
-$timeSpan = $conf->global->TIMESHEET_TIME_SPAN;
 $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
-$maxhoursperday = $conf->global->TIMESHEET_DAY_MAX_DURATION;
-$maxhoursperevent = $conf->global->TIMESHEET_EVENT_MAX_DURATION;
-$minsecondsperevent = $conf->global->TIMESHEET_EVENT_MIN_DURATION;
-$defaulthoursperevent = $conf->global->TIMESHEET_EVENT_DEFAULT_DURATION;
-$maxApproval = $conf->global->TIMESHEET_MAX_APPROVAL;
+$timeSpan = $conf->global->TIMESHEET_TIME_SPAN;
+//hide/show
 $hidedraft = $conf->global->TIMESHEET_HIDE_DRAFT;
-$hideref = $conf->global->TIMESHEET_HIDE_REF;
 $hidezeros = $conf->global->TIMESHEET_HIDE_ZEROS;
-$approvalbyweek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
 $headers = $conf->global->TIMESHEET_HEADERS;
+$hideref = $conf->global->TIMESHEET_HIDE_REF;
+$showTimespentNote = $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE;
+
+$adddocs = $conf->global->TIMESHEET_ADD_DOCS;
+
+
+$addForOther = $conf->global->TIMESHEET_ADD_FOR_OTHER;
 $whiteListMode = $conf->global->TIMESHEET_WHITELIST_MODE;
 $whiteList = $conf->global->TIMESHEET_WHITELIST;
-$dropdownAjax = $conf->global->MAIN_DISABLE_AJAX_COMBOX;
+
 $draftColor = $conf->global->TIMESHEET_COL_DRAFT;
 $valueColor = $conf->global->TIMESHEET_COL_VALUE;
 $frozenColor = $conf->global->TIMESHEET_COL_FROZEN;
 $submittedColor = $conf->global->TIMESHEET_COL_SUBMITTED;
 $approvedColor = $conf->global->TIMESHEET_COL_APPROVED;
-$rejectedColor = $conf->global->TIMESHEET_COL_REJECTED;
 $cancelledColor = $conf->global->TIMESHEET_COL_CANCELLED;
+$rejectedColor = $conf->global->TIMESHEET_COL_REJECTED;
+$maxhoursperday = $conf->global->TIMESHEET_DAY_MAX_DURATION;
 $addholidaytime = $conf->global->TIMESHEET_ADD_HOLIDAY_TIME;
-$adddocs = $conf->global->TIMESHEET_ADD_DOCS;
 $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
-$addForOther = $conf->global->TIMESHEET_ADD_FOR_OTHER;
-$noteOnPDF = $conf->global->TIMESHEET_PDF_NOTEISOTASK;
-$hidesignbox = $conf->global->TIMESHEET_PDF_HIDE_SIGNBOX;
-$showTimespentNote = $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE;
-//Invoice part
-$invoicetasktime = $conf->global->TIMESHEET_INVOICE_TASKTIME;
-$invoicetimetype = $conf->global->TIMESHEET_INVOICE_TIMETYPE;
-$invoicemethod = $conf->global->TIMESHEET_INVOICE_METHOD;
-$invoiceservice = $conf->global->TIMESHEET_INVOICE_SERVICE;
-$invoiceshowtask = $conf->global->TIMESHEET_INVOICE_SHOW_TASK;
-$invoiceshowuser = $conf->global->TIMESHEET_INVOICE_SHOW_USER;
-$searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
-$pdfhidesignbox = intval($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX);
-$blockTimespent = $conf->global->TIMESHEET_EVENT_NOT_CREATE_TIMESPENT;
-if(count($opendays)!=8) {
-    $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
-}
+//approval
+$approvalbyweek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
+$maxApproval = $conf->global->TIMESHEET_MAX_APPROVAL;
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 if(count($apflows) != 6) {
     $apflows = array('_', '0', '0', '0', '0', '0');
 }
+//Invoice part
+$invoicemethod = $conf->global->TIMESHEET_INVOICE_METHOD;
+$invoicetasktime = $conf->global->TIMESHEET_INVOICE_TASKTIME;
+$invoicetimetype = $conf->global->TIMESHEET_INVOICE_TIMETYPE;
+$invoiceservice = $conf->global->TIMESHEET_INVOICE_SERVICE;
+$invoiceshowtask = $conf->global->TIMESHEET_INVOICE_SHOW_TASK;
+$invoiceshowuser = $conf->global->TIMESHEET_INVOICE_SHOW_USER;
+
+//event
+$maxhoursperevent = $conf->global->TIMESHEET_EVENT_MAX_DURATION;
+$minsecondsperevent = $conf->global->TIMESHEET_EVENT_MIN_DURATION;
+$defaulthoursperevent = $conf->global->TIMESHEET_EVENT_DEFAULT_DURATION;
+$blockTimespent = $conf->global->TIMESHEET_EVENT_NOT_CREATE_TIMESPENT;
+//pdf
+$pdfhidesignbox = intval($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX);
+$noteOnPDF = $conf->global->TIMESHEET_PDF_NOTEISOTASK;
+$pdfHideName = intval($conf->global->TIMESHEET_PDF_HIDE_NAME);
+//advanced
+$exportFormat = $conf->global->TIMESHEET_EXPORT_FORMAT;
+$evalAddLine = $conf->global->TIMESHEET_EVAL_ADDLINE;
+$tsRound = intval($conf->global->TIMESHEET_ROUND);
+$dropdownAjax = $conf->global->MAIN_DISABLE_AJAX_COMBOX;
+$searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
+$unblockInvoiced = $conf->global->TIMESHEET_UNBLOCK_INVOICED;
+$unblockClosed = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
+
+
+if(count($opendays)!=8) {
+    $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
+}
+
 $error = 0;
 /** make sure that there is a 0 iso null
  *
@@ -216,13 +234,28 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_PDF_NOTEISOTASK", $noteOnPDF, 'chaine', 0, '', $conf->entity);
         $pdfhidesignbox = getpost('pdfHideSignbox', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_PDF_HIDE_SIGNBOX", $pdfhidesignbox, 'chaine', 0, '', $conf->entity);
+        $pdfHideName = getpost('pdfHideName', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_PDF_HIDE_NAME", $pdfHideName, 'chaine', 0, '', $conf->entity);
         // serach box
         $searchbox = getpost('searchBox', 'int');
         dolibarr_set_const($db, "TIMESHEET_SEARCHBOX", $searchbox, 'int', 0, '', $conf->entity);
         setEventMessage($langs->transnoentitiesnoconv("ConfigurationSaved"));
         $blockTimespent = getpost('blockTimespent', 'int');
         dolibarr_set_const($db, "TIMESHEET_EVENT_NOT_CREATE_TIMESPENT", $blockTimespent, 'chaine', 0, '', $conf->entity);
-
+        $evalAddLine = getpost('evalAddLine', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_EVAL_ADDLINE", $evalAddLine, 'int', 0, '', $conf->entity);
+        $exportFormat = getpost('exportFormat', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_EXPORT_FORMAT", $exportFormat, 'int', 0, '', $conf->entity);
+        $maxApproval = getpost('maxapproval', 'int');
+        dolibarr_set_const($db, "TIMESHEET_ROUND", $maxApproval, 'int', 0, '', $conf->entity);
+        $unblockInvoiced = getpost('unblockInvoiced', 'int');
+        dolibarr_set_const($db, "TIMESHEET_UNBLOCK_INVOICED", $unblockInvoiced, 'int', 0, '', $conf->entity);
+        $unblockClosed = getpost('unblockClosed', 'int');
+        dolibarr_set_const($db, "TIMESHEET_UNBLOCK_CLOSED", $unblockClosed, 'int', 0, '', $conf->entity);
+        $tsRound = getpost('tsRound', 'int');
+        dolibarr_set_const($db, "TIMESHEET_ROUND", $tsRound, 'int', 0, '', $conf->entity);
+ 
+        
         break;
     default:
         break;
@@ -491,28 +524,27 @@ echo '<table class = "noborder" width = "100%">'."\n\t\t";
 echo '<tr class = "liste_titre" width = "100%" ><th width = "200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th width = "100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
 //min hours per event
-echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("minSecondsPerEvent");//FIXTRAD
-echo '</td><td align = "left">'.$langs->trans("minSecondsPerEventDesc").'</td>';// FIXTRAD
+echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("minSecondsPerEvent");
+echo '</td><td align = "left">'.$langs->trans("minSecondsPerEventDesc").'</td>';
 echo '<td align = "left"><input type = "text" name = "minSecondsPerEvent" value = "'.$minsecondsperevent;
 echo "\" size = \"4\" ></td></tr>\n\t\t";
 //max hours per event
-echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("maxHoursPerEvent");//FIXTRAD
-echo '</td><td align = "left">'.$langs->trans("maxHoursPerEventDesc").'</td>';// FIXTRAD
+echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("maxHoursPerEvent");
+echo '</td><td align = "left">'.$langs->trans("maxHoursPerEventDesc").'</td>';
 echo '<td align = "left"><input type = "text" name = "maxhoursperevent" value = "'.$maxhoursperevent;
 echo "\" size = \"4\" ></td></tr>\n\t\t";
 //default hours per event
-echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("defaultHoursPerEvent");//FIXTRAD
-echo '</td><td align = "left">'.$langs->trans("defaultHoursPerEventDesc").'</td>';// FIXTRAD
+echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("defaultHoursPerEvent");
+echo '</td><td align = "left">'.$langs->trans("defaultHoursPerEventDesc").'</td>';
 echo '<td align = "left"><input type = "text" name = "defaulthoursperevent" value = "'.$defaulthoursperevent;
 echo "\" size = \"4\" ></td></tr>\n\t\t";
-
 // block creation of timespent
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("blockTimespent");
 echo '</td><td align = "left">'.$langs->trans("blockTimespentDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "blockTimespent" value = "1" ';
 echo (($blockTimespent == '1')?'checked':'')."></td></tr>\n\t\t";
-
 echo "</table><br>\n";
+
 //Color
 print_titre($langs->trans("Color"));
 echo '<table class = "noborder" width = "100%">'."\n\t\t";
@@ -575,6 +607,46 @@ echo '<input type = "radio" name = "blackWhiteListMode" value = "2" ';
 echo ($whiteListMode == "2"?"checked":"").'> '.$langs->trans("modeNone")."</td></tr>\n\t\t";
 echo '</table><br>';
 echo '<br>';
+//advanced behaviour
+print_titre($langs->trans("AdvancedBehaviour"));
+echo '<table class = "noborder" width = "100%">'."\n\t\t";
+echo '<tr class = "liste_titre" width = "100%" ><th width = "200px">'.$langs->trans("Name").'</th><th>';
+echo $langs->trans("Description").'</th><th width = "100px">'.$langs->trans("Value")."</th></tr>\n\t\t";
+// searchbox
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("searchbox");
+echo '</td><td align = "left">'.$langs->trans("searchboxDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "searchBox" value = "1" ';
+echo (($searchbox == '1')?'checked':'')."></td></tr>\n";
+// ROUND
+echo '<tr class = "oddeven" ><td align = "left">'.$langs->trans("tsRound");
+echo '</td><td align = "left">'.$langs->trans("tsRoundDesc").'</td>';
+echo '<td  align = "left"><input type = "text" name = "tsRound" value = "'.$tsRound;
+echo "\" size = \"4\" ></td></tr>\n\t\t";
+// eval ADDLINE
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("evalAddLine");
+echo '</td><td align = "left">'.$langs->trans("evalAddLineDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "evalAddLine" value = "1" ';
+echo (($evalAddLine == '1')?'checked':'')."></td></tr>\n\t\t";
+// export format
+echo '<tr class = "oddeven" ><td align = "left">'.$langs->trans("exportFormat");
+echo '</td><td align = "left">'.$langs->trans("exportFormatDesc").'</td>';
+echo '<td  align = "left"><input type = "text" name = "exportFormat" value = "'.$exportFormat;
+echo "\" size = \"4\" ></td></tr>\n\t\t";
+// unblock invoiced
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("unblockInvoiced");
+echo '</td><td align = "left">'.$langs->trans("unblockInvoicedDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "unblockInvoiced" value = "1" ';
+echo (($unblockInvoiced == '1')?'checked':'')."></td></tr>\n\t\t";
+// unblock closed day
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("unblockClosed");
+echo '</td><td align = "left">'.$langs->trans("unblockClosedDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "unblockClosed" value = "1" ';
+echo (($unblockClosed == '1')?'checked':'')."></td></tr>\n\t\t";
+
+
+echo '</table>'."\n\t\t";
+
+echo '<br>';
 echo '</div>';
 /*
  * INVOICE
@@ -634,6 +706,12 @@ echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("pdfHideSignbox"
 echo '</td><td align = "left">'.$langs->trans("pdfHideSignboxDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "pdfHideSignbox" value = "1" ';
 echo (($pdfhidesignbox == '1')?'checked':'')."></td></tr>\n\t\t";
+//hide name
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("pdfHideName");
+echo '</td><td align = "left">'.$langs->trans("pdfHideNameDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "pdfHideName" value = "1" ';
+echo (($pdfHideName == '1')?'checked':'')."></td></tr>\n\t\t";
+
 
 // Show note on PDF
 echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("NoteOnPDF").'</td><td align = "left">'.$langs->trans("NoteOnPDFDesc").'</td>';
@@ -656,11 +734,6 @@ echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("dropdownAjax");
 echo '</td><td align = "left">'.$langs->trans("dropdownAjaxDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "dropdownAjax" value = "1" ';
 echo (($dropdownAjax == '1')?'checked':'')."></td></tr>\n\t\t";
-// searchbox
-echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("searchbox");
-echo '</td><td align = "left">'.$langs->trans("searchboxDesc").'</td>';
-echo  '<td align = "left"><input type = "checkbox" name = "searchBox" value = "1" ';
-echo (($searchbox == '1')?'checked':'')."></td></tr>\n";
 echo '</table><br>';
 // doc
 print_titre($langs->trans("Manual"));
