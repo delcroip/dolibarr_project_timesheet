@@ -259,11 +259,11 @@ class TimesheetReport
                 $error = 0;
                 $obj = $this->db->fetch_object($resql);
                 $resArray[$i] = array('projectId' => $obj->projectid,
-                    'projectLabel' => $obj->projectref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$obj->projecttitle),
+                    'projectLabel' => $obj->projectref.(($conf->global->TIMESHEET_HIDE_REF == 0)?'':' - '.$obj->projecttitle),
                     'projectRef' => $obj->projectref,
                     'projectTitle' => $obj->projecttitle,
                     'taskId' => $obj->taskid,
-                    'taskLabel' => $obj->taskref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$obj->tasktitle),
+                    'taskLabel' => $obj->taskref.(($conf->global->TIMESHEET_HIDE_REF == 0)?'':' - '.$obj->tasktitle),
                     'taskRef' => $obj->taskref,
                     'tasktitle' => $obj->tasktitle,
                     'date' => $this->db->jdate($obj->task_date),
