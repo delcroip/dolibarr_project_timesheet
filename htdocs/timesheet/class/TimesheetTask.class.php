@@ -628,7 +628,7 @@ class TimesheetTask extends Task
     */
     public function getHTMLLineDayCell($isOpenStatus)
     {
-        global $langs, $conf;
+        global $langs, $conf,$statusColor;
         $isOpen = false;
         $dayelapsed = getDayInterval($this->date_start_approval, $this->date_end_approval);
         // day section
@@ -658,16 +658,19 @@ class TimesheetTask extends Task
                 $isOpen = $isOpenStatus && (($startDates == 0) || ($startDates <= $today_end ));
                 $isOpen = $isOpen && (($stopDates == 0) ||($stopDates >= $today));
                 $isOpen = $isOpen && ($this->pStatus < "2") ;
-                $isOpen = $isOpen  && $opendays[date("N", $today)];
+                $isOpenDay = $opendays[date("N", $today)];
+                //FIXME add a condition to allow time entry on closed day
+                $isOpen = $isOpen  && $isOpenDay;
 
                 $bkcolor = '';
                 if($isOpen) {
                     $bkcolor = 'background:#'.$statusColor[$this->status];
                     if($dayWorkLoadSec!=0 && $this->status == DRAFT)$bkcolor = 'background:#'.TIMESHEET_BC_VALUE;
+                    if(!$isOpenDay)$bkcolor = 'background:#'.TIMESHEET_BC_FREEZED;
                 } else {
                     $bkcolor = 'background:#'.TIMESHEET_BC_FREEZED;
                 }
-                $html .= "<td>\n";
+                $html = "<td>\n";
                 // add note popup
                 if($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE) {
                 $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
