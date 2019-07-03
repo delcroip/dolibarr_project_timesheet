@@ -50,6 +50,8 @@ $whiteListMode = $conf->global->TIMESHEET_WHITELIST_MODE;
 $whiteList = $conf->global->TIMESHEET_WHITELIST;
 $dropdownAjax = $conf->global->MAIN_DISABLE_AJAX_COMBOX;
 $draftColor = $conf->global->TIMESHEET_COL_DRAFT;
+$valueColor = $conf->global->TIMESHEET_COL_VALUE;
+$frozenColor = $conf->global->TIMESHEET_COL_FROZEN;
 $submittedColor = $conf->global->TIMESHEET_COL_SUBMITTED;
 $approvedColor = $conf->global->TIMESHEET_COL_APPROVED;
 $rejectedColor = $conf->global->TIMESHEET_COL_REJECTED;
@@ -165,6 +167,10 @@ switch($action) {
         //color handling
         $draftColor = getpost('draftColor', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_COL_DRAFT", $draftColor, 'chaine', 0, '', $conf->entity);
+        $valueColor = getpost('valueColor', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_COL_VALUE", $valueColor, 'chaine', 0, '', $conf->entity);
+        $frozenColor = getpost('frozenColor', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_COL_FROZEN", $frozenColor, 'chaine', 0, '', $conf->entity);
         $submittedColor = getpost('submittedColor', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_COL_SUBMITTED", $submittedColor, 'chaine', 0, '', $conf->entity);
         $approvedColor = getpost('approvedColor', 'alpha');
@@ -517,6 +523,16 @@ echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("draft");
 echo '</td><td align = "left">'.$langs->trans("draftColorDesc").'</td>';
 echo  '<td align = "left"><input name = "draftColor" class = "jscolor" value = "';
 echo $draftColor."\"></td></tr>\n\t\t";
+// color value
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("value");
+echo '</td><td align = "left">'.$langs->trans("valueColorDesc").'</td>';
+echo  '<td align = "left"><input name = "valueColor" class = "jscolor" value = "';
+echo $valueColor."\"></td></tr>\n\t\t";
+// color frozen
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("frozen");
+echo '</td><td align = "left">'.$langs->trans("frozenColorDesc").'</td>';
+echo  '<td align = "left"><input name = "frozenColor" class = "jscolor" value = "';
+echo $frozenColor."\"></td></tr>\n\t\t";
 // color submitted
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("submitted");
 echo '</td><td align = "left">'.$langs->trans("submittedColorDesc").'</td>';

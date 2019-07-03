@@ -132,6 +132,10 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_COL_REJECTED", "chaine", "FF0000", "color of rejected");
                 $r++;
+                $this->const[$r] = array("TIMESHEET_COL_VALUE", "chaine", "F0FFF0", "color of day with entry");
+                $r++;
+                $this->const[$r] = array("TIMESHEET_COL_FROZEN", "chaine", "909090", "color of closed/frozen");
+                $r++;
                 $this->const[$r] = array("TIMESHEET_DAY_MAX_DURATION", "int", 12, "max working hours per days");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_ADD_HOLIDAY_TIME", "int", 1, "count the holiday in total or not");

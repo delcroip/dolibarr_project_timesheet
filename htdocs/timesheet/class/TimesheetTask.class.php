@@ -540,6 +540,11 @@ class TimesheetTask extends Task
         $dayelapsed = getDayInterval($timeStart, $timeEnd);
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, DATE(ptt.task_datehour) AS task_date, ptt.note";
+        if(version_compare(DOL_VERSION, "4.9.9")>=0) {
+            $sql .=', (ptt.invoice_id < 0)  AS invoiced';
+        }else{
+            $sql .=', 0 AS invoiced'; 
+        }
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ";
         if(in_array($this->status, array(SUBMITTED, UNDERAPPROVAL, APPROVED, CHALLENGED, INVOICED))) {
@@ -566,7 +571,7 @@ class TimesheetTask extends Task
                 $obj = $this->db->fetch_object($resql);
                 $dateCur = $this->db->jdate($obj->task_date);
                 $day = getDayInterval($timeStart, $dateCur);
-                $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=>$obj->task_duration, 'note'=>$obj->note);
+                $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=>$obj->task_duration, 'note'=>$obj->note, 'invoiced' => $obj->invoiced);
                 $i++;
             }
             $this->db->free($resql);
@@ -597,7 +602,7 @@ class TimesheetTask extends Task
         $htmltail = '';
         $linestyle = '';
         if(($this->pStatus == "2")) {
-            $linestyle .= 'background:#'.TIMESHEET_BC_FREEZED.';';
+            $linestyle .= 'background:#'.$statusColor['FROZEN'].';';
         } elseif($statusColor[$this->status]!='' &&  $statusColor[$this->status]!='FFFFFF') {
             $linestyle .= 'background:#'.$statusColor[$this->status].';';// --FIXME
         }
@@ -630,6 +635,7 @@ class TimesheetTask extends Task
     {
         global $langs, $conf,$statusColor;
         $isOpen = false;
+        $html = '';
         $dayelapsed = getDayInterval($this->date_start_approval, $this->date_end_approval);
         // day section
         $timetype = $conf->global->TIMESHEET_TIME_TYPE;
@@ -665,12 +671,17 @@ class TimesheetTask extends Task
                 $bkcolor = '';
                 if($isOpen) {
                     $bkcolor = 'background:#'.$statusColor[$this->status];
-                    if($dayWorkLoadSec!=0 && $this->status == DRAFT)$bkcolor = 'background:#'.TIMESHEET_BC_VALUE;
-                    if(!$isOpenDay)$bkcolor = 'background:#'.TIMESHEET_BC_FREEZED;
+                    if($this->tasklist[$dayCur]['invoiced']){
+                        $bkcolor = 'background:#'.$statusColor[INVOICED];
+                    }elseif(!$isOpenDay){
+                        $bkcolor = 'background:#'.$statusColor['FROZEN'];
+                    }elseif($dayWorkLoadSec!=0 && $this->status == DRAFT){
+                        $bkcolor = 'background:#'.$statusColor['VALUE'];
+                    }
                 } else {
-                    $bkcolor = 'background:#'.TIMESHEET_BC_FREEZED;
+                    $bkcolor = 'background:#'.$statusColor['FROZEN'];
                 }
-                $html = "<td>\n";
+                $html .= "<td>\n";
                 // add note popup
                 if($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE) {
                 $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');

@@ -37,8 +37,18 @@ Define("SUPPLIER", 4);
 Define("OTHER", 5);
 Define("ROLEMAX", 6);
 // back ground colors
-define('TIMESHEET_BC_FREEZED', '909090');
-define('TIMESHEET_BC_VALUE', 'f0fff0');
+$statusColor = array(
+    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
+    'VALUE'=>$conf->global->TIMESHEET_COL_VALUE,
+    'FROZEN'=>$conf->global->TIMESHEET_COL_FROZEN,
+    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,
+    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,
+    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,
+    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED,
+    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED,
+    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED,
+    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,
+    PLANNED=>$conf->global->TIMESHEET_COL_DRAFT);
 // attendance
 define('EVENT_AUTO_START', -2);
 define('EVENT_HEARTBEAT', 1);
@@ -57,16 +67,8 @@ global $langs;
 $roles = array(0=> 'user', 1=> 'team', 2=> 'project', 3=>'customer', 4=>'supplier', 5=>'other');
 $statusA = array(0=> $langs->trans('null'), 1 =>$langs->trans('draft'), 2=>$langs->trans('submitted'), 3=>$langs->trans('approved'), 4=>$langs->trans('cancelled'), 5=>$langs->trans('rejected'), 6=>$langs->trans('challenged'), 7=>$langs->trans('invoiced'), 8=>$langs->trans('underapproval'), 9=>$langs->trans('planned'));
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
-$statusColor = array(
-    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
-    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,
-    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,
-    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,
-    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED,
-    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED,
-    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED,
-    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,
-    PLANNED=>$conf->global->TIMESHEET_COL_DRAFT);
+
+    
 //const REDUNDANCY = [
 /*Define("NULL", 0);
 Define("NONE", 1);
