@@ -382,7 +382,7 @@ class modTimesheet extends DolibarrModules
                                                                         'type'=>'left',                                        // This is a Left menu entry
                                                                         'titre'=>'userReport',
                                                                         'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'timesheet',
+                                                                        'leftmenu'=>'Timesheet',
                                                                         'url'=>'/timesheet/TimesheetReportUser.php',
                                                                         'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>130,
@@ -390,7 +390,20 @@ class modTimesheet extends DolibarrModules
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
                                                                         'target'=>'',
                                                                         'user'=>2);
-                  $r++;
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                                                                        'type'=>'left',                                        // This is a Left menu entry
+                                                                        'titre'=>'adminTimeSpent',
+                                                                        'mainmenu'=>'timesheet',
+                                                                        'leftmenu'=>'Timesheet',
+                                                                        'url'=>'/timesheet/ProjectTaskTime_list.php',
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'position'=>140,
+                                                                        'enabled'=>'$user->admin', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                                                                        'target'=>'',
+                                                                        'user'=>2);                 
+                $r++;
                 $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
                                                                         'type'=>'left',                                        // This is a Left menu entry
                                                                         'titre'=>'Timesheetwhitelist',
