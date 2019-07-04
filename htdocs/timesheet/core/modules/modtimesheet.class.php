@@ -52,7 +52,7 @@ class modTimesheet extends DolibarrModules
                 // Module description, used if translation string 'ModuleXXXDesc' not found(where XXX is value of numeric property 'numero' of module)
                 $this->description = "TimesheetView";
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.0.18';
+                $this->version = '4.1.0';
                 // Key used in llx_const table to save module status enabled/disabled(where MYMODULE is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -402,7 +402,7 @@ class modTimesheet extends DolibarrModules
                                                                         'enabled'=>'$user->admin', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
                                                                         'target'=>'',
-                                                                        'user'=>2);                 
+                                                                        'user'=>2);
                 $r++;
                 $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
                                                                         'type'=>'left',                                        // This is a Left menu entry

@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 delcroip <patrick@pmpd.eu>
  * Copyright (C) ---Put here your own copyright and developer email---
@@ -25,17 +25,17 @@
  *					Initialy built by build_class_from_table on 2019-07-03 22:42
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
+//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
+//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');			// Do not check style html tag into posted data
+//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
+//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');			// If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
@@ -44,7 +44,7 @@ include 'core/lib/includeMain.lib.php';
 //require_once 'lib/timesheet.lib.php';
 require_once 'class/ProjetTaskTime.class.php';
 require_once 'core/lib/generic.lib.php';
-#require_once 'core/lib/projettasktime.lib.php';
+//require_once 'core/lib/projettasktime.lib.php';
 dol_include_once('/core/lib/functions2.lib.php');
 require_once 'core/lib/timesheet.lib.php';
 //document handling
@@ -61,44 +61,42 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 $langs->load("projettasktime@timesheet");
 
 // Get parameter
-$id			= GETPOST('id','int');
-$ref                    = GETPOST('ref','alpha');
-$action		= GETPOST('action','alpha');
+$id			= GETPOST('id', 'int');
+$ref                    = GETPOST('ref', 'alpha');
+$action		= GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage');
 $cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm');
-$tms= GETPOST('tms','alpha');
+$tms= GETPOST('tms', 'alpha');
 //// Get parameters
-$sortfield = GETPOST('sortfield','alpha'); 
-$sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )		// Both test must be present to be compatible with all browsers
 {
-    	$ls_task= GETPOST('ls_task','int');
-	$ls_task_date_month= GETPOST('ls_task_date_month','int');
-	$ls_task_date_year= GETPOST('ls_task_date_year','int');
-	$ls_task_datehour_month= GETPOST('ls_task_datehour_month','int');
-	$ls_task_datehour_year= GETPOST('ls_task_datehour_year','int');
-	$ls_task_date_withhour= GETPOST('ls_task_date_withhour','int');
-	$ls_task_duration= GETPOST('ls_task_duration','int');
-	$ls_user= GETPOST('ls_user','int');
+    	$ls_task= GETPOST('ls_task', 'int');
+	$ls_task_date_month= GETPOST('ls_task_date_month', 'int');
+	$ls_task_date_year= GETPOST('ls_task_date_year', 'int');
+	$ls_task_datehour_month= GETPOST('ls_task_datehour_month', 'int');
+	$ls_task_datehour_year= GETPOST('ls_task_datehour_year', 'int');
+	$ls_task_date_withhour= GETPOST('ls_task_date_withhour', 'int');
+	$ls_task_duration= GETPOST('ls_task_duration', 'int');
+	$ls_user= GETPOST('ls_user', 'int');
 	if($ls_user==-1)$ls_user='';
-	$ls_thm= GETPOST('ls_thm','int');
-	$ls_note= GETPOST('ls_note','alpha');
-	$ls_invoice_id= GETPOST('ls_invoice_id','int');
-	$ls_invoice_line_id= GETPOST('ls_invoice_line_id','int');
-	$ls_import_key= GETPOST('ls_import_key','alpha');
-	$ls_status= GETPOST('ls_status','int');
-	$ls_task_time_approval= GETPOST('ls_task_time_approval','int');
-
-    
+	$ls_thm= GETPOST('ls_thm', 'int');
+	$ls_note= GETPOST('ls_note', 'alpha');
+	$ls_invoice_id= GETPOST('ls_invoice_id', 'int');
+	$ls_invoice_line_id= GETPOST('ls_invoice_line_id', 'int');
+	$ls_import_key= GETPOST('ls_import_key', 'alpha');
+	$ls_status= GETPOST('ls_status', 'int');
+	$ls_task_time_approval= GETPOST('ls_task_time_approval', 'int');
 }
 
 
-$page = GETPOST('page','int'); 
+$page = GETPOST('page', 'int');
 if ($page == -1 || !is_numeric($page)) { $page = 0; }
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -118,7 +116,7 @@ $pagenext = $page + 1;
 
 // Right Management
  /*
-if ($user->societe_id > 0 || 
+if ($user->societe_id > 0 ||
        (!$user->rights->timesheet->add && ($action=='add' || $action='create')) ||
        (!$user->rights->timesheet->view && ($action=='list' || $action='view')) ||
        (!$user->rights->timesheet->delete && ($action=='confirm_delete')) ||
@@ -132,19 +130,17 @@ if ($user->societe_id > 0 ||
 $object=new Projettasktime($db);
 if($id>0)
 {
-    $object->id=$id; 
+    $object->id=$id;
     $object->fetch($id);
     $ref=dol_sanitizeFileName($object->ref);
 }
 if(!empty($ref))
 {
-    $object->ref=$ref; 
-    $object->id=$id; 
-    $object->fetch($id,$ref);
+    $object->ref=$ref;
+    $object->id=$id;
+    $object->fetch($id, $ref);
     $ref=dol_sanitizeFileName($object->ref);
-    
 }
-
 
 /*******************************************************************
 * ACTIONS
@@ -153,10 +149,10 @@ if(!empty($ref))
 ********************************************************************/
 $form=new Form($db);
 $formother=new FormOther($db);
-$formproject=new FormProjets($db);         
+$formproject=new FormProjets($db);
 // Action to remove record
- switch($action){
-    case 'confirm_delete':	
+switch($action){
+    case 'confirm_delete':
        $result=($confirm=='yes')?$object->delete($user):0;
        if ($result > 0)
        {
@@ -166,18 +162,17 @@ $formproject=new FormProjets($db);
        else
        {
                // Delete NOK
-               if (! empty($object->errors)) setEventMessages(null,$object->errors,'errors');
-               else setEventMessage('RecordNotDeleted','errors');
+               if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+               else setEventMessage('RecordNotDeleted', 'errors');
        }
        break;
     case 'delete':
         if( $action=='delete' && ($id>0 || $ref!="")){
-         $ret=$form->form_confirm(dol_buildpath('/timesheet/Projettasktime_card.php',1).'?action=confirm_delete&id='.$id,$langs->trans('DeleteProjettasktime'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
+         $ret=$form->form_confirm(dol_buildpath('/timesheet/Projettasktime_card.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteProjettasktime'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
-      
-    } 
+}
 
 /***************************************************
 * VIEW
@@ -185,7 +180,7 @@ $formproject=new FormProjets($db);
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','Projettasktime','');
+llxHeader('', 'Projettasktime', '');
 print "<div> <!-- module body-->";
 
 $fuser=new User($db);
@@ -197,7 +192,7 @@ jQuery(document).ready(function() {
 	function init_myfunc()
 	{
 		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
+		jQuery("#myid").attr(\'disabled\', \'disabled\');
 	}
 	init_myfunc();
 	jQuery("#mybutton").click(function() {
@@ -208,30 +203,30 @@ jQuery(document).ready(function() {
 
 
     $sql = 'SELECT';
-    $sql.= ' t.rowid,';
-    
-	$sql.=' t.fk_task,';
-	$sql.=' t.task_date,';
-	$sql.=' t.task_datehour,';
-	$sql.=' t.task_date_withhour,';
-	$sql.=' t.task_duration,';
-	$sql.=' t.fk_user,';
-	$sql.=' t.thm,';
-	$sql.=' t.note,';
-	$sql.=' t.invoice_id,';
-	$sql.=' t.invoice_line_id,';
-	$sql.=' t.import_key,';
-	$sql.=' t.status,';
+    $sql.= ' t.rowid, ';
+
+	$sql.=' t.fk_task, ';
+	$sql.=' t.task_date, ';
+	$sql.=' t.task_datehour, ';
+	$sql.=' t.task_date_withhour, ';
+	$sql.=' t.task_duration, ';
+	$sql.=' t.fk_user, ';
+	$sql.=' t.thm, ';
+	$sql.=' t.note, ';
+	$sql.=' t.invoice_id, ';
+	$sql.=' t.invoice_line_id, ';
+	$sql.=' t.import_key, ';
+	$sql.=' t.status, ';
 	$sql.=' t.fk_task_time_approval';
 
-    
+
     $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as t';
     $sqlwhere='';
     if(isset($object->entity))
         $sqlwhere.= ' AND t.entity = '.$conf->entity;
     if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
     {
-            $filtrearr = explode(',', $filter);
+            $filtrearr = explode(', ', $filter);
             foreach ($filtrearr as $fil)
             {
                     $filt = explode(':', $fil);
@@ -255,29 +250,29 @@ jQuery(document).ready(function() {
 	if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
 	if($ls_task_time_approval) $sqlwhere .= natural_search(array('t.fk_task_time_approval'), $ls_task_time_approval);
 
-    
+
     //list limit
     if(!empty($sqlwhere))
-        $sql.=' WHERE '.substr ($sqlwhere, 5);
-    
+        $sql.=' WHERE '.substr($sqlwhere, 5);
+
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
         $sqlcount='SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'projet_task_time as t';
         if(!empty($sqlwhere))
-            $sqlcount.=' WHERE '.substr ($sqlwhere, 5);
+            $sqlcount.=' WHERE '.substr($sqlwhere, 5);
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if(!empty($sortfield)){$sql.= $db->order($sortfield,$sortorder);
+    if(!empty($sortfield)){$sql.= $db->order($sortfield, $sortorder);
     }else{ $sortorder = 'ASC';}
-    
+
     if (!empty($limit))
     {
-            $sql.= $db->plimit($limit+1, $offset); 
+            $sql.= $db->plimit($limit+1, $offset);
     }
-    
+
 
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
@@ -303,67 +298,67 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	if (!empty($ls_status))	$param.='&ls_status='.urlencode($ls_status);
 	if (!empty($ls_task_time_approval))	$param.='&ls_task_time_approval='.urlencode($ls_task_time_approval);
 
-        
+
         if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
-        
+
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
-        print_barre_liste($langs->trans("Projettasktime"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+        print_barre_liste($langs->trans("Projettasktime"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
         print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="liste" width="100%">'."\n";
         //TITLE
         print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans('Task'),$PHP_SELF,'t.fk_task','',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_task', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Taskdate'),$PHP_SELF,'t.task_date','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Taskdate'), $PHP_SELF, 't.task_date', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Taskdatehour'),$PHP_SELF,'t.task_datehour','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Taskdatehour'), $PHP_SELF, 't.task_datehour', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Taskdatewithhour'),$PHP_SELF,'t.task_date_withhour','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Taskdatewithhour'), $PHP_SELF, 't.task_date_withhour', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Taskduration'),$PHP_SELF,'t.task_duration','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Taskduration'), $PHP_SELF, 't.task_duration', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_user','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('User'), $PHP_SELF, 't.fk_user', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Thm'),$PHP_SELF,'t.thm','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Thm'), $PHP_SELF, 't.thm', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Note'),$PHP_SELF,'t.note','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Note'), $PHP_SELF, 't.note', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Invoiceid'),$PHP_SELF,'t.invoice_id','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Invoiceid'), $PHP_SELF, 't.invoice_id', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Invoicelineid'),$PHP_SELF,'t.invoice_line_id','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Invoicelineid'), $PHP_SELF, 't.invoice_line_id', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Importkey'),$PHP_SELF,'t.import_key','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Importkey'), $PHP_SELF, 't.import_key', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	//print_liste_field_titre($langs->trans('Tasktimeapproval'),$PHP_SELF,'t.fk_task_time_approval','',$param,'',$sortfield,$sortorder);
+	//print_liste_field_titre($langs->trans('Tasktimeapproval'), $PHP_SELF, 't.fk_task_time_approval', '', $param, '', $sortfield, $sortorder);
 	//print "\n";
 
-        
+
         print '</tr>';
         //SEARCH FIELDS
-        print '<tr class="liste_titre">'; 
+        print '<tr class="liste_titre">';
         //Search field fortask
 	print '<td class="liste_titre" colspan="1" >';
-	$sql_task=array('table'=> 'projet_task','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
-	$html_task=array('name'=>'ls_task','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
+	$sql_task=array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
+	$html_task=array('name'=>'ls_task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
 	$addChoices_task=null;
-	print select_sellist($sql_task,$html_task, $ls_task,$addChoices_task );
+	print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task);
 	print '</td>';
 //Search field fortask_date
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="task_date_month" value="'.$ls_task_date_month.'">';
 	$syear = $ls_task_date_year;
-	$formother->select_year($syear?$syear:-1,'ls_task_date_year',1, 20, 5);
+	$formother->select_year($syear?$syear:-1, 'ls_task_date_year', 1, 20, 5);
 	print '</td>';
 //Search field fortask_datehour
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="task_datehour_month" value="'.$ls_task_datehour_month.'">';
 	$syear = $ls_task_datehour_year;
-	$formother->select_year($syear?$syear:-1,'ls_task_datehour_year',1, 20, 5);
+	$formother->select_year($syear?$syear:-1, 'ls_task_datehour_year', 1, 20, 5);
 	print '</td>';
 //Search field fortask_date_withhour
 	print '<td class="liste_titre" colspan="1" >';
@@ -376,7 +371,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 //Search field foruser
 	print '<td class="liste_titre" colspan="1" >';
 
-	print $form->select_dolusers($ls_user,'user');
+	print $form->select_dolusers($ls_user, 'user');
 	print '</td>';
 //Search field forthm
 	print '<td class="liste_titre" colspan="1" >';
@@ -404,19 +399,19 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '</td>';
 //Search field fortask_time_approval
 /*	print '<td class="liste_titre" colspan="1" >';
-	$sql_task_time_approval=array('table'=> 'project_task_time_approval','keyfield'=> 'rowid','fields'=>'ref', 'join' => '', 'where'=>'','tail'=>'');
-	$html_task_time_approval=array('name'=>'ls_task_time_approval','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
+	$sql_task_time_approval=array('table'=> 'project_task_time_approval', 'keyfield'=> 'rowid', 'fields'=>'ref', 'join' => '', 'where'=>'', 'tail'=>'');
+	$html_task_time_approval=array('name'=>'ls_task_time_approval', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
 	$addChoices_task_time_approval=null;
-		print select_sellist($sql_task_time_approval,$html_task_time_approval, $ls_task_time_approval,$addChoices_task_time_approval );
+		print select_sellist($sql_task_time_approval, $html_task_time_approval, $ls_task_time_approval, $addChoices_task_time_approval );
 	print '</td>';
 
         */
-        
+
         print '<td width="15px">';
-        print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-        print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+        print '<input type="image" class="liste_titre" name="search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+        print '<input type="image" class="liste_titre" name="removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
         print '</td>';
-        print '</tr>'."\n"; 
+        print '</tr>'."\n";
         $i=0;
         $basedurl=dirname($PHP_SELF).'/ProjectTaskTime_card.php?action=view&id=';
         while ($i < $num && $i<$limit)
@@ -426,37 +421,33 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             {
                 // You can use here results
                 	print "<tr class=\"oddeven\"  onclick=\"location.href='";
-	print $basedurl.$obj->rowid."'\" >";
+                print $basedurl.$obj->rowid."'\" >";
 	
 		$StaticObject= New Task($db);
 		$StaticObject->fetch($obj->fk_task);
 		print "<td>".$StaticObject->getNomUrl('1')."</td>";
 
-	print "<td>".dol_print_date($db->jdate($obj->task_date),'day')."</td>";
-	print "<td>".dol_print_date($db->jdate($obj->task_datehour),'day')."</td>";
-	print "<td>".$obj->task_date_withhour."</td>";
-	print "<td>".$obj->task_duration."</td>";
+                print "<td>".dol_print_date($db->jdate($obj->task_date), 'day')."</td>";
+                print "<td>".dol_print_date($db->jdate($obj->task_datehour), 'day')."</td>";
+                print "<td>".$obj->task_date_withhour."</td>";
+                print "<td>".$obj->task_duration."</td>";
 		$StaticObject= New User($db);
 		$StaticObject->fetch($obj->fk_user);
 		print "<td>".$StaticObject->getNomUrl('1')."</td>";
-
-	print "<td>".$obj->thm."</td>";
-	print "<td>".$obj->note."</td>";
-	print "<td>".$obj->invoice_id."</td>";
-	print "<td>".$obj->invoice_line_id."</td>";
-	print "<td>".$obj->import_key."</td>";
-	print "<td>".$obj->status."</td>";
-	/*if(class_exists('Tasktimeapproval')){
-		$StaticObject= New Tasktimeapproval($db);
-		print "<td>".$StaticObject->getNomUrl('1',$obj->fk_task_time_approval)."</td>";
-	}else{
-		print print_sellist($sql_task_time_approval,$obj->fk_task_time_approval);
-	}*/
-	print '<td><a href="ProjectTaskTime_card.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
-	print "</tr>";
-
-                
-
+                print "<td>".$obj->thm."</td>";
+                print "<td>".$obj->note."</td>";
+                print "<td>".$obj->invoice_id."</td>";
+                print "<td>".$obj->invoice_line_id."</td>";
+                print "<td>".$obj->import_key."</td>";
+                print "<td>".$obj->status."</td>";
+                /*if(class_exists('Tasktimeapproval')){
+                        $StaticObject= New Tasktimeapproval($db);
+                        print "<td>".$StaticObject->getNomUrl('1', $obj->fk_task_time_approval)."</td>";
+                }else{
+                        print print_sellist($sql_task_time_approval, $obj->fk_task_time_approval);
+                }*/
+                print '<td><a href="ProjectTaskTime_card.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+                print "</tr>";
             }
             $i++;
         }
@@ -473,7 +464,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     print '<a href="projettasktime_card.php?action=create" class="butAction" role="button">'.$langs->trans('New');
     print ' '.$langs->trans('Projettasktime')."</a>\n";
 
-    
+
 
 
 

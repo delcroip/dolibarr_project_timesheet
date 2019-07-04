@@ -543,7 +543,7 @@ class TimesheetTask extends Task
         if(version_compare(DOL_VERSION, "4.9.9")>=0) {
             $sql .=', (ptt.invoice_id > 0)  AS invoiced';
         }else{
-            $sql .=', 0 AS invoiced'; 
+            $sql .=', 0 AS invoiced';
         }
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ";
