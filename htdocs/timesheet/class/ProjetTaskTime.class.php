@@ -64,11 +64,7 @@ class Projettasktime extends CommonObject
     public $tms='';
     public $status;
     public $task_time_approval;
-
-
     // END OF automatic var creation
-
-
     /**
      *  Constructor
      *
@@ -79,7 +75,6 @@ class Projettasktime extends CommonObject
         $this->db = $db;
         return 1;
     }
-
 
     /**
      *  Create object into database
@@ -92,58 +87,46 @@ class Projettasktime extends CommonObject
     {
         global $conf, $langs;
         $error = 0;
-
         // Clean parameters
         $this->cleanParam();
-
         // Check parameters
         // Put here code to add control on parameters values
-
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-
-    $sql.= 'fk_task,';
-    $sql.= 'task_date,';
-    $sql.= 'task_datehour,';
-    $sql.= 'task_date_withhour,';
-    $sql.= 'task_duration,';
-    $sql.= 'fk_user,';
-    $sql.= 'thm,';
-    $sql.= 'note,';
-    $sql.= 'invoice_id,';
-    $sql.= 'invoice_line_id,';
-    $sql.= 'import_key,';
-    $sql.= 'datec,';
-    $sql.= 'status,';
-    $sql.= 'fk_task_time_approval';
-
-
+        $sql.= 'fk_task,';
+        $sql.= 'task_date,';
+        $sql.= 'task_datehour,';
+        $sql.= 'task_date_withhour,';
+        $sql.= 'task_duration,';
+        $sql.= 'fk_user,';
+        $sql.= 'thm,';
+        $sql.= 'note,';
+        $sql.= 'invoice_id,';
+        $sql.= 'invoice_line_id,';
+        $sql.= 'import_key,';
+        $sql.= 'datec,';
+        $sql.= 'status,';
+        $sql.= 'fk_task_time_approval';
         $sql.= ") VALUES (";
-
-    $sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").',';
-    $sql.=' '.(empty($this->task_date) || dol_strlen($this->task_date)==0?'NULL':"'".$this->db->idate($this->task_date)."'").',';
-    $sql.=' '.(empty($this->task_datehour) || dol_strlen($this->task_datehour)==0?'NULL':"'".$this->db->idate($this->task_datehour)."'").',';
-    $sql.=' '.(empty($this->task_date_withhour)?'NULL':"'".$this->task_date_withhour."'").',';
-    $sql.=' '.(empty($this->task_duration)?'NULL':"'".$this->task_duration."'").',';
-    $sql.=' '.(empty($this->user)?'NULL':"'".$this->user."'").',';
-    $sql.=' '.(empty($this->thm)?'NULL':"'".$this->thm."'").',';
-    $sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").',';
-    $sql.=' '.(empty($this->invoice_id)?'NULL':"'".$this->invoice_id."'").',';
-    $sql.=' '.(empty($this->invoice_line_id)?'NULL':"'".$this->invoice_line_id."'").',';
-    $sql.=' '.(empty($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'").',';
-    $sql.=' NOW() ,';
-    $sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").',';
-    $sql.=' '.(empty($this->task_time_approval)?'NULL':"'".$this->task_time_approval."'").'';
-
-
+        $sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").',';
+        $sql.=' '.(empty($this->task_date) || dol_strlen($this->task_date)==0?'NULL':"'".$this->db->idate($this->task_date)."'").',';
+        $sql.=' '.(empty($this->task_datehour) || dol_strlen($this->task_datehour)==0?'NULL':"'".$this->db->idate($this->task_datehour)."'").',';
+        $sql.=' '.(empty($this->task_date_withhour)?'NULL':"'".$this->task_date_withhour."'").',';
+        $sql.=' '.(empty($this->task_duration)?'NULL':"'".$this->task_duration."'").',';
+        $sql.=' '.(empty($this->user)?'NULL':"'".$this->user."'").',';
+        $sql.=' '.(empty($this->thm)?'NULL':"'".$this->thm."'").',';
+        $sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").',';
+        $sql.=' '.(empty($this->invoice_id)?'NULL':"'".$this->invoice_id."'").',';
+        $sql.=' '.(empty($this->invoice_line_id)?'NULL':"'".$this->invoice_line_id."'").',';
+        $sql.=' '.(empty($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'").',';
+        $sql.=' NOW() ,';
+        $sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").',';
+        $sql.=' '.(empty($this->task_time_approval)?'NULL':"'".$this->task_time_approval."'").'';
         $sql.= ")";
-
         $this->db->begin();
-
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
@@ -159,7 +142,6 @@ class Projettasktime extends CommonObject
             //// End call triggers
             }
         }
-
         // Commit or rollback
         if ($error)
         {
@@ -191,24 +173,21 @@ class Projettasktime extends CommonObject
         global $langs;
         $sql = "SELECT";
         $sql.= " t.rowid,";
-
-    $sql.=' t.fk_task,';
-    $sql.=' t.task_date,';
-    $sql.=' t.task_datehour,';
-    $sql.=' t.task_date_withhour,';
-    $sql.=' t.task_duration,';
-    $sql.=' t.fk_user,';
-    $sql.=' t.thm,';
-    $sql.=' t.note,';
-    $sql.=' t.invoice_id,';
-    $sql.=' t.invoice_line_id,';
-    $sql.=' t.import_key,';
-    $sql.=' t.datec,';
-    $sql.=' t.tms,';
-    $sql.=' t.status,';
-    $sql.=' t.fk_task_time_approval';
-
-
+        $sql.=' t.fk_task,';
+        $sql.=' t.task_date,';
+        $sql.=' t.task_datehour,';
+        $sql.=' t.task_date_withhour,';
+        $sql.=' t.task_duration,';
+        $sql.=' t.fk_user,';
+        $sql.=' t.thm,';
+        $sql.=' t.note,';
+        $sql.=' t.invoice_id,';
+        $sql.=' t.invoice_line_id,';
+        $sql.=' t.import_key,';
+        $sql.=' t.datec,';
+        $sql.=' t.tms,';
+        $sql.=' t.status,';
+        $sql.=' t.fk_task_time_approval';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
         else $sql.= " WHERE t.rowid = ".$id;
@@ -220,22 +199,21 @@ class Projettasktime extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
                 $this->id    = $obj->rowid;
-
-        $this->task = $obj->fk_task;
-        $this->task_date = $this->db->jdate($obj->task_date);
-        $this->task_datehour = $this->db->jdate($obj->task_datehour);
-        $this->task_date_withhour = $obj->task_date_withhour;
-        $this->task_duration = $obj->task_duration;
-        $this->user = $obj->fk_user;
-        $this->thm = $obj->thm;
-        $this->note = $obj->note;
-        $this->invoice_id = $obj->invoice_id;
-        $this->invoice_line_id = $obj->invoice_line_id;
-        $this->import_key = $obj->import_key;
-        $this->datec = $this->db->jdate($obj->datec);
-        $this->tms = $this->db->jdate($obj->tms);
-        $this->status = $obj->status;
-        $this->task_time_approval = $obj->fk_task_time_approval;
+                $this->task = $obj->fk_task;
+                $this->task_date = $this->db->jdate($obj->task_date);
+                $this->task_datehour = $this->db->jdate($obj->task_datehour);
+                $this->task_date_withhour = $obj->task_date_withhour;
+                $this->task_duration = $obj->task_duration;
+                $this->user = $obj->fk_user;
+                $this->thm = $obj->thm;
+                $this->note = $obj->note;
+                $this->invoice_id = $obj->invoice_id;
+                $this->invoice_line_id = $obj->invoice_line_id;
+                $this->import_key = $obj->import_key;
+                $this->datec = $this->db->jdate($obj->datec);
+                $this->tms = $this->db->jdate($obj->tms);
+                $this->status = $obj->status;
+                $this->task_time_approval = $obj->fk_task_time_approval;
             }
             $this->db->free($resql);
 
@@ -267,8 +245,8 @@ class Projettasktime extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.= $this->setSQLfields($user);
         $sql.= " WHERE rowid=".$this->id;
-    $this->db->begin();
-    dol_syslog(__METHOD__);
+        $this->db->begin();
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
             if (! $error)
@@ -283,7 +261,7 @@ class Projettasktime extends CommonObject
             //// End call triggers
                 }
             }
-        // Commit or rollback
+            // Commit or rollback
             if ($error)
             {
                 foreach($this->errors as $errmsg)
@@ -314,8 +292,6 @@ class Projettasktime extends CommonObject
     public function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
     {
     global $conf, $langs;
-
-
         if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;   // Force disable tooltips
         $result='';
         if(empty($ref) && $id==0){
@@ -408,32 +384,32 @@ class Projettasktime extends CommonObject
         global $langs, $projettasktimeStatusPictoArray, $projettasktimeStatusArray;
         if ($mode == 0)
         {
-                    $prefix='';
-                    return $langs->trans($projettasktimeStatusArray[$status]);
+            $prefix='';
+            return $langs->trans($projettasktimeStatusArray[$status]);
         }
         if ($mode == 1)
         {
-                    return $langs->trans($projettasktimeStatusArray[$status]);
+            return $langs->trans($projettasktimeStatusArray[$status]);
         }
         if ($mode == 2)
         {
-                    return img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]).' '.$langs->trans($projettasktimeStatusArray[$status]);
+            return img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]).' '.$langs->trans($projettasktimeStatusArray[$status]);
         }
         if ($mode == 3)
         {
-                    return img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]);
+            return img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]);
         }
         if ($mode == 4)
         {
-                    return img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]).' '.$langs->trans($projettasktimeStatusArray[$status]);
+            return img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]).' '.$langs->trans($projettasktimeStatusArray[$status]);
         }
         if ($mode == 5)
         {
-                    return $langs->trans($projettasktimeStatusArray[$status]).' '.img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]);
+            return $langs->trans($projettasktimeStatusArray[$status]).' '.img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]);
         }
         if ($mode == 6)
         {
-                    return $langs->trans($projettasktimeStatusArray[$status]).' '.img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]);
+            return $langs->trans($projettasktimeStatusArray[$status]).' '.img_picto($projettasktimeStatusArray[$status], $projettasktimeStatusPictoArray[$status]);
         }
     }
 
@@ -472,7 +448,7 @@ class Projettasktime extends CommonObject
         elseif ($this->db->affected_rows($resql)==0){$error++;$this->errors[]="Item no found in database"; }
         }
 
-// Commit or rollback
+        // Commit or rollback
         if ($error)
         {
             foreach($this->errors as $errmsg)
@@ -544,22 +520,21 @@ class Projettasktime extends CommonObject
     public function initAsSpecimen()
     {
         $this->id = 0;
-
-    $this->task='';
-    $this->task_date='';
-    $this->task_datehour='';
-    $this->task_date_withhour='';
-    $this->task_duration='';
-    $this->user='';
-    $this->thm='';
-    $this->note='';
-    $this->invoice_id='';
-    $this->invoice_line_id='';
-    $this->import_key='';
-    $this->datec='';
-    $this->tms='';
-    $this->status='';
-    $this->task_time_approval='';
+        $this->task='';
+        $this->task_date='';
+        $this->task_datehour='';
+        $this->task_date_withhour='';
+        $this->task_duration='';
+        $this->user='';
+        $this->thm='';
+        $this->note='';
+        $this->invoice_id='';
+        $this->invoice_line_id='';
+        $this->import_key='';
+        $this->datec='';
+        $this->tms='';
+        $this->status='';
+        $this->task_time_approval='';
     }
     /**
      *    will clean the parameters
@@ -569,21 +544,21 @@ class Projettasktime extends CommonObject
      */
     public function cleanParam()
     {
-    if (!empty($this->task)) $this->task = trim($this->task);
-    if (!empty($this->task_date)) $this->task_date = trim($this->task_date);
-    if (!empty($this->task_datehour)) $this->task_datehour = trim($this->task_datehour);
-    if (!empty($this->task_date_withhour)) $this->task_date_withhour = trim($this->task_date_withhour);
-    if (!empty($this->task_duration)) $this->task_duration = trim($this->task_duration);
-    if (!empty($this->user)) $this->user = trim($this->user);
-    if (!empty($this->thm)) $this->thm = trim($this->thm);
-    if (!empty($this->note)) $this->note = trim($this->note);
-    if (!empty($this->invoice_id)) $this->invoice_id = trim($this->invoice_id);
-    if (!empty($this->invoice_line_id)) $this->invoice_line_id = trim($this->invoice_line_id);
-    if (!empty($this->import_key)) $this->import_key = trim($this->import_key);
-    if (!empty($this->datec)) $this->datec = trim($this->datec);
-    if (!empty($this->status)) $this->status = trim($this->status);
-    if (!empty($this->task_time_approval)) $this->task_time_approval = trim($this->task_time_approval);
-    }
+        if (!empty($this->task)) $this->task = trim($this->task);
+        if (!empty($this->task_date)) $this->task_date = trim($this->task_date);
+        if (!empty($this->task_datehour)) $this->task_datehour = trim($this->task_datehour);
+        if (!empty($this->task_date_withhour)) $this->task_date_withhour = trim($this->task_date_withhour);
+        if (!empty($this->task_duration)) $this->task_duration = trim($this->task_duration);
+        if (!empty($this->user)) $this->user = trim($this->user);
+        if (!empty($this->thm)) $this->thm = trim($this->thm);
+        if (!empty($this->note)) $this->note = trim($this->note);
+        if (!empty($this->invoice_id)) $this->invoice_id = trim($this->invoice_id);
+        if (!empty($this->invoice_line_id)) $this->invoice_line_id = trim($this->invoice_line_id);
+        if (!empty($this->import_key)) $this->import_key = trim($this->import_key);
+        if (!empty($this->datec)) $this->datec = trim($this->datec);
+        if (!empty($this->status)) $this->status = trim($this->status);
+        if (!empty($this->task_time_approval)) $this->task_time_approval = trim($this->task_time_approval);
+        }
     /**
     *    will create the sql part to update the parameters
     *
@@ -593,22 +568,19 @@ class Projettasktime extends CommonObject
     public function setSQLfields($user)
     {
         $sql='';
-
-    $sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").',';
-    $sql.=' task_date='.(dol_strlen($this->task_date)!=0 ? "'".$this->db->idate($this->task_date)."'":'null').',';
-    $sql.=' task_datehour='.(dol_strlen($this->task_datehour)!=0 ? "'".$this->db->idate($this->task_datehour)."'":'null').',';
-    $sql.=' task_date_withhour='.(empty($this->task_date_withhour)!=0 ? 'null':"'".$this->task_date_withhour."'").',';
-    $sql.=' task_duration='.(empty($this->task_duration)!=0 ? 'null':"'".$this->task_duration."'").',';
-    $sql.=' fk_user='.(empty($this->user)!=0 ? 'null':"'".$this->user."'").',';
-    $sql.=' thm='.(empty($this->thm)!=0 ? 'null':"'".$this->thm."'").',';
-    $sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").',';
-    $sql.=' invoice_id='.(empty($this->invoice_id)!=0 ? 'null':"'".$this->invoice_id."'").',';
-    $sql.=' invoice_line_id='.(empty($this->invoice_line_id)!=0 ? 'null':"'".$this->invoice_line_id."'").',';
-    $sql.=' import_key='.(empty($this->import_key)!=0 ? 'null':"'".$this->db->escape($this->import_key)."'").',';
-    $sql.=' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").',';
-    $sql.=' fk_task_time_approval='.(empty($this->task_time_approval)!=0 ? 'null':"'".$this->task_time_approval."'").'';
-
-
+        $sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").',';
+        $sql.=' task_date='.(dol_strlen($this->task_date)!=0 ? "'".$this->db->idate($this->task_date)."'":'null').',';
+        $sql.=' task_datehour='.(dol_strlen($this->task_datehour)!=0 ? "'".$this->db->idate($this->task_datehour)."'":'null').',';
+        $sql.=' task_date_withhour='.(empty($this->task_date_withhour)!=0 ? 'null':"'".$this->task_date_withhour."'").',';
+        $sql.=' task_duration='.(empty($this->task_duration)!=0 ? 'null':"'".$this->task_duration."'").',';
+        $sql.=' fk_user='.(empty($this->user)!=0 ? 'null':"'".$this->user."'").',';
+        $sql.=' thm='.(empty($this->thm)!=0 ? 'null':"'".$this->thm."'").',';
+        $sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").',';
+        $sql.=' invoice_id='.(empty($this->invoice_id)!=0 ? 'null':"'".$this->invoice_id."'").',';
+        $sql.=' invoice_line_id='.(empty($this->invoice_line_id)!=0 ? 'null':"'".$this->invoice_line_id."'").',';
+        $sql.=' import_key='.(empty($this->import_key)!=0 ? 'null':"'".$this->db->escape($this->import_key)."'").',';
+        $sql.=' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").',';
+        $sql.=' fk_task_time_approval='.(empty($this->task_time_approval)!=0 ? 'null':"'".$this->task_time_approval."'").'';
         return $sql;
     }
     /*
@@ -620,20 +592,20 @@ class Projettasktime extends CommonObject
     {
         $ret='';
         $array = array();
-    $array['task']=$this->task;
-    $array['task_date']=$this->task_date;
-    $array['task_datehour']=$this->task_datehour;
-    $array['task_date_withhour']=$this->task_date_withhour;
-    $array['task_duration']=$this->task_duration;
-    $array['user']=$this->user;
-    $array['thm']=$this->thm;
-    $array['note']=$this->note;
-    $array['invoice_id']=$this->invoice_id;
-    $array['invoice_line_id']=$this->invoice_line_id;
-    $array['import_key']=$this->import_key;
-    $array['datec']=$this->datec;
-    $array['status']=$this->status;
-    $array['task_time_approval']=$this->task_time_approval;
+        $array['task']=$this->task;
+        $array['task_date']=$this->task_date;
+        $array['task_datehour']=$this->task_datehour;
+        $array['task_date_withhour']=$this->task_date_withhour;
+        $array['task_duration']=$this->task_duration;
+        $array['user']=$this->user;
+        $array['thm']=$this->thm;
+        $array['note']=$this->note;
+        $array['invoice_id']=$this->invoice_id;
+        $array['invoice_line_id']=$this->invoice_line_id;
+        $array['import_key']=$this->import_key;
+        $array['datec']=$this->datec;
+        $array['status']=$this->status;
+        $array['task_time_approval']=$this->task_time_approval;
         $array['processedTime']= mktime();
         switch($mode)
         {

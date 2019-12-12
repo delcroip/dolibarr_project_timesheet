@@ -1,4 +1,7 @@
 # dolibarr_project_timesheet changelog
+4.1.1 
+- new: add timesheet for other works with project "subordinate"
+
 4.1.0
 - new: timespent admin
 - new: option to allow entering time on closed day (e.g. weekend)

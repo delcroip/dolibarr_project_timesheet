@@ -9,7 +9,7 @@ services:
     volumes:
       - ../htdocs:/var/www/html/custom:rw
     ports:
-      - 8080:80
+      - 18080:80
     env_file:
       .env
     links:
@@ -18,8 +18,8 @@ services:
     image: mariadb:10.3
     container_name: dolibarr_db
     volumes:
-#      - mysql_data:/var/lib/mysql
-      - ./dump.sql:/var/www/html/dump.sql
+      - mysql_data:/var/lib/mysql
+      - ./mount:/var/www/html
 ## How to reset database
 # 1 on the host download the right db (ver 9 bellow) because  the container doesn't have wget
 #wget https://github.com/Dolibarr/dolibarr/raw/develop/dev/initdemo/mysqldump_dolibarr_9.0.0.sql -o dump.sql

@@ -145,9 +145,9 @@ class TimesheetTask extends Task
         $sql.= 'fk_user_app_customer, ';
         $sql.= 'fk_user_app_supplier, ';
         $sql.= 'fk_user_app_other, ';
-                $sql.= 'date_creation, ';
+        $sql.= 'date_creation, ';
         $sql.= 'date_modification, ';
-                $sql.= 'fk_user_creation, ';
+        $sql.= 'fk_user_creation, ';
         $sql.= 'fk_projet_task, ';
         $sql.= 'fk_project_task_timesheet, ';
         $sql.= 'note';
@@ -220,7 +220,6 @@ class TimesheetTask extends Task
         global $langs;
         $sql = "SELECT";
         $sql.= " t.rowid, ";
-
         $sql .= ' t.fk_userid, ';
         $sql .= ' t.date_start, ';
         $sql .= ' t.date_end, ';
@@ -228,11 +227,11 @@ class TimesheetTask extends Task
         $sql .= ' t.sender, ';
         $sql .= ' t.recipient, ';
         $sql .= ' t.planned_workload, ';
-        $sql.= 't.fk_user_app_team, ';
-        $sql.= 't.fk_user_app_project, ';
-        $sql.= 't.fk_user_app_customer, ';
-        $sql.= 't.fk_user_app_supplier, ';
-        $sql.= 't.fk_user_app_other, ';
+        $sql .= 't.fk_user_app_team, ';
+        $sql .= 't.fk_user_app_project, ';
+        $sql .= 't.fk_user_app_customer, ';
+        $sql .= 't.fk_user_app_supplier, ';
+        $sql .= 't.fk_user_app_other, ';
         $sql .= ' t.date_creation, ';
         $sql .= ' t.date_modification, ';
         $sql .= ' t.fk_user_creation, ';
@@ -346,7 +345,7 @@ class TimesheetTask extends Task
         //// End call triggers
             }
         }
-// Commit or rollback
+        // Commit or rollback
         if($error) {
             foreach($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);

@@ -86,43 +86,43 @@ class TimesheetUserTasks extends CommonObject
     public function create($user, $notrigger = 0)
     {
         global $conf, $langs;
-                $error = 0;
-                // Clean parameters
-                if(isset($this->userId)) $this->userId = trim($this->userId);
-                if(isset($this->date_start)) $this->date_start = trim($this->date_start);
-                if(isset($this->date_end)) $this->date_end = trim($this->date_end);
-                if(isset($this->status)) $this->status = trim($this->status);
-                if(isset($this->date_creation)) $this->date_creation = trim($this->date_creation);
-                if(isset($this->date_modification)) $this->date_modification = trim($this->date_modification);
-                if(isset($this->user_modification)) $this->user_modification = trim($this->user_modification);
-                if(isset($this->note)) $this->note = trim($this->note);
-                $userId = (is_object($user)?$user->id:$user);
-                // Check parameters
-                // Put here code to add control on parameters values
+        $error = 0;
+        // Clean parameters
+        if(isset($this->userId)) $this->userId = trim($this->userId);
+        if(isset($this->date_start)) $this->date_start = trim($this->date_start);
+        if(isset($this->date_end)) $this->date_end = trim($this->date_end);
+        if(isset($this->status)) $this->status = trim($this->status);
+        if(isset($this->date_creation)) $this->date_creation = trim($this->date_creation);
+        if(isset($this->date_modification)) $this->date_modification = trim($this->date_modification);
+        if(isset($this->user_modification)) $this->user_modification = trim($this->user_modification);
+        if(isset($this->note)) $this->note = trim($this->note);
+        $userId = (is_object($user)?$user->id:$user);
+        // Check parameters
+        // Put here code to add control on parameters values
         // Insert request
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 
-                $sql.= 'fk_userid, ';
-                $sql.= 'date_start, ';
-                $sql.= 'date_end, ';
-                $sql.= 'status, ';
-                $sql.= 'date_creation, ';
-                $sql.= 'date_modification, ';
-                $sql.= 'fk_user_modification, ';
-                $sql.= 'note';
+        $sql.= 'fk_userid, ';
+        $sql.= 'date_start, ';
+        $sql.= 'date_end, ';
+        $sql.= 'status, ';
+        $sql.= 'date_creation, ';
+        $sql.= 'date_modification, ';
+        $sql.= 'fk_user_modification, ';
+        $sql.= 'note';
 
         $sql.= ") VALUES(";
-                $sql .= ' '.(! isset($this->userId)?'NULL':'\''.$this->userId.'\'').', ';
-                $sql .= ' '.(! isset($this->date_start) || dol_strlen($this->date_start) == 0?'NULL':'\''.$this->db->idate($this->date_start).'\'').', ';
-                $sql .= ' '.(! isset($this->date_end) || dol_strlen($this->date_end) == 0?'NULL':'\''.$this->db->idate($this->date_end).'\'').', ';
-                $sql .= ' '.(! isset($this->status)?DRAFT:$this->status).', ';
-                $sql .= ' NOW(), ';
-                $sql .= ' NOW(), ';
-                $sql .= ' \''.$userId.'\', ';//fixme 3.5
-                $sql .= ' '.(! isset($this->note)?'NULL':'\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'');
-                $sql.= ")";
-                $this->db->begin();
-                dol_syslog(__METHOD__, LOG_DEBUG);
+        $sql .= ' '.(! isset($this->userId)?'NULL':'\''.$this->userId.'\'').', ';
+        $sql .= ' '.(! isset($this->date_start) || dol_strlen($this->date_start) == 0?'NULL':'\''.$this->db->idate($this->date_start).'\'').', ';
+        $sql .= ' '.(! isset($this->date_end) || dol_strlen($this->date_end) == 0?'NULL':'\''.$this->db->idate($this->date_end).'\'').', ';
+        $sql .= ' '.(! isset($this->status)?DRAFT:$this->status).', ';
+        $sql .= ' NOW(), ';
+        $sql .= ' NOW(), ';
+        $sql .= ' \''.$userId.'\', ';//fixme 3.5
+        $sql .= ' '.(! isset($this->note)?'NULL':'\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'');
+        $sql.= ")";
+        $this->db->begin();
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if(! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
@@ -162,17 +162,15 @@ class TimesheetUserTasks extends CommonObject
     {
         global $langs;
         $sql = "SELECT";
-                $sql.= " t.rowid, ";
-
-                $sql .= ' t.fk_userid, ';
-                $sql .= ' t.date_start, ';
-                $sql .= ' t.date_end, ';
-                $sql .= ' t.status, ';
-                $sql .= ' t.date_creation, ';
-                $sql .= ' t.date_modification, ';
-                $sql .= ' t.fk_user_modification, ';
-                $sql .= ' t.note';
-
+        $sql.= " t.rowid, ";
+        $sql .= ' t.fk_userid, ';
+        $sql .= ' t.date_start, ';
+        $sql .= ' t.date_end, ';
+        $sql .= ' t.status, ';
+        $sql .= ' t.date_creation, ';
+        $sql .= ' t.date_modification, ';
+        $sql .= ' t.fk_user_modification, ';
+        $sql .= ' t.note';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if($ref) $sql.= " WHERE t.ref = '".$ref."'";
         else $sql.= " WHERE t.rowid = ".$id;
@@ -208,20 +206,20 @@ class TimesheetUserTasks extends CommonObject
     {
         global $langs;
         $sql = "SELECT";
-                $sql.= " t.rowid, ";
-
-                $sql .= ' t.fk_userid, ';
-                $sql .= ' t.date_start, ';
-                $sql .= ' t.date_end, ';
-                $sql .= ' t.status, ';
-                $sql .= ' t.date_creation, ';
-                $sql .= ' t.date_modification, ';
-                $sql .= ' t.fk_user_modification, ';
-                $sql .= ' t.note';
-
+        $sql.= " t.rowid, ";
+        $sql .= ' t.fk_userid, ';
+        $sql .= ' t.date_start, ';
+        $sql .= ' t.date_end, ';
+        $sql .= ' t.status, ';
+        $sql .= ' t.date_creation, ';
+        $sql .= ' t.date_modification, ';
+        $sql .= ' t.fk_user_modification, ';
+        $sql .= ' t.note';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.date_start = '".$this->db->idate($this->date_start)."'";
         $sql.= " AND t.fk_userid = '".$this->userId."'";
+
+
         //$sql.= " AND t.rowid = ".$id;
         dol_syslog(get_class($this)."::fetchByWeek");
         $resql = $this->db->query($sql);
@@ -233,7 +231,7 @@ class TimesheetUserTasks extends CommonObject
                 $this->date_start = $this->db->jdate($obj->date_start);
                 $this->date_end = $this->db->jdate($obj->date_end);
                 $this->status = $obj->status;
-                 $this->date_creation = $this->db->jdate($obj->date_creation);
+                $this->date_creation = $this->db->jdate($obj->date_creation);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
                 $this->user_modification = $obj->fk_user_modification;
                 $this->note = $obj->note;
@@ -463,23 +461,24 @@ public function saveInSession()
  * function to genegate the timesheet tab
  *
  *  @param    int               $userid                   user id to fetch the timesheets
- *  @return     array(string)                                             array of timesheet(serialized)
+ *  @return     array(string)                             array of timesheet(serialized)
  */
 public function fetchTaskTimesheet($userid = '')
 {
-    global $conf;
+    global $conf,$user;
     $res = array();
     if($userid == '') {
         $userid = $this->userId;
     }
+
     $whiteList = array();
     $staticWhiteList = new TimesheetFavourite($this->db);
     $datestart = $this->date_start;
     $datestop = $this->date_end;
     $whiteList = $staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
-     $tasksList = array();
-     $sqlwhiteList = '';
+    $tasksList = array();
+    $sqlwhiteList = '';
     $sql = 'SELECT DISTINCT element_id as taskid, prj.fk_soc, tsk.fk_projet, tsk.progress, ';
     $sql .= 'tsk.fk_task_parent, tsk.rowid, app.rowid as appid, prj.ref as prjRef, tsk.ref as tskRef';
     $sql .= $sqlwhiteList;
@@ -505,6 +504,10 @@ public function fetchTaskTimesheet($userid = '')
     $sql .= ' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
     $sql .= ' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
     $sql .= ' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
+    if( !$user->admin && $userid != $user->id && !in_array($userid, $user->getAllChildIds())){
+        $sql .= " AND ((tsk.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1') WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project_task' AND element_id = tsk.rowid ))";
+        $sql .= " OR (prj.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1') WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project'  AND element_id = prj.rowid )))";
+    }
     $sql .= '  ORDER BY prj.fk_soc, prjRef, tskRef ';
      dol_syslog("timesheet::getTasksTimesheet full ", LOG_DEBUG);
     $resql = $this->db->query($sql);
