@@ -52,7 +52,7 @@ class modTimesheet extends DolibarrModules
                 // Module description, used if translation string 'ModuleXXXDesc' not found(where XXX is value of numeric property 'numero' of module)
                 $this->description = "TimesheetView";
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.0.17';
+                $this->version = '4.1.1';
                 // Key used in llx_const table to save module status enabled/disabled(where MYMODULE is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -104,13 +104,17 @@ class modTimesheet extends DolibarrModules
                 //);
                 $r=0;
                 $this->const = array();
-                //$this->const[$r] = array("TIMESHEET_ATTENDANCE", "int", 1, "layout mode of the timesheets");// hours or days
-                //$r++;
+                $this->const[$r] = array("TIMESHEET_VERSION", "chaine", $this->version, "save the timesheet verison");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_ATTENDANCE", "int", 1, "layout mode of the timesheets");// hours or days
+                $r++;
                 $this->const[$r] = array("TIMESHEET_TIME_TYPE", "chaine", "hours", "layout mode of the timesheets");// hours or days
                 $r++;
                 $this->const[$r] = array("TIMESHEET_DAY_DURATION", "int", 8, "number of hour per day(used for the layout per day)");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_HIDE_DRAFT", "int", 0, "option to mask to task belonging to draft project");
+                $this->const[$r] = array("TIMESHEET_TIME_SPAN", "chaine", "splitedWeek", "timespan of the timesheets");// hours or days
+                $r++;
+                 $this->const[$r] = array("TIMESHEET_HIDE_DRAFT", "int", 0, "option to mask to task belonging to draft project");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_HIDE_ZEROS", "int", 0, "option to hide the 00:00");
                 $r++;
@@ -118,11 +122,21 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_HIDE_REF", "int", 0, "option to hide the title in the timesheets");
                 $r++;
+                $this->const[$r] = array("TIMESHEET_SHOW_TIMESPENT_NOTE", "int", 1, "show the note next to the time entry");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_ADD_DOCS", "int", 0, "Allow to join files to timesheets");
+                $r++;
+               $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER", "int", 0, "enable to time spent entry for subordinates");// hours or days
+                $r++;
                 $this->const[$r] = array("TIMESHEET_WHITELIST_MODE", "int", 0, "Option to change the behaviour of the whitelist:-whiteliste, 1-blackliste, 2-no impact ");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_WHITELIST", "int", 1, "Activate the whitelist:");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_COL_DRAFT", "chaine", "FFFFFF", "color of draft");
+                $r++;
+                $this->const[$r] = array("TIMESHEET_COL_VALUE", "chaine", "F0FFF0", "color of day with entry");
+                $r++;
+                $this->const[$r] = array("TIMESHEET_COL_FROZEN", "chaine", "909090", "color of closed/frozen");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_COL_SUBMITTED", "chaine", "00FFFF", "color of submitted");
                 $r++;
@@ -142,11 +156,9 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_MAX_APPROVAL", "int", 5, "Max TS per Approval page");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_ADD_DOCS", "int", 0, "Allow to join files to timesheets");
-                $r++;
                 $this->const[$r] = array("TIMESHEET_APPROVAL_FLOWS", "chaine", "_00000", "Approval flows ");
                 $r++;
-                 $this->const[$r] = array("TIMESHEET_INVOICE_METHOD", "int", 0, "Approval by week instead of by user");
+                $this->const[$r] = array("TIMESHEET_INVOICE_METHOD", "int", 0, "Approval by week instead of by user");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_INVOICE_TASKTIME", "chaine", "all", "set the default task to include in the invoice item");
                 $r++;
@@ -158,29 +170,35 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_INVOICE_SHOW_USER", "int", 1, "Show user on the invoice item ");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_TIME_SPAN", "chaine", "splitedWeek", "timespan of the timesheets");// hours or days
-                $r++;
-                $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER", "int", 0, "enable to time spent entry for subordinates");// hours or days
-                $r++;
-                $this->const[$r] = array("TIMESHEET_VERSION", "chaine", $this->version, "save the timesheet verison");// hours or days
-                $r++;
-                $this->const[$r] = array("TIMESHEET_SHOW_TIMESPENT_NOTE", "int", 1, "show the note next to the time entry");// hours or days
-                $r++;
-                $this->const[$r] = array("TIMESHEET_PDF_NOTEISOTASK", "int", 0, "save the timesheet verison");// hours or days
-                $r++;
                 $this->const[$r] = array("TIMESHEET_EVENT_MAX_DURATION", "int", 8, "max event duration");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_EVENT_DEFAULT_DURATION", "int", 2, "max event duration");// hours or days
-                $r++;
-                $this->const[$r] = array("TIMESHEET_EXPORT_FORMAT", "chaine", "tsv", "max event duration");// hours or days
-                $r++;
-                $this->const[$r] = array("TIMESHEET_EVAL_ADDLINE", "int", "0", "process add line vian an eval function running the invoice card page");// hours or days
-                $r++;
-                $this->const[$r] = array("TIMESHEET_PDF_HIDE_SIGNBOX", "int", "0", "hide the sign box on pdf");// hours or days
+                $this->const[$r] = array("TIMESHEET_EVENT_DEFAULT_DURATION", "int", 2, "default event duration");// hours or days
                 $r++;
                 $this->const[$r] = array("TIMESHEET_EVENT_MIN_DURATION", "int", "0", "minimum time per chrono");// hours or days
                 $r++;
-                //$this->const[2] = array("CONST3", "chaine", "valeur3", "Libelle3");
+                $this->const[$r] = array("TIMESHEET_EVENT_NOT_CREATE_TIMESPENT", "int", "0", "hide the sign box on pdf");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_PDF_HIDE_SIGNBOX", "int", "0", "hide the sign box on pdf");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_PDF_NOTEISOTASK", "int", 0, "save the timesheet verison");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_PDF_HIDE_NAME", "int", "0", "hide name in PDF");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_EXPORT_FORMAT", "chaine", "tsv", "export format xls ... ");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_EVAL_ADDLINE", "int", "0", "process add line vian an eval function running the invoice card page");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_ROUND", "int", "3", "round timespend display in day");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_SEARCHBOX", "int", "0", "enable search box in favourite");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_UNBLOCK_INVOICED", "int", "0", "unblock editing invoiced time");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_UNBLOCK_CLOSED", "int", "0", "unblock editing  closed day");// hours or days
+                $r++;
+                $this->const[$r] = array("MAIN_DISABLE_AJAX_COMBOX", "int", "0", "disable combo box");// hours or days
+                $r++;
+                 //$this->const[2] = array("CONST3", "chaine", "valeur3", "Libelle3");
                 // Array to add new pages in new tabs
                 // Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',        // To add a new tab identified by code tabname1
         //                              'objecttype:+tabname2:Title2:mylangfile@mymodule:$user->rights->othermodule->read:/mymodule/mynewtab2.php?id=__ID__',        // To add another new tab identified by code tabname2
@@ -364,7 +382,7 @@ class modTimesheet extends DolibarrModules
                                                                         'type'=>'left',                                        // This is a Left menu entry
                                                                         'titre'=>'userReport',
                                                                         'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'timesheet',
+                                                                        'leftmenu'=>'Timesheet',
                                                                         'url'=>'/timesheet/TimesheetReportUser.php',
                                                                         'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                                                                         'position'=>130,
@@ -372,7 +390,20 @@ class modTimesheet extends DolibarrModules
                                                                         'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
                                                                         'target'=>'',
                                                                         'user'=>2);
-                  $r++;
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                                                                        'type'=>'left',                                        // This is a Left menu entry
+                                                                        'titre'=>'adminTimeSpent',
+                                                                        'mainmenu'=>'timesheet',
+                                                                        'leftmenu'=>'Timesheet',
+                                                                        'url'=>'/timesheet/ProjectTaskTime_list.php',
+                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                                                                        'position'=>140,
+                                                                        'enabled'=>'$user->admin', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                                                                        'target'=>'',
+                                                                        'user'=>2);
+                $r++;
                 $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
                                                                         'type'=>'left',                                        // This is a Left menu entry
                                                                         'titre'=>'Timesheetwhitelist',

@@ -1,4 +1,26 @@
 # dolibarr_project_timesheet changelog
+4.1.1 
+- new: add timesheet for other works with project "subordinate"
+
+4.1.0
+- new: timespent admin
+- new: option to allow entering time on closed day (e.g. weekend)
+- new: invoiced time background color (approved color)
+- new: option to allow modification invoiced time
+- new: hidden option now in admin page (hide name, eval, round day )
+- fix: remove warning tasktimesheet not an array
+- fix: remove warning with float hour per day
+- fix: label not display in attendance sheet
+
+4.0.18
+- fix report issue (first group splited in two)
+- new: update task progress declared from timesheet
+
+4.0.17
+- new keeping project when moving to report
+- fix last week/month report short links
+- clean: project invoice as a project tab
+
 4.0.16
 - fix favorite not wworking
 

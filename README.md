@@ -15,6 +15,7 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
 * Free download: https://sourceforge.net/projects/dolibarr-timesheet
 * Github: https://github.com/delcroip/dolibarr_project_timesheet
 * FR development thread: https://www.dolibarr.fr/forum/11-suggestionsnouvelles-fonctionnalites/49379-timesheet-vue-pour-les-projets
+* Translation project https://lokalise.co/public/761399855cb829e995d448.06757516/
 
 # Installation
 * Download and unzip the module
@@ -47,11 +48,12 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
 - Background color not working with the metro theme (work arround: replace `background:#fafafa!important` by `background:` in `htdocs\theme\metro\style.css.php:2253`).
 
 # Next dev under analysis
-- Ressource planning  (planning for TL and PM + weekly summary by email to user)
-    - non-project related TS
+
 
 
 # Next developement for other release
+- Ressource planning  (planning for TL and PM + weekly summary by email to user)
+    - non-project related TS
 - finetune the modules rights management (admin ...)
 - handle the right for cust /  supplier / other approval
 - show the Quantity in the step 2 of invoicing (js)
@@ -59,5 +61,4 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
     - add automatic reminder for the approval
     - reminder when TS is not filled in ( email and home page)
 - better ajax error when adding fav
-- add total to the otherAP
 - maintain the ajax behavior

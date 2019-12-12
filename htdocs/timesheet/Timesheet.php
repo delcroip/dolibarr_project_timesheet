@@ -56,7 +56,7 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
     if(!empty($postUserId)) {
             $newuserid = $postUserId;
     }
-    $SubordiateIds = getSubordinates($db, $userid, 2, array(), TEAM, $entity = '1');
+    $SubordiateIds = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
     $SubordiateIds[] = $userid;
     if(in_array($newuserid, $SubordiateIds) || $user->admin) {
         $SubordiateIds[] = $userid;
@@ -104,6 +104,7 @@ switch($action) {
             if($tsUserId>0) {
                 $ret = 0;
                 $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
+                $progressTask = GETPOST('progressTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
                 $tasktab = GETPOST('task', 'array')[$tsUserId];
                 $task_timesheet->loadFromSession($timestamp, $tsUserId);
@@ -112,7 +113,7 @@ switch($action) {
                     $task_timesheet->note = $notesTaskApproval[$key];
                     $task_timesheet->update($user);
                 }
-                $ret = $task_timesheet->updateActuals($tasktab, $notesTask);
+                $ret = $task_timesheet->updateActuals($tasktab, $notesTask, $progressTask);
                 if($submitted) {
                         $task_timesheet->setStatus($user, SUBMITTED);
                         $ret++;

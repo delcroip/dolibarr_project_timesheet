@@ -35,10 +35,21 @@ Define("PROJECT", 2);
 Define("CUSTOMER", 3);
 Define("SUPPLIER", 4);
 Define("OTHER", 5);
-Define("ROLEMAX", 6);
+Define("ALL", 6);
+Define("ROLEMAX", 7);
 // back ground colors
-define('TIMESHEET_BC_FREEZED', '909090');
-define('TIMESHEET_BC_VALUE', 'f0fff0');
+$statusColor = array(
+    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
+    'VALUE'=>$conf->global->TIMESHEET_COL_VALUE,
+    'FROZEN'=>$conf->global->TIMESHEET_COL_FROZEN,
+    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,
+    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,
+    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,
+    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED,
+    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED,
+    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED,
+    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,
+    PLANNED=>$conf->global->TIMESHEET_COL_DRAFT);
 // attendance
 define('EVENT_AUTO_START', -2);
 define('EVENT_HEARTBEAT', 1);
@@ -49,24 +60,14 @@ define('EVENT_AUTO_STOP', 4);
 // number of second in a day, used to make the code readable
 define('SECINDAY', 86400);
 
-$conf->global->TIMESHEET_ROUND = 3;
-
 
 // for display trads
 global $langs;
 $roles = array(0=> 'user', 1=> 'team', 2=> 'project', 3=>'customer', 4=>'supplier', 5=>'other');
 $statusA = array(0=> $langs->trans('null'), 1 =>$langs->trans('draft'), 2=>$langs->trans('submitted'), 3=>$langs->trans('approved'), 4=>$langs->trans('cancelled'), 5=>$langs->trans('rejected'), 6=>$langs->trans('challenged'), 7=>$langs->trans('invoiced'), 8=>$langs->trans('underapproval'), 9=>$langs->trans('planned'));
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
-$statusColor = array(
-    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
-    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,
-    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,
-    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,
-    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED,
-    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED,
-    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED,
-    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,
-    PLANNED=>$conf->global->TIMESHEET_COL_DRAFT);
+
+    
 //const REDUNDANCY = [
 /*Define("NULL", 0);
 Define("NONE", 1);
@@ -100,73 +101,72 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $role = TEAM, $entity = '1')
 {
     //FIX ME handle multicompany
-    if($role == TEAM){
-      global $user;
-        return $user->getAllChildIds();
-    }
+    $list = array();
     if($userid == "") {
         return array();
     }
-    $sql[PROJECT][0] = 'SELECT DISTINCT fk_socpeople as userid FROM '.MAIN_DB_PREFIX.'element_contact';
-    $sql[PROJECT][0] .= ' WHERE element_id in (SELECT element_id';
-    $sql[PROJECT][0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
-    $sql[PROJECT][0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
-    $sql[PROJECT][0] .= ' WHERE ctc.active = \'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\')';
-    $sql[PROJECT][0] .= ' AND fk_socpeople in (';
-    $sql[PROJECT][2] = ')) AND fk_socpeople not in (';
-    $sql[PROJECT][4] = ')';
-   /* $sql[TEAM][0] = 'SELECT usr.rowid as userid FROM '.MAIN_DB_PREFIX.'user AS usr WHERE';
-    $sql[TEAM][0] .= ' usr.fk_user in (';
-    $sql[TEAM][2] = ') AND usr.rowid not in (';
-    $sql[TEAM][4] = ')';*/
-    $idlist = '';
-    if(is_array($userid)) {
-        $ecludeduserid = array_merge($userid, $ecludeduserid);
-        $idlist = implode(", ", $userid);
-    } else{
-        $ecludeduserid[] = $userid;
-        $idlist = $userid;
+    if($role == TEAM || $role == ALL){
+      global $user;
+      $list=$user->getAllChildIds();
     }
-    $sql[$role][1] = $idlist;
-    $idlist = '';
-    if(is_array($ecludeduserid)) {
-        $idlist = implode(", ", $ecludeduserid);
-    } elseif(!empty($ecludeduserid)) {
-        $idlist = $ecludeduserid;
-    }
-    $sql[$role][3] = $idlist;
-    ksort($sql[$role], SORT_NUMERIC);
-    $sqlused = implode($sql[$role]);
-    dol_syslog('form::get_subordinate role='.$role, LOG_DEBUG);
-    $list = array();
-    $resql = $db->query($sqlused);
-    if($resql) {
-        $i = 0;
-        $num = $db->num_rows($resql);
-        while($i<$num)
-        {
-            $obj = $db->fetch_object($resql);
-            if($obj) {
-                $list[] = $obj->userid;
-            }
-            $i++;
-        }
-        if(count($list)>0 && $depth>1) {
-            //this will get the same result plus the subordinate of the subordinate
-            $result = getSubordinates($db, $list, $depth-1, $ecludeduserid, $role, $entity);
-            if(is_array($result)) {
-                $list = array_merge($list, $result);
-            }
-        }
+    if($role == PROJECT || $role == ALL){
+        $sql[0] = 'SELECT DISTINCT fk_socpeople as userid FROM '.MAIN_DB_PREFIX.'element_contact';
+        $sql[0] .= ' WHERE element_id in (SELECT element_id';
+        $sql[0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
+        $sql[0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
+        $sql[0] .= ' WHERE ctc.active = \'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\')';
+        $sql[0] .= ' AND fk_socpeople in (';
+        $sql[2] = ')) AND fk_socpeople not in (';
+        $sql[4] = ')';
+        $idlist = '';
         if(is_array($userid)) {
-            $list = array_merge($list, $userid);
-        } else {
-            //$list[] = $userid;
+            $ecludeduserid = array_merge($userid, $ecludeduserid);
+            $idlist = implode(", ", $userid);
+        } else{
+            $ecludeduserid[] = $userid;
+            $idlist = $userid;
         }
-    } else {
-        $error++;
-        dol_print_error($db);
-        $list = array();
+        $sql[1] = $idlist;
+        $idlist = '';
+        if(is_array($ecludeduserid)) {
+            $idlist = implode(", ", $ecludeduserid);
+        } elseif(!empty($ecludeduserid)) {
+            $idlist = $ecludeduserid;
+        }
+        $sql[3] = $idlist;
+        ksort($sql, SORT_NUMERIC);
+        $sqlused = implode($sql);
+        dol_syslog('form::get_subordinate role='.$role, LOG_DEBUG);
+        
+        $resql = $db->query($sqlused);
+        if($resql) {
+            $i = 0;
+            $num = $db->num_rows($resql);
+            while($i<$num)
+            {
+                $obj = $db->fetch_object($resql);
+                if($obj) {
+                    $list[] = $obj->userid;
+                }
+                $i++;
+            }
+            if(count($list)>0 && $depth>1) {
+                //this will get the same result plus the subordinate of the subordinate
+                $result = getSubordinates($db, $list, $depth-1, $ecludeduserid, $role, $entity);
+                if(is_array($result)) {
+                    $list = array_merge($list, $result);
+                }
+            }
+            if(is_array($userid)) {
+                $list = array_merge($list, $userid);
+            } else {
+                //$list[] = $userid;
+            }
+        } else {
+            $error++;
+            dol_print_error($db);
+            $list = array();
+        }
     }
     //$select .= "\n";
     return array_unique($list);
