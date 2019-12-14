@@ -83,21 +83,21 @@ $resql = $db->query($sql);
 $numProject = 0;
 $projectList = array();
 if($resql) {
-        $numProject = $db->num_rows($resql);
-        $i = 0;
-        // Loop on each record found, so each couple (project id, task id)
-        while($i < $numProject)
-        {
-                $error = 0;
-                $obj = $db->fetch_object($resql);
-                $projectList[$obj->rowid]=array('value' => $obj->rowid, "label" =>  $obj->ref.' - '.$obj->title);
-                //$projectList[$obj->rowid] = new TimesheetReport($db);
-                //$projectList[$obj->rowid]->initBasic($obj->rowid, '', $obj->ref.' - '.$obj->title, $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
-                $i++;
-        }
-        $db->free($resql);
+    $numProject = $db->num_rows($resql);
+    $i = 0;
+    // Loop on each record found, so each couple (project id, task id)
+    while($i < $numProject)
+    {
+        $error = 0;
+        $obj = $db->fetch_object($resql);
+        $projectList[$obj->rowid]=array('value' => $obj->rowid, "label" =>  $obj->ref.' - '.$obj->title);
+        //$projectList[$obj->rowid] = new TimesheetReport($db);
+        //$projectList[$obj->rowid]->initBasic($obj->rowid, '', $obj->ref.' - '.$obj->title, $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
+        $i++;
+    }
+    $db->free($resql);
 } else {
-        dol_print_error($db);
+    dol_print_error($db);
 }
 $projectIdlist=array();
 $reportName=$langs->trans('ReportProject');
@@ -113,7 +113,7 @@ if($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
     if($pdf->writeFile($reportStatic, $langs)>0) {
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$reportStatic->name.".pdf");
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/" . dol_sanitizeFileName($reportStatic->name) . ".pdf");
         return;
     }
     ob_end_flush();
@@ -185,7 +185,7 @@ foreach($projectList as $pjt) {
 $Form .= '<option value = "-999" '.(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
 
 $Form .= '</select></td>';
-        //}
+//}
 // select start date
 $Form.=   '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
 // select end date
@@ -207,15 +207,15 @@ $Form.= '<input type = "radio" name = "mode" value = "UDT" '.($mode == 'UDT'?'ch
 $Form .= '> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>';
 $Form.= '<input type = "radio" name = "mode" value = "DUT" '.($mode == 'DUT'?'checked':'');
 $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
- $Form .= '</td></tr></table>';
- //submit
- $model=$conf->global->TIMESHEET_EXPORT_FORMAT;
- $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
+$Form .= '</td></tr></table>';
+//submit
+$model=$conf->global->TIMESHEET_EXPORT_FORMAT;
+$Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
 if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if(!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
 if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=reportproject&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Refresh').'</a>';
- $Form .= '</form>';
+$Form .= '</form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
 echo $querryRes;
 /*
