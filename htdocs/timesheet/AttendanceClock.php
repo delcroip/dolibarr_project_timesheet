@@ -95,7 +95,7 @@ $timesheet_attendance->fetch('', $user);
 $timesheet_attendance->printHTMLClock();
 //tmstp = time();
 //fetch ts for others
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin)) {
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && ((is_array($SubordiateIds) && count($SubordiateIds) > 1 ) ||  $SubordiateIds > 0 ||  $user->admin)) {
     //print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 $headers = explode('||', $conf->global->TIMESHEET_HEADERS);
