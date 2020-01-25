@@ -1,4 +1,8 @@
 # dolibarr_project_timesheet changelog
+4.1.2
+- fix count issue on chrono page
+- fix UTF-8 lang file 
+
 4.1.1 
 - new: add timesheet for other works with project "subordinate"
 
