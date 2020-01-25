@@ -26,7 +26,7 @@ asu_id                 integer,
 rfid                   integer DEFAULT NULL, -- null means time for the company
 role                   integer DEFAULT 0, --- role 0 = LEVEL_USER, 2 = LEVEL_ENROLLER,12 = LEVEL_MANAGER,14 = LEVEL_SUPERMANAGER
 passwd                 varchar(8), -- password on the attendance systems
-data                   varchar DEFAULT NULL, -- data on the attendance system
+data                   varchar(2048) DEFAULT NULL, -- data on the attendance system
 status                 integer DEFAULT NULL,
 date_modification      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,       -- timesheet user (redondant)
 fk_user_modification   integer  DEFAULT NULL,
