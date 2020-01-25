@@ -20,7 +20,7 @@ services:
     container_name: dolibarr_db
     volumes:
       - mysql_data_10:/var/lib/mysql
-      - ./mount:/var/www/html
+      - ./mount:/docker-entrypoint-initdb.d
 ## How to reset database
 # 1 on the host download the right db (ver 9 bellow) because  the container doesn't have wget
 #wget https://github.com/Dolibarr/dolibarr/raw/develop/dev/initdemo/mysqldump_dolibarr_9.0.0.sql -o dump.sql
