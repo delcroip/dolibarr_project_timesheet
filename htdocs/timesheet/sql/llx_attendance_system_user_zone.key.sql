@@ -15,6 +15,6 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 -- ===================================================================
-ALTER TABLE llx_attendance_system_user_zone ADD CONSTRAINT fk_ts_asu_user_id  FOREIGN KEY (fk_user) REFERENCES llx_user(rowid) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE llx_attendance_system_user_zone ADD CONSTRAINT fk_ts_asu_user_id  FOREIGN KEY (fk_user) REFERENCES llx_attendance_system_user(rowid) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE llx_attendance_system_user_zone ADD CONSTRAINT fk_ts_asu_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE llx_attendance_system_user_zone ADD CONSTRAINT fk_ts_asu_as_id  FOREIGN KEY (fk_attendance_system) REFERENCES llx_attendance_system(rowid) ON DELETE CASCADE ON UPDATE CASCADE;

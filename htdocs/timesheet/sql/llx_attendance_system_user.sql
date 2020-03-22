@@ -22,12 +22,13 @@ CREATE TABLE llx_attendance_system_user
 (
 rowid                  SERIAL ,
 fk_user                integer  NOT NULL,  -- to link with the dolibarr user
-asu_id                 integer,
+as_uid integer, -- unique id in ZK system
 rfid                   integer DEFAULT NULL, -- null means time for the company
 role                   integer DEFAULT 0, --- role 0 = LEVEL_USER, 2 = LEVEL_ENROLLER,12 = LEVEL_MANAGER,14 = LEVEL_SUPERMANAGER
 passwd                 varchar(8), -- password on the attendance systems
 data                   varchar(2048) DEFAULT NULL, -- data on the attendance system
 status                 integer DEFAULT NULL,
+mode                    integer default NULL, -- fingerpring version, faceid
 date_modification      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,       -- timesheet user (redondant)
 fk_user_modification   integer  DEFAULT NULL,
 PRIMARY KEY (rowid)

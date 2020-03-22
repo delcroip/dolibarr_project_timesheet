@@ -1,11 +1,11 @@
 version: "3"
 services:
   web:
-    image: monogramm/docker-dolibarr:latest
+    #image: monogramm/docker-dolibarr:latest
     container_name: dolibarr_web
-#    build: 
-#      context: ../
-#      dockerfile: ./build/Dockerfile
+    build: 
+      context: ../
+      dockerfile: ./build/Dockerfile
     volumes:
       - ../htdocs:/var/www/html/custom:rw
       - ..\..\dolibarr_page_from_SQLtable\page_from_table:/var/www/build

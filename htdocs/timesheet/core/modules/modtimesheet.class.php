@@ -108,6 +108,8 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_ATTENDANCE", "int", 1, "layout mode of the timesheets");// hours or days
                 $r++;
+                $this->const[$r] = array("TIMESHEET_ATTENDANCE_SYSTEM", "int", 1, "Activation of attentance system");// hours or days
+                $r++;
                 $this->const[$r] = array("TIMESHEET_TIME_TYPE", "chaine", "hours", "layout mode of the timesheets");// hours or days
                 $r++;
                 $this->const[$r] = array("TIMESHEET_DAY_DURATION", "int", 8, "number of hour per day(used for the layout per day)");
@@ -312,163 +314,213 @@ class modTimesheet extends DolibarrModules
                 //
                 // Example to declare a new Top Menu entry and its Left menu entry:
                 $this->menu[$r]=array('fk_menu'=>0, // Put 0 if this is a top menu
-                                                                        'type'=>'top',                                        // This is a Top menu entry
-                                                                        'titre'=>'Timesheet',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'timesheet',
-                                                                        'url'=>'/timesheet/Timesheet.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>100,
-                                                                        'enabled'=>'$user->rights->timesheet->user && !($user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE)',        // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);                                                // 0=Menu for internal users, 1=external users, 2=both
-                 $r++;
-
-                  $this->menu[$r]=array('fk_menu'=>0,                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'top',                                // This is a Left menu entry
-                                                                        'titre'=>'Attendance',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'attendance',
-                                                                        'url'=>'/timesheet/AttendanceClock.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>100,
-                                                                        'enabled'=>'$user->rights->timesheet->user && $user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE',
-                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);
-                  $r++;
+                        'type'=>'top',                                        // This is a Top menu entry
+                        'titre'=>'Timesheet',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'timesheet',
+                        'url'=>'/timesheet/Timesheet.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>100,
+                        'enabled'=>'$user->rights->timesheet->user && !($user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE)',        // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);                                                // 0=Menu for internal users, 1=external users, 2=both
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>0,                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'top',                                // This is a Left menu entry
+                        'titre'=>'Attendance',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'attendance',
+                        'url'=>'/timesheet/AttendanceClock.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>100,
+                        'enabled'=>'$user->rights->timesheet->user && $user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE',
+                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
                 $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet', // Put 0 if this is a top menu
-                                                                        'type'=>'left',                                        // This is a Top menu entry
-                                                                        'titre'=>'Timesheet',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'timesheet',
-                                                                        'url'=>'/timesheet/Timesheet.php?#',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>100,
-                                                                        'enabled'=>'$conf->timesheet->enabled',        // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);                                                // 0=Menu for internal users, 1=external users, 2=both
-                 $r++;
-
-                  $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'left',                                        // This is a Left menu entry
-                                                                        'titre'=>'Attendance',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'attendance',
-                                                                        'url'=>'/timesheet/AttendanceClock.php?#',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>200,
-                                                                        'enabled'=>'$user->rights->timesheet->attendance->user',
-                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);
+                        'type'=>'left',                                        // This is a Top menu entry
+                        'titre'=>'Timesheet',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'timesheet',
+                        'url'=>'/timesheet/Timesheet.php?#',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>100,
+                        'enabled'=>'$conf->timesheet->enabled',        // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);                                                // 0=Menu for internal users, 1=external users, 2=both
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'Attendance',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'attendance',
+                        'url'=>'/timesheet/AttendanceClock.php?#',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>200,
+                        'enabled'=>'$user->rights->timesheet->attendance->user',
+                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=attendance',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'AttendanceAdmin',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'attendance',
+                        'url'=>'/timesheet/AttendanceEventAdmin.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>210,
+                        'enabled'=>'$user->rights->timesheet->attendance->admin',
+                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'userReport',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'Timesheet',
+                        'url'=>'/timesheet/TimesheetReportUser.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>130,
+                        'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'adminTimeSpent',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'Timesheet',
+                        'url'=>'/timesheet/ProjectTaskTimeList.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>140,
+                        'enabled'=>'$user->admin', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'Timesheetwhitelist',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'Timesheet',
+                        'url'=>'/timesheet/TimesheetFavouriteAdmin.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>110,
+                        'enabled'=>'$conf->global->TIMESHEET_WHITELIST == 1', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
                   $r++;
-                  $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=attendance',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'left',                                        // This is a Left menu entry
-                                                                        'titre'=>'AttendanceAdmin',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'attendance',
-                                                                        'url'=>'/timesheet/AttendanceEventAdmin.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>210,
-                                                                        'enabled'=>'$user->rights->timesheet->attendance->admin',
-                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'projectReport',
+                        'mainmenu'=>'project',
+                        'leftmenu'=>'projectReport',
+                        'url'=>'/timesheet/TimesheetReportProject.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>120,
+                        'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
                 $r++;
-                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'left',                                        // This is a Left menu entry
-                                                                        'titre'=>'userReport',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'Timesheet',
-                                                                        'url'=>'/timesheet/TimesheetReportUser.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>130,
-                                                                        'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);
-                $r++;
-                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'left',                                        // This is a Left menu entry
-                                                                        'titre'=>'adminTimeSpent',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'Timesheet',
-                                                                        'url'=>'/timesheet/ProjectTaskTime_list.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>140,
-                                                                        'enabled'=>'$user->admin', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);
-                $r++;
-                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'left',                                        // This is a Left menu entry
-                                                                        'titre'=>'Timesheetwhitelist',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'Timesheet',
-                                                                        'url'=>'/timesheet/TimesheetFavouriteAdmin.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>110,
-                                                                        'enabled'=>'$conf->global->TIMESHEET_WHITELIST == 1', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);
-                  $r++;
-                  $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'left',                                        // This is a Left menu entry
-                                                                        'titre'=>'projectReport',
-                                                                        'mainmenu'=>'project',
-                                                                        'leftmenu'=>'projectReport',
-                                                                        'url'=>'/timesheet/TimesheetReportProject.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>120,
-                                                                        'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                                                                        'perms'=>'1',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);
-                   $r++;
                /*   $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'left',                                        // This is a Left menu entry
-                                                                        'titre'=>'projectInvoice',
-                                                                        'mainmenu'=>'project',
-                                                                        'leftmenu'=>'projectInvoice',
-                                                                        'url'=>'/timesheet/TimesheetProjectInvoice.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>121,
-                                                                        'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                                                                        'perms'=>'$user->rights->facture->creer',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);*/
-                  $r++;
-                    $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'left',                                        // This is a Left menu entry
-                                                                        'titre'=>'Timesheetapproval',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'Timesheetapproval',
-                                                                        'url'=>'/timesheet/TimesheetTeamApproval.php',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>130,
-                                                                        'enabled'=>'$user->rights->timesheet->approval', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                                                                        'perms'=>'$user->rights->timesheet->approval',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);
-                  $r++;
-                   $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=Timesheetapproval',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                                                        'type'=>'left',                                        // This is a Left menu entry
-                                                                        'titre'=>'Adminapproval',
-                                                                        'mainmenu'=>'timesheet',
-                                                                        'leftmenu'=>'Adminapproval',
-                                                                        'url'=>'/timesheet/TimesheetUserTasksAdmin.php?action=list&sortfield=t.date_start&sortorder=desc',
-                                                                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
-                                                                        'position'=>131,
-                                                                        'enabled'=>'$user->rights->timesheet->approval->admin', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                                                                        'perms'=>'$user->rights->timesheet->approval->admin',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                                                                        'target'=>'',
-                                                                        'user'=>2);
-                  $r++;
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'projectInvoice',
+                        'mainmenu'=>'project',
+                        'leftmenu'=>'projectInvoice',
+                        'url'=>'/timesheet/TimesheetProjectInvoice.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>121,
+                        'enabled'=>'$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'$user->rights->facture->creer',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);*/
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'Timesheetapproval',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'Timesheetapproval',
+                        'url'=>'/timesheet/TimesheetTeamApproval.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>130,
+                        'enabled'=>'$user->rights->timesheet->approval', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'$user->rights->timesheet->approval',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=Timesheetapproval',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'Adminapproval',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'Adminapproval',
+                        'url'=>'/timesheet/TimesheetUserTasksAdmin.php?action=list&sortfield=t.date_start&sortorder=desc',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>131,
+                        'enabled'=>'$user->rights->timesheet->approval->admin', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'$user->rights->timesheet->approval->admin',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'TimesheetAttendanceSystem',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'TimesheetAttendanceSystem',
+                        'url'=>'/timesheet/AttendanceSystemList.php',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=> 300,
+                        'enabled'=>'$conf->global->TIMESHEET_ATTENDANCE_SYSTEM', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'$user->rights->timesheet->attendance->admin ',                                     // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=TimesheetAttendanceSystem',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'AttendanceSystemList',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'TimesheetAttendanceSystem',
+                        'url'=>'/timesheet/AttendanceSystemList.php?action=list',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>300,
+                        'enabled'=>'$conf->global->TIMESHEET_ATTENDANCE_SYSTEM', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'$user->rights->timesheet->attendance->admin ',                                        // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=TimesheetAttendanceSystem',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'AttendanceSystemUser',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'TimesheetAttendanceSystem',
+                        'url'=>'/timesheet/AttendanceSystemUserList.php?action=list',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>300,
+                        'enabled'=>'$conf->global->TIMESHEET_ATTENDANCE_SYSTEM', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'$user->rights->timesheet->attendance->admin ',                                     // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
+                $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=timesheet,fk_leftmenu=TimesheetAttendanceSystem',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                        'type'=>'left',                                        // This is a Left menu entry
+                        'titre'=>'AttendanceSystemUserZone',
+                        'mainmenu'=>'timesheet',
+                        'leftmenu'=>'TimesheetAttendanceSystem',
+                        'url'=>'/timesheet/AttendanceSystemUserZoneList.php?action=list',
+                        'langs'=>'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'position'=>300,
+                        'enabled'=>'$conf->global->TIMESHEET_ATTENDANCE_SYSTEM', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms'=>'$user->rights->timesheet->attendance->admin ',                                    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                        'target'=>'',
+                        'user'=>2);
+                $r++;
 // impoort
 /*                $r++;
                 $this->import_code[$r]=$this->rights_class.'_'.$r;

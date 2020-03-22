@@ -21,8 +21,8 @@
 CREATE TABLE llx_attendance_system_user_zone
 (
 rowid                  SERIAL ,
-fk_user                integer  NOT NULL,  -- to link with the dolibarr user
-fk_attendance_system   integer not null,
+zone integer not null,
+fk_attendance_system_user                integer  NOT NULL,  -- to link with the zk user
 date_modification      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,       -- timesheet user (redondant)
 fk_user_modification   integer  DEFAULT NULL,
 PRIMARY KEY (rowid)

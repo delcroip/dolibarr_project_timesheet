@@ -29,7 +29,7 @@ fk_third_party        integer DEFAULT NULL, -- null means time for the company
 fk_task               integer DEFAULT NULL,
 fk_project            integer DEFAULT NULL,
 serial_nb               integer DEFAULT NULL,
-zone                   integer DEFAULT NULL,
+zone                   integer NOT NULL,
 passwd               varchar(128) DEFAULT NULL,
 status               integer DEFAULT NULL,
 mode                    integer default 1, -- fingerpring version, faceid

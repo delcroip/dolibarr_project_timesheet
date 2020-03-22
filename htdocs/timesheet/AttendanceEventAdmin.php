@@ -439,7 +439,7 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '</td>';
         print '</tr>'."\n";
         $i = 0;
-       // $basedurl = dirname($PHP_SELF).'/attendanceevent_card.php?action=view&id=';
+       // $basedurl = dirname($PHP_SELF).'/attendanceeventCard.php?action=view&id=';
         while($i < $num && $i<$limit)
         {
             $obj = $db->fetch_object($resql);
@@ -498,7 +498,7 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
     print '</table>'."\n";
     print '</form>'."\n";
     // new button
-   // print '<a href = "attendanceevent_card.php?action=create" class="butAction"role="button">'.$langs->trans('New');
+   // print '<a href = "attendanceeventCard.php?action=create" class="butAction"role="button">'.$langs->trans('New');
     print ' '.$langs->trans('Attendanceevent')."</a>\n";
 // End of page
 llxFooter();

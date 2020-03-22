@@ -571,7 +571,7 @@ switch($action) {
             //        print '</td>';
             //Search field forproject_tasktime_list
             //        print '<td class = "liste_titre" colspan = "1" >';
-            //                print '<input class = "flat" size = "16" type = "text" name = "ls_project_tasktime_list" value = "'.$ls_project_tasktime_list.'"/>';
+            //                print '<input class = "flat" size = "16" type = "text" name = "ls_project_tasktime_list" value = "'.$ls_project_tasktimeList.'"/>';
             //        print '</td>';
             //Search field foruser_approval
             //print '<td class = "liste_titre" colspan = "1" >';
@@ -597,7 +597,7 @@ switch($action) {
                             //print "<td>".dol_print_date($obj->date_end, 'day')."(".getYearWeek(0, 0, 0, $db->jdate($obj->date_end)).")</td>";//FIXME
                             print "<td>".$langs->trans(strtolower($statusA[$obj->status]))."</td>";
                             //print "<td>".$langs->trans($obj->target)."</td>";
-                            //print "<td>".$obj->fk_project_tasktime_list."</td>";
+                            //print "<td>".$obj->fk_project_tasktimeList."</td>";
                             //print "<td>".print_generic('user', 'rowid', $obj->fk_user_approval, 'lastname', 'firstname', ' ')."</td>";
                             print '<td><a href = "'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
                             print "</tr>";

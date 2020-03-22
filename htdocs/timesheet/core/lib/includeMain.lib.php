@@ -21,6 +21,7 @@
 
 
 $res = 0;
+error_reporting(E_ALL);
 $currentTimesheetPath = dirname(__FILE__);
 if(! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
     include $currentTimesheetPath.'/dev.inc.php';
@@ -43,3 +44,6 @@ if (! $res) die("Include of main fails") ;
 if ($user->admin && version_compare("4.1", $conf->global->TIMESHEET_VERSION) > 0){
     setEventMessage("Version of timesheet updated, please deactivate then reactivate the module", 'warnings');
 }
+// return from functions
+define("BADPARAM",-2);
+define("OK",1);

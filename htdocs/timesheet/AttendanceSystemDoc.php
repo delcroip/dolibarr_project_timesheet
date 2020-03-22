@@ -47,7 +47,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 // Initialize technical objects
-$object = new AttendanceSystem_class($db);
+$object = new AttendanceSystem($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->timesheet->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('AttendanceSystemdocument'));// Note that conf->hooks_modules contains array

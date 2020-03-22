@@ -333,7 +333,7 @@ switch ($action) {
             print '<input type="hidden" name="tms" value="'.$tms.'">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
         }else {// show the nav bar
-            $basedurl = dol_buildpath("/timesheet/projettasktime_list.php", 1);
+            $basedurl = dol_buildpath("/timesheet/projettasktimeList.php", 1);
             $linkback = '<a href="'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
             if(!isset($object->ref))//save ref if any
                 $object->ref = $object->id;

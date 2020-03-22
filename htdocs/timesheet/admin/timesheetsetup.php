@@ -33,6 +33,7 @@ if(!$user->admin) {
 }
 $action = getpost('action', 'alpha');
 $attendance = $conf->global->TIMESHEET_ATTENDANCE;
+$attendanceSystem = $conf->global->TIMESHEET_ATTENDANCE_SYSTEM;
 $timetype = $conf->global->TIMESHEET_TIME_TYPE;
 $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
 $timeSpan = $conf->global->TIMESHEET_TIME_SPAN;
@@ -134,6 +135,8 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_TIME_SPAN", $timeSpan, 'chaine', 0, '', $conf->entity);
         $attendance = getpost('attendance', 'int');
         dolibarr_set_const($db, "TIMESHEET_ATTENDANCE", $attendance, 'int', 0, '', $conf->entity);
+        $attendanceSystem = getpost('attendanceSystem', 'int');
+        dolibarr_set_const($db, "TIMESHEET_ATTENDANCE_SYSTEM", $attendanceSystem, 'int', 0, '', $conf->entity);
         $maxhoursperevent = getpost('maxhoursperevent', 'int');
         dolibarr_set_const($db, "TIMESHEET_EVENT_MAX_DURATION", $maxhoursperevent, 'int', 0, '', $conf->entity);
         $minsecondsperevent = getpost('minSecondsPerEvent', 'int');
@@ -330,6 +333,11 @@ echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("Attendance");
 echo '</td><td align = "left">'.$langs->trans("AttendanceDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "attendance" value = "1" ';
 echo (($attendance == '1')?'checked':'')."></td></tr>\n\t\t";
+// activate attendance system
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("AttendanceSystem");
+echo '</td><td align = "left">'.$langs->trans("AttendanceSystemDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "attendanceSystem" value = "1" ';
+echo (($attendanceSystem == '1')?'checked':'')."></td></tr>\n\t\t";
 // type time
 echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("timeType").'</td><td align = "left">'.$langs->trans("timeTypeDesc").'</td>';
 echo '<td align = "left"><input type = "radio" name = "timeType" value = "hours" ';

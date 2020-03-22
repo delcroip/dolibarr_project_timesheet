@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *        \file       dev/AttendanceSystems/AttendanceSystem_page.php
+ *        \file       dev/AttendanceSystems/AttendanceSystemPage.php
  *                \ingroup    timesheet othermodule1 othermodule2
  *                \brief      This file is an example of a php page
  *                                        Initialy built by build_class_from_table on 2019-01-30 16:24
@@ -39,7 +39,7 @@ function AttendanceSystemReloadPage($backtopage, $id, $ref)
     } elseif($id>0) {
         header("Location: ".dol_buildpath("/timesheet/AttendanceSystemCard.php", 1).'?id='.$id);
     } else {
-        header("Location: ".dol_buildpath("/timesheet/AttendanceSystemAdmin.php", 1));
+        header("Location: ".dol_buildpath("/timesheet/AttendanceSystemList.php", 1));
     }
     ob_end_flush();
     exit();
@@ -60,16 +60,6 @@ function AttendanceSystemPrepareHead($object)
         $head[$h][1] = $langs->trans("Card");
         $head[$h][2] = 'card';
         $h++;
-        if(isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
-                $nbNote = 0;
-                if(!empty($object->note_private)) $nbNote++;
-                if(!empty($object->note_public)) $nbNote++;
-                $head[$h][0] = dol_buildpath('/timesheet/AttendanceSystem_note.php', 1).'?id='.$object->id;
-                $head[$h][1] = $langs->trans('Notes');
-                if($nbNote > 0) $head[$h][1].= ' <span class = "badge">'.$nbNote.'</span>';
-                $head[$h][2] = 'note';
-                $h++;
-        }
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
         $upload_dir = $conf->timesheet->dir_output . "/AttendanceSystem/" . dol_sanitizeFileName($object->ref);
@@ -80,12 +70,8 @@ function AttendanceSystemPrepareHead($object)
         if(($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class = "badge">'.($nbFiles+$nbLinks).'</span>';
         $head[$h][2] = 'document';
         $h++;
-/*
-        $head[$h][0] = dol_buildpath("/timesheet/AttendanceSystem_agenda.php", 1).'?id='.$object->id;
-        $head[$h][1] = $langs->trans("Events");
-        $head[$h][2] = 'agenda';
-        $h++;
-*/
+
+
         // Show more tabs from modules
         // Entries must be declared in modules descriptor with line
         //$this->tabs = array(

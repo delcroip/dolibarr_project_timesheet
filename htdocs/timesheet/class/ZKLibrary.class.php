@@ -71,8 +71,8 @@ class ZKLibrary
     public $received_data = '';
     public $user_data = array();
     public $attendance_data = array();
-    public $timeout_sec = 5;
-    public $timeout_usec = 5000000;
+    public $timeout_sec = null;
+    public $timeout_usec = 500000;
     /** Object constructor.
      *
      * @param string $ip IP address of device.
@@ -189,6 +189,7 @@ class ZKLibrary
         }
         $timeout = array('sec'=>$this->timeout_sec, 'usec'=>$this->timeout_usec);
         socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, $timeout);
+        socket_set_option($this->socket, SOL_SOCKET, SO_SNDTIMEO, $timeout);
     }
     /** ping the attendance machine
      *
@@ -200,7 +201,7 @@ class ZKLibrary
         $time1 = microtime(true);
         $pfile = fsockopen($this->ip, $this->port, $errno, $errstr, $timeout);
         if(!$pfile) {
-            return 'down';
+            return false;
         }
         $time2 = microtime(true);
         fclose($pfile);
@@ -866,7 +867,7 @@ class ZKLibrary
     }
     /** Retrive the user list from the device.
      *
-     * @return false|array[int uid,string name,int role, string passwd] exec output
+     * @return false|array[int uid,string name,int role, string passwd, rfid] exec output
      */
     public function getUser()
     {
@@ -912,7 +913,11 @@ class ZKLibrary
                 $uid = $u1+($u2*256);// 2 byte
                 $role = hexdec(substr($u[1], 6, 2)).' ';// 1 byte
                 $password = hex2bin(substr($u[1], 8, 16)).' ';// 8 byte
-                $name = hex2bin(substr($u[1], 24, 74)). ' ';// 37 byte
+                $name = hex2bin(substr($u[1], 24, 48)). ' ';// 24 byte
+                $tempcard = hexdec($this->reverseHex(substr($u[1], 72, 8)));	// 4 byte card
+                //$tempcard = hexdec($this->reverseHex(substr($u[1], 72, 26)));	// 13 byte card
+                $rfid = $tempcard == "0" ? "" : $tempcard;
+                $active = hexdec(substr($u[1], 80, 2)). ' ';
                 $userid = hex2bin(substr($u[1], 98, 72)).' ';// 36 byte
                 $passwordArr = explode(chr(0), $password, 2);// explode to array
                 $password = $passwordArr[0];// get password
@@ -923,7 +928,7 @@ class ZKLibrary
                 if($name == "") {
                     $name = $uid;
                 }
-                $users[$uid] = array($userid, $name, intval($role), $password);
+                $users[$uid] = array('uid' => $userid, 'name' => $name, 'role' => intval($role), 'passwd' => $password, 'rfid' => $rfid, 'active' => $active);
                 $user_data = substr($user_data, 72);
             }
             }
@@ -950,10 +955,12 @@ class ZKLibrary
         for($i = 5;$i<10;$i++, $j++)
         {
             $template[$j] = $this->getUserTemplate($uid, $i);
+            if($template[$j] == array() )unset($template[$j]);
         }
         for($i = 4;$i>=0;$i--, $j++)
         {
             $template[$j] = $this->getUserTemplate($uid, $i);
+            if($template[$j] == array() )unset($template[$j]);
         }
         return $template;
     }
@@ -1010,7 +1017,7 @@ class ZKLibrary
             $user_data = $prefix.$user_data;
             if(strlen($user_data) > 6) {
                 $valid = 1;
-                $template_data = array($template_size, $uid, $finger, $valid, $user_data);
+                $template_data = array('size' => $template_size, 'uid' => $uid, 'finger' => $finger, 'valid' =>$valid, 'userdata' => $user_data);
             }
             }
             return $template_data;
@@ -1089,9 +1096,10 @@ class ZKLibrary
      * @param sting $password user password
      * @param int $role 0 = LEVEL_USER, 2 = LEVEL_ENROLLER,12 = LEVEL_MANAGER,14 = LEVEL_SUPERMANAGER
      * @param int £rfid card number
+     * @param int  $active 
      * @return false|string exec output
      */
-    public function setUser($uid, $userid, $name, $password, $role, $rfid)
+    public function setUser($uid, $userid, $name, $password, $role, $rfid, $active)
     {
         $uid = (int) $uid;
         $role = (int) $role;
@@ -1107,8 +1115,8 @@ class ZKLibrary
                             $byte2.chr($role).
                             str_pad($password, 8, chr(0)).
                             str_pad($name, 24, chr(0)).
-                            str_pad($rfid, 13, chr(0)).
-                            //str_pad(chr(1), 9, chr(0)).
+                            str_pad($rfid, 4, chr(0)).
+                            str_pad($active, 9, chr(0)).
                             str_pad($userid, 8, chr(0)).
                             str_repeat(chr(0), 16);
         return $this->execCommand($command, $command_string);
@@ -1302,7 +1310,7 @@ class ZKLibrary
                 $id = str_replace("\0", '', hex2bin(substr($u[1], 8, 16)));
                 $state = hexdec(substr($u[1], 56, 2));
                 $timestamp = $this->decodeTime(hexdec($this->reverseHex(substr($u[1], 58, 8))));
-                array_push($attendance, array($uid, $id, $state, $timestamp));
+                array_push($attendance, array( 'uid' => $uid, 'id' => $id, 'state' => $state, 'tms' => $timestamp));
                 $attendance_data = substr($attendance_data, 40);
             }
             }
