@@ -129,7 +129,7 @@ switch($action) {
             // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql.= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
-            dol_syslog(__METHOD__);
+            dol_syslog('timesheetsetu:deletedraft', LOG_DEBUG);
             $resql = $db->query($sql);
         }
         dolibarr_set_const($db, "TIMESHEET_TIME_SPAN", $timeSpan, 'chaine', 0, '', $conf->entity);

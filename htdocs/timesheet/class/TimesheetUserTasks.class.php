@@ -174,7 +174,7 @@ class TimesheetUserTasks extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if($ref) $sql.= " WHERE t.ref = '".$ref."'";
         else $sql.= " WHERE t.rowid = ".$id;
-        dol_syslog(get_class($this)."::fetch");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             if($this->db->num_rows($resql)) {
@@ -221,7 +221,7 @@ class TimesheetUserTasks extends CommonObject
 
 
         //$sql.= " AND t.rowid = ".$id;
-        dol_syslog(get_class($this)."::fetchByWeek");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             if($this->db->num_rows($resql)) {
@@ -286,7 +286,7 @@ class TimesheetUserTasks extends CommonObject
                 $sql .= ' note = \''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'';
         $sql.= " WHERE rowid=".$this->id;
                 $this->db->begin();
-                dol_syslog(__METHOD__);
+                dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if(! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
@@ -338,7 +338,7 @@ class TimesheetUserTasks extends CommonObject
             if(! $error) {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
                 $sql.= " WHERE rowid=".$this->id;
-                dol_syslog(__METHOD__);
+                dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql = $this->db->query($sql);
                 if(! $resql) {
                     $error++;$this->errors[] = "Error ".$this->db->lasterror();
@@ -509,7 +509,7 @@ public function fetchTaskTimesheet($userid = '')
         $sql .= " OR (prj.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1') WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project'  AND element_id = prj.rowid )))";
     }
     $sql .= '  ORDER BY prj.fk_soc, prjRef, tskRef ';
-     dol_syslog("timesheet::getTasksTimesheet full ", LOG_DEBUG);
+    dol_syslog(__METHOD__, LOG_DEBUG);
     $resql = $this->db->query($sql);
     if($resql) {
         $this->taskTimesheet = array();
@@ -562,7 +562,7 @@ public function updateActuals($tabPost, $notes = array(), $progress = array())
      //FIXME, tta should be creted
     if($this->status == APPROVED)
         return -1;
-    dol_syslog('Entering in Timesheet::task_timesheet.php::updateActuals()');
+        dol_syslog(__METHOD__, LOG_DEBUG);
     $ret = 0;
    // $tmpRet = 0;
     //$_SESSION['task_timesheet'][$this->timestamp]['timeSpendCreated'] = 0;
@@ -598,8 +598,8 @@ public function updateActuals($tabPost, $notes = array(), $progress = array())
 public function getUserName()
 {
     $sql = "SELECT usr.rowid, CONCAT(usr.firstname, ' ', usr.lastname) as username FROM ".MAIN_DB_PREFIX.'user AS usr WHERE';
-        $sql .= ' usr.rowid = '.$this->userId;
-      dol_syslog("task_timesheet::get_userName ", LOG_DEBUG);
+    $sql .= ' usr.rowid = '.$this->userId;
+    dol_syslog(__METHOD__, LOG_DEBUG);
     $resql = $this->db->query($sql);
     if($resql) {
         $i = 0;
@@ -678,7 +678,7 @@ Public function setStatus($user, $status, $id = 0)
     $error = 0;
     //if the satus is not an ENUM status
     if($status<0 || $status>STATUSMAX) {
-        dol_syslog(get_class($this)."::setStatus this status '{$status}' is not part or the enum list", LOG_ERR);
+        dol_syslog(__METHOD__.": this status '{$status}' is not part or the enum list", LOG_ERR);
         return false;
     }
     $Approved = (in_array($status, array(APPROVED, UNDERAPPROVAL)));

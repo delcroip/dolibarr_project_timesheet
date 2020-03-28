@@ -248,7 +248,7 @@ class TimesheetReport
             $sql .= $sqltail;
         }*/
         $sql .= $this->modeSQLOrder;
-        dol_syslog("timesheet::userreport::tasktimeList", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             $numTaskTime = $this->db->num_rows($resql);
@@ -461,7 +461,7 @@ class TimesheetReport
         if($model == 'excel2017' || $model == 'excel'){
             if(!(extension_loaded('zip') && extension_loaded('xml'))){
                 $this->error = "missing php extention(xml or zip)";
-                dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
+                dol_syslog(__METHOD__."::build_file Error: ".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -525,7 +525,7 @@ class TimesheetReport
             else
             {
                 $this->error = $objmodel->error;
-                dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
+                dol_syslog(__METHOD__"::build_file Error: ".$this->error, LOG_ERR);
                 return null;
             }
         }

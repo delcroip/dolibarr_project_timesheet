@@ -22,13 +22,14 @@
  *  \file       dev/AttendanceSystemUsers/AttendanceSystemUser.class.php
  *  \ingroup    timesheet othermodule1 othermodule2
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *				Initialy built by build_class_from_table on 2020-03-15 20:02
+ *				Initialy built by build_class_from_table on 2020-03-28 12:18
  */
 
 // Put here all includes required by your class file
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+//require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 require_once 'core/lib/generic.lib.php';
 require_once 'AttendanceSystemUserZone.class.php';
 
@@ -51,6 +52,7 @@ class AttendanceSystemUser extends CommonObject
     public $id;
     // BEGIN OF automatic var creation
     
+	public $as_name;
 	public $user;
 	public $as_uid;
 	public $rfid;
@@ -85,7 +87,7 @@ class AttendanceSystemUser extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $name = null ,$notrigger=0)
+    function create($user, $notrigger=0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -99,6 +101,7 @@ class AttendanceSystemUser extends CommonObject
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
         
+		$sql .= 'as_name,';
 		$sql .= 'fk_user,';
 		$sql .= 'as_uid,';
 		$sql .= 'rfid,';
@@ -110,14 +113,14 @@ class AttendanceSystemUser extends CommonObject
 
         
         $sql .= ") VALUES (";
-
+        
         $sqlSelectUser = "(SELECT rowid from ".MAIN_DB_PREFIX."user AS u ";
         $sqlSelectUser .= "WHERE u.login = '$this->as_uid'";
         $sqlSelectUser .= " OR u.email = '$this->as_uid'";
         $sqlSelectUser .= " OR u.ref_int = '$this->as_uid'";
         if($name != null)$sqlSelectUser .= " OR CONCAT(u.firstname,'.',u.lastname) = '$name'";
         $sqlSelectUser .= " LIMIT 1 )";
-
+        $sql .= ' '.(empty($this->as_name)?'NULL':"'".$this->db->escape($this->as_name)."'").',';
 		$sql .= ' '.(empty($this->user)?$sqlSelectUser:"'".$this->user."'").',';
 		$sql .= ' '.(empty($this->as_uid)?'NULL':"'".$this->as_uid."'").',';
 		$sql .= ' '.(empty($this->rfid)?'NULL':"'".$this->rfid."'").',';
@@ -184,6 +187,7 @@ class AttendanceSystemUser extends CommonObject
         $sql = "SELECT";
         $sql .= " t.rowid,";
         
+		$sql .= ' t.as_name,';
 		$sql .= ' t.fk_user,';
 		$sql .= ' t.as_uid,';
 		$sql .= ' t.rfid,';
@@ -199,7 +203,7 @@ class AttendanceSystemUser extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql .= " WHERE t.ref = '".$ref."'";
         else $sql .= " WHERE t.rowid = ".$id;
-    	dol_syslog(get_class($this)."::fetch");
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -208,6 +212,7 @@ class AttendanceSystemUser extends CommonObject
                 $obj = $this->db->fetch_object($resql);
                 $this->id    = $obj->rowid;
                 
+		$this->as_name = $obj->as_name;
 		$this->user = $obj->fk_user;
 		$this->as_uid = $obj->as_uid;
 		$this->rfid = $obj->rfid;
@@ -252,7 +257,7 @@ class AttendanceSystemUser extends CommonObject
         $sql .= $this->setSQLfields($user);
         $sql .= " WHERE rowid=".$this->id;
 		$this->db->begin();
-		dol_syslog(__METHOD__);
+		dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
             if (! $error)
@@ -326,7 +331,7 @@ class AttendanceSystemUser extends CommonObject
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
         
         if($id){
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'id='.$id.'&action=view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
         }else if (!empty($ref)){
             $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
@@ -445,7 +450,7 @@ class AttendanceSystemUser extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql .= " WHERE rowid = ".$this->id;
 
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
         else if ($this->db->affected_rows($resql) == 0){$error++;$this->errors[] = "Item no found in database"; }
@@ -524,8 +529,20 @@ class AttendanceSystemUser extends CommonObject
     function initAsSpecimen()
     {
         $this->id = 0;
-        $this->prop1 = 'prop1';
-        $this->prop2 = 'prop2';
+        
+	$this->as_name = '';
+	$this->user = '';
+	$this->as_uid = '';
+	$this->rfid = '';
+	$this->role = '';
+	$this->passwd = '';
+	$this->data = '';
+	$this->status = '';
+	$this->mode = '';
+	$this->date_modification = '';
+	$this->user_modification = '';
+
+        
     }
     /**
      *	will clean the parameters
@@ -535,6 +552,7 @@ class AttendanceSystemUser extends CommonObject
      */       
     function cleanParam(){
         
+			if (!empty($this->as_name)) $this->as_name = trim($this->as_name);
 			if (!empty($this->user)) $this->user = trim($this->user);
 			if (!empty($this->as_uid)) $this->as_uid = trim($this->as_uid);
 			if (!empty($this->rfid)) $this->rfid = trim($this->rfid);
@@ -557,6 +575,7 @@ class AttendanceSystemUser extends CommonObject
     function setSQLfields($user){
         $sql = '';
         
+		$sql .= ' as_name = '.(empty($this->as_name) != 0 ? 'null':"'".$this->db->escape($this->as_name)."'").',';
 		$sql .= ' fk_user = '.(empty($this->user) != 0 ? 'null':"'".$this->user."'").',';
 		$sql .= ' as_uid = '.(empty($this->as_uid) != 0 ? 'null':"'".$this->as_uid."'").',';
 		$sql .= ' rfid = '.(empty($this->rfid) != 0 ? 'null':"'".$this->rfid."'").',';
@@ -579,17 +598,17 @@ class AttendanceSystemUser extends CommonObject
     public function serialize($mode = 0){
 		$ret = '';
 		$array = array();
-		
-		$array['user']=$this->user;
-		$array['as_uid']=$this->as_uid;
-		$array['rfid']=$this->rfid;
-		$array['role']=$this->role;
-		$array['passwd']=$this->passwd;
-		$array['data']=$this->data;
-		$array['status']=$this->status;
-		$array['mode']=$this->mode;
-		$array['date_modification']=$this->date_modification;
-		$array['user_modification']=$this->user_modification;
+		$array['as_name'] = $this->as_name;
+		$array['user'] = $this->user;
+		$array['as_uid'] = $this->as_uid;
+		$array['rfid'] = $this->rfid;
+		$array['role'] = $this->role;
+		$array['passwd'] = $this->passwd;
+		$array['data'] = $this->data;
+		$array['status'] = $this->status;
+		$array['mode'] = $this->mode;
+		$array['date_modification'] = $this->date_modification;
+		$array['user_modification'] = $this->user_modification;
 
 		
 		$array['processedTime'] = mktime();
@@ -633,8 +652,6 @@ class AttendanceSystemUser extends CommonObject
         }
     }
 
-
-
     /***
      *  function to load 1 user in the database from an ZKUSer
      *  @param int $zone   zone of the attendance system
@@ -649,13 +666,14 @@ class AttendanceSystemUser extends CommonObject
             
             $this->mode = $mode;
             $this->user = '';
-            $this->asuid = ($ZKUser['uid']);
+            $this->as_uid = ($ZKUser['uid']);
+            $this->as_name = ($ZKUser['name']);
             $this->role = ($ZKUser['role']);
             $this->passwd = ($ZKUser['passwd']);
             $this->rfid = ($ZKUser['rfid']);
             $this->data = ($ZKUser['data']);
             $this->status = 1; //fixme
-            $this->create($user, $ZKUser['name']);
+            $this->create($user);
             // add link
 
             if($this->id > 0){
@@ -674,39 +692,39 @@ class AttendanceSystemUser extends CommonObject
 
     }
 
-    /**
+        /**
      *  Function to generate a sellist
      *  @param int $selected rowid to be preselected
      *  @return string HTML select list
      */
     
-    Public function sellist($selected = ''){
-        $join .= ' JOIN '.MAIN_DB_PREFIX.'user as u ON t.fk_user = u.rowid';    
-        $sql_attendance_system_user = array('table'=> $this->table_element ,'keyfield'=> 't.rowid','fields'=>'t.as_uid,u.firstname,u.lastname', 'join' => $join, 'where'=>'','tail'=>'');
-        $html_attendance_system_user = array('name'=>'Attendancesystemuser','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '. ');
-        $addChoices_attendance_system_user = null;
-		return select_sellist($sql_attendance_system_user,$html_attendance_system_user, $selected, $addChoices_attendance_system_user );
+    Public function sellist($selected = ''){ 
+        $join .= ' JOIN '.MAIN_DB_PREFIX.'user as u ON t.fk_user = u.rowid';       
+        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => 't.as_uid,u.firstname,u.lastname', 'join' => $join, 'where' => '', 'tail' => '');
+        $html = array('name' => 'AttendanceSystemUser', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
+        $addChoices = null;
+        return select_sellist($sql, $html, $selected, $addChoices );   
     }
 }
-
-    /***
-     *  function to load use in the database from an array
-     *  @param int $asuId   id of the attendance system
-     *  @param  array(ZKTECO User) $userArray array of user // array(uid,string name,int role, string passwd)
-     *  @param int $mode   // fngerprint version face id ...
-     *  @result int/array(int)    ok(1)/ko(-1) badParam(-2)
-     */
-    function loadAttendanceUserFromArray($zone, $mode = null, $userArray = null){
-        global $db;
-		$res = array();
-        if(is_array($userArray) && count($userArray)>0){
-            foreach($userArray as $key => $ZKUser){
-				$attendanceUser = new AttendanceSystemUser($db);
-                $res[] = $attendanceUser->loadZKUser($zone,  $mode, $ZKUser);
-            }
-            if (min($res)<0) return  $res;
-            else return OK;
-        }else return BADPARAM;
-        
-
-    }
+    
+        /***
+         *  function to load use in the database from an array
+         *  @param int $asuId   id of the attendance system
+         *  @param  array(ZKTECO User) $userArray array of user // array(uid,string name,int role, string passwd)
+         *  @param int $mode   // fngerprint version face id ...
+         *  @result int/array(int)    ok(1)/ko(-1) badParam(-2)
+         */
+        function loadAttendanceUserFromArray($zone, $mode = null, $userArray = null){
+            global $db;
+            $res = array();
+            if(is_array($userArray) && count($userArray)>0){
+                foreach($userArray as $key => $ZKUser){
+                    $attendanceUser = new AttendanceSystemUser($db);
+                    $res[] = $attendanceUser->loadZKUser($zone,  $mode, $ZKUser);
+                }
+                if (min($res)<0) return  $res;
+                else return OK;
+            }else return BADPARAM;
+            
+    
+        }

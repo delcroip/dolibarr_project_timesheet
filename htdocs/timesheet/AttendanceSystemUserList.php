@@ -19,10 +19,10 @@
  */
 
 /**
- *   	\file       dev/AttendanceSystemUsers/AttendanceSystemUserPage.php
+ *   	\file       dev/AttendanceSystemUsers/AttendanceSystemUsers.php
  *		\ingroup    timesheet othermodule1 othermodule2
  *		\brief      This file is an example of a php page
- *					Initialy built by build_class_from_table on 2020-03-15 16:01
+ *					Initialy built by build_class_from_table on 2020-03-28 12:46
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -55,7 +55,7 @@ dol_include_once('/core/class/html.formprojet.class.php');
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
-$langs->load("AttendanceSystemUser@timesheet");
+$langs->load("attendancesystemuser@timesheet");
 
 // Get parameter
 $id			 = GETPOST('id','int');
@@ -72,7 +72,8 @@ $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"])
 //$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )		// Both test must be present to be compatible with all browsers
 {
-    	$ls_user = GETPOST('ls_user','int');
+    	$ls_as_name = GETPOST('ls_as_name','alpha');
+	$ls_user = GETPOST('ls_user','int');
 	if($ls_user==-1)$ls_user = '';
 	$ls_as_uid = GETPOST('ls_as_uid','int');
 	$ls_rfid = GETPOST('ls_rfid','int');
@@ -97,7 +98,7 @@ $pagenext = $page + 1;
 
 
  // uncomment to avoid resubmision
-//if(isset( $_SESSION['AttendanceSystemUser_class'][$tms]))
+//if(isset( $_SESSION['attendancesystemuser_class'][$tms]))
 //{
 
  //   $cancel = TRUE;
@@ -200,6 +201,7 @@ jQuery(document).ready(function() {
     $sql = 'SELECT';
     $sql .= ' t.rowid,';
     
+	$sql .= ' t.as_name,';
 	$sql .= ' t.fk_user,';
 	$sql .= ' t.as_uid,';
 	$sql .= ' t.rfid,';
@@ -224,7 +226,8 @@ jQuery(document).ready(function() {
             }
     }
     //pass the search criteria
-    	if($ls_user) $sqlwhere .= natural_search(array('t.fk_user'), $ls_user);
+    	if($ls_as_name) $sqlwhere .= natural_search('t.as_name', $ls_as_name);
+	if($ls_user) $sqlwhere .= natural_search(array('t.fk_user'), $ls_user);
 	if($ls_as_uid) $sqlwhere .= natural_search(array('t.as_uid'), $ls_as_uid);
 	if($ls_rfid) $sqlwhere .= natural_search(array('t.rfid'), $ls_rfid);
 	if($ls_role) $sqlwhere .= natural_search(array('t.role'), $ls_role);
@@ -265,8 +268,17 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $param = '';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
         if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-        $param .= empty($ls_fields1)?'':'&ls_fields1='.urlencode($ls_fields1);
-        $param .= empty($ls_fields2)?'':'&ls_fields2='.urlencode($ls_fields2);
+        	if (!empty($ls_as_name))	$param .= '&ls_as_name = '.urlencode($ls_as_name);
+	if (!empty($ls_user))	$param .= '&ls_user = '.urlencode($ls_user);
+	if (!empty($ls_as_uid))	$param .= '&ls_as_uid = '.urlencode($ls_as_uid);
+	if (!empty($ls_rfid))	$param .= '&ls_rfid = '.urlencode($ls_rfid);
+	if (!empty($ls_role))	$param .= '&ls_role = '.urlencode($ls_role);
+	if (!empty($ls_passwd))	$param .= '&ls_passwd = '.urlencode($ls_passwd);
+	if (!empty($ls_data))	$param .= '&ls_data = '.urlencode($ls_data);
+	if (!empty($ls_status))	$param .= '&ls_status = '.urlencode($ls_status);
+	if (!empty($ls_mode))	$param .= '&ls_mode = '.urlencode($ls_mode);
+
+        
         if ($filter && $filter != -1) $param .= '&filtre='.urlencode($filter);
         
         $num = $db->num_rows($resql);
@@ -278,7 +290,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<table class = "liste" width = "100%">'."\n";
         //TITLE
         print '<tr class = "liste_titre">';
-        	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_user','',$param,'',$sortfield,$sortorder);
+        	print_liste_field_titre($langs->trans('Asname'),$PHP_SELF,'t.as_name','',$param,'',$sortfield,$sortorder);
+	print "\n";
+	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_user','',$param,'',$sortfield,$sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans('Asuid'),$PHP_SELF,'t.as_uid','',$param,'',$sortfield,$sortorder);
 	print "\n";
@@ -295,11 +309,15 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '</tr>';
         //SEARCH FIELDS
         print '<tr class = "liste_titre">'; 
-        //Search field foruser
+        //Search field foras_name
 	print '<td class="liste_titre" colspan="1" >';
-		$selected=$ls_user;
-$htmlname = 'ls_user';
-print $form->select_dolusers($selected,$htmlname);
+	print '<input class="flat" size="16" type="text" name="ls_as_name" value="'.$ls_as_name.'">';
+	print '</td>';
+//Search field foruser
+	print '<td class="liste_titre" colspan="1" >';
+    $selected = $ls_user;
+    $htmlname = 'ls_user';
+    print $form->select_dolusers($selected,$htmlname);
 	print '</td>';
 //Search field foras_uid
 	print '<td class="liste_titre" colspan="1" >';
@@ -339,11 +357,10 @@ print $form->select_dolusers($selected,$htmlname);
             {
                 // You can use here results
                 	print "<tr class=\"oddeven\"  onclick=\"location.href = '";
-    	print $basedurl.$obj->rowid."'\" >";
-
-		$StaticObject = New User($db);
-		print "<td>".$StaticObject->getNomUrl('1',$obj->fk_user)."</td>";
-
+	print $basedurl.$obj->rowid."'\" >";
+	print "<td>".$obj->as_name."</td>";
+    $StaticObject = New User($db);
+    print "<td>".$StaticObject->getNomUrl('1',$obj->fk_user)."</td>";
 	print "<td>".$obj->as_uid."</td>";
 	print "<td>".$obj->rfid."</td>";
 	print "<td>".$obj->role."</td>";

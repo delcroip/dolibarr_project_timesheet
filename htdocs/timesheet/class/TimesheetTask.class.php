@@ -241,7 +241,7 @@ class TimesheetTask extends Task
         $sql .= ' t.note';
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql.= " WHERE t.rowid = ".$id;
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             if($this->db->num_rows($resql)) {
@@ -330,7 +330,7 @@ class TimesheetTask extends Task
         $sql .= ' note = \''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'';
         $sql.= " WHERE rowid=".$this->appId;
         $this->db->begin();
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if(! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
@@ -381,7 +381,7 @@ class TimesheetTask extends Task
         if(! $error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid=".$this->appId;
-            dol_syslog(__METHOD__);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if(! $resql) {
                 $error++;$this->errors[] = "Error ".$this->db->lasterror();
@@ -425,7 +425,7 @@ class TimesheetTask extends Task
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET fk_task_time_approval = \'';
         $sql .= $this->appId.'\', status = \''.$status.'\' WHERE rowid in ('.$ids.')';
         // SQL start
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $this->db->begin();
         $resql = $this->db->query($sql);
         if(! $resql) {
@@ -1110,7 +1110,7 @@ class TimesheetTask extends Task
         global $conf, $user;
         $ret = 0;
         $noteUpdate = 0;
-        dol_syslog("Timesheet.class::postTaskTimeActual  taskTimeId=".$this->id, LOG_DEBUG);
+        dol_syslog(__METHOD__." taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user = $userId;
         if(!empty($note) && $note != $this->note) {
             $this->note = $note;

@@ -93,14 +93,14 @@ class AttendanceSystemUserZone extends CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
         
 		$sql .= 'zone,';
-		$sql .= 'fk_attendance_system_user,';
+		$sql .= 'fk_attendance_system_user';
 
 
         
         $sql .= ") VALUES (";
         
 		$sql .= ' '.(empty($this->zone)?'NULL':"'".$this->zone."'").',';
-		$sql .= ' '.(empty($this->attendance_system_user)?'NULL':"'".$this->attendance_system_user."'").',';
+		$sql .= ' '.(empty($this->attendance_system_user)?'NULL':"'".$this->attendance_system_user."'").'';
 
 
         
@@ -169,7 +169,7 @@ class AttendanceSystemUserZone extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql .= " WHERE t.ref = '".$ref."'";
         else $sql .= " WHERE t.rowid = ".$id;
-    	dol_syslog(get_class($this)."::fetch");
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -196,6 +196,43 @@ class AttendanceSystemUserZone extends CommonObject
         }
     }
 
+    /***
+     *  Look for duplicate
+     */
+    function fetchDuplicate(){
+        $error = 0;
+        $sql = "SELECT rowid FROM".MAIN_DB_PREFIX.$this->table_element." as t";;
+        $sql .= "WHERE";
+		$sql .= ' t.zone = '.(empty($this->zone) != 0 ? 'null':"'".$this->zone."'").',';
+		$sql .= ' t.fk_attendance_system_user = '.(empty($this->attendance_system_user) != 0 ? 'null':"'".$this->attendance_system_user."'").',';
+        $sql .= "LIMIT 1 ";
+		dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+                $this->id    = $obj->rowid;
+                
+				$this->zone = $obj->zone;
+				$this->attendance_system_user = $obj->fk_attendance_system_user;
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->user_modification = $obj->fk_user_modification;
+
+                
+            }
+            $this->db->free($resql);
+
+            return 1;
+        }
+        else
+        {
+      	    $this->error="Error ".$this->db->lasterror();
+            return -1;
+        }
+    }
+    }
 
     /**
      *  Update object into database
@@ -216,7 +253,7 @@ class AttendanceSystemUserZone extends CommonObject
         $sql .= $this->setSQLfields($user);
         $sql .= " WHERE rowid=".$this->id;
 		$this->db->begin();
-		dol_syslog(__METHOD__);
+		dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
             if (! $error)
@@ -409,7 +446,7 @@ class AttendanceSystemUserZone extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql .= " WHERE rowid = ".$this->id;
 
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
         else if ($this->db->affected_rows($resql) == 0){$error++;$this->errors[] = "Item no found in database"; }

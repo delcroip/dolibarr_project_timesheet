@@ -191,7 +191,7 @@ class Projettasktime extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
         else $sql.= " WHERE t.rowid = ".$id;
-        dol_syslog(get_class($this)."::fetch");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -246,7 +246,7 @@ class Projettasktime extends CommonObject
         $sql.= $this->setSQLfields($user);
         $sql.= " WHERE rowid=".$this->id;
         $this->db->begin();
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
             if (! $error)
@@ -442,7 +442,7 @@ class Projettasktime extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         elseif ($this->db->affected_rows($resql)==0){$error++;$this->errors[]="Item no found in database"; }

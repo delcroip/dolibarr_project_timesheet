@@ -276,7 +276,7 @@ function getSelectAps($subId, $tasks, $role_key)
         }
     }
     $sql .= ' group by ts.date_start, pjt.ref, pjt.title ORDER BY id DESC, pjt.title, ts.date_start ';
-    dol_syslog('timesheetAp::getSelectAps ', LOG_DEBUG);
+    dol_syslog(__METHOD__, LOG_DEBUG);
     $list = array();
     $resql = $db->query($sql);
     if($resql) {

@@ -139,7 +139,7 @@ class TimesheetFavourite extends CommonObject
             $sql.= ' AND (t.date_end >\''.$this->db->idate($datestart).'\' OR t.date_end IS NULL)';
         if($datestop)
             $sql.= ' AND (t.date_start <\''.$this->db->idate($datestop).'\' OR t.date_start IS NULL)';
-        dol_syslog(get_class($this)."::fetchUserList");
+            dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             $num = $this->db->num_rows($resql);
@@ -191,7 +191,7 @@ class TimesheetFavourite extends CommonObject
         } else {
             $sql.= ' WHERE t.fk_projet = \''.$this->project.'\'';
         }
-        dol_syslog(get_class($this)."::getTaskList");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             $Listtask = Array();
@@ -230,7 +230,7 @@ class TimesheetFavourite extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if($ref) $sql.= ' WHERE t.ref = \''.$ref.'\'';
         else $sql.= " WHERE t.rowid = ".$id;
-        dol_syslog(get_class($this)."::fetch");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             if($this->db->num_rows($resql)) {
@@ -278,7 +278,7 @@ class TimesheetFavourite extends CommonObject
         $sql .= ' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').'';
         $sql.= " WHERE rowid=".$this->id;
         $this->db->begin();
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if(! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
@@ -364,7 +364,7 @@ class TimesheetFavourite extends CommonObject
         if(! $error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid=".$this->id;
-            dol_syslog(__METHOD__);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if(! $resql) {
                 $error++;$this->errors[] = "Error ".$this->db->lasterror();

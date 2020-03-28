@@ -180,12 +180,12 @@ public $date_time_event_start;
         elseif(!empty($user))$sql.=  " t.fk_userid = '".$user->id;
         elseif(!empty($startToken))  $sql.= "  t.token = '".$startToken;
         else{
-            dol_syslog(get_class($this)."::fetch: no param", LOG_DEBUG);
+            dol_syslog(__METHOD__." no param", LOG_DEBUG);
             return -1;
         }
         $sql.= "' ORDER BY date_time_event DESC" ;
         $this->db->plimit(1, 0);
-        dol_syslog(get_class($this)."::fetch");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql && $this->db->num_rows($resql)) {
             $obj = $this->db->fetch_object($resql);
@@ -231,7 +231,7 @@ public $date_time_event_start;
         $sql.= $this->setSQLfields($user);
         $sql.= " WHERE rowid=".$this->id;
         $this->db->begin();
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if(! $resql) { $error++;$this->errors[] = "Error ".$this->db->lasterror();}
             if(! $error) {
@@ -395,7 +395,7 @@ public $date_time_event_start;
         if(! $error) {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid=".$this->id;
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if(! $resql) { $error++;$this->errors[] = "Error ".$this->db->lasterror();} elseif($this->db->affected_rows($resql) == 0) {$error++;$this->errors[] = "Item no found in database";}
         }
@@ -789,7 +789,7 @@ public function createTimeSpend($user, $token = '')
     $sql .= ' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
     $sql .= ' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
     $sql .= '  ORDER BY prj.fk_soc, prj.ref, tsk.ref ';
-    dol_syslog("timesheetEvent::fetchTask ", LOG_DEBUG);
+    dol_syslog(__METHOD__, LOG_DEBUG);
     $resql = $this->db->query($sql);
     if($resql) {
         $this->taskTimesheet = array();
