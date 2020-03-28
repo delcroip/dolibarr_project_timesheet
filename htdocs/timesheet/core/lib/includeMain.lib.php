@@ -47,3 +47,7 @@ if ($user->admin && version_compare("4.1", $conf->global->TIMESHEET_VERSION) > 0
 // return from functions
 define("BADPARAM",-2);
 define("OK",1);
+define("NOK",-1);
+define("NOTCREATED",-3);
+define("NOTUPDATED",-4);
+define("CHILDNOTCREATED",-5);

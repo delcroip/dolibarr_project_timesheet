@@ -101,7 +101,7 @@ if($object->id) {
         $permission = 1;
         //$permtoedit = $user->rights->timesheet->create;
         $permtoedit = 1;
-        $param = '&id= ' . $object->id;
+        $param = '&id=' . $object->id;
         //$relativepathwithnofile = 'AttendanceSystem/' . dol_sanitizeFileName($object->id).'/';
         $relativepathwithnofile = 'AttendanceSystem/' . dol_sanitizeFileName($object->ref).'/';
         include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';

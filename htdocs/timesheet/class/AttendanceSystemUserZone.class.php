@@ -290,9 +290,9 @@ class AttendanceSystemUserZone extends CommonObject
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
         
         if($id){
-            $lien = '<a href = "'.dol_buildpath('/mymodule/AttendanceSystemUserZoneCard.php',1).'id = '.$id.'&action = view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/mymodule/AttendanceSystemUserZoneCard.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
         }else if (!empty($ref)){
-            $lien = '<a href = "'.dol_buildpath('/mymodule/AttendanceSystemUserZoneCard.php',1).'?ref = '.$ref.'&action = view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/mymodule/AttendanceSystemUserZoneCard.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
             $lien = "";
         }
@@ -482,14 +482,15 @@ class AttendanceSystemUserZone extends CommonObject
     /**
      *	Initialise object with example values
      *	Id must be 0 if object instance is a specimen
-     *
+     *  @param int $zone zone of the user
+     *  @param int $fk_attendance_user rowid from the attendance
      *	@return	void
      */
-    function initAsSpecimen($zone = '',  $as_user )
+    function initAsSpecimen($zone = '',  $fk_attendance_user )
     {
         $this->id=0;
         $this->zone = $zone;
-        $this->attendance_system_user = $as_user;
+        $this->attendance_system_user = $fk_attendance_user;
 		$this->date_modification = '';
 		$this->user_modification = '';
 

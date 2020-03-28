@@ -188,7 +188,7 @@ if(is_object($firstTimesheetUser)) {
                     $relativepathwithnofile = '';
                     $modulepart = 'timesheet';
                     $permission = 1;//$user->rights->timesheet->add;
-                    $param = '&action = viewdoc&id='.$object->id;
+                    $param = '&action=viewdoc&id='.$object->id;
                     $ref = dol_sanitizeFileName($object->ref);
                     $upload_dir = $conf->timesheet->dir_output.'/tasks/'.get_exdir($object->id, 2, 0, 0, $object, 'timesheet').$ref;
                     $filearray = dol_dir_list($upload_dir, 'files', 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc'?SORT_DESC:SORT_ASC), 1);

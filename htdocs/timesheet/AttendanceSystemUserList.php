@@ -162,7 +162,7 @@ $formproject = new FormProjets($db);
        break;
     case 'delete':
         if( $action == 'delete' && ($id>0 || $ref != "")){
-         $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'?action = confirm_delete&id = '.$id,$langs->trans('DeleteAttendanceSystemUser'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'?action=confirm_delete&id='.$id,$langs->trans('DeleteAttendanceSystemUser'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -263,11 +263,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     if ($resql)
     {
         $param = '';
-        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage = '.urlencode($contextpage);
-        if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit = '.urlencode($limit);
-        $param .= empty($ls_fields1)?'':'&ls_fields1 = '.urlencode($ls_fields1);
-        $param .= empty($ls_fields2)?'':'&ls_fields2 = '.urlencode($ls_fields2);
-        if ($filter && $filter != -1) $param .= '&filtre = '.urlencode($filter);
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+        if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+        $param .= empty($ls_fields1)?'':'&ls_fields1='.urlencode($ls_fields1);
+        $param .= empty($ls_fields2)?'':'&ls_fields2='.urlencode($ls_fields2);
+        if ($filter && $filter != -1) $param .= '&filtre='.urlencode($filter);
         
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
@@ -285,10 +285,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print_liste_field_titre($langs->trans('Rfid'),$PHP_SELF,'t.rfid','',$param,'',$sortfield,$sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans('Role'),$PHP_SELF,'t.role','',$param,'',$sortfield,$sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Passwd'),$PHP_SELF,'t.passwd','',$param,'',$sortfield,$sortorder);
-	print "\n";
-	print_liste_field_titre($langs->trans('Data'),$PHP_SELF,'t.data','',$param,'',$sortfield,$sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
 	print "\n";
@@ -317,14 +313,7 @@ print $form->select_dolusers($selected,$htmlname);
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" size="16" type="text" name="ls_role" value="'.$ls_role.'">';
 	print '</td>';
-//Search field forpasswd
-	print '<td class="liste_titre" colspan="1" >';
-	print '<input class="flat" size="16" type="text" name="ls_passwd" value="'.$ls_passwd.'">';
-	print '</td>';
-//Search field fordata
-	print '<td class="liste_titre" colspan="1" >';
-	print '<input class="flat" size="16" type="text" name="ls_data" value="'.$ls_data.'">';
-	print '</td>';
+
 //Search field forstatus
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" size="16" type="text" name="ls_status" value="'.$ls_status.'">';
@@ -342,7 +331,7 @@ print $form->select_dolusers($selected,$htmlname);
         print '</td>';
         print '</tr>'."\n"; 
         $i = 0;
-        $basedurl = dirname($PHP_SELF).'/AttendanceSystemUserCard.php?action = view&id = ';
+        $basedurl = dirname($PHP_SELF).'/AttendanceSystemUserCard.php?action=view&id=';
         while ($i < $num && $i<$limit)
         {
             $obj = $db->fetch_object($resql);
@@ -350,21 +339,17 @@ print $form->select_dolusers($selected,$htmlname);
             {
                 // You can use here results
                 	print "<tr class=\"oddeven\"  onclick=\"location.href = '";
-	print $basedurl.$obj->rowid."'\" >";
-	if(class_exist('User')){
+    	print $basedurl.$obj->rowid."'\" >";
+
 		$StaticObject = New User($db);
 		print "<td>".$StaticObject->getNomUrl('1',$obj->fk_user)."</td>";
-	}else{
-		print print_sellist($sql_user,$obj->fk_user);
-	}
+
 	print "<td>".$obj->as_uid."</td>";
 	print "<td>".$obj->rfid."</td>";
 	print "<td>".$obj->role."</td>";
-	print "<td>".$obj->passwd."</td>";
-	print "<td>".$obj->data."</td>";
 	print "<td>".$obj->status."</td>";
 	print "<td>".$obj->mode."</td>";
-	print '<td><a href="AttendanceSystemUserCard.php?action = delete&id = '.$obj->rowid.'">'.img_delete().'</a></td>';
+	print '<td><a href="AttendanceSystemUserCard.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 	print "</tr>";
 
                 
@@ -382,7 +367,7 @@ print $form->select_dolusers($selected,$htmlname);
     print '</table>'."\n";
     print '</form>'."\n";
     // new button
-    print '<a href = "AttendanceSystemUserCard.php?action = create" class = "butAction" role = "button">'.$langs->trans('New');
+    print '<a href = "AttendanceSystemUserCard.php?action=create" class = "butAction" role = "button">'.$langs->trans('New');
     print ' '.$langs->trans('AttendanceSystemUser')."</a>\n";
 
     

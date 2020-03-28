@@ -72,7 +72,7 @@ class ZKLibrary
     public $user_data = array();
     public $attendance_data = array();
     public $timeout_sec = null;
-    public $timeout_usec = 500000;
+    public $timeout_usec = 2000000;
     /** Object constructor.
      *
      * @param string $ip IP address of device.

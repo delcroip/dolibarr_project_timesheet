@@ -111,11 +111,11 @@ class AttendanceSystemUser extends CommonObject
         
         $sql .= ") VALUES (";
 
-        $sqlSelectUser = "(SELECT rowid from ".MAIN_DB_PREFIX."user ";
-        $sqlSelectUser .= "WHERE login = '$this->as_uid'";
-        $sqlSelectUser .= " OR email = '$this->as_uid'";
-        $sqlSelectUser .= " OR ref_int = '$this->as_uid'";
-        if($name != null)$sqlSelectUser .= " OR CONCAT(firstname,'.',lastname) = '$name'";
+        $sqlSelectUser = "(SELECT rowid from ".MAIN_DB_PREFIX."user AS u ";
+        $sqlSelectUser .= "WHERE u.login = '$this->as_uid'";
+        $sqlSelectUser .= " OR u.email = '$this->as_uid'";
+        $sqlSelectUser .= " OR u.ref_int = '$this->as_uid'";
+        if($name != null)$sqlSelectUser .= " OR CONCAT(u.firstname,'.',u.lastname) = '$name'";
         $sqlSelectUser .= " LIMIT 1 )";
 
 		$sql .= ' '.(empty($this->user)?$sqlSelectUser:"'".$this->user."'").',';
@@ -161,7 +161,7 @@ class AttendanceSystemUser extends CommonObject
                 $this->error .= ($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
+            return -1;
         }
         else
         {
@@ -326,9 +326,9 @@ class AttendanceSystemUser extends CommonObject
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
         
         if($id){
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'id = '.$id.'&action = view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'id='.$id.'&action=view"'.$linkclose.'>';
         }else if (!empty($ref)){
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'?ref = '.$ref.'&action = view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
             $lien = "";
         }
@@ -644,20 +644,31 @@ class AttendanceSystemUser extends CommonObject
      */
     Public function loadZKUser($zone, $mode, $ZKUser){
         global $user;
+        
         if(is_array($ZKUser) ){
+            
             $this->mode = $mode;
             $this->user = '';
+            $this->asuid = ($ZKUser['uid']);
             $this->role = ($ZKUser['role']);
             $this->passwd = ($ZKUser['passwd']);
             $this->rfid = ($ZKUser['rfid']);
             $this->data = ($ZKUser['data']);
             $this->status = 1; //fixme
-            // add link
-            echo "loadZKUser";
-            $asZone = new AttendanceSystemUserZone($this->db);
-            $asZone->initAsSpecimen($zone, $ZKUser['uid']);
-            $asZone->create($user);
             $this->create($user, $ZKUser['name']);
+            // add link
+
+            if($this->id > 0){
+                $asZone = new AttendanceSystemUserZone($this->db);
+                $asZone->initAsSpecimen($zone, $this->id);
+                $asZone->create($user);
+                if($asZone->id < 0){
+                    $this->delete($user);
+                    return CHILDNOTCREATED;
+                }
+
+            }else return NOTCREATED;
+
             return OK;
         }else return BADPARAM;
 

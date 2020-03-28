@@ -318,10 +318,10 @@ class Projettasktime extends CommonObject
         }
 
         if($id){
-            $lien = '<a href="'.dol_buildpath('/timesheet/ProjettasktimeCard.php', 1).'id='.$id.'&action = view"'.$linkclose.'>';
+            $lien = '<a href="'.dol_buildpath('/timesheet/ProjettasktimeCard.php', 1).'?id='.$id.'&action=view"'.$linkclose.'>';
         }elseif (!empty($ref))
         {
-            $lien = '<a href="'.dol_buildpath('/timesheet/ProjettasktimeCard.php', 1).'?ref='.$ref.'&action = view"'.$linkclose.'>';
+            $lien = '<a href="'.dol_buildpath('/timesheet/ProjettasktimeCard.php', 1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else
         {
             $lien =  "";
