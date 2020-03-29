@@ -19,33 +19,33 @@
  */
 
 /**
- *   	\file       dev/AttendanceSystemUsers/AttendanceSystemUserPage.php
+ *   	\file       dev/attendancesystemuserlinks/attendancesystemuserlink_page.php
  *		\ingroup    timesheet othermodule1 othermodule2
  *		\brief      This file is an example of a php page
- *					Initialy built by build_class_from_table on 2020-03-11 06:29
+ *					Initialy built by build_class_from_table on 2020-03-28 19:01
  */
 
-function AttendancesystemuserReloadPage($backtopage,$id,$ref){
+function AttendanceSystemUserLinkReloadPage($backtopage,$id,$ref){
         if (!empty($backtopage)){
             header("Location: ".$backtopage);            
         }else if (!empty($ref) ){
-            header("Location: ".dol_buildpath("/timesheet/AttendanceSystemUserCard.php", 1).'?ref='.$ref);
+            header("Location: ".dol_buildpath("/timesheet/AttendanceSystemUserLinkCard.php", 1).'?ref='.$ref);
         }else if ($id>0)
         {
-           header("Location: ".dol_buildpath("/timesheet/AttendanceSystemUserCard.php", 1).'?id='.$id);
+           header("Location: ".dol_buildpath("/timesheet/AttendanceSystemUserLinkCard.php", 1).'?id='.$id);
         }else{
-           header("Location: ".dol_buildpath("/timesheet/AttendanceSystemUserList.php", 1));
+           header("Location: ".dol_buildpath("/timesheet/AttendanceSystemUserLinkList.php", 1));
 
         }
     exit();
 }
 /**
- * Prepare array of tabs for Attendancesystemuser
+ * Prepare array of tabs for AttendanceSystemUserLink
  *
- * @param	Attendancesystemuser	$object		Attendancesystemuser
+ * @param	AttendanceSystemUserLink	$object		AttendanceSystemUserLink
  * @return 	array					Array of tabs
  */
-function AttendancesystemuserPrepareHead($object)
+function AttendanceSystemUserLinkPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
@@ -54,7 +54,7 @@ function AttendancesystemuserPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemUserCard.php", 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemUserLinkCard.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -64,7 +64,7 @@ function AttendancesystemuserPrepareHead($object)
 		$nbNote = 0;
 		if (!empty($object->note_private)) $nbNote++;
 		if (!empty($object->note_public)) $nbNote++;
-		$head[$h][0] = dol_buildpath('/timesheet/AttendanceSystemUserNote.php', 1).'?id='.$object->id;
+		$head[$h][0] = dol_buildpath('/timesheet/attendancesystemuserlink_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
@@ -73,16 +73,16 @@ function AttendancesystemuserPrepareHead($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->timesheet->dir_output . "/Attendancesystemuser/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->timesheet->dir_output . "/AttendanceSystemUserLink/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
 	$nbLinks=Link::count($db, $object->element, $object->id);
-	$head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemUserDocument.php", 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemUserLinkDocuement.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemUserAgenda.php", 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath("/timesheet/attendancesystemuserlink_agenda.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	$head[$h][2] = 'agenda';
 	$h++;
@@ -95,8 +95,7 @@ function AttendancesystemuserPrepareHead($object)
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@timesheet:/timesheet/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'Attendancesystemuser@timesheet');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'AttendanceSystemUserLink@timesheet');
 
 	return $head;
 }
-

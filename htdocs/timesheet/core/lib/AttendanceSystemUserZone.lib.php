@@ -20,7 +20,7 @@
 
 /**
  *   	\file       dev/AttendanceSystemUserZones/AttendanceSystemUserZone_page.php
- *		\ingroup    mymodule othermodule1 othermodule2
+ *		\ingroup    timesheet othermodule1 othermodule2
  *		\brief      This file is an example of a php page
  *					Initialy built by build_class_from_table on 2020-01-25 21:52
  */

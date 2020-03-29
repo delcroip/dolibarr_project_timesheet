@@ -19,53 +19,42 @@
  */
 
 /**
- *  \file       dev/attendancesystems/attendancesystem.class.php
+ *  \file       dev/attendancesystemevents/attendancesystemevent.class.php
  *  \ingroup    timesheet othermodule1 othermodule2
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *				Initialy built by build_class_from_table on 2020-03-15 20:15
+ *				Initialy built by build_class_from_table on 2020-03-28 19:05
  */
 
 // Put here all includes required by your class file
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-
-require_once 'ZKLibrary.class.php';
-require_once 'AttendanceSystemUser.class.php';
-$attendancesystemStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
-$attendancesystemStatusArray=array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 =>'Payed');
+//require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
+require_once 'core/lib/generic.lib.php';
+$attendancesystemeventStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
+$attendancesystemeventStatusArray=array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 =>'Payed');
 /**
  *	Put here description of your class
  */
-class AttendanceSystem extends CommonObject
+class AttendanceSystemEvent extends CommonObject
 {
     /**
      * @var string ID to identify managed object
      */				//!< To return several error codes (or messages)
-    public $element='attendancesystem';			//!< Id that identify managed objects
+    public $element='attendancesystemevent';			//!< Id that identify managed objects
     /**
      * @var string Name of table without prefix where object is stored
      */    
-    public $table_element='attendance_system';		//!< Name of table without prefix where object is stored
+    public $table_element='attendance_system_event';		//!< Name of table without prefix where object is stored
 
     public $id;
     // BEGIN OF automatic var creation
     
-	public $label;
-	public $ip;
-	public $port;
-	public $note;
-	public $third_party;
-	public $task;
-	public $project;
-	public $serial_nb;
-	public $zone;
-	public $passwd;
-	public $status;
-	public $mode;
+	public $date_time_event = '';
+	public $attendance_system;
 	public $date_modification = '';
-	public $user_modification;
+	public $attendance_system_user;
+	public $status;
 
     
     // END OF automatic var creation
@@ -104,34 +93,18 @@ class AttendanceSystem extends CommonObject
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
         
-		$sql .= 'label,';
-		$sql .= 'ip,';
-		$sql .= 'port,';
-		$sql .= 'note,';
-		$sql .= 'fk_third_party,';
-		$sql .= 'fk_task,';
-		$sql .= 'fk_project,';
-		$sql .= 'serial_nb,';
-		$sql .= 'zone,';
-		$sql .= 'passwd,';
-		$sql .= 'status,';
-		$sql .= 'mode';
+		$sql .= 'date_time_event,';
+		$sql .= 'fk_attendance_system,';
+		$sql .= 'fk_attendance_system_user,';
+		$sql .= 'status';
 
         
         $sql .= ") VALUES (";
         
-		$sql .= ' '.(empty($this->label)?'NULL':"'".$this->db->escape($this->label)."'").',';
-		$sql .= ' '.(empty($this->ip)?'NULL':"'".$this->db->escape($this->ip)."'").',';
-		$sql .= ' '.(empty($this->port)?'NULL':"'".$this->port."'").',';
-		$sql .= ' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").',';
-		$sql .= ' '.(empty($this->third_party)?'NULL':"'".$this->third_party."'").',';
-		$sql .= ' '.(empty($this->task)?'NULL':"'".$this->task."'").',';
-		$sql .= ' '.(empty($this->project)?'NULL':"'".$this->project."'").',';
-		$sql .= ' '.(empty($this->serial_nb)?'NULL':"'".$this->serial_nb."'").',';
-		$sql .= ' '.(empty($this->zone)?'NULL':"'".$this->zone."'").',';
-		$sql .= ' '.(empty($this->passwd)?'NULL':"'".$this->db->escape($this->passwd)."'").',';
-		$sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").',';
-		$sql .= ' '.(empty($this->mode)?'NULL':"'".$this->mode."'").'';
+		$sql .= ' '.(empty($this->date_time_event) || dol_strlen($this->date_time_event) == 0?'NULL':"'".$this->db->idate($this->date_time_event)."'").',';
+		$sql .= ' '.(empty($this->attendance_system)?'NULL':"'".$this->attendance_system."'").',';
+		$sql .= ' '.(empty($this->attendance_system_user)?'NULL':"'".$this->attendance_system_user."'").',';
+		$sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
 
         
         $sql .= ")";
@@ -190,20 +163,11 @@ class AttendanceSystem extends CommonObject
         $sql = "SELECT";
         $sql .= " t.rowid,";
         
-		$sql .= ' t.label,';
-		$sql .= ' t.ip,';
-		$sql .= ' t.port,';
-		$sql .= ' t.note,';
-		$sql .= ' t.fk_third_party,';
-		$sql .= ' t.fk_task,';
-		$sql .= ' t.fk_project,';
-		$sql .= ' t.serial_nb,';
-		$sql .= ' t.zone,';
-		$sql .= ' t.passwd,';
-		$sql .= ' t.status,';
-		$sql .= ' t.mode,';
+		$sql .= ' t.date_time_event,';
+		$sql .= ' t.fk_attendance_system,';
 		$sql .= ' t.date_modification,';
-		$sql .= ' t.fk_user_modification';
+		$sql .= ' t.fk_attendance_system_user,';
+		$sql .= ' t.status';
 
         
         $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
@@ -218,20 +182,11 @@ class AttendanceSystem extends CommonObject
                 $obj = $this->db->fetch_object($resql);
                 $this->id    = $obj->rowid;
                 
-		$this->label = $obj->label;
-		$this->ip = $obj->ip;
-		$this->port = $obj->port;
-		$this->note = $obj->note;
-		$this->third_party = $obj->fk_third_party;
-		$this->task = $obj->fk_task;
-		$this->project = $obj->fk_project;
-		$this->serial_nb = $obj->serial_nb;
-		$this->zone = $obj->zone;
-		$this->passwd = $obj->passwd;
-		$this->status = $obj->status;
-		$this->mode = $obj->mode;
+		$this->date_time_event = $this->db->jdate($obj->date_time_event);
+		$this->attendance_system = $obj->fk_attendance_system;
 		$this->date_modification = $this->db->jdate($obj->date_modification);
-		$this->user_modification = $obj->fk_user_modification;
+		$this->attendance_system_user = $obj->fk_attendance_system_user;
+		$this->status = $obj->status;
 
                 
             }
@@ -305,13 +260,12 @@ class AttendanceSystem extends CommonObject
      /**
      *	Return clickable name (with picto eventually)
      *
-     *	@param		string			$htmlcontent 		text to show
+     *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
      *	@param		int			$id                     Object ID
      *	@param		string			$ref                    Object ref
-     *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
      *	@return		string						String with URL
      */
-    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
+    function getNomUrl($withpicto, $id = 0, $ref = '')
     {
 	global $conf, $langs;
 
@@ -328,34 +282,41 @@ class AttendanceSystem extends CommonObject
             }
         }
         $linkclose = '';
+        $label = '';
+        //field to show beside the icon
+        $label .= 'field1: '.$this->field1;
+
+        //info card more info could be display
+        $card = '<u>' . $langs->trans("AttendanceSystemEvent") . '</u>';
+        $card .= '<br>';
+        if($ref){
+            $card .= $langs->trans("Ref").': '.$ref;
+        }else if($id){
+            $card .= $langs->trans("#").': '.$id;
+        }
+
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label = $langs->trans("Showspread");
+                $label = $langs->trans("AttendanceSystemEvent");
                 $linkclose .= ' alt = "'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose .= ' title = "'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' title = "'.dol_escape_htmltag($card, 1).'"';
             $linkclose .= ' class = "classfortooltip'.($morecss?' '.$morecss:'').'"';
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
         
         if($id){
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemEventCard.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
         }else if (!empty($ref)){
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemEventCard.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
             $lien = "";
         }
         $lienfin = empty($lien)?'':'</a>';
 
     	$picto = 'generic';
-        $label = '<u>' . $langs->trans("spread") . '</u>';
-        $label .= '<br>';
-        if($ref){
-            $label .= $langs->trans("Red").': '.$ref;
-        }else if($id){
-            $label .= $langs->trans("#").': '.$id;
-        }
+ 
         
         
         
@@ -364,7 +325,7 @@ class AttendanceSystem extends CommonObject
         }else if ($withpicto == 2) {
             $result .= $lien.img_object($label,$picto).$lienfin;
         }else{  
-            $result .= $lien.$htmlcontent.$lienfin;
+            $result .= $lien.$label.$lienfin;
         }
     	return $result;
     }  
@@ -376,8 +337,8 @@ class AttendanceSystem extends CommonObject
 	 */
 	function selectLibStatut($form,$htmlname = 'Status')
 	{
-            global $attendancesystemStatusPictoArray,$attendancesystemStatusArray;
-            return $form->selectarray($htmlname,$attendancesystemStatusArray,$this->status);
+            global $attendancesystemeventStatusPictoArray,$attendancesystemeventStatusArray;
+            return $form->selectarray($htmlname,$attendancesystemeventStatusArray,$this->status);
 	}   
     /**
 	 *  Retourne le libelle du status (actif, inactif)
@@ -398,35 +359,35 @@ class AttendanceSystem extends CommonObject
 	 */
 	static function LibStatut($status,$mode = 0)
 	{
-		global $langs,$attendancesystemStatusPictoArray,$attendancesystemStatusArray;
+		global $langs,$attendancesystemeventStatusPictoArray,$attendancesystemeventStatusArray;
 		if ($mode == 0)
 		{
 			$prefix = '';
-			return $langs->trans($attendancesystemStatusArray[$status]);
+			return $langs->trans($attendancesystemeventStatusArray[$status]);
 		}
 		if ($mode == 1)
 		{
-			return $langs->trans($attendancesystemStatusArray[$status]);
+			return $langs->trans($attendancesystemeventStatusArray[$status]);
 		}
 		if ($mode == 2)
 		{
-			 return img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]).' '.$langs->trans($attendancesystemStatusArray[$status]);
+			 return img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]).' '.$langs->trans($attendancesystemeventStatusArray[$status]);
 		}
 		if ($mode == 3)
 		{
-			 return img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]);
+			 return img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]);
 		}
 		if ($mode == 4)
 		{
-			 return img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]).' '.$langs->trans($attendancesystemStatusArray[$status]);
+			 return img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]).' '.$langs->trans($attendancesystemeventStatusArray[$status]);
 		}
 		if ($mode == 5)
 		{
-			 return $langs->trans($attendancesystemStatusArray[$status]).' '.img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]);
+			 return $langs->trans($attendancesystemeventStatusArray[$status]).' '.img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]);
 		}
 		if ($mode == 6)
 		{
-			 return $langs->trans($attendancesystemStatusArray[$status]).' '.img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]);
+			 return $langs->trans($attendancesystemeventStatusArray[$status]).' '.img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]);
 		}
 	}
 
@@ -496,7 +457,7 @@ class AttendanceSystem extends CommonObject
     {
         global $user,$langs;
         $error = 0;
-        $object = new AttendanceSystem($this->db);
+        $object = new AttendanceSystemEvent($this->db);
         $this->db->begin();
         // Load source object
         $object->fetch($fromid);
@@ -539,20 +500,11 @@ class AttendanceSystem extends CommonObject
     {
         $this->id = 0;
         
-	$this->label = '';
-	$this->ip = '';
-	$this->port = '';
-	$this->note = '';
-	$this->third_party = '';
-	$this->task = '';
-	$this->project = '';
-	$this->serial_nb = '';
-	$this->zone = '';
-	$this->passwd = '';
-	$this->status = '';
-	$this->mode = '';
+	$this->date_time_event = '';
+	$this->attendance_system = '';
 	$this->date_modification = '';
-	$this->user_modification = '';
+	$this->attendance_system_user = '';
+	$this->status = '';
 
         
     }
@@ -564,20 +516,11 @@ class AttendanceSystem extends CommonObject
      */       
     function cleanParam(){
         
-			if (!empty($this->label)) $this->label = trim($this->label);
-			if (!empty($this->ip)) $this->ip = trim($this->ip);
-			if (!empty($this->port)) $this->port = trim($this->port);
-			if (!empty($this->note)) $this->note = trim($this->note);
-			if (!empty($this->third_party)) $this->third_party = trim($this->third_party);
-			if (!empty($this->task)) $this->task = trim($this->task);
-			if (!empty($this->project)) $this->project = trim($this->project);
-			if (!empty($this->serial_nb)) $this->serial_nb = trim($this->serial_nb);
-			if (!empty($this->zone)) $this->zone = trim($this->zone);
-			if (!empty($this->passwd)) $this->passwd = trim($this->passwd);
-			if (!empty($this->status)) $this->status = trim($this->status);
-			if (!empty($this->mode)) $this->mode = trim($this->mode);
+			if (!empty($this->date_time_event)) $this->date_time_event = trim($this->date_time_event);
+			if (!empty($this->attendance_system)) $this->attendance_system = trim($this->attendance_system);
 			if (!empty($this->date_modification)) $this->date_modification = trim($this->date_modification);
-			if (!empty($this->user_modification)) $this->user_modification = trim($this->user_modification);
+			if (!empty($this->attendance_system_user)) $this->attendance_system_user = trim($this->attendance_system_user);
+			if (!empty($this->status)) $this->status = trim($this->status);
 
         
     }
@@ -590,26 +533,17 @@ class AttendanceSystem extends CommonObject
     function setSQLfields($user){
         $sql = '';
         
-		$sql .= ' label = '.(empty($this->label) != 0 ? 'null':"'".$this->db->escape($this->label)."'").',';
-		$sql .= ' ip = '.(empty($this->ip) != 0 ? 'null':"'".$this->db->escape($this->ip)."'").',';
-		$sql .= ' port = '.(empty($this->port) != 0 ? 'null':"'".$this->port."'").',';
-		$sql .= ' note = '.(empty($this->note) != 0 ? 'null':"'".$this->db->escape($this->note)."'").',';
-		$sql .= ' fk_third_party = '.(empty($this->third_party) != 0 ? 'null':"'".$this->third_party."'").',';
-		$sql .= ' fk_task = '.(empty($this->task) != 0 ? 'null':"'".$this->task."'").',';
-		$sql .= ' fk_project = '.(empty($this->project) != 0 ? 'null':"'".$this->project."'").',';
-		$sql .= ' serial_nb = '.(empty($this->serial_nb) != 0 ? 'null':"'".$this->serial_nb."'").',';
-		$sql .= ' zone = '.(empty($this->zone) != 0 ? 'null':"'".$this->zone."'").',';
-		$sql .= ' passwd = '.(empty($this->passwd) != 0 ? 'null':"'".$this->db->escape($this->passwd)."'").',';
-		$sql .= ' status = '.(empty($this->status) != 0 ? 'null':"'".$this->status."'").',';
-		$sql .= ' mode = '.(empty($this->mode) != 0 ? 'null':"'".$this->mode."'").',';
+		$sql .= ' date_time_event = '.(dol_strlen($this->date_time_event) != 0 ? "'".$this->db->idate($this->date_time_event)."'":'null').',';
+		$sql .= ' fk_attendance_system = '.(empty($this->attendance_system) != 0 ? 'null':"'".$this->attendance_system."'").',';
 		$sql .= ' date_modification = NOW() ,';
-		$sql .= ' fk_user_modification = "'.$user->id.'"';
+		$sql .= ' fk_attendance_system_user = '.(empty($this->attendance_system_user) != 0 ? 'null':"'".$this->attendance_system_user."'").',';
+		$sql .= ' status = '.(empty($this->status) != 0 ? 'null':"'".$this->status."'").'';
 
         
         return $sql;
     }
     /*
-    * function to save a attendancesystem as a string
+    * function to save a attendancesystemevent as a string
     * @param    int     $mode   0 =>serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT 
     * @return   string       serialized object
     */
@@ -617,20 +551,11 @@ class AttendanceSystem extends CommonObject
 		$ret = '';
 		$array = array();
 		
-		$array['label'] = $this->label;
-		$array['ip'] = $this->ip;
-		$array['port'] = $this->port;
-		$array['note'] = $this->note;
-		$array['third_party'] = $this->third_party;
-		$array['task'] = $this->task;
-		$array['project'] = $this->project;
-		$array['serial_nb'] = $this->serial_nb;
-		$array['zone'] = $this->zone;
-		$array['passwd'] = $this->passwd;
-		$array['status'] = $this->status;
-		$array['mode'] = $this->mode;
+		$array['date_time_event'] = $this->date_time_event;
+		$array['attendance_system'] = $this->attendance_system;
 		$array['date_modification'] = $this->date_modification;
-		$array['user_modification'] = $this->user_modification;
+		$array['attendance_system_user'] = $this->attendance_system_user;
+		$array['status'] = $this->status;
 
 		
 		$array['processedTime'] = mktime();
@@ -649,7 +574,7 @@ class AttendanceSystem extends CommonObject
         }
          return $ret;
     }
-     /* function to load a attendancesystem as a string
+     /* function to load a attendancesystemevent as a string
      * @param   string    $str   serialized object
      * @param    int     $mode   0 =>serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
@@ -674,100 +599,16 @@ class AttendanceSystem extends CommonObject
         }
     }
 
-
-  
-    /* Function to import the event from an attendance system
-     *  @param int  $mode       simple import or creation of timesheet   
-     *  @param path $file       path to an excel to import
+        /**
+     *  Function to generate a sellist
+     *  @param int $selected rowid to be preselected
+     *  @return string HTML select list
      */
-    function importEvent($mode, $file = ''){
-        # connect to the attendance system or manage the file
-        $attendance = array();
-        if( $file != ''){
-            
-        }else if(lenght($this->ip)>6){
-            $zkteco = new ZKLibrary($this->ip,$this->port);
-            if (is_numeric($zkteco->ping()) && $zkteco->connect()){
-                # retrive event
-                $zkteco->disableDevice();
-                $attendance = $zkteco->getAttendance(); // array($uid, $id, $state, $timestamp)
-                $zkteco->clearAttendance();
-                // upload finished, disconnect
-                $zkteco->enableDevice();
-                $zkteco->disconnect();
-            } else return -2; // return error is
-        }else return -1; // return error if the IP is not set neither the file
-        
-        
-        return $attendance;
-        
-        # guess start and stop
-        # save as attendance event
-        # Create or not task time
-        
-    }
-
-    /** 
-     * Function to retrieve the user from the attendance system
-     * @return array(ZKuser) array(uid,string name,int role, string passwd)
-     */
-    function getUsers(){
-        $userArray = array();
-        if(preg_match("/^(\d{1,3}\.){3}\d{1,3}/", $this->ip)){
-            $zkteco = new ZKLibrary($this->ip,$this->port);
-            if (is_numeric($zkteco->ping()) && $zkteco->connect()){
-                dol_syslog(__METHOD__." Connected to  ".$this->ip, LOG_DEBUG);
-                # retrive event
-                $zkteco->disableDevice();
-                $userArray = $zkteco->getUser(); // array(uid,string name,int role, string passwd)
-                dol_syslog(__METHOD__." ${count($userArray)} User retrieved  ".$this->ip, LOG_DEBUG);
-                foreach ($userArray as $key => $data){ //[U16 size, U16 PIn, char FingerID, int valid, char|array(template data)]
-                    $templateData = $zkteco->getUserTemplateAll($key);
-                    $userArray[$key]['data'] = implode(unpack("H*", serialize($templateData)));
-                    //reverse $array = unserialize(pack("H*", $hex));
-                }
-                // upload finished, disconnect
-                $zkteco->enableDevice();
-                $zkteco->disconnect();
-            } else return null; // return error is
-        }else return null; // return error if the IP is not set 
-        return $userArray;
-
-    }
-
-
-    /** Function to send the user from the attendance system
-     * 
-     */
-    function setUser(){
-
-
-    }
-
-    function updateAsUser(){
-        $userArray = $this->getUser();
-        # FIXME update from name etc ... 
-    }
-
-
-
-    public function testConnection(){
-        if(preg_match("/^(\d{1,3}\.){3}\d{1,3}/", $this->ip)){
-            $zkteco = new ZKLibrary($this->ip,$this->port);
-            if (is_numeric($zkteco->ping()) && $zkteco->connect() ){
-                dol_syslog(__METHOD__." Connected to  ".$this->ip, LOG_DEBUG);
-                $zkteco->disconnect();
-                return true;
-            } else 
-            {
-                return false; // return error is
-                dol_syslog(__METHOD__." Was not able to connect to  ".$this->ip, LOG_ERR);
-            }
-        }else 
-        {
-            dol_syslog(__METHOD__." the IP ".$this->ip." is not correct", LOG_ERR);
-            return false; // return error if the IP is not set 
-            
-        }
+    
+    Public function sellist($selected = ''){    
+        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => 't.field1, t.field2', 'join' => '', 'where' => '', 'tail' => '');
+        $html = array('name' => 'AttendanceSystemEvent', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
+        $addChoices = null;
+		return select_sellist($sql, $html, $selected, $addChoices );
     }
 }

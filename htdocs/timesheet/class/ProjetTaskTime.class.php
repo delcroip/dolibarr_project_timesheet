@@ -20,7 +20,7 @@
 
 /**
  *  \file       dev/projettasktimes/projettasktime.class.php
- *  \ingroup    mymodule othermodule1 othermodule2
+ *  \ingroup    timesheet othermodule1 othermodule2
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
  *                Initialy built by build_class_from_table on 2019-07-03 22:42
  */

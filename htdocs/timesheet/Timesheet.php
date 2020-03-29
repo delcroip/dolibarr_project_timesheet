@@ -17,7 +17,7 @@
  */
 /**
  *        \file       dev/skeletons/skeleton_page.php
- *                \ingroup    mymodule othermodule1 othermodule2
+ *                \ingroup    timesheet othermodule1 othermodule2
  *                \brief      This file is an example of a php page
  *                                        Put here some comments
  */

@@ -18,10 +18,10 @@
 -- TS Revision 4.0.0
 
 
-CREATE TABLE llx_attendance_system_user_zone
+CREATE TABLE llx_attendance_system_user_link
 (
 rowid                  SERIAL ,
-zone integer not null,
+fk_attendance_system integer not null, -- link to attendance system
 fk_attendance_system_user                integer  NOT NULL,  -- to link with the zk user
 date_modification      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,       -- timesheet user (redondant)
 fk_user_modification   integer  DEFAULT NULL,

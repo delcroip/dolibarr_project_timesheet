@@ -19,10 +19,10 @@
  */
 
 /**
- *   	\file       dev/attendancesystemusers/attendancesystemuser_page.php
+ *   	\file       dev/attendancesystemevents/attendancesystemevent_page.php
  *		\ingroup    timesheet othermodule1 othermodule2
  *		\brief      This file is an example of a php page
- *					Initialy built by build_class_from_table on 2020-03-28 16:07
+ *					Initialy built by build_class_from_table on 2020-03-28 19:05
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -42,9 +42,9 @@ include 'core/lib/includeMain.lib.php';
 // Change this following line to use the correct relative path from htdocs
 //include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
 //require_once 'lib/timesheet.lib.php';
-require_once 'class/AttendanceSystemUser.class.php';
+require_once 'class/AttendanceSystemEvent.class.php';
 require_once 'core/lib/generic.lib.php';
-require_once 'core/lib/AttendanceSystemUser.lib.php';
+require_once 'core/lib/AttendanceSystemEvent.lib.php';
 dol_include_once('/core/lib/functions2.lib.php');
 //document handling
 dol_include_once('/core/lib/files.lib.php');
@@ -52,14 +52,14 @@ dol_include_once('/core/lib/files.lib.php');
 dol_include_once('/core/class/html.formfile.class.php');
 dol_include_once('/core/class/html.formother.class.php');
 dol_include_once('/core/class/html.formprojet.class.php');
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
-$langs->load("attendancesystemuser@timesheet");
+$langs->load("attendancesystemevent@timesheet");
 
 // Get parameter
 $id			= GETPOST('id','int');
-$ref                    = GETPOST('ref','alpha');
+$ref = GETPOST('ref','alpha');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
@@ -69,12 +69,17 @@ $tms = GETPOST('tms','alpha');
 /*
 $sortfield = GETPOST('sortfield','alpha'); 
 $sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
-$removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
-//$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
+$removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
+//$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )		// Both test must be present to be compatible with all browsers
 {
-    $ls_fields1=GETPOST('ls_fields1','int');
-    $ls_fields2=GETPOST('ls_fields2','alpha');
+    	$ls_date_time_event_month = GETPOST('ls_date_time_event_month','int');
+	$ls_date_time_event_year = GETPOST('ls_date_time_event_year','int');
+	$ls_attendance_system = GETPOST('ls_attendance_system','int');
+	$ls_attendance_system_user = GETPOST('ls_attendance_system_user','int');
+	$ls_status = GETPOST('ls_status','int');
+
+    
 }
 */
 
@@ -84,10 +89,10 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 
 
  // uncomment to avoid resubmision
-//if(isset( $_SESSION['attendancesystemuser_class'][$tms]))
+//if(isset( $_SESSION['attendancesystemevent_class'][$tms]))
 //{
 
- //   $cancel=TRUE;
+ //   $cancel = TRUE;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
 //}
 
@@ -106,12 +111,12 @@ if ($user->societe_id > 0 ||
 */
 
 // create object and set id or ref if provided as parameter
-$object=new AttendanceSystemUser($db);
+$object = new AttendanceSystemEvent($db);
 if($id > 0)
 {
     $object->id = $id; 
     $object->fetch($id);
-    $ref=dol_sanitizeFileName($object->ref);
+    $ref = dol_sanitizeFileName($object->ref);
    
 }
 if(!empty($ref))
@@ -119,7 +124,7 @@ if(!empty($ref))
     $object->ref = $ref; 
     $object->id = $id; 
     $object->fetch($id,$ref);
-    $ref=dol_sanitizeFileName($object->ref);
+    $ref = dol_sanitizeFileName($object->ref);
     
 }
 
@@ -131,32 +136,27 @@ if(!empty($ref))
 ********************************************************************/
 
 // Action to add record
-$error=0;
+$error = 0;
 if ($cancel){
-        AttendanceSystemUserReloadPage($backtopage,$id,$ref);
+        AttendanceSystemEventReloadPage($backtopage,$id,$ref);
 }else if (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
     //block resubmit
-    if(empty($tms) || (!isset($_SESSION['AttendanceSystemUser'][$tms]))){
-        setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
-        $action = ($action == 'add')?'create':'view';
+    if(empty($tms) || (!isset($_SESSION['AttendanceSystemEvent'][$tms]))){
+            setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
+            $action = ($action == 'add')?'create':'view';
     }
     //retrive the data
-    	$object->as_name = GETPOST('Asname');
-	$object->user =  (GETPOST('User') == '-1')?'':GETPOST('User');
-	$object->as_uid = GETPOST('Asuid');
-	$object->rfid = GETPOST('Rfid');
-	$object->role = GETPOST('Role');
-	$object->passwd = GETPOST('Passwd');
-	$object->data = GETPOST('Data');
+    	$object->date_time_event = dol_mktime(0, 0, 0,GETPOST('Datetimeeventmonth'),GETPOST('Datetimeeventday'),GETPOST('Datetimeeventyear'));
+	$object->attendance_system =  (GETPOST('Attendancesystem') == '-1')?'':GETPOST('Attendancesystem');
+	$object->attendance_system_user =  (GETPOST('Attendancesystemuser') == '-1')?'':GETPOST('Attendancesystemuser');
 	$object->status = GETPOST('Status');
-	$object->mode = GETPOST('Mode');
 
     
 
 // test here if the post data is valide
  /*
- if($object->prop1==0 || $object->prop2==0) 
+ if($object->prop1 == 0 || $object->prop2 == 0) 
  {
      if ($id>0 || $ref!='')
         $action='create';
@@ -165,7 +165,7 @@ if ($cancel){
  }
   */
         
- }else if ($id==0 && $ref=='' && $action!='create') 
+ }else if ($id == 0 && $ref=='' && $action!='create') 
  {
      $action = 'create';
  }
@@ -173,11 +173,11 @@ if ($cancel){
  
   switch($action){		
     case 'update':
-        $result=$object->update($user);
+        $result = $object->update($user);
         if ($result > 0)
         {
             // Creation OK
-            unset($_SESSION['AttendanceSystemUser'][$tms]);
+            unset($_SESSION['AttendanceSystemEvent'][$tms]);
             setEventMessage('RecordUpdated','mesgs');
 
         }
@@ -188,7 +188,7 @@ if ($cancel){
             else setEventMessage('RecordNotUpdated', 'errors');
 
         }
-        $action='view';
+        $action = 'view';
     case 'delete':
         if(isset($_GET['urlfile'])) $action='deletefile';
     case 'view':
@@ -197,7 +197,7 @@ if ($cancel){
         // fetch the object data if possible
         if ($id > 0 || !empty($ref) )
         {
-            $result=$object->fetch($id,$ref);
+            $result = $object->fetch($id,$ref);
             if ($result < 0){ 
                 dol_print_error($db);
             }else { // fill the id & ref
@@ -213,14 +213,14 @@ if ($cancel){
         }
         break;
     case 'add':
-        $result=$object->create($user);
+        $result = $object->create($user);
         if ($result > 0)
         {
-            // Creation OK
+                // Creation OK
             // remove the tms
-            unset($_SESSION['AttendanceSystemUser'][$tms]);
-            setEventMessage('RecordSucessfullyCreated', 'mesgs');
-            AttendanceSystemUserReloadPage($backtopage,$result,'');
+               unset($_SESSION['AttendanceSystemEvent'][$tms]);
+               setEventMessage('RecordSucessfullyCreated', 'mesgs');
+               AttendanceSystemEventReloadPage($backtopage,$result,'');
 
         }else
         {
@@ -232,7 +232,7 @@ if ($cancel){
         break;
      case 'confirm_delete':
 
-            $result=($confirm=='yes')?$object->delete($user):0;
+            $result = ($confirm=='yes')?$object->delete($user):0;
             if ($result > 0)
             {
                 // Delete OK
@@ -244,21 +244,21 @@ if ($cancel){
                 if (! empty($object->errors)) setEventMessages(null,$object->errors,'errors');
                 else setEventMessage('RecordNotDeleted','errors');
             }
-            AttendanceSystemUserReloadPage($backtopage, 0, '');
+            AttendanceSystemEventReloadPage($backtopage, 0, '');
          break;
 
 
           
  }             
 //Removing the tms array so the order can't be submitted two times
-if(isset( $_SESSION['AttendanceSystemUser'][$tms]))
+if(isset( $_SESSION['AttendanceSystemEvent'][$tms]))
 {
-    unset($_SESSION['AttendanceSystemUser'][$tms]);
+    unset($_SESSION['AttendanceSystemEvent'][$tms]);
 }
 if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
-    $tms=getToken();
-    $_SESSION['AttendanceSystemUser'][$tms]=array();
-    $_SESSION['AttendanceSystemUser'][$tms]['action']=$action;
+    $tms = getToken();
+    $_SESSION['AttendanceSystemEvent'][$tms] = array();
+    $_SESSION['AttendanceSystemEvent'][$tms]['action'] = $action;
             
 }
 
@@ -268,12 +268,12 @@ if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','AttendanceSystemUser','');
+llxHeader('','AttendanceSystemEvent','');
 print "<div> <!-- module body-->";
-$form=new Form($db);
-$formother=new FormOther($db);
-$formproject=new FormProjets($db);   
-$fuser=new User($db);
+$form = new Form($db);
+$formother = new FormOther($db);
+$formproject = new FormProjets($db);   
+$fuser = new User($db);
 // Put here content of your page
 
 // Example : Adding jquery code
@@ -291,31 +291,31 @@ jQuery(document).ready(function() {
 });
 </script>';*/
 
-$edit=$new=0;
+$edit = $new = 0;
 switch ($action) {
     case 'create':
-        $new=1;
+        $new = 1;
     case 'edit':
-        $edit=1;
+        $edit = 1;
    case 'delete';
         if( $action=='delete' && ($id>0 || $ref!="")){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteAttendanceSystemUser'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteAttendanceSystemEvent'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
     case 'view':
     {
         // tabs
-        if($edit==0 && $new==0){ //show tabs
-            $head=AttendanceSystemUserPrepareHead($object);
-            dol_fiche_head($head,'card',$langs->trans('AttendanceSystemUser'),0,'timesheet@timesheet');            
+        if($edit == 0 && $new == 0){ //show tabs
+            $head = AttendanceSystemEventPrepareHead($object);
+            dol_fiche_head($head,'card',$langs->trans('AttendanceSystemEvent'),0,'timesheet@timesheet');            
         }else{
-            print_fiche_titre($langs->trans('AttendanceSystemUser'));
+            print_fiche_titre($langs->trans('AttendanceSystemEvent'));
         }
 
 	print '<br>';
-        if($edit==1){
-            if($new==1){
+        if($edit == 1){
+            if($new == 1){
                 print '<form method="POST" action="'.$PHP_SELF.'?action=add">';
             }else{
                 print '<form method="POST" action="'.$PHP_SELF.'?action=update&id='.$id.'">';
@@ -325,11 +325,11 @@ switch ($action) {
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
         }else {// show the nav bar
-            $basedurl=dol_buildpath("/timesheet/AttendanceSystemUserList.php", 1);
+            $basedurl = dol_buildpath("/timesheet/AttendanceSystemEventList.php", 1);
             $linkback = '<a href="'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
             if(!isset($object->ref))//save ref if any
-                $object->ref=$object->id;
-            print $form->showrefnav($object, 'action=view&id', $linkback, 1, 'rowid', 'ref', '');
+                $object->ref = $object->id;
+            print $form->showrefnav($object, 'action = view&id', $linkback, 1, 'rowid', 'ref', '');
             //reloqd the ref
 
         }
@@ -338,31 +338,34 @@ switch ($action) {
 
         
 
-// show the field as_name
+// show the field date_time_event
 
 	print "<tr>\n";
-	print '<td>'.$langs->trans('Asname').' </td><td>';
+	print '<td class="fieldrequired">'.$langs->trans('Datetimeevent').' </td><td>';
 	if($edit == 1){
-		print '<input type="text" value="'.$object->as_name.'" name="Asname">';
+	if($new == 1){
+			print $form->select_date(-1,'Datetimeevent');
+		}else{
+			print $form->select_date($object->date_time_event,'Datetimeevent');
+		}
 	}else{
-		print $object->as_name;
+			print dol_print_date($object->date_time_event,'day');
 	}
 	print "</td>";
 	print "\n</tr>\n";
 
-// show the field user
+// show the field attendance_system
 
 	print "<tr>\n";
-	print '<td>'.$langs->trans('User').' </td><td>';
+	print '<td class="fieldrequired">'.$langs->trans('Attendancesystem').' </td><td>';
 	if($edit == 1){
-		$selected = $object->user;
-		$htmlname = 'User';
-		print $form->select_dolusers($selected,$htmlname);
+	$sql_attendance_system = array('table'=> 'llx_attendance_system_event','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
+	$html_attendance_system = array('name'=>'Attendancesystem','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
+	$addChoices_attendance_system = null;
+		print select_sellist($sql_attendance_system,$html_attendance_system, $object->attendance_system,$addChoices_attendance_system );
 	}else{
-		if($object->user != '' ){
-            $StaticObject = New User($db);
-            $StaticObject->fetch($object->user);
-			print $StaticObject->getNomUrl(1);
+		if($object->attendance_system != '' ){
+			print print_sellist($sql_attendance_system,$object->attendance_system);
 		}else{
 			print '<td></td>';
 		}
@@ -370,59 +373,22 @@ switch ($action) {
 	print "</td>";
 	print "\n</tr>\n";
 
-// show the field as_uid
+// show the field attendance_system_user
 
 	print "<tr>\n";
-	print '<td>'.$langs->trans('Asuid').' </td><td>';
+	print '<td class="fieldrequired">'.$langs->trans('Attendancesystemuser').' </td><td>';
 	if($edit == 1){
-		print '<input type="text" value="'.$object->as_uid.'" name="Asuid">';
+	$sql_attendance_system_user = array('table'=> 'llx_attendance_system_event','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
+	$html_attendance_system_user = array('name'=>'Attendancesystemuser','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
+	$addChoices_attendance_system_user = null;
+		print select_sellist($sql_attendance_system_user,$html_attendance_system_user, $object->attendance_system_user,$addChoices_attendance_system_user );
 	}else{
-		print $object->as_uid;
+		if($object->attendance_system_user != '' ){
+			print print_sellist($sql_attendance_system_user,$object->attendance_system_user);
+		}else{
+			print '<td></td>';
+		}
 	}
-	print "</td>";
-	print "\n</tr>\n";
-
-// show the field rfid
-
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Rfid').' </td><td>';
-	if($edit == 1){
-		print '<input type="text" value="'.$object->rfid.'" name="Rfid">';
-	}else{
-		print $object->rfid;
-	}
-	print "</td>";
-	print "\n</tr>\n";
-
-// show the field role
-
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Role').' </td><td>';
-	if($edit == 1){
-		print '<input type="text" value="'.$object->role.'" name="Role">';
-	}else{
-		print $object->role;
-	}
-	print "</td>";
-	print "\n</tr>\n";
-
-// show the field passwd
-
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Passwd').' </td><td>';
-	if($edit == 1){
-		print '<input type="text" value="'.$object->passwd.'" name="Passwd">';
-	}else{
-		print $object->passwd;
-	}
-	print "</td>";
-	print "\n</tr>\n";
-
-// show the field data
-
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Data').' </td><td>';
-    print strlen($object->data);
 	print "</td>";
 	print "\n</tr>\n";
 
@@ -438,25 +404,13 @@ switch ($action) {
 	print "</td>";
 	print "\n</tr>\n";
 
-// show the field mode
-
-	print "<tr>\n";
-	print '<td>'.$langs->trans('Mode').' </td><td>';
-	if($edit == 1){
-		print '<input type="text" value="'.$object->mode.'" name="Mode">';
-	}else{
-		print $object->mode;
-	}
-	print "</td>";
-	print "\n</tr>\n";
-
         
 
 	print '</table>'."\n";
 	print '<br>';
 	print '<div class="center">';
-        if($edit==1){
-        if($new==1){
+        if($edit == 1){
+        if($new == 1){
                 print '<input type="submit" class="butAction" name="add" value="'.$langs->trans('Add').'">';
             }else{
                 print '<input type="submit" name="update" value="'.$langs->trans('Update').'" class="butAction">';
@@ -464,8 +418,8 @@ switch ($action) {
             print ' &nbsp; <input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
             print '</form>';
         }else{
-            $parameters=array();
-            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            $parameters = array();
+            $reshook = $hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
             if (empty($reshook))
@@ -473,12 +427,12 @@ switch ($action) {
                 print '<div class="tabsAction">';
 
                 // Boutons d'actions
-                //if($user->rights->AttendanceSystemUser->edit)
+                //if($user->rights->AttendanceSystemEvent->edit)
                 //{
                     print '<a href="'.$PHP_SELF.'?id='.$id.'&action=edit" class="butAction">'.$langs->trans('Update').'</a>';
                 //}
                 
-                //if ($user->rights->AttendanceSystemUser->delete)
+                //if ($user->rights->AttendanceSystemEvent->delete)
                 //{
                     print '<a class="butActionDelete" href="'.$PHP_SELF.'?id='.$id.'&action=delete">'.$langs->trans('Delete').'</a>';
                 //}
@@ -493,9 +447,9 @@ switch ($action) {
         break;
     }
         case 'viewinfo':
-        print_fiche_titre($langs->trans('AttendanceSystemUser'));
-        $head=AttendanceSystemUserPrepareHead($object);
-        dol_fiche_head($head,'info',$langs->trans("AttendanceSystemUser"),0,'timesheet@timesheet');            
+        print_fiche_titre($langs->trans('AttendanceSystemEvent'));
+        $head = AttendanceSystemEventPrepareHead($object);
+        dol_fiche_head($head,'info',$langs->trans("AttendanceSystemEvent"),0,'timesheet@timesheet');            
         print '<table width="100%"><tr><td>';
         dol_print_object_info($object);
         print '</td></tr></table>';
@@ -504,7 +458,7 @@ switch ($action) {
 
     case 'delete':
         if( ($id>0 || $ref!='')){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteAttendanceSystemUser'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id,$langs->trans('DeleteAttendanceSystemEvent'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background        
         }

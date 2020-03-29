@@ -22,7 +22,7 @@ CREATE TABLE llx_attendance_event
 (
 rowid                   serial ,
 date_time_event          DATETIME        NOT NULL , -- start date of the period
-event_location_ref      VARCHAR(1024) DEFAULT NULL, -- IP or equipment of loggin
+event_location_ref      VARCHAR(1024) DEFAULT NULL, -- IP or equipment of login
 event_type              integer default 1,-- (1-->'heartbeat','sign-in','sign-out,auto-sign-in, auto-sign-out) DEFAULT 'heartbeat',
 note                  VARCHAR(1024),
 date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

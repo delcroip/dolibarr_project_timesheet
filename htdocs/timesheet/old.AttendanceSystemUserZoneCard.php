@@ -20,7 +20,7 @@
 
 /**
  *   	\file       dev/AttendanceSystemUserZones/AttendanceSystemUserPage.php
- *		\ingroup    mymodule othermodule1 othermodule2
+ *		\ingroup    timesheet othermodule1 othermodule2
  *		\brief      This file is an example of a php page
  *					Initialy built by build_class_from_table on 2020-03-15 20:11
  */
@@ -41,7 +41,7 @@
 include 'core/lib/includeMain.lib.php';
 // Change this following line to use the correct relative path from htdocs
 //include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
-//require_once 'lib/mymodule.lib.php';
+//require_once 'lib/timesheet.lib.php';
 require_once 'class/AttendanceSystemUserZone.class.php';
 require_once 'class/AttendanceSystemUser.class.php';
 require_once 'core/lib/generic.lib.php';
@@ -56,7 +56,7 @@ dol_include_once('/core/class/html.formprojet.class.php');
 $PHP_SELF=$_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
-$langs->load("AttendanceSystemUserZone@mymodule");
+$langs->load("AttendanceSystemUserZone@timesheet");
 
 // Get parameter
 $id			= GETPOST('id','int');
@@ -97,10 +97,10 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 // Right Management
  /*
 if ($user->societe_id > 0 || 
-       (!$user->rights->mymodule->add && ($action=='add' || $action='create')) ||
-       (!$user->rights->mymodule->view && ($action=='list' || $action='view')) ||
-       (!$user->rights->mymodule->delete && ($action=='confirm_delete')) ||
-       (!$user->rights->mymodule->edit && ($action=='edit' || $action='update')))
+       (!$user->rights->timesheet->add && ($action=='add' || $action='create')) ||
+       (!$user->rights->timesheet->view && ($action=='list' || $action='view')) ||
+       (!$user->rights->timesheet->delete && ($action=='confirm_delete')) ||
+       (!$user->rights->timesheet->edit && ($action=='edit' || $action='update')))
 {
 	accessforbidden();
 }
@@ -300,7 +300,7 @@ switch ($action) {
         // tabs
         if($edit==0 && $new==0){ //show tabs
             $head=AttendanceSystemUserZonePrepareHead($object);
-            dol_fiche_head($head,'card',$langs->trans('AttendanceSystemUserZone'),0,'mymodule@mymodule');            
+            dol_fiche_head($head,'card',$langs->trans('AttendanceSystemUserZone'),0,'timesheet@timesheet');            
         }else{
             print_fiche_titre($langs->trans('AttendanceSystemUserZone'));
         }
@@ -317,7 +317,7 @@ switch ($action) {
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
         }else {// show the nav bar
-            $basedurl=dol_buildpath("/mymodule/AttendanceSystemUserList.php", 1);
+            $basedurl=dol_buildpath("/timesheet/AttendanceSystemUserList.php", 1);
             $linkback = '<a href="'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
             if(!isset($object->ref))//save ref if any
                 $object->ref=$object->id;
@@ -349,10 +349,13 @@ switch ($action) {
     $StaticObject = New AttendanceSystemUser($db);
 	if($edit == 1){
         print $StaticObject->sellist($selected);
-	}else{
+	}else if($object->attendance_system_user){
         $StaticObject = New AttendanceSystemUser($db);
-        print "<td>".($obj->fk_attendance_system_user?$StaticObject->getNomUrl('1',$obj->fk_attendance_system_user):'')."</td>";
-	}
+        $StaticObject->fetch($object->attendance_system_user);
+        print ($StaticObject->getNomUrl(1));
+	}else{
+        print "<td></td>";
+    }
 	print "</td>";
 	print "\n</tr>\n";
 
@@ -414,7 +417,7 @@ switch ($action) {
         case 'viewinfo':
         print_fiche_titre($langs->trans('AttendanceSystemUserZone'));
         $head=AttendanceSystemUserZonePrepareHead($object);
-        dol_fiche_head($head,'info',$langs->trans("AttendanceSystemUserZone"),0,'mymodule@mymodule');            
+        dol_fiche_head($head,'info',$langs->trans("AttendanceSystemUserZone"),0,'timesheet@timesheet');            
         print '<table width="100%"><tr><td>';
         dol_print_object_info($object);
         print '</td></tr></table>';

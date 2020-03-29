@@ -20,7 +20,7 @@
 
 /**
  *  \file       dev/AttendanceSystemUserZones/AttendanceSystemUserZone.class.php
- *  \ingroup    mymodule othermodule1 othermodule2
+ *  \ingroup    timesheet othermodule1 othermodule2
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
  *				Initialy built by build_class_from_table on 2020-03-15 20:11
  */
@@ -82,7 +82,7 @@ class AttendanceSystemUserZone extends CommonObject
     {
     	global $conf, $langs;
 		$error=0;
-
+        //FIXME fetchDupèlicate, do the same for user
 		// Clean parameters
         $this->cleanParam();
 
@@ -109,40 +109,45 @@ class AttendanceSystemUserZone extends CommonObject
         $this->db->begin();
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-        if (! $error)
+        IF($this->fetchDuplicate()>0){
+            return OK;
+        }else
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+            $resql=$this->db->query($sql);
+            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-            if (! $notrigger)
+            if (! $error)
             {
-            // Uncomment this and change MYOBJECT to your own tag if you
-            // want this action calls a trigger.
+                $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-            //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-            //// End call triggers
+                if (! $notrigger)
+                {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action calls a trigger.
+
+                //// Call triggers
+                //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+                //// End call triggers
+                }
             }
-        }
 
-        // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
+            // Commit or rollback
+            if ($error)
             {
-                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error .= ($this->error?', '.$errmsg:$errmsg);
+                foreach($this->errors as $errmsg)
+                {
+                    dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+                    $this->error .= ($this->error?', '.$errmsg:$errmsg);
+                }
+                $this->db->rollback();
+                return -1*$error;
             }
-            $this->db->rollback();
-            return -1*$error;
-        }
-        else
-        {
-            $this->db->commit();
-            return $this->id;
+            else
+            {
+                $this->db->commit();
+                return $this->id;
+            }
         }
     }
 
@@ -198,32 +203,22 @@ class AttendanceSystemUserZone extends CommonObject
 
     /***
      *  Look for duplicate
+     *  @return int          	<0 if KO, >0 if OK
      */
     function fetchDuplicate(){
         $error = 0;
-        $sql = "SELECT rowid FROM".MAIN_DB_PREFIX.$this->table_element." as t";;
-        $sql .= "WHERE";
-		$sql .= ' t.zone = '.(empty($this->zone) != 0 ? 'null':"'".$this->zone."'").',';
-		$sql .= ' t.fk_attendance_system_user = '.(empty($this->attendance_system_user) != 0 ? 'null':"'".$this->attendance_system_user."'").',';
-        $sql .= "LIMIT 1 ";
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element." as t";;
+        $sql .= " WHERE ";
+		$sql .= ' t.zone = '.(empty($this->zone) != 0 ? 'null':"'".$this->zone."'").' AND ';
+		$sql .= ' t.fk_attendance_system_user = '.(empty($this->attendance_system_user) != 0 ? 'null':"'".$this->attendance_system_user."'");
+        $sql .= " LIMIT 1 ";
 		dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
+        if ($resql && $this->db->num_rows($resql)>0)
         {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
-                $this->id    = $obj->rowid;
-                
-				$this->zone = $obj->zone;
-				$this->attendance_system_user = $obj->fk_attendance_system_user;
-				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->user_modification = $obj->fk_user_modification;
-
-                
-            }
+            $obj = $this->db->fetch_object($resql);
+            $this->id = $obj->rowid;
             $this->db->free($resql);
-
             return 1;
         }
         else
@@ -232,7 +227,7 @@ class AttendanceSystemUserZone extends CommonObject
             return -1;
         }
     }
-    }
+    
 
     /**
      *  Update object into database
@@ -243,7 +238,7 @@ class AttendanceSystemUserZone extends CommonObject
      */
     function update($user, $notrigger=0)
     {
-	$error=0;
+	    $error=0;
         // Clean parameters
         $this->cleanParam(true);
         // Check parameters
@@ -327,9 +322,9 @@ class AttendanceSystemUserZone extends CommonObject
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
         
         if($id){
-            $lien = '<a href = "'.dol_buildpath('/mymodule/AttendanceSystemUserZoneCard.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemUserZoneCard.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
         }else if (!empty($ref)){
-            $lien = '<a href = "'.dol_buildpath('/mymodule/AttendanceSystemUserZoneCard.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemUserZoneCard.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
             $lien = "";
         }
@@ -383,7 +378,7 @@ class AttendanceSystemUserZone extends CommonObject
 	 *  @param  int		$mode          	0 = long label, 1 = short label, 2 = Picto + short label, 3 = Picto, 4 = Picto + long label, 5 = Short label + Picto, 6 = Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode = 0)
+	static function LibStatut($status, $mode = 0)
 	{
 		global $langs,$AttendanceSystemUserZoneStatusPictoArray,$AttendanceSystemUserZoneStatusArray;
 		if ($mode == 0)

@@ -18,20 +18,14 @@
 -- TS Revision 4.0.0
 
 
-CREATE TABLE llx_attendance_system_user
+CREATE TABLE llx_attendance_system_event
 (
-rowid                  SERIAL ,
-as_name                varchar(255),
-fk_user                integer  DEFAULT NULL,  -- to link with the dolibarr user
-as_uid integer, -- unique id in ZK system
-rfid                   integer DEFAULT NULL, -- null means time for the company
-role                   integer DEFAULT 0, -- role 0 = LEVEL_USER, 2 = LEVEL_ENROLLER,12 = LEVEL_MANAGER,14 = LEVEL_SUPERMANAGER
-passwd                 varchar(8), -- password on the attendance systems
-data                   blob DEFAULT NULL, -- data on the attendance system
-status                 integer DEFAULT NULL,
-mode                    integer default NULL, -- fingerpring version, faceid
-date_modification      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,       -- timesheet user (redondant)
-fk_user_modification   integer  DEFAULT NULL,
+rowid                   serial ,
+date_time_event          DATETIME        NOT NULL , -- start date of the period
+fk_attendance_system     int not NULL, -- IP or equipment of login
+date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+fk_attendance_system_user integer  NOT NULL,          -- timesheet user (redondant)
+status               integer DEFAULT NULL,
 PRIMARY KEY (rowid)
 )
 ENGINE=innodb;

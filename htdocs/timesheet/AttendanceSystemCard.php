@@ -53,6 +53,7 @@ dol_include_once('/core/class/html.formother.class.php');
 dol_include_once('/core/class/html.formprojet.class.php');
 dol_include_once('/societe/class/societe.class.php');
 dol_include_once('/projet/class/project.class.php');
+dol_include_once('/projet/class/task.class.php');
 dol_include_once('/societe/class/societe.class.php');
 $PHP_SELF = $_SERVER['PHP_SELF'];
 		// Load traductions files requiredby by page
@@ -136,18 +137,18 @@ if($cancel) {
             $action = ($action == 'add')?'create':'view';
     }
     //retrive the data
-    $object->label=GETPOST('Label');
-	$object->ip=GETPOST('Ip');
-	$object->port=GETPOST('Port');
-	$object->note=GETPOST('Note');
-	$object->third_party=GETPOST('Thirdparty');
+    $object->label = GETPOST('Label');
+	$object->ip = GETPOST('Ip');
+	$object->port = GETPOST('Port');
+	$object->note = GETPOST('Note');
+	$object->third_party = GETPOST('Thirdparty');
     $object->task = (GETPOST('Task') == '-1')?'':GETPOST('Task');
-	$object->project=GETPOST('Project');
-	$object->serial_nb=GETPOST('Serialnb');
-	$object->zone=GETPOST('Zone');
-	$object->passwd=GETPOST('Passwd');
-	$object->status=GETPOST('Status');
-	$object->mode=GETPOST('Mode');
+	$object->project = GETPOST('Project');
+	$object->serial_nb = GETPOST('Serialnb');
+	$object->zone = GETPOST('Zone');
+	$object->passwd = GETPOST('Passwd');
+	$object->status = GETPOST('Status');
+	$object->mode = GETPOST('Mode');
 		// test here if the post data is valide
  /*
  if($object->prop1 == 0 || $object->prop2 == 0) {
@@ -244,8 +245,13 @@ switch($action) {
          case 'get_time':
             $result = $object->importEvent($user);
             if($result > 0) {
-                // get user  OK
-                setEventMessage($langs->trans('TimeRetrieved'), 'mesgs');
+                $result2=loadAttendanceUserEventFromArray($object->ip, $object->third_party,$object->project,$object->task,$result);
+                if($result2 > 0) {
+                    setEventMessage($langs->trans('EventRetrieved'), 'mesgs');
+                }else{
+                    setEventMessage('EventNotSaved', 'errors');
+                }
+
             } else {
                 // get user NOK
                 if(! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
@@ -396,7 +402,8 @@ switch($action) {
         } else {
             if($object->third_party>0) {
                 $StaticObject = New Societe($db);
-                print "<td>".$StaticObject->getNomUrl('1', $object->third_party)."</td>";
+                $StaticObject->fetch($object->third_party);
+                print $StaticObject->getNomUrl(1);
             }else{
                 print "<td></td>";
             }
@@ -413,7 +420,8 @@ switch($action) {
         } else{
             if($object->task>0) {
                 $StaticObject = New Task($db);
-                print "<td>".$StaticObject->getNomUrl('1', $object->task)."</td>";
+                $StaticObject->fetch($object->task);
+                print $StaticObject->getNomUrl(1);
             } else{
                 print "<td></td>";
             }
@@ -430,7 +438,8 @@ switch($action) {
         } else{
             if($object->project>0) {
                     $StaticObject = New Project($db);
-                    print "<td>".$StaticObject->getNomUrl('1', $object->project)."</td>";
+                    $StaticObject->fetch($object->project);
+                    print $StaticObject->getNomUrl(1);
             } else{
                 print "<td></td>";
             }

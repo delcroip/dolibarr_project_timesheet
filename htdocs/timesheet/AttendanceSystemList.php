@@ -50,6 +50,7 @@ dol_include_once('/core/class/html.formfile.class.php');
 dol_include_once('/core/class/html.formother.class.php');
 dol_include_once('/core/class/html.formprojet.class.php');
 dol_include_once('/projet/class/project.class.php');
+dol_include_once('/projet/class/task.class.php');
 dol_include_once('/societe/class/societe.class.php');
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
@@ -332,19 +333,22 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
                 print "<td>".$obj->ip."</td>";
                 if($obj->fk_third_party>0) {
                         $StaticObject = New Societe($db);
-                        print "<td>".$StaticObject->getNomUrl('1', $obj->fk_third_party)."</td>";
+                        $StaticObject->fetch($obj->fk_task);
+                        print "<td>".$StaticObject->getNomUrl(1)."</td>";
                 }else{
                         print "<td></td>";
                 }
                 if($obj->fk_task>0) {
                         $StaticObject = New Task($db);
-                        print "<td>".$StaticObject->getNomUrl('1', $obj->fk_task)."</td>";
+                        $StaticObject->fetch($obj->fk_task);
+                        print "<td>".$StaticObject->getNomUrl(1)."</td>";
                 } else{
                         print "<td></td>";
                 }
                 if($obj->fk_project>0) {
                         $StaticObject = New Project($db);
-                        print "<td>".$StaticObject->getNomUrl('1', $obj->fk_project)."</td>";
+                        $StaticObject->fetch($obj->fk_project);
+                        print "<td>".$StaticObject->getNomUrl(1)."</td>";
                 }else{
                         print "<td></td>";
                 }
