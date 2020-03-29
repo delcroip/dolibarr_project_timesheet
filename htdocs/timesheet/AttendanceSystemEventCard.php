@@ -43,6 +43,8 @@ include 'core/lib/includeMain.lib.php';
 //include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
 //require_once 'lib/timesheet.lib.php';
 require_once 'class/AttendanceSystemEvent.class.php';
+require_once 'class/AttendanceSystemUser.class.php';
+require_once 'class/AttendanceSystem.class.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'core/lib/AttendanceSystemEvent.lib.php';
 dol_include_once('/core/lib/functions2.lib.php');
@@ -357,15 +359,15 @@ switch ($action) {
 // show the field attendance_system
 
 	print "<tr>\n";
-	print '<td class="fieldrequired">'.$langs->trans('Attendancesystem').' </td><td>';
+    print '<td class="fieldrequired">'.$langs->trans('Attendancesystem').' </td><td>';
+    $staticObject = new AttendanceSystem($db);
 	if($edit == 1){
-	$sql_attendance_system = array('table'=> 'llx_attendance_system_event','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
-	$html_attendance_system = array('name'=>'Attendancesystem','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
-	$addChoices_attendance_system = null;
-		print select_sellist($sql_attendance_system,$html_attendance_system, $object->attendance_system,$addChoices_attendance_system );
+        print $staticObject->sellist($object->attendance_system);
 	}else{
 		if($object->attendance_system != '' ){
-			print print_sellist($sql_attendance_system,$object->attendance_system);
+
+            $staticObject->fetch($object->attendance_system);
+            print $staticObject->getNomUrl(1);
 		}else{
 			print '<td></td>';
 		}
@@ -374,17 +376,16 @@ switch ($action) {
 	print "\n</tr>\n";
 
 // show the field attendance_system_user
-
+    $staticObject = new AttendanceSystemUser($db);
 	print "<tr>\n";
 	print '<td class="fieldrequired">'.$langs->trans('Attendancesystemuser').' </td><td>';
 	if($edit == 1){
-	$sql_attendance_system_user = array('table'=> 'llx_attendance_system_event','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
-	$html_attendance_system_user = array('name'=>'Attendancesystemuser','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
-	$addChoices_attendance_system_user = null;
-		print select_sellist($sql_attendance_system_user,$html_attendance_system_user, $object->attendance_system_user,$addChoices_attendance_system_user );
+        print $staticObject->sellist($object->attendance_system_user);
 	}else{
 		if($object->attendance_system_user != '' ){
-			print print_sellist($sql_attendance_system_user,$object->attendance_system_user);
+
+            $staticObject->fetch($object->attendance_system_user);
+            print $staticObject->getNomUrl(1);
 		}else{
 			print '<td></td>';
 		}

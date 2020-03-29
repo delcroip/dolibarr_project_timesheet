@@ -674,7 +674,19 @@ class AttendanceSystem extends CommonObject
         }
     }
 
-
+        /**
+     *  Function to generate a sellist
+     *  @param int $selected rowid to be preselected
+     *  @return string HTML select list
+     */
+    
+    Public function sellist($htmlname = '', $selected = ''){    
+        //FIXME CODE FROM TABLE 
+        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => 't.ip, t.label', 'join' => '', 'where' => '', 'tail' => '');
+        $html = array('name' => (($htmlname == '')?'AttendanceSystem':$htmlname), 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
+        $addChoices = null;
+		return select_sellist($sql, $html, $selected, $addChoices );
+    }
   
     /* Function to import the event from an attendance system
      *  @param int  $mode       simple import or creation of timesheet   

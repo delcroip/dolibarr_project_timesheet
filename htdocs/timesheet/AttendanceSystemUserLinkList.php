@@ -45,6 +45,8 @@ include 'core/lib/includeMain.lib.php';
 require_once 'class/AttendanceSystemUserLink.class.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'core/lib/AttendanceSystemUserLink.lib.php';
+require_once 'class/AttendanceSystemUser.class.php';
+require_once 'class/AttendanceSystem.class.php';
 dol_include_once('/core/lib/functions2.lib.php');
 //document handling
 dol_include_once('/core/lib/files.lib.php');
@@ -271,19 +273,15 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         //SEARCH FIELDS
         print '<tr class = "liste_titre">'; 
         //Search field forattendance_system
-	print '<td class="liste_titre" colspan="1" >';
-	$sql_attendance_system = array('table'=> 'attendancesystem','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
-	$html_attendance_system = array('name'=>'ls_attendance_system','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
-	$addChoices_attendance_system = null;
-		print select_sellist($sql_attendance_system,$html_attendance_system, $ls_attendance_system,$addChoices_attendance_system );
-	print '</td>';
-//Search field forattendance_system_user
-	print '<td class="liste_titre" colspan="1" >';
-	$sql_attendance_system_user = array('table'=> 'attendancesystemuser','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
-	$html_attendance_system_user = array('name'=>'ls_attendance_system_user','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
-	$addChoices_attendance_system_user = null;
-		print select_sellist($sql_attendance_system_user,$html_attendance_system_user, $ls_attendance_system_user,$addChoices_attendance_system_user );
-	print '</td>';
+        print '<td class="liste_titre" colspan="1" >';
+        $StaticObject = new AttendanceSystem($db);
+        print $StaticObject->sellist();
+        print '</td>';
+    //Search field forattendance_system_user
+        print '<td class="liste_titre" colspan="1" >';
+        $StaticObject = new AttendanceSystemUser($db);
+        print $StaticObject->sellist();
+        print '</td>';
 
         
         
@@ -305,11 +303,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		$StaticObject = New Attendancesystem($db);
 		$StaticObject->fetch($obj->fk_attendance_system);
 		print "<td>".$StaticObject->getNomUrl(1)."</td>";
-\		print print_sellist($sql_attendance_system,$obj->fk_attendance_system);
+//		print print_sellist($sql_attendance_system,$obj->fk_attendance_system);
 		$StaticObject = New Attendancesystemuser($db);
 		$StaticObject->fetch($obj->fk_attendance_system_user);
 		print "<td>".$StaticObject->getNomUrl(1)."</td>";
-\		print print_sellist($sql_attendance_system_user,$obj->fk_attendance_system_user);
+//		print print_sellist($sql_attendance_system_user,$obj->fk_attendance_system_user);
 	print '<td><a href="AttendanceSystemUserLinkCard.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 	print "</tr>";
 

@@ -43,6 +43,8 @@ include 'core/lib/includeMain.lib.php';
 //include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
 //require_once 'lib/timesheet.lib.php';
 require_once 'class/AttendanceSystemEvent.class.php';
+require_once 'class/AttendanceSystemUser.class.php';
+require_once 'class/AttendanceSystem.class.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'core/lib/AttendanceSystemEvent.lib.php';
 dol_include_once('/core/lib/functions2.lib.php');
@@ -291,20 +293,16 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$syear = $ls_date_time_event_year;
 	$formother->select_year($syear?$syear:-1,'ls_date_time_event_year',1, 20, 5);
 	print '</td>';
-//Search field forattendance_system
-	print '<td class="liste_titre" colspan="1" >';
-	$sql_attendance_system = array('table'=> 'attendancesystem','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
-	$html_attendance_system = array('name'=>'ls_attendance_system','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
-	$addChoices_attendance_system = null;
-		print select_sellist($sql_attendance_system,$html_attendance_system, $ls_attendance_system,$addChoices_attendance_system );
-	print '</td>';
+    //Search field forattendance_system
+    print '<td class="liste_titre" colspan="1" >';
+    $StaticObject = new AttendanceSystem($db);
+    print $StaticObject->sellist();
+    print '</td>';
 //Search field forattendance_system_user
-	print '<td class="liste_titre" colspan="1" >';
-	$sql_attendance_system_user = array('table'=> 'attendancesystemuser','keyfield'=> 'rowid','fields'=>'ref,label', 'join' => '', 'where'=>'','tail'=>'');
-	$html_attendance_system_user = array('name'=>'ls_attendance_system_user','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
-	$addChoices_attendance_system_user = null;
-		print select_sellist($sql_attendance_system_user,$html_attendance_system_user, $ls_attendance_system_user,$addChoices_attendance_system_user );
-	print '</td>';
+    print '<td class="liste_titre" colspan="1" >';
+    $StaticObject = new AttendanceSystemUser($db);
+    print $StaticObject->sellist();
+    print '</td>';
 //Search field forstatus
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" size="16" type="text" name="ls_status" value="'.$ls_status.'">';
@@ -326,22 +324,19 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             {
                 // You can use here results
                 	print "<tr class=\"oddeven\"  onclick=\"location.href = '";
-	print $basedurl.$obj->rowid."'\" >";
-	print "<td>".dol_print_date($db->jdate($obj->date_time_event),'day')."</td>";
-		$StaticObject = New Attendancesystem($db);
-		$StaticObject->fetch($obj->fk_attendance_system);
-		print "<td>".$StaticObject->getNomUrl(1)."</td>";
-\		print print_sellist($sql_attendance_system,$obj->fk_attendance_system);
-		$StaticObject = New Attendancesystemuser($db);
-		$StaticObject->fetch($obj->fk_attendance_system_user);
-		print "<td>".$StaticObject->getNomUrl(1)."</td>";
-\		print print_sellist($sql_attendance_system_user,$obj->fk_attendance_system_user);
-	print "<td>".$obj->status."</td>";
-	print '<td><a href="AttendanceSystemEventCard.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
-	print "</tr>";
-
-                
-
+                    print $basedurl.$obj->rowid."'\" >";
+                    print "<td>".dol_print_date($db->jdate($obj->date_time_event),'day')."</td>";
+                    $StaticObject = New AttendanceSystem($db);
+                    $StaticObject->fetch($obj->fk_attendance_system);
+                    print "<td>".$StaticObject->getNomUrl(1)."</td>";
+            //		print print_sellist($sql_attendance_system,$obj->fk_attendance_system);
+                    $StaticObject = New AttendanceSystemUser($db);
+                    $StaticObject->fetch($obj->fk_attendance_system_user);
+                    print "<td>".$StaticObject->getNomUrl(1)."</td>";
+            //		print print_sellist($sql_attendance_system_user,$obj->fk_attendance_system_user);
+                    print "<td>".$obj->status."</td>";
+                    print '<td><a href="AttendanceSystemEventCard.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+                    print "</tr>";
             }
             $i++;
         }
