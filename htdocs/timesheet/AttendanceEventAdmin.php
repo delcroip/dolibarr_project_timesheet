@@ -39,18 +39,19 @@ include './core/lib/includeMain.lib.php';
 // Change this following line to use the correct relative path from htdocs
 //include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
 //require_once 'lib/timesheet.lib.php';
-require_once 'class/TimesheetAttendanceEvent.class.php';
+require_once 'class/AttendanceEvent.class.php';
 require_once 'core/lib/generic.lib.php';
 //require_once 'core/lib/attendanceevent.lib.php';
-dol_include_once('/core/lib/functions2.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 //document handling
-dol_include_once('/core/lib/files.lib.php');
-//dol_include_once('/core/lib/images.lib.php');
-dol_include_once('/core/class/html.formfile.class.php');
-dol_include_once('/core/class/html.formother.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+//include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 dol_include_once('/user/class/user.class.php');
 dol_include_once('/projet/class/project.class.php');
-dol_include_once('/core/class/html.formother.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if(!$user->rights->timesheet->attendance->admin) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono admin right");
 }
@@ -85,7 +86,7 @@ if(!$removefilter) {
     $ls_task = GETPOST('ls_task', 'int');
     $ls_project = GETPOST('ls_project', 'int');
     $ls_token = GETPOST('ls_token', 'int');
-    $ls_status = GETPOST('ls_status', 'int');
+
 }
 $page = GETPOST('page', 'int');
 if($page <= 0){
@@ -155,7 +156,6 @@ switch($action) {
         $object->task = GETPOST('Task');
         $object->project = GETPOST('Project');
         $object->token = GETPOST('Token');
-        $object->status = GETPOST('Status');
         $result = $object->create($user);
         if($result > 0) {
                 // Creation OK
@@ -193,6 +193,7 @@ llxHeader('', $langs->trans('AttendanceAdmin'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
 $form = new Form($db);
 $formother = new FormOther($db);
+$formproject = new FormProjets($db);
 $fuser = new User($db);
         if($action == 'delete' && ($id>0)) {
          print $form->form_confirm(dol_buildpath('/timesheet/AttendanceEventAdmin.php', 1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceevent'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
@@ -227,7 +228,6 @@ jQuery(document).ready(function()
     $sql .= ' t.fk_task, ';
     $sql .= ' t.fk_project, ';
     $sql .= ' t.token, ';
-    $sql .= ' t.status, ';
     $sql .= '  st.date_time_event  as date_time_event_start ';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_event as t';
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."attendance_event as st ON t.token = st.token AND ABS(st.event_type)=2";
@@ -254,7 +254,7 @@ jQuery(document).ready(function()
         if($ls_task) $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
         if($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
         if($ls_token) $sqlwhere .= natural_search(array('t.token'), $ls_token);
-        if($ls_status) $sqlwhere .= natural_search(array('t.status'), $ls_status);
+
     //list limit
     if(!empty($sqlwhere))
         $sql .= ' WHERE '.substr($sqlwhere, 5);
@@ -292,7 +292,6 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         if(!empty($ls_task))        $param .= '&ls_task='.urlencode($ls_task);
         if(!empty($ls_project))        $param .= '&ls_project='.urlencode($ls_project);
         if(!empty($ls_token))        $param .= '&ls_token='.urlencode($ls_token);
-        if(!empty($ls_status))        $param .= '&ls_status='.urlencode($ls_status);
         if($filter && $filter != -1) $param .= '&filtre='.urlencode($filter);
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
@@ -320,8 +319,6 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print "\n";
         print_liste_field_titre('Token', $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre('Status', $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
-        print "\n";
         print '</tr>';
         //add
         print '<tr><td>';
@@ -332,28 +329,23 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '<input type = "text" value = "'.$object->event_location_ref.'" name = "Eventlocationref">';
         print '</td><td>';
         print $form->selectarray('Eventtype', $attendanceeventStatusArray, 2);
-        //print '<input type = "text" value = "1" name = "Eventtype">';// FIXME ARRAY SELECT
         print '</td><td>';
         print '<input type = "text" value = "'.$object->note.'" name = "Note">';
         print '</td><td>';
         if(empty($object->userid))$object->userid = $user->id;
         print $form->select_dolusers($object->userid, 'Userid', 1, '', 0);
         print '</td><td>';
-        //FIXME SOC
-        $sql_third_party = array('table'=> 'societe', 'keyfield'=> 'rowid', 'fields'=>'nom', 'join' => '', 'where'=>'', 'tail'=>'');
-        $html_third_party = array('name'=>'Thirdparty', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
-        $addChoices_third_party = null;
-        print select_sellist($sql_third_party, $html_third_party, $object->third_party, $addChoices_third_party);
+        $selected = $object->third_party;
+        $htmlname = 'Thirdparty';
+        print $form->select_company($selected, $htmlname, '', 1);
         print '</td><td>';
-        $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
-        $html_task = array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
-        $addChoices_task = null;
-        print select_sellist($sql_task, $html_task, $object->task, $addChoices_task);
+        $selected = $object->task;
+        $htmlname = 'Task';
+        $formproject->selectTasks(-1, $selected, $htmlname);
         print '</td><td>';
-        $sql_project = array('table'=> 'projet', 'keyfield'=> 'rowid', 'fields'=>'ref, title', 'join' => '', 'where'=>'', 'tail'=>'');// fixme project open
-        $html_project = array('name'=>'Project', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
-        $addChoices_project = null;
-        print select_sellist($sql_project, $html_project, $object->project, $addChoices_project);
+        $selected = $object->project;
+        $htmlname = 'Project';
+        $formproject->select_projects(-1, $selected, $htmlname);
         print '</td><td>';
         print '<input type = "text"  name = "Token">';
         print '</td><td>';
@@ -379,11 +371,10 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print "\n";
         print_liste_field_titre('Project', $PHP_SELF, 't.fk_project', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre('Token', $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre('Tocken', $PHP_SELF, 't.token', '', $param, '', $sortfield, $sortorder);
         print "\n";
-        print_liste_field_titre('Status', $PHP_SELF, 't.status', '', $param, '', $sortfield, $sortorder);
         print_liste_field_titre('Duration', '', '', '', '', '', '', '');
-        print "\n";
+        print "<th></th>\n";
         print '</tr>';
         //SEARCH FIELDS
         print '<tr class = "liste_titre">';
@@ -411,27 +402,29 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '</td>';
 //Search field forthird_party
         print '<td class = "liste_titre" colspan = "1" >';
-                $html_third_party['name'] = 'ls_third_party';
-                print select_sellist($sql_third_party, $html_third_party, $ls_third_party, $addChoices_third_party);
+        $selected = $ls_third_party;
+        $htmlname = 'ls_third_party';
+        print $form->select_company($selected, $htmlname, '', 1);       
         print '</td>';
 //Search field fortask
         print '<td class = "liste_titre" colspan = "1" >';
-                $html_task['name'] = 'ls_task';
-                print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task);
+        $selected = $ls_task;
+        $htmlname = 'ls_task';
+        $formproject->selectTasks(-1, $selected, $htmlname);
         print '</td>';
 //Search field forproject
         print '<td class = "liste_titre" colspan = "1" >';
-                $html_project['name'] = 'ls_project';
-                print select_sellist($sql_project, $html_project, $ls_project, $addChoices_project);
+        $selected = $ls_project;
+        $htmlname = 'ls_project';
+        $formproject->select_projects(-1, $selected, $htmlname);
         print '</td>';
 //Search field fortoken
+        print '<td></td>';
         //print '<td class = "liste_titre" colspan = "1" >';
         //print '<input type = "text" name = "ls_token">';
         //print '</td>';
-//Search field forstatus
-        print '<td class = "liste_titre" colspan = "1" >';
-        print '<input class = "flat" size = "16" type = "text" name = "ls_status" value = "'.$ls_status.'">';//FIXME Array
-        print '</td>';
+
+
          print '<td class = "liste_titre" colspan = "1" />';
         print '<td width = "15px">';
         print '<input type = "image" class = "liste_titre" name = "search" src = "'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value = "'.dol_escape_htmltag($langs->trans("Search")).'" title = "'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -483,7 +476,6 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
                 //print "<td>".print_generic('projet_task', 'rowid', $obj->fk_task, 'ref', 'label')."</td>";
                 //print "<td>".print_generic('projet', 'rowid', $obj->fk_project, 'ref', 'title')."</td>";
                 print "<td>".$obj->token."</td>";
-                print "<td>".$obj->status."</td>";
                 $duration=($obj->date_time_event_start<>"")?$db->jdate($obj->date_time_event)-$db->jdate($obj->date_time_event_start):'';
                 print "<td>".formatTime($duration, 0)."</td>";
                 print '<td><a href = "AttendanceEventAdmin.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';

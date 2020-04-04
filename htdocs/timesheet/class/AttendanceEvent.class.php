@@ -266,7 +266,7 @@ public $date_time_event_start;
      *        @param                int                        $withpicto                0 = _No picto, 1 = Includes the picto in the linkn, 2 = Picto only
      *        @return                string                                                String with URL
      */
-    public function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
+    public function getNomUrl($withpicto = 0, $id = 0, $ref = '' )
     {
         global $conf, $langs;
         if(! empty($conf->dol_no_mouse_hover)) $notooltip = 1;// Force disable tooltips
@@ -281,36 +281,43 @@ public $date_time_event_start;
             }
         }
         $linkclose = '';
-        if(empty($notooltip)) {
-            if(! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-                $label = $langs->trans("Showspread");
+        $label = '';
+        //field to show beside the icon
+        $label .= $this->getLabel('text');
+
+        //info card more info could be display
+        $card = '<u>' . $langs->trans("AttendanceEvent") . '</u>';
+        $card .= '<br>';
+        if($ref){
+            $card .= $langs->trans("Ref").': '.$ref;
+        }else if($id){
+            $card .= $langs->trans("#").': '.$id;
+        }
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label = $langs->trans("AttendanceEvent");
                 $linkclose .= ' alt = "'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose .= ' title = "'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' title = "'.dol_escape_htmltag($card, 1).'"';
             $linkclose .= ' class = "classfortooltip'.($morecss?' '.$morecss:'').'"';
         } else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
         if($id) {
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceeventCard.php', 1).'id='.$id.'&action=view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceEventCard.php', 1).'id='.$id.'&action=view"'.$linkclose.'>';
         } elseif(!empty($ref)) {
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceeventCard.php', 1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceEventCard.php', 1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         } else{
             $lien = "";
         }
         $lienfin = empty($lien)?'':'</a>';
         $picto = 'generic';
-        $label = '<u>' . $langs->trans("spread") . '</u>';
-        $label.= '<br>';
-        if($ref) {
-            $label .= $langs->trans("Red").': '.$ref;
-        } elseif($id) {
-            $label .= $langs->trans("#").': '.$id;
-        }
-        if($withpicto == 1) {
-            $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
-        } elseif($withpicto == 2) {
-            $result .= $lien.img_object($label, $picto).$lienfin;
-        } else{
-            $result .= $lien.$htmlcontent.$lienfin;
+    	if ($withpicto == 1){ 
+            $result .= $lien.img_object(''.$picto).$label.$lienfin;
+        }else if ($withpicto == 2) {
+            $result .= ($lien.img_object($label,$picto).$lienfin);
+        }else{  
+            $result .= $lien.$label.$lienfin;
         }
         return $result;
     }
@@ -912,4 +919,41 @@ public function serialize($mode = 0)
             }
         }
     }
+            /**
+     *  Function to generate a sellist
+     *  @param string $htmlname name of the sellist input
+     *  @param int $selected rowid to be preselected
+     *  @return string HTML select list
+     */
+    
+    Public function sellist($htmlname = '', $selected = ''){    
+        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => $this->getLabel('sql'), 'join' =>  $this->getLabel('join'), 'where' => '', 'tail' => '');
+        $html = array('name' => (($htmlname == '')?'AttendanceEvent':$htmlname), 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
+        $addChoices = null;
+		return select_sellist($sql, $html, $selected, $addChoices );
+    }
+
+    /***
+     * function to define display of the object
+     * @param string $type type of return text or sql
+     * @return string Label
+     */
+    public function getLabel($type = 'text'){
+        $ret = '';
+        switch ($type){
+            case 'sql':
+                $ret = "t.fk_userid, t.date_time_event";
+            break;
+            case 'join':
+                $ret = "";
+            break;                
+            case 'text':
+            default:
+                $ret = $this->userid.': '.$this->date_time_event;
+            break;
+
+        } 
+        return $ret;
+    }
 }
+//FIXME: getNomURL, getLabel and sellist for all class and change ref

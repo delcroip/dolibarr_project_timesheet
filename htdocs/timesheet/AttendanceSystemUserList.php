@@ -45,13 +45,13 @@ include 'core/lib/includeMain.lib.php';
 require_once 'class/AttendanceSystemUser.class.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'core/lib/AttendanceSystemUser.lib.php';
-dol_include_once('/core/lib/functions2.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 //document handling
-dol_include_once('/core/lib/files.lib.php');
-//dol_include_once('/core/lib/images.lib.php');
-dol_include_once('/core/class/html.formfile.class.php');
-dol_include_once('/core/class/html.formother.class.php');
-dol_include_once('/core/class/html.formprojet.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+//include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");

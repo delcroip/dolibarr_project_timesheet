@@ -181,8 +181,8 @@ if(is_object($firstTimesheetUser)) {
             $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id] = $task_timesheet->status;
             if(!$print) {
                 if($conf->global->TIMESHEET_ADD_DOCS == 1) {
-                    dol_include_once('/core/class/html.formfile.class.php');
-                    dol_include_once('/core/lib/files.lib.php');
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+                    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
                     $formfile = new FormFile($db);
                     $object = $task_timesheet;
                     $relativepathwithnofile = '';

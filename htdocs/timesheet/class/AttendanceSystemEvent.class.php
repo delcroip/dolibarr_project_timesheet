@@ -599,16 +599,40 @@ class AttendanceSystemEvent extends CommonObject
         }
     }
 
-        /**
+     /**
      *  Function to generate a sellist
+     *  @param string $htmlname name of the sellist input
      *  @param int $selected rowid to be preselected
      *  @return string HTML select list
      */
     
-    Public function sellist($selected = ''){    
-        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => 't.field1, t.field2', 'join' => '', 'where' => '', 'tail' => '');
-        $html = array('name' => 'AttendanceSystemEvent', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
+    Public function sellist($htmlname = '', $selected = ''){    
+        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => $this->getLabel('sql'), 'join' => $this->getLabel('sql'), 'where' => '', 'tail' => '');
+        $html = array('name' => (($htmlname == '')?'Skeleton':$htmlname), 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
         $addChoices = null;
 		return select_sellist($sql, $html, $selected, $addChoices );
+    }
+
+    /***
+     * function to define display of the object
+     * @param string $type type of return text or sql
+     * @return string Label
+     */
+    public function getLabel($type = 'text'){
+        $ret = '';
+        switch ($type){
+            case 'sql':
+                $ret = "t.fk_attendance_system_user, t.date_time_event";
+            break;
+            case 'join':
+                $ret = "";
+            break;              
+            case 'text':
+            default:
+                $ret = $this->attendance_system_user.'- '.$this->date_time_event;
+            break;
+
+        } 
+        return $ret;
     }
 }

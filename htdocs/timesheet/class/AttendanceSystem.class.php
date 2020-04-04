@@ -313,9 +313,7 @@ class AttendanceSystem extends CommonObject
      */
     function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
     {
-	global $conf, $langs;
-
-
+	    global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
     	$result='';
         if(empty($ref) && $id == 0){
@@ -328,35 +326,26 @@ class AttendanceSystem extends CommonObject
             }
         }
         $linkclose = '';
+        $label =  $this->getLabel('text') ;
+
+        $card = '<u>' . $langs->trans("AttendanceSystem") . '</u>';
+        $card .= '<br>';
+        $card .= $langs->trans("#").': '.$id;
+
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label = $langs->trans("Showspread");
+                $label = $langs->trans("AttendanceSystem");
                 $linkclose .= ' alt = "'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose .= ' title = "'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' title = "'.dol_escape_htmltag($card, 1).'"';
             $linkclose .= ' class = "classfortooltip'.($morecss?' '.$morecss:'').'"';
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
-        
-        if($id){
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
-        }else if (!empty($ref)){
-            $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
-        }else{
-            $lien = "";
-        }
+        $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceSystemCard.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
         $lienfin = empty($lien)?'':'</a>';
-
     	$picto = 'generic';
-        $label = '<u>' . $langs->trans("spread") . '</u>';
-        $label .= '<br>';
-        if($ref){
-            $label .= $langs->trans("Red").': '.$ref;
-        }else if($id){
-            $label .= $langs->trans("#").': '.$id;
-        }
-        
+     
         
         
     	if ($withpicto == 1){ 
@@ -364,7 +353,7 @@ class AttendanceSystem extends CommonObject
         }else if ($withpicto == 2) {
             $result .= $lien.img_object($label,$picto).$lienfin;
         }else{  
-            $result .= $lien.$htmlcontent.$lienfin;
+            $result .= $lien.$label.$lienfin;
         }
     	return $result;
     }  
@@ -674,19 +663,39 @@ class AttendanceSystem extends CommonObject
         }
     }
 
-        /**
+    /**
      *  Function to generate a sellist
+     *  @param string $htmlname name of the sellist input
      *  @param int $selected rowid to be preselected
      *  @return string HTML select list
      */
-    
     Public function sellist($htmlname = '', $selected = ''){    
         //FIXME CODE FROM TABLE 
-        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => 't.ip, t.label', 'join' => '', 'where' => '', 'tail' => '');
+        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => $this->getLabel('sql'), 'join' => '', 'where' => '', 'tail' => '');
         $html = array('name' => (($htmlname == '')?'AttendanceSystem':$htmlname), 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
         $addChoices = null;
 		return select_sellist($sql, $html, $selected, $addChoices );
     }
+    /***
+     * function to define display of the object
+     * @param string $type type of return text or sql
+     * @return string Label
+     */
+    public function getLabel($type = 'text'){
+        $ret = '';
+        switch ($type){
+            case 'sql':
+                $ret = "concat( t.label, ' (',t.ip,')') as display";
+            break;            
+            case 'text':
+            default:
+                $ret = $this->label.' ('.$this->ip.')';
+            break;
+
+        } 
+        return $ret;
+    }
+    
   
     /* Function to import the event from an attendance system
      *  @param int  $mode       simple import or creation of timesheet   
@@ -782,4 +791,31 @@ class AttendanceSystem extends CommonObject
             
         }
     }
+
+            /***
+         *  function to load use in the database from an array
+         *  @param int $asuId   id of the attendance system
+         *  @param  array(ZKTECO User) $userArray array of user // array(uid,string name,int role, string passwd)
+         *  @param int $mode   // fngerprint version face id ...
+         *  @result int/array(int)    ok(1)/ko(-1) badParam(-2)
+         */
+        function loadAttendanceUserFromArray($mode = null, $userArray = null){
+            global $db;
+            $res = array();
+            if(is_array($userArray) && count($userArray)>0){
+                foreach($userArray as $key => $ZKUser){
+                    $attendanceUser = new AttendanceSystemUser($db);
+                    $res[] = $attendanceUser->loadZKUser($this->id,  $mode, $ZKUser);
+                }
+                if (min($res)<0) return  $res;
+                else return OK;
+            }else return BADPARAM;
+            
+    
+        }
+
+        function loadAttendanceUserEventFromArray($ip, $third_party,$project,$task,$result){
+            //what to do with record without third party, project, task ?
+            //what to do with record without user ?
+        }
 }

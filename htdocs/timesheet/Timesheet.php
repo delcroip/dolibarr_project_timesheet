@@ -124,9 +124,8 @@ switch($action) {
         //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
                 TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
             } elseif(GETPOSTISSET('recall')) {
-                $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
-                //$task_timesheet->status = "DRAFT";
-                $ret = $task_timesheet->setStatus($user, DRAFT);
+                    $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
+                    $ret = $task_timesheet->setStatus($user, DRAFT);
                 if($ret > 0) {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
                 } else {
@@ -152,8 +151,8 @@ if(!empty($timestamp)) {
 }
 $task_timesheet->fetchAll($dateStart, $whitelistmode);
 if($conf->global->TIMESHEET_ADD_DOCS) {
-    dol_include_once('/core/class/html.formfile.class.php');
-    dol_include_once('/core/lib/files.lib.php');
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     $modulepart = 'timesheet';
     $object = $task_timesheet;
     $ref = dol_sanitizeFileName($object->ref);
@@ -162,7 +161,7 @@ if($conf->global->TIMESHEET_ADD_DOCS) {
         include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
     } else{
         include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-        //dol_include_once('/core/class/html.form.class.php');
+        //require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
     }
 }
 /***************************************************

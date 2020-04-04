@@ -41,16 +41,16 @@ include 'core/lib/includeMain.lib.php';
 		//require_once 'lib/timesheet.lib.php';
 require_once 'class/AttendanceSystem.class.php';
 require_once 'class/AttendanceSystemUser.class.php';
-require_once 'class/AttendanceSystemUserZone.class.php';
+require_once 'class/AttendanceSystemUserLink.class.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'core/lib/AttendanceSystem.lib.php';
-dol_include_once('/core/lib/functions2.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		//document handling
-dol_include_once('/core/lib/files.lib.php');
-		//dol_include_once('/core/lib/images.lib.php');
-dol_include_once('/core/class/html.formfile.class.php');
-dol_include_once('/core/class/html.formother.class.php');
-dol_include_once('/core/class/html.formprojet.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		//include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 dol_include_once('/societe/class/societe.class.php');
 dol_include_once('/projet/class/project.class.php');
 dol_include_once('/projet/class/task.class.php');
@@ -223,13 +223,12 @@ switch($action) {
             AttendanceSystemReloadPage($backtopage, 0, '');
          break;
          case 'get_user':
-            //FIXME : add loaduserfromZKarrayx
             $result = $object->getUsers($user); //uid,string name,int role, string passwd
             //echo 'result:';
             //var_dump($result);
             if($result > 0) {
                 // get user  OK
-                $result2=loadAttendanceUserFromArray($object->zone, $object->mode, $result);
+                $result2=$object->loadAttendanceUserFromArray( $object->mode, $result);
                 if($result2 > 0) {
                     setEventMessage($langs->trans('UserRetrieved'), 'mesgs');
                 }else{
@@ -414,7 +413,7 @@ switch($action) {
         print "<tr>\n";
         print '<td>'.$langs->trans('Task').' </td><td>';
         if($edit == 1) {
-            $selected = $object->project;
+            $selected = $object->task;
             $htmlname = 'Task';
             $formproject->selectTasks(-1, $selected, $htmlname);
         } else{

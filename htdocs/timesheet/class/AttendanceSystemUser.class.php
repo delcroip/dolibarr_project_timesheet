@@ -355,7 +355,7 @@ class AttendanceSystemUser extends CommonObject
             $card .= $StUser->getNomUrl(0);
         }
 
-        $label .= $this->as_name.' - '.$this->as_uid;
+        $label .= $this->getLabel('text');
         $linkclose = '';
         if (empty($notooltip))
         {
@@ -685,12 +685,12 @@ class AttendanceSystemUser extends CommonObject
 
     /***
      *  function to load 1 user in the database from an ZKUSer
-     *  @param int $zone   zone of the attendance system
+     *  @param int $attendance_system   zone of the attendance system
      *  @param int $mode   // fngerprint version face id ...
      *  @param  ZKTECO User $ZKUser // array(uid,string name,int role, string passwd, rfid, active, data)
      *  @result int    ok(1)/ko(-1) badParam(-2)
      */
-    Public function loadZKUser($zone, $mode, $ZKUser){
+    Public function loadZKUser($attendance_system, $mode, $ZKUser){
         global $user;
         
         if(is_array($ZKUser) ){
@@ -709,7 +709,7 @@ class AttendanceSystemUser extends CommonObject
 
             if($this->id > 0){
                 $asZone = new AttendanceSystemUserLink($this->db);
-                $asZone->initAsSpecimen($zone, $this->id);
+                $asZone->initAsSpecimen($attendance_system, $this->id);
                 $asZone->create($user);
                 if($asZone->id < 0){
                     $this->delete($user);
@@ -728,39 +728,38 @@ class AttendanceSystemUser extends CommonObject
      *  @param int $selected rowid to be preselected
      *  @return string HTML select list
      */
-    
-    Public function sellist($selected = ''){ 
-        $join .= ' JOIN '.MAIN_DB_PREFIX.'user as u ON t.fk_user = u.rowid';       
-        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => 't.as_uid,u.firstname,u.lastname', 'join' => $join, 'where' => '', 'tail' => '');
-        $html = array('name' => 'AttendanceSystemUser', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
+        Public function sellist($htmlname = '', $selected = ''){    
+        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => $this->getLabel('sql'), 'join' =>  $this->getLabel('join'), 'where' => '', 'tail' => '');
+        $html = array('name' => (($htmlname == '')?'AttendanceSystemUser':$htmlname), 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
         $addChoices = null;
-        return select_sellist($sql, $html, $selected, $addChoices );   
+		return select_sellist($sql, $html, $selected, $addChoices );
     }
-}
-    
-        /***
-         *  function to load use in the database from an array
-         *  @param int $asuId   id of the attendance system
-         *  @param  array(ZKTECO User) $userArray array of user // array(uid,string name,int role, string passwd)
-         *  @param int $mode   // fngerprint version face id ...
-         *  @result int/array(int)    ok(1)/ko(-1) badParam(-2)
-         */
-        function loadAttendanceUserFromArray($zone, $mode = null, $userArray = null){
-            global $db;
-            $res = array();
-            if(is_array($userArray) && count($userArray)>0){
-                foreach($userArray as $key => $ZKUser){
-                    $attendanceUser = new AttendanceSystemUser($db);
-                    $res[] = $attendanceUser->loadZKUser($zone,  $mode, $ZKUser);
-                }
-                if (min($res)<0) return  $res;
-                else return OK;
-            }else return BADPARAM;
-            
-    
-        }
+    /***
+     * function to define display of the object
+     * @param string $type type of return text or sql
+     * @return string Label
+     */
+    public function getLabel($type = 'text'){
+        $ret = '';
+        switch ($type){
+            case 'sql':
+                $ret = 't.as_uid,u.firstname,u.lastname';
+            break;
+            case 'join':
+                $ret = ' JOIN '.MAIN_DB_PREFIX.'user as u ON t.fk_user = u.rowid'; 
+            break;                
+            case 'text':
+            default:
+                $ret = $this->as_name.' ('.$this->as_uid.')';
+            break;
 
-        function loadAttendanceUserEventFromArray($ip, $third_party,$project,$task,$result){
-            //what to do with record without third party, project, task ?
-            //what to do with record without user ?
-        }
+        } 
+        return $ret;
+    }
+        
+
+
+}
+
+
+  

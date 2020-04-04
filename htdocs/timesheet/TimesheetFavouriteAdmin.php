@@ -42,11 +42,12 @@ require_once 'core/lib/generic.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 //document handling
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-//dol_include_once('/core/lib/images.lib.php');
+//include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // include conditionnally of the dolibarr version
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -79,7 +80,7 @@ if(!$removefilter) {
     $ls_date_end_month = GETPOST('ls_date_end_month', 'int');
     $ls_date_end_year = GETPOST('ls_date_end_year', 'int');
 }
-$page = GETPOST('page', 'int');//FIXME, need to use for all the list
+$page = GETPOST('page', 'int');
 if($page <= 0){
     $page = 0;
 }
@@ -255,6 +256,7 @@ llxHeader('', 'timesheetFavourite', '');
 print "<div> <!-- module body-->";
 $form = new Form($db);
 $formother = new FormOther($db);
+$formproject = new FormProjets($db);
 // Put here content of your page
 //javascript to reload the page with the poject selected
 print '

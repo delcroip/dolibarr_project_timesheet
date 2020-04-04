@@ -26,7 +26,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
-require_once 'class/TimesheetAttendanceEvent.class.php';
+require_once 'class/AttendanceEvent.class.php';
 require_once 'class/TimesheetTask.class.php';
 if(!$user->rights->timesheet->attendance->user) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");
@@ -80,7 +80,7 @@ switch($action) {
 if(!empty($tms)) {
     unset($_SESSION['timesheet_attendance'][$tms]);
 }
-//$timesheet_attendance->fetchAll($today);//FIXME: fetcht the list project/task
+
 /***************************************************
 * VIEW
 *
@@ -110,7 +110,7 @@ if($key !== false){
     unset($headers[$key]);
 }
 $ajax = false;
- // $timesheet_attendance->fetchStarted();//FIXMED
+
 //headers
 $html .= "<table id='chronoTable' class = 'noborder' width = '100%'>";
 $html .= "<tr>";

@@ -525,7 +525,7 @@ class TimesheetReport
             else
             {
                 $this->error = $objmodel->error;
-                dol_syslog(__METHOD__"::build_file Error: ".$this->error, LOG_ERR);
+                dol_syslog(__METHOD__."::build_file Error: ".$this->error, LOG_ERR);
                 return null;
             }
         }
