@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if(!$user->rights->timesheet->attendance->admin) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono admin right");
 }
-//require_once DOL_DOCUMENT_ROOT.'/projet/class/projet.class.php');
+//require_once DOL_DOCUMENT_ROOT.'/projet/class/projet.class.php';
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
