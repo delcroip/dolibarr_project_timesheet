@@ -49,9 +49,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/projet/class/project.class.php');
-dol_include_once('/projet/class/task.class.php');
-dol_include_once('/societe/class/societe.class.php');
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php');
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");

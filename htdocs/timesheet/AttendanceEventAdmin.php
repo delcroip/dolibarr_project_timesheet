@@ -49,13 +49,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/user/class/user.class.php');
-dol_include_once('/projet/class/project.class.php');
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if(!$user->rights->timesheet->attendance->admin) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono admin right");
 }
-//dol_include_once('/projet/class/projet.class.php');
+//require_once DOL_DOCUMENT_ROOT.'/projet/class/projet.class.php');
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");

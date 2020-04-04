@@ -26,9 +26,9 @@
  */
 
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $AttendanceSystemUserZoneStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
 $AttendanceSystemUserZoneStatusArray=array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 =>'Payed');

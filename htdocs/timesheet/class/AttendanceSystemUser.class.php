@@ -26,9 +26,9 @@
  */
 
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+//require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 //require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 require_once 'core/lib/generic.lib.php';
 require_once 'AttendanceSystemUserLink.class.php';
