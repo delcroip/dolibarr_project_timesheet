@@ -204,7 +204,7 @@ function validateTime(object,col_id){
                 //var regex=/^([0-5]{1}([.,]{1}[0-9]{1,3})?|[.,]{1}[0-9]{1,3}|)$/;
                 var regex=/^([0-2]{0,1})?([:,.]([0-9]{0,3}))?$/
                 if(regex.test(object.value)){
-                    object.value=object.value.replace(/:|\,/g,'.'); //fixme
+                    object.value=object.value.replace(/:|\,/g,'.'); 
                 }else {
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;

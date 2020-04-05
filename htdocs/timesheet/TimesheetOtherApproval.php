@@ -25,7 +25,6 @@ require_once 'class/TimesheetTask.class.php';
 *
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
-//FIXME: correct admin approval
 $userId = is_object($user)?$user->id:$user;
 // find the Role //FIX ME SHOW ONLY if he has right
 $role = GETPOST('role', 'alpha');

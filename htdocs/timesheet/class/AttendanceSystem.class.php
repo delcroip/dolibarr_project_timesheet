@@ -670,7 +670,6 @@ class AttendanceSystem extends CommonObject
      *  @return string HTML select list
      */
     Public function sellist($htmlname = '', $selected = ''){    
-        //FIXME CODE FROM TABLE 
         $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 'fields' => $this->getLabel('sql'), 'join' => '', 'where' => '', 'tail' => '');
         $html = array('name' => (($htmlname == '')?'AttendanceSystem':$htmlname), 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
         $addChoices = null;

@@ -55,7 +55,7 @@ $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
 if($user->rights->facture->creer && hasProjectRight($userid, $projectId)) {
     if($projectId>0)$staticProject->fetch($projectId);
-    if($socid == 0 || !is_numeric($socid))$socid = $staticProject->socid;//FIXME check must be in place to ensure the user hqs the right to see the project details
+    if($socid == 0 || !is_numeric($socid))$socid = $staticProject->socid;
 $edit = 1;
 // avoid SQL issue
 if(empty($dateStart) || empty($dateEnd) ||$dateStart == $dateEnd) {

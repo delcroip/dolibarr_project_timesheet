@@ -197,9 +197,9 @@ if(is_object($firstTimesheetUser)) {
                     $Form .= ob_get_contents().'<br>'."\n";
                     ob_end_clean();
                 }
-                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Approved" ><span>'.$langs->trans('approved').'</span></label>'."\n";/*FIXME*/
-                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Rejected" ><span>'.$langs->trans('rejected').'</span></label>'."\n";/*FIXME*/
-                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Submitted" checked ><span>'.$langs->trans('submitted').'</span></label>'."\n";/*FIXME*/
+                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Approved" ><span>'.$langs->trans('approved').'</span></label>'."\n";
+                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Rejected" ><span>'.$langs->trans('rejected').'</span></label>'."\n";
+                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Submitted" checked ><span>'.$langs->trans('submitted').'</span></label>'."\n";
                 $Form .= '<br><br><br>'."\n";
             }
             $i++;//use for the offset
@@ -237,7 +237,6 @@ $db->close();
 */
 function getTStobeApproved($level, $offset, $role, $subId)
 {
-    // FIXME LEVEL ISSUE
     global $db, $conf;
     if((!is_array($subId) || !count($subId)) && $subId!='all')return array();
     $byWeek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;

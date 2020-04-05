@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 //global $db;
-// FIXME Ver. 3
+
 // Define status
 
 

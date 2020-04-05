@@ -85,7 +85,7 @@ if(!$removefilter) {
     $ls_note = GETPOST('ls_note', 'alpha');
     if($ls_note == -1)$ls_note = '';
 }
-$page = GETPOST('page', 'int');//FIXME, need to use for all the list
+$page = GETPOST('page', 'int');
 if($page <= 0){
     $page = 0;
 }
@@ -594,11 +594,7 @@ switch($action) {
                             print $basedurl.$obj->rowid."'\" >";
                             print "<td>".print_generic('user', 'rowid', $obj->fk_userid, 'lastname', 'firstname', ' ')."</td>";
                             print "<td>".dol_print_date($obj->date_start, 'day')."</td>";
-                            //print "<td>".dol_print_date($obj->date_end, 'day')."(".getYearWeek(0, 0, 0, $db->jdate($obj->date_end)).")</td>";//FIXME
                             print "<td>".$langs->trans(strtolower($statusA[$obj->status]))."</td>";
-                            //print "<td>".$langs->trans($obj->target)."</td>";
-                            //print "<td>".$obj->fk_project_tasktimeList."</td>";
-                            //print "<td>".print_generic('user', 'rowid', $obj->fk_user_approval, 'lastname', 'firstname', ' ')."</td>";
                             print '<td><a href = "'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
                             print "</tr>";
                     }

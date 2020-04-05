@@ -71,7 +71,7 @@ class TimesheetTask extends Task
     {
         /* key used upon update of the TS via the TTA
          * canceled or planned shouldn't affect the TS status update
-         * draft will be stange at this stage but could be retrieved automatically // FIXME
+         * draft will be stange at this stage but could be retrieved automatically 
          * invoiced should appear when there is no Submitted, underapproval, Approved, challenged, rejected
          * Approved should apear when there is no Submitted, underapproval, challenged, rejected left
          * Submitted should appear when no approval action is started: underapproval, Approved, challenged, rejected
@@ -603,7 +603,7 @@ class TimesheetTask extends Task
         if(($this->pStatus == "2")) {
             $linestyle .= 'background:#'.$statusColor['FROZEN'].';';
         } elseif($statusColor[$this->status]!='' &&  $statusColor[$this->status]!='FFFFFF') {
-            $linestyle .= 'background:#'.$statusColor[$this->status].';';// --FIXME
+            $linestyle .= 'background:#'.$statusColor[$this->status].';';
         }
         /*
         * Open task ?
