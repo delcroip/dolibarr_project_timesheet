@@ -22,3 +22,4 @@
 
 ALTER TABLE llx_attendance_system_event ADD CONSTRAINT fk_ts_ase_user_id  FOREIGN KEY (fk_attendance_system_user) REFERENCES llx_attendance_system_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
 ALTER TABLE llx_attendance_system_event ADD CONSTRAINT fk_ts_ase_system_id  FOREIGN KEY (fk_attendance_system) REFERENCES llx_attendance_system(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_attendance_system_event ADD CONSTRAINT fk_ts_ase_event_id  FOREIGN KEY (fk_attendance_event) REFERENCES llx_attendance_event(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;

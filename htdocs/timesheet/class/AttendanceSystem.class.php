@@ -33,8 +33,9 @@ require_once DOL_DOCUMENT_ROOT."/projet/class/project.class.php";
 
 require_once 'ZKLibrary.class.php';
 require_once 'AttendanceSystemUser.class.php';
-$attendancesystemStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
-$attendancesystemStatusArray=array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 =>'Payed');
+require_once 'AttendanceSystemEvent.class.php';
+$attendancesystemStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut3',3=>'statut4',4=>'statut8');
+$attendancesystemStatusArray=array(0=> 'InOut',1=>'In',2=>'Out',3 =>'Access',4 => 'Deactivated');
 /**
  *	Put here description of your class
  */
@@ -675,8 +676,7 @@ class AttendanceSystem extends CommonObject
         $addChoices = null;
 		return select_sellist($sql, $html, $selected, $addChoices );
     }
-    /***
-     * function to define display of the object
+    /**     * function to define display of the object
      * @param string $type type of return text or sql
      * @return string Label
      */
@@ -791,20 +791,16 @@ class AttendanceSystem extends CommonObject
         }
     }
 
-            /***
-         *  function to load use in the database from an array
-         *  @param int $asuId   id of the attendance system
+         /**         *  function to load user in the database from an array
          *  @param  array(ZKTECO User) $userArray array of user // array(uid,string name,int role, string passwd)
-         *  @param int $mode   // fngerprint version face id ...
          *  @result int/array(int)    ok(1)/ko(-1) badParam(-2)
          */
-        function loadAttendanceUserFromArray($mode = null, $userArray = null){
-            global $db;
+        function loadAttendanceUserFromArray( $userArray = null){
             $res = array();
             if(is_array($userArray) && count($userArray)>0){
                 foreach($userArray as $key => $ZKUser){
-                    $attendanceUser = new AttendanceSystemUser($db);
-                    $res[] = $attendanceUser->loadZKUser($this->id,  $mode, $ZKUser);
+                    $attendanceUser = new AttendanceSystemUser($this->db);
+                    $res[] = $attendanceUser->loadZKUser($this->id,  $this->mode, $ZKUser);
                 }
                 if (min($res)<0) return  $res;
                 else return OK;
@@ -812,9 +808,24 @@ class AttendanceSystem extends CommonObject
             
     
         }
-
-        function loadAttendanceUserEventFromArray($ip, $third_party,$project,$task,$result){
-            //what to do with record without third party, project, task ?
-            //what to do with record without user ?
+        /**         *  function to load event in the database from an array
+         *  @param  event(ZKTECO event) $EventArray array of user // array( 'uid' => $uid, 'id' => $id, 'state' => $state, 'tms' => $timestamp)
+         *  @result int/array(int)    ok(1)/ko(-1) badParam(-2)
+         */
+        function loadAttendanceUserEventFromArray($EventArray = null){
+            $res = array();
+            $prevUid = '';
+            $curUser = '';
+            $attendanceUser = new AttendanceSystemUser($this->db);
+            if(is_array($EventArray) && count($EventArray)>0){
+                foreach($EventArray as $key => $ZKEvent){
+                    $ZKEvent = new AttendanceSystemEvent($this->db);
+                    if ($prevUid != $ZKEvent['uid']) $curUser = $attendanceUser->fetchAsUser($this->id, $ZKEvent['uid']);//FIXME need to check that the user is uid
+                    $res[] = $ZKEvent->loadZKEvent($this->id,  $this->status, $curUser, $ZKEvent);
+                    $prevUid = $ZKEvent['uid'];
+                }
+                if (min($res)<0) return  $res;
+                else return OK;
+            }else return BADPARAM;
         }
 }

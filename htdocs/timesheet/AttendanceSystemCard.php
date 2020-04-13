@@ -228,7 +228,7 @@ switch($action) {
             //var_dump($result);
             if($result > 0) {
                 // get user  OK
-                $result2=$object->loadAttendanceUserFromArray( $object->mode, $result);
+                $result2=$object->loadAttendanceUserFromArray( $result);
                 if($result2 > 0) {
                     setEventMessage($langs->trans('UserRetrieved'), 'mesgs');
                 }else{

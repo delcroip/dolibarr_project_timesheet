@@ -115,7 +115,8 @@ class AttendanceSystemUser extends CommonObject
         $sql .= ") VALUES (";
         
         $sqlSelectUser = "(SELECT rowid from ".MAIN_DB_PREFIX."user AS u ";
-        $sqlSelectUser .= "WHERE u.login = '$this->as_uid'";
+        $sqlSelectUser .= " WHERE u.login = '$this->as_name'";
+        $sqlSelectUser .= " OR u.login = '$this->as_uid'";
         $sqlSelectUser .= " OR u.email = '$this->as_uid'";
         $sqlSelectUser .= " OR u.ref_int = '$this->as_uid'";
         if($this->name != null)$sqlSelectUser .= " OR CONCAT(u.firstname,'.',u.lastname) = '$name'";
@@ -683,8 +684,7 @@ class AttendanceSystemUser extends CommonObject
         }
     }
 
-    /***
-     *  function to load 1 user in the database from an ZKUSer
+    /**     *  function to load 1 user in the database from an ZKUSer
      *  @param int $attendance_system   zone of the attendance system
      *  @param int $mode   // fngerprint version face id ...
      *  @param  ZKTECO User $ZKUser // array(uid,string name,int role, string passwd, rfid, active, data)
@@ -723,7 +723,7 @@ class AttendanceSystemUser extends CommonObject
 
     }
 
-        /**
+    /**
      *  Function to generate a sellist
      *  @param int $selected rowid to be preselected
      *  @return string HTML select list
@@ -734,11 +734,12 @@ class AttendanceSystemUser extends CommonObject
         $addChoices = null;
 		return select_sellist($sql, $html, $selected, $addChoices );
     }
-    /***
-     * function to define display of the object
-     * @param string $type type of return text or sql
-     * @return string Label
-     */
+
+    /**
+     *  function to define display of the object
+     *  @param string $type type of return text or sql
+     *  @return string Label
+     **/
     public function getLabel($type = 'text'){
         $ret = '';
         switch ($type){
@@ -756,8 +757,41 @@ class AttendanceSystemUser extends CommonObject
         } 
         return $ret;
     }
-        
+    /**
+     *  function to retrieve the dol user based on the attendance_user + link user 
+     * @param int $fk_attendance_system id of the attendance system
+     * @param int $user_as_id ZKTeco user id
+     *  
+     **/    
+    public function fetchAsUser($fk_attendance_system, $user_as_id){
+        $error = 0;
+        $ret = '';
+        $sql = "SELECT asu.rowid FROM ".MAIN_DB_PREFIX.$this->table_element.' AS asu';
+        $sql .= " JOIN ".MAIN_DB_PREFIX.'attendance_system_user_link AS asul';
+		$sql .= ' ON  asu.rowid = asul.fk_attendance_system_user';
+        $sql .= " AND  asul.fk_attendance_system = ".$fk_attendance_system;
+		$sql .= ' WHERE asu.as_uid = '.$fk_attendance_system;
+        $sql .= " LIMIT 1 ";
+		dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql && $this->db->num_rows($resql)>0)
+        {
+            $obj = $this->db->fetch_object($resql);
+            
+            if (isset($obj->rowid)){
+                $ret =  $obj->rowid;;
+            }else{
+                $ret = NOK;
+            }
+            $this->db->free($resql);
 
+        }else
+        {
+      	    $this->error="Error ".$this->db->lasterror();
+            $ret = NOK;
+        }
+        return $ret;
+    }
 
 }
 

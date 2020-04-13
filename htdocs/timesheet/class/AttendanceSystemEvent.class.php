@@ -53,8 +53,11 @@ class AttendanceSystemEvent extends CommonObject
 	public $date_time_event = '';
 	public $attendance_system;
 	public $date_modification = '';
-	public $attendance_system_user;
-	public $status;
+    public $attendance_system_user;
+    public $user = '';
+    public $status;
+    public $event_type;
+    public $attendance_event;
 
     
     // END OF automatic var creation
@@ -95,7 +98,10 @@ class AttendanceSystemEvent extends CommonObject
         
 		$sql .= 'date_time_event,';
 		$sql .= 'fk_attendance_system,';
-		$sql .= 'fk_attendance_system_user,';
+        $sql .= 'fk_attendance_system_user,';
+        $sql .= 'fk_attendance_event,';
+        $sql .= 'fk_user,';
+        $sql .= 'event_type,';
 		$sql .= 'status';
 
         
@@ -103,7 +109,10 @@ class AttendanceSystemEvent extends CommonObject
         
 		$sql .= ' '.(empty($this->date_time_event) || dol_strlen($this->date_time_event) == 0?'NULL':"'".$this->db->idate($this->date_time_event)."'").',';
 		$sql .= ' '.(empty($this->attendance_system)?'NULL':"'".$this->attendance_system."'").',';
-		$sql .= ' '.(empty($this->attendance_system_user)?'NULL':"'".$this->attendance_system_user."'").',';
+        $sql .= ' '.(empty($this->attendance_system_user)?'NULL':"'".$this->attendance_system_user."'").',';
+        $sql .= ' '.(empty($this->attendance_event)?'NULL':"'".$this->attendance_event."'").',';
+        $sql .= ' '.(empty($this->user)?'NULL':"'".$this->user."'").',';
+        $sql .= ' '.(empty($this->event_type)?'1':"'".$this->event_type."'").',';
 		$sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
 
         
@@ -166,7 +175,10 @@ class AttendanceSystemEvent extends CommonObject
 		$sql .= ' t.date_time_event,';
 		$sql .= ' t.fk_attendance_system,';
 		$sql .= ' t.date_modification,';
-		$sql .= ' t.fk_attendance_system_user,';
+        $sql .= ' t.fk_attendance_system_user,';
+        $sql .= ' t.fk_attendance_event,';
+        $sql .= ' t.fk_user,';
+        $sql .= ' t.event_type,';
 		$sql .= ' t.status';
 
         
@@ -181,14 +193,14 @@ class AttendanceSystemEvent extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
                 $this->id    = $obj->rowid;
-                
-		$this->date_time_event = $this->db->jdate($obj->date_time_event);
-		$this->attendance_system = $obj->fk_attendance_system;
-		$this->date_modification = $this->db->jdate($obj->date_modification);
-		$this->attendance_system_user = $obj->fk_attendance_system_user;
-		$this->status = $obj->status;
-
-                
+                $this->date_time_event = $this->db->jdate($obj->date_time_event);
+                $this->attendance_system = $obj->fk_attendance_system;
+                $this->date_modification = $this->db->jdate($obj->date_modification);
+                $this->attendance_system_user = $obj->fk_attendance_system_user;
+                $this->attendance_event = $obj->fk_attendance_event;
+                $this->user = $obj->fk_user;
+                $this->event_type = $obj->event_type;
+                $this->status = $obj->status;       
             }
             $this->db->free($resql);
 
@@ -289,11 +301,9 @@ class AttendanceSystemEvent extends CommonObject
         //info card more info could be display
         $card = '<u>' . $langs->trans("AttendanceSystemEvent") . '</u>';
         $card .= '<br>';
-        if($ref){
-            $card .= $langs->trans("Ref").': '.$ref;
-        }else if($id){
-            $card .= $langs->trans("#").': '.$id;
-        }
+        $card .= $langs->trans("#").': '.$id;
+        $card .= '<br>';
+        $card .= $this->getLibStatut(2);
 
         if (empty($notooltip))
         {
@@ -499,14 +509,14 @@ class AttendanceSystemEvent extends CommonObject
     function initAsSpecimen()
     {
         $this->id = 0;
-        
-	$this->date_time_event = '';
-	$this->attendance_system = '';
-	$this->date_modification = '';
-	$this->attendance_system_user = '';
-	$this->status = '';
-
-        
+        $this->date_time_event = '';
+        $this->attendance_system = '';
+        $this->date_modification = '';
+        $this->attendance_system_user = '';
+        $this->attendance_event = '';
+        $this->user = '';
+        $this->event_type = 1;
+        $this->status = '';
     }
     /**
      *	will clean the parameters
@@ -519,7 +529,10 @@ class AttendanceSystemEvent extends CommonObject
 			if (!empty($this->date_time_event)) $this->date_time_event = trim($this->date_time_event);
 			if (!empty($this->attendance_system)) $this->attendance_system = trim($this->attendance_system);
 			if (!empty($this->date_modification)) $this->date_modification = trim($this->date_modification);
-			if (!empty($this->attendance_system_user)) $this->attendance_system_user = trim($this->attendance_system_user);
+            if (!empty($this->attendance_system_user)) $this->attendance_system_user = trim($this->attendance_system_user);
+            if (!empty($this->attendance_event)) $this->attendance_event = trim($this->attendance_event);
+            if (!empty($this->user)) $this->user = trim($this->user);
+			if (!empty($this->event_type)) $this->event_type = trim($this->event_type);
 			if (!empty($this->status)) $this->status = trim($this->status);
 
         
@@ -537,6 +550,9 @@ class AttendanceSystemEvent extends CommonObject
 		$sql .= ' fk_attendance_system = '.(empty($this->attendance_system) != 0 ? 'null':"'".$this->attendance_system."'").',';
 		$sql .= ' date_modification = NOW() ,';
 		$sql .= ' fk_attendance_system_user = '.(empty($this->attendance_system_user) != 0 ? 'null':"'".$this->attendance_system_user."'").',';
+		$sql .= ' fk_attendance_event = '.(empty($this->attendance_event) != 0 ? 'null':"'".$this->attendance_event."'").',';
+		$sql .= ' fk_user = '.(empty($this->user) != 0 ? 'null':"'".$this->user."'").',';
+		$sql .= ' event_type = '.(empty($this->event_type) != 0 ? 'null':"'".$this->event_type."'").',';
 		$sql .= ' status = '.(empty($this->status) != 0 ? 'null':"'".$this->status."'").'';
 
         
@@ -554,10 +570,11 @@ class AttendanceSystemEvent extends CommonObject
 		$array['date_time_event'] = $this->date_time_event;
 		$array['attendance_system'] = $this->attendance_system;
 		$array['date_modification'] = $this->date_modification;
-		$array['attendance_system_user'] = $this->attendance_system_user;
+        $array['attendance_system_user'] = $this->attendance_system_user;
+        $array['attendance_event'] = $this->attendance_system_user;
+        $array['user'] = $this->user;
+        $array['event_type'] = $this->attendance_system_user;
 		$array['status'] = $this->status;
-
-		
 		$array['processedTime'] = mktime();
         switch($mode)
         {
@@ -613,8 +630,7 @@ class AttendanceSystemEvent extends CommonObject
 		return select_sellist($sql, $html, $selected, $addChoices );
     }
 
-    /***
-     * function to define display of the object
+    /**     * function to define display of the object
      * @param string $type type of return text or sql
      * @return string Label
      */
@@ -625,7 +641,7 @@ class AttendanceSystemEvent extends CommonObject
                 $ret = "t.fk_attendance_system_user, t.date_time_event";
             break;
             case 'join':
-                $ret = "";
+                $ret = " ";
             break;              
             case 'text':
             default:
@@ -635,4 +651,121 @@ class AttendanceSystemEvent extends CommonObject
         } 
         return $ret;
     }
+
+
+    /**
+    * 
+    *  function to load the event from a zkevent
+    *  @param  event(ZKTECO event) $ZKEvent  array( 'uid' => $uid, 'id' => $id, 'state' => $state, 'tms' => $timestamp)
+    *  @result int/array(int)    ok(1)/ko(-1) badParam(-2)
+    */
+     
+    public function loadZKEvent($fk_attendance_system, $event_type, $as_user, $ZKEvent){
+        global $user;
+        if(is_array($ZKEvent) ){
+            $this->date_time_event = $ZKEvent['tms'];
+            $this->attendance_system = $fk_attendance_system;
+            $this->attendance_system_user =  $as_user;
+            $this->attendance_event = '';
+            $this->event_type = $event_type;
+            $this->status = $ZKEvent['state'];
+            $this->create($user);
+            return OK;
+        }else return BADPARAM;
+    }
+
 }
+
+    /**
+    *  function to generate event from system event.
+    *  @result int OK/KO
+    */
+    function parseSystemEvent(){
+        $arrayEvent = fetchUnlinkedSystemEvent();
+        $ret = array();
+        //loop for all user
+        if(is_array($arrayEvent))foreach($arrayEvent as $userid => $userEvent){
+            //loop for all event
+            if(is_array($userEvent))foreach($userEvent as $userid => $Event){
+                $userDayList = splitByDay($Event);
+                //loop for all the day found
+                if(is_array($userDayList))foreach($userDayList as $userDay){
+                    $ret[] = parseDaySystemEvent($userDay);
+                }
+            }
+        }
+
+    }
+
+    /**
+    * 
+    *   function to group event by days.
+    *   @param array(event) $EventArray list of event for a single user
+    *   @result array( day => array(event))/KO
+    */
+    function splitByDay($EventArray){
+        
+
+    //Durée maximale entre le premier pointage et le dernier (défaut à 13h)
+
+    //Durée maximale entre 00:00 (jour du premier pointage) et le dernier pointage (ça sera plus des 24 si l’entreprise fait les trois 8, défaut à 22h30)
+
+    //Temps de repos minimal entre deux journées pour un travailleur (défaut à 11h )
+
+
+    }
+
+
+    /**
+    * 
+    *  function to generate event from a sub list of system event.
+    *   @param array(event) $EventArray list of event for a single user for a single day
+    *  @result int OK/KO
+    */
+    function parseDaySystemEvent($EventArray){
+
+    }
+
+    /**
+    * 
+    *  function to get the event not parsed.
+    *  @result int OK/KO
+    */
+    function fetchUnlinkedSystemEvent(){
+        global $db;
+        $error = 0;
+        $ret = array();
+        $sql = "SELECT ase.date_time_event, ase.fk_attendance_system,";
+        $sql .= "  ase.attendance_system_user, asu.fk_user,";
+        $sql .= "  ase.event_type, asu.status";
+        $sql .= " FROM ".MAIN_DB_PREFIX.'attendance_system_event AS ase';
+        $sql .= ' JOIN '.MAIN_DB_PREFIX.'attendance_system_user AS asu';
+        $sql .= ' ON ase.fk_attendance_system_user = asu.rowid';
+        $sql .= ' WHERE ase.fk_attendance_event = NULL';
+        $sql .= ' ORDER BY asu.fk_user = NULL DESC';
+        $sql .= ' , ase.date_time_event ASC';
+		dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql)
+
+            for($i = 0; $i < $num; $i++){
+                $obj = $this->db->fetch_object($resql);
+                $ret[$obj->fk_user][$i] = array();
+                $ret[$obj->fk_user][$i]['date_time_event'] = $obj->date_time_event;
+                $ret[$obj->fk_user][$i]['attendance_system'] = $obj->fk_attendance_system;
+                $ret[$obj->fk_user][$i]['attendance_system_user'] = $obj->attendance_system_user;
+                $ret[$obj->fk_user][$i]['event_type'] = $obj->date_time_event;
+                $ret[$obj->fk_user][$i]['status'] = $obj->date_time_event;
+            }
+
+            $this->db->free($resql);
+
+        }else
+        {
+      	    $this->error="Error ".$this->db->lasterror();
+            $ret = NOK;
+        }
+        return $ret;
+    }

@@ -601,8 +601,7 @@ class AttendanceSystemUserLink extends CommonObject
 		return select_sellist($sql, $html, $selected, $addChoices );
     }
 
-    /***
-     * function to define display of the object
+    /**     * function to define display of the object
      * @param string $type type of return text or sql
      * @return string Label
      */
