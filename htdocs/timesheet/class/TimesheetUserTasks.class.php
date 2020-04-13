@@ -118,7 +118,7 @@ class TimesheetUserTasks extends CommonObject
         $sql .= ' '.(! isset($this->status)?DRAFT:$this->status).', ';
         $sql .= ' NOW(), ';
         $sql .= ' NOW(), ';
-        $sql .= ' \''.$userId.'\', ';//fixme 3.5
+        $sql .= ' \''.$userId.'\', ';
         $sql .= ' '.(! isset($this->note)?'NULL':'\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'');
         $sql.= ")";
         $this->db->begin();
@@ -732,7 +732,7 @@ public function getHTML($ajax = false, $Approval = false)
     $Form .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
     $Form .= $this->getHTMLHolidayLines($ajax);
     if(!$Approval)$Form .= $this->getHTMLTotal();
-    //$Form .= '<tbody style = "overflow:auto;">';//FIXME, max height should be defined
+    //$Form .= '<tbody style = "overflow:auto;">';
     $Form .= $this->getHTMLtaskLines($ajax);
     //$Form .= '</tbody>';// overflow div
     $Form .= $this->getHTMLTotal();
@@ -924,7 +924,12 @@ public function getHTMLHolidayLines($ajax = false)
     $i = 0;
     $Lines = '';
     if(!$ajax) {
-        $Lines .= $this->holidays->getHTMLFormLine($this->headers, $this->id);
+        if(is_object($this->holidays)){
+            $Lines .= $this->holidays->getHTMLFormLine($this->headers, $this->id);
+        }else{
+            dol_syslog(__METHOD__.": missing Holiday object", LOG_ERR);
+
+        }
     }
     return $Lines;
 }
