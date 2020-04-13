@@ -381,6 +381,11 @@ switch($action) {
         print '</table>'."\n";
         print '<br>';
         if($object->status != DRAFT && $edit!=1) {
+            $object->fetchByWeek();
+            $object->fetchTaskTimesheet();
+            //$ret+=$this->getTaskTimeIds();
+            //FIXME module holiday should be activated ?
+            $object->fetchUserHoliday();
             print $object->userName." - ".dol_print_date($object->date_start, 'day');
             print $object->getHTMLHeader();
             print $object->getHTMLHolidayLines(false);
