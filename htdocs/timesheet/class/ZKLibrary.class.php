@@ -1031,8 +1031,7 @@ class ZKLibrary
             return false;
         }
     }
-    /** //FIXME
-     *
+    /** get the user data such ad fingers, faceid    *
      * @return bool|string user data
      */
     public function getUserData()
@@ -1238,7 +1237,7 @@ class ZKLibrary
         $command_string = $byte1.$byte2;
         return $this->execCommand($command, $command_string);
     }
-    /**  Start enroll //fixme
+    /**  Start enrollement of finger for the user witn the UID
      *
      * @param int $uid user id
      * @param int $finger finger to enroll
