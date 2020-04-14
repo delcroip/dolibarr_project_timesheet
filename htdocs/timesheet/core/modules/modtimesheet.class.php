@@ -102,7 +102,7 @@ class modTimesheet extends DolibarrModules
                 // Example: $this->const=array(0=>array('timesheet_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
                 //                             1=>array('timesheet_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
                 //);
-                $r=0;
+                $r = 0;
                 $this->const = array();
                 $this->const[$r] = array("TIMESHEET_VERSION", "chaine", $this->version, "save the timesheet verison");// hours or days
                 $r++;
@@ -261,14 +261,14 @@ class modTimesheet extends DolibarrModules
                 //$this->boxes=array(array(0=>array('file'=>'myboxa.php', 'note'=>'', 'enabledbydefaulton'=>'Home'), 1=>array('file'=>'myboxb.php', 'note'=>''), 2=>array('file'=>'myboxc.php', 'note'=>'')););
                 // Permissions
                 $this->rights = array();                // Permission array used by this module
-                $r=0;
+                $r = 0;
                  $this->rights[$r][0] = 86100200;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'TimesheetUser';        // Permission label
                  $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
                  $this->rights[$r][4] = 'user';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
                  //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
                  $r++;
-                //$r=0;
+                //$r = 0;
                  $this->rights[$r][0] = 86100201;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'TeamApprover';        // Permission label
                  $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
@@ -309,7 +309,7 @@ class modTimesheet extends DolibarrModules
                 // $r++;
                 // Main menu entries
                 $this->menu = array();                        // List of menus to add
-                $r=0;
+                $r = 0;
                 // Add here entries to declare new menus
                 //
                 // Example to declare a new Top Menu entry and its Left menu entry:
@@ -548,7 +548,7 @@ class modTimesheet extends DolibarrModules
               );
                 $this->import_examplevalues_array[$r]=array('sr.fk_soc'=>"MyBigCompany", 'sr.fk_user'=>"login");*/
                 // Exports
-                //$r=1;
+                //$r = 1;
                 // Example:
                 // $this->export_code[$r]=$this->rights_class.'_'.$r;
                 // $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';        // Translation key(used only if key ExportDataset_xxx_z not found)
@@ -564,7 +564,7 @@ class modTimesheet extends DolibarrModules
         public function init($options = '')
         {
             global $db, $conf;
-            $result=$this->_load_tables('/timesheet/sql/');
+            $result = $this->_load_tables('/timesheet/sql/');
             $sql = array();
             $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql[0].= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'

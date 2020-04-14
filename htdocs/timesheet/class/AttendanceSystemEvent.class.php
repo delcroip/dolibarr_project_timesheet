@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 //require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 //require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 require_once 'core/lib/generic.lib.php';
-$attendancesystemeventStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
-$attendancesystemeventStatusArray=array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 =>'Payed');
+$attendancesystemeventStatusPictoArray = array(0 => 'statut7', 1 => 'statut3', 2 => 'statut8', 3 => 'statut4', 4 => 'statut4', 5 => 'statut4', 6 => 'statut4');
+$attendancesystemeventStatusArray = array(0 => 'loaded', 1 => 'in', 2 => 'out', 3 => 'ErrorSingle' , 4 => 'ErrorDouble', 5 => 'ErrorIn', 6 => 'ErrorOut');
 /**
  *	Put here description of your class
  */
@@ -41,11 +41,11 @@ class AttendanceSystemEvent extends CommonObject
     /**
      * @var string ID to identify managed object
      */				//!< To return several error codes (or messages)
-    public $element='attendancesystemevent';			//!< Id that identify managed objects
+    public $element = 'attendancesystemevent';			//!< Id that identify managed objects
     /**
      * @var string Name of table without prefix where object is stored
      */    
-    public $table_element='attendance_system_event';		//!< Name of table without prefix where object is stored
+    public $table_element = 'attendance_system_event';		//!< Name of table without prefix where object is stored
 
     public $id;
     // BEGIN OF automatic var creation
@@ -56,6 +56,7 @@ class AttendanceSystemEvent extends CommonObject
     public $attendance_system_user;
     public $user = '';
     public $status;
+    public $state;
     public $event_type;
     public $attendance_event;
 
@@ -82,10 +83,10 @@ class AttendanceSystemEvent extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
         $this->cleanParam();
@@ -103,7 +104,7 @@ class AttendanceSystemEvent extends CommonObject
         $sql .= 'fk_user,';
         $sql .= 'event_type,';
 		$sql .= 'status';
-
+		$sql .= 'state';
         
         $sql .= ") VALUES (";
         
@@ -114,14 +115,14 @@ class AttendanceSystemEvent extends CommonObject
         $sql .= ' '.(empty($this->user)?'NULL':"'".$this->user."'").',';
         $sql .= ' '.(empty($this->event_type)?'1':"'".$this->event_type."'").',';
 		$sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
-
+		$sql .= ' '.(empty($this->state)?'NULL':"'".$this->state."'").'';
         
         $sql .= ")";
 
         $this->db->begin();
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
         if (! $error)
@@ -134,7 +135,7 @@ class AttendanceSystemEvent extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+            //$result = $this->call_trigger('MYOBJECT_CREATE',$user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
@@ -166,7 +167,7 @@ class AttendanceSystemEvent extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id,$ref = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -180,19 +181,20 @@ class AttendanceSystemEvent extends CommonObject
         $sql .= ' t.fk_user,';
         $sql .= ' t.event_type,';
 		$sql .= ' t.status';
+		$sql .= ' t.state';
 
         
         $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         if ($ref) $sql .= " WHERE t.ref = '".$ref."'";
         else $sql .= " WHERE t.rowid = ".$id;
     	dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-                $this->id    = $obj->rowid;
+                $this->id = $obj->rowid;
                 $this->date_time_event = $this->db->jdate($obj->date_time_event);
                 $this->attendance_system = $obj->fk_attendance_system;
                 $this->date_modification = $this->db->jdate($obj->date_modification);
@@ -201,6 +203,7 @@ class AttendanceSystemEvent extends CommonObject
                 $this->user = $obj->fk_user;
                 $this->event_type = $obj->event_type;
                 $this->status = $obj->status;       
+                $this->state = $obj->state;       
             }
             $this->db->free($resql);
 
@@ -221,9 +224,9 @@ class AttendanceSystemEvent extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user, $notrigger=0)
+    function update($user, $notrigger = 0)
     {
-	$error=0;
+	$error = 0;
         // Clean parameters
         $this->cleanParam(true);
         // Check parameters
@@ -244,7 +247,7 @@ class AttendanceSystemEvent extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+            //$result = $this->call_trigger('MYOBJECT_MODIFY',$user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
@@ -282,8 +285,8 @@ class AttendanceSystemEvent extends CommonObject
 	global $conf, $langs;
 
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-    	$result='';
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;   // Force disable tooltips
+    	$result = '';
         if(empty($ref) && $id == 0){
             if(isset($this->id))  {
                 $id = $this->id;
@@ -345,10 +348,10 @@ class AttendanceSystemEvent extends CommonObject
 	 *  @param	object 		$form          form object that should be created	
       *  *  @return	string 			       html code to select status
 	 */
-	function selectLibStatut($form,$htmlname = 'Status')
+	function selectLibStatut($form, $htmlname = 'Status')
 	{
             global $attendancesystemeventStatusPictoArray,$attendancesystemeventStatusArray;
-            return $form->selectarray($htmlname,$attendancesystemeventStatusArray,$this->status);
+            return $form->selectarray($htmlname, $attendancesystemeventStatusArray, $this->status);
 	}   
     /**
 	 *  Retourne le libelle du status (actif, inactif)
@@ -560,13 +563,13 @@ class AttendanceSystemEvent extends CommonObject
     }
     /*
     * function to save a attendancesystemevent as a string
-    * @param    int     $mode   0 =>serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT 
+    * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT 
     * @return   string       serialized object
     */
     public function serialize($mode = 0){
 		$ret = '';
 		$array = array();
-		
+		$array['id'] = $this->id;
 		$array['date_time_event'] = $this->date_time_event;
 		$array['attendance_system'] = $this->attendance_system;
 		$array['date_modification'] = $this->date_modification;
@@ -593,7 +596,7 @@ class AttendanceSystemEvent extends CommonObject
     }
      /* function to load a attendancesystemevent as a string
      * @param   string    $str   serialized object
-     * @param    int     $mode   0 =>serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
+     * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT,
      * @return  int              OK
      */    
        public function unserialize($str,$mode = 0){
@@ -609,7 +612,17 @@ class AttendanceSystemEvent extends CommonObject
             case 2:
                 $array = json_decode($str);
                 break;
+
         }
+        $this->loadFromArray($array);
+       }
+
+     /* function to load a attendancesystemevent from an array
+     * @param   array    $array   serialized object
+     * @return  int              OK
+     */    
+    public function loadFromArray($array){
+
         // automatic unserialisation based on match between property name and key value
         foreach ($array as $key => $value) {
             if(isset($this->{$key}))$this->{$key} = $value;
@@ -665,10 +678,11 @@ class AttendanceSystemEvent extends CommonObject
         if(is_array($ZKEvent) ){
             $this->date_time_event = $ZKEvent['tms'];
             $this->attendance_system = $fk_attendance_system;
-            $this->attendance_system_user =  $as_user;
+            $this->attendance_system_user = $as_user;
             $this->attendance_event = '';
             $this->event_type = $event_type;
-            $this->status = $ZKEvent['state'];
+            $this->state = $ZKEvent['state'];
+            $this->state = 0;
             $this->create($user);
             return OK;
         }else return BADPARAM;
@@ -704,15 +718,35 @@ class AttendanceSystemEvent extends CommonObject
     *   @result array( day => array(event))/KO
     */
     function splitByDay($EventArray){
-        
-
-    //Durée maximale entre le premier pointage et le dernier (défaut à 13h)
-
-    //Durée maximale entre 00:00 (jour du premier pointage) et le dernier pointage (ça sera plus des 24 si l’entreprise fait les trois 8, défaut à 22h30)
-
-    //Temps de repos minimal entre deux journées pour un travailleur (défaut à 11h )
-
-
+        // assuming the array is sorted asc by date
+        global $conf;
+        $date = null;
+        $fristEvent = null;
+        $diffE2D = null;
+        $DayEvent = array();
+        $day = 1;
+        foreach ($EventArray as $event){
+            //if there is no event in the day or only one
+            if (count($DayEvent[$day]) < 2){
+                $date = $event['date_time_event'];
+                $fristEvent = $event['date_time_event'];
+                $date->setTime(0,0);
+            }
+            $diffE2E = date_diff($fristEvent, $event['date_time_event']);
+            // ensure that the 2 consecutives event are not too distant
+            if($diffE2E < $conf->global->ATTENDANCE_MIN_OVERDAY_BREAK){
+                $diffE2D = date_diff($date, $event['date_time_event']);
+                // ensure that the nex event is not too far int the next day
+                if($diffE2D <  $conf->global->ATTENDANCE_MAX_DAY_SPAN){
+                    $DayEvent[$day] = $event;
+                }else{
+                    $day++;
+                }
+            }else{
+                $day++;
+            }
+            $DayEvent[$day] = $event;
+        }
     }
 
 
@@ -720,12 +754,63 @@ class AttendanceSystemEvent extends CommonObject
     * 
     *  function to generate event from a sub list of system event.
     *   @param array(event) $EventArray list of event for a single user for a single day
-    *  @result int OK/KO
+    *  @result int number of event actually saved as attendance
     */
     function parseDaySystemEvent($EventArray){
-
+        global $conf,$db;
+        $inEvent = null; // 0 for in, 1 for out
+        $prevEvent = null;
+        $totalError = 0;
+        $error = 0;
+        $nbrEvent = count($EventArray);
+        $staticObject = new AttendanceSystemEvent($db);
+        foreach ($EventArray as $event){
+            $error = 0;
+            $nbrEvent = (count($EventArray) - $totalError)%2;
+            $durlast = ($prevEvent == null)?
+                $conf->global->TIMESHEET_EVENT_MIN_DURATION:
+                date_diff($prevEvent['date_time_event'],$event['date_time_event']);
+            if($inEvent == null){
+                //event type 1-->'heartbeat','sign-in','sign-out','access'
+                if ($event['event_type'] == 3){ //out event cannot count as in event
+                    $error = 1;
+                }elseif ($event['event_type'] == 1 //event
+                    && (count($EventArray) - $totalError)%2 == 1 //odd number of valid event
+                    && $durlast < $conf->global->TIMESHEET_EVENT_MIN_DURATION){
+                       $error = 1;
+                }
+                if($error == 0){
+                    $inEvent = $event;
+                    $prevEvent = $event;
+                }
+            }else{
+                $dur = date_diff($inEvent['date_time_event'],$event['date_time_event']);
+                if ($event['event_type'] == 2){ //Signin, save the second one an put the first one as error
+                    $staticObject->loadFromArray($event);
+                    $staticObject->status = 
+                    SetASEventError($prevEvent);
+                    $nbrEvent -= 1;
+                    $inEvent = $event;
+                    $prevEvent = $event;
+                    $error = 1;
+                }else if ($event['event_type'] < 1 || $event['event_type'] > 3 ){ // in case the access event come into the picture
+                    SetASEventError($event);
+                    $nbrEvent -= 1;
+                }elseif ($dur > $conf->global->TIMESHEET_EVENT_MIN_DURATION  // duration more than min
+                        && $dur < $conf->global->TIMESHEET_EVENT_MAX_DURATION){ // duration less that may
+                    GenerateAttendanceEvent($inEvent, $event);
+                    $inEvent = null;
+                    $prevEvent = $event;
+                }else{
+                    SetASEventError($event);
+                    SetASEventError($inEvent);
+                    $nbrEvent -= 2;
+                }
+            }
+        }
+        return $nbrEvent;
     }
-
+    
     /**
     * 
     *  function to get the event not parsed.
@@ -735,17 +820,18 @@ class AttendanceSystemEvent extends CommonObject
         global $db;
         $error = 0;
         $ret = array();
-        $sql = "SELECT ase.date_time_event, ase.fk_attendance_system,";
+        $sql = "SELECT ase.rowid, ase.date_time_event, ase.fk_attendance_system,";
         $sql .= "  ase.attendance_system_user, asu.fk_user,";
-        $sql .= "  ase.event_type, asu.status";
+        $sql .= "  ase.event_type, ase.status";
         $sql .= " FROM ".MAIN_DB_PREFIX.'attendance_system_event AS ase';
         $sql .= ' JOIN '.MAIN_DB_PREFIX.'attendance_system_user AS asu';
         $sql .= ' ON ase.fk_attendance_system_user = asu.rowid';
         $sql .= ' WHERE ase.fk_attendance_event = NULL';
+        $sql .= ' AND ase.event_type > 4'; // don't take access event
         $sql .= ' ORDER BY asu.fk_user = NULL DESC';
         $sql .= ' , ase.date_time_event ASC';
 		dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$db->query($sql);
+        $resql = $db->query($sql);
         if ($resql)
         {
             $num = $this->db->num_rows($resql)
@@ -753,11 +839,12 @@ class AttendanceSystemEvent extends CommonObject
             for($i = 0; $i < $num; $i++){
                 $obj = $this->db->fetch_object($resql);
                 $ret[$obj->fk_user][$i] = array();
+                $ret[$obj->fk_user][$i]['id'] = $obj->rowid;
                 $ret[$obj->fk_user][$i]['date_time_event'] = $obj->date_time_event;
                 $ret[$obj->fk_user][$i]['attendance_system'] = $obj->fk_attendance_system;
-                $ret[$obj->fk_user][$i]['attendance_system_user'] = $obj->attendance_system_user;
-                $ret[$obj->fk_user][$i]['event_type'] = $obj->date_time_event;
-                $ret[$obj->fk_user][$i]['status'] = $obj->date_time_event;
+                $ret[$obj->fk_user][$i]['attendance_system_user'] = $obj->fk_attendance_system_user;
+                $ret[$obj->fk_user][$i]['event_type'] = $obj->event_type;
+                $ret[$obj->fk_user][$i]['status'] = $obj->status;
             }
 
             $this->db->free($resql);

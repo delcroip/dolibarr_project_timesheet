@@ -78,7 +78,7 @@ $langs->load('timesheet@timesheet');
             }
              $sql .= ' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
             $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task = t.rowid';
-            if($invoicabletaskOnly == 1)$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
+            if($invoicabletaskOnly == 1)$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
             $sql .= ' WHERE t.fk_projet='.$projectId;
                 $sql .= " AND DATE(tt.task_datehour) BETWEEN '".$db->idate($dateStart);
                 $sql .= "' AND '".$db->idate($dateEnd)."'";
@@ -160,10 +160,10 @@ $langs->load('timesheet@timesheet');
             $dateinvoice = time();
                     //$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
                             // Si facture standard
-            $object->socid                                 = $socid;
-            $object->type                                 = 0;//Facture::TYPE_STANDARD;
-            $object->date                                 = $dateinvoice;
-            $object->fk_project                         = $projectId;
+            $object->socid = $socid;
+            $object->type = 0;//Facture::TYPE_STANDARD;
+            $object->date = $dateinvoice;
+            $object->fk_project = $projectId;
             $object->fetch_thirdparty();
             $id = $object->create($user);
             $resArray = $_POST['userTask'];
@@ -173,11 +173,11 @@ $langs->load('timesheet@timesheet');
 
             if($id > 0  && is_array($resArray)) {
                 $db->commit();
-                $invoicecard=str_replace(
+                $invoicecard = str_replace(
                                 array("require '../../main.inc.php';","<?php","\$db->close();"),
                                 "",
                                 file_get_contents(DOL_DOCUMENT_ROOT.'/compta/facture/card.php'));
-                foreach($resArray as $uId =>$userTaskService) {
+                foreach($resArray as $uId => $userTaskService) {
                         //$userTaskService[$user][$task] = array('duration', 'VAT', 'Desc', 'PriceHT', 'Service', 'unit_duration', 'unit_duration_unit');
                     if(is_array($userTaskService))foreach($userTaskService as  $tId => $service) {
                         $durationTab = explode(':', $service['duration']);
@@ -189,7 +189,7 @@ $langs->load('timesheet@timesheet');
                         if(($tId!='any') && $conf->global->TIMESHEET_INVOICE_SHOW_TASK)$details = "\n".$service['taskLabel'];
                         if(($uId!='any')&& $conf->global->TIMESHEET_INVOICE_SHOW_USER)$details .= "\n".$service['userName'];
                         //prepare the CURL params
-                        $postdata=array();
+                        $postdata = array();
                         $postdata['action'] = 'addline';
                         $postdata['id'] = $object->id;
                         $postdata['date_startday'] = date('d', $dateStart);
@@ -252,7 +252,7 @@ $langs->load('timesheet@timesheet');
                 // End of object creation, we show it
                 if(1) {
                     if(version_compare(DOL_VERSION, "4.9.9")>=0) {
-                        foreach($task_time_array AS $idLine=> $task_time_list) {
+                        foreach($task_time_array AS $idLine => $task_time_list) {
                                 //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
                             Update_task_time_invoice($id, $idLine, $task_time_list);
                         }
@@ -340,9 +340,9 @@ $langs->load('timesheet@timesheet');
 $morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader('', $langs->trans('TimesheetToInvoice'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
-$project= new Project($db);
+$project = new Project($db);
 $project->fetch($projectId);
-$headProject=project_prepare_head($project);
+$headProject = project_prepare_head($project);
 dol_fiche_head($headProject, 'invoice', $langs->trans("Project"), 0, 'project');
 print $Form;
 //javascript to reload the page with the poject selected

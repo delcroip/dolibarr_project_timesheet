@@ -128,7 +128,7 @@ switch($action) {
         if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN) {
             // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
-            $sql.= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
+            $sql .= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
             dol_syslog('timesheetsetu:deletedraft', LOG_DEBUG);
             $resql = $db->query($sql);
         }
@@ -691,7 +691,7 @@ $htmlProductArray = array('name'=>'invoiceService', 'ajaxNbChar'=>$ajaxNbChar);
 $sqlProductArray = array('table'=>'product', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'where'=>'tosell = 1 AND fk_product_type = 1', 'separator' => ' - ');
 print select_sellist($sqlProductArray, $htmlProductArray, $invoiceservice, $addchoices);
 echo "</td></tr>\n\t\t";
-//line tasktime ==
+//line tasktime == 
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("invoiceTaskTime");
 echo '</td><td align = "left">'.$langs->trans("invoiceTaskTimeDesc").'</td>';
 echo  '<td align = "left"><input type = "radio" name = "invoiceTaskTime" value = "all" ';

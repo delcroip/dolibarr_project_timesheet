@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT."/projet/class/project.class.php";
 require_once 'ZKLibrary.class.php';
 require_once 'AttendanceSystemUser.class.php';
 require_once 'AttendanceSystemEvent.class.php';
-$attendancesystemStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut3',3=>'statut4',4=>'statut8');
-$attendancesystemStatusArray=array(0=> 'InOut',1=>'In',2=>'Out',3 =>'Access',4 => 'Deactivated');
+$attendancesystemStatusPictoArray = array(0=> 'statut7',1=>'statut3',2=>'statut3',3=>'statut4',4=>'statut8');
+$attendancesystemStatusArray = array(0=> 'InOut',1=>'In',2=>'Out',3 => 'Access',4 => 'Deactivated');
 /**
  *	Put here description of your class
  */
@@ -44,11 +44,11 @@ class AttendanceSystem extends CommonObject
     /**
      * @var string ID to identify managed object
      */				//!< To return several error codes (or messages)
-    public $element='attendancesystem';			//!< Id that identify managed objects
+    public $element = 'attendancesystem';			//!< Id that identify managed objects
     /**
      * @var string Name of table without prefix where object is stored
      */    
-    public $table_element='attendance_system';		//!< Name of table without prefix where object is stored
+    public $table_element = 'attendance_system';		//!< Name of table without prefix where object is stored
 
     public $id;
     // BEGIN OF automatic var creation
@@ -91,10 +91,10 @@ class AttendanceSystem extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
         $this->cleanParam();
@@ -140,7 +140,7 @@ class AttendanceSystem extends CommonObject
         $this->db->begin();
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
         if (! $error)
@@ -153,7 +153,7 @@ class AttendanceSystem extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+            //$result = $this->call_trigger('MYOBJECT_CREATE',$user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
@@ -185,7 +185,7 @@ class AttendanceSystem extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id,$ref = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -211,13 +211,13 @@ class AttendanceSystem extends CommonObject
         if ($ref) $sql .= " WHERE t.ref = '".$ref."'";
         else $sql .= " WHERE t.rowid = ".$id;
     	dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-                $this->id    = $obj->rowid;
+                $this->id = $obj->rowid;
                 
 		$this->label = $obj->label;
 		$this->ip = $obj->ip;
@@ -255,9 +255,9 @@ class AttendanceSystem extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user, $notrigger=0)
+    function update($user, $notrigger = 0)
     {
-	$error=0;
+	$error = 0;
         // Clean parameters
         $this->cleanParam(true);
         // Check parameters
@@ -278,7 +278,7 @@ class AttendanceSystem extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+            //$result = $this->call_trigger('MYOBJECT_MODIFY',$user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
@@ -312,11 +312,11 @@ class AttendanceSystem extends CommonObject
      *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
      *	@return		string						String with URL
      */
-    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
+    function getNomUrl($htmlcontent,$id = 0,$ref = '',$withpicto = 0)
     {
 	    global $conf, $langs;
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-    	$result='';
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;   // Force disable tooltips
+    	$result = '';
         if(empty($ref) && $id == 0){
             if(isset($this->id))  {
                 $id = $this->id;
@@ -327,7 +327,7 @@ class AttendanceSystem extends CommonObject
             }
         }
         $linkclose = '';
-        $label =  $this->getLabel('text') ;
+        $label = $this->getLabel('text') ;
 
         $card = '<u>' . $langs->trans("AttendanceSystem") . '</u>';
         $card .= '<br>';
@@ -600,7 +600,7 @@ class AttendanceSystem extends CommonObject
     }
     /*
     * function to save a attendancesystem as a string
-    * @param    int     $mode   0 =>serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT 
+    * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT 
     * @return   string       serialized object
     */
     public function serialize($mode = 0){
@@ -641,7 +641,7 @@ class AttendanceSystem extends CommonObject
     }
      /* function to load a attendancesystem as a string
      * @param   string    $str   serialized object
-     * @param    int     $mode   0 =>serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
+     * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */    
        public function unserialize($str,$mode = 0){

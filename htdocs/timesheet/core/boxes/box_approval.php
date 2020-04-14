@@ -61,11 +61,11 @@ class box_approval extends ModeleBoxes
            if($tasks == '')$tasks = 0;
            // $sql .= ' COUNT(t.rowid) as nb, ';
             $sql .= ' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
-            $sql.= ' WHERE t.status IN ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.') AND ((t.recipient='.TEAM;
-            $sql.= ' AND t.fk_userid in ('.$subordinate.'))';//fixme should check subordinate and project
-            $sql.= ' OR (t.recipient='.PROJECT.' and fk_projet_task in ('.$tasks.')))';
-            $sql.= '  GROUP BY t.recipient ';
+            $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
+            $sql .= ' WHERE t.status IN ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.') AND ((t.recipient='.TEAM;
+            $sql .= ' AND t.fk_userid in ('.$subordinate.'))';//fixme should check subordinate and project
+            $sql .= ' OR (t.recipient='.PROJECT.' and fk_projet_task in ('.$tasks.')))';
+            $sql .= '  GROUP BY t.recipient ';
             $result = $db->query($sql);
             if($result) {
                 $num = $db->num_rows($result);

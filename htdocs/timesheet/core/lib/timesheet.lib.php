@@ -64,7 +64,7 @@ define('SECINDAY', 86400);
 // for display trads
 global $langs;
 $roles = array(0=> 'user', 1=> 'team', 2=> 'project', 3=>'customer', 4=>'supplier', 5=>'other');
-$statusA = array(0=> $langs->trans('null'), 1 =>$langs->trans('draft'), 2=>$langs->trans('submitted'), 3=>$langs->trans('approved'), 4=>$langs->trans('cancelled'), 5=>$langs->trans('rejected'), 6=>$langs->trans('challenged'), 7=>$langs->trans('invoiced'), 8=>$langs->trans('underapproval'), 9=>$langs->trans('planned'));
+$statusA = array(0=> $langs->trans('null'), 1 => $langs->trans('draft'), 2=>$langs->trans('submitted'), 3=>$langs->trans('approved'), 4=>$langs->trans('cancelled'), 5=>$langs->trans('rejected'), 6=>$langs->trans('challenged'), 7=>$langs->trans('invoiced'), 8=>$langs->trans('underapproval'), 9=>$langs->trans('planned'));
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 
     
@@ -107,7 +107,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
     }
     if($role == TEAM || $role == ALL){
       global $user;
-      $list=$user->getAllChildIds();
+      $list = $user->getAllChildIds();
     }
     if($role == PROJECT || $role == ALL){
         $sql[0] = 'SELECT DISTINCT fk_socpeople as userid FROM '.MAIN_DB_PREFIX.'element_contact';
@@ -185,14 +185,14 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
 function getTasks($db, $userid, $role = 'project')
 {
     $sql = 'SELECT tk.fk_projet as project, tk.rowid as task';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON  tk.fk_projet = ec.element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE ctc.element in (\''.$role.'\') AND ctc.active = \'1\' AND ctc.code LIKE \'%LEADER%\' ';
     $sql .= ' AND fk_socpeople = \''.$userid.'\'';
     $sql .= ' UNION ';
     $sql .= ' SELECT tk.fk_projet as project, tk.rowid as task';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'projet_task as tk';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact as ec on(tk.rowid = element_id)';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE ctc.element in (\'project_task\') AND ctc.active = \'1\' AND ctc.code LIKE \'%EXECUTIVE%\' ';
@@ -236,7 +236,7 @@ function getUsersName($userids)
 if(is_array($userids)) {
         $sql .= ' usr.rowid in ('.implode(', ', $userids).')';
 } else{
-    $sql .= ' usr.rowid ='.$userids;
+    $sql .= ' usr.rowid = '.$userids;
 }
         /*
         $nbIds = (is_array($userids))?count($userids)-1:0;
@@ -410,7 +410,7 @@ function getStartDate($datetime, $prevNext = 0)
                 $startDatePrevWeek = strtotime('monday previous week  midnight', $datetime);
                 if($startDateMonth>$startDateWeek) {
                     $startDate = $startDateWeek;
-                } elseif ($startDateMonth==$startDateWeek){
+                } elseif ($startDateMonth == $startDateWeek){
                     $startDate = $startDatePrevWeek;
                 } else {
                     $startDate = ($startDateMonth<$startDatePrevWeek)?$startDatePrevWeek:$startDateMonth;
@@ -503,7 +503,7 @@ global $langs, $roles, $apflows;
 global $conf;
 //$roles = array(0=> 'team', 1=> 'project', 2=>'customer', 3=>'supplier', 4=>'other');
 $rolesUrl = array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOtherApproval.php?role=project', 3=>'TimesheetOtherApproval.php?role=customer', 4=>'TimesheetOtherApproval.php?role=supplier', 5=>'TimesheetOtherApproval.php?role=other');
-    foreach($apflows as $key=> $value) {
+    foreach($apflows as $key => $value) {
         if($value == 1) {
             echo '  <div class = "inline-block tabsElem"><a  href = "'.$rolesUrl[$key].'&leftmenu=timesheet" class = "';
             echo    ($role_key == $key)?'tabactive':'tabunactive';
@@ -565,8 +565,8 @@ function formatTime($duration, $hoursperdays = -1)
         $default = array('type'=>'warnings', 'text'=>'NothingChanged', 'param'=>0);
         $messages[] = array('type'=>'mesgs', 'text'=>'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
         $messages[] = array('type'=>'errors', 'text'=>'updateError', 'param'=>$arraymessage['updateError']);
-        $nbr=0;
-        foreach($messages as $key=> $message) {
+        $nbr = 0;
+        foreach($messages as $key => $message) {
             if($message['param']>0) {
                 if($returnstring == false)setEventMessage($langs->transnoentitiesnoconv($message['text']).$message['param'], $message['type']);
                 else $messages[$key]['text']=$langs->trans($message['text']);

@@ -85,10 +85,10 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
     protected function setUp()
     {
         global $conf,$user,$langs,$db;
-                $conf=$this->savconf;
-                $user=$this->savuser;
-                $langs=$this->savlangs;
-                $db=$this->savdb;
+                $conf = $this->savconf;
+                $user = $this->savuser;
+                $langs = $this->savlangs;
+                $db = $this->savdb;
                 print __METHOD__."\n";
                 //print $db->getVersion()."\n";
     }
@@ -109,14 +109,14 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
     public function testTimesheetUserTasksCreate()
     {
         global $conf,$user,$langs,$db;
-                $conf=$this->savconf;
-                $user=$this->savuser;
-                $langs=$this->savlangs;
-                $db=$this->savdb;
-                $localobject=new TimesheetUserTasks($this->savdb, 1);//FIXEME
+                $conf = $this->savconf;
+                $user = $this->savuser;
+                $langs = $this->savlangs;
+                $db = $this->savdb;
+                $localobject = new TimesheetUserTasks($this->savdb, 1);//FIXEME
         $localobject->initAsSpecimen();
         $localobject->date_start= mktime();
-        $result=$localobject->create($user);
+        $result = $localobject->create($user);
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
         return $result;
@@ -133,12 +133,12 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
     public function testTimesheetUserTasksFetch($id)
     {
         global $conf,$user,$langs,$db;
-                $conf=$this->savconf;
-                $user=$this->savuser;
-                $langs=$this->savlangs;
-                $db=$this->savdb;
-                $localobject=new TimesheetUserTasks($this->savdb, 1);
-        $result=$localobject->fetch($id);
+                $conf = $this->savconf;
+                $user = $this->savuser;
+                $langs = $this->savlangs;
+                $db = $this->savdb;
+                $localobject = new TimesheetUserTasks($this->savdb, 1);
+        $result = $localobject->fetch($id);
         $this->assertLessThan($result, 0);
         print __METHOD__." id=".$id." result=".$result."\n";
         return $localobject;
@@ -155,11 +155,11 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
     public function testTimesheetUserTasksValid($localobject)
     {
         global $conf,$user,$langs,$db;
-                $conf=$this->savconf;
-                $user=$this->savuser;
-                $langs=$this->savlangs;
-                $db=$this->savdb;
-        $result=$localobject->setValid($user);
+                $conf = $this->savconf;
+                $user = $this->savuser;
+                $langs = $this->savlangs;
+                $db = $this->savdb;
+        $result = $localobject->setValid($user);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
         return $localobject;
@@ -176,11 +176,11 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
     public function testTimesheetUserTasksOther($localobject)
     {
         global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-        //$result=$localobject->setClose($user);
+        $conf = $this->savconf;
+        $user = $this->savuser;
+        $langs = $this->savlangs;
+        $db = $this->savdb;
+        //$result = $localobject->setClose($user);
         //print __METHOD__." id=".$localobject->id." result=".$result."\n";
         //$this->assertLessThan($result, 0);
         return $localobject->id;
@@ -197,13 +197,13 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
     public function testTimesheetUserTasksDelete($id)
     {
         global $conf,$user,$langs,$db;
-                $conf=$this->savconf;
-                $user=$this->savuser;
-                $langs=$this->savlangs;
-                $db=$this->savdb;
-                $localobject=new TimesheetUserTasks($this->savdb, 1);
-        $result=$localobject->fetch($id);
-                $result=$localobject->delete($user);
+                $conf = $this->savconf;
+                $user = $this->savuser;
+                $langs = $this->savlangs;
+                $db = $this->savdb;
+                $localobject = new TimesheetUserTasks($this->savdb, 1);
+        $result = $localobject->fetch($id);
+                $result = $localobject->delete($user);
                 print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertLessThan($result, 0);
         return $result;

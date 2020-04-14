@@ -121,7 +121,7 @@ if(is_array($selectList)&& count($selectList)) {
         $offset = 0;
         for($i = 0;$i<$current;$i++)
 {
-            $offset+= $selectList[$i]['count'];
+            $offset += $selectList[$i]['count'];
         }
         $level = $selectList[$i]['count'];
 }*/
@@ -191,20 +191,20 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
     $form = new Form($db);
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
     if($current!=0) {
-        $Nav.= '<a href="?action=goTo&target='.($current-1);
-        $Nav.=  '&role='.($role);
-        if($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
-        $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
+        $Nav .= '<a href="?action=goTo&target='.($current-1);
+        $Nav .= '&role='.($role);
+        if($optioncss != '')$Nav .= '&amp;optioncss='.$optioncss;
+        $Nav .= '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
     }
     $Nav .= "</th>\n\t\t<th>\n\t\t\t";
-    $Nav.=  '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
-    $Nav.=   $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
-    $Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+    $Nav .= '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
+    $Nav .= $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
+    $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
     if($current<count($selectList)) {
-        $Nav.=  '<a href="?action=goTo&target='.($current+1);
-        $Nav.=  '&role='.($role);
-        if($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
-        $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>';
+        $Nav .= '<a href="?action=goTo&target='.($current+1);
+        $Nav .= '&role='.($role);
+        if($optioncss != '') $Nav .= '&amp;optioncss='.$optioncss;
+        $Nav .= '">'.$langs->trans("Next").' &gt;&gt;</a>';
     }
     $Nav .= "\n\t\t</th>\n\t</tr>\n </table>\n";
     return $Nav;
@@ -294,7 +294,7 @@ function getSelectAps($subId, $tasks, $role_key)
                 {
                     $custIdList = array_slice($idsList, $nb-TIMESHEET_MAX_TTA_APPROVAL, TIMESHEET_MAX_TTA_APPROVAL);
                     $list[] = array("id"=>$obj->id, "idList"=>$custIdList, "label"=>$obj->label.' ('.$j."/".ceil($obj->nb/TIMESHEET_MAX_TTA_APPROVAL).')', "count"=>TIMESHEET_MAX_TTA_APPROVAL);
-                    $nb-=TIMESHEET_MAX_TTA_APPROVAL;
+                    $nb -= TIMESHEET_MAX_TTA_APPROVAL;
                     $j++;
                 }
                 $custIdList = array_slice($idsList, 0, $nb);
@@ -342,7 +342,7 @@ function getHTMLRows($objectArray)
         echo"\t".'<th width = "60px" style = "text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
     }
     echo "<tr>\n";
-    foreach($objectArray as $key=> $object) {
+    foreach($objectArray as $key => $object) {
  //        $object->getTaskInfo();
         $object->getActuals();
         echo '<tr>';

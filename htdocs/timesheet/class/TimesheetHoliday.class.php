@@ -46,7 +46,7 @@ class TimesheetHoliday extends Holiday
     public function fetchUserWeek($userId, $datestart, $datestop)
     {
         $SQLfilter = " AND (cp.date_fin>='".$this->db->idate($datestart)."') ";
-        $SQLfilter.= " AND (cp.date_debut<'".$this->db->idate($datestop)."')";
+        $SQLfilter .= " AND (cp.date_debut<'".$this->db->idate($datestop)."')";
         $ret = $this->fetchByUser($userId, '', $SQLfilter);
         $this->holidayPresent = ($ret == 1);
         $this->holidaylist = array();
@@ -148,7 +148,7 @@ class TimesheetHoliday extends Holiday
                     $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
                     $amColor = ($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
                     $amClass = ($holiday['prev'])?'':' noPrevHoliday';
-                    $amClass.= ($pm && $pmId == $amId)?'':' noNextHoliday';
+                    $amClass .= ($pm && $pmId == $amId)?'':' noNextHoliday';
                     $html .= ' class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
                 } else {
                     $html .= ' class = "holiday" >&nbsp;</a></li>';
@@ -158,7 +158,7 @@ class TimesheetHoliday extends Holiday
                     $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
                     $pmColor = ($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
                     $pmClass = ($am && $pmId == $amId)?'':' noPrevHoliday';
-                    $pmClass.= ($holiday['next'])?'':' noNextHoliday';
+                    $pmClass .= ($holiday['next'])?'':' noNextHoliday';
                     $html .= ' class = "holiday'.$pmClass.'" style = "'.$pmColor.'">&nbsp;</a></li>';
                 } else {
                     $html .= ' class = "holiday" >&nbsp;</a></li>';

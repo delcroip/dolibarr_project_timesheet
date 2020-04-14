@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 //require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 require_once 'core/lib/generic.lib.php';
-$attendancesystemuserlinkStatusPictoArray=array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
-$attendancesystemuserlinkStatusArray=array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 =>'Payed');
+$attendancesystemuserlinkStatusPictoArray = array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
+$attendancesystemuserlinkStatusArray = array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 => 'Payed');
 /**
  *	Put here description of your class
  */
@@ -41,11 +41,11 @@ class AttendanceSystemUserLink extends CommonObject
     /**
      * @var string ID to identify managed object
      */				//!< To return several error codes (or messages)
-    public $element='attendancesystemuserlink';			//!< Id that identify managed objects
+    public $element = 'attendancesystemuserlink';			//!< Id that identify managed objects
     /**
      * @var string Name of table without prefix where object is stored
      */    
-    public $table_element='attendance_system_user_link';		//!< Name of table without prefix where object is stored
+    public $table_element = 'attendance_system_user_link';		//!< Name of table without prefix where object is stored
 
     public $id;
     // BEGIN OF automatic var creation
@@ -78,10 +78,10 @@ class AttendanceSystemUserLink extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
         $this->cleanParam();
@@ -107,7 +107,7 @@ class AttendanceSystemUserLink extends CommonObject
         $this->db->begin();
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
         if (! $error)
@@ -120,7 +120,7 @@ class AttendanceSystemUserLink extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+            //$result = $this->call_trigger('MYOBJECT_CREATE',$user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
@@ -152,7 +152,7 @@ class AttendanceSystemUserLink extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id,$ref = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -168,13 +168,13 @@ class AttendanceSystemUserLink extends CommonObject
         if ($ref) $sql .= " WHERE t.ref = '".$ref."'";
         else $sql .= " WHERE t.rowid = ".$id;
     	dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-                $this->id    = $obj->rowid;
+                $this->id = $obj->rowid;
                 
 		$this->attendance_system = $obj->fk_attendance_system;
 		$this->attendance_system_user = $obj->fk_attendance_system_user;
@@ -202,9 +202,9 @@ class AttendanceSystemUserLink extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user, $notrigger=0)
+    function update($user, $notrigger = 0)
     {
-	$error=0;
+	$error = 0;
         // Clean parameters
         $this->cleanParam(true);
         // Check parameters
@@ -225,7 +225,7 @@ class AttendanceSystemUserLink extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+            //$result = $this->call_trigger('MYOBJECT_MODIFY',$user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
@@ -263,8 +263,8 @@ class AttendanceSystemUserLink extends CommonObject
 	global $conf, $langs;
 
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-    	$result='';
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;   // Force disable tooltips
+    	$result = '';
         if(empty($ref) && $id == 0){
             if(isset($this->id))  {
                 $id = $this->id;
@@ -533,7 +533,7 @@ class AttendanceSystemUserLink extends CommonObject
     }
     /*
     * function to save a attendancesystemuserlink as a string
-    * @param    int     $mode   0 =>serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT 
+    * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT 
     * @return   string       serialized object
     */
     public function serialize($mode = 0){
@@ -564,7 +564,7 @@ class AttendanceSystemUserLink extends CommonObject
     }
      /* function to load a attendancesystemuserlink as a string
      * @param   string    $str   serialized object
-     * @param    int     $mode   0 =>serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
+     * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */    
        public function unserialize($str,$mode = 0){

@@ -53,9 +53,9 @@ $PHP_SELF = $_SERVER['PHP_SELF'];
 //$langs->load("companies");
 $langs->load("timesheet@timesheet");
 // Get parameter
-$id                         = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action                 = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -383,7 +383,7 @@ switch($action) {
         if($object->status != DRAFT && $edit!=1) {
             $object->fetchByWeek();
             $object->fetchTaskTimesheet();
-            //$ret+=$this->getTaskTimeIds();
+            //$ret += $this->getTaskTimeIds();
             //FIXME module holiday should be activated ?
             $object->fetchUserHoliday();
             print $object->userName." - ".dol_print_date($object->date_start, 'day');
@@ -450,7 +450,7 @@ switch($action) {
         $filearray = dol_dir_list($upload_dir, 'files', 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc'?SORT_DESC:SORT_ASC), 1);
         $totalsize = 0;
         foreach($filearray as $key => $file) {
-                $totalsize+=$file['size'];
+                $totalsize += $file['size'];
         }
         print '<table class = "border" width = "100%">';
         $linkback = '<a href = "'.$PHP_SELF.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -479,15 +479,15 @@ switch($action) {
     default:
         {
     $sql = 'SELECT';
-    $sql.= ' t.rowid, ';
+    $sql .= ' t.rowid, ';
     $sql .= ' t.fk_userid, ';
     $sql .= ' t.date_start, ';
     $sql .= ' t.date_end, ';
     $sql .= ' t.status';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
     $sqlwhere = '';
     if(isset($object->entity))
-        $sqlwhere.= ' AND t.entity = '.$conf->entity;
+        $sqlwhere .= ' AND t.entity = '.$conf->entity;
     if($filter && $filter != -1) {
         // GETPOST('filtre') may be a string {
         $filtrearr = explode(', ', $filter);
@@ -517,9 +517,9 @@ switch($action) {
             $result = $db->query($sqlcount);
             $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
     }
-    $sql.= $db->order($sortfield, $sortorder);
+    $sql .= $db->order($sortfield, $sortorder);
     if(!empty($limit)) {
-            $sql.= $db->plimit($limit+1, $offset);
+            $sql .= $db->plimit($limit+1, $offset);
     }
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);

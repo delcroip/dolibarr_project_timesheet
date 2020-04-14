@@ -212,19 +212,19 @@ class TimesheetReport
         $first = true;
         $sql = 'SELECT prj.rowid as projectid, usr.rowid as userid, tsk.rowid as taskid, ';
         if($db->type!='pgsql') {
-            $sql.= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(usr.firstname) as firstname, MAX(usr.lastname) as lastname, ';
-            $sql.= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
+            $sql .= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(usr.firstname) as firstname, MAX(usr.lastname) as lastname, ';
+            $sql .= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         } else {
-            $sql.= ' prj.title as projecttitle, prj.ref as projectref, usr.firstname, usr.lastname, ';
-            $sql.= " tsk.ref as taskref, tsk.label as tasktitle, STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
+            $sql .= ' prj.title as projecttitle, prj.ref as projectref, usr.firstname, usr.lastname, ';
+            $sql .= " tsk.ref as taskref, tsk.label as tasktitle, STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
         }
-        $sql.= ' DATE(ptt.task_datehour) AS task_date, SUM(ptt.task_duration) as duration ';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
-        $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = fk_task ';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = tsk.rowid ';
-        $sql.= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
-        $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user = usr.rowid ';
-        $sql.= ' WHERE ';
+        $sql .= ' DATE(ptt.task_datehour) AS task_date, SUM(ptt.task_duration) as duration ';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
+        $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = fk_task ';
+        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = tsk.rowid ';
+        $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
+        $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as usr ON ptt.fk_user = usr.rowid ';
+        $sql .= ' WHERE ';
         if(!empty($this->userid)) {
             $sql .= ' ptt.fk_user IN (\''.implode("','", $this->userid).'\') ';
             $first = false;
@@ -241,8 +241,8 @@ class TimesheetReport
         }
          /*if(!empty($startDay))$sql .= 'AND task_date>=\''.$this->db->idate($startDay).'\'';
           else */$sql .= ($first?'':'AND ').' DATE(task_datehour)>=\''.$this->db->idate($this->startDate).'\'';
-          /*if(!empty($stopDay))$sql.= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
-          else */$sql.= ' AND DATE(task_datehour)<=\''.$this->db->idate($this->stopDate).'\'';
+          /*if(!empty($stopDay))$sql .= ' AND task_date<=\''.$this->db->idate($stopDay).'\'';
+          else */$sql .= ' AND DATE(task_datehour)<=\''.$this->db->idate($this->stopDate).'\'';
          $sql .= ' GROUP BY usr.rowid, DATE(ptt.task_datehour),  prj.rowid, tsk.rowid ';
         /*if(!empty($sqltail)) {
             $sql .= $sqltail;
@@ -383,7 +383,7 @@ class TimesheetReport
                     //empty lvl 3 HTML to start anew
                     $lvl3HTML = '';
                     //add the LVL 3 total to LVL3
-                    $lvl2Total+=$lvl3Total;
+                    $lvl2Total += $lvl3Total;
                     //empty lvl 3 total to start anew
                     $lvl3Total = 0;
                     // save the new lvl2 ref
@@ -394,7 +394,7 @@ class TimesheetReport
                     {
                         $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
                         //addlvl 2 total to lvl1
-                        $lvl1Total+=$lvl2Total;
+                        $lvl1Total += $lvl2Total;
                         //empty lvl 2 total tyo start anew
                         $lvl2HTML = '';
                         $lvl2Total = 0;
@@ -405,7 +405,7 @@ class TimesheetReport
                         {
                            $lvl0HTML .= $this->getLvl0HTML($resArray[$Curlvl0][$this->lvl0Title], $lvl1Total, $lvl1HTML, $short);
                            //addlvl 2 total to lvl1
-                           $lvl0Total+=$lvl1Total;
+                           $lvl0Total += $lvl1Total;
                            //empty lvl 2 total tyo start anew
                            $lvl1HTML = '';
                            $lvl1Total = 0;
@@ -420,29 +420,29 @@ class TimesheetReport
                 } elseif(!empty($item['note'])) {
                     $lvl3Notes .= "<br>".$item['note'];
                 }
-                $lvl3Total+=$item['duration'];
+                $lvl3Total += $item['duration'];
                 $i++;
                 if ( $i == $numTaskTime){
-                    $lvl2HTML .=$this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Title], $lvl3Total, $lvl3HTML, $short, $lvl3Notes);
+                    $lvl2HTML .= $this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Title], $lvl3Total, $lvl3HTML, $short, $lvl3Notes);
                     //empty lvl 3 Notes to start anew
                     $lvl3Notes = '';
                     //empty lvl 3 HTML to start anew
                     $lvl3HTML = '';
                     //add the LVL 3 total to LVL3
-                    $lvl2Total+=$lvl3Total;
+                    $lvl2Total += $lvl3Total;
                     //empty lvl 3 total to start anew
                     $lvl3Total = 0;
                   //creat the LVL 1 Title line
                     $lvl1HTML .= $this->getLvl1HTML($resArray[$Curlvl1][$this->lvl1Title], $lvl2Total, $lvl2HTML, $short);
                     //addlvl 2 total to lvl1
-                    $lvl1Total+=$lvl2Total;
+                    $lvl1Total += $lvl2Total;
                     //empty lvl 2 total tyo start anew
                     $lvl2HTML = '';
                     $lvl2Total = 0;             }
             }
             
             $lvl0HTML .= $this->getLvl0HTML($resArray[$Curlvl0][$this->lvl0Title], $lvl1Total, $lvl1HTML, $short);
-            $lvl0Total+=$lvl1Total;
+            $lvl0Total += $lvl1Total;
 // make the whole result
             $HTMLRes .= $lvl0HTML;
         } // end is numtasktime
@@ -479,9 +479,9 @@ class TimesheetReport
 
         if(is_array($resArray))
         {
-            //$dirname=$conf->timesheet->dir_output.'/reports';
+            //$dirname = $conf->timesheet->dir_output.'/reports';
             //
-            $dirname=$conf->export->dir_temp.'/'.$user->id;
+            $dirname = $conf->export->dir_temp.'/'.$user->id;
             /*
             if($save){
                 $dirname = $conf->user->dir_output."/".$this->userid.'/reports';
@@ -491,7 +491,7 @@ class TimesheetReport
                     $dirname = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/reports';
                 }
             } else{
-                $dirname=$conf->timesheet->dir_output.'/reports';
+                $dirname = $conf->timesheet->dir_output.'/reports';
             }*/
             $filename = "report.".$objmodel->getDriverExtension();
                     //str_replace(array('/', ' ', "'", '"', '&', '?'), '_', $this->ref).'.'.$objmodel->getDriverExtension();
@@ -596,7 +596,7 @@ class TimesheetReport
         // make the whole result
             $lvl0HTML .= $this->getHTMLReportHeaders();
             $lvl0HTML .= '<tr class = "liste_titre"><th>'.$lvl0title.'<th>';
-            $lvl0HTML .=((!$short)?'<th></th>':'').'<th > TOTAL</th>';
+            $lvl0HTML .= ((!$short)?'<th></th>':'').'<th > TOTAL</th>';
             $lvl0HTML .= '<th>'.formatTime($lvl1Total, 0).'</th>';
             $lvl0HTML .= '<th>'.formatTime($lvl1Total, -3).'</th><th></th></tr>';
            //add the LVL 3 HTML content in lvl1

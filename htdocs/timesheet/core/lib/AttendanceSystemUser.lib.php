@@ -75,7 +75,7 @@ function AttendancesystemuserPrepareHead($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->timesheet->dir_output . "/Attendancesystemuser/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
-	$nbLinks=Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemUserDocument.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';

@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 //require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $projettasktimeStatusPictoArray = array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
-$projettasktimeStatusArray = array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 =>'Payed');
+$projettasktimeStatusArray = array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 => 'Payed');
 /**
  *    Put here description of your class
  */
@@ -40,18 +40,18 @@ class Projettasktime extends CommonObject
     /**
      * @var string ID to identify managed object
      */                //!< To return several error codes (or messages)
-    public $element='projettasktime';            //!< Id that identify managed objects
+    public $element = 'projettasktime';            //!< Id that identify managed objects
     /**
      * @var string Name of table without prefix where object is stored
      */
-    public $table_element='projet_task_time';        //!< Name of table without prefix where object is stored
+    public $table_element = 'projet_task_time';        //!< Name of table without prefix where object is stored
 
     public $id;
     // BEGIN OF automatic var creation
 
     public $task;
-    public $task_date='';
-    public $task_datehour='';
+    public $task_date = '';
+    public $task_datehour = '';
     public $task_date_withhour;
     public $task_duration;
     public $user;
@@ -60,8 +60,8 @@ class Projettasktime extends CommonObject
     public $invoice_id;
     public $invoice_line_id;
     public $import_key;
-    public $datec='';
-    public $tms='';
+    public $datec = '';
+    public $tms = '';
     public $status;
     public $task_time_approval;
     // END OF automatic var creation
@@ -93,39 +93,39 @@ class Projettasktime extends CommonObject
         // Put here code to add control on parameters values
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-        $sql.= 'fk_task,';
-        $sql.= 'task_date,';
-        $sql.= 'task_datehour,';
-        $sql.= 'task_date_withhour,';
-        $sql.= 'task_duration,';
-        $sql.= 'fk_user,';
-        $sql.= 'thm,';
-        $sql.= 'note,';
-        $sql.= 'invoice_id,';
-        $sql.= 'invoice_line_id,';
-        $sql.= 'import_key,';
-        $sql.= 'datec,';
-        $sql.= 'status,';
-        $sql.= 'fk_task_time_approval';
-        $sql.= ") VALUES (";
-        $sql.=' '.(empty($this->task)?'NULL':"'".$this->task."'").',';
-        $sql.=' '.(empty($this->task_date) || dol_strlen($this->task_date)==0?'NULL':"'".$this->db->idate($this->task_date)."'").',';
-        $sql.=' '.(empty($this->task_datehour) || dol_strlen($this->task_datehour)==0?'NULL':"'".$this->db->idate($this->task_datehour)."'").',';
-        $sql.=' '.(empty($this->task_date_withhour)?'NULL':"'".$this->task_date_withhour."'").',';
-        $sql.=' '.(empty($this->task_duration)?'NULL':"'".$this->task_duration."'").',';
-        $sql.=' '.(empty($this->user)?'NULL':"'".$this->user."'").',';
-        $sql.=' '.(empty($this->thm)?'NULL':"'".$this->thm."'").',';
-        $sql.=' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").',';
-        $sql.=' '.(empty($this->invoice_id)?'NULL':"'".$this->invoice_id."'").',';
-        $sql.=' '.(empty($this->invoice_line_id)?'NULL':"'".$this->invoice_line_id."'").',';
-        $sql.=' '.(empty($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'").',';
-        $sql.=' NOW() ,';
-        $sql.=' '.(empty($this->status)?'NULL':"'".$this->status."'").',';
-        $sql.=' '.(empty($this->task_time_approval)?'NULL':"'".$this->task_time_approval."'").'';
-        $sql.= ")";
+        $sql .= 'fk_task,';
+        $sql .= 'task_date,';
+        $sql .= 'task_datehour,';
+        $sql .= 'task_date_withhour,';
+        $sql .= 'task_duration,';
+        $sql .= 'fk_user,';
+        $sql .= 'thm,';
+        $sql .= 'note,';
+        $sql .= 'invoice_id,';
+        $sql .= 'invoice_line_id,';
+        $sql .= 'import_key,';
+        $sql .= 'datec,';
+        $sql .= 'status,';
+        $sql .= 'fk_task_time_approval';
+        $sql .= ") VALUES (";
+        $sql .= ' '.(empty($this->task)?'NULL':"'".$this->task."'").',';
+        $sql .= ' '.(empty($this->task_date) || dol_strlen($this->task_date)==0?'NULL':"'".$this->db->idate($this->task_date)."'").',';
+        $sql .= ' '.(empty($this->task_datehour) || dol_strlen($this->task_datehour)==0?'NULL':"'".$this->db->idate($this->task_datehour)."'").',';
+        $sql .= ' '.(empty($this->task_date_withhour)?'NULL':"'".$this->task_date_withhour."'").',';
+        $sql .= ' '.(empty($this->task_duration)?'NULL':"'".$this->task_duration."'").',';
+        $sql .= ' '.(empty($this->user)?'NULL':"'".$this->user."'").',';
+        $sql .= ' '.(empty($this->thm)?'NULL':"'".$this->thm."'").',';
+        $sql .= ' '.(empty($this->note)?'NULL':"'".$this->db->escape($this->note)."'").',';
+        $sql .= ' '.(empty($this->invoice_id)?'NULL':"'".$this->invoice_id."'").',';
+        $sql .= ' '.(empty($this->invoice_line_id)?'NULL':"'".$this->invoice_line_id."'").',';
+        $sql .= ' '.(empty($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'").',';
+        $sql .= ' NOW() ,';
+        $sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").',';
+        $sql .= ' '.(empty($this->task_time_approval)?'NULL':"'".$this->task_time_approval."'").'';
+        $sql .= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         if (! $error)
         {
@@ -137,7 +137,7 @@ class Projettasktime extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_CREATE', $user);
+            //$result = $this->call_trigger('MYOBJECT_CREATE', $user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
@@ -172,33 +172,33 @@ class Projettasktime extends CommonObject
     {
         global $langs;
         $sql = "SELECT";
-        $sql.= " t.rowid,";
-        $sql.=' t.fk_task,';
-        $sql.=' t.task_date,';
-        $sql.=' t.task_datehour,';
-        $sql.=' t.task_date_withhour,';
-        $sql.=' t.task_duration,';
-        $sql.=' t.fk_user,';
-        $sql.=' t.thm,';
-        $sql.=' t.note,';
-        $sql.=' t.invoice_id,';
-        $sql.=' t.invoice_line_id,';
-        $sql.=' t.import_key,';
-        $sql.=' t.datec,';
-        $sql.=' t.tms,';
-        $sql.=' t.status,';
-        $sql.=' t.fk_task_time_approval';
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
-        else $sql.= " WHERE t.rowid = ".$id;
+        $sql .= " t.rowid,";
+        $sql .= ' t.fk_task,';
+        $sql .= ' t.task_date,';
+        $sql .= ' t.task_datehour,';
+        $sql .= ' t.task_date_withhour,';
+        $sql .= ' t.task_duration,';
+        $sql .= ' t.fk_user,';
+        $sql .= ' t.thm,';
+        $sql .= ' t.note,';
+        $sql .= ' t.invoice_id,';
+        $sql .= ' t.invoice_line_id,';
+        $sql .= ' t.import_key,';
+        $sql .= ' t.datec,';
+        $sql .= ' t.tms,';
+        $sql .= ' t.status,';
+        $sql .= ' t.fk_task_time_approval';
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        if ($ref) $sql .= " WHERE t.ref = '".$ref."'";
+        else $sql .= " WHERE t.rowid = ".$id;
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-                $this->id    = $obj->rowid;
+                $this->id = $obj->rowid;
                 $this->task = $obj->fk_task;
                 $this->task_date = $this->db->jdate($obj->task_date);
                 $this->task_datehour = $this->db->jdate($obj->task_datehour);
@@ -243,8 +243,8 @@ class Projettasktime extends CommonObject
         // Put here code to add a control on parameters values
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.= $this->setSQLfields($user);
-        $sql.= " WHERE rowid=".$this->id;
+        $sql .= $this->setSQLfields($user);
+        $sql .= " WHERE rowid=".$this->id;
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -256,7 +256,7 @@ class Projettasktime extends CommonObject
             // Uncomment this and change MYOBJECT to your own tag if you
             // want this action calls a trigger.
             //// Call triggers
-            //$result=$this->call_trigger('MYOBJECT_MODIFY', $user);
+            //$result = $this->call_trigger('MYOBJECT_MODIFY', $user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                 }
@@ -293,26 +293,26 @@ class Projettasktime extends CommonObject
     {
     global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;   // Force disable tooltips
-        $result='';
-        if(empty($ref) && $id==0){
+        $result = '';
+        if(empty($ref) && $id == 0){
             if(isset($this->id))  {
-                $id=$this->id;
+                $id = $this->id;
             }elseif (isset($this->rowid)){
-                $id=$this->rowid;
+                $id = $this->rowid;
             }if(isset($this->ref)){
-                $ref=$this->ref;
+                $ref = $this->ref;
             }
         }
-        $linkclose='';
+        $linkclose = '';
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label=$langs->trans("Showspread");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+                $label = $langs->trans("Showspread");
+                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
         }else{
             $linkclose = ($morecss?' class="'.$morecss.'"':'');
         }
@@ -324,18 +324,18 @@ class Projettasktime extends CommonObject
             $lien = '<a href="'.dol_buildpath('/timesheet/ProjettasktimeCard.php', 1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else
         {
-            $lien =  "";
+            $lien = "";
         }
         $lienfin = empty($lien)?'':'</a>';
-        $picto='generic';
+        $picto = 'generic';
         $label = '<u>' . $langs->trans("spread") . '</u>';
-        $label.= '<br>';
+        $label .= '<br>';
         if($ref)
         {
-            $label.=$langs->trans("Red").': '.$ref;
+            $label .= $langs->trans("Red").': '.$ref;
         }elseif($id)
         {
-            $label.=$langs->trans("#").': '.$id;
+            $label .= $langs->trans("#").': '.$id;
         }
         
         if ($withpicto == 1 )
@@ -384,7 +384,7 @@ class Projettasktime extends CommonObject
         global $langs, $projettasktimeStatusPictoArray, $projettasktimeStatusArray;
         if ($mode == 0)
         {
-            $prefix='';
+            $prefix = '';
             return $langs->trans($projettasktimeStatusArray[$status]);
         }
         if ($mode == 1)
@@ -432,7 +432,7 @@ class Projettasktime extends CommonObject
         // Uncomment this and change MYOBJECT to your own tag if you
         // want this action calls a trigger.
         //// Call triggers
-        //$result=$this->call_trigger('MYOBJECT_DELETE', $user);
+        //$result = $this->call_trigger('MYOBJECT_DELETE', $user);
         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
         //// End call triggers
             }
@@ -440,7 +440,7 @@ class Projettasktime extends CommonObject
         if (! $error)
         {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE rowid=".$this->id;
+        $sql .= " WHERE rowid=".$this->id;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -487,7 +487,7 @@ class Projettasktime extends CommonObject
         // Clear fields
         // ...
         // Create clone
-        $result=$object->create($user);
+        $result = $object->create($user);
 
         // Other options
         if ($result < 0)
@@ -567,20 +567,20 @@ class Projettasktime extends CommonObject
     */
     public function setSQLfields($user)
     {
-        $sql='';
-        $sql.=' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").',';
-        $sql.=' task_date='.(dol_strlen($this->task_date)!=0 ? "'".$this->db->idate($this->task_date)."'":'null').',';
-        $sql.=' task_datehour='.(dol_strlen($this->task_datehour)!=0 ? "'".$this->db->idate($this->task_datehour)."'":'null').',';
-        $sql.=' task_date_withhour='.(empty($this->task_date_withhour)!=0 ? 'null':"'".$this->task_date_withhour."'").',';
-        $sql.=' task_duration='.(empty($this->task_duration)!=0 ? 'null':"'".$this->task_duration."'").',';
-        $sql.=' fk_user='.(empty($this->user)!=0 ? 'null':"'".$this->user."'").',';
-        $sql.=' thm='.(empty($this->thm)!=0 ? 'null':"'".$this->thm."'").',';
-        $sql.=' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").',';
-        $sql.=' invoice_id='.(empty($this->invoice_id)!=0 ? 'null':"'".$this->invoice_id."'").',';
-        $sql.=' invoice_line_id='.(empty($this->invoice_line_id)!=0 ? 'null':"'".$this->invoice_line_id."'").',';
-        $sql.=' import_key='.(empty($this->import_key)!=0 ? 'null':"'".$this->db->escape($this->import_key)."'").',';
-        $sql.=' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").',';
-        $sql.=' fk_task_time_approval='.(empty($this->task_time_approval)!=0 ? 'null':"'".$this->task_time_approval."'").'';
+        $sql = '';
+        $sql .= ' fk_task='.(empty($this->task)!=0 ? 'null':"'".$this->task."'").',';
+        $sql .= ' task_date='.(dol_strlen($this->task_date)!=0 ? "'".$this->db->idate($this->task_date)."'":'null').',';
+        $sql .= ' task_datehour='.(dol_strlen($this->task_datehour)!=0 ? "'".$this->db->idate($this->task_datehour)."'":'null').',';
+        $sql .= ' task_date_withhour='.(empty($this->task_date_withhour)!=0 ? 'null':"'".$this->task_date_withhour."'").',';
+        $sql .= ' task_duration='.(empty($this->task_duration)!=0 ? 'null':"'".$this->task_duration."'").',';
+        $sql .= ' fk_user='.(empty($this->user)!=0 ? 'null':"'".$this->user."'").',';
+        $sql .= ' thm='.(empty($this->thm)!=0 ? 'null':"'".$this->thm."'").',';
+        $sql .= ' note='.(empty($this->note)!=0 ? 'null':"'".$this->db->escape($this->note)."'").',';
+        $sql .= ' invoice_id='.(empty($this->invoice_id)!=0 ? 'null':"'".$this->invoice_id."'").',';
+        $sql .= ' invoice_line_id='.(empty($this->invoice_line_id)!=0 ? 'null':"'".$this->invoice_line_id."'").',';
+        $sql .= ' import_key='.(empty($this->import_key)!=0 ? 'null':"'".$this->db->escape($this->import_key)."'").',';
+        $sql .= ' status='.(empty($this->status)!=0 ? 'null':"'".$this->status."'").',';
+        $sql .= ' fk_task_time_approval='.(empty($this->task_time_approval)!=0 ? 'null':"'".$this->task_time_approval."'").'';
         return $sql;
     }
     /*
@@ -590,7 +590,7 @@ class Projettasktime extends CommonObject
     */
     public function serialize($mode = 0)
     {
-        $ret='';
+        $ret = '';
         $array = array();
         $array['task']=$this->task;
         $array['task_date']=$this->task_date;
@@ -629,7 +629,7 @@ class Projettasktime extends CommonObject
     */
     public function unserialize($str, $mode = 0)
     {
-        $ret='';
+        $ret = '';
         $array = array();
         switch($mode)
         {

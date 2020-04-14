@@ -294,8 +294,8 @@ class ZKLibrary
             if($chksum > USHRT_MAX) {
                 $chksum -= USHRT_MAX;
             }
-            $i-=2;
-            $j+=2;
+            $i -= 2;
+            $j += 2;
         }
         if($i) {
             $chksum = $chksum + $p['c'.strval(count($p))];
@@ -1291,27 +1291,27 @@ class ZKLibrary
             }
             $attendance = array();
             if(count($this->attendance_data) > 0) {
-            $num = count($this->attendance_data);
-            for($x = 0; $x < $num; $x++)
-            {
-                if($x > 0) {
-                $this->attendance_data[$x] = substr($this->attendance_data[$x], 8);
+                $num = count($this->attendance_data);
+                for($x = 0; $x < $num; $x++)
+                {
+                    if($x > 0) {
+                        $this->attendance_data[$x] = substr($this->attendance_data[$x], 8);
+                    }
                 }
-            }
-            $attendance_data = implode('', $this->attendance_data);
-            $attendance_data = substr($attendance_data, 10);
-            while(strlen($attendance_data) > 40)
-            {
-                $u = unpack('H78', substr($attendance_data, 0, 39));
-                $u1 = hexdec(substr($u[1], 4, 2));
-                $u2 = hexdec(substr($u[1], 6, 2));
-                $uid = $u1+($u2*256);
-                $id = str_replace("\0", '', hex2bin(substr($u[1], 8, 16)));
-                $state = hexdec(substr($u[1], 56, 2));
-                $timestamp = $this->decodeTime(hexdec($this->reverseHex(substr($u[1], 58, 8))));
-                array_push($attendance, array( 'uid' => $uid, 'id' => $id, 'state' => $state, 'tms' => $timestamp));
-                $attendance_data = substr($attendance_data, 40);
-            }
+                $attendance_data = implode('', $this->attendance_data);
+                $attendance_data = substr($attendance_data, 10);
+                while(strlen($attendance_data) > 40)
+                {
+                    $u = unpack('H78', substr($attendance_data, 0, 39));
+                    $u1 = hexdec(substr($u[1], 4, 2));
+                    $u2 = hexdec(substr($u[1], 6, 2));
+                    $uid = $u1+($u2*256);
+                    $id = str_replace("\0", '', hex2bin(substr($u[1], 8, 16)));
+                    $state = hexdec(substr($u[1], 56, 2));
+                    $timestamp = $this->decodeTime(hexdec($this->reverseHex(substr($u[1], 58, 8))));
+                    array_push($attendance, array( 'uid' => $uid, 'id' => $id, 'state' => $state, 'tms' => $timestamp));
+                    $attendance_data = substr($attendance_data, 40);
+                }
             }
             return $attendance;
         }

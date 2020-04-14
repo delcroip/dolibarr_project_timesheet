@@ -54,14 +54,14 @@ $PHP_SELF = $_SERVER['PHP_SELF'];
 //$langs->load("companies");
 $langs->load("Timesheet");
 // Get parameter
-$id                         = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action                 = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'aplha');
 $cancel = GETPOST('cancel', 'aplha');
 $confirm = GETPOST('confirm', 'aplha');
 $tms = GETPOST('tms', 'alpha');
-$ajax         = GETPOST('ajax', 'int');
+$ajax = GETPOST('ajax', 'int');
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
@@ -505,18 +505,18 @@ switch($action) {
     case 'list':
     default:
         $sql = 'SELECT';
-        $sql.= ' t.rowid, ';
+        $sql .= ' t.rowid, ';
         $sql .= ' t.fk_user, ';
         $sql .= ' t.fk_project, ';
         $sql .= ' t.fk_project_task, ';
         $sql .= ' t.subtask, ';
         $sql .= ' t.date_start, ';
         $sql .= ' t.date_end';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'timesheet_whitelist as t';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'timesheet_whitelist as t';
         $sqlwhere = '';
         $userId = (is_object($user)?$user->id:$user);
         if(isset($object->entity))
-            $sqlwhere.= ' AND t.entity = '.$conf->entity;
+            $sqlwhere .= ' AND t.entity = '.$conf->entity;
         if($filter && $filter != -1) {
             // GETPOST('filtre') may be a string {
             $filtrearr = explode(', ', $filter);
@@ -559,12 +559,12 @@ switch($action) {
             $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
         }
         if(!empty($sortfield)) {
-            $sql.= $db->order($sortfield, $sortorder);
+            $sql .= $db->order($sortfield, $sortorder);
         } else {
             $sortorder = 'ASC';
         }
         if(!empty($limit)) {
-            $sql.= $db->plimit($limit+1, $offset);
+            $sql .= $db->plimit($limit+1, $offset);
         }
         //execute SQL
         dol_syslog($script_file, LOG_DEBUG);

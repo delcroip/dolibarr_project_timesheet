@@ -24,8 +24,8 @@ require_once './core/modules/pdf/pdf_rat.modules.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $htmlother = new FormOther($db);
 $userid = is_object($user)?$user->id:$user;
-$id                 = GETPOST('id', 'int');
-$action                 = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
 $userIdSelected = GETPOST('userSelected', 'int');
 $exportFriendly = GETPOST('exportFriendly', 'alpha');
 if(empty($userIdSelected))$userIdSelected = $userid;
@@ -101,13 +101,13 @@ if($resql) {
 } else {
     dol_print_error($db);
 }
-$userIdlist=array();
-$reportName=$langs->trans('ReportProject');
+$userIdlist = array();
+$reportName = $langs->trans('ReportProject');
 if($userIdSelected<>-999){
     $userIdlist[]=$userIdSelected;
-    $reportName=$userList[$userIdSelected]['value'];
+    $reportName = $userList[$userIdSelected]['value'];
 } else {
-    $userIdlist=array_keys($userList);
+    $userIdlist = array_keys($userList);
 }
 $reportStatic = new TimesheetReport($db);
 $reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
@@ -127,7 +127,7 @@ if($action == 'getpdf') {
     {
         @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
     }
-    $name=$reportStatic->buildFile($model, false);
+    $name = $reportStatic->buildFile($model, false);
     if(!empty($name)){
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=export&file=".$name);
         return;
@@ -140,20 +140,20 @@ if($action == 'getpdf') {
 llxHeader('', $langs->trans('userReport'), '');
 $Form .= "<div id='quicklinks'>";
 //This week quick link
-$Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard');
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard')."'>".$langs->trans('thisWeek')."</a>";
 //This month quick link
-$Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard');
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard')."'>".$langs->trans('thisMonth')."</a>";
 //last week quick link
-$Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard');
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard')."'>".$langs->trans('lastWeek')."</a>";
 //Last month quick link
-$Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard');
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("last day of previous month"), 'dayxcard')."'>".$langs->trans('lastMonth')."</a>";
 //today
 $today = dol_print_date(mktime(), 'dayxcard');
-$Form .= "<a class='tab' href ='?action=reportUser&userSelected=".$user->id."&dateStart=".$today;
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".$today;
 $Form .= "&dateEnd=".$today."'>".$langs->trans('today')."</a> ";
 $Form .= "</div>";
 
@@ -190,10 +190,10 @@ if(!empty($userIdSelected)
     }
 }
 $Form .= '</select></td>';
-$Form.=   '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
+$Form .= '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
 // select end date
-$Form.=   '<td>'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
-//$Form.= '<td>'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year, 'year', 0, 10, 3).' </td>';
+$Form .= '<td>'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
+//$Form .= '<td>'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year, 'year', 0, 10, 3).' </td>';
 $Form .= ' <td><input type = "checkbox" name = "short" value = "1" ';
 $Form .= (($short == 1)?'checked>':'>').'</td>' ;
 // Select invoiceable only
@@ -203,15 +203,15 @@ $Form .= (($invoicabletaskOnly == 1)?'checked>':'>').'</td>';
 $Form .= '<td><input type = "checkbox" name = "exportfriendly" value = "1" ';
 $Form .= (($exportfriendly == 1)?'checked>':'>').'</td>';
 // Select mode
-$Form.= '<td><input type = "radio" name = "mode" value = "PTD" '.($mode == 'PTD'?'checked':'');
+$Form .= '<td><input type = "radio" name = "mode" value = "PTD" '.($mode == 'PTD'?'checked':'');
 $Form .= '> '.$langs->trans('Project').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>';
-$Form.= '<input type = "radio" name = "mode" value = "PDT" '.($mode == 'PDT'?'checked':'');
+$Form .= '<input type = "radio" name = "mode" value = "PDT" '.($mode == 'PDT'?'checked':'');
 $Form .= '> '.$langs->trans('Project').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>';
-$Form.= '<input type = "radio" name = "mode" value = "DPT" '.($mode == 'DPT'?'checked':'');
+$Form .= '<input type = "radio" name = "mode" value = "DPT" '.($mode == 'DPT'?'checked':'');
 $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('Project').' / '.$langs->trans('Task').'<br>';
  $Form .= '</td></tr></table>';
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
- $model=$conf->global->TIMESHEET_EXPORT_FORMAT;
+ $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
 //if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if(!empty($querryRes)  && $conf->global->MAIN_MODULE_EXPORT)$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
 $Form .= '</form>';

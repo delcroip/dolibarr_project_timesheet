@@ -47,7 +47,7 @@ if($whitelistmode == '') {
     $whitelistmode = $conf->global->TIMESHEET_WHITELIST_MODE;
 }
 $userid = is_object($user)?$user->id:$user;
-$postUserId= GETPOST('userid', 'int');
+$postUserId = GETPOST('userid', 'int');
 $submitted = GETPOST('submit', 'alpha');
 $tsUserId = GETPOST('tsUserId', 'int');
 
@@ -71,7 +71,7 @@ if($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $dateStart = $_SESSION["dateStart"];
 } else {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
-    if($dateStart==0)$dateStart=getStartDate(time(), 0);
+    if($dateStart == 0)$dateStart = getStartDate(time(), 0);
 }
 $_SESSION["dateStart"] = $dateStart ;
 
@@ -82,9 +82,9 @@ $langs->load("projects");
 $langs->load('timesheet@timesheet');
 /*
 // Get parameters
-$id                         = GETPOST('id', 'int');
-$action                 = GETPOST('action', 'alpha');
-$myparam         = GETPOST('myparam', 'alpha');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$myparam = GETPOST('myparam', 'alpha');
 // Protection if external user
 if($user->societe_id > 0) {
         //accessforbidden();
@@ -189,11 +189,11 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
 $Form = $task_timesheet->getHTMLNavigation($optioncss);
 $Form .= $task_timesheet->getHTMLFormHeader();
      if($conf->global->TIMESHEET_WHITELIST == 1) {
-        $Form.= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
-        $Form.= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
+        $Form .= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
+        $Form .= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
         $Form .= '  <div '.(($task_timesheet->whitelistmode == 0)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'whitelist\')"><a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('blackWhiteList').'</a></div>';
-        $Form.= '  <div '.(($task_timesheet->whitelistmode == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
-        $Form.= '</div>';
+        $Form .= '  <div '.(($task_timesheet->whitelistmode == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
+        $Form .= '</div>';
      }
 $Form .= $task_timesheet->getHTML();
 //simulualate a click on of of the tabs

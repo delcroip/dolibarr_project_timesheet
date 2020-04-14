@@ -45,7 +45,7 @@ if($posBs>0) {
     $sql = 'SELECT DISTINCT ';
     $sql .= $sqlarray['keyfield'];
     $sql .= ', '.$sqlarray['fields'];
-    $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql .= ' '.$sqlarray['join'];
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))

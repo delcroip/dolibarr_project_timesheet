@@ -62,9 +62,9 @@ $PHP_SELF = $_SERVER['PHP_SELF'];
 $langs->load("projettasktime@timesheet");
 
 // Get parameter
-$id            = GETPOST('id', 'int');
-$ref           = GETPOST('ref', 'alpha');
-$action        = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
@@ -73,26 +73,26 @@ $tms = GETPOST('tms', 'alpha');
 /*
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder','alpha'):'ASC';
-$removefilter=isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
-//$applyfilter=isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
+$removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
+//$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )        // Both test must be present to be compatible with all browsers
 {
-        $ls_task= GETPOST('ls_task','int');
-    $ls_task_date_month= GETPOST('ls_task_date_month','int');
-    $ls_task_date_year= GETPOST('ls_task_date_year','int');
-    $ls_task_datehour_month= GETPOST('ls_task_datehour_month','int');
-    $ls_task_datehour_year= GETPOST('ls_task_datehour_year','int');
-    $ls_task_date_withhour= GETPOST('ls_task_date_withhour','int');
-    $ls_task_duration= GETPOST('ls_task_duration','int');
-    $ls_user= GETPOST('ls_user','int');
-    if($ls_user==-1)$ls_user='';
-    $ls_thm= GETPOST('ls_thm','int');
-    $ls_note= GETPOST('ls_note','alpha');
-    $ls_invoice_id= GETPOST('ls_invoice_id','int');
-    $ls_invoice_line_id= GETPOST('ls_invoice_line_id','int');
-    $ls_import_key= GETPOST('ls_import_key','alpha');
-    $ls_status= GETPOST('ls_status','int');
-    $ls_task_time_approval= GETPOST('ls_task_time_approval','int');
+        $ls_task = GETPOST('ls_task','int');
+    $ls_task_date_month = GETPOST('ls_task_date_month','int');
+    $ls_task_date_year = GETPOST('ls_task_date_year','int');
+    $ls_task_datehour_month = GETPOST('ls_task_datehour_month','int');
+    $ls_task_datehour_year = GETPOST('ls_task_datehour_year','int');
+    $ls_task_date_withhour = GETPOST('ls_task_date_withhour','int');
+    $ls_task_duration = GETPOST('ls_task_duration','int');
+    $ls_user = GETPOST('ls_user','int');
+    if($ls_user == -1)$ls_user = '';
+    $ls_thm = GETPOST('ls_thm','int');
+    $ls_note = GETPOST('ls_note','alpha');
+    $ls_invoice_id = GETPOST('ls_invoice_id','int');
+    $ls_invoice_line_id = GETPOST('ls_invoice_line_id','int');
+    $ls_import_key = GETPOST('ls_import_key','alpha');
+    $ls_status = GETPOST('ls_status','int');
+    $ls_task_time_approval = GETPOST('ls_task_time_approval','int');
 
 
 }
@@ -107,7 +107,7 @@ if (!$removefilter )        // Both test must be present to be compatible with a
 //if(isset( $_SESSION['projettasktime_class'][$tms]))
 //{
 
- //   $cancel=TRUE;
+ //   $cancel = TRUE;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
 //}
 
@@ -116,29 +116,29 @@ if (!$removefilter )        // Both test must be present to be compatible with a
 // Right Management
  /*
 if ($user->societe_id > 0 ||
-       (!$user->rights->timesheet->add && ($action=='add' || $action='create')) ||
-       (!$user->rights->timesheet->view && ($action=='list' || $action='view')) ||
-       (!$user->rights->timesheet->delete && ($action=='confirm_delete')) ||
-       (!$user->rights->timesheet->edit && ($action=='edit' || $action='update')))
+       (!$user->rights->timesheet->add && ($action == 'add' || $action = 'create')) ||
+       (!$user->rights->timesheet->view && ($action == 'list' || $action = 'view')) ||
+       (!$user->rights->timesheet->delete && ($action == 'confirm_delete')) ||
+       (!$user->rights->timesheet->edit && ($action == 'edit' || $action = 'update')))
 {
     accessforbidden();
 }
 */
 
 // create object and set id or ref if provided as parameter
-$object=new Projettasktime($db);
+$object = new Projettasktime($db);
 if($id>0)
 {
     $object->id=$id;
     $object->fetch($id);
-    $ref=dol_sanitizeFileName($object->ref);
+    $ref = dol_sanitizeFileName($object->ref);
 }
 if(!empty($ref))
 {
     $object->ref=$ref;
     $object->id=$id;
     $object->fetch($id, $ref);
-    $ref=dol_sanitizeFileName($object->ref);
+    $ref = dol_sanitizeFileName($object->ref);
 }
 
 
@@ -149,7 +149,7 @@ if(!empty($ref))
 ********************************************************************/
 
 // Action to add record
-$error=0;
+$error = 0;
 if ($cancel){
 //        ProjettasktimeReloadPage($backtopage,$id,$ref);
 }elseif (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
@@ -157,7 +157,7 @@ if ($cancel){
     //block resubmit
     if(empty($tms) || (!isset($_SESSION['Projettasktime'][$tms]))){
         setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
-        $action=($action=='add')?'create':'view';
+        $action = ($action == 'add')?'create':'view';
     }
     //retrive the data
     $object->task = GETPOST('Task');
@@ -181,9 +181,9 @@ if ($cancel){
  if($object->prop1==0 || $object->prop2==0)
  {
      if ($id>0 || $ref!='')
-        $action='create';
+        $action = 'create';
      else
-        $action='edit';
+        $action = 'edit';
  }
   */
 }elseif ($id == 0 && $ref == '' && $action != 'create')
@@ -205,7 +205,7 @@ switch($action){
             if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
             else setEventMessage('RecordNotUpdated', 'errors');
         }
-        $action='view';
+        $action = 'view';
     case 'delete':
         if(isset($_GET['urlfile'])) $action = 'deletefile';
     case 'view':
@@ -267,7 +267,7 @@ if(isset($_SESSION['Projettasktime'][$tms]))
     unset($_SESSION['Projettasktime'][$tms]);
 }
 if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))){
-    $tms=getToken();
+    $tms = getToken();
     $_SESSION['Projettasktime'][$tms]=array();
     $_SESSION['Projettasktime'][$tms]['action'] = $action;
 }
@@ -346,7 +346,7 @@ switch ($action) {
 
     print "<tr>\n";
     print '<td class="fieldrequired">'.$langs->trans('Task').' </td><td>';
-    if($edit ==1 ){
+    if($edit == 1 ){
         $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref,label', 'join' => '', 'where'=>'', 'tail'=>'');
         $html_task = array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
         $addChoices_task = null;
@@ -422,7 +422,7 @@ switch ($action) {
     print "<tr>\n";
     print '<td>'.$langs->trans('User').' </td><td>';
     if($edit == 1){
-        $selected=$object->user;
+        $selected = $object->user;
         print $form->select_dolusers($selected, 'User', 1, '', 0);
     }else{
         $sUser = new User($db);
@@ -511,10 +511,10 @@ switch ($action) {
 
     print "<tr>\n";
     print '<td>'.$langs->trans('Tasktimeapproval').' </td><td>';
-    $sql_task_time_approval=array('table'=> 'project_task_time_approval', 'keyfield'=> 'rowid', 'fields'=>'date_start,date_end,fk_projet_task,fk_userid', 'join' => '', 'where'=>'', 'tail'=>'');
+    $sql_task_time_approval = array('table'=> 'project_task_time_approval', 'keyfield'=> 'rowid', 'fields'=>'date_start,date_end,fk_projet_task,fk_userid', 'join' => '', 'where'=>'', 'tail'=>'');
     if($edit == 1){
-        $html_task_time_approval=array('name'=>'Tasktimeapproval', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
-        $addChoices_task_time_approval=null;
+        $html_task_time_approval = array('name'=>'Tasktimeapproval', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
+        $addChoices_task_time_approval = null;
         print select_sellist($sql_task_time_approval, $html_task_time_approval, $object->task_time_approval, $addChoices_task_time_approval);
     }else{
         print print_sellist($sql_task_time_approval, $object->task_time_approval);
@@ -537,8 +537,8 @@ switch ($action) {
             print ' &nbsp; <input type="submit" class="butActionDelete" name="cancel" value="'.$langs->trans('Cancel').'"></div>';
             print '</form>';
         }else{
-            $parameters=array();
-            $reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+            $parameters = array();
+            $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
             if (empty($reshook))
@@ -568,7 +568,7 @@ switch ($action) {
 
     case 'delete':
         if( ($id>0 || $ref!='')){
-         $ret=$form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteProjettasktime'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteProjettasktime'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background
         }

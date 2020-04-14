@@ -102,16 +102,16 @@ class TimesheetUserTasks extends CommonObject
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 
-        $sql.= 'fk_userid, ';
-        $sql.= 'date_start, ';
-        $sql.= 'date_end, ';
-        $sql.= 'status, ';
-        $sql.= 'date_creation, ';
-        $sql.= 'date_modification, ';
-        $sql.= 'fk_user_modification, ';
-        $sql.= 'note';
+        $sql .= 'fk_userid, ';
+        $sql .= 'date_start, ';
+        $sql .= 'date_end, ';
+        $sql .= 'status, ';
+        $sql .= 'date_creation, ';
+        $sql .= 'date_modification, ';
+        $sql .= 'fk_user_modification, ';
+        $sql .= 'note';
 
-        $sql.= ") VALUES(";
+        $sql .= ") VALUES(";
         $sql .= ' '.(! isset($this->userId)?'NULL':'\''.$this->userId.'\'').', ';
         $sql .= ' '.(! isset($this->date_start) || dol_strlen($this->date_start) == 0?'NULL':'\''.$this->db->idate($this->date_start).'\'').', ';
         $sql .= ' '.(! isset($this->date_end) || dol_strlen($this->date_end) == 0?'NULL':'\''.$this->db->idate($this->date_end).'\'').', ';
@@ -120,7 +120,7 @@ class TimesheetUserTasks extends CommonObject
         $sql .= ' NOW(), ';
         $sql .= ' \''.$userId.'\', ';
         $sql .= ' '.(! isset($this->note)?'NULL':'\''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'');
-        $sql.= ")";
+        $sql .= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -162,7 +162,7 @@ class TimesheetUserTasks extends CommonObject
     {
         global $langs;
         $sql = "SELECT";
-        $sql.= " t.rowid, ";
+        $sql .= " t.rowid, ";
         $sql .= ' t.fk_userid, ';
         $sql .= ' t.date_start, ';
         $sql .= ' t.date_end, ';
@@ -171,9 +171,9 @@ class TimesheetUserTasks extends CommonObject
         $sql .= ' t.date_modification, ';
         $sql .= ' t.fk_user_modification, ';
         $sql .= ' t.note';
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        if($ref) $sql.= " WHERE t.ref = '".$ref."'";
-        else $sql.= " WHERE t.rowid = ".$id;
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        if($ref) $sql .= " WHERE t.ref = '".$ref."'";
+        else $sql .= " WHERE t.rowid = ".$id;
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
@@ -206,7 +206,7 @@ class TimesheetUserTasks extends CommonObject
     {
         global $langs;
         $sql = "SELECT";
-        $sql.= " t.rowid, ";
+        $sql .= " t.rowid, ";
         $sql .= ' t.fk_userid, ';
         $sql .= ' t.date_start, ';
         $sql .= ' t.date_end, ';
@@ -215,12 +215,12 @@ class TimesheetUserTasks extends CommonObject
         $sql .= ' t.date_modification, ';
         $sql .= ' t.fk_user_modification, ';
         $sql .= ' t.note';
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        $sql.= " WHERE t.date_start = '".$this->db->idate($this->date_start)."'";
-        $sql.= " AND t.fk_userid = '".$this->userId."'";
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        $sql .= " WHERE t.date_start = '".$this->db->idate($this->date_start)."'";
+        $sql .= " AND t.fk_userid = '".$this->userId."'";
 
 
-        //$sql.= " AND t.rowid = ".$id;
+        //$sql .= " AND t.rowid = ".$id;
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
@@ -284,7 +284,7 @@ class TimesheetUserTasks extends CommonObject
                 $sql .= ' date_modification = NOW(), ';
                 $sql .= ' fk_user_modification = \''.$userId.'\', ';
                 $sql .= ' note = \''.$this->db->escape(dol_html_entity_decode($this->note, ENT_QUOTES)).'\'';
-        $sql.= " WHERE rowid=".$this->id;
+        $sql .= " WHERE rowid=".$this->id;
                 $this->db->begin();
                 dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -337,7 +337,7 @@ class TimesheetUserTasks extends CommonObject
             }
             if(! $error) {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-                $sql.= " WHERE rowid=".$this->id;
+                $sql .= " WHERE rowid=".$this->id;
                 dol_syslog(__METHOD__, LOG_DEBUG);
                 $resql = $this->db->query($sql);
                 if(! $resql) {
@@ -412,7 +412,7 @@ class TimesheetUserTasks extends CommonObject
         $this->timestamp = getToken();
         $this->fetchByWeek();
         $this->fetchTaskTimesheet();
-        //$ret+=$this->getTaskTimeIds();
+        //$ret += $this->getTaskTimeIds();
         //FIXME module holiday should be activated ?
         $this->fetchUserHoliday();
         $this->saveInSession();
@@ -573,10 +573,10 @@ public function updateActuals($tabPost, $notes = array(), $progress = array())
          * For each task store in matching the session timestamp
          */
         if(is_array($this->taskTimesheet)){
-            foreach($this->taskTimesheet as $key  => $row) {
+            foreach($this->taskTimesheet as $key => $row) {
                 $tasktime = new TimesheetTask($this->db);
                 $tasktime->unserialize($row);
-                $ret+=$tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->id], $progress[$tasktime->id]);
+                $ret += $tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->id], $progress[$tasktime->id]);
                 $this->taskTimesheet[$key] = $tasktime->serialize();
             }
         }
@@ -950,28 +950,28 @@ public function getHTMLNavigation($optioncss, $ajax = false)
     if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1)$tail = '&userid='.$this->userId;
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
     if($ajax) {
-//     $Nav.=  '<a id = "navPrev" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, -1).'\', 0);';
+//     $Nav .= '<a id = "navPrev" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, -1).'\', 0);';
     } else{
-        $Nav.=  '<a href="?dateStart='.getStartDate($this->date_start, -1).$tail;
+        $Nav .= '<a href="?dateStart='.getStartDate($this->date_start, -1).$tail;
     }
-    if($optioncss != '')$Nav.=   '&amp;optioncss='.$optioncss;
-    $Nav.=  '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+    if($optioncss != '')$Nav .= '&amp;optioncss='.$optioncss;
+    $Nav .= '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
 //  if($ajax)
 //  {
-    //    $Nav.=  '<form name = "goToDate" onsubmit = "return toDateHandler();" action="?action=goToDate&wlm='.$this->whitelistmode.'" method = "POST">'."\n\t\t\t";
+    //    $Nav .= '<form name = "goToDate" onsubmit = "return toDateHandler();" action="?action=goToDate&wlm='.$this->whitelistmode.'" method = "POST">'."\n\t\t\t";
     //} else{
-        $Nav.=  '<form name = "goToDate" action="?action=goToDate'.$tail.'" method = "POST" >'."\n\t\t\t";
+        $Nav .= '<form name = "goToDate" action="?action=goToDate'.$tail.'" method = "POST" >'."\n\t\t\t";
     //}
-    $Nav.=   $langs->trans("GoTo").': '.$form->select_date(-1, 'toDate', 0, 0, 0, "", 1, 1, 1)."\n\t\t\t";;
-    $Nav.=  '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+    $Nav .= $langs->trans("GoTo").': '.$form->select_date(-1, 'toDate', 0, 0, 0, "", 1, 1, 1)."\n\t\t\t";;
+    $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
     //if($ajax)
 //    {
-    //    $Nav.=  '<a id = "navNext" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, 1).'\', 0);';
+    //    $Nav .= '<a id = "navNext" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, 1).'\', 0);';
     //} else{
-        $Nav.=  '<a href="?dateStart='.getStartDate($this->date_start, 1).$tail;
+        $Nav .= '<a href="?dateStart='.getStartDate($this->date_start, 1).$tail;
     //}
-    if($optioncss != '') $Nav.=   '&amp;optioncss='.$optioncss;
-    $Nav.=  '">'.$langs->trans("Next").' &gt;&gt;</a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
+    if($optioncss != '') $Nav .= '&amp;optioncss='.$optioncss;
+    $Nav .= '">'.$langs->trans("Next").' &gt;&gt;</a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
     return $Nav;
 }
      /**
@@ -1088,7 +1088,7 @@ public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
 public function GetTimeSheetXML()
 {
     global $langs, $conf;
-    $xml.= "<timesheet dateStart = \"{$this->date_start}\" timestamp = \"{$this->timestamp}\" timetype = \"".$conf->global->TIMESHEET_TIME_TYPE."\"";
+    $xml .= "<timesheet dateStart = \"{$this->date_start}\" timestamp = \"{$this->timestamp}\" timetype = \"".$conf->global->TIMESHEET_TIME_TYPE."\"";
     $xml .= ' nextWeek = "'.date('Y\WW', strtotime($this->date_start."+3 days +1 week")).'" prevWeek = "'.date('Y\WW', strtotime($this->date_start."+3 days -1 week")).'">';
     //error handling
     $xml .= getEventMessagesXML();
@@ -1105,10 +1105,10 @@ public function GetTimeSheetXML()
         } else{
             $link = '';
         }
-        $xmlheaders.= "<header col = \"{$i}\" name = \"{$header}\" {$link}>{$langs->transnoentitiesnoconv($header)}</header>";
+        $xmlheaders .= "<header col = \"{$i}\" name = \"{$header}\" {$link}>{$langs->transnoentitiesnoconv($header)}</header>";
         $i++;
     }
-    $xml.= "<headers>{$xmlheaders}</headers>";
+    $xml .= "<headers>{$xmlheaders}</headers>";
         //days
     $xmldays = '';
     for ($i = 0;$i<7;$i++)
@@ -1118,14 +1118,14 @@ public function GetTimeSheetXML()
        $curDayTrad = $langs->trans(date('l', $curDay)).'  '.dol_mktime($curDay);
        $xmldays .= "<day col = \"{$i}\">{$curDayTrad}</day>";
     }
-    $xml.= "<days>{$xmldays}</days>";
+    $xml .= "<days>{$xmldays}</days>";
         $tab = $this->fetchTaskTimesheet();
         $i = 0;
         $xml .= "<userTs userid = \"{$this->userId}\"  count = \"".count($this->taskTimesheet)."\" userName = \"{$this->userName}\" >";
         foreach($this->taskTimesheet as $timesheet) {
             $row = new TimesheetTask($this->db);
              $row->unserialize($timesheet);
-            $xml.= $row->getXML($this->date_start);//FIXME
+            $xml .= $row->getXML($this->date_start);//FIXME
             $i++;
         }
         $xml .= "</userTs>";
@@ -1145,10 +1145,10 @@ public function sendApprovalReminders()
     $sql .= ' COUNT(t.rowid) as nb, ';
     $sql .= ' u.email, ';
     $sql .= ' u.fk_user as approverid';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
-    $sql.= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
-    $sql.= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
-    $sql.= '  AND t.recipient='.TEAM.' GROUP BY u.fk_user';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
+    $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
+    $sql .= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
+    $sql .= '  AND t.recipient='.TEAM.' GROUP BY u.fk_user';
      dol_syslog(__METHOD__, LOG_DEBUG);
     $resql = $this->db->query($sql);
     if($resql) {

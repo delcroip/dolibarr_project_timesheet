@@ -23,10 +23,10 @@ require_once './class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $htmlother = new FormOther($db);
-//$objmodelexport=new ModeleExports($db);
-$id                 = GETPOST('id', 'int');
-$action                 = GETPOST('action', 'alpha');
-//$dateStart         = GETPOST('dateStart', 'alpha');
+//$objmodelexport = new ModeleExports($db);
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+//$dateStart = GETPOST('dateStart', 'alpha');
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $short = GETPOST('short', 'int');
@@ -72,10 +72,10 @@ if(!$user->admin) {
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active = \'1\'  ';
     $sql .= ' AND fk_socpeople = \''.$userid.'\' and fk_statut = \'1\'';
-    $sql.= " AND pjt.entity IN (".getEntity('projet').")";
+    $sql .= " AND pjt.entity IN (".getEntity('projet').")";
 } else{
     $sql .= ' WHERE fk_statut = \'1\' ';
-    $sql.= " AND pjt.entity IN (".getEntity('projet').")";
+    $sql .= " AND pjt.entity IN (".getEntity('projet').")";
 }
 dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
 //launch the sql querry
@@ -99,13 +99,13 @@ if($resql) {
 } else {
         dol_print_error($db);
 }
-$projectIdlist=array();
-$reportName=$langs->trans('ReportProject');
+$projectIdlist = array();
+$reportName = $langs->trans('ReportProject');
 if($projectSelectedId<>-999){
     $projectIdlist[]=$projectSelectedId;
-    $reportName=$projectList[$projectSelectedId]['label'];
+    $reportName = $projectList[$projectSelectedId]['label'];
 } else {
-    $projectIdlist= array_keys($projectList);
+    $projectIdlist = array_keys($projectList);
 }
 $reportStatic = new TimesheetReport($db);
 $reportStatic->initBasic($projectIdlist, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
@@ -125,7 +125,7 @@ if($action == 'getpdf') {
     {
         @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
     }
-    $name=$reportStatic->buildFile($model, false);
+    $name = $reportStatic->buildFile($model, false);
     if(!empty($name)){
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=export&file=".$name);
         return;
@@ -147,20 +147,20 @@ if($projectSelectedId   &&!empty($dateStart)) {
 }
 $Form .= "<div id='quicklinks'>";
 //This week quick link
-$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard');
+$Form .= "<a class='tab' href = '?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard')."'>".$langs->trans('thisWeek')."</a>";
 //This month quick link
-$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard');
+$Form .= "<a class='tab' href = '?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard')."'>".$langs->trans('thisMonth')."</a>";
 //last week quick link
-$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard');
+$Form .= "<a class='tab' href = '?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard')."'>".$langs->trans('lastWeek')."</a>";
 //Last month quick link
-$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard');
+$Form .= "<a class='tab' href = '?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard');
 $Form .= "&dateEnd=".dol_print_date(strtotime("last day of previous month"), 'dayxcard')."'>".$langs->trans('lastMonth')."</a>";
 //today
 $today = dol_print_date(mktime(), 'dayxcard');
-$Form .= "<a class='tab' href ='?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".$today;
+$Form .= "<a class='tab' href = '?action=reportUser&projectSelected=".$projectSelectedId."&dateStart=".$today;
 $Form .= "&dateEnd=".$today."'>".$langs->trans('today')."</a> ";
 $Form .= "</div>";
 $Form .= '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
@@ -187,9 +187,9 @@ $Form .= '<option value = "-999" '.(($projectSelectedId == "-999")?"selected":''
 $Form .= '</select></td>';
         //}
 // select start date
-$Form.=   '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
+$Form .= '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
 // select end date
-$Form.=   '<td>'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
+$Form .= '<td>'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
 //$Form .= '<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year, 'year', 0, 10, 3)
 // Select short
 $Form .= ' <td><input type = "checkbox" name = "short" value = "1" ';
@@ -201,15 +201,15 @@ $Form .= (($invoicabletaskOnly == 1)?'checked>':'>').'</td>';
 $Form .= '<td><input type = "checkbox" name = "exportfriendly" value = "1" ';
 $Form .= (($exportfriendly == 1)?'checked>':'>').'</td>';
 // Select mode
-$Form.= '<td><input type = "radio" name = "mode" value = "UTD" '.($mode == 'UTD'?'checked':'');
+$Form .= '<td><input type = "radio" name = "mode" value = "UTD" '.($mode == 'UTD'?'checked':'');
 $Form .= '> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>';
-$Form.= '<input type = "radio" name = "mode" value = "UDT" '.($mode == 'UDT'?'checked':'');
+$Form .= '<input type = "radio" name = "mode" value = "UDT" '.($mode == 'UDT'?'checked':'');
 $Form .= '> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->trans('Task').'<br>';
-$Form.= '<input type = "radio" name = "mode" value = "DUT" '.($mode == 'DUT'?'checked':'');
+$Form .= '<input type = "radio" name = "mode" value = "DUT" '.($mode == 'DUT'?'checked':'');
 $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
  $Form .= '</td></tr></table>';
  //submit
- $model=$conf->global->TIMESHEET_EXPORT_FORMAT;
+ $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
 if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7")<=0))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
@@ -227,8 +227,8 @@ print '<td>'.$langs->trans("LibraryUsed").'</td>';
 print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>'."\n";
 
-$liste=$objmodelexport->liste_modeles($db);
-$listeall=$liste;
+$liste = $objmodelexport->liste_modeles($db);
+$listeall = $liste;
 foreach($listeall as $key => $val)
 {
     if (preg_match('/__\(Disabled\)__/',$listeall[$key]))
@@ -239,8 +239,8 @@ foreach($listeall as $key => $val)
 
     print '<tr class="oddeven">';
     print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';
-    $text=$objmodelexport->getDriverDescForKey($key);
-    $label=$listeall[$key];
+    $text = $objmodelexport->getDriverDescForKey($key);
+    $label = $listeall[$key];
     print $form->textwithpicto($label,$text).'</td>';
     print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
     print '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';

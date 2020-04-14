@@ -95,18 +95,18 @@ public $date_time_event_start;
                 // Put here code to add control on parameters values
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-        $sql.= 'date_time_event, ';
-        $sql.= 'event_location_ref, ';
-        $sql.= 'event_type, ';
-        $sql.= 'note, ';
-        $sql.= 'fk_userid, ';
-        $sql.= 'fk_third_party, ';
-        $sql.= 'fk_task, ';
-        $sql.= 'fk_project, ';
-        $sql.= 'token, ';
-        $sql.= 'status, ';
-        $sql.= 'date_modification, fk_user_modification';
-        $sql.= ") VALUES(";
+        $sql .= 'date_time_event, ';
+        $sql .= 'event_location_ref, ';
+        $sql .= 'event_type, ';
+        $sql .= 'note, ';
+        $sql .= 'fk_userid, ';
+        $sql .= 'fk_third_party, ';
+        $sql .= 'fk_task, ';
+        $sql .= 'fk_project, ';
+        $sql .= 'token, ';
+        $sql .= 'status, ';
+        $sql .= 'date_modification, fk_user_modification';
+        $sql .= ") VALUES(";
         $sql .= ' '.(empty($this->date_time_event) || dol_strlen($this->date_time_event) == 0?'NULL':"'".$this->db->idate($this->date_time_event)."'").', ';
         $sql .= ' '.(empty($this->event_location_ref)?'NULL':"'".$this->db->escape($this->event_location_ref)."'").', ';
         $sql .= ' '.(empty($this->event_type)?'NULL':"'".$this->event_type."'").', ';
@@ -118,7 +118,7 @@ public $date_time_event_start;
         $sql .= ' '.(empty($this->token)?'NULL':"'".$this->token."'").', ';
         $sql .= ' '.(empty($this->status)?'NULL':"'".$this->status."'").'';
         $sql .= ', NOW(), \''.$user->id.'\'';
-        $sql.= ")";
+        $sql .= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -159,7 +159,7 @@ public $date_time_event_start;
     {
         global $langs;
         $sql = "SELECT";
-        $sql.= " t.rowid, ";
+        $sql .= " t.rowid, ";
         $sql .= ' t.date_time_event, ';
         $sql .= ' t.event_location_ref, ';
         $sql .= ' t.event_type, ';
@@ -173,17 +173,17 @@ public $date_time_event_start;
         $sql .= ' t.token, ';
         $sql .= ' t.status, ';
         $sql .= '  st.date_time_event  as date_time_event_start ';
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element." as st ON t.token = st.token AND ABS(st.event_type = 2)";
-        $sql.= " WHERE ";
-        if(!empty($id))$sql.= "t.rowid = '".$id;
-        elseif(!empty($user))$sql.=  " t.fk_userid = '".$user->id;
-        elseif(!empty($startToken))  $sql.= "  t.token = '".$startToken;
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element." as st ON t.token = st.token AND ABS(st.event_type = 2)";
+        $sql .= " WHERE ";
+        if(!empty($id))$sql .= "t.rowid = '".$id;
+        elseif(!empty($user))$sql .= " t.fk_userid = '".$user->id;
+        elseif(!empty($startToken))  $sql .= "  t.token = '".$startToken;
         else{
             dol_syslog(__METHOD__." no param", LOG_DEBUG);
             return -1;
         }
-        $sql.= "' ORDER BY date_time_event DESC" ;
+        $sql .= "' ORDER BY date_time_event DESC" ;
         $this->db->plimit(1, 0);
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -228,8 +228,8 @@ public $date_time_event_start;
         // Put here code to add a control on parameters values
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.= $this->setSQLfields($user);
-        $sql.= " WHERE rowid=".$this->id;
+        $sql .= $this->setSQLfields($user);
+        $sql .= " WHERE rowid=".$this->id;
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -401,7 +401,7 @@ public $date_time_event_start;
         }
         if(! $error) {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE rowid=".$this->id;
+        $sql .= " WHERE rowid=".$this->id;
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if(! $resql) { $error++;$this->errors[] = "Error ".$this->db->lasterror();} elseif($this->db->affected_rows($resql) == 0) {$error++;$this->errors[] = "Item no found in database";}
@@ -546,7 +546,7 @@ public $date_time_event_start;
             $location_ref = $this->event_location_ref;
             //close the most recent one if any
             $this->ajaxStop($user, $json, true);
-            //$this->status =
+            //$this->status = 
         }
 //erase the data
         $status = $this->status;
