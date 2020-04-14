@@ -315,7 +315,7 @@ public $date_time_event_start;
     	if ($withpicto == 1){ 
             $result .= $lien.img_object(''.$picto).$label.$lienfin;
         }else if ($withpicto == 2) {
-            $result .= ($lien.img_object($label,$picto).$lienfin);
+            $result .= ($lien.img_object($label, $picto).$lienfin);
         }else{  
             $result .= $lien.$label.$lienfin;
         }

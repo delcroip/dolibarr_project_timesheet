@@ -632,7 +632,7 @@ class TimesheetTask extends Task
     */
     public function getHTMLLineDayCell($isOpenStatus)
     {
-        global $langs, $conf,$statusColor;
+        global $langs, $conf, $statusColor;
         $isOpen = false;
         $html = '';
         $dayelapsed = getDayInterval($this->date_start_approval, $this->date_end_approval);

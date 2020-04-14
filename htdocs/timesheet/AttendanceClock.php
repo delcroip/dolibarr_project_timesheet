@@ -119,7 +119,7 @@ foreach($headers as $key => $value) {
     if(count($headers) == 1) {
            $html .= 'colspan = "2" ';
     }
-    $html .= "> <a onclick=\"sortTable('chronoTable','col{$value}','asc');\">".$langs->trans($value)."</a></th>\n";
+    $html .= "> <a onclick=\"sortTable('chronoTable', 'col{$value}', 'asc');\">".$langs->trans($value)."</a></th>\n";
 }
 $html .= "<th>".$langs->trans("Action")."</th></tr>";
 // show the filter

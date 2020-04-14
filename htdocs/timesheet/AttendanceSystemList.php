@@ -72,17 +72,17 @@ $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"])
 if(!$removefilter) {
     // Both test must be present to be compatible with all browsers {
     $ls_label = GETPOST('ls_label', 'alpha');
-    $ls_ip= GETPOST('ls_ip','alpha');
-    $ls_port= GETPOST('ls_port','int');
-    $ls_note= GETPOST('ls_note','alpha');
-    $ls_third_party= GETPOST('ls_third_party','int');
-    $ls_task= GETPOST('ls_task','int');
-    $ls_project= GETPOST('ls_project','int');
-    $ls_serial_nb= GETPOST('ls_serial_nb','int');
-    $ls_zone= GETPOST('ls_zone','int');
-    $ls_passwd= GETPOST('ls_passwd','alpha');
-    $ls_status= GETPOST('ls_status','int');
-    $ls_mode= GETPOST('ls_mode','int');
+    $ls_ip = GETPOST('ls_ip', 'alpha');
+    $ls_port = GETPOST('ls_port', 'int');
+    $ls_note = GETPOST('ls_note', 'alpha');
+    $ls_third_party = GETPOST('ls_third_party', 'int');
+    $ls_task = GETPOST('ls_task', 'int');
+    $ls_project = GETPOST('ls_project', 'int');
+    $ls_serial_nb = GETPOST('ls_serial_nb', 'int');
+    $ls_zone = GETPOST('ls_zone', 'int');
+    $ls_passwd = GETPOST('ls_passwd', 'alpha');
+    $ls_status = GETPOST('ls_status', 'int');
+    $ls_mode = GETPOST('ls_mode', 'int');
 }
 $page = GETPOST('page', 'int');
 if($page <= 0){
@@ -177,23 +177,23 @@ jQuery(document).ready(function()
 });
 </script>';*/
     $sql = 'SELECT';
-    $sql.= ' t.rowid, ';
-    $sql.=' t.label,';
-    $sql.=' t.ip,';
-    $sql.=' t.port,';
-    $sql.=' t.note,';
-    $sql.=' t.fk_third_party,';
-    $sql.=' t.fk_task,';
-    $sql.=' t.fk_project,';
-    $sql.=' t.serial_nb,';
-    $sql.=' t.zone,';
-    $sql.=' t.passwd,';
-    $sql.=' t.status,';
-    $sql.=' t.mode';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_system as t';
+    $sql .= ' t.rowid, ';
+    $sql .= ' t.label,';
+    $sql .= ' t.ip,';
+    $sql .= ' t.port,';
+    $sql .= ' t.note,';
+    $sql .= ' t.fk_third_party,';
+    $sql .= ' t.fk_task,';
+    $sql .= ' t.fk_project,';
+    $sql .= ' t.serial_nb,';
+    $sql .= ' t.zone,';
+    $sql .= ' t.passwd,';
+    $sql .= ' t.status,';
+    $sql .= ' t.mode';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'attendance_system as t';
     $sqlwhere = '';
     if(isset($object->entity))
-        $sqlwhere.= ' AND t.entity = '.$conf->entity;
+        $sqlwhere .= ' AND t.entity = '.$conf->entity;
     if($filter && $filter != -1) {
         // GETPOST('filtre') may be a string {
         $filtrearr = explode(', ', $filter);
@@ -228,12 +228,12 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
     if(!empty($sortfield)) {
-        $sql.= $db->order($sortfield, $sortorder);
+        $sql .= $db->order($sortfield, $sortorder);
     } else{
         $sortorder = 'ASC';
     }
     if(!empty($limit)) {
-            $sql.= $db->plimit($limit+1, $offset);
+            $sql .= $db->plimit($limit+1, $offset);
     }
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
@@ -243,17 +243,17 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         if(! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
         if($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
          if(!empty($ls_label))        $param .= '&ls_label='.urlencode($ls_label);
-         if (!empty($ls_ip))	$param.='&ls_ip='.urlencode($ls_ip);
-         if (!empty($ls_port))	$param.='&ls_port='.urlencode($ls_port);
-         if (!empty($ls_note))	$param.='&ls_note='.urlencode($ls_note);
-         if (!empty($ls_third_party))	$param.='&ls_third_party='.urlencode($ls_third_party);
-         if (!empty($ls_task))	$param.='&ls_task='.urlencode($ls_task);
-         if (!empty($ls_project))	$param.='&ls_project='.urlencode($ls_project);
-         if (!empty($ls_serial_nb))	$param.='&ls_serial_nb='.urlencode($ls_serial_nb);
-         if (!empty($ls_zone))	$param.='&ls_zone='.urlencode($ls_zone);
-         if (!empty($ls_passwd))	$param.='&ls_passwd='.urlencode($ls_passwd);
-         if (!empty($ls_status))	$param.='&ls_status='.urlencode($ls_status);
-         if (!empty($ls_mode))	$param.='&ls_mode='.urlencode($ls_mode);
+         if (!empty($ls_ip))	$param .= '&ls_ip='.urlencode($ls_ip);
+         if (!empty($ls_port))	$param .= '&ls_port='.urlencode($ls_port);
+         if (!empty($ls_note))	$param .= '&ls_note='.urlencode($ls_note);
+         if (!empty($ls_third_party))	$param .= '&ls_third_party='.urlencode($ls_third_party);
+         if (!empty($ls_task))	$param .= '&ls_task='.urlencode($ls_task);
+         if (!empty($ls_project))	$param .= '&ls_project='.urlencode($ls_project);
+         if (!empty($ls_serial_nb))	$param .= '&ls_serial_nb='.urlencode($ls_serial_nb);
+         if (!empty($ls_zone))	$param .= '&ls_zone='.urlencode($ls_zone);
+         if (!empty($ls_passwd))	$param .= '&ls_passwd='.urlencode($ls_passwd);
+         if (!empty($ls_status))	$param .= '&ls_status='.urlencode($ls_status);
+         if (!empty($ls_mode))	$param .= '&ls_mode='.urlencode($ls_mode);
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
         print_barre_liste($langs->trans("AttendanceSystem"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
@@ -264,17 +264,17 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '<tr class = "liste_titre">';
          print_liste_field_titre($langs->trans('Label'), $PHP_SELF, 't.label', '', $param, '', $sortfield, $sortorder);
          print "\n";
-         print_liste_field_titre($langs->trans('Ip'),$PHP_SELF,'t.ip','',$param,'',$sortfield,$sortorder);
+         print_liste_field_titre($langs->trans('Ip'), $PHP_SELF, 't.ip','', $param,'', $sortfield, $sortorder);
          print "\n";
-         print_liste_field_titre($langs->trans('Thirdparty'),$PHP_SELF,'t.fk_third_party','',$param,'',$sortfield,$sortorder);
+         print_liste_field_titre($langs->trans('Thirdparty'), $PHP_SELF, 't.fk_third_party','', $param,'', $sortfield, $sortorder);
          print "\n";
-         print_liste_field_titre($langs->trans('Task'),$PHP_SELF,'t.fk_task','',$param,'',$sortfield,$sortorder);
+         print_liste_field_titre($langs->trans('Task'), $PHP_SELF, 't.fk_task','', $param,'', $sortfield, $sortorder);
          print "\n";
-         print_liste_field_titre($langs->trans('Project'),$PHP_SELF,'t.fk_project','',$param,'',$sortfield,$sortorder);
+         print_liste_field_titre($langs->trans('Project'), $PHP_SELF, 't.fk_project','', $param,'', $sortfield, $sortorder);
          print "\n";
-         print_liste_field_titre($langs->trans('Zone'),$PHP_SELF,'t.zone','',$param,'',$sortfield,$sortorder);
+         print_liste_field_titre($langs->trans('Zone'), $PHP_SELF, 't.zone','', $param,'', $sortfield, $sortorder);
          print "\n";
-         print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
+         print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status','', $param,'', $sortfield, $sortorder);
          print "\n";
         print '</tr>';
         //SEARCH FIELDS

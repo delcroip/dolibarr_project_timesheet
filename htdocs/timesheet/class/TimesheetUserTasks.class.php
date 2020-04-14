@@ -465,7 +465,7 @@ public function saveInSession()
  */
 public function fetchTaskTimesheet($userid = '')
 {
-    global $conf,$user;
+    global $conf, $user;
     $res = array();
     if($userid == '') {
         $userid = $this->userId;
@@ -771,7 +771,7 @@ public function getHTMLHeader()
         if(count($this->headers) == 1) {
                 $html .= 'colspan = "2" ';
         }
-        $html .= "> <a onclick=\"sortTable('timesheetTable_{$this->id}','col{$value}','asc');\">".$langs->trans($value)."</a></th>\n";
+        $html .= "> <a onclick=\"sortTable('timesheetTable_{$this->id}', 'col{$value}', 'asc');\">".$langs->trans($value)."</a></th>\n";
     }
     $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
     for ($i = 0;$i<$weeklength;$i++)

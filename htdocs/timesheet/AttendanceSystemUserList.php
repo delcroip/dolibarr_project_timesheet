@@ -25,17 +25,17 @@
  *					Initialy built by build_class_from_table on 2020-03-28 12:46
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
+//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
+//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');			// Do not check style html tag into posted data
+//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
+//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');			// If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
@@ -58,30 +58,30 @@ $PHP_SELF = $_SERVER['PHP_SELF'];
 $langs->load("attendancesystemuser@timesheet");
 
 // Get parameter
-$id			 = GETPOST('id','int');
-$ref = GETPOST('ref','alpha');
-$action		 = GETPOST('action','alpha');
+$id			 = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action		 = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
-$tms = GETPOST('tms','alpha');
+$tms = GETPOST('tms', 'alpha');
 //// Get parameters
-$sortfield = GETPOST('sortfield','alpha'); 
-$sortorder = GETPOST('sortorder','alpha')?GETPOST('sortorder','alpha'):'ASC';
+$sortfield = GETPOST('sortfield', 'alpha'); 
+$sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )		// Both test must be present to be compatible with all browsers
 {
-    	$ls_as_name = GETPOST('ls_as_name','alpha');
-	$ls_user = GETPOST('ls_user','int');
-	if($ls_user==-1)$ls_user = '';
-	$ls_as_uid = GETPOST('ls_as_uid','int');
-	$ls_rfid = GETPOST('ls_rfid','int');
-	$ls_role = GETPOST('ls_role','int');
-	$ls_passwd = GETPOST('ls_passwd','alpha');
-	$ls_data = GETPOST('ls_data','alpha');
-	$ls_status = GETPOST('ls_status','int');
-	$ls_mode = GETPOST('ls_mode','int');
+    	$ls_as_name = GETPOST('ls_as_name', 'alpha');
+	$ls_user = GETPOST('ls_user', 'int');
+	if($ls_user == -1)$ls_user = '';
+	$ls_as_uid = GETPOST('ls_as_uid', 'int');
+	$ls_rfid = GETPOST('ls_rfid', 'int');
+	$ls_role = GETPOST('ls_role', 'int');
+	$ls_passwd = GETPOST('ls_passwd', 'alpha');
+	$ls_data = GETPOST('ls_data', 'alpha');
+	$ls_status = GETPOST('ls_status', 'int');
+	$ls_mode = GETPOST('ls_mode', 'int');
 
     
 }
@@ -89,7 +89,7 @@ if (!$removefilter )		// Both test must be present to be compatible with all bro
 
 if ($page == -1 || !is_numeric($page))  { $page = 0; }
 if ($page == -1) { $page = 0; }
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -131,7 +131,7 @@ if(!empty($ref))
 {
     $object->ref = $ref; 
     $object->id = $id; 
-    $object->fetch($id,$ref);
+    $object->fetch($id, $ref);
     $ref = dol_sanitizeFileName($object->ref);
     
 }
@@ -157,13 +157,13 @@ $formproject = new FormProjets($db);
        else
        {
                // Delete NOK
-               if (! empty($object->errors)) setEventMessages(null,$object->errors,'errors');
-               else setEventMessage('RecordNotDeleted','errors');
+               if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+               else setEventMessage('RecordNotDeleted', 'errors');
        }
        break;
     case 'delete':
         if( $action == 'delete' && ($id>0 || $ref != "")){
-         $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'?action=confirm_delete&id='.$id,$langs->trans('DeleteAttendanceSystemUser'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm(dol_buildpath('/timesheet/AttendanceSystemUserCard.php',1).'?action=confirm_delete&id='.$id, $langs->trans('DeleteAttendanceSystemUser'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -176,7 +176,7 @@ $formproject = new FormProjets($db);
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','AttendanceSystemUser','');
+llxHeader('', 'AttendanceSystemUser','');
 print "<div> <!-- module body-->";
 
 $fuser = new User($db);
@@ -251,7 +251,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sqlcount);
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
-    if(!empty($sortfield)){$sql .= $db->order($sortfield,$sortorder);
+    if(!empty($sortfield)){$sql .= $db->order($sortfield, $sortorder);
     }else{ $sortorder = 'ASC';}
     
     if (!empty($limit))
@@ -268,41 +268,41 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         $param = '';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
         if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-        	if (!empty($ls_as_name))	$param .= '&ls_as_name = '.urlencode($ls_as_name);
-	if (!empty($ls_user))	$param .= '&ls_user = '.urlencode($ls_user);
-	if (!empty($ls_as_uid))	$param .= '&ls_as_uid = '.urlencode($ls_as_uid);
-	if (!empty($ls_rfid))	$param .= '&ls_rfid = '.urlencode($ls_rfid);
-	if (!empty($ls_role))	$param .= '&ls_role = '.urlencode($ls_role);
-	if (!empty($ls_passwd))	$param .= '&ls_passwd = '.urlencode($ls_passwd);
-	if (!empty($ls_data))	$param .= '&ls_data = '.urlencode($ls_data);
-	if (!empty($ls_status))	$param .= '&ls_status = '.urlencode($ls_status);
-	if (!empty($ls_mode))	$param .= '&ls_mode = '.urlencode($ls_mode);
+        	if (!empty($ls_as_name))	$param .= '&ls_as_name='.urlencode($ls_as_name);
+	if (!empty($ls_user))	$param .= '&ls_user='.urlencode($ls_user);
+	if (!empty($ls_as_uid))	$param .= '&ls_as_uid='.urlencode($ls_as_uid);
+	if (!empty($ls_rfid))	$param .= '&ls_rfid='.urlencode($ls_rfid);
+	if (!empty($ls_role))	$param .= '&ls_role='.urlencode($ls_role);
+	if (!empty($ls_passwd))	$param .= '&ls_passwd='.urlencode($ls_passwd);
+	if (!empty($ls_data))	$param .= '&ls_data='.urlencode($ls_data);
+	if (!empty($ls_status))	$param .= '&ls_status='.urlencode($ls_status);
+	if (!empty($ls_mode))	$param .= '&ls_mode='.urlencode($ls_mode);
 
         
         if ($filter && $filter != -1) $param .= '&filtre='.urlencode($filter);
         
         $num = $db->num_rows($resql);
         //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
-        print_barre_liste($langs->trans("AttendanceSystemUser"),$page,$PHP_SELF,$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+        print_barre_liste($langs->trans("AttendanceSystemUser"), $page, $PHP_SELF, $param, $sortfield, $sortorder,'', $num, $nbtotalofrecords);
         print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
         print '<form method = "POST" action = "'.$_SERVER["PHP_SELF"].'">';
         print '<table class = "liste" width = "100%">'."\n";
         //TITLE
         print '<tr class = "liste_titre">';
-        	print_liste_field_titre($langs->trans('Asname'),$PHP_SELF,'t.as_name','',$param,'',$sortfield,$sortorder);
+        	print_liste_field_titre($langs->trans('Asname'), $PHP_SELF, 't.as_name','', $param,'', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('User'),$PHP_SELF,'t.fk_user','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('User'), $PHP_SELF, 't.fk_user','', $param,'', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Asuid'),$PHP_SELF,'t.as_uid','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Asuid'), $PHP_SELF, 't.as_uid','', $param,'', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Rfid'),$PHP_SELF,'t.rfid','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Rfid'), $PHP_SELF, 't.rfid','', $param,'', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Role'),$PHP_SELF,'t.role','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Role'), $PHP_SELF, 't.role','', $param,'', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Status'),$PHP_SELF,'t.status','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Status'), $PHP_SELF, 't.status','', $param,'', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Mode'),$PHP_SELF,'t.mode','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Mode'), $PHP_SELF, 't.mode','', $param,'', $sortfield, $sortorder);
 	print "\n";
 
         
@@ -317,7 +317,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '<td class="liste_titre" colspan="1" >';
     $selected = $ls_user;
     $htmlname = 'ls_user';
-    print $form->select_dolusers($selected,$htmlname);
+    print $form->select_dolusers($selected, $htmlname);
 	print '</td>';
 //Search field foras_uid
 	print '<td class="liste_titre" colspan="1" >';
@@ -344,8 +344,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         
         
         print '<td width = "15px">';
-        print '<input type = "image" class = "liste_titre" name = "search" src = "'.img_picto($langs->trans("Search"),'search.png','','',1).'" value = "'.dol_escape_htmltag($langs->trans("Search")).'" title = "'.dol_escape_htmltag($langs->trans("Search")).'">';
-        print '<input type = "image" class = "liste_titre" name = "removefilter" src = "'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value = "'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title = "'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+        print '<input type = "image" class = "liste_titre" name = "search" src = "'.img_picto($langs->trans("Search"), 'search.png','','',1).'" value = "'.dol_escape_htmltag($langs->trans("Search")).'" title = "'.dol_escape_htmltag($langs->trans("Search")).'">';
+        print '<input type = "image" class = "liste_titre" name = "removefilter" src = "'.img_picto($langs->trans("Search"), 'searchclear.png','','',1).'" value = "'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title = "'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
         print '</td>';
         print '</tr>'."\n"; 
         $i = 0;

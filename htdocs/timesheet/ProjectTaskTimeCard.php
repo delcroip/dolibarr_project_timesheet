@@ -25,17 +25,17 @@
  *                    Initialy built by build_class_from_table on 2019-07-03 22:42
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');            // Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK','1');            // Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');        // Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');            // If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');            // If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');                // If this page is public (can be called outside logged session)
+//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');            // Do not check anti CSRF attack test
+//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1');            // Do not check style html tag into posted data
+//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');        // Do not check anti POST attack test
+//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');            // If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');            // If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+//if (! defined("NOLOGIN"))        define("NOLOGIN", '1');                // If this page is public (can be called outside logged session)
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
@@ -72,27 +72,27 @@ $tms = GETPOST('tms', 'alpha');
 //// Get parameters
 /*
 $sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder','alpha'):'ASC';
+$sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
 $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"]);
 //$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if (!$removefilter )        // Both test must be present to be compatible with all browsers
 {
-        $ls_task = GETPOST('ls_task','int');
-    $ls_task_date_month = GETPOST('ls_task_date_month','int');
-    $ls_task_date_year = GETPOST('ls_task_date_year','int');
-    $ls_task_datehour_month = GETPOST('ls_task_datehour_month','int');
-    $ls_task_datehour_year = GETPOST('ls_task_datehour_year','int');
-    $ls_task_date_withhour = GETPOST('ls_task_date_withhour','int');
-    $ls_task_duration = GETPOST('ls_task_duration','int');
-    $ls_user = GETPOST('ls_user','int');
+        $ls_task = GETPOST('ls_task', 'int');
+    $ls_task_date_month = GETPOST('ls_task_date_month', 'int');
+    $ls_task_date_year = GETPOST('ls_task_date_year', 'int');
+    $ls_task_datehour_month = GETPOST('ls_task_datehour_month', 'int');
+    $ls_task_datehour_year = GETPOST('ls_task_datehour_year', 'int');
+    $ls_task_date_withhour = GETPOST('ls_task_date_withhour', 'int');
+    $ls_task_duration = GETPOST('ls_task_duration', 'int');
+    $ls_user = GETPOST('ls_user', 'int');
     if($ls_user == -1)$ls_user = '';
-    $ls_thm = GETPOST('ls_thm','int');
-    $ls_note = GETPOST('ls_note','alpha');
-    $ls_invoice_id = GETPOST('ls_invoice_id','int');
-    $ls_invoice_line_id = GETPOST('ls_invoice_line_id','int');
-    $ls_import_key = GETPOST('ls_import_key','alpha');
-    $ls_status = GETPOST('ls_status','int');
-    $ls_task_time_approval = GETPOST('ls_task_time_approval','int');
+    $ls_thm = GETPOST('ls_thm', 'int');
+    $ls_note = GETPOST('ls_note', 'alpha');
+    $ls_invoice_id = GETPOST('ls_invoice_id', 'int');
+    $ls_invoice_line_id = GETPOST('ls_invoice_line_id', 'int');
+    $ls_import_key = GETPOST('ls_import_key', 'alpha');
+    $ls_status = GETPOST('ls_status', 'int');
+    $ls_task_time_approval = GETPOST('ls_task_time_approval', 'int');
 
 
 }
@@ -151,7 +151,7 @@ if(!empty($ref))
 // Action to add record
 $error = 0;
 if ($cancel){
-//        ProjettasktimeReloadPage($backtopage,$id,$ref);
+//        ProjettasktimeReloadPage($backtopage, $id, $ref);
 }elseif (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref))))
 {
     //block resubmit
@@ -236,7 +236,7 @@ switch($action){
             // remove the tms
                unset($_SESSION['Projettasktime'][$tms]);
                setEventMessage('RecordSucessfullyCreated', 'mesgs');
-             //  ProjettasktimeReloadPage($backtopage,$result,'');
+             //  ProjettasktimeReloadPage($backtopage, $result,'');
         }else
         {
                 // Creation KO

@@ -231,17 +231,17 @@ $liste = $objmodelexport->liste_modeles($db);
 $listeall = $liste;
 foreach($listeall as $key => $val)
 {
-    if (preg_match('/__\(Disabled\)__/',$listeall[$key]))
+    if (preg_match('/__\(Disabled\)__/', $listeall[$key]))
     {
-        $listeall[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$listeall[$key]);
+        $listeall[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')', $listeall[$key]);
         unset($liste[$key]);
     }
 
     print '<tr class="oddeven">';
-    print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';
+    print '<td width="16">'.img_picto_common($key, $objmodelexport->getPictoForKey($key)).' ';
     $text = $objmodelexport->getDriverDescForKey($key);
     $label = $listeall[$key];
-    print $form->textwithpicto($label,$text).'</td>';
+    print $form->textwithpicto($label, $text).'</td>';
     print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
     print '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
     print '</tr>'."\n";

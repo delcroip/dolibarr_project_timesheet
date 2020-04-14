@@ -60,9 +60,9 @@ $PHP_SELF = $_SERVER['PHP_SELF'];
 		//$langs->load("companies");
 $langs->load("AttendanceSystem@timesheet");
 		// Get parameter
-$id                         = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action                 = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
@@ -75,17 +75,17 @@ $removefilter = isset($_POST["removefilter_x"]) || isset($_POST["removefilter"])
 		//$applyfilter = isset($_POST["search_x"]) ;//|| isset($_POST["search"]);
 if(!$removefilter)                // Both test must be present to be compatible with all browsers {
         $ls_label = GETPOST('ls_label', 'alpha');
-        $ls_ip= GETPOST('ls_ip','alpha');
-        $ls_port= GETPOST('ls_port','int');
-        $ls_note= GETPOST('ls_note','alpha');
-        $ls_third_party= GETPOST('ls_third_party','int');
-        $ls_task= GETPOST('ls_task','int');
-        $ls_project= GETPOST('ls_project','int');
-        $ls_serial_nb= GETPOST('ls_serial_nb','int');
-        $ls_zone= GETPOST('ls_zone','int');
-        $ls_passwd= GETPOST('ls_passwd','alpha');
-        $ls_status= GETPOST('ls_status','int');
-        $ls_mode= GETPOST('ls_mode','int');
+        $ls_ip = GETPOST('ls_ip', 'alpha');
+        $ls_port = GETPOST('ls_port', 'int');
+        $ls_note = GETPOST('ls_note', 'alpha');
+        $ls_third_party = GETPOST('ls_third_party', 'int');
+        $ls_task = GETPOST('ls_task', 'int');
+        $ls_project = GETPOST('ls_project', 'int');
+        $ls_serial_nb = GETPOST('ls_serial_nb', 'int');
+        $ls_zone = GETPOST('ls_zone', 'int');
+        $ls_passwd = GETPOST('ls_passwd', 'alpha');
+        $ls_status = GETPOST('ls_status', 'int');
+        $ls_mode = GETPOST('ls_mode', 'int');
 }
 */
  // uncomment to avoid resubmision
@@ -228,7 +228,7 @@ switch($action) {
             //var_dump($result);
             if($result > 0) {
                 // get user  OK
-                $result2=$object->loadAttendanceUserFromArray( $result);
+                $result2 = $object->loadAttendanceUserFromArray( $result);
                 if($result2 > 0) {
                     setEventMessage($langs->trans('UserRetrieved'), 'mesgs');
                 }else{
@@ -244,7 +244,7 @@ switch($action) {
          case 'get_time':
             $result = $object->importEvent($user);
             if($result > 0) {
-                $result2=loadAttendanceUserEventFromArray($object->ip, $object->third_party,$object->project,$object->task,$result);
+                $result2 = loadAttendanceUserEventFromArray($object->ip, $object->third_party, $object->project, $object->task, $result);
                 if($result2 > 0) {
                     setEventMessage($langs->trans('EventRetrieved'), 'mesgs');
                 }else{
@@ -495,8 +495,8 @@ switch($action) {
 
 	print "<tr>\n";
 	print '<td>'.$langs->trans('Mode').' </td><td>';
-	if($edit==1){
-		if ($new==1)
+	if($edit == 1){
+		if ($new == 1)
 			print '<input type="text" value="1" name="Mode">';
 		else
 			print '<input type="text" value="'.$object->mode.'" name="Mode">';

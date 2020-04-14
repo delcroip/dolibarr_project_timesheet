@@ -69,7 +69,7 @@ class TimesheetReport
      */
     public function initBasic($projectid, $userid, $name, $startDate, $stopDate, $mode, $invoiceableOnly = '0', $taskarray = null)
     {
-        global  $conf,$user,$langs;
+        global  $conf, $user, $langs;
         if($userid && !$user->admin && empty($projectid)){
             // FIXME check is the $use is a N+1 or specific rights
         } elseif($projectid && !$user->admin){
@@ -465,7 +465,7 @@ class TimesheetReport
                 return -1;
             }
         }
-        global $conf,$langs,$user;
+        global $conf, $langs, $user;
         $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
         $file = "export_".$model.".modules.php";
         $classname = "Export".ucfirst($model);

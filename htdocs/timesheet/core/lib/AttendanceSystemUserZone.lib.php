@@ -25,7 +25,7 @@
  *					Initialy built by build_class_from_table on 2020-01-25 21:52
  */
 
-function AttendancesystemuserzoneReloadPage($backtopage,$id,$ref){
+function AttendancesystemuserzoneReloadPage($backtopage, $id, $ref){
         if (!empty($backtopage)){
             header("Location: ".$backtopage);            
         }else if (!empty($ref) ){
@@ -74,7 +74,7 @@ function AttendancesystemuserzonePrepareHead($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->timesheet->dir_output . "/Attendancesystemuserzone/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir, 'files',0,'','(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = dol_buildpath("/timesheet/AttendanceSystemUserZone_document.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');

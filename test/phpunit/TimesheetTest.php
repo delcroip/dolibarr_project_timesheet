@@ -20,8 +20,8 @@
  *      \brief      PHPUnit test
  *                \remarks        To run this script as CLI:  phpunit filename.php
  */
-global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');        // This is to force using mysql driver
+global $conf, $user, $langs, $db;
+//define('TEST_DB_FORCE_TYPE', 'mysql');        // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/timesheet/class/TimesheetUserTasks.class.php';
@@ -54,7 +54,7 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
         {
                 parent::__construct();
                 //$this->sharedFixture
-                global $conf,$user,$langs,$db;
+                global $conf, $user, $langs, $db;
                 $this->savconf=$conf;
                 $this->savuser=$user;
                 $this->savlangs=$langs;
@@ -66,14 +66,14 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
         // Static methods
     public static function setUpBeforeClass()
     {
-        global $conf,$user,$langs,$db;
+        global $conf, $user, $langs, $db;
                 $db->begin();        // This is to have all actions inside a transaction even if test launched without suite.
         print __METHOD__."\n";
     }
     // tear down after class
     public static function tearDownAfterClass()
     {
-        global $conf,$user,$langs,$db;
+        global $conf, $user, $langs, $db;
                 $db->rollback();
                 print __METHOD__."\n";
     }
@@ -84,7 +84,7 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
          */
     protected function setUp()
     {
-        global $conf,$user,$langs,$db;
+        global $conf, $user, $langs, $db;
                 $conf = $this->savconf;
                 $user = $this->savuser;
                 $langs = $this->savlangs;
@@ -108,7 +108,7 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
      */
     public function testTimesheetUserTasksCreate()
     {
-        global $conf,$user,$langs,$db;
+        global $conf, $user, $langs, $db;
                 $conf = $this->savconf;
                 $user = $this->savuser;
                 $langs = $this->savlangs;
@@ -132,7 +132,7 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
      */
     public function testTimesheetUserTasksFetch($id)
     {
-        global $conf,$user,$langs,$db;
+        global $conf, $user, $langs, $db;
                 $conf = $this->savconf;
                 $user = $this->savuser;
                 $langs = $this->savlangs;
@@ -154,7 +154,7 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
      */
     public function testTimesheetUserTasksValid($localobject)
     {
-        global $conf,$user,$langs,$db;
+        global $conf, $user, $langs, $db;
                 $conf = $this->savconf;
                 $user = $this->savuser;
                 $langs = $this->savlangs;
@@ -175,7 +175,7 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
      */
     public function testTimesheetUserTasksOther($localobject)
     {
-        global $conf,$user,$langs,$db;
+        global $conf, $user, $langs, $db;
         $conf = $this->savconf;
         $user = $this->savuser;
         $langs = $this->savlangs;
@@ -196,7 +196,7 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
      */
     public function testTimesheetUserTasksDelete($id)
     {
-        global $conf,$user,$langs,$db;
+        global $conf, $user, $langs, $db;
                 $conf = $this->savconf;
                 $user = $this->savuser;
                 $langs = $this->savlangs;

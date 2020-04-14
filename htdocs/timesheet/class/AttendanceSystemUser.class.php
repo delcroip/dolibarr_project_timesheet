@@ -150,7 +150,7 @@ class AttendanceSystemUser extends CommonObject
                 // want this action calls a trigger.
 
                 //// Call triggers
-                //$result = $this->call_trigger('MYOBJECT_CREATE',$user);
+                //$result = $this->call_trigger('MYOBJECT_CREATE', $user);
                 //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
                 //// End call triggers
                 }
@@ -183,7 +183,7 @@ class AttendanceSystemUser extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$ref = '')
+    function fetch($id, $ref = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -297,7 +297,7 @@ class AttendanceSystemUser extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result = $this->call_trigger('MYOBJECT_MODIFY',$user);
+            //$result = $this->call_trigger('MYOBJECT_MODIFY', $user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
@@ -330,7 +330,7 @@ class AttendanceSystemUser extends CommonObject
      *	@param		int			$id                     Object ID
      *	@return		string						String with URL
      */
-    function getNomUrl($withpicto = 1,$id = 0)
+    function getNomUrl($withpicto = 1, $id = 0)
     {
 	global $conf, $langs;
 
@@ -384,9 +384,9 @@ class AttendanceSystemUser extends CommonObject
         
         
     	if ($withpicto == 1){ 
-            $result .= ($lien.img_object('',$picto).$label.$lienfin);
+            $result .= ($lien.img_object('', $picto).$label.$lienfin);
         }else if ($withpicto == 2) {
-            $result .= $lien.img_object($label,$picto).$lienfin;
+            $result .= $lien.img_object($label, $picto).$lienfin;
         }else{  
             $result .= $lien.$label.$lienfin;
         }
@@ -398,10 +398,10 @@ class AttendanceSystemUser extends CommonObject
 	 *  @param	object 		$form          form object that should be created	
       *  *  @return	string 			       html code to select status
 	 */
-	function selectLibStatut($form,$htmlname = 'Status')
+	function selectLibStatut($form, $htmlname = 'Status')
 	{
-            global $AttendanceSystemUserStatusPictoArray,$AttendanceSystemUserStatusArray;
-            return $form->selectarray($htmlname,$AttendanceSystemUserStatusArray,$this->status);
+            global $AttendanceSystemUserStatusPictoArray, $AttendanceSystemUserStatusArray;
+            return $form->selectarray($htmlname, $AttendanceSystemUserStatusArray, $this->status);
 	}   
     /**
 	 *  Retourne le libelle du status (actif, inactif)
@@ -411,7 +411,7 @@ class AttendanceSystemUser extends CommonObject
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 	/**
 	 *  Return the status
@@ -420,9 +420,9 @@ class AttendanceSystemUser extends CommonObject
 	 *  @param  int		$mode          	0 = long label, 1 = short label, 2 = Picto + short label, 3 = Picto, 4 = Picto + long label, 5 = Short label + Picto, 6 = Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode = 0)
+	static function LibStatut($status, $mode = 0)
 	{
-		global $langs,$AttendanceSystemUserStatusPictoArray,$AttendanceSystemUserStatusArray;
+		global $langs, $AttendanceSystemUserStatusPictoArray, $AttendanceSystemUserStatusArray;
 		if ($mode == 0)
 		{
 			$prefix = '';
@@ -434,23 +434,23 @@ class AttendanceSystemUser extends CommonObject
 		}
 		if ($mode == 2)
 		{
-			 return img_picto($AttendanceSystemUserStatusArray[$status],$AttendanceSystemUserStatusPictoArray[$status]).' '.$langs->trans($AttendanceSystemUserStatusArray[$status]);
+			 return img_picto($AttendanceSystemUserStatusArray[$status], $AttendanceSystemUserStatusPictoArray[$status]).' '.$langs->trans($AttendanceSystemUserStatusArray[$status]);
 		}
 		if ($mode == 3)
 		{
-			 return img_picto($AttendanceSystemUserStatusArray[$status],$AttendanceSystemUserStatusPictoArray[$status]);
+			 return img_picto($AttendanceSystemUserStatusArray[$status], $AttendanceSystemUserStatusPictoArray[$status]);
 		}
 		if ($mode == 4)
 		{
-			 return img_picto($AttendanceSystemUserStatusArray[$status],$AttendanceSystemUserStatusPictoArray[$status]).' '.$langs->trans($AttendanceSystemUserStatusArray[$status]);
+			 return img_picto($AttendanceSystemUserStatusArray[$status], $AttendanceSystemUserStatusPictoArray[$status]).' '.$langs->trans($AttendanceSystemUserStatusArray[$status]);
 		}
 		if ($mode == 5)
 		{
-			 return $langs->trans($AttendanceSystemUserStatusArray[$status]).' '.img_picto($AttendanceSystemUserStatusArray[$status],$AttendanceSystemUserStatusPictoArray[$status]);
+			 return $langs->trans($AttendanceSystemUserStatusArray[$status]).' '.img_picto($AttendanceSystemUserStatusArray[$status], $AttendanceSystemUserStatusPictoArray[$status]);
 		}
 		if ($mode == 6)
 		{
-			 return $langs->trans($AttendanceSystemUserStatusArray[$status]).' '.img_picto($AttendanceSystemUserStatusArray[$status],$AttendanceSystemUserStatusPictoArray[$status]);
+			 return $langs->trans($AttendanceSystemUserStatusArray[$status]).' '.img_picto($AttendanceSystemUserStatusArray[$status], $AttendanceSystemUserStatusPictoArray[$status]);
 		}
 	}
 
@@ -473,7 +473,7 @@ class AttendanceSystemUser extends CommonObject
         // Uncomment this and change MYOBJECT to your own tag if you
         // want this action calls a trigger.
         //// Call triggers
-        //$result = $this->call_trigger('MYOBJECT_DELETE',$user);
+        //$result = $this->call_trigger('MYOBJECT_DELETE', $user);
         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
         //// End call triggers
             }
@@ -518,7 +518,7 @@ class AttendanceSystemUser extends CommonObject
      */
     function createFromClone($fromid)
     {
-        global $user,$langs;
+        global $user, $langs;
         $error = 0;
         $object = new AttendanceSystemUser($this->db);
         $this->db->begin();
@@ -664,7 +664,7 @@ class AttendanceSystemUser extends CommonObject
      * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */    
-       public function unserialize($str,$mode = 0){
+       public function unserialize($str, $mode = 0){
        $ret = '';
        $array = array();
         switch($mode)

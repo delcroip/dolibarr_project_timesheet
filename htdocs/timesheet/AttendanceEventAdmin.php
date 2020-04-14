@@ -61,9 +61,9 @@ $PHP_SELF = $_SERVER['PHP_SELF'];
 //$langs->load("companies");
 //$langs->load("attendance@timesheet");
 // Get parameter
-$id                         = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action                 = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
@@ -218,7 +218,7 @@ jQuery(document).ready(function()
 });
 </script>';*/
     $sql = 'SELECT';
-    $sql.= ' t.rowid, ';
+    $sql .= ' t.rowid, ';
     $sql .= ' t.date_time_event, ';
     $sql .= ' t.event_location_ref, ';
     $sql .= ' t.event_type, ';
@@ -229,12 +229,12 @@ jQuery(document).ready(function()
     $sql .= ' t.fk_project, ';
     $sql .= ' t.token, ';
     $sql .= '  st.date_time_event  as date_time_event_start ';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'attendance_event as t';
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."attendance_event as st ON t.token = st.token AND ABS(st.event_type)=2";
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'attendance_event as t';
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."attendance_event as st ON t.token = st.token AND ABS(st.event_type)=2";
 
     $sqlwhere = '';
     if(isset($object->entity))
-        $sqlwhere.= ' AND t.entity = '.$conf->entity;
+        $sqlwhere .= ' AND t.entity = '.$conf->entity;
     if($filter && $filter != -1) {
         // GETPOST('filtre') may be a string {
             $filtrearr = explode(', ', $filter);
@@ -268,12 +268,12 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
 }
     if(!empty($sortfield)) {
-        $sql.= $db->order($sortfield, $sortorder);
+        $sql .= $db->order($sortfield, $sortorder);
     } else{
        $sql .= ' ORDER BY t.date_time_event DESC';
     }
     if(!empty($limit)) {
-            $sql.= $db->plimit($limit+1, $offset);
+            $sql .= $db->plimit($limit+1, $offset);
     }
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
@@ -476,7 +476,7 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
                 //print "<td>".print_generic('projet_task', 'rowid', $obj->fk_task, 'ref', 'label')."</td>";
                 //print "<td>".print_generic('projet', 'rowid', $obj->fk_project, 'ref', 'title')."</td>";
                 print "<td>".$obj->token."</td>";
-                $duration=($obj->date_time_event_start<>"")?$db->jdate($obj->date_time_event)-$db->jdate($obj->date_time_event_start):'';
+                $duration = ($obj->date_time_event_start <> "")?$db->jdate($obj->date_time_event)-$db->jdate($obj->date_time_event_start):'';
                 print "<td>".formatTime($duration, 0)."</td>";
                 print '<td><a href = "AttendanceEventAdmin.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
                 print "</tr>";
