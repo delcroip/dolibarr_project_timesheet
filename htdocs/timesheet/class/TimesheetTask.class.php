@@ -539,7 +539,7 @@ class TimesheetTask extends Task
         $dayelapsed = getDayInterval($timeStart, $timeEnd);
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, DATE(ptt.task_datehour) AS task_date, ptt.note";
-        if(version_compare(DOL_VERSION, "4.9.9")>=0) {
+        if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
             $sql .= ', (ptt.invoice_id > 0)  AS invoiced';
         }else{
             $sql .= ', 0 AS invoiced';
@@ -551,7 +551,7 @@ class TimesheetTask extends Task
         } else {
             $sql .= " ptt.fk_task = '".$this->id."' ";
             $sql .= " AND (ptt.fk_user = '".$userid."') ";
-            $sql .= " AND (DATE(ptt.task_datehour)>='".$this->db->idate($timeStart)."') ";
+            $sql .= " AND (DATE(ptt.task_datehour) >= '".$this->db->idate($timeStart)."') ";
             $sql .= " AND (DATE(ptt.task_datehour)<'".$this->db->idate($timeEnd)."')";
         }
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1187,14 +1187,14 @@ class TimesheetTask extends Task
                 if($item['duration']!=$duration || $daynote!=$item['note']) {
                     if($this->timespent_duration>0 || !empty($daynote)) {
                         dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
-                        if($this->updateTimeSpent($Submitter, 0)>=0) {
+                        if($this->updateTimeSpent($Submitter, 0) >= 0) {
                             $resArray['timeSpendModified']++;
                         } else {
                             $resArray['updateError']++;
                         }
                     } else {
                         dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
-                        if($this->delTimeSpent($Submitter, 0)>=0) {
+                        if($this->delTimeSpent($Submitter, 0) >= 0) {
                             $resArray['timeSpendDeleted']++;
                             $this->tasklist[$dayKey]['id'] = 0;
                         } else {
@@ -1206,7 +1206,7 @@ class TimesheetTask extends Task
                 $this->timespent_note = $daynote;
                 $this->timespent_duration = $duration;
                 $newId = $this->addTimeSpent($Submitter, 0);
-                if($newId>=0) {
+                if($newId >= 0) {
                     $resArray['timeSpendCreated']++;
                     $this->tasklist[$dayKey]['id'] = $newId;
                 } else {

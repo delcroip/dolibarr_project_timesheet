@@ -215,7 +215,7 @@ class ZKLibrary
     private function reverseHex($input)
     {
         $output = '';
-        for($i = strlen($input);$i>=0;$i--)
+        for($i = strlen($input);$i >= 0;$i--)
         {
             $output .= substr($input, $i, 2);
             $i--;
@@ -957,7 +957,7 @@ class ZKLibrary
             $template[$j] = $this->getUserTemplate($uid, $i);
             if($template[$j] == array() )unset($template[$j]);
         }
-        for($i = 4;$i>=0;$i--, $j++)
+        for($i = 4;$i >= 0;$i--, $j++)
         {
             $template[$j] = $this->getUserTemplate($uid, $i);
             if($template[$j] == array() )unset($template[$j]);

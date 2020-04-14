@@ -668,7 +668,7 @@ public $date_time_event_start;
         $this->fetch('', $user);
         $tokenDb = $this->token;
         if((empty($tokenJson) && empty($tokenDb))||
-                (!empty($tokenDb) && $this->event_type>=EVENT_STOP))
+                (!empty($tokenDb) && $this->event_type >= EVENT_STOP))
         {
             //00
             $this->initAsSpecimen();
@@ -791,10 +791,10 @@ public function createTimeSpend($user, $token = '')
     if($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
         $sql .= ' AND prj.fk_statut>\'0\' ';
     }
-    $sql .= ' AND (prj.datee>=\''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
-    $sql .= ' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
-    $sql .= ' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
-    $sql .= ' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
+    $sql .= ' AND (prj.datee >= \''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
+    $sql .= ' AND (prj.dateo <= \''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
+    $sql .= ' AND (tsk.datee >= \''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
+    $sql .= ' AND (tsk.dateo <= \''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
     $sql .= '  ORDER BY prj.fk_soc, prj.ref, tsk.ref ';
     dol_syslog(__METHOD__, LOG_DEBUG);
     $resql = $this->db->query($sql);

@@ -500,10 +500,10 @@ public function fetchTaskTimesheet($userid = '')
     if($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
          $sql .= ' AND prj.fk_statut>\'0\' ';
     }
-    $sql .= ' AND (prj.datee>=\''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
-    $sql .= ' AND (prj.dateo<=\''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
-    $sql .= ' AND (tsk.datee>=\''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
-    $sql .= ' AND (tsk.dateo<=\''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
+    $sql .= ' AND (prj.datee >= \''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
+    $sql .= ' AND (prj.dateo <= \''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
+    $sql .= ' AND (tsk.datee >= \''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
+    $sql .= ' AND (tsk.dateo <= \''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
     if( !$user->admin && $userid != $user->id && !in_array($userid, $user->getAllChildIds())){
         $sql .= " AND ((tsk.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1') WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project_task' AND element_id = tsk.rowid ))";
         $sql .= " OR (prj.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1') WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project'  AND element_id = prj.rowid )))";
@@ -628,7 +628,7 @@ public function getUserName()
  */
 public function updateStatus($user, $status = 0)
 {
-    if($this->id<=0)return -1;
+    if($this->id <= 0)return -1;
     if($status!='') {
         if($status<0 || $status> STATUSMAX)return -1;// status not valid
         $updatedStatus = $status;
@@ -689,7 +689,7 @@ Public function setStatus($user, $status, $id = 0)
     if($id!=0)$this->fetch($id);
     $this->status = $status;
     // Update request
-    $error = ($this->id<=0)?$this->create($user):$this->update($user);
+    $error = ($this->id <= 0)?$this->create($user):$this->update($user);
     if($error>0) {
         if($status == REJECTED)$this->sendRejectedReminders($user);
         if(count($this->taskTimesheet)<1) {

@@ -92,7 +92,7 @@ class pdf_rat extends ModelPDFTimesheetReport
  *
  *        @param        Project                $object                Object project a generer
  *        @param        Translate        $outputlangs        Lang output object
- *        @return        int                                  1 if OK, <=0 if KO
+ *        @return        int                                  1 if OK, <= 0 if KO
  */
 public function writeFile($object, $outputlangs)
 {

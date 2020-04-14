@@ -231,7 +231,7 @@ switch($action) {
     case 'create':
     default:
         //document handling
-        if(version_compare(DOL_VERSION, "4.0")>=0) {
+        if(version_compare(DOL_VERSION, "4.0") >= 0) {
             include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
         } else{
             include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
@@ -364,7 +364,7 @@ switch($action) {
         if($edit == 1) {
             if(!empty($editedProject))$object->project = $editedProject;
             $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
-            /* $formUserWhere = ' (t.datee>=\''.$object->db->idate(time()).'\' OR t.datee IS NULL)';
+            /* $formUserWhere = ' (t.datee >= \''.$object->db->idate(time()).'\' OR t.datee IS NULL)';
            if(!$user->admin) {
 
                 $formUserJoin = ' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid = ec.element_id';
@@ -378,7 +378,7 @@ switch($action) {
             $htmlProjectArray = array('name'=>'Project', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
             $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);*/
-            //if($ajaxNbChar>=0) {
+            //if($ajaxNbChar >= 0) {
             //    print "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
             //}else{
             //}

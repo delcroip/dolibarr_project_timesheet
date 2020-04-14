@@ -110,14 +110,14 @@ $subId = ($user->admin)?'all':getSubordinates($db, $userId, 1, array($userId), $
 $tasks = implode(', ', array_keys(getTasks($db, $userId)));
 if($tasks == "")$tasks = 0;
 $selectList = getSelectAps($subId, $tasks, $role_key);
-if($current>=count($selectList))$current = 0;
+if($current >= count($selectList))$current = 0;
 // number of TS to show
 $level = intval(TIMESHEET_MAX_TTA_APPROVAL);
 //define the offset
 $offset = 0;
 /*
 if(is_array($selectList)&& count($selectList)) {
-        if($current>=count($selectList))$current = 0;
+        if($current >= count($selectList))$current = 0;
         $offset = 0;
         for($i = 0;$i<$current;$i++)
 {

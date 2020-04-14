@@ -101,7 +101,7 @@ if($action == 'submit') {
             if(($tsRejected+$tsApproved)>0) {
                 $current--;
             }
-            if($ret>=0) {
+            if($ret >= 0) {
                 if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").$tsApproved);
                 if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").$tsRejected);
                 if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").$errors);
@@ -128,7 +128,7 @@ $selectList = getSelectAps($subId);
 $level = intval($conf->global->TIMESHEET_MAX_APPROVAL);
 $offset = 0;
 if(is_array($selectList)&& count($selectList)) {
-    if($current>=count($selectList))$current = 0;
+    if($current >= count($selectList))$current = 0;
     $offset = 0;
     for($i = 0;$i<$current;$i++)
     {

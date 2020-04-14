@@ -45,7 +45,7 @@ class TimesheetHoliday extends Holiday
     }*/
     public function fetchUserWeek($userId, $datestart, $datestop)
     {
-        $SQLfilter = " AND (cp.date_fin>='".$this->db->idate($datestart)."') ";
+        $SQLfilter = " AND (cp.date_fin >= '".$this->db->idate($datestart)."') ";
         $SQLfilter .= " AND (cp.date_debut<'".$this->db->idate($datestop)."')";
         $ret = $this->fetchByUser($userId, '', $SQLfilter);
         $this->holidayPresent = ($ret == 1);
@@ -65,7 +65,7 @@ class TimesheetHoliday extends Holiday
                 $curDay = strtotime(' + '.$day.' days', $datestart);
                 $this->holidaylist[$day] = array('amId'=>'0', 'pmId'=>'0', 'prev'=>false, 'am'=>false, 'pm'=>false, 'next'=>false, 'amStatus'=>0, 'pmStatus'=>0);
                 foreach($this->holiday as $record) {
-                    if($record['date_debut']<=$curDay && $record['date_fin']>=$curDay) {
+                    if($record['date_debut'] <= $curDay && $record['date_fin'] >= $curDay) {
                      $prev = ($record['date_debut']<$curDay)?true:false;
                      $next = ($record['date_fin']>$curDay)?true:false;
                      $am = false;
@@ -91,9 +91,9 @@ class TimesheetHoliday extends Holiday
                      }
                      // in case of 2 holiday present in the half day order 3, 2, 1, 5, 4
                      $oldSatus = $this->holidaylist[$day]['amStatus'];
-                     $amOverride = ($this->holidaylist[$day]['amId'] == 0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3)));
+                     $amOverride = ($this->holidaylist[$day]['amId'] == 0) || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut'] <= 3 && ($record['statut']>$oldSatus || $oldSatus >3)));
                      $oldSatus = $this->holidaylist[$day]['amStatus'];
-                     $pmOverride = ($this->holidaylist[$day]['pmId'] == 0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut']<=3 && ($record['statut']>$oldSatus || $oldSatus >3)));
+                     $pmOverride = ($this->holidaylist[$day]['pmId'] == 0) ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)||($record['statut'] <= 3 && ($record['statut']>$oldSatus || $oldSatus >3)));
                      if($am && $amOverride) {
                          $this->holidaylist[$day]['am'] = true;
                          $this->holidaylist[$day]['amId'] = $record['rowid'];

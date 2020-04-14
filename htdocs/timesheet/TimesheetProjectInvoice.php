@@ -251,7 +251,7 @@ $langs->load('timesheet@timesheet');
                 }
                 // End of object creation, we show it
                 if(1) {
-                    if(version_compare(DOL_VERSION, "4.9.9")>=0) {
+                    if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
                         foreach($task_time_array AS $idLine => $task_time_list) {
                                 //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
                             Update_task_time_invoice($id, $idLine, $task_time_list);
@@ -314,7 +314,7 @@ $langs->load('timesheet@timesheet');
             $Form .= '<input type = "radio" name = "ts2Invoice" value = "all" ';
             $Form .= ($ts2Invoice == "all"?"checked":"").'> '.$langs->trans("All")."</th></tr>";
     // not alreqdy invoice
-            if(version_compare(DOL_VERSION, "4.9.9")>=0) {
+            if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
                     $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('TimesheetNotInvoiced');
                     $Form .= '</th><th align = "left"><input type = "checkbox" name = "tsNotInvoiced" value = "1" ></th></tr>';
             } else{
@@ -326,7 +326,7 @@ $langs->load('timesheet@timesheet');
             $Form .= '</table>';
             $Form .= '<input type = "submit" onclick = "return checkEmptyFormFields(event,\'settings\',\'';
             $Form .= $langs->trans("pleaseFillAll").'\')" class = "butAction" value = "'.$langs->trans('Next')."\">\n</from>";
-            if($ajaxNbChar>=0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
+            if($ajaxNbChar >= 0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
             break;
     }
 } else {
