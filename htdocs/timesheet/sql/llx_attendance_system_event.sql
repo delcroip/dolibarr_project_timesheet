@@ -29,6 +29,7 @@ fk_attendance_event integer  NULL, -- will be linked after parsing if the data q
 fk_user integer NULL, -- user when found upon upload to simplify parsing
 event_type              integer default 1,-- (1-->'heartbeat','sign-in','sign-out','access') DEFAULT 'heartbeat' depend on the attendance system,
 status               integer DEFAULT NULL,
+state               integer DEFAULT NULL,
 PRIMARY KEY (rowid)
 )
 ENGINE=innodb;

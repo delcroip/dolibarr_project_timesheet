@@ -135,7 +135,7 @@ class AttendanceSystemEvent extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result = $this->call_trigger('MYOBJECT_CREATE',$user);
+            //$result = $this->call_trigger('MYOBJECT_CREATE', $user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
@@ -167,7 +167,7 @@ class AttendanceSystemEvent extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$ref = '')
+    function fetch($id, $ref = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -247,7 +247,7 @@ class AttendanceSystemEvent extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result = $this->call_trigger('MYOBJECT_MODIFY',$user);
+            //$result = $this->call_trigger('MYOBJECT_MODIFY', $user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
@@ -334,9 +334,9 @@ class AttendanceSystemEvent extends CommonObject
         
         
     	if ($withpicto == 1){ 
-            $result .= ($lien.img_object($label,$picto).$htmlcontent.$lienfin);
+            $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
         }else if ($withpicto == 2) {
-            $result .= $lien.img_object($label,$picto).$lienfin;
+            $result .= $lien.img_object($label, $picto).$lienfin;
         }else{  
             $result .= $lien.$label.$lienfin;
         }
@@ -350,7 +350,7 @@ class AttendanceSystemEvent extends CommonObject
 	 */
 	function selectLibStatut($form, $htmlname = 'Status')
 	{
-            global $attendancesystemeventStatusPictoArray,$attendancesystemeventStatusArray;
+            global $attendancesystemeventStatusPictoArray, $attendancesystemeventStatusArray;
             return $form->selectarray($htmlname, $attendancesystemeventStatusArray, $this->status);
 	}   
     /**
@@ -361,7 +361,7 @@ class AttendanceSystemEvent extends CommonObject
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 	/**
 	 *  Return the status
@@ -370,9 +370,9 @@ class AttendanceSystemEvent extends CommonObject
 	 *  @param  int		$mode          	0 = long label, 1 = short label, 2 = Picto + short label, 3 = Picto, 4 = Picto + long label, 5 = Short label + Picto, 6 = Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode = 0)
+	static function LibStatut($status, $mode = 0)
 	{
-		global $langs,$attendancesystemeventStatusPictoArray,$attendancesystemeventStatusArray;
+		global $langs, $attendancesystemeventStatusPictoArray, $attendancesystemeventStatusArray;
 		if ($mode == 0)
 		{
 			$prefix = '';
@@ -384,23 +384,23 @@ class AttendanceSystemEvent extends CommonObject
 		}
 		if ($mode == 2)
 		{
-			 return img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]).' '.$langs->trans($attendancesystemeventStatusArray[$status]);
+			 return img_picto($attendancesystemeventStatusArray[$status], $attendancesystemeventStatusPictoArray[$status]).' '.$langs->trans($attendancesystemeventStatusArray[$status]);
 		}
 		if ($mode == 3)
 		{
-			 return img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]);
+			 return img_picto($attendancesystemeventStatusArray[$status], $attendancesystemeventStatusPictoArray[$status]);
 		}
 		if ($mode == 4)
 		{
-			 return img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]).' '.$langs->trans($attendancesystemeventStatusArray[$status]);
+			 return img_picto($attendancesystemeventStatusArray[$status], $attendancesystemeventStatusPictoArray[$status]).' '.$langs->trans($attendancesystemeventStatusArray[$status]);
 		}
 		if ($mode == 5)
 		{
-			 return $langs->trans($attendancesystemeventStatusArray[$status]).' '.img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]);
+			 return $langs->trans($attendancesystemeventStatusArray[$status]).' '.img_picto($attendancesystemeventStatusArray[$status], $attendancesystemeventStatusPictoArray[$status]);
 		}
 		if ($mode == 6)
 		{
-			 return $langs->trans($attendancesystemeventStatusArray[$status]).' '.img_picto($attendancesystemeventStatusArray[$status],$attendancesystemeventStatusPictoArray[$status]);
+			 return $langs->trans($attendancesystemeventStatusArray[$status]).' '.img_picto($attendancesystemeventStatusArray[$status], $attendancesystemeventStatusPictoArray[$status]);
 		}
 	}
 
@@ -423,7 +423,7 @@ class AttendanceSystemEvent extends CommonObject
         // Uncomment this and change MYOBJECT to your own tag if you
         // want this action calls a trigger.
         //// Call triggers
-        //$result = $this->call_trigger('MYOBJECT_DELETE',$user);
+        //$result = $this->call_trigger('MYOBJECT_DELETE', $user);
         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
         //// End call triggers
             }
@@ -468,7 +468,7 @@ class AttendanceSystemEvent extends CommonObject
      */
     function createFromClone($fromid)
     {
-        global $user,$langs;
+        global $user, $langs;
         $error = 0;
         $object = new AttendanceSystemEvent($this->db);
         $this->db->begin();
@@ -520,6 +520,7 @@ class AttendanceSystemEvent extends CommonObject
         $this->user = '';
         $this->event_type = 1;
         $this->status = '';
+        $this->state = '';
     }
     /**
      *	will clean the parameters
@@ -529,14 +530,15 @@ class AttendanceSystemEvent extends CommonObject
      */       
     function cleanParam(){
         
-			if (!empty($this->date_time_event)) $this->date_time_event = trim($this->date_time_event);
-			if (!empty($this->attendance_system)) $this->attendance_system = trim($this->attendance_system);
-			if (!empty($this->date_modification)) $this->date_modification = trim($this->date_modification);
-            if (!empty($this->attendance_system_user)) $this->attendance_system_user = trim($this->attendance_system_user);
-            if (!empty($this->attendance_event)) $this->attendance_event = trim($this->attendance_event);
-            if (!empty($this->user)) $this->user = trim($this->user);
-			if (!empty($this->event_type)) $this->event_type = trim($this->event_type);
-			if (!empty($this->status)) $this->status = trim($this->status);
+        if (!empty($this->date_time_event)) $this->date_time_event = trim($this->date_time_event);
+        if (!empty($this->attendance_system)) $this->attendance_system = trim($this->attendance_system);
+        if (!empty($this->date_modification)) $this->date_modification = trim($this->date_modification);
+        if (!empty($this->attendance_system_user)) $this->attendance_system_user = trim($this->attendance_system_user);
+        if (!empty($this->attendance_event)) $this->attendance_event = trim($this->attendance_event);
+        if (!empty($this->user)) $this->user = trim($this->user);
+        if (!empty($this->event_type)) $this->event_type = trim($this->event_type);
+        if (!empty($this->status)) $this->status = trim($this->status);
+        if (!empty($this->state)) $this->state = trim($this->state);
 
         
     }
@@ -557,8 +559,7 @@ class AttendanceSystemEvent extends CommonObject
 		$sql .= ' fk_user = '.(empty($this->user) != 0 ? 'null':"'".$this->user."'").',';
 		$sql .= ' event_type = '.(empty($this->event_type) != 0 ? 'null':"'".$this->event_type."'").',';
 		$sql .= ' status = '.(empty($this->status) != 0 ? 'null':"'".$this->status."'").'';
-
-        
+		$sql .= ' state = '.(empty($this->state) != 0 ? 'null':"'".$this->state."'").'';    
         return $sql;
     }
     /*
@@ -578,6 +579,7 @@ class AttendanceSystemEvent extends CommonObject
         $array['user'] = $this->user;
         $array['event_type'] = $this->attendance_system_user;
 		$array['status'] = $this->status;
+		$array['state'] = $this->state;
 		$array['processedTime'] = mktime();
         switch($mode)
         {
@@ -599,7 +601,7 @@ class AttendanceSystemEvent extends CommonObject
      * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT,
      * @return  int              OK
      */    
-       public function unserialize($str,$mode = 0){
+       public function unserialize($str, $mode = 0){
        $ret = '';
        $array = array();
         switch($mode)
@@ -682,7 +684,7 @@ class AttendanceSystemEvent extends CommonObject
             $this->attendance_event = '';
             $this->event_type = $event_type;
             $this->state = $ZKEvent['state'];
-            $this->state = 0;
+            $this->status = 0;
             $this->create($user);
             return OK;
         }else return BADPARAM;
@@ -757,7 +759,7 @@ class AttendanceSystemEvent extends CommonObject
     *  @result int number of event actually saved as attendance
     */
     function parseDaySystemEvent($EventArray){
-        global $conf,$db;
+        global $conf, $db;
         $inEvent = null; // 0 for in, 1 for out
         $prevEvent = null;
         $totalError = 0;
@@ -769,9 +771,9 @@ class AttendanceSystemEvent extends CommonObject
             $nbrEvent = (count($EventArray) - $totalError)%2;
             $durlast = ($prevEvent == null)?
                 $conf->global->TIMESHEET_EVENT_MIN_DURATION:
-                date_diff($prevEvent['date_time_event'],$event['date_time_event']);
+                date_diff($prevEvent['date_time_event'], $event['date_time_event']);
             if($inEvent == null){
-                //event type 1-->'heartbeat','sign-in','sign-out','access'
+                //event type 1-->'heartbeat', 'sign-in', 'sign-out', 'access'
                 if ($event['event_type'] == 3){ //out event cannot count as in event
                     $error = 1;
                 }elseif ($event['event_type'] == 1 //event
@@ -784,7 +786,7 @@ class AttendanceSystemEvent extends CommonObject
                     $prevEvent = $event;
                 }
             }else{
-                $dur = date_diff($inEvent['date_time_event'],$event['date_time_event']);
+                $dur = date_diff($inEvent['date_time_event'], $event['date_time_event']);
                 if ($event['event_type'] == 2){ //Signin, save the second one an put the first one as error
                     $staticObject->loadFromArray($event);
                     $staticObject->status = 
@@ -822,7 +824,7 @@ class AttendanceSystemEvent extends CommonObject
         $ret = array();
         $sql = "SELECT ase.rowid, ase.date_time_event, ase.fk_attendance_system,";
         $sql .= "  ase.attendance_system_user, asu.fk_user,";
-        $sql .= "  ase.event_type, ase.status";
+        $sql .= "  ase.event_type, ase.status, ase.state";
         $sql .= " FROM ".MAIN_DB_PREFIX.'attendance_system_event AS ase';
         $sql .= ' JOIN '.MAIN_DB_PREFIX.'attendance_system_user AS asu';
         $sql .= ' ON ase.fk_attendance_system_user = asu.rowid';
@@ -845,6 +847,7 @@ class AttendanceSystemEvent extends CommonObject
                 $ret[$obj->fk_user][$i]['attendance_system_user'] = $obj->fk_attendance_system_user;
                 $ret[$obj->fk_user][$i]['event_type'] = $obj->event_type;
                 $ret[$obj->fk_user][$i]['status'] = $obj->status;
+                $ret[$obj->fk_user][$i]['state'] = $obj->state;
             }
 
             $this->db->free($resql);

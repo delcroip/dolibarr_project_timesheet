@@ -153,7 +153,7 @@ class AttendanceSystem extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result = $this->call_trigger('MYOBJECT_CREATE',$user);
+            //$result = $this->call_trigger('MYOBJECT_CREATE', $user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
             }
@@ -185,7 +185,7 @@ class AttendanceSystem extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$ref = '')
+    function fetch($id, $ref = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -278,7 +278,7 @@ class AttendanceSystem extends CommonObject
             // want this action calls a trigger.
 
             //// Call triggers
-            //$result = $this->call_trigger('MYOBJECT_MODIFY',$user);
+            //$result = $this->call_trigger('MYOBJECT_MODIFY', $user);
             //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
             //// End call triggers
                  }
@@ -312,7 +312,7 @@ class AttendanceSystem extends CommonObject
      *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
      *	@return		string						String with URL
      */
-    function getNomUrl($htmlcontent,$id = 0,$ref = '',$withpicto = 0)
+    function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
     {
 	    global $conf, $langs;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;   // Force disable tooltips
@@ -350,9 +350,9 @@ class AttendanceSystem extends CommonObject
         
         
     	if ($withpicto == 1){ 
-            $result .= ($lien.img_object($label,$picto).$htmlcontent.$lienfin);
+            $result .= ($lien.img_object($label, $picto).$htmlcontent.$lienfin);
         }else if ($withpicto == 2) {
-            $result .= $lien.img_object($label,$picto).$lienfin;
+            $result .= $lien.img_object($label, $picto).$lienfin;
         }else{  
             $result .= $lien.$label.$lienfin;
         }
@@ -364,10 +364,10 @@ class AttendanceSystem extends CommonObject
 	 *  @param	object 		$form          form object that should be created	
       *  *  @return	string 			       html code to select status
 	 */
-	function selectLibStatut($form,$htmlname = 'Status')
+	function selectLibStatut($form, $htmlname = 'Status')
 	{
-            global $attendancesystemStatusPictoArray,$attendancesystemStatusArray;
-            return $form->selectarray($htmlname,$attendancesystemStatusArray,$this->status);
+            global $attendancesystemStatusPictoArray, $attendancesystemStatusArray;
+            return $form->selectarray($htmlname, $attendancesystemStatusArray, $this->status);
 	}   
     /**
 	 *  Retourne le libelle du status (actif, inactif)
@@ -377,7 +377,7 @@ class AttendanceSystem extends CommonObject
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 	/**
 	 *  Return the status
@@ -386,9 +386,9 @@ class AttendanceSystem extends CommonObject
 	 *  @param  int		$mode          	0 = long label, 1 = short label, 2 = Picto + short label, 3 = Picto, 4 = Picto + long label, 5 = Short label + Picto, 6 = Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode = 0)
+	static function LibStatut($status, $mode = 0)
 	{
-		global $langs,$attendancesystemStatusPictoArray,$attendancesystemStatusArray;
+		global $langs, $attendancesystemStatusPictoArray, $attendancesystemStatusArray;
 		if ($mode == 0)
 		{
 			$prefix = '';
@@ -400,23 +400,23 @@ class AttendanceSystem extends CommonObject
 		}
 		if ($mode == 2)
 		{
-			 return img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]).' '.$langs->trans($attendancesystemStatusArray[$status]);
+			 return img_picto($attendancesystemStatusArray[$status], $attendancesystemStatusPictoArray[$status]).' '.$langs->trans($attendancesystemStatusArray[$status]);
 		}
 		if ($mode == 3)
 		{
-			 return img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]);
+			 return img_picto($attendancesystemStatusArray[$status], $attendancesystemStatusPictoArray[$status]);
 		}
 		if ($mode == 4)
 		{
-			 return img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]).' '.$langs->trans($attendancesystemStatusArray[$status]);
+			 return img_picto($attendancesystemStatusArray[$status], $attendancesystemStatusPictoArray[$status]).' '.$langs->trans($attendancesystemStatusArray[$status]);
 		}
 		if ($mode == 5)
 		{
-			 return $langs->trans($attendancesystemStatusArray[$status]).' '.img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]);
+			 return $langs->trans($attendancesystemStatusArray[$status]).' '.img_picto($attendancesystemStatusArray[$status], $attendancesystemStatusPictoArray[$status]);
 		}
 		if ($mode == 6)
 		{
-			 return $langs->trans($attendancesystemStatusArray[$status]).' '.img_picto($attendancesystemStatusArray[$status],$attendancesystemStatusPictoArray[$status]);
+			 return $langs->trans($attendancesystemStatusArray[$status]).' '.img_picto($attendancesystemStatusArray[$status], $attendancesystemStatusPictoArray[$status]);
 		}
 	}
 
@@ -439,7 +439,7 @@ class AttendanceSystem extends CommonObject
         // Uncomment this and change MYOBJECT to your own tag if you
         // want this action calls a trigger.
         //// Call triggers
-        //$result = $this->call_trigger('MYOBJECT_DELETE',$user);
+        //$result = $this->call_trigger('MYOBJECT_DELETE', $user);
         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
         //// End call triggers
             }
@@ -484,7 +484,7 @@ class AttendanceSystem extends CommonObject
      */
     function createFromClone($fromid)
     {
-        global $user,$langs;
+        global $user, $langs;
         $error = 0;
         $object = new AttendanceSystem($this->db);
         $this->db->begin();
@@ -644,7 +644,7 @@ class AttendanceSystem extends CommonObject
      * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */    
-       public function unserialize($str,$mode = 0){
+       public function unserialize($str, $mode = 0){
        $ret = '';
        $array = array();
         switch($mode)
@@ -706,7 +706,7 @@ class AttendanceSystem extends CommonObject
         if( $file != ''){
             
         }else if(lenght($this->ip)>6){
-            $zkteco = new ZKLibrary($this->ip,$this->port);
+            $zkteco = new ZKLibrary($this->ip, $this->port);
             if (is_numeric($zkteco->ping()) && $zkteco->connect()){
                 # retrive event
                 $zkteco->disableDevice();
@@ -734,7 +734,7 @@ class AttendanceSystem extends CommonObject
     function getUsers(){
         $userArray = array();
         if(preg_match("/^(\d{1,3}\.){3}\d{1,3}/", $this->ip)){
-            $zkteco = new ZKLibrary($this->ip,$this->port);
+            $zkteco = new ZKLibrary($this->ip, $this->port);
             if (is_numeric($zkteco->ping()) && $zkteco->connect()){
                 dol_syslog(__METHOD__." Connected to  ".$this->ip, LOG_DEBUG);
                 # retrive event
@@ -773,7 +773,7 @@ class AttendanceSystem extends CommonObject
 
     public function testConnection(){
         if(preg_match("/^(\d{1,3}\.){3}\d{1,3}/", $this->ip)){
-            $zkteco = new ZKLibrary($this->ip,$this->port);
+            $zkteco = new ZKLibrary($this->ip, $this->port);
             if (is_numeric($zkteco->ping()) && $zkteco->connect() ){
                 dol_syslog(__METHOD__." Connected to  ".$this->ip, LOG_DEBUG);
                 $zkteco->disconnect();
