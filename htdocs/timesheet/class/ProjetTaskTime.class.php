@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 //require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$projettasktimeStatusPictoArray = array(0=> 'statut7',1=>'statut3',2=>'statut8',3=>'statut4');
-$projettasktimeStatusArray = array(0=> 'Draft',1=>'Validated',2=>'Cancelled',3 => 'Payed');
+$projettasktimeStatusPictoArray = array(0 => 'statut7',1 => 'statut3',2 => 'statut8',3 => 'statut4');
+$projettasktimeStatusArray = array(0 => 'Draft',1 => 'Validated',2 => 'Cancelled',3 => 'Payed');
 /**
  *    Put here description of your class
  */
@@ -585,7 +585,7 @@ class Projettasktime extends CommonObject
     }
     /*
     * function to save a projettasktime as a string
-    * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
+    * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
     * @return   string       serialized object
     */
     public function serialize($mode = 0)
@@ -624,7 +624,7 @@ class Projettasktime extends CommonObject
     }
     /* function to load a projettasktime as a string
     * @param   string    $str   serialized object
-    * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
+    * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
     * @return  int              OK
     */
     public function unserialize($str, $mode = 0)

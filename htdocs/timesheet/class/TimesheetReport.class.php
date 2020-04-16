@@ -326,8 +326,8 @@ class TimesheetReport
     {
         global $langs;
         $HTMLHeaders = '<h1>'.$this->name.'</h1>';
-        $title = array('projectLabel'=>'Project', 'dateDisplay'=>'Day', 'taskLabel'=>'Tasks', 'userName'=>'User');
-        $titleWidth = array('4'=>'120', '7'=>'200');
+        $title = array('projectLabel' => 'Project', 'dateDisplay' => 'Day', 'taskLabel' => 'Tasks', 'userName' => 'User');
+        $titleWidth = array('4' => '120', '7' => '200');
         $HTMLHeaders = '<table class = "noborder" width = "100%">';
         $HTMLHeaders .= '<tr class = "liste_titre">';//<th>'.$langs->trans('Name').'</th>';
         $HTMLHeaders .= '<th>'.$langs->trans($title[$this->lvl0Title]).'</th>';

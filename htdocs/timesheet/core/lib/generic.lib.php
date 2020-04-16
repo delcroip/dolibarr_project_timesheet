@@ -55,10 +55,10 @@ global $langs;
  * @return string HTML code
  */
 function select_sellist(
-    $sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
-    $htmlarray = array('name'=> 'HTMLSellist', 'class'=>'', 'otherparam'=>'', '$ajaxNbChar'=>'', 'separator'=> ' ', 'noajax'=>0),
+    $sqlarray = array('table' => 'user', 'keyfield' => 'rowid', 'fields' => 'firstname, lastname', 'join' => '', 'where' => '', 'tail' => ''),
+    $htmlarray = array('name' => 'HTMLSellist', 'class' => '', 'otherparam' => '', '$ajaxNbChar' => '', 'separator' => ' ', 'noajax' => 0),
     $selected = '',
-    $addtionnalChoices = array('NULL'=>'NULL')
+    $addtionnalChoices = array('NULL' => 'NULL')
 ) {
     global $conf, $langs, $db;
     $noajax = isset($htmlarray['noajax']);
@@ -80,7 +80,7 @@ function select_sellist(
         } elseif($start2) {
             $label = substr($item, $start2+1);
         }
-        $fields[] = array('select' => $item, 'label'=>trim($label));
+        $fields[] = array('select' => $item, 'label' => trim($label));
     }
     $select = "\n";
     if($ajax) {
@@ -191,7 +191,7 @@ function select_sellist(
  * @return string HTML code
  */
 function print_sellist(
-    $sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
+    $sqlarray = array('table' => 'user', 'keyfield' => 'rowid', 'fields' => 'firstname, lastname', 'join' => '', 'where' => '', 'tail' => ''),
     $selected = '',
     $separator = ' ',
     $url = ''
@@ -230,7 +230,7 @@ function print_sellist(
             } elseif($start2) {
                 $label = substr($item, $start2+1);
             }
-            $fields[] = array('select' => $item, 'label'=>trim($label));
+            $fields[] = array('select' => $item, 'label' => trim($label));
         }
         $num = $db->num_rows($resql);
         if($num) {

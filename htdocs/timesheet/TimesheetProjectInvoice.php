@@ -118,7 +118,7 @@ $langs->load('timesheet@timesheet');
                     switch($mode) {
                         case 'user':
                              //step 2.2 get the list of user  (all or approved)
-                            $resArray[] = array("USER" => $obj->fk_user, "TASK" =>'any', "DURATION"=>$duration, 'LIST'=>$obj->task_time_list);
+                            $resArray[] = array("USER" => $obj->fk_user, "TASK" => 'any', "DURATION"=>$duration, 'LIST'=>$obj->task_time_list);
                             break;
                         case 'taskUser':
                              //step 2.3 get the list of taskUser  (all or approved)
@@ -288,11 +288,11 @@ $langs->load('timesheet@timesheet');
             $Form .= '<tr class = "liste_titre" width = "100%" ><th colspan = "2">'.$langs->trans('generalInvoiceProjectParam').'</th></tr>';
             $invoicingMethod = $conf->global->TIMESHEET_INVOICE_METHOD;
             //$Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('Project').'</th><th align = "left" width = "80%" >';
-            //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL'=>'NULL'), $sqlTailTable = '', $ajaxUrl = '')
+            //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL' => 'NULL'), $sqlTailTable = '', $ajaxUrl = '')
             //$ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             //$Form .= select_generic('projet', 'rowid', 'projectid', 'ref', 'title', $projectId, ' - ', $sqlTailWhere, '', null, , $ajaxNbChar);
-            //$htmlProjectArray = array('name'=>'projectid', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
-            //$sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'t.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
+            //$htmlProjectArray = array('name' => 'projectid', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam' => ' onchange = "reload(this.form)"');
+            //$sqlProjectArray = array('table' => 'projet', 'keyfield' => 't.rowid', 'fields' => 't.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
             //$Form .= select_sellist($sqlProjectArray, $htmlProjectArray, $projectId);
             $Form .= '<input type = "hidden" name = "projectid" value = "'.$projectId.'">';
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('DateStart').'</th>';
@@ -400,8 +400,8 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     $addchoices = array(0 => $langs->transnoentities('Custom').': '.$taskLabel, '-999'=> $langs->transnoentities('not2invoice'));
     $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
     $html .= '</th><th >';
-    $html .= select_sellist(array('table'=> 'product', 'keyfield'=> 'rowid', 'fields'=>'ref,label', 'where'=>' tosell = 1 AND fk_product_type = 1'),
-                        array('name'=>'userTask['.$user.']['.$task.'][Service]',  'separator'=> ' - '),
+    $html .= select_sellist(array('table' => 'product', 'keyfield' => 'rowid', 'fields' => 'ref,label', 'where' => ' tosell = 1 AND fk_product_type = 1'),
+                        array('name' => 'userTask['.$user.']['.$task.'][Service]',  'separator' => ' - '),
                         $defaultService,
                         $addchoices);
     $html .= '</th>';

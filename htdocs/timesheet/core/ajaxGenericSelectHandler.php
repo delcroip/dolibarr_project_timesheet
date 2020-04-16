@@ -72,7 +72,7 @@ if($posBs>0) {
         } elseif($start2) {
             $label = substr($item, $start2+1);
         }
-        $fields[] = array('select' => $item, 'label'=>trim($label));
+        $fields[] = array('select' => $item, 'label' => trim($label));
     }
         $i = 0;
          //return $table."this->db".$field;

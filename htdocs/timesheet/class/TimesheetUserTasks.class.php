@@ -642,15 +642,15 @@ public function updateStatus($user, $status = 0)
         return 1;
     }
     $Priority = array(
-    DRAFT=>0,
-    SUBMITTED=>1,
-    APPROVED=>2,
-    CANCELLED=>4,
-    REJECTED=>5,
-    CHALLENGED=>6,
-    INVOICED=>7,
-    UNDERAPPROVAL=>3,
-    PLANNED=>9);
+    DRAFT => 0,
+    SUBMITTED => 1,
+    APPROVED => 2,
+    CANCELLED => 4,
+    REJECTED => 5,
+    CHALLENGED => 6,
+    INVOICED => 7,
+    UNDERAPPROVAL => 3,
+    PLANNED => 9);
     //look for the status to apply to the TS  from the TTA
     foreach($this->taskTimesheet as $row) {
         $tta = new TimesheetTask($this->db);

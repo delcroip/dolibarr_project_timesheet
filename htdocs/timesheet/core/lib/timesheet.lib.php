@@ -63,7 +63,7 @@ define('SECINDAY', 86400);
 
 // for display trads
 global $langs;
-$roles = array(0=> 'user', 1=> 'team', 2=> 'project', 3=>'customer', 4=>'supplier', 5=>'other');
+$roles = array(0 => 'user', 1 => 'team', 2 => 'project', 3 => 'customer', 4 => 'supplier', 5 => 'other');
 $statusA = array(0=> $langs->trans('null'), 1 => $langs->trans('draft'), 2=>$langs->trans('submitted'), 3=>$langs->trans('approved'), 4=>$langs->trans('cancelled'), 5=>$langs->trans('rejected'), 6=>$langs->trans('challenged'), 7=>$langs->trans('invoiced'), 8=>$langs->trans('underapproval'), 9=>$langs->trans('planned'));
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 
@@ -501,8 +501,8 @@ function showTimesheetApTabs($role_key)
 {
 global $langs, $roles, $apflows;
 global $conf;
-//$roles = array(0=> 'team', 1=> 'project', 2=>'customer', 3=>'supplier', 4=>'other');
-$rolesUrl = array(1=> 'TimesheetTeamApproval.php?role=team', 2=> 'TimesheetOtherApproval.php?role=project', 3=>'TimesheetOtherApproval.php?role=customer', 4=>'TimesheetOtherApproval.php?role=supplier', 5=>'TimesheetOtherApproval.php?role=other');
+//$roles = array(0 => 'team', 1 => 'project', 2 => 'customer', 3 => 'supplier', 4 => 'other');
+$rolesUrl = array(1 => 'TimesheetTeamApproval.php?role=team', 2 => 'TimesheetOtherApproval.php?role=project', 3 => 'TimesheetOtherApproval.php?role=customer', 4 => 'TimesheetOtherApproval.php?role=supplier', 5 => 'TimesheetOtherApproval.php?role=other');
     foreach($apflows as $key => $value) {
         if($value == 1) {
             echo '  <div class = "inline-block tabsElem"><a  href = "'.$rolesUrl[$key].'&leftmenu=timesheet" class = "';
@@ -559,12 +559,12 @@ function formatTime($duration, $hoursperdays = -1)
     {
         global $langs;
         $messages = array();
-        $messages[] = array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
-        $messages[] = array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
-        $messages[] = array('type'=>'mesgs', 'text'=>'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
-        $default = array('type'=>'warnings', 'text'=>'NothingChanged', 'param'=>0);
-        $messages[] = array('type'=>'mesgs', 'text'=>'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
-        $messages[] = array('type'=>'errors', 'text'=>'updateError', 'param'=>$arraymessage['updateError']);
+        $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
+        $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
+        $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
+        $default = array('type' => 'warnings', 'text' => 'NothingChanged', 'param' => 0);
+        $messages[] = array('type' => 'mesgs', 'text' => 'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
+        $messages[] = array('type' => 'errors', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
         $nbr = 0;
         foreach($messages as $key => $message) {
             if($message['param']>0) {

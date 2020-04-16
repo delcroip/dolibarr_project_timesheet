@@ -555,7 +555,7 @@ switch($action) {
             print '<tr class = "liste_titre">';
             //Search field foruserId
             print '<td class = "liste_titre" colspan = "1" >';
-    //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL'=>'NULL'), $sqlTailTable = '', $ajaxUrl = '')
+    //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL' => 'NULL'), $sqlTailTable = '', $ajaxUrl = '')
 
             //print select_generic('user', 'rowid', 'ls_userId', 'lastname', 'firstname', $ls_userId, ' - ', '', '', null, '', $ajaxNbChar);
             print $form->select_users($ls_userId, 'ls_userId');

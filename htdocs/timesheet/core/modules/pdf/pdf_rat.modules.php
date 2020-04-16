@@ -394,10 +394,10 @@ public function writeLine(&$pdf, $line, $curY, $outputlangs)
     // Add dash line between entries
     if(! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES)) {
         //$pdf->setPage($pageposafter);
-        $pdf->SetLineStyle(array('dash'=>'1, 1', 'color'=>array(80, 80, 80)));
+        $pdf->SetLineStyle(array('dash' => '1, 1', 'color' => array(80, 80, 80)));
         //$pdf->SetDrawColor(190, 190, 200);
         $pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
-        $pdf->SetLineStyle(array('dash'=>0));
+        $pdf->SetLineStyle(array('dash' => 0));
     }
     return $nexY;
 }

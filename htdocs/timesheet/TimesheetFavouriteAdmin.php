@@ -213,7 +213,7 @@ switch($action) {
         if($result > 0) {
             // Delete OK
             if($ajax == 1) {
-                echo json_encode(array('id'=> '0'));
+                echo json_encode(array('id' => '0'));
                 ob_end_flush();
                 exit();
             } else{
@@ -375,8 +375,8 @@ switch($action) {
 
 
             
-            $htmlProjectArray = array('name'=>'Project', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
-            $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
+            $htmlProjectArray = array('name' => 'Project', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam' => ' onchange = "reload(this.form)"');
+            $sqlProjectArray = array('table' => 'projet', 'keyfield' => 't.rowid', 'fields' => 'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);*/
             //if($ajaxNbChar >= 0) {
             //    print "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
@@ -414,8 +414,8 @@ switch($action) {
                 $formTaskWhere .= " AND (ctc.element = 'project_task' AND ctc.active = '1'  AND ec.fk_socpeople = '".$user->id."')";
             }
             $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
-            $htmlProjectTaskArray = array('name'=>'Projecttask', 'ajaxNbChar'=>$ajaxNbChar);
-            $sqlProjectTaskArray = array('table'=>'projet_task', 'keyfield'=>'t.rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
+            $htmlProjectTaskArray = array('name' => 'Projecttask', 'ajaxNbChar'=>$ajaxNbChar);
+            $sqlProjectTaskArray = array('table' => 'projet_task', 'keyfield' => 't.rowid', 'fields' => 'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
             */
         } else {
@@ -611,15 +611,15 @@ switch($action) {
             //Search field forproject
             print '<td class = "liste_titre" colspan = "1" >';
             $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
-            $htmlProjectArray = array('name'=>'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
-            $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
+            $htmlProjectArray = array('name' => 'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
+            $sqlProjectArray = array('table' => 'projet', 'keyfield' => 'rowid', 'fields' => 'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectArray, $htmlProjectArray, $ls_project);
             print '</td>';
             //Search field forproject_task
             print '<td class = "liste_titre" colspan = "1" >';
             $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
-            $htmlProjectTaskArray = array('name'=>'ls_project_task', 'ajaxNbChar'=>$ajaxNbChar);
-            $sqlProjectTaskArray = array('table'=>'projet_task', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
+            $htmlProjectTaskArray = array('name' => 'ls_project_task', 'ajaxNbChar'=>$ajaxNbChar);
+            $sqlProjectTaskArray = array('table' => 'projet_task', 'keyfield' => 'rowid', 'fields' => 'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
             //print select_generic('projet_task', 'rowid', 'ls_project_task', 'ref', 'label', $ls_project_task, ' - ', '', '', null, '', $ajaxNbChar);
             print '</td>';

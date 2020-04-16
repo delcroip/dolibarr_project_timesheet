@@ -92,7 +92,7 @@ class TimesheetTask extends Task
         $this->status = DRAFT;
         $this->sender = USER;
         $this->recipient = TEAM;
-        $this->user_app = array(TEAM=>0, PROJECT=>0, CUSTOMER=>0, SUPPLIER=>0, OTHER=>0);
+        $this->user_app = array(TEAM => 0, PROJECT => 0, CUSTOMER => 0, SUPPLIER => 0, OTHER => 0);
     }
     /******************************************************************************
      *
@@ -557,7 +557,7 @@ class TimesheetTask extends Task
         dol_syslog(__METHOD__, LOG_DEBUG);
         for($i = 0;$i<$dayelapsed;$i++)
         {
-                $this->tasklist[$i] = array('id'=>0, 'duration'=>0, 'date'=>$timeStart+SECINDAY*$i+SECINDAY/4);
+                $this->tasklist[$i] = array('id' => 0, 'duration' => 0, 'date'=>$timeStart+SECINDAY*$i+SECINDAY/4);
         }
         $resql = $this->db->query($sql);
         if($resql) {
@@ -909,7 +909,7 @@ class TimesheetTask extends Task
     */
     /**
     * function to save a time sheet as a string
-    * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
+    * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
     * @return   string       serialized object
     */
     public function serialize($mode = 0)
@@ -957,7 +957,7 @@ class TimesheetTask extends Task
     
   /** function to load a skeleton as a string
      * @param   string    $str   serialized object
-     * @param    int     $mode   0=>serialize, 1=> json_encode, 2 => json_encode PRETTY PRINT
+     * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
      * @return  int              OK
      */
     public function unserialize($str, $mode = 0)

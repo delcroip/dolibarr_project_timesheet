@@ -51,7 +51,7 @@ class box_approval extends ModeleBoxes
         $text = $langs->trans('Timesheet');
         $this->info_box_head = array(
                         'text' => $text,
-                        'limit'=> dol_strlen($text)
+                        'limit' => dol_strlen($text)
       );
         if($user->rights->timesheet->approval) {
                         $sql = 'SELECT';
@@ -105,7 +105,7 @@ class box_approval extends ModeleBoxes
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => 'align = "left"',
-                    'maxlength'=>500,
+                    'maxlength' => 500,
                     'text' =>($db->error().' sql='.$sql),
               );
             }

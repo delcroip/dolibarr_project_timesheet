@@ -293,7 +293,7 @@ function getSelectAps($subId, $tasks, $role_key)
                 while($nb>TIMESHEET_MAX_TTA_APPROVAL)
                 {
                     $custIdList = array_slice($idsList, $nb-TIMESHEET_MAX_TTA_APPROVAL, TIMESHEET_MAX_TTA_APPROVAL);
-                    $list[] = array("id"=>$obj->id, "idList"=>$custIdList, "label"=>$obj->label.' ('.$j."/".ceil($obj->nb/TIMESHEET_MAX_TTA_APPROVAL).')', "count"=>TIMESHEET_MAX_TTA_APPROVAL);
+                    $list[] = array("id"=>$obj->id, "idList"=>$custIdList, "label"=>$obj->label.' ('.$j."/".ceil($obj->nb/TIMESHEET_MAX_TTA_APPROVAL).')', "count" => TIMESHEET_MAX_TTA_APPROVAL);
                     $nb -= TIMESHEET_MAX_TTA_APPROVAL;
                     $j++;
                 }

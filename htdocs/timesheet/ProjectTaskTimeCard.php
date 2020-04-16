@@ -347,8 +347,8 @@ switch ($action) {
     print "<tr>\n";
     print '<td class="fieldrequired">'.$langs->trans('Task').' </td><td>';
     if($edit == 1 ){
-        $sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref,label', 'join' => '', 'where'=>'', 'tail'=>'');
-        $html_task = array('name'=>'Task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
+        $sql_task = array('table' => 'projet_task', 'keyfield' => 'rowid', 'fields' => 'ref,label', 'join' => '', 'where' => '', 'tail' => '');
+        $html_task = array('name' => 'Task', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
         $addChoices_task = null;
         print select_sellist($sql_task, $html_task, $object->task, $addChoices_task);
     }else{
@@ -511,9 +511,9 @@ switch ($action) {
 
     print "<tr>\n";
     print '<td>'.$langs->trans('Tasktimeapproval').' </td><td>';
-    $sql_task_time_approval = array('table'=> 'project_task_time_approval', 'keyfield'=> 'rowid', 'fields'=>'date_start,date_end,fk_projet_task,fk_userid', 'join' => '', 'where'=>'', 'tail'=>'');
+    $sql_task_time_approval = array('table' => 'project_task_time_approval', 'keyfield' => 'rowid', 'fields' => 'date_start,date_end,fk_projet_task,fk_userid', 'join' => '', 'where' => '', 'tail' => '');
     if($edit == 1){
-        $html_task_time_approval = array('name'=>'Tasktimeapproval', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
+        $html_task_time_approval = array('name' => 'Tasktimeapproval', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
         $addChoices_task_time_approval = null;
         print select_sellist($sql_task_time_approval, $html_task_time_approval, $object->task_time_approval, $addChoices_task_time_approval);
     }else{

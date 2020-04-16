@@ -687,8 +687,8 @@ echo '</td><td align = "left">'.$langs->trans("invoiceServiceDesc").'</td>';
 echo  '<td align = "left">';
 $addchoices = array('-999'=> $langs->transnoentitiesnoconv('not2invoice'), -1=> $langs->transnoentitiesnoconv('Custom'));
 $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
-$htmlProductArray = array('name'=>'invoiceService', 'ajaxNbChar'=>$ajaxNbChar);
-$sqlProductArray = array('table'=>'product', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'where'=>'tosell = 1 AND fk_product_type = 1', 'separator' => ' - ');
+$htmlProductArray = array('name' => 'invoiceService', 'ajaxNbChar'=>$ajaxNbChar);
+$sqlProductArray = array('table' => 'product', 'keyfield' => 'rowid', 'fields' => 'ref, label', 'where' => 'tosell = 1 AND fk_product_type = 1', 'separator' => ' - ');
 print select_sellist($sqlProductArray, $htmlProductArray, $invoiceservice, $addchoices);
 echo "</td></tr>\n\t\t";
 //line tasktime == 

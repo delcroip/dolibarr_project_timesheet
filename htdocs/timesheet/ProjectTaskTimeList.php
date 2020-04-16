@@ -343,8 +343,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         print '<tr class="liste_titre">';
         //Search field fortask
 		print '<td class="liste_titre" colspan="1" >';
-		$sql_task = array('table'=> 'projet_task', 'keyfield'=> 'rowid', 'fields'=>'ref, label', 'join' => '', 'where'=>'', 'tail'=>'');
-		$html_task = array('name'=>'ls_task', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
+		$sql_task = array('table' => 'projet_task', 'keyfield' => 'rowid', 'fields' => 'ref, label', 'join' => '', 'where' => '', 'tail' => '');
+		$html_task = array('name' => 'ls_task', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
 		$addChoices_task = null;
 		print select_sellist($sql_task, $html_task, $ls_task, $addChoices_task);
 		print '</td>';
@@ -399,8 +399,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		print '</td>';
 	//Search field fortask_time_approval
 	/*	print '<td class="liste_titre" colspan="1" >';
-		$sql_task_time_approval = array('table'=> 'project_task_time_approval', 'keyfield'=> 'rowid', 'fields'=>'ref', 'join' => '', 'where'=>'', 'tail'=>'');
-		$html_task_time_approval = array('name'=>'ls_task_time_approval', 'class'=>'', 'otherparam'=>'', 'ajaxNbChar'=>'', 'separator'=> '-');
+		$sql_task_time_approval = array('table' => 'project_task_time_approval', 'keyfield' => 'rowid', 'fields' => 'ref', 'join' => '', 'where' => '', 'tail' => '');
+		$html_task_time_approval = array('name' => 'ls_task_time_approval', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
 		$addChoices_task_time_approval = null;
 			print select_sellist($sql_task_time_approval, $html_task_time_approval, $ls_task_time_approval, $addChoices_task_time_approval );
 		print '</td>';
