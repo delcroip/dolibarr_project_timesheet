@@ -1143,10 +1143,11 @@ public function sendApprovalReminders()
     global $langs;
     $sql = 'SELECT';
     $sql .= ' COUNT(t.rowid) as nb, ';
-    $sql .= ' u.email, ';
+    $sql .= ' u.email as w_email, tm.email as tm_email';
     $sql .= ' u.fk_user as approverid';
-    $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'llx_project_task_time_approval as t';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
+    $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as utm on u.fk_userid = u.rowid ';
     $sql .= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
     $sql .= '  AND t.recipient='.TEAM.' GROUP BY u.fk_user';
      dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1159,8 +1160,9 @@ public function sendApprovalReminders()
             if($obj) {
                 $message = str_replace("__NB_TS__", $obj->nb, str_replace('\n', "\n", $langs->trans('YouHaveApprovalPendingMsg')));
                 //$message = "Bonjour, \n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
-                $sendto = $obj->email;
-                $replyto = $obj->email;
+                $sendto = $obj->tm_email;
+                $replyto = $obj->w_email;
+                $addr_cc = null; //$addr_cc = $obj->w_email; // uncomment if the user should be in cc
                 $subject = $langs->transnoentities("YouHaveApprovalPending");
                 if(!empty($sendto) && $sendto!="NULL") {
                     require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
@@ -1172,7 +1174,7 @@ public function sendApprovalReminders()
                         $filename_list = array(),
                         $mimetype_list = array(),
                         $mimefilename_list = array(),
-                        $addr_cc, $addr_bcc = 0,
+                        $addr_cc, $addr_bcc = null,
                         $deliveryreceipt = 0,
                         $msgishtml = 1);
                     $mailfile->sendfile();
