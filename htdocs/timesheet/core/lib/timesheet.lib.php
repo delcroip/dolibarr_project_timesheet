@@ -559,16 +559,16 @@ function formatTime($duration, $hoursperdays = -1)
     {
         global $langs;
         $messages = array();
-        $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
-        $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
-        $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
+        if($arraymessage['timeSpendCreated']) $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
+        if($arraymessage['timeSpendModified'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
+        if($arraymessage['timeSpendDeleted'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
         $default = array('type' => 'warnings', 'text' => 'NothingChanged', 'param' => 0);
-        $messages[] = array('type' => 'mesgs', 'text' => 'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
-        $messages[] = array('type' => 'mesgs', 'text' => 'ProgressUpdate', 'param'=>$arraymessage['ProgressUpdate']);
-        $messages[] = array('type' => 'errors', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
-        $messages[] = array('type' => 'warnings', 'text' => 'NoActiveEvent', 'param'=>$arraymessage['NoActiveEvent']);
-        $messages[] = array('type' => 'errors', 'text' => 'EventNotActive', 'param'=>$arraymessage['EventNotActive']);
-        $messages[] = array('type' => 'errors', 'text' => 'DbError', 'param'=>$arraymessage['DbError']);
+        if($arraymessage['NoteUpdated'])$messages[] = array('type' => 'mesgs', 'text' => 'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
+        if($arraymessage['ProgressUpdate'])$messages[] = array('type' => 'mesgs', 'text' => 'ProgressUpdate', 'param'=>$arraymessage['ProgressUpdate']);
+        if($arraymessage['updateError'])$messages[] = array('type' => 'errors', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
+        if($arraymessage['NoActiveEvent'])$messages[] = array('type' => 'warnings', 'text' => 'NoActiveEvent', 'param'=>'');
+        if($arraymessage['EventNotActive'])$messages[] = array('type' => 'errors', 'text' => 'EventNotActive', 'param'=>'');
+        if($arraymessage['DbError'])$messages[] = array('type' => 'errors', 'text' => 'DbError', 'param'=>'');
 
         $nbr = 0;
         foreach($messages as $key => $message) {
@@ -577,7 +577,9 @@ function formatTime($duration, $hoursperdays = -1)
                 else $messages[$key]['text']=$langs->trans($message['text']);
                 $nbr++;
             } else{
-                unset($messages[$key]);
+                if($returnstring == false)setEventMessage($langs->transnoentitiesnoconv($message['text']), $message['type']);
+                else $messages[$key]['text']=$langs->trans($message['text']);
+                $nbr++;
             }
         }
         if($nbr == 0) setEventMessage($langs->transnoentitiesnoconv(
