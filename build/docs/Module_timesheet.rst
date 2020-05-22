@@ -10,7 +10,7 @@ Author: Patrick Delcroix contact@pmpd.eu
    invoice related action possible is the creation of a draft invoice by
    using the Dolibarr core methods (there is no invoice related database
    request in the module)
-   
+
 .. contents:: a title for the contents
     :depth: 2
 
@@ -55,24 +55,19 @@ project via Project→contact Project. Then he can be assigned to the task
 
 
 .. include:: TimesheetView.rst
+   :literal:
+
 .. include:: Attendance.rst
+   :literal:
+
 .. include:: Favourite.rst
+   :literal:
+
 .. include:: Approval.rst
+   :literal:
+
 .. include:: ProjectReports.rst
+   :literal:
+
 .. include:: ProjectInvoice.rst
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   :literal:
