@@ -81,12 +81,12 @@ if($action == 'submit') {
                 switch($approvals[$key]) {
                     case 'Approved':
                         $ret = $curTaskTimesheet->setStatus($user, (($appflowOn>0)?UNDERAPPROVAL:APPROVED), $key);
-                        if(ret<0)$errors++;
+                        if($ret<0)$errors++;
                         else $tsApproved++;
                         break;
                     case 'Rejected':
                         $ret = $curTaskTimesheet->setStatus($user, REJECTED, $key);
-                        if(ret<0)$errors++;
+                        if($ret<0)$errors++;
                         else $tsRejected++;
                         break;
                     case 'Submitted':
