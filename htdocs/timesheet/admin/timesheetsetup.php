@@ -33,7 +33,7 @@ if(!$user->admin) {
 }
 $action = getpost('action', 'alpha');
 $attendance = $conf->global->TIMESHEET_ATTENDANCE;
-$attendanceSystem = $conf->global->TIMESHEET_ATTENDANCE_SYSTEM;
+
 $timetype = $conf->global->TIMESHEET_TIME_TYPE;
 $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
 $timeSpan = $conf->global->TIMESHEET_TIME_SPAN;
@@ -135,8 +135,6 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_TIME_SPAN", $timeSpan, 'chaine', 0, '', $conf->entity);
         $attendance = getpost('attendance', 'int');
         dolibarr_set_const($db, "TIMESHEET_ATTENDANCE", $attendance, 'int', 0, '', $conf->entity);
-        $attendanceSystem = getpost('attendanceSystem', 'int');
-        dolibarr_set_const($db, "TIMESHEET_ATTENDANCE_SYSTEM", $attendanceSystem, 'int', 0, '', $conf->entity);
         $maxhoursperevent = getpost('maxhoursperevent', 'int');
         dolibarr_set_const($db, "TIMESHEET_EVENT_MAX_DURATION", $maxhoursperevent, 'int', 0, '', $conf->entity);
         $minsecondsperevent = getpost('minSecondsPerEvent', 'int');
@@ -250,7 +248,7 @@ switch($action) {
         $exportFormat = getpost('exportFormat', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_EXPORT_FORMAT", $exportFormat, 'int', 0, '', $conf->entity);
         $maxApproval = getpost('maxapproval', 'int');
-        dolibarr_set_const($db, "TIMESHEET_ROUND", $maxApproval, 'int', 0, '', $conf->entity);
+        dolibarr_set_const($db, "TIMESHEET_MAX_APPROVAL", $maxApproval, 'int', 0, '', $conf->entity);
         $unblockInvoiced = getpost('unblockInvoiced', 'int');
         dolibarr_set_const($db, "TIMESHEET_UNBLOCK_INVOICED", $unblockInvoiced, 'int', 0, '', $conf->entity);
         $unblockClosed = getpost('unblockClosed', 'int');
@@ -306,6 +304,7 @@ foreach($headersT as $header) {
 //permet d'afficher la structure dolibarr
 $morejs = array("/timesheet/core/js/timesheet.js?v2.0", "/timesheet/core/js/jscolor.js");
 llxHeader("", $langs->trans("timesheetSetup"), '', '', '', '', $morejs, '', 0, 0);
+if($action = "save")echo "<script>window.history.pushState('', '', '".explode('?', $_SERVER['REQUEST_URI'], 2)[0]."');</script>";
 $linkback = '<a href = "'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("timesheetSetup"), $linkback, 'title_setup');
 echo '<div class = "fiche"><br><br>';
@@ -333,11 +332,7 @@ echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("Attendance");
 echo '</td><td align = "left">'.$langs->trans("AttendanceDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "attendance" value = "1" ';
 echo (($attendance == '1')?'checked':'')."></td></tr>\n\t\t";
-// activate attendance system
-echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("AttendanceSystem");
-echo '</td><td align = "left">'.$langs->trans("AttendanceSystemDesc").'</td>';
-echo  '<td align = "left"><input type = "checkbox" name = "attendanceSystem" value = "1" ';
-echo (($attendanceSystem == '1')?'checked':'')."></td></tr>\n\t\t";
+
 // type time
 echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("timeType").'</td><td align = "left">'.$langs->trans("timeTypeDesc").'</td>';
 echo '<td align = "left"><input type = "radio" name = "timeType" value = "hours" ';
