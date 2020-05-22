@@ -1,19 +1,3 @@
-Current version **4.1.3**
-
-Dolibarr minimum version : **3.5.6**
-
-Dolibarr latest version tested : **11.0**
-
-Author: Patrick Delcroix contact@pmpd.eu
-
-   Note: this module is not able to do any changes to invoices; the only
-   invoice related action possible is the creation of a draft invoice by
-   using the Dolibarr core methods (there is no invoice related database
-   request in the module)
-
-.. contents:: a title for the contents
-    :depth: 2
-
 Prerequisites:
 ==============
 
@@ -51,23 +35,3 @@ shown after the start date
 in order to assign a user to a task he must be first assign to the
 project via Project→contact Project. Then he can be assigned to the task
 : Task > resource assignation.
-
-
-
-.. include:: TimesheetView.rst
-   :literal:
-
-.. include:: Attendance.rst
-   :literal:
-
-.. include:: Favourite.rst
-   :literal:
-
-.. include:: Approval.rst
-   :literal:
-
-.. include:: ProjectReports.rst
-   :literal:
-
-.. include:: ProjectInvoice.rst
-   :literal:
