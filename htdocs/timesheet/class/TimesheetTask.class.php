@@ -1006,8 +1006,8 @@ class TimesheetTask extends Task
         $sql .= "SET duration_effective = (SELECT SUM(ptt.task_duration) ";
         $sql .= "FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt ";
         $sql .= "WHERE ptt.fk_task = '".$this->id."'), ";
-        $sql .= " progress = '".$this->progress."' ";
-        $sql .= "WHERE pt.rowid = '".$this->id."' ";
+        $sql .= " progress = '".$this->progress."'";
+        $sql .= " WHERE pt.rowid = '".$this->id."' ";
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
@@ -1110,6 +1110,7 @@ class TimesheetTask extends Task
         global $conf, $user;
         $ret = 0;
         $noteUpdate = 0;
+        
         dol_syslog(__METHOD__." taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user = $userId;
         if(!empty($note) && $note != $this->note) {
@@ -1140,12 +1141,16 @@ class TimesheetTask extends Task
 
         if($progressUpdate || (is_array($_SESSION['task_timesheet'][$timestamp]) && array_sum($_SESSION['task_timesheet'][$timestamp])>$_SESSION['task_timesheet'][$timestamp]['updateError'])) {
             $this->updateTimeUsed();// needed upon delete
+            if ($progressUpdate)$_SESSION['task_timesheet'][$timestamp]['ProgressUpdate']++;
         }
-        if($noteUpdate ) {
+        
+        
+        if( $noteUpdate ) {
             $retNote = ($this->appId>0)?$this->update($user):$this->create($user);
-            if($retNote) {
+            if($retNote  ) {
                 $_SESSION['task_timesheet'][$timestamp]['NoteUpdated']++;
-            } else{
+                
+            }else{
                 $_SESSION['task_timesheet'][$timestamp]['updateError']++;
             }
         }

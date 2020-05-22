@@ -534,7 +534,7 @@ public function fetchTaskTimesheet($userid = '')
                     $tasksList[$i]->progress = $obj->progress;
                     $tasksList[$i]->listed = $whiteList[$obj->taskid];
                     $i++;
-                    $ret[$obj->appid] = 1;
+                    $ret[$obj->taskid] = $obj->appid;
             }
             $this->db->free($resql);
              $i = 0;
@@ -561,10 +561,11 @@ public function fetchTaskTimesheet($userid = '')
  */
 public function updateActuals($tabPost, $notes = array(), $progress = array())
 {
+    
      //FIXME, tta should be creted
-    if($this->status == APPROVED)
-        return -1;
-        dol_syslog(__METHOD__, LOG_DEBUG);
+    if($this->status == APPROVED)return -1;
+
+    dol_syslog(__METHOD__, LOG_DEBUG);
     $ret = 0;
    // $tmpRet = 0;
     //$_SESSION['task_timesheet'][$this->timestamp]['timeSpendCreated'] = 0;
@@ -574,11 +575,16 @@ public function updateActuals($tabPost, $notes = array(), $progress = array())
         /*
          * For each task store in matching the session timestamp
          */
-        if(is_array($this->taskTimesheet)){
-            foreach($this->taskTimesheet as $key => $row) {
+        if(is_array($this->taskTimesheet)){ 
+            foreach($this->taskTimesheet as $key => $row) { 
                 $tasktime = new TimesheetTask($this->db);
                 $tasktime->unserialize($row);
-                $ret += $tasktime->postTaskTimeActual($tabPost[$tasktime->id], $this->userId, $this->user, $this->timestamp,  $notes[$tasktime->id], $progress[$tasktime->id]);
+                if(isset($tabPost[$tasktime->id])){  
+                    
+                    $ret += $tasktime->postTaskTimeActual($tabPost[$tasktime->id], 
+                        $this->userId, $this->user, $this->timestamp,  
+                        $notes[$tasktime->id], $progress[$tasktime->id]);
+                }
                 $this->taskTimesheet[$key] = $tasktime->serialize();
             }
         }
@@ -756,7 +762,6 @@ public function getHTMLHeader()
     $weeklength = getDayInterval($this->date_start, $this->date_end);
     $maxColSpan = $weeklength+count($this->headers);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
-    $html = '<input type = "hidden" name = "timestamp" value = "'.$this->timestamp."\"/>\n";
     $html .= '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
      $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
@@ -823,6 +828,7 @@ public function getHTMLFooter($ajax = false)
 {
      global $langs, $apflows;
     //form button
+    $html = '<input type = "hidden" name = "timestamp" value = "'.$this->timestamp."\"/>\n";
     $html .= '<div class = "tabsAction">';
      $isOpenSatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED));
     if($isOpenSatus) {

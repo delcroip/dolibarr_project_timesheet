@@ -68,24 +68,28 @@ if($action == 'submit') {
         $appflowOn = in_array('1', array_slice($apflows, 2));
         //$task_timesheet->db = $db;
         if(!empty($_POST['approval'])) {
-            $notes = $_POST['note'];
+            $notes = GETPOST('note', 'array');
             $notesTask = GETPOST('notesTask', 'array');
+            $progressTask = GETPOST('progressTask', 'array');
             $approvals = $_POST['approval'];
-            foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $key => $tsUser) {
+
+            foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $tsuId => $tsStatus) {
+                
                 $curTaskTimesheet = new TimesheetUserTasks($db);
                 $count++;
-                $curTaskTimesheet->fetch($key);
+                $curTaskTimesheet->fetch($tsuId);
                 $arrayTTA = $curTaskTimesheet->fetchTaskTimesheet();
-                $curTaskTimesheet->updateActuals($arrayTTA, $notesTask);
+                $curTaskTimesheet->timestamp = $timestamp;
+                $curTaskTimesheet->updateActuals($arrayTTA, $notesTask[$tsuId],$progressTask[$tsuId]);
                 //if($approvals[$key]!=$tsUser)
-                switch($approvals[$key]) {
+                switch($approvals[$tsuId]) {
                     case 'Approved':
-                        $ret = $curTaskTimesheet->setStatus($user, (($appflowOn>0)?UNDERAPPROVAL:APPROVED), $key);
+                        $ret = $curTaskTimesheet->setStatus($user, (($appflowOn>0)?UNDERAPPROVAL:APPROVED), $tsuId);
                         if($ret<0)$errors++;
                         else $tsApproved++;
                         break;
                     case 'Rejected':
-                        $ret = $curTaskTimesheet->setStatus($user, REJECTED, $key);
+                        $ret = $curTaskTimesheet->setStatus($user, REJECTED, $tsuId);
                         if($ret<0)$errors++;
                         else $tsRejected++;
                         break;
@@ -95,13 +99,14 @@ if($action == 'submit') {
                 }
                 if($curTaskTimesheet->note!=$notes[$curTaskTimesheet->appId]) {
                     $curTaskTimesheet->note = $notes[$curTaskTimesheet->appId];
-                    $curTaskTimesheet->update(user);
+                    $curTaskTimesheet->update($user);
                 }
             }
             if(($tsRejected+$tsApproved)>0) {
                 $current--;
             }
             if($ret >= 0) {
+
                 if($tsApproved)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetApproved").$tsApproved);
                 if($tsRejected)setEventMessage($langs->transnoentitiesnoconv("NumberOfTimesheetRejected").$tsRejected);
                 if($errors)setEventMessage($langs->transnoentitiesnoconv("NumberOfErrors").$errors);
@@ -119,6 +124,7 @@ if($action == 'submit') {
             setEventMessage($langs->transnoentitiesnoconv("InternalError"), 'errors');
     }
 }
+TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
 if(!empty($timestamp)) {
     unset($_SESSION['timesheetAp'][$timestamp]);
 }
@@ -158,7 +164,7 @@ if($xml) {
     ob_end_flush();
 exit();
 }*/
-$task_timesheet = new TimesheetUserTasks($db);
+$TTU = new TimesheetUserTasks($db);
 $head = ($print)?'<style type = "text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
 $morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
@@ -169,22 +175,22 @@ echo '<div id = "Team" class = "tabBar">';
 if(is_object($firstTimesheetUser)) {
     if(!$print) echo getHTMLNavigation($optioncss, $selectList, $current);
     $Form .= $firstTimesheetUser->getHTMLFormHeader($ajax);
-    foreach($objectArray as $key => $task_timesheet) {
+    foreach($objectArray as $key => $TTU) {
 
         if($i<$level) {
-            $task_timesheet->fetchTaskTimesheet();
+            $TTU->fetchTaskTimesheet();
     //$ret += $this->getTaskTimeIds();
     //FIXME module holiday should be activated ?
-            $task_timesheet->fetchUserHoliday();
-            $Form .= $task_timesheet->userName." - ".dol_print_date($task_timesheet->date_start, 'day');
-            $Form .= $task_timesheet->getHTML(false, true);
-            $_SESSION['timesheetAp'][$timestamp]['tsUser'][$task_timesheet->id] = $task_timesheet->status;
+            $TTU->fetchUserHoliday();
+            $Form .= $TTU->userName." - ".dol_print_date($TTU->date_start, 'day');
+            $Form .= $TTU->getHTML(false, true);
+            $_SESSION['timesheetAp'][$timestamp]['tsUser'][$TTU->id] = $TTU->status;
             if(!$print) {
                 if($conf->global->TIMESHEET_ADD_DOCS == 1) {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
                     include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
                     $formfile = new FormFile($db);
-                    $object = $task_timesheet;
+                    $object = $TTU;
                     $relativepathwithnofile = '';
                     $modulepart = 'timesheet';
                     $permission = 1;//$user->rights->timesheet->add;
@@ -197,9 +203,9 @@ if(is_object($firstTimesheetUser)) {
                     $Form .= ob_get_contents().'<br>'."\n";
                     ob_end_clean();
                 }
-                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Approved" ><span>'.$langs->trans('approved').'</span></label>'."\n";
-                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Rejected" ><span>'.$langs->trans('rejected').'</span></label>'."\n";
-                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$task_timesheet->id.']" value = "Submitted" checked ><span>'.$langs->trans('submitted').'</span></label>'."\n";
+                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$TTU->id.']" value = "Approved" ><span>'.$langs->trans('approved').'</span></label>'."\n";
+                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$TTU->id.']" value = "Rejected" ><span>'.$langs->trans('rejected').'</span></label>'."\n";
+                $Form .= '<label class = "butAction"><input type = "radio"  name = "approval['.$TTU->id.']" value = "Submitted" checked ><span>'.$langs->trans('submitted').'</span></label>'."\n";
                 $Form .= '<br><br><br>'."\n";
             }
             $i++;//use for the offset
