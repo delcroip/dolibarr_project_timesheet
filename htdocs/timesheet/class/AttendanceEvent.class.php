@@ -584,6 +584,7 @@ public $date_time_event_start;
         $note = '';
         $tokenJson = '';
         $retJson = '';
+        $arrayRes = array();
         if(!empty($json)) {
             $this->unserialize($json, 1);
             $this->status = "";
@@ -598,17 +599,15 @@ public $date_time_event_start;
         $tokenDb = $this->token;
         if(empty($tokenDb)) {  // 00 01 no db record found by token or user
             $this->initAsSpecimen();
-            $this->status = array(
-                   'text'=>$langs->trans('NoActiveEvent'),
-                   'type'=>'errors',
-                   'param'=>'');
+            if(!$auto){
+                $arrayRes["NoActiveEvent"]++ ;
+                $this->status = TimesheetsetEventMessage($arrayRes, true);
+            }
             // AUTO START ?
         } elseif($this->event_type >= EVENT_STOP) { // found but already stopped
             $this->initAsSpecimen();
-            $this->status = array(
-                   'text'=>$langs->trans('EventNotActive'),
-                   'type'=>'errors',
-                   'param'=>'');
+            $arrayRes["EventNotActive"]++;
+            $this->status = TimesheetsetEventMessage($arrayRes, true);
         } else{// 11 && 10 found and active
             if(!empty($tokenJson)) { //11
                 $this->event_location_ref = $location_ref;
@@ -637,10 +636,9 @@ public $date_time_event_start;
                 $this->createTimeSpend($user, $tokenDb);
             } else{
                 $this->initAsSpecimen();
-                $this->status = array(
-                   'text'=>$langs->trans('DBError'),
-                   'type'=>'errors',
-                   'param'=>'');
+                $arrayRes = array();
+                $this->status = $arrayRes["DbError"]++ ;
+                $this->status = TimesheetsetEventMessage($arrayRes, true);
             }
         }
         return $this->serialize(2);;
@@ -658,6 +656,7 @@ public $date_time_event_start;
         $location_ref = '';
         $note = '';
         $tokenJson = '';
+        $arrayRes = array();
         $retJson = '';
         if(!empty($json)) {
             $this->unserialize($json, 1);
@@ -672,15 +671,11 @@ public $date_time_event_start;
         {
             //00
             $this->initAsSpecimen();
-            $this->status = array(
-                   'text'=>$langs->trans('NoActiveEvent'),
-                   'type'=>'warning',
-                   'param'=>'');
+            $arrayRes["NoActiveEvent"]++ ;
+            $this->status = TimesheetsetEventMessage($arrayRes, true);
         } elseif(empty($tokenDb) && !empty($tokenJson)) { // json recieved with token //01
-            $this->status = array(
-                   'text'=>$langs->trans('EventNotActive'),
-                   'type'=>'errors',
-                   'param'=>'');
+            $arrayRes["EventNotActive"]++;
+            $this->status = TimesheetsetEventMessage($arrayRes, true);
         } elseif(!empty($tokenDb)) {
             // 11 && 10
             if(!empty($tokenJson)) {

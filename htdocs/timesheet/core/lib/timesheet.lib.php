@@ -564,7 +564,12 @@ function formatTime($duration, $hoursperdays = -1)
         $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
         $default = array('type' => 'warnings', 'text' => 'NothingChanged', 'param' => 0);
         $messages[] = array('type' => 'mesgs', 'text' => 'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
+        $messages[] = array('type' => 'mesgs', 'text' => 'ProgressUpdate', 'param'=>$arraymessage['ProgressUpdate']);
         $messages[] = array('type' => 'errors', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
+        $messages[] = array('type' => 'warnings', 'text' => 'NoActiveEvent', 'param'=>$arraymessage['NoActiveEvent']);
+        $messages[] = array('type' => 'errors', 'text' => 'EventNotActive', 'param'=>$arraymessage['EventNotActive']);
+        $messages[] = array('type' => 'errors', 'text' => 'DbError', 'param'=>$arraymessage['DbError']);
+
         $nbr = 0;
         foreach($messages as $key => $message) {
             if($message['param']>0) {
