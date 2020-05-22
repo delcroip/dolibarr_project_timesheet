@@ -1119,6 +1119,7 @@ class TimesheetTask extends Task
         if(!empty($progress) && $progress != $this->progress) {
             $this->progress = $progress;
             $progressUpdate = true;
+            $_SESSION['task_timesheet'][$timestamp]['ProgressUpdate']++;
         }
         if(is_array($timesheetPost))foreach($timesheetPost as $dayKey => $dayData) {
             $wkload = $dayData[0];
@@ -1136,6 +1137,7 @@ class TimesheetTask extends Task
             $_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']+=$lineresult['timeSpendDeleted'];
             $_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']+=$lineresult['timeSpendCreated'];
         }
+
         if($progressUpdate || (is_array($_SESSION['task_timesheet'][$timestamp]) && array_sum($_SESSION['task_timesheet'][$timestamp])>$_SESSION['task_timesheet'][$timestamp]['updateError'])) {
             $this->updateTimeUsed();// needed upon delete
         }

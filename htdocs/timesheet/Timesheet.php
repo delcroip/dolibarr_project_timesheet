@@ -103,6 +103,7 @@ switch($action) {
         if(isset($_SESSION['task_timesheet'][$timestamp])) {
             if($tsUserId>0) {
                 $ret = 0;
+                $key = 1;
                 $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
                 $progressTask = GETPOST('progressTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
@@ -110,6 +111,7 @@ switch($action) {
                 $task_timesheet->loadFromSession($timestamp, $tsUserId);
                 if($task_timesheet->note != $notesTaskApproval[$key]) {
                     $update = true;
+                    $_SESSION['task_timesheet'][$timestamp]['NoteUpdated'] ++;
                     $task_timesheet->note = $notesTaskApproval[$key];
                     $task_timesheet->update($user);
                 }
@@ -132,7 +134,7 @@ switch($action) {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"), 'errors');
                 }
             }elseif(is_array($_SESSION['task_timesheet'][$timestamp])){
-                    setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warnings');
+                        setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warnings');
             }else{
                     setEventMessage($langs->transnoentitiesnoconv("NoTaskToUpdate"), 'errors');
             }

@@ -441,6 +441,7 @@ class TimesheetUserTasks extends CommonObject
        $this->date_start = $_SESSION['task_timesheet'][$timestamp][$id]['dateStart'];
        $this->date_end = $_SESSION['task_timesheet'][$timestamp][$id]['dateEnd'];
        $this->ref = $_SESSION['task_timesheet'][$timestamp][$id]['ref'];
+       $this->note = $_SESSION['task_timesheet'][$timestamp][$id]['note'];
        $this->holidays = unserialize($_SESSION['task_timesheet'][$timestamp][$id]['holiday']);
        $this->taskTimesheet = unserialize($_SESSION['task_timesheet'][$timestamp][$id]['taskTimesheet']);;
    }
@@ -454,6 +455,7 @@ public function saveInSession()
     $_SESSION['task_timesheet'][$this->timestamp][$this->id]['ref'] = $this->ref;
     $_SESSION['task_timesheet'][$this->timestamp][$this->id]['dateStart'] = $this->date_start;
     $_SESSION['task_timesheet'][$this->timestamp][$this->id]['dateEnd'] = $this->date_end;
+    $_SESSION['task_timesheet'][$this->timestamp][$this->id]['note'] = $this->note;
     $_SESSION['task_timesheet'][$this->timestamp][$this->id]['holiday'] = serialize($this->holidays);
     $_SESSION['task_timesheet'][$this->timestamp][$this->id]['taskTimesheet'] = serialize($this->taskTimesheet);
 }
