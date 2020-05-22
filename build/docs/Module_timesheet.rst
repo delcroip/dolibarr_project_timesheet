@@ -53,12 +53,12 @@ project via Project→contact Project. Then he can be assigned to the task
 .. toctree::
    :maxdepth: 2
 
-   TimesheetView
-   Attendance
-   Favourite
-   Approval
-   ProjectReports
-   ProjectInvoice
+   ./TimesheetView.rst
+   ./Attendance.rst
+   ./Favourite.rst
+   ./Approval.rst
+   ./ProjectReports.rst
+   ./ProjectInvoice.rst
 
 
 
