@@ -26,6 +26,10 @@ DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, a
 * **Active projects and tasks**
 * Users assigned to the project(s) and task(s)
 
+# Docs
+
+[Documentaiton on Github](./build/docs/index.rst)
+
 # Functionnalities
  - Timespend entry by week or Month for all the eligible tasks of a user in the timesheet page (splitted week possible, possible to add time spent for subordinates)
  - total per day and per timesheet
