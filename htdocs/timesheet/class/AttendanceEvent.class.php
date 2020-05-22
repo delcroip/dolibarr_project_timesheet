@@ -643,6 +643,7 @@ public $date_time_event_start;
         }
         return $this->serialize(2);;
     }
+
     /**
      *  Will register an hearbear for an attendance and return the result in json
      *

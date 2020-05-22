@@ -126,12 +126,16 @@ $html .= "<th>".$langs->trans("Action")."</th></tr>";
 $html .= '<tr class = "timesheet_line" id = "searchline">';
 $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
 $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
-$html .= $timesheet_attendance->printHTMLTaskList($headers, $user->id);
+$htmltmp .= $timesheet_attendance->printHTMLTaskList($headers, $user->id);
+$pattern  = "/(progressTask\[[^\]]+\]\[[^\]]+\])/i";
+$replacement = '$1" onchange="updateProgress(event);';
+$html .=  preg_replace($pattern, $replacement, $htmltmp);
 $html .= "</table>";
 //Javascript
 //$Form .= ' <script type = "text/javascript" src = "core/js/timesheet.js"></script>'."\n";
 $html .= '<script type = "text/javascript">'."\n\t";
 $html .= "let stopwatch = new Stopwatch(document.getElementById('stopwatch'));stopwatch.load();";
+$html .= "updateAllProgress();\n";
 $html .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $html;

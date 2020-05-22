@@ -562,13 +562,13 @@ function formatTime($duration, $hoursperdays = -1)
         if($arraymessage['timeSpendCreated']) $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
         if($arraymessage['timeSpendModified'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
         if($arraymessage['timeSpendDeleted'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
-        $default = array('type' => 'warnings', 'text' => 'NothingChanged', 'param' => 0);
+        $default = array('type' => 'warning', 'text' => 'NothingChanged', 'param' => 0);
         if($arraymessage['NoteUpdated'])$messages[] = array('type' => 'mesgs', 'text' => 'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
-        if($arraymessage['ProgressUpdate'])$messages[] = array('type' => 'mesgs', 'text' => 'ProgressUpdate', 'param'=>$arraymessage['ProgressUpdate']);
-        if($arraymessage['updateError'])$messages[] = array('type' => 'errors', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
-        if($arraymessage['NoActiveEvent'])$messages[] = array('type' => 'warnings', 'text' => 'NoActiveEvent', 'param'=>'');
-        if($arraymessage['EventNotActive'])$messages[] = array('type' => 'errors', 'text' => 'EventNotActive', 'param'=>'');
-        if($arraymessage['DbError'])$messages[] = array('type' => 'errors', 'text' => 'DbError', 'param'=>'');
+        if($arraymessage['ProgressUpdate'])$messages[] = array('type' => 'mesgs', 'text' => 'ProgressUpdate', 'param'=>'');
+        if($arraymessage['updateError'])$messages[] = array('type' => 'error', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
+        if($arraymessage['NoActiveEvent'])$messages[] = array('type' => 'warning', 'text' => 'NoActiveEvent', 'param'=>'');
+        if($arraymessage['EventNotActive'])$messages[] = array('type' => 'error', 'text' => 'EventNotActive', 'param'=>'');
+        if($arraymessage['DbError'])$messages[] = array('type' => 'error', 'text' => 'DbError', 'param'=>'');
 
         $nbr = 0;
         foreach($messages as $key => $message) {
@@ -605,4 +605,44 @@ function get_timezone_offset($remote_tz, $origin_tz = null)
     $remote_dt = new DateTime("now", $remote_dtz);
     $offset = $origin_dtz->getOffset($origin_dt) - $remote_dtz->getOffset($remote_dt);
     return $offset;
+}
+
+/**
+ *  Will register an progree change for an attendance and return the result in json
+ *
+ *  @param USER $user user that will update
+ *  @param  string                $json         json of the request
+ *  @return        int                                         <0 if KO, >0 if OK
+ */
+function ajaxprogress($user, $json)
+{
+    global $conf, $langs,$db;
+    $res = '';
+    $arrayRes = array();
+    $task = new Task($db);
+    if(!empty($json)) {
+        $object = json_decode($json);
+        if ($object == false || !($object->taskid > 0)){
+            $arrayRes['updateError'] ++;
+        }else{
+            $task->fetch($object->taskid);
+            if($object->progress == '' ||$object->progress == -1){
+                $object->progress = $task->progress;
+                $res++;
+            }else{
+                $task->progress = $object->progress;
+                $res = $task->update($user);
+                if ($res){
+                    $arrayRes['ProgressUpdate'] ++;
+                }else{
+                    $arrayRes['updateError'] ++;
+                }
+            }
+        }
+        if(count($arrayRes)) $object->status = TimesheetsetEventMessage($arrayRes, true);
+    }else{
+        $arrayRes['updateError'] ++;
+        $object['status'] = TimesheetsetEventMessage($arrayRes, true);
+    }
+    return json_encode($object);
 }
