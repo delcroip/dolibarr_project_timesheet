@@ -50,15 +50,15 @@ project via Project→contact Project. Then he can be assigned to the task
 : Task > resource assignation.
 
 
-.. toctree::
-   :maxdepth: 2
+.. contents:: a title for the contents
+    :depth: 2
 
-   ./TimesheetView.rst
-   ./Attendance.rst
-   ./Favourite.rst
-   ./Approval.rst
-   ./ProjectReports.rst
-   ./ProjectInvoice.rst
+.. include:: ./TimesheetView.rst
+.. include:: ./Attendance.rst
+.. include:: ./Favourite.rst
+.. include:: ./Approval.rst
+.. include:: ./ProjectReports.rst
+.. include:: ./ProjectInvoice.rst
 
 
 
