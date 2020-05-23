@@ -58,8 +58,8 @@ $langs->load('timesheet@timesheet');
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 if($action == 'submit') {
-    if(isset($_SESSION['timesheetAp'][$timestamp])) {
-       // $_SESSION['timesheetAp'][$timestamp]['tsUser']
+    if(isset($_SESSION['task_timesheet'][$timestamp])) {
+       // $_SESSION['task_timesheet'][$timestamp]['tsUser']
         $tsApproved = 0;
         $tsRejected = 0;
         $ret = 0;
@@ -73,7 +73,7 @@ if($action == 'submit') {
             $progressTask = GETPOST('progressTask', 'array');
             $approvals = $_POST['approval'];
 
-            foreach($_SESSION['timesheetAp'][$timestamp]['tsUser'] as $tsuId => $tsStatus) {
+            foreach($_SESSION['task_timesheet'][$timestamp]['tsUser'] as $tsuId => $tsStatus) {
                 
                 $curTaskTimesheet = new TimesheetUserTasks($db);
                 $count++;
@@ -101,6 +101,7 @@ if($action == 'submit') {
                     $curTaskTimesheet->note = $notes[$curTaskTimesheet->appId];
                     $curTaskTimesheet->update($user);
                 }
+                TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
             }
             if(($tsRejected+$tsApproved)>0) {
                 $current--;
@@ -124,9 +125,9 @@ if($action == 'submit') {
             setEventMessage($langs->transnoentitiesnoconv("InternalError"), 'errors');
     }
 }
-TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
+
 if(!empty($timestamp)) {
-    unset($_SESSION['timesheetAp'][$timestamp]);
+    unset($_SESSION['task_timesheet'][$timestamp]);
 }
 $timestamp = getToken();
 $subId = ($user->admin)?'all':getSubordinates($db, $userId, 2, array($userId), TEAM);
@@ -184,7 +185,7 @@ if(is_object($firstTimesheetUser)) {
             $TTU->fetchUserHoliday();
             $Form .= $TTU->userName." - ".dol_print_date($TTU->date_start, 'day');
             $Form .= $TTU->getHTML(false, true);
-            $_SESSION['timesheetAp'][$timestamp]['tsUser'][$TTU->id] = $TTU->status;
+            $_SESSION['task_timesheet'][$timestamp]['tsUser'][$TTU->id] = $TTU->status;
             if(!$print) {
                 if($conf->global->TIMESHEET_ADD_DOCS == 1) {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';

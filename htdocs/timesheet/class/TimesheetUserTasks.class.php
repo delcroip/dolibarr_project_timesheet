@@ -660,7 +660,7 @@ public function updateStatus($user, $status = 0)
     UNDERAPPROVAL => 3,
     PLANNED => 9);
     //look for the status to apply to the TS  from the TTA
-    foreach($this->taskTimesheet as $row) {
+    if(count($this->taskTimesheet ))foreach($this->taskTimesheet as $row) {
         $tta = new TimesheetTask($this->db);
         $tta->unserialize($row);
         if($tta->appId>0) { // tta already created

@@ -51,7 +51,7 @@ if($current == null)$current = '0';
 //handle submission
 if($action == 'submit') {
     if(isset($_SESSION['task_timesheet'][$token])) {
-        // $_SESSION['timesheetAp'][$token]['tsUser']
+        // $_SESSION['task_timesheet'][$token]['tsUser']
         $tsApproved = 0;
         $tsRejected = 0;
         $ret = 0;
