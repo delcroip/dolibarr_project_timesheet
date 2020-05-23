@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 //require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once 'class/TimesheetTask.class.php';
 require_once 'core/lib/timesheet.lib.php';
+require_once 'class/TimesheetFavourite.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 $attendanceeventStatusPictoArray = array(-2=> 'status7', 3=> 'statut3', 1=>'statut3', 2=>'statut3', 4=>'statut7');
 $attendanceeventStatusArray = array(-2=> $langs->trans('AutoCheckin'), 1=>$langs->trans('Heartbeat'), 2=>$langs->trans('Checkin'), 3=>$langs->trans('Checkout'), 4=>$langs->trans('AutoCheckout'));
@@ -770,7 +771,10 @@ public function createTimeSpend($user, $token = '')
  public function fetchTasks($userid = '', $date = '')
  {
     global $conf;
+
     if(empty($date))$date = time();
+    $staticWhiteList = new TimesheetFavourite($this->db);
+    $whiteList = $staticWhiteList->fetchUserList($userid, $date, $date + SECINDAY);
     if($userid == '') {
         $userid = $this->userid;
     }
@@ -807,7 +811,8 @@ public function createTimeSpend($user, $token = '')
             $tasksList[$i]->id = $obj->taskid;
             $tasksList[$i]->userId = $this->userid;
             $tasksList[$i]->getTaskInfo();
-              $i++;
+            $tasksList[$i]->listed = $whiteList[$obj->taskid];
+            $i++;
         }
         $this->db->free($resql);
         $i = 0;

@@ -474,9 +474,10 @@ public function fetchTaskTimesheet($userid = '')
     }
 
     $whiteList = array();
-    $staticWhiteList = new TimesheetFavourite($this->db);
+    
     $datestart = $this->date_start;
     $datestop = $this->date_end;
+    $staticWhiteList = new TimesheetFavourite($this->db);
     $whiteList = $staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
     $tasksList = array();
