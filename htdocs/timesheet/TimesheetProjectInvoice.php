@@ -405,8 +405,16 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
                         $defaultService,
                         $addchoices);
     $html .= '</th>';
+    $unitValue = '';
+    if(($user>0)){ // if the is no defaulf service, use the thm if available, if not use the tjm
+        $curUser = new User($db);
+        $curUser->fetch($user);
+        if($curUser->thm)$unitValue = $curUser->thm;
+        else if($curUser->tjm)$unitValue = $curUser->tjm;
+    }
+
     $html .= '<th ><input type = "text"  size = "30" name = "userTask['.$user.']['.$task.'][Desc]" ></th>';
-    $html .= '<th><input type = "text"  size = "6" name = "userTask['.$user.']['.$task.'][PriceHT]" ></th>';
+    $html .= '<th><input type = "text"  size = "6" name = "userTask['.$user.']['.$task.'][PriceHT]" value="'.number_format($unitValue,2).'" ></th>';
     //$html .= '<th><input type = "text" size = "6" name = "userTask['.$user.']['.$task.']["VAT"]" ></th>';
     $html .= '<th>'.$form->load_tva('userTask['.$user.']['.$task.'][VAT]', -1, $seller, $buyer, 0, 0, '', false, 1).'</th>';
     $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['.$user.']['.$task.'][unit_duration]" value = "1" >';
