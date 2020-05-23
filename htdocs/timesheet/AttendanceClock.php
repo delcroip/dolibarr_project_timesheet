@@ -125,6 +125,14 @@ $html .= "<th>".$langs->trans("Action")."</th></tr>";
 // show the filter
 $html .= '<tr class = "timesheet_line" id = "searchline">';
 $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
+
+if($conf->global->TIMESHEET_WHITELIST == 1) {
+   $html .= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
+   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
+   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 0)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'whitelist\')"><a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('blackWhiteList').'</a></div>';
+   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
+   $html .= '</div>';
+}
 $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
 $htmltmp .= $timesheet_attendance->printHTMLTaskList($headers, $user->id);
 $pattern  = "/(progressTask\[[^\]]+\]\[[^\]]+\])/i";
@@ -136,6 +144,7 @@ $html .= "</table>";
 $html .= '<script type = "text/javascript">'."\n\t";
 $html .= "let stopwatch = new Stopwatch(document.getElementById('stopwatch'));stopwatch.load();";
 $html .= "updateAllProgress();\n";
+$html .= "document.getElementById('defaultOpen').click();\n";
 $html .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $html;
