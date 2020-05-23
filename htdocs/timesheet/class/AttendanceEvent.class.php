@@ -672,7 +672,7 @@ public $date_time_event_start;
         {
             //00
             $this->initAsSpecimen();
-            $arrayRes["NoActiveEvent"]++ ;
+            if($this->userid)$arrayRes["NoActiveEvent"]++ ;
             $this->status = TimesheetsetEventMessage($arrayRes, true);
         } elseif(empty($tokenDb) && !empty($tokenJson)) { // json recieved with token //01
             $arrayRes["EventNotActive"]++;
