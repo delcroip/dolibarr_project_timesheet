@@ -127,7 +127,7 @@ if($cancel) {
     $object->user = ($user->admin && $ajax!=1)?GETPOST('User', 'int'):$userId;
     $object->project = GETPOST('Project', 'int');
     if($object->project == -1)$object->project = '';
-    $object->project_task = GETPOST('Projecttask', 'int');
+    $object->project_task = GETPOST('Task', 'int');
     if($object->project_task == -1)$object->project_task = '';
     $object->subtask = GETPOST('Subtask', 'int');
     if($object->subtask == "") $object->subtask = 0;
@@ -260,35 +260,7 @@ $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 // Put here content of your page
 //javascript to reload the page with the poject selected
-print '
-<SCRIPT type = "text/javascript">
-function reload()
-{
-    var param_array = window.location.href.split(\'?\')[1].split(\'&\');
-    var index;
-    var id = "";
-    var action = "create";
-    for(index = 0;index < param_array.length;++index)
-    {
-        x = param_array[index].split(\' = \');
-        if(x[0] == "action") {
-            action=x[1];
-        }
-        if(x[0] == "id") {
-            id = "&id="+x[1];
-        }
 
-    }
-    var pjtSelect = document.getElementById("Project")
-    var pjt = pjtSelect.selectedIndex;
-    var pjtold = (typeof(pjtSelect.defaultSelected) === \'undefined\')?0:pjtSelect.defaultSelected ;
-    var usr = document.getElementById("User").value;
-    if( pjtSelect != null && pjt != pjtold){
-        self.location = "'.$PHP_SELF.'?&action=" + action + id +"&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
-    }
-
-}
-</script>';
 // Example : Adding jquery code
 /*print '<script type = "text/javascript" language = "javascript">
 jQuery(document).ready(function()
@@ -402,7 +374,7 @@ switch($action) {
         // show the field project_task
         print '<td>'.$langs->trans('Task').' </td><td>';
         if($edit == 1) {
-            $selected = $object->task;
+            $selected = $object->project_task;
             $htmlname = 'Task';
             $formproject->selectTasks(-1, $selected, $htmlname,24,0,1,0,0,0, 'maxwidth500',($object->project?$object->project:''));
             /*
@@ -419,7 +391,7 @@ switch($action) {
             print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
             */
         } else {
-            if($object->task>0) {
+            if($object->project_task>0) {
                 $StaticObject = New Task($db);
                 $StaticObject->fetch($object->project_task);
                 print $StaticObject->getNomUrl(1);
@@ -483,6 +455,34 @@ switch($action) {
             }
             print ' &nbsp;<input type = "submit" class = "butActionDelete" name = "cancel" value = "'.$langs->trans('Cancel').'"></div>';
             print '</form>';
+            //scipt to reload page when the project is changed
+            print '
+            <script type = "text/javascript">
+                $("#Project").on("select2:select", function (e) {
+                    var param_array = window.location.href.split(\'?\')[1].split(\'&\');
+                    var index;
+                    var id = "";
+                    var action = "create";
+                    for(index = 0;index < param_array.length;++index)
+                    {
+                        x = param_array[index].split(\' = \');
+                        if(x[0] == "action") {
+                            action=x[1];
+                        }
+                        if(x[0] == "id") {
+                            id = "&id="+x[1];
+                        }
+
+                    }
+                    var pjtSelect = e.params.data;
+                    var pjt = pjtSelect.id;
+                    var pjtold = (typeof(pjtSelect.defaultSelected) === \'undefined\')?0:pjtSelect.defaultSelected ;
+                    var usr = document.getElementById("User").value;
+                    if( pjtSelect != null && pjt != pjtold){
+                        self.location = "'.$PHP_SELF.'?&action=" + action + id +"&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
+                    }
+                });
+             </script>';
         } else{
             $parameters = array();
             $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);// Note that $action and $object may have been modified by hook
@@ -735,4 +735,5 @@ function timesheetFavourite_prepare_head($object)
 }
 // End of page
 llxFooter();
+
 $db->close();
