@@ -1,4 +1,17 @@
 # dolibarr_project_timesheet changelog
+4.2.0
+- fix: send approval reminder
+- fix: favorite edit card update the task when the project is selected
+- fix: update the note and progress from team approval
+- fix: update declared progress from chrono
+- fix: error in team approval (#109)
+- new: link propal to timesheet invoice (#101)
+- new: favorite tab in chrono (#111)
+- new: add user, project and task link in reports (#104)
+- new: use the hourly or daily rate as default in invoice unit price
+
+
+
 4.1.2
 - fix count issue on chrono page
 - fix UTF-8 lang file 
