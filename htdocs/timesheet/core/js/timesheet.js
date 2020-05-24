@@ -204,7 +204,7 @@ function validateTime(object,col_id){
                 //var regex=/^([0-5]{1}([.,]{1}[0-9]{1,3})?|[.,]{1}[0-9]{1,3}|)$/;
                 var regex=/^([0-2]{0,1})?([:,.]([0-9]{0,3}))?$/
                 if(regex.test(object.value)){
-                    object.value=object.value.replace(/:|\,/g,'.'); //fixme
+                    object.value=object.value.replace(/:|\,/g,'.'); 
                 }else {
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
@@ -623,3 +623,63 @@ function sortTable(table,col,sort) {
       }
     }
   }
+  
+
+
+function updateProgress(event){
+    element= event.target;
+    updateProgressElement(element);
+}
+
+function updateProgressElement(element){
+      // check if value has changed
+    // send the jsom
+    let ret;
+    ret = {name : element.name,
+        taskid : element.name.match(/progressTask\[[0-9]*\]\[([0-9]+)\]/)[1],
+        progress : element.value,
+        status : null};
+    
+    var Url="ajax.php?action=updateprogress"
+    $.ajax({
+        type: "POST",
+        url: Url,
+        data:'json='+JSON.stringify(ret),
+        success: updateProgressSuccess,
+        error: $.jnotify
+    });
+
+  }
+
+  function updateProgressSuccess(data){
+        
+        if(typeof data.status!== 'undefined' && data.status && data.status!=""){ //  display status
+            var obj=JSON.parse(data.status);
+            Object.keys(obj).forEach(function(key){
+                $.jnotify(obj[key].text+obj[key].param,obj[key].type)
+                if (obj[key].type == 'megs'){// only one will be returned
+                }
+            });
+        }
+        if( typeof data.name !== 'undefined' &&  data.name !== null){
+            let element = document.getElementsByName(data.name);
+            if(element[0] !== 'undefined') element[0].value =  data.progress;
+        }
+
+  }
+
+  function updateAllProgress(){
+    selectElements = document.getElementsByTagName('select')
+    Object.keys(selectElements).forEach(function(key){
+            current = selectElements[key];
+            selectName = current.getAttribute("name");
+            if (selectName && selectName.indexOf("progressTask") === 0) {
+                updateProgressElement(current);
+            }
+        }
+    )
+    
+  }
+
+
+

@@ -55,10 +55,10 @@ global $langs;
  * @return string HTML code
  */
 function select_sellist(
-    $sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
-    $htmlarray = array('name'=> 'HTMLSellist', 'class'=>'', 'otherparam'=>'', '$ajaxNbChar'=>'', 'separator'=> ' ', 'noajax'=>0),
+    $sqlarray = array('table' => 'user', 'keyfield' => 'rowid', 'fields' => 'firstname, lastname', 'join' => '', 'where' => '', 'tail' => ''),
+    $htmlarray = array('name' => 'HTMLSellist', 'class' => '', 'otherparam' => '', '$ajaxNbChar' => '', 'separator' => ' ', 'noajax' => 0),
     $selected = '',
-    $addtionnalChoices = array('NULL'=>'NULL')
+    $addtionnalChoices = array('NULL' => 'NULL')
 ) {
     global $conf, $langs, $db;
     $noajax = isset($htmlarray['noajax']);
@@ -71,7 +71,7 @@ function select_sellist(
     $listFields = explode(',', $sqlarray['fields']);
     $fields = array();
     foreach($listFields as $item) {
-        $item=trim($item);
+        $item = trim($item);
         $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
         $start2 = strpos($item, '.');
         $label = $item;
@@ -80,7 +80,7 @@ function select_sellist(
         } elseif($start2) {
             $label = substr($item, $start2+1);
         }
-        $fields[] = array('select' => $item, 'label'=>trim($label));
+        $fields[] = array('select' => $item, 'label' => trim($label));
     }
     $select = "\n";
     if($ajax) {
@@ -120,7 +120,7 @@ function select_sellist(
     $sql = 'SELECT DISTINCT ';
     $sql .= $sqlarray['keyfield'];
     $sql .= ', '.$sqlarray['fields'];
-    $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql .= ' '.$sqlarray['join'];
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))
@@ -133,7 +133,7 @@ function select_sellist(
     $labelKey = ($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
     $resql = $db->query($sql);
     if($resql) {
-        $selectOptions.= "<option value = \"-1\" ".(empty($selected)?"selected":"").">&nbsp;</option>\n";
+        $selectOptions .= "<option value = \"-1\" ".(empty($selected)?"selected":"").">&nbsp;</option>\n";
         $i = 0;
         $separator = isset($htmlarray['separator'])?$htmlarray['separator']:' ';
          //return $table."this->db".$field;
@@ -147,7 +147,7 @@ function select_sellist(
                     if(!empty($fieldtoshow))$fieldtoshow .= $separator;
                     $fieldtoshow .= $obj->{$item['label']};
                 }
-                $selectOptions.= "<option value = \"".$obj->{$labelKey}."\" ";
+                $selectOptions .= "<option value = \"".$obj->{$labelKey}."\" ";
                 if($obj->{$labelKey} == $selected) {
                      $selectOptions .= 'selected = \"selected\"';
                      $selectedValue = $fieldtoshow;
@@ -159,12 +159,12 @@ function select_sellist(
             $i++;
         }
         if($addtionnalChoices)foreach($addtionnalChoices as $value => $choice) {
-            $selectOptions.= '<option value = "'.$value.'" '.(($selected == $value)?'selected':'').">{$choice}</option>\n";
+            $selectOptions .= '<option value = "'.$value.'" '.(($selected == $value)?'selected':'').">{$choice}</option>\n";
         }
     } else {
         $error++;
         dol_print_error($db);
-       $select.= "<option value = \"-1\" selected = \"selected\">ERROR</option>\n";
+       $select .= "<option value = \"-1\" selected = \"selected\">ERROR</option>\n";
     }
     if($ajaxNbChar && $ajax) {
         if($selectedValue == '' && is_array($addtionnalChoices)) {
@@ -191,7 +191,7 @@ function select_sellist(
  * @return string HTML code
  */
 function print_sellist(
-    $sqlarray = array('table'=> 'user', 'keyfield'=> 'rowid', 'fields'=>'firstname, lastname', 'join' => '', 'where'=>'', 'tail'=>''),
+    $sqlarray = array('table' => 'user', 'keyfield' => 'rowid', 'fields' => 'firstname, lastname', 'join' => '', 'where' => '', 'tail' => ''),
     $selected = '',
     $separator = ' ',
     $url = ''
@@ -205,10 +205,10 @@ function print_sellist(
     $sql = 'SELECT DISTINCT ';
     $sql .= $sqlarray['keyfield'];
     $sql .= ', '.$sqlarray['fields'];
-    $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql .= ' '.$sqlarray['join'];
-    $sql.= ' WHERE '.$sqlarray['keyfield'].' = \''.$selected.'\'';
+    $sql .= ' WHERE '.$sqlarray['keyfield'].' = \''.$selected.'\'';
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))
             $sql .= ' AND '.$sqlarray['where'];
     if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
@@ -221,7 +221,7 @@ function print_sellist(
         $listFields = explode(',', $sqlarray['fields']);
         $fields = array();
         foreach($listFields as $item) {
-            $item=trim($item);
+            $item = trim($item);
             $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
             $start2 = strpos($item, '.');
             $label = $item;
@@ -230,7 +230,7 @@ function print_sellist(
             } elseif($start2) {
                 $label = substr($item, $start2+1);
             }
-            $fields[] = array('select' => $item, 'label'=>trim($label));
+            $fields[] = array('select' => $item, 'label' => trim($label));
         }
         $num = $db->num_rows($resql);
         if($num) {
@@ -251,7 +251,7 @@ function print_sellist(
     } else {
         $error++;
         dol_print_error($db);
-       $select.= "ERROR";
+       $select .= "ERROR";
     }
       //$select .= "\n";
       return $select;
@@ -315,8 +315,8 @@ function getToken($length = 32)
 {
     $token = "";
     $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
-    $codeAlphabet.= "0123456789";
+    $codeAlphabet .= "abcdefghijklmnopqrstuvwxyz";
+    $codeAlphabet .= "0123456789";
     for($i = 0;$i<$length;$i++)
     {
         $token .= $codeAlphabet[crypto_rand_secure(0, strlen($codeAlphabet))];
@@ -356,66 +356,66 @@ function print_generic($table, $fieldValue, $selected, $fieldToShow1, $fieldToSh
 function getNomUrl($type, $htmlcontent = '1', $id = 0, $ref = '')
 {
     global $db;
-    $object=null;
-    $link='';
+    $object = null;
+    $link = '';
     switch (strtolower(str_replace('_', '', $type)))
     {
         case "supplier":
         case "fournisseur":
-            $type="Fournisseur";
+            $type = "Fournisseur";
             if (!class_exists($type)) break;
         case "customer":
         case "Company":
         case "societe":
-           $type="Societe";
+           $type = "Societe";
             break;
         case "invoice":
         case "facture":
         case "invoicecustomer":
         case "customerinvoice":
-           $type="Facture";
+           $type = "Facture";
             break;
         case "invoicesupplier":
         case "supplierinvoice":
         case "facturefourn":
-            $type="FactureFournisseur";
+            $type = "FactureFournisseur";
             break;
         case "expense":
             break;
         case "bankaccount":
-            $type="Account";
+            $type = "Account";
             break;
         case "salary":
-            $type="PaymentSalary";
+            $type = "PaymentSalary";
             break;
         case "order":
         case "customerorder":
         case "ordercustomer":
-            $type="Commande";
+            $type = "Commande";
             break;
         case "supplierorder":
         case "ordersupplier":
-            $type="FactureFournisseur";
+            $type = "FactureFournisseur";
             break;
         case "subscriber":
-            $type="Adherent";
+            $type = "Adherent";
             break;
         case "donation":
-            $type="Don";
+            $type = "Don";
             break;
         case "charge":
         case "healthcareexpense":
         case "socialcontributions":
-            $type="Chargesociales";
+            $type = "Chargesociales";
            break;
         case "payment":
-            $type= "Paiement";
+            $type = "Paiement";
             break;
         case "vat":
-            $type="TVA";
+            $type = "TVA";
             break;
         case "expense":
-            $type="ExpenseReport";
+            $type = "ExpenseReport";
         default:
             break;
     }

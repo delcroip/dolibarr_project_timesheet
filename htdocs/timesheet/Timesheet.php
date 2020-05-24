@@ -17,7 +17,7 @@
  */
 /**
  *        \file       dev/skeletons/skeleton_page.php
- *                \ingroup    mymodule othermodule1 othermodule2
+ *                \ingroup    timesheet othermodule1 othermodule2
  *                \brief      This file is an example of a php page
  *                                        Put here some comments
  */
@@ -47,7 +47,7 @@ if($whitelistmode == '') {
     $whitelistmode = $conf->global->TIMESHEET_WHITELIST_MODE;
 }
 $userid = is_object($user)?$user->id:$user;
-$postUserId= GETPOST('userid', 'int');
+$postUserId = GETPOST('userid', 'int');
 $submitted = GETPOST('submit', 'alpha');
 $tsUserId = GETPOST('tsUserId', 'int');
 
@@ -71,7 +71,7 @@ if($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
     $dateStart = $_SESSION["dateStart"];
 } else {
     $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
-    if($dateStart==0)$dateStart=getStartDate(time(), 0);
+    if($dateStart == 0)$dateStart = getStartDate(time(), 0);
 }
 $_SESSION["dateStart"] = $dateStart ;
 
@@ -82,9 +82,9 @@ $langs->load("projects");
 $langs->load('timesheet@timesheet');
 /*
 // Get parameters
-$id                         = GETPOST('id', 'int');
-$action                 = GETPOST('action', 'alpha');
-$myparam         = GETPOST('myparam', 'alpha');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$myparam = GETPOST('myparam', 'alpha');
 // Protection if external user
 if($user->societe_id > 0) {
         //accessforbidden();
@@ -103,6 +103,7 @@ switch($action) {
         if(isset($_SESSION['task_timesheet'][$timestamp])) {
             if($tsUserId>0) {
                 $ret = 0;
+                $key = 1;
                 $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
                 $progressTask = GETPOST('progressTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
@@ -110,6 +111,7 @@ switch($action) {
                 $task_timesheet->loadFromSession($timestamp, $tsUserId);
                 if($task_timesheet->note != $notesTaskApproval[$key]) {
                     $update = true;
+                    $_SESSION['task_timesheet'][$timestamp]['NoteUpdated'] ++;
                     $task_timesheet->note = $notesTaskApproval[$key];
                     $task_timesheet->update($user);
                 }
@@ -124,16 +126,15 @@ switch($action) {
         //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
                 TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
             } elseif(GETPOSTISSET('recall')) {
-                $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
-                //$task_timesheet->status = "DRAFT";
-                $ret = $task_timesheet->setStatus($user, DRAFT);
+                    $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
+                    $ret = $task_timesheet->setStatus($user, DRAFT);
                 if($ret > 0) {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
                 } else {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"), 'errors');
                 }
             }elseif(is_array($_SESSION['task_timesheet'][$timestamp])){
-                    setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warnings');
+                        setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warnings');
             }else{
                     setEventMessage($langs->transnoentitiesnoconv("NoTaskToUpdate"), 'errors');
             }
@@ -152,17 +153,17 @@ if(!empty($timestamp)) {
 }
 $task_timesheet->fetchAll($dateStart, $whitelistmode);
 if($conf->global->TIMESHEET_ADD_DOCS) {
-    dol_include_once('/core/class/html.formfile.class.php');
-    dol_include_once('/core/lib/files.lib.php');
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     $modulepart = 'timesheet';
     $object = $task_timesheet;
     $ref = dol_sanitizeFileName($object->ref);
     $upload_dir = $conf->timesheet->dir_output.'/users/'.get_exdir($object->id, 2, 0, 0, $object, 'timesheet').$ref;
-    if(version_compare(DOL_VERSION, "4.0")>=0) {
+    if(version_compare(DOL_VERSION, "4.0") >= 0) {
         include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
     } else{
         include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-        //dol_include_once('/core/class/html.form.class.php');
+        //require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
     }
 }
 /***************************************************
@@ -190,11 +191,11 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
 $Form = $task_timesheet->getHTMLNavigation($optioncss);
 $Form .= $task_timesheet->getHTMLFormHeader();
      if($conf->global->TIMESHEET_WHITELIST == 1) {
-        $Form.= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
-        $Form.= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
+        $Form .= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
+        $Form .= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
         $Form .= '  <div '.(($task_timesheet->whitelistmode == 0)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'whitelist\')"><a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('blackWhiteList').'</a></div>';
-        $Form.= '  <div '.(($task_timesheet->whitelistmode == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
-        $Form.= '</div>';
+        $Form .= '  <div '.(($task_timesheet->whitelistmode == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
+        $Form .= '</div>';
      }
 $Form .= $task_timesheet->getHTML();
 //simulualate a click on of of the tabs

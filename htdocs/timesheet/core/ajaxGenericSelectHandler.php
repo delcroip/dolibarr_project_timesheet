@@ -45,7 +45,7 @@ if($posBs>0) {
     $sql = 'SELECT DISTINCT ';
     $sql .= $sqlarray['keyfield'];
     $sql .= ', '.$sqlarray['fields'];
-    $sql.= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
     if(isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql .= ' '.$sqlarray['join'];
     if(isset($sqlarray['where']) && !empty($sqlarray['where']))
@@ -72,7 +72,7 @@ if($posBs>0) {
         } elseif($start2) {
             $label = substr($item, $start2+1);
         }
-        $fields[] = array('select' => $item, 'label'=>trim($label));
+        $fields[] = array('select' => $item, 'label' => trim($label));
     }
         $i = 0;
          //return $table."this->db".$field;

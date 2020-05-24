@@ -41,21 +41,21 @@ if(!$user->rights->timesheet->approval->admin) {
 require_once 'core/lib/generic.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 require_once 'core/lib/timesheet.lib.php';
-dol_include_once('/core/lib/functions2.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 //document handling
-dol_include_once('/core/lib/files.lib.php');
-//dol_include_once('/core/lib/images.lib.php');
-dol_include_once('/core/class/html.formfile.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+//include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // include conditionnally of the dolibarr version
-dol_include_once('/core/class/html.formother.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("timesheet@timesheet");
 // Get parameter
-$id                         = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action                 = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -85,7 +85,7 @@ if(!$removefilter) {
     $ls_note = GETPOST('ls_note', 'alpha');
     if($ls_note == -1)$ls_note = '';
 }
-$page = GETPOST('page', 'int');//FIXME, need to use for all the list
+$page = GETPOST('page', 'int');
 if($page <= 0){
     $page = 0;
 }
@@ -236,7 +236,7 @@ if($conf->global->TIMESHEET_ADD_DOCS && $id>0) {
     $object->fetch($id);
     $ref = dol_sanitizeFileName($object->ref);
     $upload_dir = $conf->timesheet->dir_output.'/tasks/'.get_exdir($object->id, 2, 0, 0, $object, 'timesheet').$ref;
-    if(version_compare(DOL_VERSION, "4.0")>=0) {
+    if(version_compare(DOL_VERSION, "4.0") >= 0) {
        include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
     } else{
        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
@@ -381,6 +381,11 @@ switch($action) {
         print '</table>'."\n";
         print '<br>';
         if($object->status != DRAFT && $edit!=1) {
+            $object->fetchByWeek();
+            $object->fetchTaskTimesheet();
+            //$ret += $this->getTaskTimeIds();
+            //FIXME module holiday should be activated ?
+            $object->fetchUserHoliday();
             print $object->userName." - ".dol_print_date($object->date_start, 'day');
             print $object->getHTMLHeader();
             print $object->getHTMLHolidayLines(false);
@@ -445,7 +450,7 @@ switch($action) {
         $filearray = dol_dir_list($upload_dir, 'files', 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc'?SORT_DESC:SORT_ASC), 1);
         $totalsize = 0;
         foreach($filearray as $key => $file) {
-                $totalsize+=$file['size'];
+                $totalsize += $file['size'];
         }
         print '<table class = "border" width = "100%">';
         $linkback = '<a href = "'.$PHP_SELF.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -474,15 +479,15 @@ switch($action) {
     default:
         {
     $sql = 'SELECT';
-    $sql.= ' t.rowid, ';
+    $sql .= ' t.rowid, ';
     $sql .= ' t.fk_userid, ';
     $sql .= ' t.date_start, ';
     $sql .= ' t.date_end, ';
     $sql .= ' t.status';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
     $sqlwhere = '';
     if(isset($object->entity))
-        $sqlwhere.= ' AND t.entity = '.$conf->entity;
+        $sqlwhere .= ' AND t.entity = '.$conf->entity;
     if($filter && $filter != -1) {
         // GETPOST('filtre') may be a string {
         $filtrearr = explode(', ', $filter);
@@ -512,9 +517,9 @@ switch($action) {
             $result = $db->query($sqlcount);
             $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
     }
-    $sql.= $db->order($sortfield, $sortorder);
+    $sql .= $db->order($sortfield, $sortorder);
     if(!empty($limit)) {
-            $sql.= $db->plimit($limit+1, $offset);
+            $sql .= $db->plimit($limit+1, $offset);
     }
     //execute SQL
     dol_syslog($script_file, LOG_DEBUG);
@@ -550,7 +555,7 @@ switch($action) {
             print '<tr class = "liste_titre">';
             //Search field foruserId
             print '<td class = "liste_titre" colspan = "1" >';
-    //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL'=>'NULL'), $sqlTailTable = '', $ajaxUrl = '')
+    //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL' => 'NULL'), $sqlTailTable = '', $ajaxUrl = '')
 
             //print select_generic('user', 'rowid', 'ls_userId', 'lastname', 'firstname', $ls_userId, ' - ', '', '', null, '', $ajaxNbChar);
             print $form->select_users($ls_userId, 'ls_userId');
@@ -571,7 +576,7 @@ switch($action) {
             //        print '</td>';
             //Search field forproject_tasktime_list
             //        print '<td class = "liste_titre" colspan = "1" >';
-            //                print '<input class = "flat" size = "16" type = "text" name = "ls_project_tasktime_list" value = "'.$ls_project_tasktime_list.'"/>';
+            //                print '<input class = "flat" size = "16" type = "text" name = "ls_project_tasktime_list" value = "'.$ls_project_tasktimeList.'"/>';
             //        print '</td>';
             //Search field foruser_approval
             //print '<td class = "liste_titre" colspan = "1" >';
@@ -594,11 +599,7 @@ switch($action) {
                             print $basedurl.$obj->rowid."'\" >";
                             print "<td>".print_generic('user', 'rowid', $obj->fk_userid, 'lastname', 'firstname', ' ')."</td>";
                             print "<td>".dol_print_date($obj->date_start, 'day')."</td>";
-                            //print "<td>".dol_print_date($obj->date_end, 'day')."(".getYearWeek(0, 0, 0, $db->jdate($obj->date_end)).")</td>";//FIXME
                             print "<td>".$langs->trans(strtolower($statusA[$obj->status]))."</td>";
-                            //print "<td>".$langs->trans($obj->target)."</td>";
-                            //print "<td>".$obj->fk_project_tasktime_list."</td>";
-                            //print "<td>".print_generic('user', 'rowid', $obj->fk_user_approval, 'lastname', 'firstname', ' ')."</td>";
                             print '<td><a href = "'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
                             print "</tr>";
                     }

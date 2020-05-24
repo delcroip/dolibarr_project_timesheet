@@ -53,14 +53,14 @@ class pdf_rat extends ModelPDFTimesheetReport
         $this->description = $langs->trans("DocumentModelRat");
         // Dimension page pour format A4
         $this->type = 'pdf';
-        $formatarray=pdf_getFormat();
+        $formatarray = pdf_getFormat();
         $this->page_largeur = $formatarray['width'];
         $this->page_hauteur = $formatarray['height'];
         $this->format = array($this->page_largeur, $this->page_hauteur);
         $this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
         $this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
-        $this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
-        $this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
+        $this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
+        $this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
         $this->option_logo = 1;// Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;// Gere option tva FACTURE_TVAOPTION
         $this->option_codeproduitservice = 1;// Affiche code produit-service
@@ -92,12 +92,12 @@ class pdf_rat extends ModelPDFTimesheetReport
  *
  *        @param        Project                $object                Object project a generer
  *        @param        Translate        $outputlangs        Lang output object
- *        @return        int                                  1 if OK, <=0 if KO
+ *        @return        int                                  1 if OK, <= 0 if KO
  */
 public function writeFile($object, $outputlangs)
 {
     global $conf, $hookmanager, $langs, $user;
-    if(! is_object($outputlangs)) $outputlangs=$langs;
+    if(! is_object($outputlangs)) $outputlangs = $langs;
     // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
     if(! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
     //load langs
@@ -109,7 +109,7 @@ public function writeFile($object, $outputlangs)
 
     //get save dir
     if($conf->projet->dir_output) {
-        $objectref =  dol_sanitizeFileName($object->name);
+        $objectref = dol_sanitizeFileName($object->name);
         $dir = $conf->timesheet->dir_output.'/reports/';
         $file = $dir . "/" . $objectref . ".pdf";
         if(! file_exists($dir)) {
@@ -122,14 +122,14 @@ public function writeFile($object, $outputlangs)
             // Add pdfgeneration hook
             if(! is_object($hookmanager)) {
                 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-                $hookmanager=new HookManager($this->db);
+                $hookmanager = new HookManager($this->db);
             }
             $hookmanager->initHooks(array('pdfgeneration'));
-            $parameters=array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+            $parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
             global $action;
-            $reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);// Note that $action and $object may have been modified by some hooks
+            $reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);// Note that $action and $object may have been modified by some hooks
             // Create pdf instance
-            $pdf=pdf_getInstance($this->format);
+            $pdf = pdf_getInstance($this->format);
 
             $pdf->SetAutoPageBreak(1, 0);
             if(class_exists('TCPDF')) {
@@ -143,12 +143,12 @@ public function writeFile($object, $outputlangs)
                 $tplidx = $pdf->importPage(1);
             }
             //get data
-            $tasktimearray=$object->getReportArray();
-            $TotalLines=array();
-            $userTaskArray=array();
+            $tasktimearray = $object->getReportArray();
+            $TotalLines = array();
+            $userTaskArray = array();
             //order data per user id and calc total per user
             foreach($tasktimearray as $line) {
-                $projectid=$line['projectId'];
+                $projectid = $line['projectId'];
                 $userTaskArray[$projectid][$line['userId']]['lines'][]=$line;
                 $TotalLines[$projectid][$line['userId']]+=$line['duration'];
                 $TotalLines[$projectid]['Total']+=$line['duration'];
@@ -162,7 +162,7 @@ public function writeFile($object, $outputlangs)
             }
             //init the pdf
             $pdf->Open();
-            $pagenb=0;
+            $pagenb = 0;
             $pdf->SetDrawColor(128, 128, 128);
             $pdf->SetTitle($outputlangs->convToOutputCharset($object->name));
             $pdf->SetSubject($outputlangs->transnoentities("ProjectTimeReport"));
@@ -177,7 +177,7 @@ public function writeFile($object, $outputlangs)
                 foreach($userArray as $userid => $taskArray) {
                   // New page
                     $pagenb++;
-                    $pagenb=$this->writeUser($pdf, $tplidx, $object, $outputlangs, $pagenb, $taskArray, $projectid);
+                    $pagenb = $this->writeUser($pdf, $tplidx, $object, $outputlangs, $pagenb, $taskArray, $projectid);
                 }
             }
             //if(method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
@@ -186,9 +186,9 @@ public function writeFile($object, $outputlangs)
             $pdf->Output($file, 'F');
             // Add pdfgeneration hook
             $hookmanager->initHooks(array('pdfgeneration'));
-            $parameters=array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+            $parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
             global $action;
-            $reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);// Note that $action and $object may have been modified by some hooks
+            $reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);// Note that $action and $object may have been modified by some hooks
             if(! empty($conf->global->MAIN_UMASK))
                     @chmod($file, octdec($conf->global->MAIN_UMASK));
             $this->result = array('fullpath'=>$file);
@@ -216,22 +216,22 @@ public function writeFile($object, $outputlangs)
         global $conf;
         //constant
         $default_font_size = pdf_getPDFFontSize($outputlangs);        // Must be after pdf_getInstance
-        //$heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);        // Height reserved to output the free text on last page
+        //$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);        // Height reserved to output the free text on last page
         $tab_top = 42;
         $tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
         $writable_height = 170;
         $tab_height_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?170:202);
-        $height_note=0;
+        $height_note = 0;
         $tab_height = $writable_height - $height_note;
-        //$cur_tab_height=$tab_height;
-        $HeightSignBox=30;
+        //$cur_tab_height = $tab_height;
+        $HeightSignBox = 30;
         $heightforinfotot = 40;
         $heightforfooter = $this->marge_basse+1;        // Height reserved to output the footer(value include bottom margin)
-        $pageposbefore=0;
-        $heightoftitleline =6;
-        $bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
-        $widthSignBox=($this->page_largeur-$this->marge_gauche-$this->marge_droite)/2-1;
-        $cur_tab_height=$tab_height;
+        $pageposbefore = 0;
+        $heightoftitleline = 6;
+        $bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
+        $widthSignBox = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/2-1;
+        $cur_tab_height = $tab_height;
         $pdf->AddPage();
         //init pdf cursor
         $pdf->setPage($pagenb);
@@ -242,43 +242,43 @@ public function writeFile($object, $outputlangs)
         $pdf->MultiCell(0, 3, '');                // Set interline to 3
         $pdf->SetTextColor(0, 0, 0);
         $nexY = $tab_top + $heightoftitleline + 1;
-        $nblignes=count($tasktimearray['lines']);
+        $nblignes = count($tasktimearray['lines']);
         // Loop on each lines but total
         for ($i = 0 ;$i < $nblignes ;$i++) {
             // move the cusor to add space between records
             $curY = ($i == 0)? $nexY:$nexY+2;
-            $pageposbefore=$pdf->getPage();
-            $posybefore=$curY;
+            $pageposbefore = $pdf->getPage();
+            $posybefore = $curY;
             //try to write line
             $tasktimearray['lines'][$i]['ref']=$i;
             $pdf->startTransaction();
-            $posyafter=$this->writeLine($pdf, $tasktimearray['lines'][$i], $curY, $outputlangs);
-            $pageposafter=$pdf->getPage();
+            $posyafter = $this->writeLine($pdf, $tasktimearray['lines'][$i], $curY, $outputlangs);
+            $pageposafter = $pdf->getPage();
             // looks if the record fit int he current page
-            $addpagebreak=false;
-            $lineheight=$posyafter-$posybefore;
+            $addpagebreak = false;
+            $lineheight = $posyafter-$posybefore;
             if($pageposafter>$pageposbefore) {
                 // auto page break
-                $addpagebreak=true;
+                $addpagebreak = true;
             } elseif($posyafter>$this->page_hauteur - $heightforfooter - $heightforinfotot) {
                 // in the sign zone, check if a new page will be required
                 if($posyafter >($this->page_hauteur -($heightforfooter))) {
                     // There is a pagebreak, shouldn't happen as this should trigger a auto page break {
-                    $addpagebreak=true;
+                    $addpagebreak = true;
                 } elseif(($nblignes-$i)*($lineheight)< $this->page_hauteur - $heightforfooter - $posyafter) {
                     // not enough space for te remaining line and the sign box {
-                    $addpagebreak=true;
+                    $addpagebreak = true;
                 }
             } elseif(isset($tasktimearray['lines'][$i+1]['pagebreak']) && $tasktimearray['lines'][$i+1]['pagebreak']) {
                 //pagebreak mentionned on the next line
-                $addpagebreak=true;
+                $addpagebreak = true;
             }
            // action when a page break is required : rollback and write on the next page
             if($addpagebreak == true) {
-                $cur_tab_height=$tab_height_newpage;
+                $cur_tab_height = $tab_height_newpage;
                 $pdf->rollbackTransaction(true);
                 // new page
-                $pageposafter=$pageposbefore+1;
+                $pageposafter = $pageposbefore+1;
                 $pdf->AddPage();
                 // init page
                 if(! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -291,7 +291,7 @@ public function writeFile($object, $outputlangs)
                 //write on the next page
                 $curY = $tab_top_newpage + $heightoftitleline + 1;
                 // Detect if some page were added automatically and output _tableau for past pages
-                $nexY =$this->writeLine($pdf, $tasktimearray['lines'][$i], $curY, $outputlangs);
+                $nexY = $this->writeLine($pdf, $tasktimearray['lines'][$i], $curY, $outputlangs);
                 $pdf->setPage($pagenb);
                 //Write the table border and footer on the previous page
                 if($pagenb == 1) {
@@ -305,12 +305,12 @@ public function writeFile($object, $outputlangs)
                 if(empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->pageHead($pdf, $object, 0, $outputlangs, $startday, $stopday, $projectid);
                 $pagenb++;
                 $pdf->setPage($pageposafter);
-                $pageposafter=$pdf->getPage();
+                $pageposafter = $pdf->getPage();
             } else {
                 // No pagebreak, commit transaction {
                 $pdf->commitTransaction();
-                $nexY =$posyafter;
-                $pageposafter=$pdf->getPage();
+                $nexY = $posyafter;
+                $pageposafter = $pdf->getPage();
             }
         }
         // Show table border for last page
@@ -321,14 +321,14 @@ public function writeFile($object, $outputlangs)
         }// show the sign box & total on the last page for the user
         if(empty($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX)) {
             $pdf->SetFont('', 'B', $default_font_size);
-            $txtTotal= $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
+            $txtTotal = $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1, 0, true, 'L');
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $txtTotal, 0, 1, 0, true, 'R');
             $pdf->SetFont('', '', $default_font_size - 1);
             $pdf->writeHTMLCell(80, 3, $this->marge_gauche+1, $bottomlasttab+7, $outputlangs->transnoentities('employeeSignature'), 0, 1);
             $pdf->writeHTMLCell(80, 3, $this->marge_gauche+$widthSignBox+2, $bottomlasttab+7, $outputlangs->transnoentities('customerSignature'), 0, 1);
             $nexY = $pdf->GetY();
-            //$height_note=$nexY-$tab_top;
+            //$height_note = $nexY-$tab_top;
             //Rect prend une longueur en 3eme param
             $pdf->SetDrawColor(192, 192, 192);
             //draw left rect for total
@@ -355,49 +355,49 @@ public function writeFile($object, $outputlangs)
 public function writeLine(&$pdf, $line, $curY, $outputlangs)
 {
     global $conf;
-    $ref=$line['ref'];
-    $libelleline="";
+    $ref = $line['ref'];
+    $libelleline = "";
     switch($this->noteISOtask) {
         case 2: // show task and Note
-            $libelleline=$line['taskLabel'].(empty($line['note'])?'':': '.$line['note']);
+            $libelleline = $line['taskLabel'].(empty($line['note'])?'':': '.$line['note']);
             break;
         case 1:       // show note
-            $libelleline=$line['note'];
+            $libelleline = $line['note'];
              break;
         case 0: //show task
         default:
-            $libelleline=$line['taskLabel'];
+            $libelleline = $line['taskLabel'];
     }
-    $userName=$line['userName'];
-    $date=dol_print_date($line['date'], 'day');
-    //$duration=($tasktimearray[$i]['duration']>0)?convertSecondToTime((int) $tasktimearray[$i]['duration'], 'allhourmin'):'';
-    $duration=formatTime($line['duration'], -2);
+    $userName = $line['userName'];
+    $date = dol_print_date($line['date'], 'day');
+    //$duration = ($tasktimearray[$i]['duration']>0)?convertSecondToTime((int) $tasktimearray[$i]['duration'], 'allhourmin'):'';
+    $duration = formatTime($line['duration'], -2);
     // Ref of task
     $pdf->SetXY($this->posxref, $curY);
     $pdf->MultiCell($this->posxdate-$this->posxref, 0, dol_string_nohtmltag($ref), 0, 'L');
-    $nexY=max($nexY, $pdf->GetY());
+    $nexY = max($nexY, $pdf->GetY());
     // date
     $pdf->SetXY($this->posxdate, $curY);
     $pdf->MultiCell($this->posxlabel-$this->posxdate, 0, $date, 0, 'L');
-    $nexY=max($nexY, $pdf->GetY());
+    $nexY = max($nexY, $pdf->GetY());
     //label
     $pdf->SetXY($this->posxlabel, $curY);
     $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, dol_string_nohtmltag($libelleline), 0, 'L');
-    $nexY=max($nexY, $pdf->GetY());
+    $nexY = max($nexY, $pdf->GetY());
     // Workler
     //$pdf->SetXY($this->posxworker, $curY);
     //$pdf->MultiCell($this->posxlabel-$this->posxworker, 0, $userName?substr($userName, 0, 23):'', 0, 'L');
     // Duration
     $pdf->SetXY($this->posxduration, $curY);
     $pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxduration, 3, $duration, 0, 'R');
-    $nexY=max($nexY, $pdf->GetY());
+    $nexY = max($nexY, $pdf->GetY());
     // Add dash line between entries
     if(! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES)) {
         //$pdf->setPage($pageposafter);
-        $pdf->SetLineStyle(array('dash'=>'1, 1', 'color'=>array(80, 80, 80)));
+        $pdf->SetLineStyle(array('dash' => '1, 1', 'color' => array(80, 80, 80)));
         //$pdf->SetDrawColor(190, 190, 200);
         $pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
-        $pdf->SetLineStyle(array('dash'=>0));
+        $pdf->SetLineStyle(array('dash' => 0));
     }
     return $nexY;
 }
@@ -436,17 +436,17 @@ public function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outpu
         //$pdf->MultiCell($this->posxdate-$this->posxworker, 3, $outputlangs->transnoentities("Name"), 0, 'L');
         //task title
         $pdf->SetXY($this->posxlabel, $tab_top+1);
-        $libelleline="";
+        $libelleline = "";
         switch($this->noteISOtask) {
             case 2: // show task and Note
-                $libelleline=$outputlangs->transnoentities("Task").':'.$outputlangs->transnoentities("Note");
+                $libelleline = $outputlangs->transnoentities("Task").':'.$outputlangs->transnoentities("Note");
                 break;
             case 1:       // show note
-                $libelleline=$outputlangs->transnoentities("Note");
+                $libelleline = $outputlangs->transnoentities("Note");
                  break;
             case 0: //show task
             default:
-                $libelleline=$outputlangs->transnoentities("Task");
+                $libelleline = $outputlangs->transnoentities("Task");
         }
         $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $libelleline, 0, 'L');
         //duration title
@@ -477,18 +477,18 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
     $pdf->SetTextColor(0, 0, 60);
     $pdf->SetFont('', 'B', $default_font_size + 3);
     // define initial position on the cursor on the pdf page
-    $posx=$this->page_largeur-$this->marge_droite-100;
-    $posy=$this->marge_haute;
+    $posx = $this->page_largeur-$this->marge_droite-100;
+    $posy = $this->marge_haute;
     $pdf->SetXY($this->marge_gauche, $posy);
-    $height=$default_font_size + 3;
+    $height = $default_font_size + 3;
     // Logo or company name
-    $logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-    $logoWidth=0;
+    $logo = $conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
+    $logoWidth = 0;
     if($mysoc->logo) {
         if(is_readable($logo)) {
-            $height=pdf_getHeightForLogo($logo);
-            $tmp=dol_getImageSize($logo, $url);
-            $logoWidth=$tmp['width']>130?130:$tmp['width'];
+            $height = pdf_getHeightForLogo($logo);
+            $tmp = dol_getImageSize($logo, $url);
+            $logoWidth = $tmp['width']>130?130:$tmp['width'];
             $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);        // width=0(auto)
         } else {
                 $pdf->SetTextColor(200, 0, 0);
@@ -515,17 +515,17 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
     }
     $pdf->SetFont('', '', $default_font_size);
     //dateStart
-    $posy+=12;
+    $posy += 12;
     $pdf->SetXY($posx, $posy);
     $pdf->SetTextColor(0, 0, 60);
     $pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : " . dol_print_date($object->startDate, 'day', false, $outputlangs, true), '', 'R');
     //DateStop
-    $posy+=5;
+    $posy += 5;
     $pdf->SetXY($posx, $posy);
     $pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->stopDate, 'day', false, $outputlangs, true), '', 'R');
     // third party name
     if(is_object($object->thirdparty[$projectid])) {
-            $posy+=5;
+            $posy += 5;
             $pdf->SetXY($posx, $posy);
             $pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $object->thirdparty[$projectid]->getFullName($outputlangs), '', 'R');
     }
@@ -540,10 +540,10 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
  *      @param        int                        $hidefreetext                1=Hide free text
  *      @return        integer
  */
-/*function pageFoot(&$pdf, $object, $outputlangs, $hidefreetext=0)
+/*function pageFoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 {
     global $conf;
-    //$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+    //$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
     //return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 }*/
 }

@@ -16,11 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 //global $db;
-// FIXME Ver. 3
+
 // Define status
 
 
 $res = 0;
+error_reporting(E_ALL);
 $currentTimesheetPath = dirname(__FILE__);
 if(! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
     include $currentTimesheetPath.'/dev.inc.php';
@@ -43,3 +44,10 @@ if (! $res) die("Include of main fails") ;
 if ($user->admin && version_compare("4.1", $conf->global->TIMESHEET_VERSION) > 0){
     setEventMessage("Version of timesheet updated, please deactivate then reactivate the module", 'warnings');
 }
+// return from functions
+define("BADPARAM",-2);
+define("OK",1);
+define("NOK",-1);
+define("NOTCREATED",-3);
+define("NOTUPDATED",-4);
+define("CHILDNOTCREATED",-5);

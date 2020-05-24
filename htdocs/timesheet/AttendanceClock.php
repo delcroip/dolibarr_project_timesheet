@@ -17,7 +17,7 @@
  */
 /**
  *        \file       dev/skeletons/skeleton_page.php
- *                \ingroup    mymodule othermodule1 othermodule2
+ *                \ingroup    timesheet othermodule1 othermodule2
  *                \brief      This file is an example of a php page
  *                                        Put here some comments
  */
@@ -26,7 +26,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
-require_once 'class/TimesheetAttendanceEvent.class.php';
+require_once 'class/AttendanceEvent.class.php';
 require_once 'class/TimesheetTask.class.php';
 if(!$user->rights->timesheet->attendance->user) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");
@@ -80,7 +80,7 @@ switch($action) {
 if(!empty($tms)) {
     unset($_SESSION['timesheet_attendance'][$tms]);
 }
-//$timesheet_attendance->fetchAll($today);//FIXME: fetcht the list project/task
+
 /***************************************************
 * VIEW
 *
@@ -95,8 +95,8 @@ $timesheet_attendance->fetch('', $user);
 $timesheet_attendance->printHTMLClock();
 //tmstp = time();
 //fetch ts for others
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin)) {
-    //print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && ((is_array($SubordiateIds) && count($SubordiateIds) > 1 ) ||  $SubordiateIds > 0 ||  $user->admin)) { 
+//print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 $headers = explode('||', $conf->global->TIMESHEET_HEADERS);
 // remove tta note as it is useless there
@@ -110,7 +110,7 @@ if($key !== false){
     unset($headers[$key]);
 }
 $ajax = false;
- // $timesheet_attendance->fetchStarted();//FIXMED
+
 //headers
 $html .= "<table id='chronoTable' class = 'noborder' width = '100%'>";
 $html .= "<tr>";
@@ -119,19 +119,32 @@ foreach($headers as $key => $value) {
     if(count($headers) == 1) {
            $html .= 'colspan = "2" ';
     }
-    $html .= "> <a onclick=\"sortTable('chronoTable','col{$value}','asc');\">".$langs->trans($value)."</a></th>\n";
+    $html .= "> <a onclick=\"sortTable('chronoTable', 'col{$value}', 'asc');\">".$langs->trans($value)."</a></th>\n";
 }
 $html .= "<th>".$langs->trans("Action")."</th></tr>";
 // show the filter
 $html .= '<tr class = "timesheet_line" id = "searchline">';
 $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
+
+if($conf->global->TIMESHEET_WHITELIST == 1) {
+   $html .= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
+   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
+   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 0)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'whitelist\')"><a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('blackWhiteList').'</a></div>';
+   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
+   $html .= '</div>';
+}
 $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
-$html .= $timesheet_attendance->printHTMLTaskList($headers, $user->id);
+$htmltmp .= $timesheet_attendance->printHTMLTaskList($headers, $user->id);
+$pattern  = "/(progressTask\[[^\]]+\]\[[^\]]+\])/i";
+$replacement = '$1" onchange="updateProgress(event);';
+$html .=  preg_replace($pattern, $replacement, $htmltmp);
 $html .= "</table>";
 //Javascript
 //$Form .= ' <script type = "text/javascript" src = "core/js/timesheet.js"></script>'."\n";
 $html .= '<script type = "text/javascript">'."\n\t";
 $html .= "let stopwatch = new Stopwatch(document.getElementById('stopwatch'));stopwatch.load();";
+$html .= "updateAllProgress();\n";
+$html .= "document.getElementById('defaultOpen').click();\n";
 $html .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $html;

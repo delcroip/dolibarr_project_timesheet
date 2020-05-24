@@ -42,24 +42,26 @@ require_once 'core/lib/generic.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 //document handling
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-//dol_include_once('/core/lib/images.lib.php');
+//include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // include conditionnally of the dolibarr version
-
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
 $langs->load("Timesheet");
 // Get parameter
-$id                         = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action                 = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'aplha');
 $cancel = GETPOST('cancel', 'aplha');
 $confirm = GETPOST('confirm', 'aplha');
 $tms = GETPOST('tms', 'alpha');
-$ajax         = GETPOST('ajax', 'int');
+$ajax = GETPOST('ajax', 'int');
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
@@ -79,7 +81,7 @@ if(!$removefilter) {
     $ls_date_end_month = GETPOST('ls_date_end_month', 'int');
     $ls_date_end_year = GETPOST('ls_date_end_year', 'int');
 }
-$page = GETPOST('page', 'int');//FIXME, need to use for all the list
+$page = GETPOST('page', 'int');
 if($page <= 0){
     $page = 0;
 }
@@ -125,7 +127,7 @@ if($cancel) {
     $object->user = ($user->admin && $ajax!=1)?GETPOST('User', 'int'):$userId;
     $object->project = GETPOST('Project', 'int');
     if($object->project == -1)$object->project = '';
-    $object->project_task = GETPOST('Projecttask', 'int');
+    $object->project_task = GETPOST('Task', 'int');
     if($object->project_task == -1)$object->project_task = '';
     $object->subtask = GETPOST('Subtask', 'int');
     if($object->subtask == "") $object->subtask = 0;
@@ -211,7 +213,7 @@ switch($action) {
         if($result > 0) {
             // Delete OK
             if($ajax == 1) {
-                echo json_encode(array('id'=> '0'));
+                echo json_encode(array('id' => '0'));
                 ob_end_flush();
                 exit();
             } else{
@@ -229,7 +231,7 @@ switch($action) {
     case 'create':
     default:
         //document handling
-        if(version_compare(DOL_VERSION, "4.0")>=0) {
+        if(version_compare(DOL_VERSION, "4.0") >= 0) {
             include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
         } else{
             include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
@@ -255,31 +257,10 @@ llxHeader('', 'timesheetFavourite', '');
 print "<div> <!-- module body-->";
 $form = new Form($db);
 $formother = new FormOther($db);
+$formproject = new FormProjets($db);
 // Put here content of your page
 //javascript to reload the page with the poject selected
-print '
-<SCRIPT type = "text/javascript">
-function reload(form)
-{
-var param_array = window.location.href.split(\'?\')[1].split(\'&\');
-var index;
-var id = "";
-var action = "create";
-for(index = 0;index < param_array.length;++index)
-{
-    x = param_array[index].split(\' = \');
-    if(x[0] == "action") {
-        action=x[1];
-    }
-    if(x[0] == "id") {
-        id = "&id="+x[1];
-    }
-}
-var pjt = document.getElementById("Project").value;
-var usr = document.getElementById("User").value;
-self.location = "'.$PHP_SELF.'?&action=" + action + id +"&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
-}
-</script>';
+
 // Example : Adding jquery code
 /*print '<script type = "text/javascript" language = "javascript">
 jQuery(document).ready(function()
@@ -354,21 +335,38 @@ switch($action) {
         print '<td class = "fieldrequired">'.$langs->trans('Project').' </td><td>';
         if($edit == 1) {
             if(!empty($editedProject))$object->project = $editedProject;
-            $formUserWhere = ' (t.datee>=\''.$object->db->idate(time()).'\' OR t.datee IS NULL)';
-            if(!$user->admin) {
+            $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
+            /* $formUserWhere = ' (t.datee >= \''.$object->db->idate(time()).'\' OR t.datee IS NULL)';
+           if(!$user->admin) {
+
                 $formUserJoin = ' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid = ec.element_id';
                 $formUserJoin .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = fk_c_type_contact';
                 $formUserWhere .= " AND (ctc.element = 'project' AND ctc.active = '1'  AND ec.fk_socpeople = '".$user->id."')";
                 $formUserWhere .= " OR (t.public = '1')";
             }
-            $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
-            $htmlProjectArray = array('name'=>'Project', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
-            $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
-            print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);
-            if($ajaxNbChar>=0) print "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
-  //FIXME best to feed additionnal param to the search generic
+
+
+            
+            $htmlProjectArray = array('name' => 'Project', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam' => ' onchange = "reload(this.form)"');
+            $sqlProjectArray = array('table' => 'projet', 'keyfield' => 't.rowid', 'fields' => 'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
+            print select_sellist($sqlProjectArray, $htmlProjectArray, $object->project);*/
+            //if($ajaxNbChar >= 0) {
+            //    print "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
+            //}else{
+            //}
+            $selected = $object->project;
+            $htmlname = 'Project';
+            $formproject->select_projects(-1, $selected, $htmlname);
+                        //print '<a class = "butAction" onclick = "reload();">'.$langs->trans('ShowOnlyProjectTasks').'</a>';
+
         } else {
-            print print_generic('projet', 'rowid', $object->project, 'ref', 'title');
+            if($object->project>0) {
+                    $StaticObject = New Project($db);
+                    $StaticObject->fetch($object->project);
+                    print $StaticObject->getNomUrl(1);
+            } else{
+                print "<td></td>";
+            }
         }
         print "</td>";
         print "</tr>\n";
@@ -376,6 +374,10 @@ switch($action) {
         // show the field project_task
         print '<td>'.$langs->trans('Task').' </td><td>';
         if($edit == 1) {
+            $selected = $object->project_task;
+            $htmlname = 'Task';
+            $formproject->selectTasks(-1, $selected, $htmlname,24,0,1,0,0,0, 'maxwidth500',($object->project?$object->project:''));
+            /*
             $formTaskJoin = '';
             $formTaskWhere = ' fk_projet = \''.($object->project?$object->project:'0').'\'';
             if(!$user->admin) {
@@ -384,11 +386,18 @@ switch($action) {
                 $formTaskWhere .= " AND (ctc.element = 'project_task' AND ctc.active = '1'  AND ec.fk_socpeople = '".$user->id."')";
             }
             $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
-            $htmlProjectTaskArray = array('name'=>'Projecttask', 'ajaxNbChar'=>$ajaxNbChar);
-            $sqlProjectTaskArray = array('table'=>'projet_task', 'keyfield'=>'t.rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
+            $htmlProjectTaskArray = array('name' => 'Projecttask', 'ajaxNbChar'=>$ajaxNbChar);
+            $sqlProjectTaskArray = array('table' => 'projet_task', 'keyfield' => 't.rowid', 'fields' => 'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
+            */
         } else {
-            print print_generic('projet_task', 'rowid', $object->project_task, 'ref', 'label');
+            if($object->project_task>0) {
+                $StaticObject = New Task($db);
+                $StaticObject->fetch($object->project_task);
+                print $StaticObject->getNomUrl(1);
+            } else{
+                print "<td></td>";
+            }
         }
         print "</td>";
         print "</tr>\n";
@@ -414,6 +423,7 @@ switch($action) {
                 print $form->select_date($object->date_start, 'Datestart');
             }
         } else {
+            
             print dol_print_date($object->date_start, 'day');
         }
         print "</td>";
@@ -445,6 +455,34 @@ switch($action) {
             }
             print ' &nbsp;<input type = "submit" class = "butActionDelete" name = "cancel" value = "'.$langs->trans('Cancel').'"></div>';
             print '</form>';
+            //scipt to reload page when the project is changed
+            print '
+            <script type = "text/javascript">
+                $("#Project").on("select2:select", function (e) {
+                    var param_array = window.location.href.split(\'?\')[1].split(\'&\');
+                    var index;
+                    var id = "";
+                    var action = "create";
+                    for(index = 0;index < param_array.length;++index)
+                    {
+                        x = param_array[index].split(\'=\');
+                        if(x[0] == "action") {
+                            action=x[1];
+                        }
+                        if(x[0] == "id") {
+                            id = "&id="+x[1];
+                        }
+
+                    }
+                    var pjtSelect = e.params.data;
+                    var pjt = pjtSelect.id;
+                    var pjtold = (typeof(pjtSelect.defaultSelected) === \'undefined\')?0:pjtSelect.defaultSelected ;
+                    var usr = document.getElementById("User").value;
+                    if( pjtSelect != null && pjt != pjtold){
+                        self.location = "'.$PHP_SELF.'?&action=" + action + id +"&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
+                    }
+                });
+             </script>';
         } else{
             $parameters = array();
             $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);// Note that $action and $object may have been modified by hook
@@ -467,18 +505,18 @@ switch($action) {
     case 'list':
     default:
         $sql = 'SELECT';
-        $sql.= ' t.rowid, ';
+        $sql .= ' t.rowid, ';
         $sql .= ' t.fk_user, ';
         $sql .= ' t.fk_project, ';
         $sql .= ' t.fk_project_task, ';
         $sql .= ' t.subtask, ';
         $sql .= ' t.date_start, ';
         $sql .= ' t.date_end';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'timesheet_whitelist as t';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'timesheet_whitelist as t';
         $sqlwhere = '';
         $userId = (is_object($user)?$user->id:$user);
         if(isset($object->entity))
-            $sqlwhere.= ' AND t.entity = '.$conf->entity;
+            $sqlwhere .= ' AND t.entity = '.$conf->entity;
         if($filter && $filter != -1) {
             // GETPOST('filtre') may be a string {
             $filtrearr = explode(', ', $filter);
@@ -502,7 +540,7 @@ switch($action) {
             if($ls_date_end_month)$sqlwhere .= ' AND MONTH(t.date_end) = \''.$ls_date_end_month.'\'';
             if($ls_date_end_year)$sqlwhere .= ' AND YEAR(t.date_end) = \''.$ls_date_end_year.'\'';
         } else {
-            if($ls_date_start_month)$sqlwhere .= ' AND date_part(\'month\', t.date_start) = \''.$ls_date_start_month.'\'';//FIXME PGSQL
+            if($ls_date_start_month)$sqlwhere .= ' AND date_part(\'month\', t.date_start) = \''.$ls_date_start_month.'\'';
             if($ls_date_start_year)$sqlwhere .= ' AND date_part(\'year\', t.date_start) = \''.$ls_date_start_year.'\'';
             if($ls_date_end_month)$sqlwhere .= ' AND date_part(\'month\', t.date_end) = \''.$ls_date_end_month.'\'';
             if($ls_date_end_year)$sqlwhere .= ' AND date_part(\'year\', t.date_end) = \''.$ls_date_end_year.'\'';
@@ -521,12 +559,12 @@ switch($action) {
             $nbtotalofrecords = ($result)?$objcount = $db->fetch_object($result)->count:0;
         }
         if(!empty($sortfield)) {
-            $sql.= $db->order($sortfield, $sortorder);
+            $sql .= $db->order($sortfield, $sortorder);
         } else {
             $sortorder = 'ASC';
         }
         if(!empty($limit)) {
-            $sql.= $db->plimit($limit+1, $offset);
+            $sql .= $db->plimit($limit+1, $offset);
         }
         //execute SQL
         dol_syslog($script_file, LOG_DEBUG);
@@ -573,15 +611,15 @@ switch($action) {
             //Search field forproject
             print '<td class = "liste_titre" colspan = "1" >';
             $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
-            $htmlProjectArray = array('name'=>'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
-            $sqlProjectArray = array('table'=>'projet', 'keyfield'=>'rowid', 'fields'=>'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
+            $htmlProjectArray = array('name' => 'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
+            $sqlProjectArray = array('table' => 'projet', 'keyfield' => 'rowid', 'fields' => 'ref, title', 'join'=>$formUserJoin, 'where'=>$formUserWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectArray, $htmlProjectArray, $ls_project);
             print '</td>';
             //Search field forproject_task
             print '<td class = "liste_titre" colspan = "1" >';
             $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
-            $htmlProjectTaskArray = array('name'=>'ls_project_task', 'ajaxNbChar'=>$ajaxNbChar);
-            $sqlProjectTaskArray = array('table'=>'projet_task', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
+            $htmlProjectTaskArray = array('name' => 'ls_project_task', 'ajaxNbChar'=>$ajaxNbChar);
+            $sqlProjectTaskArray = array('table' => 'projet_task', 'keyfield' => 'rowid', 'fields' => 'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
             print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
             //print select_generic('projet_task', 'rowid', 'ls_project_task', 'ref', 'label', $ls_project_task, ' - ', '', '', null, '', $ajaxNbChar);
             print '</td>';
@@ -697,4 +735,5 @@ function timesheetFavourite_prepare_head($object)
 }
 // End of page
 llxFooter();
+
 $db->close();

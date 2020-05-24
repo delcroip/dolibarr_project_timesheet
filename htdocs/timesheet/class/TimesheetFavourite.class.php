@@ -24,8 +24,8 @@
  */
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
-//require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+//require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 /**
  *        Put here description of your class
  */
@@ -73,20 +73,20 @@ class TimesheetFavourite extends CommonObject
         // Put here code to add control on parameters values
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-        $sql.= 'fk_user, ';
-        $sql.= 'fk_project, ';
-        $sql.= 'fk_project_task, ';
-        $sql.= 'subtask, ';
-        $sql.= 'date_start, ';
-        $sql.= 'date_end';
-        $sql.= ") VALUES(";
+        $sql .= 'fk_user, ';
+        $sql .= 'fk_project, ';
+        $sql .= 'fk_project_task, ';
+        $sql .= 'subtask, ';
+        $sql .= 'date_start, ';
+        $sql .= 'date_end';
+        $sql .= ") VALUES(";
         $sql .= ' \''.$this->user.'\', ';
         $sql .= ' \''.$this->project.'\', ';
         $sql .= ' '.(empty($this->project_task)?'NULL':'\''.$this->project_task.'\'').', ';
         $sql .= ' '.(($this->subtask) ? 'TRUE':'FALSE').', ';
         $sql .= ' '.(empty($this->date_start) || dol_strlen($this->date_start) == 0?'NULL':'\''.$this->db->idate($this->date_start).'\'').', ';
         $sql .= ' '.(empty($this->date_end) || dol_strlen($this->date_end) == 0?'NULL':'\''.$this->db->idate($this->date_end).'\'').'';
-        $sql.= ")";
+        $sql .= ")";
         $this->db->begin();
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -125,7 +125,7 @@ class TimesheetFavourite extends CommonObject
         $List = array();
         $Listtask = array();
         $sql = "SELECT";
-        $sql.= " t.rowid, ";
+        $sql .= " t.rowid, ";
 
         $sql .= ' t.fk_user, ';
         $sql .= ' t.fk_project, ';
@@ -133,13 +133,13 @@ class TimesheetFavourite extends CommonObject
         $sql .= ' t.subtask, ';
         $sql .= ' t.date_start, ';
         $sql .= ' t.date_end';
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        $sql.= " WHERE t.fk_user = ".$userid;
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        $sql .= " WHERE t.fk_user = ".$userid;
         if($datestart)
-            $sql.= ' AND (t.date_end >\''.$this->db->idate($datestart).'\' OR t.date_end IS NULL)';
+            $sql .= ' AND (t.date_end >\''.$this->db->idate($datestart).'\' OR t.date_end IS NULL)';
         if($datestop)
-            $sql.= ' AND (t.date_start <\''.$this->db->idate($datestop).'\' OR t.date_start IS NULL)';
-        dol_syslog(get_class($this)."::fetchUserList");
+            $sql .= ' AND (t.date_start <\''.$this->db->idate($datestop).'\' OR t.date_start IS NULL)';
+            dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             $num = $this->db->num_rows($resql);
@@ -181,17 +181,17 @@ class TimesheetFavourite extends CommonObject
     public function getTaskList()
     {
         $sql = "SELECT";
-        $sql.= " t.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+        $sql .= " t.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
         if($this->project_task && $this->subtask) {
-            $sql.= '  WHERE  (t.rowid = \''.$this->project_task.'\'';
-            $sql.= '  OR  t.fk_task_parent = \''.$this->project_task.'\')';
+            $sql .= '  WHERE  (t.rowid = \''.$this->project_task.'\'';
+            $sql .= '  OR  t.fk_task_parent = \''.$this->project_task.'\')';
         } elseif($this->project_task) {
-            $sql.= '  WHERE t.rowid = \''.$this->project_task.'\'';
+            $sql .= '  WHERE t.rowid = \''.$this->project_task.'\'';
         } else {
-            $sql.= ' WHERE t.fk_projet = \''.$this->project.'\'';
+            $sql .= ' WHERE t.fk_projet = \''.$this->project.'\'';
         }
-        dol_syslog(get_class($this)."::getTaskList");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             $Listtask = Array();
@@ -220,17 +220,17 @@ class TimesheetFavourite extends CommonObject
     public function fetch($id, $ref = '')
     {
         $sql = "SELECT";
-        $sql.= " t.rowid, ";
+        $sql .= " t.rowid, ";
         $sql .= ' t.fk_user, ';
         $sql .= ' t.fk_project, ';
         $sql .= ' t.fk_project_task, ';
         $sql .= ' t.subtask, ';
         $sql .= ' t.date_start, ';
         $sql .= ' t.date_end';
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        if($ref) $sql.= ' WHERE t.ref = \''.$ref.'\'';
-        else $sql.= " WHERE t.rowid = ".$id;
-        dol_syslog(get_class($this)."::fetch");
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        if($ref) $sql .= ' WHERE t.ref = \''.$ref.'\'';
+        else $sql .= " WHERE t.rowid = ".$id;
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if($resql) {
             if($this->db->num_rows($resql)) {
@@ -276,9 +276,9 @@ class TimesheetFavourite extends CommonObject
         $sql .= ' subtask='.(($this->subtask) ? 'TRUE':'FALSE').', ';
         $sql .= ' date_start='.(dol_strlen($this->date_start)!=0 ? '\''.$this->db->idate($this->date_start).'\'':'null').', ';
         $sql .= ' date_end='.(dol_strlen($this->date_end)!=0 ? '\''.$this->db->idate($this->date_end).'\'':'null').'';
-        $sql.= " WHERE rowid=".$this->id;
+        $sql .= " WHERE rowid=".$this->id;
         $this->db->begin();
-        dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if(! $resql) {
             $error++;$this->errors[] = "Error ".$this->db->lasterror();
@@ -363,8 +363,8 @@ class TimesheetFavourite extends CommonObject
         }
         if(! $error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " WHERE rowid=".$this->id;
-            dol_syslog(__METHOD__);
+            $sql .= " WHERE rowid=".$this->id;
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql = $this->db->query($sql);
             if(! $resql) {
                 $error++;$this->errors[] = "Error ".$this->db->lasterror();

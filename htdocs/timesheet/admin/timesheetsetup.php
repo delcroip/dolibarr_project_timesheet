@@ -33,6 +33,7 @@ if(!$user->admin) {
 }
 $action = getpost('action', 'alpha');
 $attendance = $conf->global->TIMESHEET_ATTENDANCE;
+
 $timetype = $conf->global->TIMESHEET_TIME_TYPE;
 $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
 $timeSpan = $conf->global->TIMESHEET_TIME_SPAN;
@@ -127,8 +128,8 @@ switch($action) {
         if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN) {
             // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
-            $sql.= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
-            dol_syslog(__METHOD__);
+            $sql .= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
+            dol_syslog('timesheetsetu:deletedraft', LOG_DEBUG);
             $resql = $db->query($sql);
         }
         dolibarr_set_const($db, "TIMESHEET_TIME_SPAN", $timeSpan, 'chaine', 0, '', $conf->entity);
@@ -247,7 +248,7 @@ switch($action) {
         $exportFormat = getpost('exportFormat', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_EXPORT_FORMAT", $exportFormat, 'int', 0, '', $conf->entity);
         $maxApproval = getpost('maxapproval', 'int');
-        dolibarr_set_const($db, "TIMESHEET_ROUND", $maxApproval, 'int', 0, '', $conf->entity);
+        dolibarr_set_const($db, "TIMESHEET_MAX_APPROVAL", $maxApproval, 'int', 0, '', $conf->entity);
         $unblockInvoiced = getpost('unblockInvoiced', 'int');
         dolibarr_set_const($db, "TIMESHEET_UNBLOCK_INVOICED", $unblockInvoiced, 'int', 0, '', $conf->entity);
         $unblockClosed = getpost('unblockClosed', 'int');
@@ -303,6 +304,7 @@ foreach($headersT as $header) {
 //permet d'afficher la structure dolibarr
 $morejs = array("/timesheet/core/js/timesheet.js?v2.0", "/timesheet/core/js/jscolor.js");
 llxHeader("", $langs->trans("timesheetSetup"), '', '', '', '', $morejs, '', 0, 0);
+if($action = "save")echo "<script>window.history.pushState('', '', '".explode('?', $_SERVER['REQUEST_URI'], 2)[0]."');</script>";
 $linkback = '<a href = "'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("timesheetSetup"), $linkback, 'title_setup');
 echo '<div class = "fiche"><br><br>';
@@ -330,6 +332,7 @@ echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("Attendance");
 echo '</td><td align = "left">'.$langs->trans("AttendanceDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "attendance" value = "1" ';
 echo (($attendance == '1')?'checked':'')."></td></tr>\n\t\t";
+
 // type time
 echo '<tr class = "oddeven"><td align = "left">'.$langs->trans("timeType").'</td><td align = "left">'.$langs->trans("timeTypeDesc").'</td>';
 echo '<td align = "left"><input type = "radio" name = "timeType" value = "hours" ';
@@ -679,11 +682,11 @@ echo '</td><td align = "left">'.$langs->trans("invoiceServiceDesc").'</td>';
 echo  '<td align = "left">';
 $addchoices = array('-999'=> $langs->transnoentitiesnoconv('not2invoice'), -1=> $langs->transnoentitiesnoconv('Custom'));
 $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
-$htmlProductArray = array('name'=>'invoiceService', 'ajaxNbChar'=>$ajaxNbChar);
-$sqlProductArray = array('table'=>'product', 'keyfield'=>'rowid', 'fields'=>'ref, label', 'where'=>'tosell = 1 AND fk_product_type = 1', 'separator' => ' - ');
+$htmlProductArray = array('name' => 'invoiceService', 'ajaxNbChar'=>$ajaxNbChar);
+$sqlProductArray = array('table' => 'product', 'keyfield' => 'rowid', 'fields' => 'ref, label', 'where' => 'tosell = 1 AND fk_product_type = 1', 'separator' => ' - ');
 print select_sellist($sqlProductArray, $htmlProductArray, $invoiceservice, $addchoices);
 echo "</td></tr>\n\t\t";
-//line tasktime ==
+//line tasktime == 
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("invoiceTaskTime");
 echo '</td><td align = "left">'.$langs->trans("invoiceTaskTimeDesc").'</td>';
 echo  '<td align = "left"><input type = "radio" name = "invoiceTaskTime" value = "all" ';

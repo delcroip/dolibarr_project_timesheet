@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 //get param
 $staticProject = new Project($db);
 $projectId = GETPOST('projectid', 'int');
+$propalId = GETPOST('propalid', 'int');
 $socid = GETPOST('socid', 'int');
 //$month = GETPOST('month', 'alpha');
 //$year = GETPOST('year', 'int');
@@ -55,7 +56,7 @@ $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
 if($user->rights->facture->creer && hasProjectRight($userid, $projectId)) {
     if($projectId>0)$staticProject->fetch($projectId);
-    if($socid == 0 || !is_numeric($socid))$socid = $staticProject->socid;//FIXME check must be in place to ensure the user hqs the right to see the project details
+    if($socid == 0 || !is_numeric($socid))$socid = $staticProject->socid;
 $edit = 1;
 // avoid SQL issue
 if(empty($dateStart) || empty($dateEnd) ||$dateStart == $dateEnd) {
@@ -78,7 +79,7 @@ $langs->load('timesheet@timesheet');
             }
              $sql .= ' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
             $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task = t.rowid';
-            if($invoicabletaskOnly == 1)$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
+            if($invoicabletaskOnly == 1)$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
             $sql .= ' WHERE t.fk_projet='.$projectId;
                 $sql .= " AND DATE(tt.task_datehour) BETWEEN '".$db->idate($dateStart);
                 $sql .= "' AND '".$db->idate($dateEnd)."'";
@@ -97,6 +98,7 @@ $langs->load('timesheet@timesheet');
             $sql .= ' GROUP BY '.$fields;
             dol_syslog('timesheet::timesheetProjectInvoice step2', LOG_DEBUG);
             $Form = '<form name = "settings" action="?step=3" method = "POST" >'."\n\t";
+            $Form .= '<input type = "hidden" name = "propalid" value = "'.$propalId.'">';
             $Form .= '<input type = "hidden" name = "projectid" value = "'.$projectId.'">';
             $Form .= '<input type = "hidden" name = "dateStart" value = "'.dol_print_date($dateStart, 'dayxcard').'">';
             $Form .= '<input type = "hidden" name = "dateEnd" value = "'.dol_print_date($dateEnd, 'dayxcard').'">';
@@ -118,7 +120,7 @@ $langs->load('timesheet@timesheet');
                     switch($mode) {
                         case 'user':
                              //step 2.2 get the list of user  (all or approved)
-                            $resArray[] = array("USER" => $obj->fk_user, "TASK" =>'any', "DURATION"=>$duration, 'LIST'=>$obj->task_time_list);
+                            $resArray[] = array("USER" => $obj->fk_user, "TASK" => 'any', "DURATION"=>$duration, 'LIST'=>$obj->task_time_list);
                             break;
                         case 'taskUser':
                              //step 2.3 get the list of taskUser  (all or approved)
@@ -160,11 +162,17 @@ $langs->load('timesheet@timesheet');
             $dateinvoice = time();
                     //$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
                             // Si facture standard
-            $object->socid                                 = $socid;
-            $object->type                                 = 0;//Facture::TYPE_STANDARD;
-            $object->date                                 = $dateinvoice;
-            $object->fk_project                         = $projectId;
+            $object->socid = $socid;
+            $object->type = 0;//Facture::TYPE_STANDARD;
+            $object->date = $dateinvoice;
+            $object->fk_project = $projectId;
             $object->fetch_thirdparty();
+            if($propalId > 0){
+                $object->origin = 'propal';
+                $object->origin_id = $propalId;
+                $object->linked_objects[$object->origin] = $object->origin_id;
+            }
+            //origin=propal&originid=34&socid=10
             $id = $object->create($user);
             $resArray = $_POST['userTask'];
             $hoursPerDay = $conf->global->TIMESHEET_DAY_DURATION;
@@ -173,11 +181,11 @@ $langs->load('timesheet@timesheet');
 
             if($id > 0  && is_array($resArray)) {
                 $db->commit();
-                $invoicecard=str_replace(
+                $invoicecard = str_replace(
                                 array("require '../../main.inc.php';","<?php","\$db->close();"),
                                 "",
                                 file_get_contents(DOL_DOCUMENT_ROOT.'/compta/facture/card.php'));
-                foreach($resArray as $uId =>$userTaskService) {
+                foreach($resArray as $uId => $userTaskService) {
                         //$userTaskService[$user][$task] = array('duration', 'VAT', 'Desc', 'PriceHT', 'Service', 'unit_duration', 'unit_duration_unit');
                     if(is_array($userTaskService))foreach($userTaskService as  $tId => $service) {
                         $durationTab = explode(':', $service['duration']);
@@ -189,7 +197,7 @@ $langs->load('timesheet@timesheet');
                         if(($tId!='any') && $conf->global->TIMESHEET_INVOICE_SHOW_TASK)$details = "\n".$service['taskLabel'];
                         if(($uId!='any')&& $conf->global->TIMESHEET_INVOICE_SHOW_USER)$details .= "\n".$service['userName'];
                         //prepare the CURL params
-                        $postdata=array();
+                        $postdata = array();
                         $postdata['action'] = 'addline';
                         $postdata['id'] = $object->id;
                         $postdata['date_startday'] = date('d', $dateStart);
@@ -199,6 +207,8 @@ $langs->load('timesheet@timesheet');
                         $postdata['date_endmonth'] = date('m', $dateEnd);
                         $postdata['date_endyear'] = date('Y', $dateEnd);
                         $postdata['addline']='Add';
+
+                        
 
                         if($service['Service']>0) {
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
@@ -251,8 +261,8 @@ $langs->load('timesheet@timesheet');
                 }
                 // End of object creation, we show it
                 if(1) {
-                    if(version_compare(DOL_VERSION, "4.9.9")>=0) {
-                        foreach($task_time_array AS $idLine=> $task_time_list) {
+                    if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
+                        foreach($task_time_array AS $idLine => $task_time_list) {
                                 //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
                             Update_task_time_invoice($id, $idLine, $task_time_list);
                         }
@@ -288,11 +298,11 @@ $langs->load('timesheet@timesheet');
             $Form .= '<tr class = "liste_titre" width = "100%" ><th colspan = "2">'.$langs->trans('generalInvoiceProjectParam').'</th></tr>';
             $invoicingMethod = $conf->global->TIMESHEET_INVOICE_METHOD;
             //$Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('Project').'</th><th align = "left" width = "80%" >';
-            //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL'=>'NULL'), $sqlTailTable = '', $ajaxUrl = '')
+            //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL' => 'NULL'), $sqlTailTable = '', $ajaxUrl = '')
             //$ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             //$Form .= select_generic('projet', 'rowid', 'projectid', 'ref', 'title', $projectId, ' - ', $sqlTailWhere, '', null, , $ajaxNbChar);
-            //$htmlProjectArray = array('name'=>'projectid', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam'=>' onchange = "reload(this.form)"');
-            //$sqlProjectArray = array('table'=>'projet', 'keyfield'=>'t.rowid', 'fields'=>'t.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
+            //$htmlProjectArray = array('name' => 'projectid', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam' => ' onchange = "reload(this.form)"');
+            //$sqlProjectArray = array('table' => 'projet', 'keyfield' => 't.rowid', 'fields' => 't.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
             //$Form .= select_sellist($sqlProjectArray, $htmlProjectArray, $projectId);
             $Form .= '<input type = "hidden" name = "projectid" value = "'.$projectId.'">';
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('DateStart').'</th>';
@@ -307,14 +317,57 @@ $langs->load('timesheet@timesheet');
             $Form .= ($invoicingMethod == "taskUser"?"checked":"").'> '.$langs->trans("Tasks").' & '.$langs->trans("User")."</th></tr>\n\t\t";
     //cust list
             $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Customer').'</th><th  align = "left">'.$form->select_company($socid, 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3)', 1).'</th></tr>';
-    //all ts or only approved
+    //propal
+   
+        if($conf->global->MAIN_MODULE_PROPALE){
+            //http://localhost:18080/compta/facture/card.php?action=create&origin=propal&originid=34&socid=10
+            $joinPropal = ' JOIN '.MAIN_DB_PREFIX.'c_stcomm as stp ON fk_statut = stp.id and stp.active = 1 ';
+            $sqlPropal = array('table' => 'propal' , 'keyfield' => 't.rowid', 'fields' => 't.ref, stp.libelle', 'join' => $joinPropal , 'where' => $socid?('t.fk_soc = '.$socid):'1 = 2', 'tail' => '');
+            $htmlPropal = array('name' => 'propalid', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => ' - ');
+            $addChoices = null;
+            $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Propal').'</th><th>';
+            $Form .= select_sellist($sqlPropal, $htmlPropal, '', $addChoices ).'</th></tr>';
+        }
+        $Form .= '
+        <script type = "text/javascript">
+            $("#socid").on("select2:select", function (e) {
+                var param_array = window.location.href.split(\'?\')[1].split(\'&\');
+                var index;
+                var id = "";
+                for(index = 0;index < param_array.length;++index)
+                {
+                    x = param_array[index].split(\'=\');
+                    if(x[0] == "projectid") {
+                        id = "projectid="+x[1];
+                    }
+
+                }
+                var socSelect = e.params.data;
+                var soc =  socSelect.id;
+                var socElement = document.getElementById("socid");
+                var socOld = (typeof(socElement.defaultSelected) === \'undefined\')?0:socElement.defaultSelected ;
+                var dateStartday = "&dateStartday="+document.getElementById("dateStartday").value;
+                var dateStartmonth = "&dateStartmonth="+document.getElementById("dateStartmonth").value;
+                var dateStartyear = "&dateStartyear="+document.getElementById("dateStartyear").value;
+
+                var dateEndday = "&dateEndday="+document.getElementById("dateEndday").value;
+                var dateEndmonth = "&dateEndmonth="+document.getElementById("dateEndmonth").value;
+                var dateEndyear = "&dateEndyear="+document.getElementById("dateEndyear").value;
+                
+                if( soc != null && soc != socOld){
+                    self.location = "'.$PHP_SELF.'?" + id  + "&socid=" + soc +  dateStartday + dateStartmonth + dateStartyear + dateEndday + dateEndmonth + dateEndyear;
+                }
+            });
+         </script>';
+    
+     //all ts or only approved
            $ts2Invoice = $conf->global->TIMESHEET_INVOICE_TASKTIME;
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('TimesheetToInvoice').'</th><th align = "left"><input type = "radio" name = "ts2Invoice" value = "approved" ';
             $Form .= ($ts2Invoice == "approved"?"checked":"").'> '.$langs->trans("approvedOnly").' <br>';
             $Form .= '<input type = "radio" name = "ts2Invoice" value = "all" ';
             $Form .= ($ts2Invoice == "all"?"checked":"").'> '.$langs->trans("All")."</th></tr>";
     // not alreqdy invoice
-            if(version_compare(DOL_VERSION, "4.9.9")>=0) {
+            if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
                     $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('TimesheetNotInvoiced');
                     $Form .= '</th><th align = "left"><input type = "checkbox" name = "tsNotInvoiced" value = "1" ></th></tr>';
             } else{
@@ -326,7 +379,7 @@ $langs->load('timesheet@timesheet');
             $Form .= '</table>';
             $Form .= '<input type = "submit" onclick = "return checkEmptyFormFields(event,\'settings\',\'';
             $Form .= $langs->trans("pleaseFillAll").'\')" class = "butAction" value = "'.$langs->trans('Next')."\">\n</from>";
-            if($ajaxNbChar>=0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
+           // if($ajaxNbChar >= 0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
             break;
     }
 } else {
@@ -340,20 +393,20 @@ $langs->load('timesheet@timesheet');
 $morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader('', $langs->trans('TimesheetToInvoice'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
-$project= new Project($db);
+$project = new Project($db);
 $project->fetch($projectId);
-$headProject=project_prepare_head($project);
+$headProject = project_prepare_head($project);
 dol_fiche_head($headProject, 'invoice', $langs->trans("Project"), 0, 'project');
 print $Form;
 //javascript to reload the page with the poject selected
-print '
+/*print '
 <SCRIPT type = "text/javascript">
 function reload(form)
 {
-var pjt = document.getElementById("projectid").value;
-self.location="?projectid=" + pjt ;
+    var pjt = document.getElementById("projectid").value;
+    self.location="?projectid=" + pjt ;
 }
-</script>';
+</script>';*/
 llxFooter();
 $db->close();
 /***************************************************
@@ -400,13 +453,21 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     $addchoices = array(0 => $langs->transnoentities('Custom').': '.$taskLabel, '-999'=> $langs->transnoentities('not2invoice'));
     $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
     $html .= '</th><th >';
-    $html .= select_sellist(array('table'=> 'product', 'keyfield'=> 'rowid', 'fields'=>'ref,label', 'where'=>' tosell = 1 AND fk_product_type = 1'),
-                        array('name'=>'userTask['.$user.']['.$task.'][Service]',  'separator'=> ' - '),
+    $html .= select_sellist(array('table' => 'product', 'keyfield' => 'rowid', 'fields' => 'ref,label', 'where' => ' tosell = 1 AND fk_product_type = 1'),
+                        array('name' => 'userTask['.$user.']['.$task.'][Service]',  'separator' => ' - '),
                         $defaultService,
                         $addchoices);
     $html .= '</th>';
+    $unitValue = '';
+    if(($user>0)){ // if the is no defaulf service, use the thm if available, if not use the tjm
+        $curUser = new User($db);
+        $curUser->fetch($user);
+        if($curUser->thm)$unitValue = $curUser->thm;
+        else if($curUser->tjm)$unitValue = $curUser->tjm;
+    }
+
     $html .= '<th ><input type = "text"  size = "30" name = "userTask['.$user.']['.$task.'][Desc]" ></th>';
-    $html .= '<th><input type = "text"  size = "6" name = "userTask['.$user.']['.$task.'][PriceHT]" ></th>';
+    $html .= '<th><input type = "text"  size = "6" name = "userTask['.$user.']['.$task.'][PriceHT]" value="'.number_format($unitValue,2).'" ></th>';
     //$html .= '<th><input type = "text" size = "6" name = "userTask['.$user.']['.$task.']["VAT"]" ></th>';
     $html .= '<th>'.$form->load_tva('userTask['.$user.']['.$task.'][VAT]', -1, $seller, $buyer, 0, 0, '', false, 1).'</th>';
     $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['.$user.']['.$task.'][unit_duration]" value = "1" >';

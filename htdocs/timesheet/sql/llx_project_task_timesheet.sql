@@ -26,7 +26,7 @@ rowid                 serial ,
 date_start              DATE        NOT NULL, -- start date of the period
 date_end               DATE        NOT NULL, -- start date of the period
 status                   integer default 1, -- enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
-note                  VARCHAR(1024), -- in case target is not team, querry on task
+note                  VARCHAR(1024), -- note
 date_creation         DATETIME      NOT NULL,
 date_modification     TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 fk_userid               integer     NOT NULL,          -- timesheet user
