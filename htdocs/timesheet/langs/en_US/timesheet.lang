@@ -148,7 +148,7 @@ RecordUpdated = Record updated
 rejected = Rejected
 rejectedColorDesc = Color for the holiday & timesheet rejected by the approver
 Reminder = Reminder
-reminderEmailProcess = You can activate reminder via emails through the task planner of Dolibarr<br>Job type \= Call method of a Dolibarr Class<br>Module \= timesheet<br>Classes \= Task_timesheet.class.php<br>Instance/Object to create \= timesheet<br> Method \= sendApprovalReminders
+reminderEmailProcess = You can activate reminder via emails through the task planner of Dolibarr<br>Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = timesheet/class/TimesheetUserTasks.class.php<br>Instance/Object to create = TimesheetUserTasks<br> Method = sendApprovalReminders
 savedDuration = Saved duration
 searchbox = Activate search boxes
 searchboxDesc = Replace the drop down lists by search boxes for the Tasks. Needed when hundreds of tasks are defined in order to improve performance. (Project, contact, third partie use the search box configuration defined in other module)
@@ -231,3 +231,8 @@ unblockInvoicedDesc = Allow to edit timespent already invoiced
 unblockClosed = Allow closed days
 unblockClosedDesc = Allow timespent entry during closed days
 adminTimeSpent = Administration of time spent 
+ProgressUpdate = Progress Updated
+updateError = Error during update
+NoActiveEvent = No active event found
+EventNotActive = Event not active
+DbError = Database error

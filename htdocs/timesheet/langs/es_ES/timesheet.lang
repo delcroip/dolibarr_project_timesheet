@@ -148,7 +148,7 @@ RecordUpdated = Registro actualizado
 rejected = Rechazado
 rejectedColorDesc = Color de la hoja de vacaciones y horas rechazada por el aprobador
 Reminder = Recordatorio
-reminderEmailProcess = Puede activar el recordatorio a través de correos electrónicos a través del planificador de tareas de Dolibarr <br> Job type \= Call method of a Dolibarr Class<br>Module \= timesheet<br>Classes \= Task_timesheet.class.php<br>Instance/Object to create \= timesheet<br> Method \= sendApprovalReminders
+reminderEmailProcess = Puede activar el recordatorio a través de correos electrónicos a través del planificador de tareas de Dolibarr<br>Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = timesheet/class/TimesheetUserTasks.class.php<br>Instance/Object to create = TimesheetUserTasks<br> Method = sendApprovalReminders
 savedDuration = Duración guardado
 searchbox = Activar búsqueda cajas
 searchboxDesc = Reemplace las listas desplegables por cuadros de búsqueda de las Tareas. Se necesita cuando se definen cientos de tareas para mejorar el rendimiento. (Proyecto, contacto, tercera parte utilizar la configuración de la caja de búsqueda definida en otro módulo)
@@ -231,3 +231,8 @@ unblockInvoicedDesc = Permite editar los tiempos ya facturados
 unblockClosed = Permitir días de cierre
 unblockClosedDesc = Permitir la entrada de personas durante los días de cierre
 adminTimeSpent = Administración del tiempo empleado.
+ProgressUpdate = Progreso actualizado
+updateError = Error durante la actualización
+NoActiveEvent = No se ha encontrado ningún evento activo
+EventNotActive = Evento no activo
+DbError = Error de la base de datos

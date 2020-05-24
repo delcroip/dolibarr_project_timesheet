@@ -148,7 +148,7 @@ RecordUpdated = Oltre giorni con successo
 rejected = Respinta
 rejectedColorDesc = Colore per la festa e scheda attività respinta dal responsabile approvazioni
 Reminder = Promemoria
-reminderEmailProcess = È possibile attivare promemoria via e-mail attraverso il pianificatore compito di Dolibarr <br> Job type \= Call method of a Dolibarr Class<br>Module \= timesheet<br>Classes \= Task_timesheet.class.php<br>Instance/Object to create \= timesheet<br> Method \= sendApprovalReminders
+reminderEmailProcess = È possibile attivare promemoria via e-mail attraverso il pianificatore compito di Dolibarr<br>Job type = Call method of a Dolibarr Class<br>Module = timesheet<br>Classes = timesheet/class/TimesheetUserTasks.class.php<br>Instance/Object to create = TimesheetUserTasks<br> Method = sendApprovalReminders
 savedDuration = Durata salvato
 searchbox = Attivare le caselle di ricerca
 searchboxDesc = Sostituire le liste a discesa per le caselle di ricerca per le attività. Necessita quando vengono definite centinaia di attività per migliorare le prestazioni. (Progetto, contatto, terza parte utilizza la configurazione della casella di ricerca definita in altri moduli)
@@ -231,3 +231,8 @@ unblockInvoicedDesc = Permette di modificare i tempi già fatturati
 unblockClosed = Consentire giorni di chiusura
 unblockClosedDesc = Consentire l'ingresso nei giorni di chiusura
 adminTimeSpent = Amministrazione del tempo trascorso
+ProgressUpdate = Progresso aggiornato
+updateError = Errore durante l'aggiornamento
+NoActiveEvent = Nessun evento attivo trovato
+EventNotActive = Evento non attivo
+DbError = Errore del database
