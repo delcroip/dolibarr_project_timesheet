@@ -19,10 +19,36 @@
 //require_once('mysql.class.php');
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once 'class/TimesheetHoliday.class.php';
-require_once 'core/lib/generic.lib.php';
-require_once 'class/TimesheetTask.class.php';
-require_once 'class/TimesheetFavourite.class.php';
+require_once 'TimesheetHoliday.class.php';
+require_once 'TimesheetTask.class.php';
+require_once 'TimesheetFavourite.class.php';
+if(file_exists('./../core/lib/generic.lib.php')) {
+    require_once './../core/lib/generic.lib.php';
+}else{
+    //called outside the module
+    Define("NULL", 0);
+    Define("DRAFT", 1);
+    Define("SUBMITTED", 2);
+    Define("APPROVED", 3);
+    Define("CANCELLED", 4);
+    Define("REJECTED", 5);
+    Define("CHALLENGED", 6);
+    Define("INVOICED", 7);
+    Define("UNDERAPPROVAL", 8);
+    Define("PLANNED", 9);
+    Define("STATUSMAX", 10);
+    //APPFLOW
+    //const LINKED_ITEM = [
+    Define("USER", 0);
+    Define("TEAM", 1);
+    Define("PROJECT", 2);
+    Define("CUSTOMER", 3);
+    Define("SUPPLIER", 4);
+    Define("OTHER", 5);
+    Define("ALL", 6);
+    Define("ROLEMAX", 7);
+}
+
 class TimesheetUserTasks extends CommonObject
 {
     //common
@@ -1145,18 +1171,19 @@ public function GetTimeSheetXML()
 /**
  *        function that will send email to
  *
- *        @return        void
+ *        @return        bool success / failure
  */
 public function sendApprovalReminders()
 {
     global $langs;
+    $ret = true;
     $sql = 'SELECT';
     $sql .= ' COUNT(t.rowid) as nb, ';
-    $sql .= ' u.email as w_email, tm.email as tm_email';
+    $sql .= ' u.email as w_email, utm.email as tm_email,';
     $sql .= ' u.fk_user as approverid';
-    $sql .= ' FROM '.MAIN_DB_PREFIX.'llx_project_task_time_approval as t';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
-    $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as utm on u.fk_userid = u.rowid ';
+    $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as utm on u.fk_user = utm.rowid ';
     $sql .= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
     $sql .= '  AND t.recipient='.TEAM.' GROUP BY u.fk_user';
      dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1186,7 +1213,7 @@ public function sendApprovalReminders()
                         $addr_cc, $addr_bcc = null,
                         $deliveryreceipt = 0,
                         $msgishtml = 1);
-                    $mailfile->sendfile();
+                    $ret = $ret && $mailfile->sendfile();
                 }
             }
         }
@@ -1194,7 +1221,9 @@ public function sendApprovalReminders()
         $error++;
         dol_print_error($db);
         $list = array();
+        $ret = false;
     }
+    return $ret;
 }
         /**
          * function that will send email upon timesheet rejection

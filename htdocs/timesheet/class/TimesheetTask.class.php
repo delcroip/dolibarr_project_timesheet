@@ -20,7 +20,7 @@
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once 'class/TimesheetUserTasks.class.php';
+require_once 'TimesheetUserTasks.class.php';
 class TimesheetTask extends Task
 {
     public $element = 'Task_time_approval';//!< Id that identify managed objects
