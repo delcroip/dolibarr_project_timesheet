@@ -465,7 +465,7 @@ switch($action) {
                     var action = "create";
                     for(index = 0;index < param_array.length;++index)
                     {
-                        x = param_array[index].split(\' = \');
+                        x = param_array[index].split(\'=\');
                         if(x[0] == "action") {
                             action=x[1];
                         }

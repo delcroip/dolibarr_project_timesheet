@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 //get param
 $staticProject = new Project($db);
 $projectId = GETPOST('projectid', 'int');
+$propalId = GETPOST('propalid', 'int');
 $socid = GETPOST('socid', 'int');
 //$month = GETPOST('month', 'alpha');
 //$year = GETPOST('year', 'int');
@@ -97,6 +98,7 @@ $langs->load('timesheet@timesheet');
             $sql .= ' GROUP BY '.$fields;
             dol_syslog('timesheet::timesheetProjectInvoice step2', LOG_DEBUG);
             $Form = '<form name = "settings" action="?step=3" method = "POST" >'."\n\t";
+            $Form .= '<input type = "hidden" name = "propalid" value = "'.$propalId.'">';
             $Form .= '<input type = "hidden" name = "projectid" value = "'.$projectId.'">';
             $Form .= '<input type = "hidden" name = "dateStart" value = "'.dol_print_date($dateStart, 'dayxcard').'">';
             $Form .= '<input type = "hidden" name = "dateEnd" value = "'.dol_print_date($dateEnd, 'dayxcard').'">';
@@ -165,6 +167,12 @@ $langs->load('timesheet@timesheet');
             $object->date = $dateinvoice;
             $object->fk_project = $projectId;
             $object->fetch_thirdparty();
+            if($propalId > 0){
+                $object->origin = 'propal';
+                $object->origin_id = $propalId;
+                $object->linked_objects[$object->origin] = $object->origin_id;
+            }
+            //origin=propal&originid=34&socid=10
             $id = $object->create($user);
             $resArray = $_POST['userTask'];
             $hoursPerDay = $conf->global->TIMESHEET_DAY_DURATION;
@@ -199,6 +207,8 @@ $langs->load('timesheet@timesheet');
                         $postdata['date_endmonth'] = date('m', $dateEnd);
                         $postdata['date_endyear'] = date('Y', $dateEnd);
                         $postdata['addline']='Add';
+
+                        
 
                         if($service['Service']>0) {
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
@@ -307,7 +317,50 @@ $langs->load('timesheet@timesheet');
             $Form .= ($invoicingMethod == "taskUser"?"checked":"").'> '.$langs->trans("Tasks").' & '.$langs->trans("User")."</th></tr>\n\t\t";
     //cust list
             $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Customer').'</th><th  align = "left">'.$form->select_company($socid, 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3)', 1).'</th></tr>';
-    //all ts or only approved
+    //propal
+   
+        if($conf->global->MAIN_MODULE_PROPALE){
+            //http://localhost:18080/compta/facture/card.php?action=create&origin=propal&originid=34&socid=10
+            $joinPropal = ' JOIN '.MAIN_DB_PREFIX.'c_stcomm as stp ON fk_statut = stp.id and stp.active = 1 ';
+            $sqlPropal = array('table' => 'propal' , 'keyfield' => 't.rowid', 'fields' => 't.ref, stp.libelle', 'join' => $joinPropal , 'where' => $socid?('t.fk_soc = '.$socid):'1 = 2', 'tail' => '');
+            $htmlPropal = array('name' => 'propalid', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => ' - ');
+            $addChoices = null;
+            $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Propal').'</th><th>';
+            $Form .= select_sellist($sqlPropal, $htmlPropal, '', $addChoices ).'</th></tr>';
+        }
+        $Form .= '
+        <script type = "text/javascript">
+            $("#socid").on("select2:select", function (e) {
+                var param_array = window.location.href.split(\'?\')[1].split(\'&\');
+                var index;
+                var id = "";
+                for(index = 0;index < param_array.length;++index)
+                {
+                    x = param_array[index].split(\'=\');
+                    if(x[0] == "projectid") {
+                        id = "projectid="+x[1];
+                    }
+
+                }
+                var socSelect = e.params.data;
+                var soc =  socSelect.id;
+                var socElement = document.getElementById("socid");
+                var socOld = (typeof(socElement.defaultSelected) === \'undefined\')?0:socElement.defaultSelected ;
+                var dateStartday = "&dateStartday="+document.getElementById("dateStartday").value;
+                var dateStartmonth = "&dateStartmonth="+document.getElementById("dateStartmonth").value;
+                var dateStartyear = "&dateStartyear="+document.getElementById("dateStartyear").value;
+
+                var dateEndday = "&dateEndday="+document.getElementById("dateEndday").value;
+                var dateEndmonth = "&dateEndmonth="+document.getElementById("dateEndmonth").value;
+                var dateEndyear = "&dateEndyear="+document.getElementById("dateEndyear").value;
+                
+                if( soc != null && soc != socOld){
+                    self.location = "'.$PHP_SELF.'?" + id  + "&socid=" + soc +  dateStartday + dateStartmonth + dateStartyear + dateEndday + dateEndmonth + dateEndyear;
+                }
+            });
+         </script>';
+    
+     //all ts or only approved
            $ts2Invoice = $conf->global->TIMESHEET_INVOICE_TASKTIME;
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('TimesheetToInvoice').'</th><th align = "left"><input type = "radio" name = "ts2Invoice" value = "approved" ';
             $Form .= ($ts2Invoice == "approved"?"checked":"").'> '.$langs->trans("approvedOnly").' <br>';
@@ -326,7 +379,7 @@ $langs->load('timesheet@timesheet');
             $Form .= '</table>';
             $Form .= '<input type = "submit" onclick = "return checkEmptyFormFields(event,\'settings\',\'';
             $Form .= $langs->trans("pleaseFillAll").'\')" class = "butAction" value = "'.$langs->trans('Next')."\">\n</from>";
-            if($ajaxNbChar >= 0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
+           // if($ajaxNbChar >= 0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
             break;
     }
 } else {
@@ -346,14 +399,14 @@ $headProject = project_prepare_head($project);
 dol_fiche_head($headProject, 'invoice', $langs->trans("Project"), 0, 'project');
 print $Form;
 //javascript to reload the page with the poject selected
-print '
+/*print '
 <SCRIPT type = "text/javascript">
 function reload(form)
 {
-var pjt = document.getElementById("projectid").value;
-self.location="?projectid=" + pjt ;
+    var pjt = document.getElementById("projectid").value;
+    self.location="?projectid=" + pjt ;
 }
-</script>';
+</script>';*/
 llxFooter();
 $db->close();
 /***************************************************
