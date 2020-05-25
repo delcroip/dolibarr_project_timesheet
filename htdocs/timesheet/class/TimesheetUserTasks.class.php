@@ -22,8 +22,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once 'TimesheetHoliday.class.php';
 require_once 'TimesheetTask.class.php';
 require_once 'TimesheetFavourite.class.php';
-if(file_exists('./../core/lib/generic.lib.php')) {
-    require_once './../core/lib/generic.lib.php';
+if(file_exists('core/lib/generic.lib.php')) {
+    require_once 'core/lib/generic.lib.php';
 }else{
     //called outside the module
     Define("NULL", 0);
