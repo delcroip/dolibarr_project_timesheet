@@ -1,4 +1,10 @@
 # dolibarr_project_timesheet changelog
+4.2.2
+- new: show the time not editable (when there is several task time for ady/task)
+
+4.2.1
+- fix: blank timesheet page
+
 4.2.0
 - fix: send approval reminder
 - fix: favorite edit card update the task when the project is selected
