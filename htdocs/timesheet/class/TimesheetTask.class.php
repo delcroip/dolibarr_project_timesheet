@@ -557,12 +557,13 @@ class TimesheetTask extends Task
         dol_syslog(__METHOD__, LOG_DEBUG);
         for($i = 0;$i<$dayelapsed;$i++)
         {
-                $this->tasklist[$i] = array('id' => 0, 'duration' => 0, 'date'=>$timeStart+SECINDAY*$i+SECINDAY/4);
+                $this->tasklist[$i] = array('id' => 0, 'duration' => 0, 'date'=>$timeStart+SECINDAY*$i+SECINDAY/4, 'other' => 0);
         }
         $resql = $this->db->query($sql);
         if($resql) {
             $num = $this->db->num_rows($resql);
             $i = 0;
+            unset($this->tasklistAll);
             // Loop on each record found, so each couple (project id, task id)
             while($i < $num)
             {
@@ -570,7 +571,10 @@ class TimesheetTask extends Task
                 $obj = $this->db->fetch_object($resql);
                 $dateCur = $this->db->jdate($obj->task_date);
                 $day = getDayInterval($timeStart, $dateCur);
-                $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=>$obj->task_duration, 'note'=>$obj->note, 'invoiced' => $obj->invoiced);
+                $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=> $obj->task_duration, 'note'=>$obj->note, 
+                'invoiced' => $obj->invoiced, 'other' => ($this->tasklist[$day]['duration'] + $this->tasklist[$day]['other']),
+                'noteOther' =>  ($this->tasklist[$day]['note']."\n".$this->tasklist[$day]['noteOther']));
+ //               $this->tasklistAll[] =  array('day' => $day, 'id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=>$obj->task_duration, 'note'=>$obj->note, 'invoiced' => $obj->invoiced);
                 $i++;
             }
             $this->db->free($resql);
@@ -622,6 +626,7 @@ class TimesheetTask extends Task
         $html .= $this->getHTMLlineInfoCell($headers);
         $html .= $this->getHTMLLineDayCell($isOpenStatus);
         $html .= "</tr>\n";
+
         return $html.$htmltail;
     }
     /**
@@ -653,6 +658,8 @@ class TimesheetTask extends Task
             // to avoid editing if the task is closed
             $dayWorkLoadSec = isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
             $dayWorkLoad = formatTime($dayWorkLoadSec, -1);
+            $otherSec = isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['other']:0;
+            $other = formatTime($otherSec, -1);
             $startDates = ($this->date_start>$this->startDatePjct)?$this->date_start:$this->startDatePjct;
 
             $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct == 0)?$this->date_end:$this->stopDatePjct;
@@ -682,6 +689,7 @@ class TimesheetTask extends Task
                 if($isInvoiced){
                     $bkcolor = 'background:#'.$statusColor[INVOICED];
                 }
+                
                 $html .= "<td>\n";
                 // add note popup
                 if($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE) {
@@ -704,6 +712,15 @@ class TimesheetTask extends Task
                 $html .= 'onkeypress = "return regexEvent(this,event,\'timeChar\')" ';
                 $html .= 'onblur = "validateTime(this, \''.$this->userId.'_'.$dayCur.'\')" /></div>';
                  //end note code
+                 if( $otherSec > 0){
+                    $html .= '<br><a class = "column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
+                    if(!empty($this->tasklist[$dayCur]['noteOther']))$html .= ' title = "'.htmlentities($this->tasklist[$dayCur]['noteOther']).'"';
+                    //$html .= ' name = "task['.$this->id.']['.$dayCur.']" ';
+                    $html .= ' style = "width: 90%;"';
+                    $html .= ' >'.((($hidezeros == 1) && ($otherSec == 0))?"":$other);
+                    $html .= '</a> ';
+                 }
+
                 $html .= "</td>\n";
             } else {
                 $html .= ' <td><a class = "column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
