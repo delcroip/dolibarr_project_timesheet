@@ -420,6 +420,9 @@ class TimesheetTask extends Task
         if(!is_array($this->tasklist)) $this->getActuals($this->date_start_approval, $this->date_end_approval, $this->userId);
         if(is_array($this->tasklist))foreach($this->tasklist as $item) {
             if($item['id']!='')$idList[] = $item['id'];
+            if(is_array($item['other'])){
+                $idList = array_merge($idList, array_column($item['other'], 'id'));
+            } 
         }
         $ids = implode(', ', $idList);
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET fk_task_time_approval = \'';
@@ -555,11 +558,14 @@ class TimesheetTask extends Task
             $sql .= " AND (DATE(ptt.task_datehour)<'".$this->db->idate($timeEnd)."')";
         }
         dol_syslog(__METHOD__, LOG_DEBUG);
+        $other = array();
         for($i = 0;$i<$dayelapsed;$i++)
         {
-                $this->tasklist[$i] = array('id' => 0, 'duration' => 0, 'date'=>$timeStart+SECINDAY*$i+SECINDAY/4, 'other' => 0);
+            $other[$i] = array();    
+            $this->tasklist[$i] = array('id' => 0, 'duration' => 0, 'date'=>$timeStart+SECINDAY*$i+SECINDAY/4, 'other' => null);
         }
         $resql = $this->db->query($sql);
+        
         if($resql) {
             $num = $this->db->num_rows($resql);
             $i = 0;
@@ -568,12 +574,17 @@ class TimesheetTask extends Task
             while($i < $num)
             {
                 $error = 0;
+
                 $obj = $this->db->fetch_object($resql);
                 $dateCur = $this->db->jdate($obj->task_date);
                 $day = getDayInterval($timeStart, $dateCur);
+                if($this->tasklist[$day]['duration'] > 0 || strlen($this->tasklist[$day]['note']) > 0){
+                    $other[$day][] = array( 'duration' => $this->tasklist[$day]['duration'], 'id' => $this->tasklist[$day]['id'], 'note' => $this->tasklist[$day]['note']);
+                }
+                
                 $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=> $obj->task_duration, 'note'=>$obj->note, 
-                'invoiced' => $obj->invoiced, 'other' => ($this->tasklist[$day]['duration'] + $this->tasklist[$day]['other']),
-                'noteOther' =>  ($this->tasklist[$day]['note']."\n".$this->tasklist[$day]['noteOther']));
+                'invoiced' => $obj->invoiced);
+                if(is_array($other[$day]) > 0)$this->tasklist[$day]['other'] = $other[$day];
  //               $this->tasklistAll[] =  array('day' => $day, 'id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=>$obj->task_duration, 'note'=>$obj->note, 'invoiced' => $obj->invoiced);
                 $i++;
             }
@@ -658,13 +669,20 @@ class TimesheetTask extends Task
             // to avoid editing if the task is closed
             $dayWorkLoadSec = isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
             $dayWorkLoad = formatTime($dayWorkLoadSec, -1);
-            $otherSec = isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['other']:0;
-            $other = formatTime($otherSec, -1);
+            
+            
             $startDates = ($this->date_start>$this->startDatePjct)?$this->date_start:$this->startDatePjct;
 
             $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct == 0)?$this->date_end:$this->stopDatePjct;
             //take the end of the day
-        
+            
+            $noteother = '';
+            $otherSec = 0;
+            if(is_array($this->tasklist[$dayCur]['other'])){
+                $noteother = implode("\n", array_column($this->tasklist[$dayCur]['other'], 'note'));
+                $otherSec = array_sum(array_column($this->tasklist[$dayCur]['other'], 'duration'));
+            }
+            $other = formatTime($otherSec, -1);
             
             if($isOpenStatus) {
                 $isOpen = $isOpenStatus && (($startDates == 0) || ($startDates <= $today_end ));
@@ -714,7 +732,7 @@ class TimesheetTask extends Task
                  //end note code
                  if( $otherSec > 0){
                     $html .= '<br><a class = "column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
-                    if(!empty($this->tasklist[$dayCur]['noteOther']))$html .= ' title = "'.htmlentities($this->tasklist[$dayCur]['noteOther']).'"';
+                    if(!empty($noteother))$html .= ' title = "'.htmlentities($noteother).'"';
                     //$html .= ' name = "task['.$this->id.']['.$dayCur.']" ';
                     $html .= ' style = "width: 90%;"';
                     $html .= ' >'.((($hidezeros == 1) && ($otherSec == 0))?"":$other);
@@ -724,10 +742,14 @@ class TimesheetTask extends Task
                 $html .= "</td>\n";
             } else {
                 $html .= ' <td><a class = "column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'"';
-                if(!empty($this->tasklist[$dayCur]['note']))$html .= ' title = "'.htmlentities($this->tasklist[$dayCur]['note']).'"';
+                if(!empty($this->tasklist[$dayCur]['note'])){
+                    $html .= ' title = "'.htmlentities($this->tasklist[$dayCur]['note'].((strlen($noteother)>0)?"\n".$noteother:'')).'"';
+                }
+                $dayWorkLoadAllSec = $dayWorkLoadSec + $otherSec;
+                $dayWorkLoadAll = formatTime($dayWorkLoadAllSec, -1);
                 $html .= ' name = "task['.$this->id.']['.$dayCur.']" ';
                 $html .= ' style = "width: 90%;"';
-                $html .= ' >'.((($hidezeros == 1) && ($dayWorkLoadSec == 0))?"":$dayWorkLoad);
+                $html .= ' >'.((($hidezeros == 1) && ($dayWorkLoadAllSec == 0))?"":$dayWorkLoadAll);
                 $html .= '</a> ';
                 $html .= "</td>\n";
             }
