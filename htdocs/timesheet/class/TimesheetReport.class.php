@@ -241,7 +241,7 @@ class TimesheetReport
         global $conf;
         $resArray = array();
         $first = true;
-        $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.fk_projet as taskid,';
+        $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.rowid as taskid,';
         if($this->db->type!='pgsql') {
 //            $sql .= ' MAX(prj.title) as projecttitle, MAX(prj.ref) as projectref, MAX(usr.firstname) as firstname, MAX(usr.lastname) as lastname, ';
 //            $sql .= " MAX(tsk.ref) as taskref, MAX(tsk.label) as tasktitle,";
@@ -272,6 +272,9 @@ class TimesheetReport
         if($this->invoiceableOnly == 1) {
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
+	    
+	$sql .= ($first?'':'AND ').'tsk.entity IN ('.getEntity('project').')';
+	    
          /*if(!empty($startDay))$sql .= 'AND task_date >= \''.$this->db->idate($startDay).'\'';
           else */$sql .= ($first?'':'AND ').' DATE(task_datehour) >= \''.$this->db->idate($this->startDate).'\'';
           /*if(!empty($stopDay))$sql .= ' AND task_date <= \''.$this->db->idate($stopDay).'\'';
