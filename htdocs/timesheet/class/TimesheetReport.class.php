@@ -245,6 +245,7 @@ class TimesheetReport
         global $conf;
         $resArray = array();
         $first = true;
+
         $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.fk_projet as taskid, ptt.rowid as id,';
         if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
             $sql .= ' (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced,';
@@ -280,6 +281,7 @@ class TimesheetReport
         if($this->invoiceableOnly == 1) {
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
+
         $sql .= ($first?'':'AND ').' DATE(task_datehour) >= \''.$this->db->idate($this->startDate).'\'';
         $sql .= ' AND DATE(task_datehour) <= \''.$this->db->idate($this->stopDate).'\'';
         $sql .= ' AND (ptt.task_duration > 0 or LENGTH(ptt.note)>0)';
