@@ -236,3 +236,4 @@ updateError = Error during update
 NoActiveEvent = No active event found
 EventNotActive = Event not active
 DbError = Database error
+nbTsToSubmit = Number of timesheet to submit

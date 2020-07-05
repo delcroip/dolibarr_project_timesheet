@@ -26,7 +26,7 @@ rowid                serial ,
 date_start              DATE        NOT NULL, -- start date of the period
 date_end             DATE        NOT NULL, -- start date of the period
 status                  integer default 1, -- enum('DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL','PLANNED') DEFAULT 'DRAFT',
-sender                   integer default 1, -- enum('team','project','customer','provider','other','user') DEFAULT 'user', -- a team ts is always needed
+sender                   integer default 0, -- enum('team','project','customer','provider','other','user') DEFAULT 'user', -- a team ts is always needed
 recipient                integer default 1, -- enum('team','project','customer','provider','other','user') DEFAULT 'team', -- a team ts is always needed
 note                  VARCHAR(1024), -- in case target is not team, querry on task
 planned_workload                integer DEFAULT NULL,

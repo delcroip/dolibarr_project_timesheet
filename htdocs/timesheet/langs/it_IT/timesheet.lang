@@ -236,3 +236,4 @@ updateError = Errore durante l'aggiornamento
 NoActiveEvent = Nessun evento attivo trovato
 EventNotActive = Evento non attivo
 DbError = Errore del database
+nbTsToSubmit = Numero di fogli di orario da presentare

@@ -236,3 +236,4 @@ updateError = Fehler während der Aktualisierung
 NoActiveEvent = Kein aktives Ereignis gefunden
 EventNotActive = Ereignis nicht aktiv
 DbError = Datenbank-Fehler
+nbTsToSubmit = Anzahl der einzureichenden Stundenzettel
