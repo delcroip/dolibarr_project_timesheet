@@ -267,7 +267,7 @@ class TimesheetReport
             $first = false;
         }
         if(is_array($this->taskarray) && count($this->taskarray)>1) {
-            $sql .= ($first?'':'AND ').'tsk.rowid in ('.explode($taskarray, ', ').') ';
+            $sql .= ($first?'':'AND ').'tsk.rowid in ('.explode($this->taskarray, ', ').') ';
         }
         if($this->invoiceableOnly == 1) {
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
@@ -410,6 +410,7 @@ class TimesheetReport
     {
     // HTML buffer
         global $langs;
+        $HTMLRes = '';
         $lvl0HTML = $lvl1HTML = $lvl3HTML = $lvl2HTML = '';
         // partial totals
         $lvl3Total = $lvl2Total = $lvl1Total = $lvl0Total = 0;
@@ -669,8 +670,9 @@ class TimesheetReport
  */
     public function getLvl3HTML($item)
     {
+        $lvl3HTML = '';
         $lvl3HTML .= '<tr class = "oddeven" align = "left"><td colspan="3" ></td><td>'
-            .$item[$this->lvl3Title].'</td><td>';
+            .$item[$this->lvl3Link].'</td><td>';
         $lvl3HTML .= $item['durationHours'].'</td><td>';
         $lvl3HTML .= $item['durationDays'].'</td><td>';
         $lvl3HTML .= $item['note'];

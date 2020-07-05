@@ -543,7 +543,7 @@ class TimesheetTask extends Task
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, DATE(ptt.task_datehour) AS task_date, ptt.note";
         if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
-            $sql .= ', (ptt.invoice_id > 0)  AS invoiced';
+            $sql .= ', (ptt.invoice_id > 0 or invoice_line_id>0)  AS invoiced';
         }else{
             $sql .= ', 0 AS invoiced';
         }
@@ -616,7 +616,7 @@ class TimesheetTask extends Task
         $htmltail = '';
         $linestyle = '';
         if(($this->pStatus == "2")) {
-            $linestyle .= 'background:#'.$statusColor['FROZEN'].';';
+            $linestyle .= 'background:#'.$statusColor[FROZEN].';';
         } elseif($statusColor[$this->status]!='' &&  $statusColor[$this->status]!='FFFFFF') {
             $linestyle .= 'background:#'.$statusColor[$this->status].';';
         }
@@ -695,14 +695,14 @@ class TimesheetTask extends Task
 
                 $bkcolor = '';
                 if(!$isOpenDay){
-                    $bkcolor = 'background:#'.$statusColor['FROZEN'];
+                    $bkcolor = 'background:#'.$statusColor[FROZEN];
                 }elseif($isOpen) {
                     $bkcolor = 'background:#'.$statusColor[$this->status];
                     if($dayWorkLoadSec!=0 && $this->status == DRAFT){
-                        $bkcolor = 'background:#'.$statusColor['VALUE'];
+                        $bkcolor = 'background:#'.$statusColor[VALUE];
                     }
                 }else {
-                    $bkcolor = 'background:#'.$statusColor['FROZEN'];
+                    $bkcolor = 'background:#'.$statusColor[FROZEN];
                 }
                 if($isInvoiced){
                     $bkcolor = 'background:#'.$statusColor[INVOICED];

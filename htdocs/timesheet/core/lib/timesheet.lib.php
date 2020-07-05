@@ -27,6 +27,8 @@ Define("INVOICED", 7);
 Define("UNDERAPPROVAL", 8);
 Define("PLANNED", 9);
 Define("STATUSMAX", 10);
+Define("VALUE", 100);
+Define("FROZEN", 101);
 //APPFLOW
 //const LINKED_ITEM = [
 Define("USER", 0);
@@ -40,8 +42,8 @@ Define("ROLEMAX", 7);
 // back ground colors
 $statusColor = array(
     DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
-    'VALUE'=>$conf->global->TIMESHEET_COL_VALUE,
-    'FROZEN'=>$conf->global->TIMESHEET_COL_FROZEN,
+    VALUE=>$conf->global->TIMESHEET_COL_VALUE,
+    FROZEN=>$conf->global->TIMESHEET_COL_FROZEN,
     SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,
     APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,
     CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,
