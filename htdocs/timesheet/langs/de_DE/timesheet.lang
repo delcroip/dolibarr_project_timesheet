@@ -237,3 +237,7 @@ NoActiveEvent = Kein aktives Ereignis gefunden
 EventNotActive = Ereignis nicht aktiv
 DbError = Datenbank-Fehler
 nbTsToSubmit = Anzahl der einzureichenden Stundenzettel
+reportInvoicedColDesc = Spalte "Fakturiert" in der Berichtstabelle
+reportInvoicedCol = In Rechnung gestellte Spalte
+reportUngroup = Stufe 3 in Berichten aufheben
+reportUngroupDesc = Gruppierung von Elementen der Ebene 3 im Bericht aufheben, z.B. mehrere Aufgabenzeiten für einen einzigen Tag resultieren aus mehreren Berichtszeilen.

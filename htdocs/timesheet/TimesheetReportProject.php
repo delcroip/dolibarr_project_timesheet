@@ -30,10 +30,17 @@ $action = GETPOST('action', 'alpha');
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $short = GETPOST('short', 'int');
+$invoicedCol = GETPOST('invoicedcol', 'int');
+
+$ungroup = GETPOST('ungroup', 'int');
+
 $mode = GETPOST('mode', 'alpha');
+
 $model = GETPOST('model', 'alpha');
 if(empty($mode)){
     $mode = 'UTD';
+    $ungroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
+    $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
 }
 
 $projectSelectedId = GETPOST('projectSelected');
@@ -108,7 +115,7 @@ if($projectSelectedId<>-999){
     $projectIdlist = array_keys($projectList);
 }
 $reportStatic = new TimesheetReport($db);
-$reportStatic->initBasic($projectIdlist, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly);
+$reportStatic->initBasic($projectIdlist, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
 if($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
@@ -169,10 +176,8 @@ $Form .= '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optionc
         <td>'.$langs->trans('Project').'</td>
         <td>'.$langs->trans('DateStart').'</td>
         <td>'.$langs->trans('DateEnd').'</td>
-        <td>'.$langs->trans('short').'</td>
-        <td>'.$langs->trans('InvoicableOnly').'</td>
-        <td>'.$langs->trans('exportfriendly').'</td>
         <td>'.$langs->trans('Mode').'</td>
+        <td>'.$langs->trans('Options').'</td>
         <td></td>
         </tr>
         <tr >
@@ -191,15 +196,6 @@ $Form .= '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1
 // select end date
 $Form .= '<td>'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
 //$Form .= '<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year, 'year', 0, 10, 3)
-// Select short
-$Form .= ' <td><input type = "checkbox" name = "short" value = "1" ';
-$Form .= (($short == 1)?'checked>':'>').'</td>' ;
-// Select invoiceable only
-$Form .= '<td><input type = "checkbox" name = "invoicabletaskOnly" value = "1" ';
-$Form .= (($invoicabletaskOnly == 1)?'checked>':'>').'</td>';
-// Select Export friendly
-$Form .= '<td><input type = "checkbox" name = "exportfriendly" value = "1" ';
-$Form .= (($exportfriendly == 1)?'checked>':'>').'</td>';
 // Select mode
 $Form .= '<td><input type = "radio" name = "mode" value = "UTD" '.($mode == 'UTD'?'checked':'');
 $Form .= '> '.$langs->trans('User').' / '.$langs->trans('Task').' / '.$langs->trans('Date').'<br>';
@@ -208,15 +204,33 @@ $Form .= '> '.$langs->trans('User').' / '.$langs->trans('Date').' / '.$langs->tr
 $Form .= '<input type = "radio" name = "mode" value = "DUT" '.($mode == 'DUT'?'checked':'');
 $Form .= '> '.$langs->trans('Date').' / '.$langs->trans('User').' / '.$langs->trans('Task').'<br>';
 
- $Form .= '</td></tr></table>';
+ $Form .= '</td>';
+// select short
+$Form .= ' <td><input type = "checkbox" name = "short" value = "1" ';
+$Form .= (($short == 1)?'checked>':'>').$langs->trans('short').'</br>' ;
+// Select invoiceable only
+$Form .= '<input type = "checkbox" name = "invoicabletaskOnly" value = "1" ';
+$Form .= (($invoicabletaskOnly == 1)?'checked>':'>').$langs->trans('InvoicableOnly').'</br>';
+// Select Export friendly
+$Form .= '<input type = "checkbox" name = "exportfriendly" value = "1" ';
+$Form .= (($exportfriendly == 1)?'checked>':'>').$langs->trans('exportfriendly').'</br>';
+// Select show invoice
+$Form .= '<input type = "checkbox" name = "invoicedcol" value = "1" ';
+$Form .= (($invoicedCol == 1)?'checked>':'>'). $langs->trans('reportInvoicedCol').'</br>';
+// Select Export friendly
+$Form .= '<input type = "checkbox" name = "ungroup" value = "1" ';
+$Form .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').'</td>';
+
+ $Form .= '</tr></table>';
+
  //submit
  $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
 if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7") <= 0))$Form .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 
-if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if(!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Export').'</a>';
-if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=reportproject&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('Refresh').'</a>';
+if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('TimesheetPDF').'</a>';
+if(!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
+if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=reportproject&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('Refresh').'</a>';
 $Form .= '</form>';
 if(!($optioncss != '' && !empty($_POST['userSelected']))) echo $Form;
 echo $querryRes;

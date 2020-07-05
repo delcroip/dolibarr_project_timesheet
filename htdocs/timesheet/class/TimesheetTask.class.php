@@ -543,7 +543,7 @@ class TimesheetTask extends Task
         if($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, DATE(ptt.task_datehour) AS task_date, ptt.note";
         if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
-            $sql .= ', (ptt.invoice_id > 0 or invoice_line_id>0)  AS invoiced';
+            $sql .= ', (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced';
         }else{
             $sql .= ', 0 AS invoiced';
         }

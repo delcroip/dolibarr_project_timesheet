@@ -1,4 +1,8 @@
 # dolibarr_project_timesheet changelog
+4.3.0
+- new: possibility to ungroup reports
+- 
+
 4.2.2
 - new: show the time not editable (when there is several task time for ady/task)
 

@@ -93,7 +93,8 @@ $dropdownAjax = $conf->global->MAIN_DISABLE_AJAX_COMBOX;
 $searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
 $unblockInvoiced = $conf->global->TIMESHEET_UNBLOCK_INVOICED;
 $unblockClosed = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
-
+$reportInvoicedCol= $conf->global->TIMESHEET_REPORT_INVOICED_COL;
+$reportUngroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
 
 if(count($opendays)!=8) {
     $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
@@ -253,6 +254,10 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_UNBLOCK_INVOICED", $unblockInvoiced, 'int', 0, '', $conf->entity);
         $unblockClosed = getpost('unblockClosed', 'int');
         dolibarr_set_const($db, "TIMESHEET_UNBLOCK_CLOSED", $unblockClosed, 'int', 0, '', $conf->entity);
+        $reportInvoicedCol = getpost('reportInvoicedCol', 'int');
+        dolibarr_set_const($db, "TIMESHEET_REPORT_INVOICED_COL", $reportInvoicedCol, 'int', 0, '', $conf->entity);
+        $reportUngroup = getpost('reportUngroup', 'int');
+        dolibarr_set_const($db, "TIMESHEET_REPORT_UNGROUP", $reportUngroup, 'int', 0, '', $conf->entity);
         $tsRound = getpost('tsRound', 'int');
         dolibarr_set_const($db, "TIMESHEET_ROUND", $tsRound, 'int', 0, '', $conf->entity);
  
@@ -645,6 +650,17 @@ echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("unblockClosed")
 echo '</td><td align = "left">'.$langs->trans("unblockClosedDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "unblockClosed" value = "1" ';
 echo (($unblockClosed == '1')?'checked':'')."></td></tr>\n\t\t";
+// show invoiced col in reports
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("reportInvoicedCol");
+echo '</td><td align = "left">'.$langs->trans("reportInvoicedColDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "reportInvoicedCol" value = "1" ';
+echo (($reportInvoicedCol == '1')?'checked':'')."></td></tr>\n\t\t";
+// ungroup lvl3 reports
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("reportUngroup");
+echo '</td><td align = "left">'.$langs->trans("reportUngroupDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "reportUngroup" value = "1" ';
+echo (($reportUngroup == '1')?'checked':'')."></td></tr>\n\t\t";
+
 
 
 echo '</table>'."\n\t\t";

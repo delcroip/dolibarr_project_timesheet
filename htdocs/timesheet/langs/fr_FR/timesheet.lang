@@ -237,3 +237,7 @@ NoActiveEvent = Aucun événement actif trouvé
 EventNotActive = Evénement non actif
 DbError = Erreur de base de données
 nbTsToSubmit = Nombre de feuilles de temps à soumettre
+reportInvoicedColDesc = Colonnes facturées dans le tableau du rapport
+reportInvoicedCol = Colonne facturée
+reportUngroup = Dégrouper le niveau 3 dans les rapports
+reportUngroupDesc = Dégroupez les éléments de niveau 3 dans le rapport, par exemple, les multiples heures de travail pour une seule journée résulteront de plusieurs lignes de rapport.
