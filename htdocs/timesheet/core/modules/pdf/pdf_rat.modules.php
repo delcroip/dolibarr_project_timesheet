@@ -143,7 +143,7 @@ public function writeFile($object, $outputlangs)
                 $tplidx = $pdf->importPage(1);
             }
             //get data
-            $tasktimearray = $object->getReportArray();
+            $tasktimearray = $object->getReportArray(!($object->ungroup == 1));
             $TotalLines = array();
             $userTaskArray = array();
             //order data per user id and calc total per user

@@ -1,4 +1,15 @@
 # dolibarr_project_timesheet changelog
+4.3.0
+- new: possibility to ungroup reports
+- fix: remove closed project (without end date) task
+- new: improve timesheet box (add ts to submit and layout imnprovement)
+
+4.2.2
+- new: show the time not editable (when there is several task time for ady/task)
+
+4.2.1
+- fix: blank timesheet page
+
 4.2.0
 - fix: send approval reminder
 - fix: favorite edit card update the task when the project is selected
