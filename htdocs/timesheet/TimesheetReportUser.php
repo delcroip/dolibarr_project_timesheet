@@ -82,7 +82,7 @@ $sql = 'SELECT DISTINCT usr.rowid as userid, usr.lastname, usr.firstname '
 $sql .= 'JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
      .' ON ec.fk_socpeople = usr.rowid '
      .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact'
-     .' WHERE ctc.element in (\'project_task\', \'project\') AND ctc.active = \'1\' ';
+     .' WHERE ctc.element in (\'project_task\', \'project\') AND ctc.active = \'1\' AND usr.statut = \'1\' ';
 if(!$user->admin) {
     $list = getSubordinates($db, $userid, 3);
     $list[] = $userid;
