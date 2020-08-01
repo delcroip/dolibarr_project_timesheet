@@ -1,4 +1,9 @@
 # dolibarr_project_timesheet changelog
+4.3.1
+- fix: show only active user in unserreport (admin)
+- fix: missing SQL quotes
+- fix: wrong task in reports
+
 4.3.0
 - new: possibility to ungroup reports
 - fix: remove closed project (without end date) task
