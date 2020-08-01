@@ -246,7 +246,7 @@ class TimesheetReport
         $resArray = array();
         $first = true;
 
-        $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.fk_projet as taskid, ptt.rowid as id,';
+        $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.rowid as taskid, ptt.rowid as id,';
         if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
             $sql .= ' (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced,';
         }else{
