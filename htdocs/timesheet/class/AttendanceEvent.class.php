@@ -789,9 +789,9 @@ public function createTimeSpend($user, $token = '')
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
     $sql .= " WHERE ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task' ";
     if($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
-        $sql .= ' AND prj.fk_statut =  1)';
+        $sql .= ' AND prj.fk_statut =  \'1\')';
     }else{
-        $sql .= ' AND prj.fk_statut in (0, 1)';
+        $sql .= ' AND prj.fk_statut in (\'0\', \'1\')';
     }
     $sql .= ' AND (prj.datee >= \''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
     $sql .= ' AND (prj.dateo <= \''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
