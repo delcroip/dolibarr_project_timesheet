@@ -1,4 +1,9 @@
 # dolibarr_project_timesheet changelog
+4.3.2
+- new: pdf user report 
+- fix: SQL error on ts page when draft hidden
+
+
 4.3.1
 - fix: show only active user in unserreport (admin)
 - fix: missing SQL quotes

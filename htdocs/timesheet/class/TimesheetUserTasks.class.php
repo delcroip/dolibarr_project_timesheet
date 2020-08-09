@@ -527,7 +527,7 @@ public function fetchTaskTimesheet($userid = '')
     //end approval
     $sql .= " WHERE ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task' ";
     if($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
-        $sql .= ' AND prj.fk_statut =  \'1\')';
+        $sql .= ' AND prj.fk_statut =  \'1\'';
     }else{
         $sql .= ' AND prj.fk_statut in (\'0\',\'1\')';
     }

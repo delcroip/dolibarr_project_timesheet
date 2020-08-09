@@ -79,6 +79,7 @@ class TimesheetReport
         } elseif($projectid && !$user->admin){
             //FIXME check that the user has project rights
         }
+        
         $first = false;
         $this->ref=array();
         $this->invoiceableOnly = $invoiceableOnly;
@@ -87,7 +88,8 @@ class TimesheetReport
         if($projectid && !is_array($projectid)) {
             $this->project[$projectid] = new Project($this->db);
             $this->project[$projectid]->fetch($projectid);
-            $this->ref[$projectid] = $this->project[$projectid]->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)?'':' - '.$this->project[$projectid]->title);
+            $this->ref[$projectid] = $this->project[$projectid]->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)
+                ?'':' - '.$this->project[$projectid]->title);
             $first = true;
             $this->thirdparty[$projectid] = new Societe($this->db);
             $this->thirdparty[$projectid]->fetch($this->project[$projectid]->socid);
@@ -106,15 +108,15 @@ class TimesheetReport
         if($userid && !is_array($userid)) {
             $this->user[$userid] = new User($this->db);
             $this->user[$userid]->fetch($userid);
-            if(empty($this->ref)){
-                $this->ref[$userid]= $this->user->lastname.' '.$this->user->firstname;
+            if(count($this->ref) == 0){
+                $this->ref[$userid]= $this->user[$userid]->lastname.' '.$this->user[$userid]->firstname;
             }
         }elseif(is_array($userid)) {
             foreach($userid as $id){
                 $this->user[$id] = new User($this->db);
                 $this->user[$id]->fetch($id);
-                if(empty($this->ref)){
-                    $this->ref[$id]= $this->user->lastname.' '.$this->user->firstname;
+                if(count($this->ref) == 0){
+                    $this->ref[$id]= $this->user[$id]->lastname.' '.$this->user[$id]->firstname;
                 }
             }
         }
@@ -124,10 +126,14 @@ class TimesheetReport
         $this->short = $short;
         $this->ungroup = $ungroup;
         $this->invoicedCol = $invoicedCol;
-        if(count($this->ref) == 1){
-            $this->name = reset($this->ref);
+        if ( $name <> ''){
+            $this->name =  $name;
         }else{
-            $this->name = $langs->trans("ProjectReport");
+            $this->name = '';
+        }
+        
+        if(count($this->ref) == 1){
+            $this->name .= reset($this->ref);
         }
         $this->name .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
         switch($mode){
