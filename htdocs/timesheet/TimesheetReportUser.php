@@ -112,10 +112,10 @@ if($resql) {
     dol_print_error($db);
 }
 $userIdlist = array();
-$reportName = $langs->trans('ReportProject');
+$reportName = '';//$langs->trans('ReportUser');
 if($userIdSelected<>-999){
     $userIdlist[]=$userIdSelected;
-    $reportName = $userList[$userIdSelected]['value'];
+    //$reportName = $userList[$userIdSelected]['value'];
 } else {
     $userIdlist = array_keys($userList);
 }
@@ -125,7 +125,7 @@ if($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
     if($pdf->writeFile($reportStatic, $langs)>0) {
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/".$report->ref.".pdf");
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/" . dol_sanitizeFileName($reportStatic->name) . ".pdf");
         return;
     }
     ob_end_flush();
@@ -230,6 +230,7 @@ $Form .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').'</td>'
  $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
 //if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if(!empty($querryRes)  && $conf->global->MAIN_MODULE_EXPORT)$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
+if(!empty($querryRes)) $Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('PDF').'</a>';
 $Form .= '</form>';
 if(!($optioncss != '' && !empty($userIdSelected))) echo $Form;
 // section to generate
