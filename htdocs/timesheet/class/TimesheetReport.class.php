@@ -252,7 +252,7 @@ class TimesheetReport
         $resArray = array();
         $first = true;
 
-        $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.rowid as taskid, ptt.rowid as id,';
+        $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.rowid as taskid, ';
         if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
             $sql .= ' (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced,';
         }else{
@@ -260,13 +260,13 @@ class TimesheetReport
         }
         if($forceGroup == 1){
             if($this->db->type!='pgsql') {
-                $sql .= " GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
+                $sql .= " MAX(ptt.rowid) as id, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
             } else {
-                $sql .= " STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
+                $sql .= " MAX(ptt.rowid) as id, STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
             }
             $sql .= ' DATE(ptt.task_datehour) AS task_date, SUM(ptt.task_duration) as duration ';
         }else{
-            $sql .= " ptt.note  as note, tske.invoiceable as invoicable, ";
+            $sql .= " ptt.rowid as id, ptt.note  as note, tske.invoiceable as invoicable, ";
             $sql .= ' DATE(ptt.task_datehour) AS task_date, ptt.task_duration as duration ';
         } 
         $sql .= ' FROM '.MAIN_DB_PREFIX.'projet_task_time as ptt ';
@@ -291,7 +291,7 @@ class TimesheetReport
         $sql .= ($first?'':'AND ').' DATE(task_datehour) >= \''.$this->db->idate($this->startDate).'\'';
         $sql .= ' AND DATE(task_datehour) <= \''.$this->db->idate($this->stopDate).'\'';
         $sql .= ' AND (ptt.task_duration > 0 or LENGTH(ptt.note)>0)';
-        if($forceGroup == 1)$sql .= ' GROUP BY ptt.fk_user,  tsk.fk_projet, tsk.rowid, DATE(ptt.task_datehour) ';
+        if($forceGroup == 1)$sql .= ' GROUP BY ptt.fk_user,  tsk.fk_projet, tsk.rowid, DATE(ptt.task_datehour), (ptt.invoice_id > 0 or ptt.invoice_line_id>0)';
         $sql .= $this->modeSQLOrder;
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -370,7 +370,7 @@ class TimesheetReport
     */
     public function getHTMLreportExport()
     {
-        $resArray = $this->getReportArray();
+        $resArray = $this->getReportArray(!($this->ungroup ==1));
         $HTMLRes = '<h1>'.$this->name.'</h1>';
         $HTMLRes .= $this->getHTMLReportHeaders();
         foreach($resArray as $key => $item) {
@@ -433,7 +433,7 @@ class TimesheetReport
         $lvl3SubNotes = "";
         $lvl3SubInvoiced = '';
         $sqltail = '';
-        $resArray = $this->getReportArray();
+        $resArray = $this->getReportArray(!($this->ungroup ==1));
         $numTaskTime = count($resArray);
         $i = 0;
         $Curlvl0 = 0; // related to get array
@@ -506,7 +506,7 @@ class TimesheetReport
                 $lvl3Total += $item['duration'];
                 // show the LVL 3 only if not short
                 if($this->short == 0) {
-                    if($this->ungroup == 0){
+                    /*if($this->ungroup == 0){
                         // erase previous value 
                         if($item[$this->lvl3Title] != $Curlvl3 
                         || ($resArray[$Curlvl2][$this->lvl2Key] != $item[$this->lvl2Key])
@@ -533,15 +533,15 @@ class TimesheetReport
                         $lvl3SubTotal += $item['duration'];
                         if(strlen($lvl3SubNotes)>0) $lvl3SubNotes .= "<br>";
                         $lvl3SubNotes .= $item['note'];
-                    }else{ 
+                    }else{ */
                         $lvl3HTML .= $this->getLvl3HTML($item[$this->lvl3Link], $item['duration'], $item['note'], $item['invoiced']);
-                    }
+                    //}
 
                 } 
                 $i++;
                 // show the last block
                 if ( $i == $numTaskTime){
-                    if($this->ungroup == 0 && $this->short == 0) $lvl3HTML .= $this->getLvl3HTML($item[$this->lvl3Link], $lvl3SubTotal, $lvl3SubNotes, $lvl3SubInvoiced); 
+                    //if( $this->short == 0) $lvl3HTML .= $this->getLvl3HTML($item[$this->lvl3Link], $lvl3SubTotal, $lvl3SubNotes, $lvl3SubInvoiced); 
                     $lvl2HTML .= $this->getLvl2HTML($resArray[$Curlvl2][$this->lvl2Link], $lvl3Total, $lvl3HTML, $lvl3Notes);
                     //empty lvl 3 Notes to start anew
                     $lvl3Notes = '';

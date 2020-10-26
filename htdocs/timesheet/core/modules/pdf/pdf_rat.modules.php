@@ -125,7 +125,7 @@ public function writeFile($object, $outputlangs)
                 $hookmanager = new HookManager($this->db);
             }
             $hookmanager->initHooks(array('pdfgeneration'));
-            $parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+            $parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
             global $action;
             $reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);// Note that $action and $object may have been modified by some hooks
             // Create pdf instance
@@ -149,14 +149,14 @@ public function writeFile($object, $outputlangs)
             //order data per user id and calc total per user
             foreach($tasktimearray as $line) {
                 $projectid = $line['projectId'];
-                $userTaskArray[$projectid][$line['userId']]['lines'][]=$line;
-                $TotalLines[$projectid][$line['userId']]+=$line['duration'];
-                $TotalLines[$projectid]['Total']+=$line['duration'];
+                $userTaskArray[$projectid][$line['userId']]['lines'][] = $line;
+                $TotalLines[$projectid][$line['userId']] += $line['duration'];
+                $TotalLines[$projectid]['Total'] += $line['duration'];
             }
            /* add a line with the total*/
             foreach($userTaskArray as $projectid => $userArray){
                 foreach($userArray as $userid => $taskArray) {
-                    $userTaskArray[$projectid][$userid]['Total']=formatTime($TotalLines[$projectid][$userid], -2);
+                    $userTaskArray[$projectid][$userid]['Total'] = formatTime($TotalLines[$projectid][$userid], -2);
                 }
                 //$userTaskArray[$projectid]['Total']=formatTime($TotalLines[$projectid]['Total'], -2);
             }
@@ -186,7 +186,7 @@ public function writeFile($object, $outputlangs)
             $pdf->Output($file, 'F');
             // Add pdfgeneration hook
             $hookmanager->initHooks(array('pdfgeneration'));
-            $parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+            $parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
             global $action;
             $reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);// Note that $action and $object may have been modified by some hooks
             if(! empty($conf->global->MAIN_UMASK))

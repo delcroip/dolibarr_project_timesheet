@@ -148,8 +148,7 @@ if($projectSelectedId   &&!empty($dateStart)) {
     if($exportfriendly){
         $querryRes .= $reportStatic->getHTMLreportExport();
     }else {
-        $querryRes .= $reportStatic->getHTMLreport($short,
-            dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'));
+        $querryRes .= $reportStatic->getHTMLreport($short);
     }
 }
 $Form .= "<div id='quicklinks'>";
