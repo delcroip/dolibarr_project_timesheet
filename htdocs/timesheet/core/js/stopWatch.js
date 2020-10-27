@@ -42,18 +42,19 @@ class event{
 
 }
 class Stopwatch {
-    constructor(display) {
+    constructor(display, user) {
         this.running = false;
         this.display = display;
         this.times = [ 0, 0, 0,0];
-        this.event=new event();
+        this.event = new event();
         //this.reset();
         this.animationframeID=null;
+        this.userid = user;
         this.print(this.times);
     }
     //function called to load stopwatch data (json)
     loadSuccess(data){
-       this.reset();
+       //this.reset();
        if( typeof data.event_type !== 'undefined'){
         this.event =data;
 
@@ -166,9 +167,12 @@ class Stopwatch {
     // fucntion to update the js object and the serialize it in json
     serialize(){
         //save the note
-        this.event.note=document.getElementById("eventNote").value;
-        this.event.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
-        return 'json='+JSON.stringify(this.event);
+        if(this.event.task>0 || this.event.project>0 || this.event.third_party>0 ){
+            this.event.note=document.getElementById("eventNote").value;
+            this.event.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
+            this.event.userid=this.userid;
+            return 'json='+JSON.stringify(this.event);
+        }else return '';
     }
     //sent a POST request to create a stop event
     stop() {
