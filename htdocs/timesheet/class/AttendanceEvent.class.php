@@ -181,8 +181,7 @@ public $date_time_event_start;
         elseif(!empty($user))$sql .= " t.fk_userid = '".$user->id;
         elseif(!empty($startToken))  $sql .= "  t.token = '".$startToken;
         else{
-            dol_syslog(__METHOD__." no param", LOG_DEBUG);
-            return -1;
+            $sql .= " t.fk_userid = '".$this->userid;
         }
         $sql .= "' ORDER BY date_time_event DESC" ;
         $this->db->plimit(1, 0);
@@ -551,8 +550,10 @@ public $date_time_event_start;
         }
 //erase the data
         $status = $this->status;
+        $tmpUserid = $this->userid;
         $this->initAsSpecimen();
-        $this->userid = $user->id;
+        $this->userid = $tmpUserid;
+        //$this->userid = $user->id;
         //load the data of the new
         if(!empty($task)) {
             $this->task = trim($task);
@@ -594,7 +595,7 @@ public $date_time_event_start;
             $tokenJson = $this->token;
             $this->fetch('', '', $tokenJson);
         } else {
-             $this->fetch('', $user);
+             $this->fetch('');
         }
         $ret = 0;
         $tokenDb = $this->token;
@@ -666,7 +667,7 @@ public $date_time_event_start;
             $note = $this->note;
             $tokenJson = $this->token;
         }
-        $this->fetch('', $user);
+        $this->fetch('');
         $tokenDb = $this->token;
         if((empty($tokenJson) && empty($tokenDb))||
                 (!empty($tokenDb) && $this->event_type >= EVENT_STOP))
@@ -705,6 +706,29 @@ public $date_time_event_start;
   * @param string $token   token
   * @return null
   */
+/**
+*        Return HTML to get other user
+*
+*        @param                string                        $idsList                list of user id
+*        @param                int                        $selected               id that shoudl be selected
+*        @param                int                        $admin                 is the user an admin
+*        @return                string                                                String with URL
+*/
+public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
+{
+    global $langs;
+    $form = new Form($this->db);
+    $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs" method = "POST">';
+    if(!$admin) {
+        $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
+    } else{
+         $HTML .= $form->select_dolusers($selected, 'userid');
+    }
+    $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
+
+    return $HTML;
+}
+
 public function createTimeSpend($user, $token = '')
 {
     //if(empty($token))$token = $this->token;

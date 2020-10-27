@@ -535,9 +535,21 @@ class TimesheetTask extends Task
         // change the time to take all the TS per day
         //$timeStart = floor($timeStart/SECINDAY)*SECINDAY;
         //$timeEnd = ceil($timeEnd/SECINDAY)*SECINDAY;
-        if($timeStart == 0) $timeStart = $this->date_start_approval;
-        if($timeEnd == 0) $timeEnd = $this->date_end_approval;
-        if($userid == 0) $userid = $this->userId;
+        if($timeStart == 0){
+            $timeStart = $this->date_start_approval;
+        } else {
+            $this->date_start_approval = $timeStart;
+        }
+        if($timeEnd == 0){
+            $timeEnd = $this->date_end_approval;
+        } else {
+            $this->date_end_approval = $timeEnd;
+        }
+        if($userid == 0){
+            $userid = $this->userId;
+        } else {
+            $this->userId= $userid;
+        }
         $this->timespent_fk_user = $userid;
         $dayelapsed = getDayInterval($timeStart, $timeEnd);
         if($dayelapsed<1)return -1;

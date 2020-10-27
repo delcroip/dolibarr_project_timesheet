@@ -44,7 +44,27 @@ $langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
 $userid = $user->id;
+$postUserId = GETPOST('userid', 'int');
+// if the user can enter ts for other the user id is diferent
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
+    if(!empty($postUserId)) {
+        $newuserid = $postUserId;
+    }else{
+        $newuserid =$user->id;
+    }
+    $SubordiateIds = getSubordinates($db, $user->id, 2, array(), ALL, $entity = '1');
+    $SubordiateIds[] = $user->id;
+    if(in_array($newuserid, $SubordiateIds) || $user->admin) {
+        //$SubordiateIds[] = $userid;
+        $userid = $newuserid;
+    } elseif($action == 'getOtherTs') {
+        setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
+        unset($action);
+    }
+    
+}
 $timesheet_attendance = new Attendanceevent($db, $userid);
+
 /*******************************************************************
 * ACTIONS
 *
@@ -89,15 +109,14 @@ if(!empty($tms)) {
 $morejs = array("/timesheet/core/js/stopWatch.js?".$conf->global->TIMESHEET_VERSION, "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 $morecss = array("/timesheet/core/css/stopWatch.css");
 llxHeader('', $langs->trans('Attendance'), '', '', '', "", $morejs, $morecss);
+
 //calculate the week days
 // clock
 $timesheet_attendance->fetch('', $user);
-$timesheet_attendance->printHTMLClock();
-//tmstp = time();
-//fetch ts for others
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && ((is_array($SubordiateIds) && count($SubordiateIds) > 1 ) ||  $SubordiateIds > 0 ||  $user->admin)) { 
-//print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
+if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && ((is_array($SubordiateIds) && count($SubordiateIds) > 1 ) ||  $SubordiateIds > 0 ||  $user->admin)) {
+        print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
+$timesheet_attendance->printHTMLClock();
 $headers = explode('||', $conf->global->TIMESHEET_HEADERS);
 // remove tta note as it is useless there
 $key = array_search('Note', $headers);
@@ -134,7 +153,7 @@ if($conf->global->TIMESHEET_WHITELIST == 1) {
    $html .= '</div>';
 }
 $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
-$htmltmp .= $timesheet_attendance->printHTMLTaskList($headers, $user->id);
+$htmltmp .= $timesheet_attendance->printHTMLTaskList($headers, $userid);
 $pattern  = "/(progressTask\[[^\]]+\]\[[^\]]+\])/i";
 $replacement = '$1" onchange="updateProgress(event);';
 $html .=  preg_replace($pattern, $replacement, $htmltmp);
@@ -142,7 +161,7 @@ $html .= "</table>";
 //Javascript
 //$Form .= ' <script type = "text/javascript" src = "core/js/timesheet.js"></script>'."\n";
 $html .= '<script type = "text/javascript">'."\n\t";
-$html .= "let stopwatch = new Stopwatch(document.getElementById('stopwatch'));stopwatch.load();";
+$html .= "let stopwatch = new Stopwatch(document.getElementById('stopwatch'),".$userid.");stopwatch.load();";
 $html .= "updateAllProgress();\n";
 $html .= "document.getElementById('defaultOpen').click();\n";
 $html .= "\n\t".'</script>'."\n";
