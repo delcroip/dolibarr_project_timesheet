@@ -719,7 +719,7 @@ echo (($invoiceshowuser == '1')?'checked':'')."></td></tr>\n\t\t";
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("invoiceShowTask");
 echo '</td><td align = "left">'.$langs->trans("invoiceShowTaskDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "invoiceShowTask" value = "1" ';
-echo (($invoiceshowuser == '1')?'checked':'')."></td></tr>\n\t\t";
+echo (($invoiceshowtask == '1')?'checked':'')."></td></tr>\n\t\t";
 //hide signbox
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("pdfHideSignbox");
 echo '</td><td align = "left">'.$langs->trans("pdfHideSignboxDesc").'</td>';

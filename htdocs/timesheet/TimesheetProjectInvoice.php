@@ -215,8 +215,32 @@ $langs->load('timesheet@timesheet');
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $product = new Product($db);
                             $product->fetch($service['Service']);
+
                             $unit_duration_unit = substr($product->duration, -1);
-                            $unit_factor = ($unit_duration_unit == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
+                            switch($unit_duration_unit){
+                                case 'h':
+                                    $unit_factor = 3600;
+                                break;
+                                case 'i':
+                                    $unit_factor = 60;
+                                break;
+                                case 's':
+                                    $unit_factor = 1;
+                                break;
+                                case 'w':
+                                    $unit_factor = 3600*$hoursPerDay*5;
+                                break;
+                                case 'm':
+                                    $unit_factor = 3600*$hoursPerDay*65/3;
+                                break;
+                                case 'y':
+                                    $unit_factor = 3600*$hoursPerDay*260;
+                                break;
+                                case 'd':
+                                default:
+                                    $unit_factor = $hoursPerDay*3600;
+                            }
+                            
                             $factor = intval(substr($product->duration, 0, -1));
                             if($factor == 0)$factor = 1;//to avoid divided by $factor0
                             $quantity = round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);
@@ -224,8 +248,28 @@ $langs->load('timesheet@timesheet');
                             $postdata['prod_entry_mode'] = 'predef';
                             $postdata['idprod'] = $service['Service'];
                             $postdata['qty'] = (float) $quantity;
+            
+                            if ($object->thirdparty->default_lang != '' && is_array($product->multilangs[$object->thirdparty->default_lang]))
+                            {
+                                $desc = $product->multilangs[$object->thirdparty->default_lang]['description'];
+                                $label = $product->multilangs[$object->thirdparty->default_lang]['label'];
+                            }else{
+                                $desc = $product->description;
+                                $label = $product->label;
+                            }
+
+                            $prices =  $product->getSellPrice( $mysoc,$object->thirdparty);
+                            $price_base_type = $prices['price_base_type'];
+                            $price_ttc = $prices['pu_ttc'];
+                            $tva_tx = $prices['tva_tx'];
+                            $price = $prices['pu_ht'];
+
+
                             if(!$conf->global->TIMESHEET_EVAL_ADDLINE){
-                                $result = $object->addline($product->description.$details, $product->price, $quantity, $product->tva_tx, $localtax1_tx, $localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
+                                $result = $object->addline($product->description.$details, $price, $quantity, $tva_tx, 
+                                    $localtax1_tx, $localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', 
+                                    $price_base_type, $price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, $label, 0, 100, '', 
+                                    $product->fk_unit);
                             }
                         } elseif($service['Service']<>-999) {
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
@@ -458,7 +502,7 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
                         $defaultService,
                         $addchoices);
     $html .= '</th>';
-    $unitValue = '';
+    $unitValue = '0.0';
     if(($user>0)){ // if the is no defaulf service, use the thm if available, if not use the tjm
         $curUser = new User($db);
         $curUser->fetch($user);
