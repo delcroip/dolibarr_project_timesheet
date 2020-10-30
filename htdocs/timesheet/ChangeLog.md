@@ -1,4 +1,14 @@
 # dolibarr_project_timesheet changelog
+4.3.4
+- new: support cust language in invoice
+- new: support cust price for service
+- fix: setup "show task in invoice" correctly displayed  
+
+4.3.3
+- new: add chrono fopr other
+- fix: report pgsql
+- fix report html not correct (task missing)
+
 4.3.2
 - new: pdf user report 
 - fix: SQL error on ts page when draft hidden
