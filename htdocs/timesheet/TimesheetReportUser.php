@@ -18,10 +18,12 @@
  */
 include 'core/lib/includeMain.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
+$form = new Form($db);
 $htmlother = new FormOther($db);
 $userid = is_object($user)?$user->id:$user;
 $id = GETPOST('id', 'int');
@@ -76,6 +78,28 @@ if(empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
 }
+
+// if the user can see ts for other the user id is diferent
+$userIdlist = array();
+$userIdlistfull = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
+if(!empty($userIdSelected) && $userIdSelected <> -999) {
+    
+    $userIdlistfull[] = $userid;
+    if(in_array($userIdSelected, $userIdlist) || $user->admin) {
+        $userIdlist[] = $userIdSelected;
+    } else{
+        setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
+        unset($action);
+        $userIdlist[] = $userid;
+    }
+}elseif($userIdSelected = -999)
+{
+    $userIdlist = $userIdlistfull;
+}else{
+    $userIdlist[] = $userid;
+}
+
+/*
 //querry to get the project where the user have priviledge;either project responsible or admin
 $sql = 'SELECT DISTINCT usr.rowid as userid, usr.lastname, usr.firstname '
      .'FROM '.MAIN_DB_PREFIX.'user as usr ';
@@ -111,14 +135,8 @@ if($resql) {
 } else {
     dol_print_error($db);
 }
-$userIdlist = array();
-$reportName = '';//$langs->trans('ReportUser');
-if($userIdSelected<>-999){
-    $userIdlist[]=$userIdSelected;
-    //$reportName = $userList[$userIdSelected]['value'];
-} else {
-    $userIdlist = array_keys($userList);
-}
+*/
+
 $reportStatic = new TimesheetReport($db);
 $reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
 if($action == 'getpdf') {
@@ -177,13 +195,11 @@ $Form .= '<form action="?action=reportUser'.(($optioncss != '')?'&amp;optioncss=
         <td>'.$langs->trans('Options').'</td>
         </tr>
         <tr >
-        <td><select  name = "userSelected">
+        <td>
         ';
-foreach($userList as $usr) {
-   // $Form .= '<option value = "'.$usr->id.'">'.$usr->name.'</option> ';
-    $Form .= '<option value = "'.$usr['value'].'" '.(($userIdSelected == $usr['value'])?"selected":'').' >'.$usr['label'].'</option>'."\n";
-}
-$Form .= '<option value = "-999" '.(($userIdSelected == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+
+$Form .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null, 0, $idsList);
+
 //$mode = 'PTD';
 $querryRes = '';
 if(!empty($userIdSelected)
@@ -196,7 +212,7 @@ if(!empty($userIdSelected)
             "User report ".dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'));
     }
 }
-$Form .= '</select></td>';
+
 $Form .= '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
 // select end date
 $Form .= '<td>'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
