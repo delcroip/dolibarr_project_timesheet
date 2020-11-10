@@ -1,4 +1,7 @@
 # dolibarr_project_timesheet changelog
+4.3.5
+- fix: user report doesn't show all users
+
 4.3.4
 - new: support cust language in invoice
 - new: support cust price for service
