@@ -99,44 +99,6 @@ if(!empty($userIdSelected) && $userIdSelected <> -999) {
     $userIdlist[] = $userid;
 }
 
-/*
-//querry to get the project where the user have priviledge;either project responsible or admin
-$sql = 'SELECT DISTINCT usr.rowid as userid, usr.lastname, usr.firstname '
-     .'FROM '.MAIN_DB_PREFIX.'user as usr ';
-$sql .= 'JOIN '.MAIN_DB_PREFIX.'element_contact as ec '
-     .' ON ec.fk_socpeople = usr.rowid '
-     .' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact'
-     .' WHERE ctc.element in (\'project_task\', \'project\') AND ctc.active = \'1\' AND usr.statut = \'1\' ';
-if(!$user->admin) {
-    $list = getSubordinates($db, $userid, 3);
-    $list[] = $userid;
-    $sql .= ' AND (usr.rowid in ('.implode(', ', $list).'))';
-}
-dol_syslog("timesheet::reportuser::userList", LOG_DEBUG);
-//launch the sql querry
-$resql = $db->query($sql);
-$numUser = 0;
-$userList = array();
-
-if($resql) {
-    $numUser = $db->num_rows($resql);
-    $i = 0;
-    // Loop on each record found, so each couple (project id, task id)
-    while($i < $numUser)
-    {
-        $error = 0;
-        $obj = $db->fetch_object($resql);
-        $userList[$obj->userid] = array('value' => $obj->userid, "label" => $obj->firstname.' '.$obj->lastname);
-        //$userList[$obj->userid] = new TimesheetReport($db);
-        //$userList[$obj->userid]->initBasic('', $obj->userid, $obj->firstname.' '.$obj->lastname, $dateStart, $dateEnd, $mode);
-        $i++;
-    }
-    $db->free($resql);
-} else {
-    dol_print_error($db);
-}
-*/
-
 $reportStatic = new TimesheetReport($db);
 $reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
 if($action == 'getpdf') {

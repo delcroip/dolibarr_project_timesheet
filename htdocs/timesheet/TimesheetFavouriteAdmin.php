@@ -377,19 +377,6 @@ switch($action) {
             $selected = $object->project_task;
             $htmlname = 'Task';
             $formproject->selectTasks(-1, $selected, $htmlname,24,0,1,0,0,0, 'maxwidth500',($object->project?$object->project:''));
-            /*
-            $formTaskJoin = '';
-            $formTaskWhere = ' fk_projet = \''.($object->project?$object->project:'0').'\'';
-            if(!$user->admin) {
-                $formTaskJoin = ' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid = ec.element_id';
-                $formTaskJoin .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = fk_c_type_contact';
-                $formTaskWhere .= " AND (ctc.element = 'project_task' AND ctc.active = '1'  AND ec.fk_socpeople = '".$user->id."')";
-            }
-            $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
-            $htmlProjectTaskArray = array('name' => 'Projecttask', 'ajaxNbChar'=>$ajaxNbChar);
-            $sqlProjectTaskArray = array('table' => 'projet_task', 'keyfield' => 't.rowid', 'fields' => 'ref, label', 'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');
-            print select_sellist($sqlProjectTaskArray, $htmlProjectTaskArray, $object->project_task);
-            */
         } else {
             if($object->project_task>0) {
                 $StaticObject = New Task($db);
