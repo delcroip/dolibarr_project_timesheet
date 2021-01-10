@@ -562,7 +562,7 @@ function hasProjectRight($userid, $projectid)
         $sql = ' SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec ';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
         $sql .= ' WHERE element_id = \''.$projectid;
-        $sql .= '\' AND (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\') AND ctc.active = \'1\'  ';
+        $sql .= '\' AND (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%BILLING%\')) AND ctc.active = \'1\'  ';
         $sql .= ' AND fk_socpeople = \''.$userid.'\' ';
         dol_syslog("ProjectInvoice::hasProjectRight", LOG_DEBUG);
         $resql = $db->query($sql);
