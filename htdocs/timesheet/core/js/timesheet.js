@@ -519,7 +519,7 @@ function ShowHide(id){
  */
 function favOnOff(evt, prjtId, tskId){
     var favId=evt.target.id;
-    var url='TimesheetFavouriteAdmin.php?ajax=1&Project='+prjtId+'&Projecttask='+tskId;
+    var url='TimesheetFavouriteAdmin.php?ajax=1&Project='+prjtId+'&Task='+tskId;
     url+='&action='+((favId>0)?('confirm_delete&confirm=yes&id='+favId):'add');
     httpGetAsync(url,setId, evt);
 }
