@@ -811,7 +811,13 @@ public function createTimeSpend($user, $token = '')
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact  AND ctc.active = \'1\') ';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = ec.element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
-    $sql .= " WHERE ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task' ";
+    $sql .= " WHERE ((ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task') ";
+    // SHOW TASK ON PUBLIC PROEJCT
+    if($conf->global->TIMESHEET_ALLOW_PUBLIC == '1') {
+        $sql .= '  OR  prj.public =  \'1\')';
+    }else{
+        $sql .= ' )';
+    }
     if($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
         $sql .= ' AND prj.fk_statut =  \'1\'';
     }else{

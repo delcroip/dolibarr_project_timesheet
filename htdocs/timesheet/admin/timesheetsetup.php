@@ -95,7 +95,7 @@ $unblockInvoiced = $conf->global->TIMESHEET_UNBLOCK_INVOICED;
 $unblockClosed = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
 $reportInvoicedCol= $conf->global->TIMESHEET_REPORT_INVOICED_COL;
 $reportUngroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
-
+$allowPublic = $conf->global->TIMESHEET_ALLOW_PUBLIC;
 if(count($opendays)!=8) {
     $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
 }
@@ -258,6 +258,8 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_REPORT_INVOICED_COL", $reportInvoicedCol, 'int', 0, '', $conf->entity);
         $reportUngroup = getpost('reportUngroup', 'int');
         dolibarr_set_const($db, "TIMESHEET_REPORT_UNGROUP", $reportUngroup, 'int', 0, '', $conf->entity);
+        $allowPublic = getpost('allowPublic', 'int');
+        dolibarr_set_const($db, "TIMESHEET_ALLOW_PUBLIC", $allowPublic, 'int', 0, '', $conf->entity);
         $tsRound = getpost('tsRound', 'int');
         dolibarr_set_const($db, "TIMESHEET_ROUND", $tsRound, 'int', 0, '', $conf->entity);
  
@@ -640,6 +642,12 @@ echo '<tr class = "oddeven" ><td align = "left">'.$langs->trans("exportFormat");
 echo '</td><td align = "left">'.$langs->trans("exportFormatDesc").'</td>';
 echo '<td  align = "left"><input type = "text" name = "exportFormat" value = "'.$exportFormat;
 echo "\" size = \"4\" ></td></tr>\n\t\t";
+// allow add time on public project
+echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("allowPublic");
+echo '</td><td align = "left">'.$langs->trans("allowPublicDesc").'</td>';
+echo  '<td align = "left"><input type = "checkbox" name = "allowPublic" value = "1" ';
+echo (($allowPublic == '1')?'checked':'')."></td></tr>\n\t\t";
+
 // unblock invoiced
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("unblockInvoiced");
 echo '</td><td align = "left">'.$langs->trans("unblockInvoicedDesc").'</td>';

@@ -525,7 +525,13 @@ public function fetchTaskTimesheet($userid = '')
     $sql .= ' AND app.date_start = \''.$this->db->idate($datestart).'\'';
     $sql .= ' AND app.date_end = \''.$this->db->idate($datestop).'\'';
     //end approval
-    $sql .= " WHERE ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task' ";
+    $sql .= " WHERE ((ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task') ";
+    // SHOW TASK ON PUBLIC PROEJCT
+    if($conf->global->TIMESHEET_ALLOW_PUBLIC == '1') {
+        $sql .= '  OR  prj.public =  \'1\')';
+    }else{
+        $sql .= ' )';
+    }
     if($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
         $sql .= ' AND prj.fk_statut =  \'1\'';
     }else{
@@ -535,9 +541,12 @@ public function fetchTaskTimesheet($userid = '')
     $sql .= ' AND (prj.dateo <= \''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
     $sql .= ' AND (tsk.datee >= \''.$this->db->idate($datestart).'\' OR tsk.datee IS NULL)';
     $sql .= ' AND (tsk.dateo <= \''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
+    // show task only of people on the same project (not used for team leader)
     if( !$user->admin && $userid != $user->id && !in_array($userid, $user->getAllChildIds())){
-        $sql .= " AND ((tsk.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1') WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project_task' AND element_id = tsk.rowid ))";
-        $sql .= " OR (prj.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1') WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project'  AND element_id = prj.rowid )))";
+        $sql .= " AND ((tsk.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
+        $sql .= " WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project_task' AND element_id = tsk.rowid ))";
+        $sql .= " OR (prj.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
+        $sql .= " WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project'  AND element_id = prj.rowid )))";
     }
     $sql .= '  ORDER BY prj.fk_soc, prjRef, tskRef ';
     dol_syslog(__METHOD__, LOG_DEBUG);
