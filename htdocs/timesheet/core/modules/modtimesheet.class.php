@@ -495,7 +495,7 @@ class modTimesheet extends DolibarrModules
             $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql[0].= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
             $sql[2] ="IF NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'rat' AND type='timesheetReport' AND entity = ".$conf->entity." ) INSERT INTO ".MAIN_DB_PREFIX."document_model(nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.")";
-            $sql[3] ="IF NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."c_type_contact WHERE rowid = '8201160' ) INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active ) values (8210160, 'project',  'internal', 'PROJECTBILLING', 'Responsable Facturation Projet', 1);
+            $sql[3] ="IF NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."c_type_contact WHERE rowid = '8201160' ) INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active ) values (8210160, 'project',  'internal', 'PROJECTBILLING', 'Responsable Facturation Projet', 1)";
             dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
             include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);

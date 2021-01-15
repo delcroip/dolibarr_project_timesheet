@@ -241,3 +241,5 @@ reportInvoicedColDesc = Colonnes facturées dans le tableau du rapport
 reportInvoicedCol = Colonne facturée
 reportUngroup = Dégrouper le niveau 3 dans les rapports
 reportUngroupDesc = Dégroupez les éléments de niveau 3 dans le rapport, par exemple, les multiples heures de travail pour une seule journée résulteront de plusieurs lignes de rapport.
+allowPublicDesc = Afficher les tâches des projets publics sur la feuille de temps des tâches utilisateur et les pages chrono
+allowPublic = Afficher les tâches des projets publics

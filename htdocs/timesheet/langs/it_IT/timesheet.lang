@@ -241,3 +241,5 @@ reportInvoicedColDesc = Colonna fatturata nella tabella dei rapporti
 reportInvoicedCol = Colonna fatturata
 reportUngroup = Disaggregare il livello 3 nei rapporti
 reportUngroupDesc = Disaggregare l'elemento di livello 3 nel report, ad esempio più tasktime per un singolo giorno risulterà da più righe di report.
+allowPublicDesc = Visualizza le attività dei progetti pubblici nella scheda attività utente e nelle pagine cronografo
+allowPublic = Mostra le attività dei progetti pubblici

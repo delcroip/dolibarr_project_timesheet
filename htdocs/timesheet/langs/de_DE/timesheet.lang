@@ -241,3 +241,5 @@ reportInvoicedColDesc = Spalte "Fakturiert" in der Berichtstabelle
 reportInvoicedCol = In Rechnung gestellte Spalte
 reportUngroup = Stufe 3 in Berichten aufheben
 reportUngroupDesc = Gruppierung von Elementen der Ebene 3 im Bericht aufheben, z.B. mehrere Aufgabenzeiten für einen einzigen Tag resultieren aus mehreren Berichtszeilen.
+allowPublicDesc = Zeigen Sie die Aufgaben öffentlicher Projekte auf der Arbeitszeittabelle für Benutzeraufgaben und auf den Chronoseiten an
+allowPublic = Öffentliche Projektaufgaben anzeigen
