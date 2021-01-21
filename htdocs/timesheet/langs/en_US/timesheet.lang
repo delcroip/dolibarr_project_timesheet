@@ -241,3 +241,5 @@ reportInvoicedColDesc = Invoiced column in report table
 reportInvoicedCol = Invoiced column
 reportUngroup = Ungroup level 3 in reports
 reportUngroupDesc = Ungroup level 3 item in report, for example multiple tasktime for a single day will result of multiple report lines.
+allowPublicDesc = Display the tasks of public projects on user task timesheet and chrono pages
+allowPublic = Show public projects tasks

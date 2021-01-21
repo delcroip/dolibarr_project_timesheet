@@ -241,3 +241,5 @@ reportInvoicedColDesc = Columna de facturación en el cuadro del informe
 reportInvoicedCol = Columna facturada
 reportUngroup = Desagrupar el nivel 3 en los informes
 reportUngroupDesc = Desagrupar el elemento de nivel 3 en el informe, por ejemplo, el tiempo de tarea múltiple para un solo día resultará en múltiples líneas de informe.
+allowPublicDesc = Mostrar las tareas de los proyectos públicos en la hoja de tiempo de las tareas del usuario y las páginas de crono
+allowPublic = Mostrar tareas de proyectos públicos

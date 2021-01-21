@@ -128,14 +128,14 @@ class TimesheetReport
         $this->invoicedCol = $invoicedCol;
         if ( $name <> ''){
             $this->name =  $name;
+        }else if(count($this->ref) == 1){
+            $this->name .= reset($this->ref);
         }else{
             $this->name = '';
         }
         
-        if(count($this->ref) == 1){
-            $this->name .= reset($this->ref);
-        }
-        $this->name .= '_'.str_replace('/', '-', dol_print_date($startDate, 'day')).'_'.str_replace('/', '-', dol_print_date($stopDate, 'day'));
+        
+        $this->name .= ', '.str_replace('/', '-', dol_print_date($startDate, 'day')).','.str_replace('/', '-', dol_print_date($stopDate, 'day'));
         switch($mode){
             case 'PDT': //project  / task / Days //FIXME dayoff missing
                 $this->modeSQLOrder = 'ORDER BY ptt.fk_user,tsk.fk_projet, DATE(ptt.task_datehour), tsk.rowid ASC   ';
