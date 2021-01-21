@@ -52,7 +52,7 @@ class modTimesheet extends DolibarrModules
                 // Module description, used if translation string 'ModuleXXXDesc' not found(where XXX is value of numeric property 'numero' of module)
                 $this->description = "TimesheetView";
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.3.6';
+                $this->version = '4.3.7';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -494,8 +494,13 @@ class modTimesheet extends DolibarrModules
             $sql = array();
             $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql[0].= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
-            $sql[2] ="IF NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'rat' AND type='timesheetReport' AND entity = ".$conf->entity." ) INSERT INTO ".MAIN_DB_PREFIX."document_model(nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.")";
-            $sql[3] ="IF NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."c_type_contact WHERE rowid = '8201160' ) INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active ) values (8210160, 'project',  'internal', 'PROJECTBILLING', 'Responsable Facturation Projet', 1)";
+            if($db->type=='pgsql') {
+                $sql[1] ="INSERT INTO ".MAIN_DB_PREFIX."document_model(nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.") ON CONFLICT(nom) DO NOTHING;";
+                $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active ) values (8210160, 'project',  'internal', 'PROJECTBILLING', 'Responsable Facturation Projet', 1) ON CONFLICT(rowid) DO NOTHING;"; 
+            }else {
+                $sql[1] ="INSERT IGNORE INTO ".MAIN_DB_PREFIX."document_model(nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.");";
+                $sql[2] ="INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active ) values (8210160, 'project',  'internal', 'PROJECTBILLING', 'Responsable Facturation Projet', 1);";
+            }
             dolibarr_set_const($db, "TIMESHEET_VERSION", $this->version, 'chaine', 0, '', $conf->entity);
             include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
@@ -506,7 +511,7 @@ class modTimesheet extends DolibarrModules
             // allow ext id of 32 char
            // $extrafields->addExtraField('external_id', "ExternalId", 'varchar', 100, 32, 'user', 1, 0, '', '', 1, '$user->rights->timesheet->AttendanceAdmin', 3, 'specify the id of the external system', '', 0, 'timesheet@ptimesheet', '$conf->global->ATTENDANCE_EXT_SYSTEM');
             // add the "invoicable" bool to the task
-            $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean', 1, '', 'projet_task', 0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+            $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean', 1, '', 'projet_task', 0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@timesheet', '$conf->timesheet->enabled');
             return $this->_init($sql, $options);
         }
         /**

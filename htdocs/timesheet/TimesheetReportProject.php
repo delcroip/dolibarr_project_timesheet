@@ -115,7 +115,7 @@ if($projectSelectedId<>-999){
     $projectIdlist = array_keys($projectList);
 }
 $reportStatic = new TimesheetReport($db);
-$reportStatic->initBasic($projectIdlist, '', '', $dateStart, $dateEnd, $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
+$reportStatic->initBasic($projectIdlist, '', $reportName, $dateStart, $dateEnd, $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
 if($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;

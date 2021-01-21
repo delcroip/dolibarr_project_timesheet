@@ -1,4 +1,14 @@
 # dolibarr_project_timesheet changelog
+4.3.7
+- fix activation issue
+- fix: name of the pdf
+
+4.3.6
+- new: billing role
+- new: add time on public project
+- fix: add a single task as favorites
+
+
 4.3.5
 - fix: user report doesn't show all users
 

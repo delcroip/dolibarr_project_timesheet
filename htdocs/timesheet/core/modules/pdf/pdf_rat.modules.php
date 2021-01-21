@@ -146,7 +146,7 @@ public function writeFile($object, $outputlangs)
             $tasktimearray = $object->getReportArray(!($object->ungroup == 1));
             $TotalLines = array();
             $userTaskArray = array();
-            //order data per user id and calc total per user
+            //order data per project/user id and calc total per user
             foreach($tasktimearray as $line) {
                 $projectid = $line['projectId'];
                 $userTaskArray[$projectid][$line['userId']]['lines'][] = $line;
@@ -508,7 +508,7 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
     $pdf->SetXY($this->marge_gauche+$logoWidth, $posy);
     $pdf->SetTextColor(0, 0, 60);
     $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->ref[$projectid]), '', 'R');
-    //worke name
+    //worker name
     if(!empty($userName) && !$conf->global->TIMESHEET_PDF_HIDE_NAME) {
         $pdf->SetXY($this->marge_gauche, $height+$default_font_size + 3);
         $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
