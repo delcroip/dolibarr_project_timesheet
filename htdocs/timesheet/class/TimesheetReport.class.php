@@ -575,9 +575,9 @@ class TimesheetReport
      * @param bool $save    will save the export on the project/user folder or not
      * @return string   filename
      */
-    public function buildFile($model = 'excel2017', $save = false)
+    public function buildFile($model = 'excel2017new', $save = false)
     {
-        if($model == 'excel2017' || $model == 'excel'){
+        if($model == 'excel2017new' ||$model == 'excel2017' || $model == 'excel'){
             if(!(extension_loaded('zip') && extension_loaded('xml'))){
                 $this->error = "missing php extention(xml or zip)";
                 dol_syslog(__METHOD__."::build_file Error: ".$this->error, LOG_ERR);
@@ -589,7 +589,7 @@ class TimesheetReport
         $file = "export_".$model.".modules.php";
         $classname = "Export".ucfirst($model);
         require_once $dir.$file;
-	$objmodel = new $classname($this->db);
+	    $objmodel = new $classname($this->db);
         $arrayTitle = array('projectRef' => 'projectRef', 'projectTitle' => 'projectTitle', 'taskRef' => 'taskRef', 'tasktitle' => 'taskTitle', 'dateDisplay' => 'Date', 'durationHours' => 'Hours', 'durationDays' => 'Days', 'userId' => 'userId', 'firstName' => 'Firstname', 'lastName' => 'Lastname', 'note' => 'Note', 'invoiceable' => 'Invoiceable','invoiced' => 'Invoiced');
         $arrayTypes = array('projectRef' => 'TextAuto', 'projectTitle' => 'TextAuto', 'taskRef' => 'TextAuto', 'tasktitle' => 'TextAuto', 'dateDisplay' => 'Date', 'durationHours' => 'TextAuto', 'durationDays' => 'Numeric', 'userId' => 'Numeric', 'firstName' => 'TextAuto', 'lastName' => 'TextAuto', 'note' => 'TextAuto', 'invoiceable' => 'Numeric','invoiced' => 'TextAuto');
         $arraySelected = array('projectRef' => 'projectRef', 'projectTitle' => 'projectTitle', 'taskRef' => 'taskRef', 'tasktitle' => 'tasktitle', 'userId' => 'userId', 'firstName' => 'firstName', 'lastName' => 'lastName', 'dateDisplay' => 'date', 'durationHours' => 'durationHours', 'durationDays' => 'durationDays', 'note' => 'note', 'invoiceable' => 'invoiceable','invoiced' => 'invoiced');
