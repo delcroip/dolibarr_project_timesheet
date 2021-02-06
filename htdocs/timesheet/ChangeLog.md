@@ -1,4 +1,8 @@
 # dolibarr_project_timesheet changelog
+4.3.8
+- new: add dropdown for export format
+- fix: billing role was not allowed to get reports
+
 4.3.7
 - fix activation issue
 - fix: name of the pdf

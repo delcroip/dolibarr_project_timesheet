@@ -116,7 +116,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
         $sql[0] .= ' WHERE element_id in (SELECT element_id';
         $sql[0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
         $sql[0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
-        $sql[0] .= ' WHERE ctc.active = \'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%EXECUTIVE%\')';
+        $sql[0] .= ' WHERE ctc.active = \'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%BILLING%\' OR ctc.code LIKE \'%EXECUTIVE%\')';
         $sql[0] .= ' AND fk_socpeople in (';
         $sql[2] = ')) AND fk_socpeople not in (';
         $sql[4] = ')';
