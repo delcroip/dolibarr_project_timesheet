@@ -638,10 +638,18 @@ echo '</td><td align = "left">'.$langs->trans("evalAddLineDesc").'</td>';
 echo  '<td align = "left"><input type = "checkbox" name = "evalAddLine" value = "1" ';
 echo (($evalAddLine == '1')?'checked':'')."></td></tr>\n\t\t";
 // export format
+$formats = array();
+foreach(glob(DOL_DOCUMENT_ROOT . "/core/modules/export/export_*.modules.php") as $file) {
+    preg_match_all("/export_(?<format>.+)\.modules\.php/", $file, $matches);
+    $formats[] = $matches['format'][0];
+}
 echo '<tr class = "oddeven" ><td align = "left">'.$langs->trans("exportFormat");
 echo '</td><td align = "left">'.$langs->trans("exportFormatDesc").'</td>';
-echo '<td  align = "left"><input type = "text" name = "exportFormat" value = "'.$exportFormat;
-echo "\" size = \"4\" ></td></tr>\n\t\t";
+echo '<td  align = "left"><select name = "exportFormat">';
+foreach($formats as $format){
+echo "\n\t<option value=\"$format\" ".($exportFormat==$format?'selected':'').">$format</option>";
+}
+echo "</select></td></tr>\n\t\t";
 // allow add time on public project
 echo  '<tr class = "oddeven"><td align = "left">'.$langs->trans("allowPublic");
 echo '</td><td align = "left">'.$langs->trans("allowPublicDesc").'</td>';
