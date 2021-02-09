@@ -85,7 +85,7 @@ $userIdlistfull = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
 if(!empty($userIdSelected) && $userIdSelected <> -999) {
     
     $userIdlistfull[] = $userid;
-    if(in_array($userIdSelected, $userIdlist) || $user->admin) {
+    if(in_array($userIdSelected, $userIdlist) || $user->admin || $user->rights->timesheet->attendance->admin) {
         $userIdlist[] = $userIdSelected;
     } else{
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');

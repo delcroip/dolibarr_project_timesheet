@@ -110,6 +110,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
     if($role == TEAM || $role == ALL){
       global $user;
       $list = $user->getAllChildIds();
+      
     }
     if($role == PROJECT || $role == ALL){
         $sql[0] = 'SELECT DISTINCT fk_socpeople as userid FROM '.MAIN_DB_PREFIX.'element_contact';
