@@ -130,7 +130,7 @@ if(!empty($timestamp)) {
     unset($_SESSION['task_timesheet'][$timestamp]);
 }
 $timestamp = getToken();
-$subId = ($user->admin)?'all':getSubordinates($db, $userId, 2, array($userId), TEAM);
+$subId = ($user->admin || $user->rights->timesheet->attendance->admin)?'all':getSubordinates($db, $userId, 2, array($userId), TEAM);
 $selectList = getSelectAps($subId);
 $level = intval($conf->global->TIMESHEET_MAX_APPROVAL);
 $offset = 0;

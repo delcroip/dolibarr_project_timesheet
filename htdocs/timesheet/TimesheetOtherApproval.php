@@ -106,7 +106,7 @@ if($action == 'submit') {
 *
 * Put here all code to build page
 ****************************************************/
-$subId = ($user->admin)?'all':getSubordinates($db, $userId, 1, array($userId), $role_key);//FIx ME for other role
+$subId = ($user->admin || $user->rights->timesheet->attendance->admin)?'all':getSubordinates($db, $userId, 1, array($userId), $role_key);//FIx ME for other role
 $tasks = implode(', ', array_keys(getTasks($db, $userId)));
 if($tasks == "")$tasks = 0;
 $selectList = getSelectAps($subId, $tasks, $role_key);

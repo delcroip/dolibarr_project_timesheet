@@ -54,7 +54,7 @@ if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD
     }
     $SubordiateIds = getSubordinates($db, $user->id, 2, array(), ALL, $entity = '1');
     $SubordiateIds[] = $user->id;
-    if(in_array($newuserid, $SubordiateIds) || $user->admin) {
+    if(in_array($newuserid, $SubordiateIds) || $user->admin || $user->rights->timesheet->attendance->admin) {
         //$SubordiateIds[] = $userid;
         $userid = $newuserid;
     } elseif($action == 'getOtherTs') {
