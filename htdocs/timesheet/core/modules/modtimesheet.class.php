@@ -51,6 +51,8 @@ class modTimesheet extends DolibarrModules
                 $this->name = preg_replace('/^mod/i', '', get_class($this));
                 // Module description, used if translation string 'ModuleXXXDesc' not found(where XXX is value of numeric property 'numero' of module)
                 $this->description = "TimesheetView";
+		        $this->editor_name = 'Patrick Delcroix';
+		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
                 $this->version = '4.4.0';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
