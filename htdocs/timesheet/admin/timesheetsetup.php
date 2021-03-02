@@ -793,9 +793,13 @@ echo $langs->trans('feebackDesc').' : <a href = "mailto:patrick@pmpd.eu?subject=
 print load_fiche_titre( $langs->trans("Reminder"), '', '' );
 print '<div>'.$langs->trans('reminderEmailProcess').'</div>';
 echo '</div>';
-//echo '</div>';// end fiche
-echo '<input type = "submit" class = "butAction" value = "'.$langs->trans('Save')."\">\n</from>";
-echo '<br><br><br>';
+
+print '<div class="tabsAction">';
+print '<div class="inline-block divButAction"><input type="submit" class="button butAction" value="' . $langs->trans( 'Save' ) . '" /></div>';
+print "</div>";
+
+echo '</form>';
 echo '<script>document.getElementById("defaultOpen").click()</script>';
+
 llxFooter();
 $db->close();
