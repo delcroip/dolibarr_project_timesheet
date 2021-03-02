@@ -1,7 +1,10 @@
 # dolibarr_project_timesheet changelog
-4.3.9
-- new permission attendance->admin has the same priviledge as Admin 
 
+4.4.0 (2021-TBD)
+- fix: UI improvements
+
+4.3.9 (2021-02-09)
+- new permission attendance->admin has the same priviledge as Admin 
 
 4.3.8
 - new: add dropdown for export format
@@ -15,7 +18,6 @@
 - new: billing role
 - new: add time on public project
 - fix: add a single task as favorites
-
 
 4.3.5
 - fix: user report doesn't show all users
@@ -33,7 +35,6 @@
 4.3.2
 - new: pdf user report 
 - fix: SQL error on ts page when draft hidden
-
 
 4.3.1
 - fix: show only active user in unserreport (admin)
@@ -62,12 +63,9 @@
 - new: add user, project and task link in reports (#104)
 - new: use the hourly or daily rate as default in invoice unit price
 
-
-
 4.1.2
 - fix count issue on chrono page
 - fix UTF-8 lang file 
-
 
 4.1.1 
 - new: add timesheet for other works with project "subordinate"
