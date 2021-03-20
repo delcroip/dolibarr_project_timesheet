@@ -207,8 +207,8 @@ $Form .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').'</td>'
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
  $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
 //if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if(!empty($querryRes)  && $conf->global->MAIN_MODULE_EXPORT)$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
-if(!empty($querryRes)) $Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode=DTU&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('PDF').'</a>';
+if(!empty($querryRes)  && $conf->global->MAIN_MODULE_EXPORT)$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
+if(!empty($querryRes)) $Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('PDF').'</a>';
 $Form .= '</form>';
 if(!($optioncss != '' && !empty($userIdSelected))) echo $Form;
 // section to generate
