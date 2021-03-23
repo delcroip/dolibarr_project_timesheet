@@ -110,7 +110,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
     if($role == TEAM || $role == ALL){
       global $user;
       $list = $user->getAllChildIds();
-      
+
     }
     if($role == PROJECT || $role == ALL){
         $sql[0] = 'SELECT DISTINCT fk_socpeople as userid FROM '.MAIN_DB_PREFIX.'element_contact';
@@ -541,6 +541,7 @@ function formatTime($duration, $hoursperdays = -1)
     } elseif($hoursperdays == -3) {
         $hoursperdays = $conf->global->TIMESHEET_DAY_DURATION;
     }
+    if(!is_numeric($duration))$duration = 0;
     if($hoursperdays == 0) {
         $TotalSec = $duration%60;
         $TotalMin = (($duration-$TotalSec)/60)%60;
