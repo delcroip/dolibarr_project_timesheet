@@ -751,6 +751,7 @@ public function createTimeSpend($user, $token = '')
     /** Function generate the HTML code to use the clock
      *
      * @param string[] $headers header to display
+     * @param    string              $token           CSRF token
      * @param int $userid   user id
      * @return string   HTML code
      */

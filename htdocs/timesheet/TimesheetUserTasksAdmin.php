@@ -59,7 +59,7 @@ $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$tms = GETPOST('tms', 'alpha');
+$token = GETPOST('$token', 'alpha');
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
@@ -95,7 +95,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 //$upload_dir = $conf->timesheet->dir_output.'/Timesheetuser/'.dol_sanitizeFileName($object->ref);
  // uncomment to avoid resubmision
-//if(isset($_SESSION['Timesheetuser_class'][$tms]))
+//if(isset($_SESSION['timesheet'][$token]))
 //{
  //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
@@ -134,7 +134,7 @@ if($cancel) {
     reloadpage($backtopage, $id, $ref);
 } elseif(($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref)))) {
     //block resubmit
-    if(empty($tms) || (!isset($_SESSION['Timesheetuser_'.$tms]))) {
+    if(empty($token) || (!isset($_SESSION['timesheet'][$token]))) {
         setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
         $action = ($action == 'add')?'create':'view';
     }
@@ -161,7 +161,7 @@ switch($action) {
         $result = $object->update($user);
         if($result > 0) {
             // Creation OK
-            unset($_SESSION['Timesheetuser_'.$tms]);
+            unset($_SESSION['timesheet'][$token]);
             setEventMessage('RecordUpdated', 'mesgs');
             // reloadpage($backtopage, $object->id, $ref);
             $action = 'view';
@@ -201,8 +201,8 @@ switch($action) {
         $result = $object->create($user);
         if($result > 0) {
             // Creation OK
-            // remove the tms
-           unset($_SESSION['Timesheetuser_'.$tms]);
+            // remove the $token
+           unset($_SESSION['timesheet'][$token]);
            setEventMessage('RecordSucessfullyCreated', 'mesgs');
            reloadpage($backtopage, $result, $ref);
         } else {
@@ -242,14 +242,14 @@ if($conf->global->TIMESHEET_ADD_DOCS && $id>0) {
        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
     }
 }
-//Removing the tms array so the order can't be submitted two times
-if(isset($_SESSION['Timesheetuser_'.$tms])) {
-    unset($_SESSION['Timesheetuser_'.$tms]);
+//Removing the $token array so the order can't be submitted two times
+if(isset($_SESSION['timesheet'][$token])) {
+    unset($_SESSION['timesheet'][$token]);
 }
 if(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))) {
-    $tms = getToken();
-    $_SESSION['Timesheetuser_'.$tms] = array();
-    $_SESSION['Timesheetuser_'.$tms]['action'] = $action;
+    $token = getToken();
+    $_SESSION['timesheet'][$token] = array();
+    $_SESSION['timesheet'][$token]['action'] = $action;
 }
 /***************************************************
 * VIEW
@@ -306,7 +306,7 @@ switch($action) {
             } else{
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action=update&id='.$id.'">';
             }
-            print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
+            print '<input type = "hidden" name = "$token" value = "'.$token.'">';
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
         } else {// show the nav bar
             $basedurltab = explode("?", $PHP_SELF);

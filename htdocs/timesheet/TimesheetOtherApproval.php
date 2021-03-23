@@ -50,8 +50,8 @@ $token = GETPOST('token', 'alpha');
 if($current == null)$current = '0';
 //handle submission
 if($action == 'submit') {
-    if(isset($_SESSION['task_timesheet'][$token])) {
-        // $_SESSION['task_timesheet'][$token]['tsUser']
+    if(isset($_SESSION['timesheet'][$token])) {
+        // $_SESSION['timesheet'][$token]['tsUser']
         $tsApproved = 0;
         $tsRejected = 0;
         $ret = 0;
@@ -63,7 +63,7 @@ if($action == 'submit') {
             $approvals = GETPOST('approval', 'array');
             $notes = GETPOST('notesTask', 'array');
             $update = false;
-            foreach($_SESSION['task_timesheet'][$token] as $id => $role_row) {
+            foreach($_SESSION['timesheet'][$token] as $id => $role_row) {
                 $count++;
                 $task_timesheet->fetch($id);
                 if($notes[$id]!=$task_timesheet->note) {
@@ -131,7 +131,7 @@ $token = getToken();
 if(is_array($objectArray)) {
     // SAVE THE ARRAY IN THE SESSION FOR CHECK UPON SUBMIT
     foreach($objectArray as $object) {
-        $_SESSION['task_timesheet'][$token][$object->appId] = $role;
+        $_SESSION['timesheet'][$token][$object->appId] = $role;
     }
 }
 /***************************************************
@@ -149,7 +149,7 @@ echo '<div id = "'.$role.'" class = "tabBar">';
 if(!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $current);
 // form header
 echo '<form action="?action=submit" method = "POST" name = "OtherAp" id = "OtherAp">';
-echo '<input type = "hidden" name = "token" value = "'.$token.'"/>';
+echo '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
 echo '<input type = "hidden" name = "role" value = "'.$role.'"/>';
 echo '<input type = "hidden" name = "target" value = "'.($current+1)."\"/>\n";
 // table hearder

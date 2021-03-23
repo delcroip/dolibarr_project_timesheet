@@ -518,10 +518,16 @@ function ShowHide(id){
  * function to add/remove this task as favoris
  */
 function favOnOff(evt, prjtId, tskId){
+    var token = getToken();
     var favId=evt.target.id;
     var url='TimesheetFavouriteAdmin.php?ajax=1&Project='+prjtId+'&Task='+tskId;
+    url+='&token='+token;
     url+='&action='+((favId>0)?('confirm_delete&confirm=yes&id='+favId):'add');
     httpGetAsync(url,setId, evt);
+}
+
+function getToken(){
+    return document.getElementById('csrf-token').value
 }
 
 function httpGetAsync(theUrl, callback, callbackParam)

@@ -600,7 +600,7 @@ function get_timezone_offset($remote_tz, $origin_tz = null)
 {
     if($origin_tz === null) {
         if(!is_string($origin_tz = date_default_timezone_get())) {
-            return false; // A UTC timestamp was returned -- bail out!
+            return false; // A UTC token was returned -- bail out!
         }
     }
     $origin_dtz = new DateTimeZone($origin_tz);

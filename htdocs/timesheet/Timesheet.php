@@ -41,7 +41,7 @@ $toDateday = GETPOST('toDateday', 'int');// to not look for the date if action n
 $toDatemonth = GETPOST('toDatemonth', 'int');
 $toDateyear = GETPOST('toDateyear', 'int');
 }
-$timestamp = GETPOST('timestamp', 'alpha');
+$token = GETPOST('token', 'alpha');
 $whitelistmode = GETPOST('wlm', 'int');
 if($whitelistmode == '') {
     $whitelistmode = $conf->global->TIMESHEET_WHITELIST_MODE;
@@ -100,7 +100,7 @@ $status = '';
 $update = false;
 switch($action) {
     case 'submit':
-        if(isset($_SESSION['task_timesheet'][$timestamp])) {
+        if(isset($_SESSION['timesheet'][$token])) {
             if($tsUserId>0) {
                 $ret = 0;
                 $key = 1;
@@ -108,10 +108,10 @@ switch($action) {
                 $progressTask = GETPOST('progressTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
                 $tasktab = GETPOST('task', 'array')[$tsUserId];
-                $task_timesheet->loadFromSession($timestamp, $tsUserId);
+                $task_timesheet->loadFromSession($token, $tsUserId);
                 if($task_timesheet->note != $notesTaskApproval[$key]) {
                     $update = true;
-                    $_SESSION['task_timesheet'][$timestamp]['NoteUpdated'] ++;
+                    $_SESSION['timesheet'][$token]['NoteUpdated'] ++;
                     $task_timesheet->note = $notesTaskApproval[$key];
                     $task_timesheet->update($user);
                 }
@@ -123,23 +123,23 @@ switch($action) {
                 } else {
                     $task_timesheet->setStatus($user, DRAFT);
                 }
-        //$ret = postActuals($db, $user, $_POST['task'], $timestamp);
-                TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
+        //$ret = postActuals($db, $user, $_POST['task'], $token);
+                TimesheetsetEventMessage($_SESSION['timesheet'][$token]);
             } elseif(GETPOSTISSET('recall')) {
-                    $task_timesheet->loadFromSession($timestamp, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
+                    $task_timesheet->loadFromSession($token, GETPOST('tsUserId', 'int'));/*FIXME to support multiple TS sent*/
                     $ret = $task_timesheet->setStatus($user, DRAFT);
                 if($ret > 0) {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetRecalled"));
                 } else {
                     setEventMessage($langs->transnoentitiesnoconv("timesheetNotRecalled"), 'errors');
                 }
-            }elseif(is_array($_SESSION['task_timesheet'][$timestamp])){
+            }elseif(is_array($_SESSION['timesheet'][$token])){
                         setEventMessage($langs->transnoentitiesnoconv("NothingChanged"), 'warnings');
             }else{
                     setEventMessage($langs->transnoentitiesnoconv("NoTaskToUpdate"), 'errors');
             }
         } else{
-                setEventMessage($langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" : timestamp missmatch"), 'errors');
+                setEventMessage($langs->transnoentitiesnoconv("InternalError").$langs->transnoentitiesnoconv(" : token missmatch"), 'errors');
         }
         break;
     case 'deletefile':
@@ -148,8 +148,8 @@ switch($action) {
     default:
         break;
 }
-if(!empty($timestamp)) {
-       unset($_SESSION['task_timesheet'][$timestamp]);
+if(!empty($token)) {
+       unset($_SESSION['timesheet'][$token]);
 }
 $task_timesheet->fetchAll($dateStart, $whitelistmode);
 if($conf->global->TIMESHEET_ADD_DOCS) {
@@ -182,7 +182,7 @@ exit();
 $morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader('', $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
-//tmstp = time();
+//tokentp = time();
 //fetch ts for others
 if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && (count($SubordiateIds)>1 || $user->admin)) {
     print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);

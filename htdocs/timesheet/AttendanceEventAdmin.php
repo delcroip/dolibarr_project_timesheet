@@ -67,7 +67,7 @@ $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
-$tms = GETPOST('tms', 'alpha');
+$token = GETPOST('token', 'alpha');
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
@@ -97,7 +97,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
  // uncomment to avoid resubmision
-//if(isset($_SESSION['attendanceevent_class'][$tms]))
+//if(isset($_SESSION['attendanceevent_class'][$token]))
 //{
  //   $cancel = true;
  //  setEventMessages('Internal error, POST not exptected', null, 'errors');
@@ -141,7 +141,7 @@ switch($action) {
         }
         break;
     case 'add':
-        if(empty($tms) || (!isset($_SESSION['Attendanceevent'][$tms]))) {
+        if(empty($token) || (!isset($_SESSION['Attendanceevent'][$token]))) {
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
             $action = 'list';
         }
@@ -159,13 +159,13 @@ switch($action) {
         $result = $object->create($user);
         if($result > 0) {
                 // Creation OK
-            // remove the tms
+            // remove the token
                if($ajax == 1) {
                    $object->serialize(2); //return JSON
                     ob_end_flush();
-                    exit();// don't remove the tms. don't continue with the
+                    exit();// don't remove the token. don't continue with the
                }
-                   unset($_SESSION['Attendanceevent'][$tms]);
+                   unset($_SESSION['Attendanceevent'][$token]);
                setEventMessage('RecordSucessfullyCreated', 'mesgs');
                //AttendanceeventReloadPage($backtopage, $result, '');
         } else {
@@ -176,13 +176,13 @@ switch($action) {
         }
     break;
 }
-    //Removing the tms array so the order can't be submitted two times
-if(isset($_SESSION['Attendanceevent'][$tms])) {
-    unset($_SESSION['Attendanceevent'][$tms]);
+    //Removing the token array so the order can't be submitted two times
+if(isset($_SESSION['Attendanceevent'][$token])) {
+    unset($_SESSION['Attendanceevent'][$token]);
 }
-    $tms = getToken();
-    $_SESSION['Attendanceevent'][$tms] = array();
-    $_SESSION['Attendanceevent'][$tms]['action'] = $action;
+    $token = getToken();
+    $_SESSION['Attendanceevent'][$token] = array();
+    $_SESSION['Attendanceevent'][$token]['action'] = $action;
 /***************************************************
 * VIEW
 *
@@ -322,7 +322,7 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         print '</tr>';
         //add
         print '<tr><td>';
-        print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
+        print '<input type = "hidden" id="csrf-token" name ="token" value = "'.$token.'">';
         print $form->select_date(time(), 'Datetimeevent');
         print '<input type = "text" maxlength = "5" onkeypress = "return regexEvent(this,event,\'timeChar\')" name = "DatetimeeventHour" value = "'.date('H:m').'"/>';
         print '</td><td>';
@@ -347,7 +347,6 @@ if(empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         $htmlname = 'Project';
         $formproject->select_projects(-1, $selected, $htmlname);
         print '</td><td>';
-        print '<input type = "text"  name = "Token">';
         print '</td><td>';
         print '<input type = "submit" value = "'.$langs->trans('add').'" ">';
         print '</td></tr></table></form>';

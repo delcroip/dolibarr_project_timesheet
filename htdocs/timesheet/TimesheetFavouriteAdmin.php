@@ -60,7 +60,7 @@ $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'aplha');
 $cancel = GETPOST('cancel', 'aplha');
 $confirm = GETPOST('confirm', 'aplha');
-$tms = GETPOST('tms', 'alpha');
+$token = GETPOST('token', 'alpha');
 $ajax = GETPOST('ajax', 'int');
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -109,17 +109,17 @@ if($cancel) {
         reloadpage($backtopage, $id, $ref);
 } elseif(($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))) {
     if(GETPOST('User', 'int') == "") {
-        //to keep the tms on javvascript reload {
-        $tms = getToken();
-        $_SESSION['timesheetFavourite'.$tms] = array();
-        $_SESSION['timesheetFavourite'.$tms]['action'] = $action;
+        //to keep the token on javvascript reload {
+        $token = getToken();
+        $_SESSION['timesheet'][$token] = array();
+        $_SESSION['timesheet'][$token]['action'] = $action;
     } else {
         $editedUser = GETPOST('User', 'int');
         $editedProject = GETPOST('Project', 'int');
     }
 } elseif(($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref)))) {
     //block resubmit
-    if($ajax!=1 && (empty($tms) || (!isset($_SESSION['timesheetFavourite'.$tms])))) {
+    if((empty($token) || (!isset($_SESSION['timesheet'][$token])))) {
             setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
             $action = ($action == 'add')?'create':'edit';
     }
@@ -151,7 +151,6 @@ switch($action) {
         $result = ($user->admin || ($user->id == $object->user))?$object->update():-1;
         if($result > 0) {
             // Creation OK
-            unset($_SESSION['timesheetFavourite'.$tms]);
             setEventMessage('RecordUpdated', 'mesgs');
             reloadpage($backtopage, $object->id, $ref);
         } else {
@@ -191,8 +190,8 @@ switch($action) {
         $result = $object->create();
         if($result > 0) {
             // Creation OK
-            // remove the tms
-            unset($_SESSION['timesheetFavourite'.$tms]);
+
+
             if($ajax == 1) {
                    echo json_encode(array('id'=> $result));
                    ob_end_flush();
@@ -239,14 +238,12 @@ switch($action) {
         if(isset($_GET['urlfile'])) $action = 'viewdoc';
         break;
 }
-//Removing the tms array so the order can't be submitted two times
-if(isset($_SESSION['timesheetFavourite'.$tms]) &&  !GETPOST('Project', 'int')) {
-   // unset($_SESSION['timesheetFavourite'.$tms]);
-}
 if($ajax == 1) {
     echo json_encode(array('errors'=> $object->errors));
     ob_end_flush();
     exit();
+} else {
+    unset($_SESSION['timesheet'][$token]);
 }
 /***************************************************
 * VIEW
@@ -305,7 +302,7 @@ switch($action) {
             } else{
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action=update&id='.$id.'">';
             }
-            print '<input type = "hidden" name = "tms" value = "'.$tms.'">';
+            print '<input type = "hidden" id="csrf-token"  name = "token" value = "'.$token.'">';
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
         } else {
             // show the nav bar
@@ -466,7 +463,7 @@ switch($action) {
                     var pjtold = (typeof(pjtSelect.defaultSelected) === \'undefined\')?0:pjtSelect.defaultSelected ;
                     var usr = document.getElementById("User").value;
                     if( pjtSelect != null && pjt != pjtold){
-                        self.location = "'.$PHP_SELF.'?&action=" + action + id +"&tms='.$tms.'&User=" +usr+ "&Project=" + pjt ;
+                        self.location = "'.$PHP_SELF.'?&action=" + action + id +"&token='.$token.'&User=" +usr+ "&Project=" + pjt ;
                     }
                 });
              </script>';

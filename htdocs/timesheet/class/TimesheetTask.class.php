@@ -883,8 +883,7 @@ class TimesheetTask extends Task
     {
         global $langs, $conf;
         $Class = 'oddeven '.(($this->listed)?'timesheet_whitelist':'timesheet_blacklist').' timesheet_line ';
-        $linestyle .= "";
-        $html = '<tr class = "'.$Class.'" '.((!empty($linestyle))?'style = "'.$linestyle.'"':'');
+        $html = '<tr class = "'.$Class.'" ';
         if(!empty($this->note))$html .= ' title = "'.htmlentities($this->note).'"';
         $html .= '>'."\n";
         //title section
@@ -1160,12 +1159,12 @@ class TimesheetTask extends Task
     *  @param    int               $userid                    user id sending timespent
     *  @param    object              $Submitter             user who submit
     *  @param    array(int)               $tasktimeid          the id of the tasktime if any
-    *  @param     int               $timestamp          timesheetweek
+    *  @param     int               $token          timesheetweek
     *  @param     string              $note        notes
     *  @param     string              $progress        stated progress
     *  @return     int                                                       1 => succes, 0 => Failure
     */
-    public function postTaskTimeActual($timesheetPost, $userId, $Submitter, $timestamp, $note = '', $progress = '')
+    public function postTaskTimeActual($timesheetPost, $userId, $Submitter, $token, $note = '', $progress = '')
     {
         global $conf, $user;
         $ret = 0;
@@ -1192,35 +1191,35 @@ class TimesheetTask extends Task
                 $duration = $durationTab['minute']*60+$durationTab['hour']*3600;
             }
             $lineresult = $this->saveTaskTime($Submitter, $duration, $daynote, $dayKey);
-            $_SESSION['task_timesheet'][$timestamp]['timeSpendModified']+=$lineresult['timeSpendModified'];
-            $_SESSION['task_timesheet'][$timestamp]['updateError']+=$lineresult['updateError'];
-            $_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']+=$lineresult['timeSpendDeleted'];
-            $_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']+=$lineresult['timeSpendCreated'];
+            $_SESSION['timesheet'][$token]['timeSpendModified']+=$lineresult['timeSpendModified'];
+            $_SESSION['timesheet'][$token]['updateError']+=$lineresult['updateError'];
+            $_SESSION['timesheet'][$token]['timeSpendDeleted']+=$lineresult['timeSpendDeleted'];
+            $_SESSION['timesheet'][$token]['timeSpendCreated']+=$lineresult['timeSpendCreated'];
         }
-        $nbUpdate = ($_SESSION['task_timesheet'][$timestamp]['timeSpendModified'] 
-            + $_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted'] 
-            + $_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']) ;
+        $nbUpdate = ($_SESSION['timesheet'][$token]['timeSpendModified'] 
+            + $_SESSION['timesheet'][$token]['timeSpendDeleted'] 
+            + $_SESSION['timesheet'][$token]['timeSpendCreated']) ;
         # update the time used on the task level
         if($nbUpdate > 0) {
             $this->updateTimeUsed();
-            if ($progressUpdate)$_SESSION['task_timesheet'][$timestamp]['ProgressUpdate']++;
+            if ($progressUpdate)$_SESSION['timesheet'][$token]['ProgressUpdate']++;
         }
         
         
         if( $noteUpdate ) {
             $retNote = ($this->appId>0)?$this->update($user):$this->create($user);
             if($retNote  ) {
-                $_SESSION['task_timesheet'][$timestamp]['NoteUpdated']++;
+                $_SESSION['timesheet'][$token]['NoteUpdated']++;
                 
             }else{
-                $_SESSION['task_timesheet'][$timestamp]['updateError']++;
+                $_SESSION['timesheet'][$token]['updateError']++;
             }
         }
 
         $ret = 0;
-        if(is_array($_SESSION['task_timesheet'][$timestamp]))
-            $ret = $_SESSION['task_timesheet'][$timestamp]['ProgressUpdate'] 
-            + $nbUpdate -$_SESSION['task_timesheet'][$timestamp]['updateError'];
+        if(is_array($_SESSION['timesheet'][$token]))
+            $ret = $_SESSION['timesheet'][$token]['ProgressUpdate'] 
+            + $nbUpdate -$_SESSION['timesheet'][$token]['updateError'];
         return $ret;
         //return $idList;
     }

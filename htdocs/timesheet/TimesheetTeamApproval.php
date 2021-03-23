@@ -45,7 +45,7 @@ if($current == ''){
     $current = 0;
 }
 //$toDate = GETPOST('toDate');
-$timestamp = GETPOST('timestamp', 'alpha');
+$token = GETPOST('token', 'alpha');
 //$userid = is_object($user)?$user->id:$user;
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -58,8 +58,8 @@ $langs->load('timesheet@timesheet');
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 if($action == 'submit') {
-    if(isset($_SESSION['task_timesheet'][$timestamp])) {
-       // $_SESSION['task_timesheet'][$timestamp]['tsUser']
+    if(isset($_SESSION['timesheet'][$token])) {
+       // $_SESSION['timesheet'][$token]['tsUser']
         $tsApproved = 0;
         $tsRejected = 0;
         $ret = 0;
@@ -73,13 +73,13 @@ if($action == 'submit') {
             $progressTask = GETPOST('progressTask', 'array');
             $approvals = $_POST['approval'];
 
-            foreach($_SESSION['task_timesheet'][$timestamp]['tsUser'] as $tsuId => $tsStatus) {
+            foreach($_SESSION['timesheet'][$token]['tsUser'] as $tsuId => $tsStatus) {
                 
                 $curTaskTimesheet = new TimesheetUserTasks($db);
                 $count++;
                 $curTaskTimesheet->fetch($tsuId);
                 $arrayTTA = $curTaskTimesheet->fetchTaskTimesheet();
-                $curTaskTimesheet->timestamp = $timestamp;
+                $curTaskTimesheet->token = $token;
                 $curTaskTimesheet->updateActuals($arrayTTA, $notesTask[$tsuId],$progressTask[$tsuId]);
                 //if($approvals[$key]!=$tsUser)
                 switch($approvals[$tsuId]) {
@@ -101,7 +101,7 @@ if($action == 'submit') {
                     $curTaskTimesheet->note = $notes[$curTaskTimesheet->appId];
                     $curTaskTimesheet->update($user);
                 }
-                TimesheetsetEventMessage($_SESSION['task_timesheet'][$timestamp]);
+                TimesheetsetEventMessage($_SESSION['timesheet'][$token]);
             }
             if(($tsRejected+$tsApproved)>0) {
                 $current--;
@@ -126,10 +126,10 @@ if($action == 'submit') {
     }
 }
 
-if(!empty($timestamp)) {
-    unset($_SESSION['task_timesheet'][$timestamp]);
+if(!empty($token)) {
+    unset($_SESSION['timesheet'][$token]);
 }
-$timestamp = getToken();
+$token = getToken();
 $subId = ($user->admin || $user->rights->timesheet->attendance->admin)?'all':getSubordinates($db, $userId, 2, array($userId), TEAM);
 $selectList = getSelectAps($subId);
 $level = intval($conf->global->TIMESHEET_MAX_APPROVAL);
@@ -172,7 +172,7 @@ llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 showTimesheetApTabs(TEAM);
 echo '<div id = "Team" class = "tabBar">';
-//tmstp = time();
+//tokentp = time();
 if(is_object($firstTimesheetUser)) {
     if(!$print) echo getHTMLNavigation($optioncss, $selectList, $current);
     $Form .= $firstTimesheetUser->getHTMLFormHeader($ajax);
@@ -185,7 +185,7 @@ if(is_object($firstTimesheetUser)) {
             $TTU->fetchUserHoliday();
             $Form .= $TTU->userName." - ".dol_print_date($TTU->date_start, 'day');
             $Form .= $TTU->getHTML(false, true);
-            $_SESSION['task_timesheet'][$timestamp]['tsUser'][$TTU->id] = $TTU->status;
+            $_SESSION['timesheet'][$token]['tsUser'][$TTU->id] = $TTU->status;
             if(!$print) {
                 if($conf->global->TIMESHEET_ADD_DOCS == 1) {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -214,14 +214,14 @@ if(is_object($firstTimesheetUser)) {
     }
    // $offset += $i;
     if(!$print) {
-        $Form .= $firstTimesheetUser->getHTMLFooterAp($current, $timestamp);
+        $Form .= $firstTimesheetUser->getHTMLFooterAp($current, $token);
     } else {
         $Form .= '<table width = "100%"><tr><td align = "center">'.$langs->trans('customerSignature').'</td><td align = "center">'.$langs->trans('managerSignature').'</td><td align = "center">'.$langs->trans('employeeSignature').'</td></tr></table>';
     }
 } else{
     $Form .= '<h1>'.$langs->trans('NothingToValidate').'</h1>';
     $staticTs = new TimesheetUserTasks($db);
-    $Form .= $staticTs->getHTMLFooterAp($current, $timestamp);
+    $Form .= $staticTs->getHTMLFooterAp($current, $token);
 }
 //Javascript
 $timetype = $conf->global->TIMESHEET_TIME_TYPE;

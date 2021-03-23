@@ -24,7 +24,7 @@ function refreshTimesheet(Wlmode,hidezero){
 	// extrat important info from XML
         var timesheet=xmlDoc.getElementsByTagName("timesheet");
         if(timesheet.length==0)throw "Bad XML: no timesheet Node";
-        var timestamp=timesheet[0].getAttribute('timestamp');
+        var token=timesheet[0].getAttribute('token');
         var dateStart=timesheet[0].getAttribute('dateStart');
         var id=timesheet[0].getAttribute('id');/*FIXME not returned yet*/
         var prevDate=timesheet[0].getAttribute('prevDate');
@@ -53,7 +53,7 @@ function refreshTimesheet(Wlmode,hidezero){
         //update the header
 	MT.rows[0].innerHTML=generateHeader(headers,days);
         // update the hidden param
-        MT.rows[1].cells[0].innerHTML=generateHiddenParam(timestamp,dateStart);
+        MT.rows[1].cells[0].innerHTML=generateHiddenParam(token,dateStart);
 
 	//delete the old lines /*FIXME, not woking anymore*/
 	var idxT = document.getElementById("totalT").rowIndex;
@@ -104,8 +104,8 @@ function generateHeader(headers,days){
         return hearderRow;
 }
 
-function generateHiddenParam(timestamp,dateStart){
-    var hiddenParam='<input type="hidden" id="timestamp" name="timestamp" value="'+timestamp+"\"/>\n";
+function generateHiddenParam(token,dateStart){
+    var hiddenParam='<input type="hidden" id="token" name="token" value="'+token+"\"/>\n";
     hiddenParam+= '<input type="hidden" name="dateStart" value="'+dateStart+'" />';
     return hiddenParam;
 }
@@ -158,8 +158,8 @@ function loadXMLTimesheet(dateStart, user)
 {
     var Url="timesheet.php?xml=1&dateStart="+dateStart;
     if(user!==0) Url+="&user="+user;
-    var timestamp=$("#timestamp").serialize();
-    if(timestamp!==undefined)Url+="&"+timestamp;
+    var token=$("#token").serialize();
+    if(token!==undefined)Url+="&"+token;
 $.ajax({
     type: "GET",
     url: Url,
@@ -174,8 +174,8 @@ function loadXMLTimesheetFromDate(toDate, user)
 {
     var Url="timesheet.php?action=goToDate&xml=1&toDate="+toDate;
     if(user!==0) Url+="&user="+user;
-    var timestamp=$("#timestamp").serialize();
-    if(timestamp!==undefined)Url+="&"+timestamp;
+    var token=$("#token").serialize();
+    if(token!==undefined)Url+="&"+token;
 
 $.ajax({
     type: "GET",

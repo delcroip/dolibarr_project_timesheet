@@ -31,7 +31,7 @@ require_once 'class/TimesheetTask.class.php';
 if(!$user->rights->timesheet->attendance->user) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");
 }
-$tms = GETPOST('tms', 'alpha');
+$token = GETPOST('token', 'alpha');
 $action = GETPOST('action', 'alpha');
 $project = GETPOST('project', 'int');
 $task = GETPOST('taskid', 'int');
@@ -97,8 +97,8 @@ switch($action) {
     default:
         break;
 }
-if(!empty($tms)) {
-    unset($_SESSION['timesheet_attendance'][$tms]);
+if(!empty($token)) {
+    unset($_SESSION['timesheet'][$token]);
 }
 
 /***************************************************

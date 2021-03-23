@@ -77,7 +77,7 @@ class TimesheetUserTasks extends CommonObject
     public $taskTimesheet;
     public $headers;
     public $weekDays;
-    public $timestamp;
+    public $token;
     public $whitelistmode;
     public $userName;
     /**
@@ -435,7 +435,7 @@ class TimesheetUserTasks extends CommonObject
         $this->date_start = getStartDate($startdate);
         $this->ref = $this->date_start.'_'.$this->userId;
         $this->date_end = getEndDate($this->date_start);
-        $this->timestamp = getToken();
+        $this->token = getToken();
         $this->fetchByWeek();
         $this->fetchTaskTimesheet();
         //$ret += $this->getTaskTimeIds();
@@ -455,21 +455,21 @@ class TimesheetUserTasks extends CommonObject
 
     /** function to load from session [//FIXME: to be removed not REST appraoch]
      *
-     * @param string $timestamp ref to load
+     * @param string $token ref to load
      * @param int $id   object id
      * @return null
      */
-   public function loadFromSession($timestamp, $id)
+   public function loadFromSession($token, $id)
    {
        $this->fetch($id);
-       $this->timestamp = $timestamp;
-       $this->userId = $_SESSION['task_timesheet'][$timestamp][$id]['userId'];
-       $this->date_start = $_SESSION['task_timesheet'][$timestamp][$id]['dateStart'];
-       $this->date_end = $_SESSION['task_timesheet'][$timestamp][$id]['dateEnd'];
-       $this->ref = $_SESSION['task_timesheet'][$timestamp][$id]['ref'];
-       $this->note = $_SESSION['task_timesheet'][$timestamp][$id]['note'];
-       $this->holidays = unserialize($_SESSION['task_timesheet'][$timestamp][$id]['holiday']);
-       $this->taskTimesheet = unserialize($_SESSION['task_timesheet'][$timestamp][$id]['taskTimesheet']);;
+       $this->token = $token;
+       $this->userId = $_SESSION['timesheet'][$token][$id]['userId'];
+       $this->date_start = $_SESSION['timesheet'][$token][$id]['dateStart'];
+       $this->date_end = $_SESSION['timesheet'][$token][$id]['dateEnd'];
+       $this->ref = $_SESSION['timesheet'][$token][$id]['ref'];
+       $this->note = $_SESSION['timesheet'][$token][$id]['note'];
+       $this->holidays = unserialize($_SESSION['timesheet'][$token][$id]['holiday']);
+       $this->taskTimesheet = unserialize($_SESSION['timesheet'][$token][$id]['taskTimesheet']);;
    }
 /*
  * function to load the parma from the session
@@ -477,13 +477,13 @@ class TimesheetUserTasks extends CommonObject
  */
 public function saveInSession()
 {
-    $_SESSION['task_timesheet'][$this->timestamp][$this->id]['userId'] = $this->userId;
-    $_SESSION['task_timesheet'][$this->timestamp][$this->id]['ref'] = $this->ref;
-    $_SESSION['task_timesheet'][$this->timestamp][$this->id]['dateStart'] = $this->date_start;
-    $_SESSION['task_timesheet'][$this->timestamp][$this->id]['dateEnd'] = $this->date_end;
-    $_SESSION['task_timesheet'][$this->timestamp][$this->id]['note'] = $this->note;
-    $_SESSION['task_timesheet'][$this->timestamp][$this->id]['holiday'] = serialize($this->holidays);
-    $_SESSION['task_timesheet'][$this->timestamp][$this->id]['taskTimesheet'] = serialize($this->taskTimesheet);
+    $_SESSION['timesheet'][$this->token][$this->id]['userId'] = $this->userId;
+    $_SESSION['timesheet'][$this->token][$this->id]['ref'] = $this->ref;
+    $_SESSION['timesheet'][$this->token][$this->id]['dateStart'] = $this->date_start;
+    $_SESSION['timesheet'][$this->token][$this->id]['dateEnd'] = $this->date_end;
+    $_SESSION['timesheet'][$this->token][$this->id]['note'] = $this->note;
+    $_SESSION['timesheet'][$this->token][$this->id]['holiday'] = serialize($this->holidays);
+    $_SESSION['timesheet'][$this->token][$this->id]['taskTimesheet'] = serialize($this->taskTimesheet);
 }
 /*
  * function to genegate the timesheet tab
@@ -606,12 +606,12 @@ public function updateActuals($tabPost, $notes = array(), $progress = array())
     dol_syslog(__METHOD__, LOG_DEBUG);
     $ret = 0;
    // $tmpRet = 0;
-    //$_SESSION['task_timesheet'][$this->timestamp]['timeSpendCreated'] = 0;
-    //$_SESSION['task_timesheet'][$this->timestamp]['timeSpendDeleted'] = 0;
-    //$_SESSION['task_timesheet'][$this->timestamp]['timeSpendModified'] = 0;
-    // $_SESSION['task_timesheet'][$timestamp]['NoteUpdated'] = 0
+    //$_SESSION['timesheet'][$this->token]['timeSpendCreated'] = 0;
+    //$_SESSION['timesheet'][$this->token]['timeSpendDeleted'] = 0;
+    //$_SESSION['timesheet'][$this->token]['timeSpendModified'] = 0;
+    // $_SESSION['timesheet'][$token]['NoteUpdated'] = 0
         /*
-         * For each task store in matching the session timestamp
+         * For each task store in matching the session token
          */
         if(is_array($this->taskTimesheet)){ 
             foreach($this->taskTimesheet as $key => $row) { 
@@ -620,7 +620,7 @@ public function updateActuals($tabPost, $notes = array(), $progress = array())
                 if(isset($tabPost[$tasktime->id])){  
                     
                     $ret += $tasktime->postTaskTimeActual($tabPost[$tasktime->id], 
-                        $this->userId, $this->user, $this->timestamp,  
+                        $this->userId, $this->user, $this->token,  
                         $notes[$tasktime->id], $progress[$tasktime->id]);
                 }
                 $this->taskTimesheet[$key] = $tasktime->serialize();
@@ -764,11 +764,10 @@ Public function setStatus($user, $status, $id = 0)
  *
  ******************************************************************************/
 /* function to genegate the tHTML view of the TS
- *
-  *  @param    bool           $ajax     ajax of html behaviour
-  *  @return     string                                                   html code
+ *  @param    bool           $ajax     ajax of html behaviour
+ *  @return     string                                                   html code
  */
-public function getHTML($ajax = false, $Approval = false)
+public function getHTML( $ajax = false, $Approval = false)
 {
     global $langs;
     $Form = $this->getHTMLHeader();
@@ -779,7 +778,7 @@ public function getHTML($ajax = false, $Approval = false)
     $Form .= $this->getHTMLHolidayLines($ajax);
     if(!$Approval)$Form .= $this->getHTMLTotal();
     //$Form .= '<tbody style = "overflow:auto;">';
-    $Form .= $this->getHTMLtaskLines($ajax);
+    $Form .= $this->getHTMLtaskLines( $ajax);
     //$Form .= '</tbody>';// overflow div
     $Form .= $this->getHTMLTotal();
     $Form .= '</table>';
@@ -866,7 +865,7 @@ public function getHTMLFooter($ajax = false)
 {
      global $langs, $apflows;
     //form button
-    $html = '<input type = "hidden" name = "timestamp" value = "'.$this->timestamp."\"/>\n";
+    $html = '<input type = "hidden" id="csrf-token" name = "token" value = "'.$this->token."\"/>\n";
     $html .= '<div class = "tabsAction">';
      $isOpenSatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED));
     if($isOpenSatus) {
@@ -890,14 +889,14 @@ public function getHTMLFooter($ajax = false)
    /* function to genegate the timesheet table header
  *
  *  @param    int           $current           number associated with the TS AP
- *  @param     int               $timestamp         timestamp
+
   *  @return     string                                                   html code
  */
-public function getHTMLFooterAp($current, $timestamp)
+public function getHTMLFooterAp($current)
 {
      global $langs;
     //form button
-    $html .= '<input type = "hidden" name = "timestamp" value = "'.$timestamp."\"/>\n";
+    $html .= '<input type = "hidden" id="csrf-token"  name = "token" value = "'.$this->token."\"/>\n";
     $html .= '<input type = "hidden" name = "target" value = "'.($current+1)."\"/>\n";
     $html .= '<div class = "tabsAction">';
     if($offset == 0 || $prevOffset!=$offset)$html .= '<input type = "submit" class = "butAction" name = "Send" value = "'.$langs->trans('Next')."\" />\n";
@@ -914,9 +913,10 @@ public function getHTMLFooterAp($current, $timestamp)
 }
       /*
  * function to genegate the timesheet list
+
  *  @return     string                                                   html code
  */
-public function getHTMLtaskLines($ajax = false)
+public function getHTMLtaskLines( $ajax = false)
 {
     $i = 1;
     $Lines = '';
@@ -1134,7 +1134,7 @@ public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
 public function GetTimeSheetXML()
 {
     global $langs, $conf;
-    $xml .= "<timesheet dateStart = \"{$this->date_start}\" timestamp = \"{$this->timestamp}\" timetype = \"".$conf->global->TIMESHEET_TIME_TYPE."\"";
+    $xml .= "<timesheet dateStart = \"{$this->date_start}\" token = \"{$this->token}\" timetype = \"".$conf->global->TIMESHEET_TIME_TYPE."\"";
     $xml .= ' nextWeek = "'.date('Y\WW', strtotime($this->date_start."+3 days +1 week")).'" prevWeek = "'.date('Y\WW', strtotime($this->date_start."+3 days -1 week")).'">';
     //error handling
     $xml .= getEventMessagesXML();
