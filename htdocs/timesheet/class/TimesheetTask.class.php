@@ -153,8 +153,10 @@ class TimesheetTask extends Task
         $sql .= 'note';
         $sql .= ") VALUES(";
         $sql .= ' '.(empty($this->userId)?'NULL':'\''.$this->userId.'\'').', ';
-        $sql .= ' '.(empty($this->date_start_approval) || dol_strlen($this->date_start_approval) == 0?'NULL':'\''.$this->db->idate($this->date_start_approval).'\'').', ';
-        $sql .= ' '.(empty($this->date_end_approval) || dol_strlen($this->date_end_approval) == 0?'NULL':'\''.$this->db->idate($this->date_end_approval).'\'').', ';
+        $sql .= ' '.(empty($this->date_start_approval) || dol_strlen($this->date_start_approval) == 0?'NULL':'\''
+            .$this->db->idate($this->date_start_approval).'\'').', ';
+        $sql .= ' '.(empty($this->date_end_approval) || dol_strlen($this->date_end_approval) == 0?'NULL':'\''
+            .$this->db->idate($this->date_end_approval).'\'').', ';
         $sql .= ' '.(empty($this->status)?'1':'\''.$this->status.'\'').', ';
         $sql .= ' '.(empty($this->sender)?USER:'\''.$this->sender.'\'').', ';
         $sql .= ' '.(empty($this->recipient)?TEAM:'\''.$this->recipient.'\'').', ';
@@ -591,7 +593,8 @@ class TimesheetTask extends Task
                 $dateCur = $this->db->jdate($obj->task_date);
                 $day = getDayInterval($timeStart, $dateCur);
                 if($this->tasklist[$day]['duration'] > 0 || strlen($this->tasklist[$day]['note']) > 0){
-                    $other[$day][] = array( 'duration' => $this->tasklist[$day]['duration'], 'id' => $this->tasklist[$day]['id'], 'note' => $this->tasklist[$day]['note']);
+                    $other[$day][] = array( 'duration' => $this->tasklist[$day]['duration'], 
+                        'id' => $this->tasklist[$day]['id'], 'note' => $this->tasklist[$day]['note']);
                 }
                 
                 $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=> $obj->task_duration, 'note'=>$obj->note, 
@@ -685,7 +688,8 @@ class TimesheetTask extends Task
             
             $startDates = ($this->date_start>$this->startDatePjct)?$this->date_start:$this->startDatePjct;
 
-            $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0) || $this->stopDatePjct == 0)?$this->date_end:$this->stopDatePjct;
+            $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0) 
+                || $this->stopDatePjct == 0)?$this->date_end:$this->stopDatePjct;
             //take the end of the day
             
             $noteother = '';
@@ -723,7 +727,9 @@ class TimesheetTask extends Task
                 $html .= "<td>\n";
                 // add note popup
                 if($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE) {
-                $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
+                $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'
+                    .$this->userId.'_'.$this->id.'_'.$dayCur.'" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'
+                    .$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
                 //note code
                 $html .= '<div class = "modal" id = "note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';
                 $html .= '<div class = "modal-content">';
@@ -735,7 +741,8 @@ class TimesheetTask extends Task
                 $html .= '</div></div>';
                 }
                 //add input day
-                $html .= '<div style = "display:inline-block;"><input  type = "text" '.(($isOpen)?'':'readonly').' class = "column_'.$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'" ';
+                $html .= '<div style = "display:inline-block;"><input  type = "text" '.(($isOpen)?'':'readonly').' class = "column_'
+                    .$this->userId.'_'.$dayCur.' user_'.$this->userId.' line_'.$this->userId.'_'.$this->id.'" ';
                 $html .= ' name = "task['.$this->userId.']['.$this->id.']['.$dayCur.'][0]" ';
                 $html .= ' value = "'.((($hidezeros == 1) && ($dayWorkLoadSec == 0))?"":$dayWorkLoad);
                 $html .= '" maxlength = "5" size = "2" style = "'.$bkcolor.'" ';
@@ -796,7 +803,8 @@ class TimesheetTask extends Task
                     $html .= '</div>';
                     break;
                 case 'Tasks':
-                    if($conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'.$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off').'.png" onClick = favOnOff(event,'.$this->fk_project.','.$this->id.') style = "cursor:pointer;">  ';
+                    if($conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'.$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off')
+                        .'.png" onClick = favOnOff(event,'.$this->fk_project.','.$this->id.') style = "cursor:pointer;">  ';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->id);
                     $html .= str_replace('classfortooltip', 'classfortooltip colTasks', $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
@@ -849,7 +857,8 @@ class TimesheetTask extends Task
                     $html .= " onfocus = 'this.blur()' readonly = 'true' size = '1' value = '&#x2753;' onclick = 'tristate_Marks(this)' />\n";
                     break;
                 case 'Note':
-                    $html .= img_picto('Note', empty($this->note)?'filenew':'file', ' id="img_noteTask_'.$this->userId.'_'.$this->id.'" onClick = "openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\');"');
+                    $html .= img_picto('Note', empty($this->note)?'filenew':'file', ' id="img_noteTask_'.$this->userId
+                        .'_'.$this->id.'" onClick = "openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\');"');
                     $html .= '<div class = "modal" id = "noteTask_'.$this->userId.'_'.$this->id.'" >';
                     $html .= '<div class = "modal-content">';
                     $html .= '<span class = "close " onclick = "closeNotes();">&times;</span>';
@@ -1171,7 +1180,6 @@ class TimesheetTask extends Task
         if(!empty($progress) && $progress != $this->progress) {
             $this->progress = $progress;
             $progressUpdate = true;
-            $_SESSION['task_timesheet'][$timestamp]['ProgressUpdate']++;
         }
         if(is_array($timesheetPost))foreach($timesheetPost as $dayKey => $dayData) {
             $wkload = $dayData[0];
@@ -1189,9 +1197,12 @@ class TimesheetTask extends Task
             $_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted']+=$lineresult['timeSpendDeleted'];
             $_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']+=$lineresult['timeSpendCreated'];
         }
-
-        if($progressUpdate || (is_array($_SESSION['task_timesheet'][$timestamp]) && array_sum($_SESSION['task_timesheet'][$timestamp])>$_SESSION['task_timesheet'][$timestamp]['updateError'])) {
-            $this->updateTimeUsed();// needed upon delete
+        $nbUpdate = ($_SESSION['task_timesheet'][$timestamp]['timeSpendModified'] 
+            + $_SESSION['task_timesheet'][$timestamp]['timeSpendDeleted'] 
+            + $_SESSION['task_timesheet'][$timestamp]['timeSpendCreated']) ;
+        # update the time used on the task level
+        if($nbUpdate > 0) {
+            $this->updateTimeUsed();
             if ($progressUpdate)$_SESSION['task_timesheet'][$timestamp]['ProgressUpdate']++;
         }
         
@@ -1208,7 +1219,8 @@ class TimesheetTask extends Task
 
         $ret = 0;
         if(is_array($_SESSION['task_timesheet'][$timestamp]))
-            $ret = array_sum($_SESSION['task_timesheet'][$timestamp])-$_SESSION['task_timesheet'][$timestamp]['updateError'];
+            $ret = $_SESSION['task_timesheet'][$timestamp]['ProgressUpdate'] 
+            + $nbUpdate -$_SESSION['task_timesheet'][$timestamp]['updateError'];
         return $ret;
         //return $idList;
     }
