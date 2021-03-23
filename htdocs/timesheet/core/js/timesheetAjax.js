@@ -23,7 +23,7 @@ function refreshTimesheet(Wlmode,hidezero){
       try{
 	// extrat important info from XML
         var timesheet=xmlDoc.getElementsByTagName("timesheet");
-        if(timesheet.length==0)throw "Bad XML: no timesheet Node";
+        if (timesheet.length==0)throw "Bad XML: no timesheet Node";
         var token=timesheet[0].getAttribute('token');
         var dateStart=timesheet[0].getAttribute('dateStart');
         var id=timesheet[0].getAttribute('id');/*FIXME not returned yet*/
@@ -76,7 +76,7 @@ function refreshTimesheet(Wlmode,hidezero){
                     // document.getElementById("timesheetTable").innerHTML = table;
 
             }
-            if(tasks.length>1){
+            if (tasks.length>1){
                 var nameRow=MT.insertRow(idxT+1);
                 nameRow.innerHTML='<td colspan="'+headers[0].childNodes.length+'">'+tasks[j].getAttribute('userName')+'</td><td colspan="7"></td>';
             }
@@ -122,19 +122,19 @@ function generateTaskLine(headers,task,timetype,hidezero){
 	var days=task.getElementsByTagName('day');
     var taskId=task.getAttribute('id');
 	for( i =0; i< days.length; i++){
-		if(i!= days[i].getAttribute('col')) throw "badXML:task day";
+		if (i!= days[i].getAttribute('col')) throw "badXML:task day";
 		var open=days[i].getAttribute('open');
 		html += '<th><input type="text"';
-		if(open==0)html +=' readonly';
+		if (open==0)html +=' readonly';
 		html +=' class="time4day['+i+']" ';
 		html += 'name="task['+taskId+']['+i+']" ';
 		var Value=days[i].childNodes[0].nodeValue;
 		html +=' value="'+Value;
 		html +='" maxlength="5" style="width: 90%;'
 		var color='f0fff0';
-		if(Value=="00:00"||Value=="0")color='';
-		if(open==0)color='909090';
-		if(color!='')html +='background:#'+color;
+		if (Value=="00:00"||Value=="0")color='';
+		if (open==0)color='909090';
+		if (color!='')html +='background:#'+color;
 		html +='; " onkeypress="return regexEvent(this,event,\'timeChar\')" ';
 		html += 'onblur="regexEvent(this,event,\''+timetype+'\');updateTotal('+i+',\''+timetype+'\',0,'+hidezero+')" />';
 		html += "</th>";
@@ -157,9 +157,9 @@ function UpdateNavigation(nextDate,prevDate){
 function loadXMLTimesheet(dateStart, user)
 {
     var Url="timesheet.php?xml=1&dateStart="+dateStart;
-    if(user!==0) Url+="&user="+user;
+    if (user!==0) Url+="&user="+user;
     var token=$("#token").serialize();
-    if(token!==undefined)Url+="&"+token;
+    if (token!==undefined)Url+="&"+token;
 $.ajax({
     type: "GET",
     url: Url,
@@ -173,9 +173,9 @@ $.ajax({
 function loadXMLTimesheetFromDate(toDate, user)
 {
     var Url="timesheet.php?action=goToDate&xml=1&toDate="+toDate;
-    if(user!==0) Url+="&user="+user;
+    if (user!==0) Url+="&user="+user;
     var token=$("#token").serialize();
-    if(token!==undefined)Url+="&"+token;
+    if (token!==undefined)Url+="&"+token;
 
 $.ajax({
     type: "GET",
@@ -192,7 +192,7 @@ function loadXMLTimesheetFromSubmit(user)
 
     var Url="timesheet.php?action=submit&xml=1";
     //var postData=document.getElementById('timesheetForm');
-    if(user!==0) Url+="&user="+user;
+    if (user!==0) Url+="&user="+user;
     $.ajax({
     type: "POST",
     url: Url,
@@ -208,7 +208,7 @@ function submitTimesheet(user){
     return false;
 }
 function loadXMLError(Doc){
-	if(this.dataType=="xml"){
+	if (this.dataType=="xml"){
 		$.jnotify("XML error",'error',true);
 	}else{
  		$.jnotify("you are not logged",'error',true);
@@ -220,7 +220,7 @@ function loadXMLError(Doc){
 //fucntion to handle toDate submit
 function toDateHandler(){
     var toDate=$('#toDate').val();
-    if(toDate==''){
+    if (toDate==''){
         alert('Date ?');
     }else{
         loadXMLTimesheetFromDate(toDate, 0);

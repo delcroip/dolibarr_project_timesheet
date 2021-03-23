@@ -23,10 +23,10 @@
 $res = 0;
 error_reporting(E_ALL);
 $currentTimesheetPath = dirname(__FILE__);
-if(! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
+if (! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
     include $currentTimesheetPath.'/dev.inc.php';
 }
-//if(! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+//if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
 if (! $res && file_exists($currentTimesheetPath."/../../../main.inc.php")) {
     $res = @include $currentTimesheetPath.'/../../../main.inc.php';// in HTdocs
     //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../../");

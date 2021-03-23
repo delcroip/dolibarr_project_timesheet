@@ -30,7 +30,7 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $userIdSelected = GETPOST('userSelected', 'int');
 $exportFriendly = GETPOST('exportFriendly', 'alpha');
-if(empty($userIdSelected))$userIdSelected = $userid;
+if (empty($userIdSelected))$userIdSelected = $userid;
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 // Load traductions files requiredby by page
@@ -48,7 +48,7 @@ $short = GETPOST('short', 'int');
 $invoicedCol = GETPOST('invoicedcol', 'int');
 $ungroup = GETPOST('ungroup', 'int');
 $model = GETPOST('model', 'alpha');
-if(empty($mode)){
+if (empty($mode)){
     $mode = 'PTD';
     $ungroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
     $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
@@ -73,7 +73,7 @@ $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
-if(empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
+if (empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
     $step = 0;
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
@@ -82,17 +82,17 @@ if(empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
 // if the user can see ts for other the user id is diferent
 $userIdlist = array();
 $userIdlistfull = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
-if(!empty($userIdSelected) && $userIdSelected <> -999) {
+if (!empty($userIdSelected) && $userIdSelected <> -999) {
     
     $userIdlistfull[] = $userid;
-    if(in_array($userIdSelected, $userIdlist) || $user->admin || $user->rights->timesheet->attendance->admin) {
+    if (in_array($userIdSelected, $userIdlist) || $user->admin || $user->rights->timesheet->attendance->admin) {
         $userIdlist[] = $userIdSelected;
     } else{
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
         unset($action);
         $userIdlist[] = $userid;
     }
-}elseif($userIdSelected = -999)
+} elseif ($userIdSelected = -999)
 {
     $userIdlist = $userIdlistfull;
 }else{
@@ -100,25 +100,28 @@ if(!empty($userIdSelected) && $userIdSelected <> -999) {
 }
 
 $reportStatic = new TimesheetReport($db);
-$reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
-if($action == 'getpdf') {
+$reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, 
+    $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
+if ($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
-    if($pdf->writeFile($reportStatic, $langs)>0) {
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/" . dol_sanitizeFileName($reportStatic->name) . ".pdf");
+    if ($pdf->writeFile($reportStatic, $langs)>0) {
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/" 
+        .dol_sanitizeFileName($reportStatic->name) . ".pdf");
         return;
     }
     ob_end_flush();
     exit();
-}elseif($action == 'getExport'){
-    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+} elseif ($action == 'getExport'){
+    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?
+        300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
     $max_time = @ini_get("max_execution_time");
-    if($max_time && $max_time < $max_execution_time_for_export)
+    if ($max_time && $max_time < $max_execution_time_for_export)
     {
         @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
     }
     $name = $reportStatic->buildFile($model, false);
-    if(!empty($name)){
+    if (!empty($name)){
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=export&file=".$name);
         return;
     }
@@ -130,24 +133,34 @@ if($action == 'getpdf') {
 llxHeader('', $langs->trans('userReport'), '');
 $Form .= "<div id='quicklinks'>";
 //This week quick link
-$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard');
-$Form .= "&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard')."'>".$langs->trans('thisWeek')."</a>";
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected="
+    .$user->id."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard')."'>"
+    .$langs->trans('thisWeek')."</a>";
 //This month quick link
-$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard');
-$Form .= "&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard')."'>".$langs->trans('thisMonth')."</a>";
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected="
+    .$user->id."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard')."'>"
+    .$langs->trans('thisMonth')."</a>";
 //last week quick link
-$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard');
-$Form .= "&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard')."'>".$langs->trans('lastWeek')."</a>";
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected="
+    .$user->id."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard')."'>"
+    .$langs->trans('lastWeek')."</a>";
 //Last month quick link
-$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard');
-$Form .= "&dateEnd=".dol_print_date(strtotime("last day of previous month"), 'dayxcard')."'>".$langs->trans('lastMonth')."</a>";
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected="
+    .$user->id."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard');
+$Form .= "&dateEnd=".dol_print_date(strtotime("last day of previous month"), 'dayxcard')
+    ."'>".$langs->trans('lastMonth')."</a>";
 //today
 $today = dol_print_date(mktime(), 'dayxcard');
-$Form .= "<a class='tab' href = '?action=reportUser&userSelected=".$user->id."&dateStart=".$today;
+$Form .= "<a class='tab' href = '?action=reportUser&userSelected="
+    .$user->id."&dateStart=".$today;
 $Form .= "&dateEnd=".$today."'>".$langs->trans('today')."</a> ";
 $Form .= "</div>";
 
-$Form .= '<form action="?action=reportUser'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
+$Form .= '<form action="?action=reportUser'.(($optioncss != '')?'&amp;optioncss='
+    .$optioncss:'').'" method = "POST">
         <table class = "noborder"  width = "100%">
         <tr>
         <td>'.$langs->trans('User').'</td>
@@ -164,14 +177,15 @@ $Form .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null, 0, $id
 
 //$mode = 'PTD';
 $querryRes = '';
-if(!empty($userIdSelected)
+if (!empty($userIdSelected)
         &&!empty($dateEnd) && !empty($dateStart))
 {
-    if($exportfriendly){
+    if ($exportfriendly){
         $querryRes .= $reportStatic->getHTMLreportExport();
     }else {
         $querryRes .= $reportStatic->getHTMLreport($short,
-            "User report ".dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'));
+            "User report ".dol_print_date($dateStart, 'day').'-'
+                .dol_print_date($dateEnd, 'day'));
     }
 }
 
@@ -206,13 +220,22 @@ $Form .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').'</td>'
  $Form .= '</tr></table>';
  $Form .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
  $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
-//if(!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if(!empty($querryRes)  && $conf->global->MAIN_MODULE_EXPORT)$Form .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
-if(!empty($querryRes)) $Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&userSelected='.$userIdSelected.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('PDF').'</a>';
+//if (!empty($querryRes))$Form .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
+if (!empty($querryRes)  && $conf->global->MAIN_MODULE_EXPORT)$Form 
+    .= '<a class = "butAction" href="?action=getExport&dateStart='
+    .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
+    .dol_print_date($dateEnd, 'dayxcard').'&userSelected='
+    .$userIdSelected.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='
+    .$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
+if (!empty($querryRes)) $Form .= '<a class = "butAction" href="?action=getpdf&dateStart='
+    .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
+    .dol_print_date($dateEnd, 'dayxcard')
+    .'&userSelected='.$userIdSelected.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='
+    .$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('PDF').'</a>';
 $Form .= '</form>';
-if(!($optioncss != '' && !empty($userIdSelected))) echo $Form;
+if (!($optioncss != '' && !empty($userIdSelected))) echo $Form;
 // section to generate
-if(!empty($querryRes)) {
+if (!empty($querryRes)) {
     echo $querryRes;
 }
 llxFooter();

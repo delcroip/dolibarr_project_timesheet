@@ -53,12 +53,12 @@ class box_approval extends ModeleBoxes
                         'text' => $text,
                         'limit' => dol_strlen($text)
       );
-        if($user->rights->timesheet->approval) {
+        if ($user->rights->timesheet->approval) {
             
             $subordinate = implode(', ', getSubordinates($db, $userid, 2));
-            if($subordinate == '')$subordinate = 0;
+            if ($subordinate == '')$subordinate = 0;
             $tasks = implode(', ', array_keys(getTasks($db, $userid)));
-            if($tasks == '')$tasks = 0;
+            if ($tasks == '')$tasks = 0;
             $sql = 'SELECT';
            // $sql .= ' COUNT(t.rowid) as nb, ';
             $sql .= ' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
@@ -71,22 +71,22 @@ class box_approval extends ModeleBoxes
             $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as utt';
             $sql .= ' WHERE utt.status = '.DRAFT.' AND utt.fk_userid= '.$userid;
             $result = $db->query($sql);
-            if($result) {
+            if ($result) {
                 $num = $db->num_rows($result);
                 while($num>0)
                 {
                     $obj = $db->fetch_object($result);
-                    if($obj->recipient == PROJECT) {
+                    if ($obj->recipient == PROJECT) {
                         $nbPrj = $obj->nbtsk;
-                    } elseif($obj->recipient == TEAM) {
+                    } elseif ($obj->recipient == TEAM) {
                         $nbTm = $obj->nbtm;
-                    }elseif($obj->recipient == USER) {
+                    } elseif ($obj->recipient == USER) {
                         $nbUsr = $obj->nbtm;
                     }
                     $num--;
                 }
                 $i=0;
-                if($nbTm>0){
+                if ($nbTm>0){
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "left"',
                         'text' => $langs->trans('team').': ',
@@ -100,7 +100,7 @@ class box_approval extends ModeleBoxes
                     );
                     $i++;
                 }
-                if($nbPrj>0){
+                if ($nbPrj>0){
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "left"',
                         'text' => $langs->trans('project').': ',
@@ -114,7 +114,7 @@ class box_approval extends ModeleBoxes
                     );
                     $i++;
                 }
-                if($nbUsr>0){
+                if ($nbUsr>0){
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "left"',
                         'text' => $langs->trans('Timesheet').': ',
