@@ -225,11 +225,11 @@ public function writeFile($object, $outputlangs)
         $tab_height = $writable_height - $height_note;
         //$cur_tab_height = $tab_height;
         $HeightSignBox = 30;
-        $heightforinfotot = 40;
+        $heightforlastfooter = ($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX == 1)?7:($HeightSignBox + 7);
         $heightforfooter = $this->marge_basse+1;        // Height reserved to output the footer(value include bottom margin)
         $pageposbefore = 0;
         $heightoftitleline = 6;
-        $bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
+        $bottomlasttab = $this->page_hauteur - $heightforlastfooter - $heightforfooter + 1;
         $widthSignBox = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/2-1;
         $cur_tab_height = $tab_height;
         $pdf->AddPage();
@@ -260,7 +260,7 @@ public function writeFile($object, $outputlangs)
             if($pageposafter>$pageposbefore) {
                 // auto page break
                 $addpagebreak = true;
-            } elseif($posyafter>$this->page_hauteur - $heightforfooter - $heightforinfotot) {
+            } elseif($posyafter>$this->page_hauteur - $heightforfooter - $heightforlastfooter) {
                 // in the sign zone, check if a new page will be required
                 if($posyafter >($this->page_hauteur -($heightforfooter))) {
                     // There is a pagebreak, shouldn't happen as this should trigger a auto page break {
@@ -297,7 +297,7 @@ public function writeFile($object, $outputlangs)
                 if($pagenb == 1) {
                     $this->tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, $heightoftitleline, $outputlangs, 0);
                 } else {
-                    $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, $heightoftitleline, $outputlangs, 1);
+                    $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, $heightoftitleline, $outputlangs, 0);
                 }
                 //$this->pageFoot($pdf, $object, $outputlangs, 1);
                 $pdf->setPage($pagenb);
@@ -315,11 +315,17 @@ public function writeFile($object, $outputlangs)
         }
         // Show table border for last page
         if($pagenb == 1) {
-            $this->tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot -   $heightforfooter, $heightoftitleline, $outputlangs, 0);
+            $this->tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforlastfooter -   $heightforfooter, $heightoftitleline, $outputlangs, 0);
         } else {
-            $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot   - $heightforfooter, $heightoftitleline, $outputlangs, 0);
+            $this->tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforlastfooter   - $heightforfooter, $heightoftitleline, $outputlangs, 0);
         }// show the sign box & total on the last page for the user
-        if(empty($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX)) {
+        if($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX == 1) {
+            $txtTotal = $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
+            $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1, 0, true, 'L');
+            $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $txtTotal, 0, 1, 0, true, 'R');
+            $pdf->Rect($this->page_largeur-$this->marge_droite-60, $bottomlasttab, 60, 5);
+        }else
+        {
             $pdf->SetFont('', 'B', $default_font_size);
             $txtTotal = $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1, 0, true, 'L');
@@ -336,7 +342,7 @@ public function writeFile($object, $outputlangs)
              //draw right rect for employee sign
             $pdf->Rect($this->marge_gauche, $bottomlasttab+6, $widthSignBox, $HeightSignBox);
              //draw left rect for provider sign
-            $pdf->Rect($this->marge_gauche+$widthSignBox+1, $bottomlasttab+6, $widthSignBox, $HeightSignBox);
+            $pdf->Rect($this->marge_gauche+$widthSignBox+2, $bottomlasttab+6, $widthSignBox, $HeightSignBox);
         }
         // Pied de page
         //$this->pageFoot($pdf, $object, $outputlangs);
