@@ -50,10 +50,16 @@ $month = GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Dat
 //$langs->load("companies");
 //$firstDay = ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
 //$lastDay = ($month)?strtotime('last day of this month', $firstDay):strtotime('last day of previous month');
-$langs->load("main");
-$langs->load("projects");
-$langs->load('timesheet@timesheet');
-//find the right week
+
+// Load translation files required by the page
+$langs->loadLangs(
+	array(
+		'main',
+		'projects',
+		'timesheet@timesheet',
+	)
+);
+
 //find the right week
 $dateStart = strtotime(GETPOST('dateStart', 'alpha'));
 $dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goTodate
@@ -153,44 +159,14 @@ if ($projectSelectedId   &&!empty($dateStart)) {
         $querryRes .= $reportStatic->getHTMLreport($short);
     }
 }
-$form_output .= "<div id='quicklinks'>";
-//This week quick link
-$form_output .= "<a class='tab' href = '?action=reportUser&projectSelected="
-    .$projectSelectedId."&dateStart="
-    .dol_print_date(strtotime("monday this week"), 'dayxcard');
-$form_output .= "&dateEnd="
-    .dol_print_date(strtotime("sunday this week"), 'dayxcard')."'>"
-    .$langs->trans('thisWeek')."</a>";
-//This month quick link
-$form_output .= "<a class='tab' href = '?action=reportUser&projectSelected="
-    .$projectSelectedId."&dateStart="
-    .dol_print_date(strtotime("first day of this month"), 'dayxcard');
-$form_output .= "&dateEnd="
-    .dol_print_date(strtotime("last day of this month"), 'dayxcard')."'>"
-    .$langs->trans('thisMonth')."</a>";
-//last week quick link
-$form_output .= "<a class='tab' href = '?action=reportUser&projectSelected="
-    .$projectSelectedId."&dateStart="
-    .dol_print_date(strtotime("monday last week"), 'dayxcard');
-$form_output .= "&dateEnd="
-    .dol_print_date(strtotime("sunday last week"), 'dayxcard')."'>"
-    .$langs->trans('lastWeek')."</a>";
-//Last month quick link
-$form_output .= "<a class='tab' href = '?action=reportUser&projectSelected="
-    .$projectSelectedId."&dateStart="
-    .dol_print_date(strtotime("first day of previous month"), 'dayxcard');
-$form_output .= "&dateEnd="
-    	.dol_print_date(strtotime("last day of previous month"), 'dayxcard')."'>"
-        .$langs->trans('lastMonth')."</a>";
-//today
-$today = dol_print_date(mktime(), 'dayxcard');
-$form_output .= "<a class='tab' href = '?action=reportUser&projectSelected="
-    .$projectSelectedId."&dateStart=".$today;
-$form_output .= "&dateEnd=".$today."'>".$langs->trans('today')."</a> ";
-$form_output .= "</div>";
-$form_output .= '<form action="?action=reportproject'
-    .(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
-        <table class = "noborder"  width = "100%">
+
+$head = timesheet_report_prepare_head( 'project', $projectSelectedId );
+print dol_get_fiche_head( $head, 'showthismonth', $langs->trans( 'TimeSpent' ), - 1, 'clock' );
+
+$form_output = '';
+
+$form_output .= '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
+        <table class="noborder"  width="100%">
         <tr>
         <td>'.$langs->trans('Project').'</td>
         <td>'.$langs->trans('DateStart').'</td>
@@ -213,9 +189,9 @@ $form_output .= '<option value = "-999" '
 $form_output .= '</select></td>';
 //}
 // select start date
-$form_output .= '<td>'.$form_output->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
+$form_output .= '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
 // select end date
-$form_output .= '<td>'.$form_output->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
+$form_output .= '<td>'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
 //$form_output .= '<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year, 'year', 0, 10, 3)
 // Select mode
 $form_output .= '<td><input type = "radio" name = "mode" value = "UTD" '.($mode == 'UTD'?'checked':'');
@@ -298,7 +274,7 @@ foreach ($listeall as $key => $val)
     print '<td width="16">'.img_picto_common($key, $objmodelexport->getPictoForKey($key)).' ';
     $text = $objmodelexport->getDriverDescForKey($key);
     $label = $listeall[$key];
-    print $form_output->textwithpicto($label, $text).'</td>';
+    print $form->textwithpicto($label, $text).'</td>';
     print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
     print '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
     print '</tr>'."\n";

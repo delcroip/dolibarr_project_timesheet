@@ -72,7 +72,7 @@ $statusA = array(0=> $langs->trans('null'), 1 => $langs->trans('draft'), 2=>$lan
     9=>$langs->trans('planned'));
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 
-    
+
 //const REDUNDANCY = [
 /*Define("NULL", 0);
 Define("NONE", 1);
@@ -143,7 +143,7 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
         ksort($sql, SORT_NUMERIC);
         $sqlused = implode($sql);
         dol_syslog('form::get_subordinate role='.$role, LOG_DEBUG);
-        
+
         $resql = $db->query($sqlused);
         if ($resql) {
             $i = 0;
@@ -652,4 +652,44 @@ function ajaxprogress($user, $json)
         $object['status'] = TimesheetsetEventMessage($arrayRes, true);
     }
     return json_encode($object);
+}
+
+function timesheet_report_prepare_head( $mode, $item_id ) {
+
+	global $langs, $conf, $user;
+
+	$head   = array();
+	$h      = 0;
+	$action = "reportUser&userSelected=" . $item_id;
+	if ( 'project' == $mode ) {
+		$action = "reportUser&projectSelected=" . $item_id;;
+	}
+
+	$head[$h][0] = "?action=".$action."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard');
+	$head[$h][1] = $langs->trans('thisWeek');
+	$head[$h][2] = 'showthisweek';
+	$h++;
+
+	$head[$h][0] = "?action=".$action."&dateStart=".dol_print_date(strtotime("first day of this month")."&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard'), 'dayxcard');
+	$head[$h][1] = $langs->trans('thisMonth');
+	$head[$h][2] = 'showthismonth';
+	$h++;
+
+	$head[$h][0] = "?action=".$action."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard');
+	$head[$h][1] = $langs->trans('lastWeek');
+	$head[$h][2] = 'showlastweek';
+	$h++;
+
+	$head[$h][0] = "?action=".$action."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("last day of previous month"), 'dayxcard');
+	$head[$h][1] = $langs->trans('lastMonth');
+	$head[$h][2] = 'showlastmonth';
+	$h++;
+
+	$today = dol_print_date(mktime(), 'dayxcard');
+
+	$head[$h][0] = "?action=".$action."&dateStart=".$today."&dateEnd=".$today;
+	$head[$h][1] = $langs->trans('Today');
+	$head[$h][2] = 'showtoday';
+
+	return $head;
 }
