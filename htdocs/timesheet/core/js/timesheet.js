@@ -35,11 +35,11 @@ function submitTs(){
               //var regex= /^[0-9:]{1}$/;
               //alert(event.charCode);
               //var charCode = (evt.which) ? evt.which : event.keyCode;
-        if((charCode >= 48) && (charCode <= 57)) return true;
-        else if(charCode===46) return true; // comma
-        else if(charCode===8) return true;// periode
-        else if(charCode === 58)  return true; // : 
-        else if(ctrlDown && charCode == 86) return true; //Ctrl + V
+        if ((charCode >= 48) && (charCode <= 57)) return true;
+        else if (charCode===46) return true; // comma
+        else if (charCode===8) return true;// periode
+        else if (charCode === 58)  return true; // : 
+        else if (ctrlDown && charCode == 86) return true; //Ctrl + V
         else return false;      
 
   }
@@ -53,12 +53,12 @@ function pad(n) {
 
 //function from http://www.timlabonne.com/2013/07/parsing-a-time-string-with-javascript/
 function parseTime(timeStr, dt) {
-    if(!dt) {
+    if (!dt) {
         dt = new Date();
     }
 
     var time = timeStr.match(/(\d+)(?::(\d\d))?\s*((p|a)?)/i);
-    if(!time) {
+    if (!time) {
         dt.setHours(0);
         return NaN;
     }
@@ -79,12 +79,12 @@ function validateTotal(col_id){
         var Total =document.getElementsByClassName('TotalColumn_'+col_id);
         var lines =document.getElementsByClassName('column_'+col_id);
         total=getTotal(lines);
-        if(Total[0].innerHTML!=minutesToHTML(total)){
+        if (Total[0].innerHTML!=minutesToHTML(total)){
             var hours=total/60;
-            if(hours>day_max_hours){
+            if (hours>day_max_hours){
                $.jnotify(err_msg_max_hours_exceded ,'error',false);   //
                 return -1;
-            }else if(hours>day_hours){
+            }else if (hours>day_hours){
                $.jnotify(wng_msg_hours_exceded ,'warning',false);
             }
         }
@@ -165,15 +165,15 @@ function removeUnchanged(){
             var nbTextarea = textarea.length;
             var nbSelect = select.length;
             for(k=0;k<nbInputs;k++){
-                if(inputs[k].defaultValue!=inputs[k].value)changed++
+                if (inputs[k].defaultValue!=inputs[k].value)changed++
             }
             for(k=0;k<nbTextarea;k++){
-                if(textarea[k].defaultValue!=textarea[k].value)changed++
+                if (textarea[k].defaultValue!=textarea[k].value)changed++
             }
             for(k=0;k<nbSelect;k++){
-                if(select[k].defaultValue!=select[k].value)changed++
+                if (select[k].defaultValue!=select[k].value)changed++
             }
-            if(changed==0){
+            if (changed==0){
                 task[i].parentNode.removeChild(task[i]);
                 i--;
                 nbUser--;
@@ -194,7 +194,7 @@ function removeUnchanged(){
  */
 function validateTime(object,col_id){
     updated=false;
-    if(object.value!=object.defaultValue)
+    if (object.value!=object.defaultValue)
     {
     switch(time_type)
       {
@@ -203,13 +203,13 @@ function validateTime(object,col_id){
                 object.value=object.value.replace(',','.');
                 //var regex=/^([0-5]{1}([.,]{1}[0-9]{1,3})?|[.,]{1}[0-9]{1,3}|)$/;
                 var regex=/^([0-2]{0,1})?([:,.]([0-9]{0,3}))?$/
-                if(regex.test(object.value)){
+                if (regex.test(object.value)){
                     object.value=object.value.replace(/:|\,/g,'.'); 
                 }else {
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
                 }
-                if(hide_zero && object.value=='0')object.value='';
+                if (hide_zero && object.value=='0')object.value='';
           break;
           case 'hours':
           default:
@@ -217,29 +217,29 @@ function validateTime(object,col_id){
                   var regex= /^(([0-1]{0,1}[0-9]{1})|([2]{1}[0-4]{0,1}))?([:,.]([0-9]{0,2}))?$/;
                   var regex_format= /^0*([0-9]{2,}):([0-9]{2})0*$/;
                   
-                  if(regex.test(object.value))
+                  if (regex.test(object.value))
                   {
                       tmp=object.value.replace(regex,'00$01:$0500');
                       object.value=tmp.replace(regex_format,'$1:$2');
-                  }else if(!object.value){
+                  }else if (!object.value){
                         object.value='0:00';
                 }
                 else{
                     object.value=object.defaultValue;
                     object.style.backgroundColor = "red";
                 }
-                if(hide_zero && object.value=='00:00')object.value='';
+                if (hide_zero && object.value=='00:00')object.value='';
                 /*
                   var regex= /^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1}):[0-9]{2}$/;
                   var regex2=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1})$/;
                   var regex3=/^([0-1]{0,1}[0-9]{1}|[2]{0,1}[0-4]{1}):[0-9]{1}$/;
-                  if(!regex.test(object.value))
+                  if (!regex.test(object.value))
                   {
-                    if(regex2.test(object.value)){ // simple number will assume hours
+                    if (regex2.test(object.value)){ // simple number will assume hours
                         object.value=object.value+':00';
-                    }else if(regex3.test(object.value)){ //missing 0 will assume ten of min
+                    }else if (regex3.test(object.value)){ //missing 0 will assume ten of min
                         object.value=object.value+'0';
-                    }else if(!object.value){
+                    }else if (!object.value){
                         object.value='0:00';
                     }
                     else{
@@ -247,14 +247,14 @@ function validateTime(object,col_id){
                         object.style.backgroundColor = "red";
                     }
                   }*/
-                  if(hide_zero && object.value=='0:00')object.value='';
+                  if (hide_zero && object.value=='0:00')object.value='';
 //              }
             break;
       }
     }else{
         object.style.backgroundColor = object.style.getPropertyValue("background");
     }
-    if(validateTotal(col_id)<0){
+    if (validateTotal(col_id)<0){
           object.value=minutesToHTML(0);
           object.style.backgroundColor = "red";
     }
@@ -288,17 +288,17 @@ function updateAllLinesTotal(){
 function getTotal(dayList){
     var nbline = dayList.length;
     var total=0;
-    if(time_type=="hours")
+    if (time_type=="hours")
     {
         for (var i=0;i<nbline;i++)
         {
             var taskTime= new Date(0);
             var element=dayList[i];
-            if(element)
+            if (element)
             {
-                if(element.value){
+                if (element.value){
                     parseTime(element.value,taskTime);
-                }else if(element.innerHTML){
+                }else if (element.innerHTML){
                     parseTime(element.innerHTML,taskTime);
                 }else {
                     parseTime("00:00",taskTime);
@@ -310,11 +310,11 @@ function getTotal(dayList){
         for (var i=0;i<nbline;i++)
         {
                 var element=dayList[i];
-                if(element)
+                if (element)
                 {
-                    if(element.value){
+                    if (element.value){
                         total+=parseFloat(element.value);
-                    }else if(element.innerHTML){
+                    }else if (element.innerHTML){
                         total+=parseFloat(element.innerHTML);
                     }else{
                         total+=0;
@@ -328,13 +328,13 @@ function getTotal(dayList){
 
 function minutesToHTML(total){
     var retVal='';
-    if(time_type=="hours")
+    if (time_type=="hours")
     {
         retVal=pad(Math.floor(total/60))+':'+pad(total-Math.floor(total/60)*60.);
-        if(hide_zero && retVal=='00:00')retVal='';
+        if (hide_zero && retVal=='00:00')retVal='';
     }else{
         retVal= Math.round(total/60/day_hours*1000)/1000;
-        if(hide_zero && total==0)retVal='';
+        if (hide_zero && total==0)retVal='';
     }
     return retVal;
 }
@@ -345,7 +345,7 @@ function openTab(evt, tabName) {
 
     // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabBar");
-  if(tabName=="All"){
+  if (tabName=="All"){
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].style.display = "block";
         }
@@ -388,11 +388,11 @@ function searchTask(evt){
         for (j=0; j<fields.length;j++){
            var found=0;
            found+=fields[j].innerHTML.search(search);
-           if(found>=0){
+           if (found>=0){
              displayLine=true;
             }
         }
-        if(!displayLine)tslist[i].style.display = "none";
+        if (!displayLine)tslist[i].style.display = "none";
     }
 
 }
@@ -412,7 +412,7 @@ function showFavoris(evt, tabName) {
     for (i = 0; i < tsNote.length; i++) {
                tsNote[i].style.display = "none";
     }
-    if(tabName=='All'){
+    if (tabName=='All'){
         for (i = 0; i < tslist.length; i++) {
             tslist[i].style.display = "";
         }
@@ -421,7 +421,7 @@ function showFavoris(evt, tabName) {
                tslist[i].style.display = "none";
         }
 
-        if(tabName=='whitelist'){
+        if (tabName=='whitelist'){
             wlist = document.getElementsByClassName("timesheet_whitelist");
             for (i = 0; i < wlist.length; i++) {
                wlist[i].style.display = "";
@@ -454,14 +454,14 @@ function checkEmptyFormFields(even,Myform,msg){
     var fields=curform.getElementsByTagName("input");
     var error=0;
     for(field in fields){
-        if(fields[field].value=='' && fields[field].name!='')error++;
+        if (fields[field].value=='' && fields[field].name!='')error++;
     }
     var selects=curform.getElementsByTagName("select");
     for(select in selects){
-        if(selects[select].value=='-1' && fields[field].name!='')error++;
+        if (selects[select].value=='-1' && fields[field].name!='')error++;
     }
 
-    if(error){
+    if (error){
         $.jnotify(msg,'error',true);
         return false
     }
@@ -506,7 +506,7 @@ function checkEmptyFormFields(even,Myform,msg){
  */
 function ShowHide(id){
     elmt=document.getElementById(id);
-    if(elmt.style.display != ""){
+    if (elmt.style.display != ""){
         //elmt.hidden=false;
         elmt.style.display = "";
     }else{
@@ -518,17 +518,23 @@ function ShowHide(id){
  * function to add/remove this task as favoris
  */
 function favOnOff(evt, prjtId, tskId){
+    var token = getToken();
     var favId=evt.target.id;
     var url='TimesheetFavouriteAdmin.php?ajax=1&Project='+prjtId+'&Task='+tskId;
+    url+='&token='+token;
     url+='&action='+((favId>0)?('confirm_delete&confirm=yes&id='+favId):'add');
     httpGetAsync(url,setId, evt);
+}
+
+function getToken(){
+    return document.getElementById('csrf-token').value
 }
 
 function httpGetAsync(theUrl, callback, callbackParam)
 {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
-        if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback(callbackParam,xmlHttp.responseText);
     }
     xmlHttp.open("GET", theUrl, true); // true for asynchronous
@@ -538,7 +544,7 @@ function httpGetAsync(theUrl, callback, callbackParam)
 function setId(evt, JsonStr){
     var obj = JSON.parse(JsonStr);
      evt.target.id=obj.id;
-     if(obj.id>0){
+     if (obj.id>0){
           evt.target.src="img/fav_on.png";
           evt.target.parentElement.parentElement.className=evt.target.parentElement.parentElement.className.replace('timesheet_blacklist','timesheet_whitelist');
      }else{
@@ -577,7 +583,7 @@ function closeNotes(){
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
 
-    if(!event.target.classList.contains('modal')) {
+    if (!event.target.classList.contains('modal')) {
         //closeNotes();
     }
 }
@@ -603,12 +609,12 @@ function sortTable(table,col,sort) {
         x = rows[i].getElementsByClassName(col)[0];
         y = rows[i + 1].getElementsByClassName(col)[0];
         // Check if the two rows should switch place:
-        if(typeof(x) !== 'undefined' && typeof(y) !== 'undefined'){
+        if (typeof(x) !== 'undefined' && typeof(y) !== 'undefined'){
             if (sort == "desc" && (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())){
                 // If so, mark as a switch and break the loop:
                 shouldSwitch = true;
                 break;
-            }else if(sort == "asc" && (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())){
+            }else if (sort == "asc" && (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())){
                 // If so, mark as a switch and break the loop:
                 shouldSwitch = true;
                 break;                
@@ -653,24 +659,24 @@ function updateProgressElement(element){
 
   function updateProgressSuccess(data){
         
-        if(typeof data.status!== 'undefined' && data.status && data.status!=""){ //  display status
+        if (typeof data.status!== 'undefined' && data.status && data.status!=""){ //  display status
             var obj=JSON.parse(data.status);
-            Object.keys(obj).forEach(function(key){
+            Object.keys(obj).foreach (function(key){
                 $.jnotify(obj[key].text+obj[key].param,obj[key].type)
                 if (obj[key].type == 'megs'){// only one will be returned
                 }
             });
         }
-        if( typeof data.name !== 'undefined' &&  data.name !== null){
+        if ( typeof data.name !== 'undefined' &&  data.name !== null){
             let element = document.getElementsByName(data.name);
-            if(element[0] !== 'undefined') element[0].value =  data.progress;
+            if (element[0] !== 'undefined') element[0].value =  data.progress;
         }
 
   }
 
   function updateAllProgress(){
     selectElements = document.getElementsByTagName('select')
-    Object.keys(selectElements).forEach(function(key){
+    Object.keys(selectElements).foreach (function(key){
             current = selectElements[key];
             selectName = current.getAttribute("name");
             if (selectName && selectName.indexOf("progressTask") === 0) {

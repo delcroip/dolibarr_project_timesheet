@@ -23,14 +23,14 @@ require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-$form = new Form($db);
+$form_output = new Form($db);
 $htmlother = new FormOther($db);
 $userid = is_object($user)?$user->id:$user;
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $userIdSelected = GETPOST('userSelected', 'int');
 $exportFriendly = GETPOST('exportFriendly', 'alpha');
-if(empty($userIdSelected))$userIdSelected = $userid;
+if (empty($userIdSelected))$userIdSelected = $userid;
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -54,7 +54,7 @@ $short = GETPOST('short', 'int');
 $invoicedCol = GETPOST('invoicedcol', 'int');
 $ungroup = GETPOST('ungroup', 'int');
 $model = GETPOST('model', 'alpha');
-if(empty($mode)){
+if (empty($mode)){
     $mode = 'PTD';
     $ungroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
     $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
@@ -79,7 +79,7 @@ $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
-if(empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
+if (empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
     $step = 0;
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
@@ -88,17 +88,17 @@ if(empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
 // if the user can see ts for other the user id is diferent
 $userIdlist = array();
 $userIdlistfull = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
-if(!empty($userIdSelected) && $userIdSelected <> -999) {
-
+if (!empty($userIdSelected) && $userIdSelected <> -999) {
+    
     $userIdlistfull[] = $userid;
-    if(in_array($userIdSelected, $userIdlist) || $user->admin || $user->rights->timesheet->attendance->admin) {
+    if (in_array($userIdSelected, $userIdlist) || $user->admin || $user->rights->timesheet->attendance->admin) {
         $userIdlist[] = $userIdSelected;
     } else{
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
         unset($action);
         $userIdlist[] = $userid;
     }
-}elseif($userIdSelected = -999)
+} elseif ($userIdSelected = -999)
 {
     $userIdlist = $userIdlistfull;
 }else{
@@ -106,25 +106,28 @@ if(!empty($userIdSelected) && $userIdSelected <> -999) {
 }
 
 $reportStatic = new TimesheetReport($db);
-$reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
-if($action == 'getpdf') {
+$reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, 
+    $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
+if ($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
-    if($pdf->writeFile($reportStatic, $langs)>0) {
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/" . dol_sanitizeFileName($reportStatic->name) . ".pdf");
+    if ($pdf->writeFile($reportStatic, $langs)>0) {
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/" 
+        .dol_sanitizeFileName($reportStatic->name) . ".pdf");
         return;
     }
     ob_end_flush();
     exit();
-}elseif($action == 'getExport'){
-    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+} elseif ($action == 'getExport'){
+    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?
+        300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
     $max_time = @ini_get("max_execution_time");
-    if($max_time && $max_time < $max_execution_time_for_export)
+    if ($max_time && $max_time < $max_execution_time_for_export)
     {
         @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
     }
     $name = $reportStatic->buildFile($model, false);
-    if(!empty($name)){
+    if (!empty($name)){
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=export&file=".$name);
         return;
     }
@@ -157,14 +160,15 @@ $form_output .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null,
 
 //$mode = 'PTD';
 $querryRes = '';
-if(!empty($userIdSelected)
+if (!empty($userIdSelected)
         &&!empty($dateEnd) && !empty($dateStart))
 {
-    if($exportfriendly){
+    if ($exportfriendly){
         $querryRes .= $reportStatic->getHTMLreportExport();
     }else {
         $querryRes .= $reportStatic->getHTMLreport($short,
-            "User report ".dol_print_date($dateStart, 'day').'-'.dol_print_date($dateEnd, 'day'));
+            "User report ".dol_print_date($dateStart, 'day').'-'
+                .dol_print_date($dateEnd, 'day'));
     }
 }
 

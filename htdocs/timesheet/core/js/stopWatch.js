@@ -55,7 +55,7 @@ class Stopwatch {
     //function called to load stopwatch data (json)
     loadSuccess(data){
        //this.reset();
-       if( typeof data.event_type !== 'undefined'){
+       if ( typeof data.event_type !== 'undefined'){
         this.event =data;
 
 
@@ -64,11 +64,11 @@ class Stopwatch {
          this.timestampClock=performance.now();
          this.time =performance.now()+ (this.event.date_time_event_start-this.event.processedTime)*1000;
 
-        if(this.event.event_type<3  && this.event.event_type!=0) { // launch the clock for heartbeat and
+        if (this.event.event_type<3  && this.event.event_type!=0) { // launch the clock for heartbeat and
              this.running = true;
              this.updatePlayStopIcon(this.running,this.event.task);
              this.animationframeID=requestAnimationFrame(this.step.bind(this));
-         }else if(this.event.event_type>=3 || this.event.event_type==0){ // stop the clock
+         }else if (this.event.event_type>=3 || this.event.event_type==0){ // stop the clock
 
              this.running = false;
              this.reset();
@@ -88,9 +88,9 @@ class Stopwatch {
      }
 
 
-     if(typeof data.status!== 'undefined' && data.status && data.status!=""){ //  display status
+     if (typeof data.status!== 'undefined' && data.status && data.status!=""){ //  display status
                 var obj=JSON.parse(data.status);
-                Object.keys(obj).forEach(function(key){
+                Object.keys(obj).foreach (function(key){
                     $.jnotify(obj[key].text+obj[key].param,obj[key].type)
         });
      }
@@ -105,9 +105,9 @@ class Stopwatch {
      // place the play Icone
     updatePlayStopIcon(play,taskid){
         //update the main play
-        if(play==false){
+        if (play==false){
 
-             if(this.event.project==0 && this.event.third_party==0 && this.event.task==0)
+             if (this.event.project==0 && this.event.third_party==0 && this.event.task==0)
                  document.getElementById("mainPlayStop").src= 'img/tinyblack.gif';
              else
                  document.getElementById("mainPlayStop").src= 'img/play-arrow.png';
@@ -118,7 +118,7 @@ class Stopwatch {
          var buttons=document.getElementsByClassName('playStopButton');
         var i;
         for (i = 0; i < buttons.length; i++) {
-             if(buttons[i].id!= 'playStop_'+taskid || play==false){
+             if (buttons[i].id!= 'playStop_'+taskid || play==false){
                  buttons[i].src='img/play-arrow.png';
              }else{
                  buttons[i].src='img/stop-square.png';
@@ -136,7 +136,7 @@ class Stopwatch {
         //saving the actual update  location
  //       this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
         var Url="AttendanceClock.php?action=start"
-        if(taskid!==0) Url+="&taskid="+taskid;
+        if (taskid!==0) Url+="&taskid="+taskid;
         $.ajax({
             type: "POST",
             url: Url,
@@ -167,7 +167,7 @@ class Stopwatch {
     // fucntion to update the js object and the serialize it in json
     serialize(){
         //save the note
-        if(this.event.task>0 || this.event.project>0 || this.event.third_party>0 ){
+        if (this.event.task>0 || this.event.project>0 || this.event.third_party>0 ){
             this.event.note=document.getElementById("eventNote").value;
             this.event.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
             this.event.userid=this.userid;
@@ -193,15 +193,15 @@ class Stopwatch {
     }
     //code that will run to update the clock, called by the browser
      step(timestamp) {
-        if(!this.running) return;
-        if(timestamp-this.timestampClock>300) {
+        if (!this.running) return;
+        if (timestamp-this.timestampClock>300) {
             this.calculate(timestamp);
             this.time = timestamp;
             this.timestampClock=timestamp;
             this.print();
         }
 
-        if(timestamp-this.timestampHeartbeart>60000) {
+        if (timestamp-this.timestampHeartbeart>60000) {
             this.save('');
             this.timestampHeartbeart=timestamp;
         }//autosave every minute
@@ -215,17 +215,17 @@ class Stopwatch {
         this.times[3] += diff / 10;
         while(this.times[3]>100){
             // Seconds are 100 hundredths of a second
-            if(this.times[3] >= 100) {
+            if (this.times[3] >= 100) {
                 this.times[2] += 1;
                 this.times[3] -= 100;
             }
             // Minutes are 60 seconds
-            if(this.times[2] >= 60) {
+            if (this.times[2] >= 60) {
                 this.times[1] += 1;
                 this.times[2] -= 60;
             }
                   // hours are 60 minutes
-            if(this.times[1] >= 60) {
+            if (this.times[1] >= 60) {
                 this.times[0] += 1;
                 this.times[1] -= 60;
             }
@@ -252,7 +252,7 @@ function pad0(value, count) {
 }
 // start stop fuction
 function startStop(evt,user,tsk){
-    if(evt.target.src.indexOf('img/stop-square.png')>0){
+    if (evt.target.src.indexOf('img/stop-square.png')>0){
         stopwatch.stop();
     }else{
         stopwatch.start(tsk);

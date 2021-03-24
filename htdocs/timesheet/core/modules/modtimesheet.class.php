@@ -54,7 +54,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_name = 'Patrick Delcroix';
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.4.0';
+                $this->version = '4.3.10';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -234,13 +234,13 @@ class modTimesheet extends DolibarrModules
         $this->tabs[] = array('data' => 'project:+invoice:projectInvoice:timesheet@timesheet:$user->rights->facture->creer:/timesheet/TimesheetProjectInvoice.php?projectid=__ID__');  					// To add a new tab identified by code tabname1
         $this->tabs[] = array('data' => 'project:+report:projectReport:timesheet@timesheet:true:/timesheet/TimesheetReportProject.php?projectSelected=__ID__');  					// To add a new tab identified by code tabname1
         // Dictionaries
-        if(! isset($conf->timesheet->enabled)) {
+        if (! isset($conf->timesheet->enabled)) {
             $conf->timesheet=new stdClass();
             $conf->timesheet->enabled=0;
         }
                 $this->dictionaries=array();
         /* Example:
-        if(! isset($conf->timesheet->enabled)) $conf->timesheet->enabled=0;        // This is to avoid warnings
+        if (! isset($conf->timesheet->enabled)) $conf->timesheet->enabled=0;        // This is to avoid warnings
         $this->dictionaries=array(
             'langs' => 'mylangfile@timesheet',
             'tabname' => array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),                // List of tables we want to see into dictonnary editor
@@ -269,47 +269,47 @@ class modTimesheet extends DolibarrModules
                  $this->rights[$r][0] = 86100200;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'TimesheetUser';        // Permission label
                  $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'user';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
-                 //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][4] = 'user';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                  $r++;
                 //$r = 0;
                  $this->rights[$r][0] = 86100201;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'TeamApprover';        // Permission label
                  $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                  $r++;
                  $this->rights[$r][0] = 86100202;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'ApprovalAdmin';        // Permission label
                  $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
                  $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
                  $this->rights[$r][0] = 86100203;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'ExportRead';        // Permission label
                  $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'read';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
-                 //$this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][4] = 'read';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 //$this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                  $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
                  $this->rights[$r][0] = 86100205;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'AttendanceUser';        // Permission label
                  $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'user';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][5] = 'user';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                  $r++;
                  $this->rights[$r][0] = 86100206;                                // Permission id(must not be already used)
                  $this->rights[$r][1] = 'AttendanceAdmin';        // Permission label
                  $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                  $r++;
 // Example:
                 // $this->rights[$r][0] = 2000;                                // Permission id(must not be already used)
                 // $this->rights[$r][1] = 'Permision label';        // Permission label
                 // $this->rights[$r][3] = 1;                                        // Permission by default for new user(0/1)
-                // $this->rights[$r][4] = 'level1';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
-                // $this->rights[$r][5] = 'level2';                                // In php code, permission will be checked by test if($user->rights->permkey->level1->level2)
+                // $this->rights[$r][4] = 'level1';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                // $this->rights[$r][5] = 'level2';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                 // $r++;
                 // Main menu entries
                 $this->menu = array();                        // List of menus to add
@@ -496,7 +496,7 @@ class modTimesheet extends DolibarrModules
             $sql = array();
             $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql[0].= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
-            if($db->type=='pgsql') {
+            if ($db->type=='pgsql') {
                 $sql[1] ="INSERT INTO ".MAIN_DB_PREFIX."document_model(nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.") ON CONFLICT(nom) DO NOTHING;";
                 $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active ) values (8210160, 'project',  'internal', 'PROJECTBILLING', 'Responsable Facturation Projet', 1) ON CONFLICT(rowid) DO NOTHING;"; 
             }else {

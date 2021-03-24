@@ -63,34 +63,34 @@ function select_sellist(
     global $conf, $langs, $db;
     $noajax = isset($htmlarray['noajax']);
      $ajax = $conf->use_javascript_ajax && !$noajax ;
-    if(!isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) || !isset($htmlarray['name'])) {
+    if (!isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields']) || !isset($htmlarray['name'])) {
         return 'error, one of the mandatory field of the function  select_sellist is missing';
     }
     $htmlName = $htmlarray['name'];
     $ajaxNbChar = $htmlarray['ajaxNbChar'];
     $listFields = explode(',', $sqlarray['fields']);
     $fields = array();
-    foreach($listFields as $item) {
+    foreach ($listFields as $item) {
         $item = trim($item);
         $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
         $start2 = strpos($item, '.');
         $label = $item;
-        if($start) {
+        if ($start) {
             $label = substr($item, $start+4);
-        } elseif($start2) {
+        } elseif ($start2) {
             $label = substr($item, $start2+1);
         }
         $fields[] = array('select' => $item, 'label' => trim($label));
     }
     $select = "\n";
-    if($ajax) {
+    if ($ajax) {
         include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
        $token = getToken();
         $urloption = 'token='.$token;
         $comboenhancement = '';
         //$ajaxUrl = '';
         $searchfields = '';
-        if($ajaxNbChar) {
+        if ($ajaxNbChar) {
             $ajaxUrl = dol_buildpath('/timesheet/core/ajaxGenericSelectHandler.php', 1);
             $_SESSION['ajaxQuerry'][$token]['sql'] = $sqlarray;
             $_SESSION['ajaxQuerry'][$token]['fields'] = $fields;
@@ -121,18 +121,18 @@ function select_sellist(
     $sql .= $sqlarray['keyfield'];
     $sql .= ', '.$sqlarray['fields'];
     $sql .= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
-    if(isset($sqlarray['join']) && !empty($sqlarray['join']))
+    if (isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql .= ' '.$sqlarray['join'];
-    if(isset($sqlarray['where']) && !empty($sqlarray['where']))
+    if (isset($sqlarray['where']) && !empty($sqlarray['where']))
             $sql .= ' WHERE '.$sqlarray['where'];
-    if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
+    if (isset($sqlarray['tail']) && !empty($sqlarray['tail']))
             $sql .= ' '.$sqlarray['tail'];
     dol_syslog('form::select_sellist ', LOG_DEBUG);
     // remove the 't." if any
     $startkey = strpos($sqlarray['keyfield'], '.');
     $labelKey = ($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
     $resql = $db->query($sql);
-    if($resql) {
+    if ($resql) {
         $selectOptions .= "<option value = \"-1\" ".(empty($selected)?"selected":"").">&nbsp;</option>\n";
         $i = 0;
         $separator = isset($htmlarray['separator'])?$htmlarray['separator']:' ';
@@ -141,14 +141,14 @@ function select_sellist(
         while($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            if($obj) {
+            if ($obj) {
                 $fieldtoshow = '';
-                foreach($fields as $item) {
-                    if(!empty($fieldtoshow))$fieldtoshow .= $separator;
+                foreach ($fields as $item) {
+                    if (!empty($fieldtoshow))$fieldtoshow .= $separator;
                     $fieldtoshow .= $obj->{$item['label']};
                 }
                 $selectOptions .= "<option value = \"".$obj->{$labelKey}."\" ";
-                if($obj->{$labelKey} == $selected) {
+                if ($obj->{$labelKey} == $selected) {
                      $selectOptions .= 'selected = \"selected\"';
                      $selectedValue = $fieldtoshow;
                 }
@@ -158,7 +158,7 @@ function select_sellist(
             }
             $i++;
         }
-        if($addtionnalChoices)foreach($addtionnalChoices as $value => $choice) {
+        if ($addtionnalChoices)foreach ($addtionnalChoices as $value => $choice) {
             $selectOptions .= '<option value = "'.$value.'" '.(($selected == $value)?'selected':'').">{$choice}</option>\n";
         }
     } else {
@@ -166,8 +166,8 @@ function select_sellist(
         dol_print_error($db);
        $select .= "<option value = \"-1\" selected = \"selected\">ERROR</option>\n";
     }
-    if($ajaxNbChar && $ajax) {
-        if($selectedValue == '' && is_array($addtionnalChoices)) {
+    if ($ajaxNbChar && $ajax) {
+        if ($selectedValue == '' && is_array($addtionnalChoices)) {
             $selectedValue = $addtionnalChoices[$selected];
         }
         $select .= '<input type = "text" class = "minwidth200 '.(isset($htmlarray['class'])?$htmlarray['class']:'').'" name = "'.$htmlName.'" id = "'.(isset($htmlarray['id'])?$htmlarray['id']:$htmlName).'" value = "'.$selectedValue.'"'.$htmlarray['otherparam'].' />';
@@ -197,51 +197,51 @@ function print_sellist(
     $url = ''
 ) {
     global $conf, $langs, $db;
-    if(!isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields'])) {
+    if (!isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields'])) {
         return 'error, one of the mandatory field of the function  select_sellist is missing:'.$sqlarray['table'].$sqlarray['keyfield'].$sqlarray['fields'];
-    } elseif(empty($selected)) {
+    } elseif (empty($selected)) {
         return "NuLL";
     }
     $sql = 'SELECT DISTINCT ';
     $sql .= $sqlarray['keyfield'];
     $sql .= ', '.$sqlarray['fields'];
     $sql .= ' FROM '.MAIN_DB_PREFIX.$sqlarray['table'].' as t';
-    if(isset($sqlarray['join']) && !empty($sqlarray['join']))
+    if (isset($sqlarray['join']) && !empty($sqlarray['join']))
             $sql .= ' '.$sqlarray['join'];
     $sql .= ' WHERE '.$sqlarray['keyfield'].' = \''.$selected.'\'';
-    if(isset($sqlarray['where']) && !empty($sqlarray['where']))
+    if (isset($sqlarray['where']) && !empty($sqlarray['where']))
             $sql .= ' AND '.$sqlarray['where'];
-    if(isset($sqlarray['tail']) && !empty($sqlarray['tail']))
+    if (isset($sqlarray['tail']) && !empty($sqlarray['tail']))
             $sql .= ' '.$sqlarray['tail'];
     dol_syslog('form::print_sellist ', LOG_DEBUG);
     $startkey = strpos($sqlarray['keyfield'], '.');
     $labelKey = ($startkey)?substr($sqlarray['keyfield'], $startkey+1):$sqlarray['keyfield'];
     $resql = $db->query($sql);
-    if($resql) {
+    if ($resql) {
         $listFields = explode(',', $sqlarray['fields']);
         $fields = array();
-        foreach($listFields as $item) {
+        foreach ($listFields as $item) {
             $item = trim($item);
             $start = MAX(strpos($item, ' AS '), strpos($item, ' as '));
             $start2 = strpos($item, '.');
             $label = $item;
-            if($start) {
+            if ($start) {
                 $label = substr($item, $start+4);
-            } elseif($start2) {
+            } elseif ($start2) {
                 $label = substr($item, $start2+1);
             }
             $fields[] = array('select' => $item, 'label' => trim($label));
         }
         $num = $db->num_rows($resql);
-        if($num) {
+        if ($num) {
             $obj = $db->fetch_object($resql);
-            if($obj) {
+            if ($obj) {
                 $select = '';
-                foreach($fields as $item) {
-                    if(!empty($select))$select .= $separator;
+                foreach ($fields as $item) {
+                    if (!empty($select))$select .= $separator;
                     $select .= $obj->{$item['label']};
                 }
-                     if(!empty($url))$select = '<a href = "'.$url.$obj->{$sqlarray['keyfield']}.'">'.$select.'</a>';
+                     if (!empty($url))$select = '<a href = "'.$url.$obj->{$sqlarray['keyfield']}.'">'.$select.'</a>';
             } else{
                 $select = "NULL";
             }
@@ -271,7 +271,7 @@ function printBitStringHTML($bitstring, $labels, $names, $edit = 0)
     global $langs;
     $html = "error, paramters of printBitStringHTML not valid";
     $numberOfBits = count($labels);
-    if(is_array($labels) && count_chars(bitstring)!=($numberOfBits+1)) {
+    if (is_array($labels) && count_chars(bitstring)!=($numberOfBits+1)) {
         $htmlValue = '';
         $html = '<table class = "noborder" width = "100%"><tr class = "titre">';
         for($i = 0;$i<$numberOfBits;$i++)
@@ -294,7 +294,7 @@ function printBitStringHTML($bitstring, $labels, $names, $edit = 0)
 function crypto_rand_secure($min, $max)
 {
     $range = $max - $min;
-    if($range < 0) return $min;// not so random...
+    if ($range < 0) return $min;// not so random...
     $log = log($range, 2);
     $bytes = (int) ($log / 8) + 1;// length in bytes
     $bits = (int) $log + 1;// length in bits

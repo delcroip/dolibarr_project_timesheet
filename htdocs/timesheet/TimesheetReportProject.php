@@ -37,7 +37,7 @@ $ungroup = GETPOST('ungroup', 'int');
 $mode = GETPOST('mode', 'alpha');
 
 $model = GETPOST('model', 'alpha');
-if(empty($mode)){
+if (empty($mode)){
     $mode = 'UTD';
     $ungroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
     $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
@@ -72,7 +72,7 @@ $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
-if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
+if (empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
     $step = 0;
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
@@ -80,7 +80,7 @@ if(empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
 $userid = is_object($user)?$user->id:$user;
 //querry to get the project where the user have priviledge;either project responsible or admin
 $sql = 'SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
-if(!$user->admin) {
+if (!$user->admin) {
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid = element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR  ctc.code LIKE \'%BILLING%\'))) AND ctc.active = \'1\'  ';
@@ -95,7 +95,7 @@ dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
 $resql = $db->query($sql);
 $numProject = 0;
 $projectList = array();
-if($resql) {
+if ($resql) {
     $numProject = $db->num_rows($resql);
     $i = 0;
     // Loop on each record found, so each couple (project id, task id)
@@ -114,7 +114,7 @@ if($resql) {
 }
 $projectIdlist = array();
 $reportName = $langs->trans('ReportProject');
-if($projectSelectedId<>-999){
+if ($projectSelectedId<>-999){
     $projectIdlist[]=$projectSelectedId;
     $reportName = $projectList[$projectSelectedId]['label'];
 } else {
@@ -122,24 +122,26 @@ if($projectSelectedId<>-999){
 }
 $reportStatic = new TimesheetReport($db);
 $reportStatic->initBasic($projectIdlist, '', $reportName, $dateStart, $dateEnd, $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
-if($action == 'getpdf') {
+if ($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
-    if($pdf->writeFile($reportStatic, $langs)>0) {
+    if ($pdf->writeFile($reportStatic, $langs)>0) {
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/" . dol_sanitizeFileName($reportStatic->name) . ".pdf");
         return;
     }
     ob_end_flush();
     exit();
-}elseif($action == 'getExport'){
-    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+} elseif ($action == 'getExport'){
+    $max_execution_time_for_export = 
+        (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?
+            300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
     $max_time = @ini_get("max_execution_time");
-    if($max_time && $max_time < $max_execution_time_for_export)
+    if ($max_time && $max_time < $max_execution_time_for_export)
     {
         @ini_set("max_execution_time", $max_execution_time_for_export); // This work only if safe mode is off. also web servers has timeout of 300
     }
     $name = $reportStatic->buildFile($model, false);
-    if(!empty($name)){
+    if (!empty($name)){
         header("Location: ".DOL_URL_ROOT."/document.php?modulepart=export&file=".$name);
         return;
     }
@@ -150,8 +152,8 @@ if($action == 'getpdf') {
 llxHeader('', $langs->trans('projectReport'), '');
 
 $querryRes = '';
-if($projectSelectedId   &&!empty($dateStart)) {
-    if($exportfriendly){
+if ($projectSelectedId   &&!empty($dateStart)) {
+    if ($exportfriendly){
         $querryRes .= $reportStatic->getHTMLreportExport();
     }else {
         $querryRes .= $reportStatic->getHTMLreport($short);
@@ -177,10 +179,12 @@ $form_output .= '<form action="?action=reportproject'.(($optioncss != '')?'&amp;
         <td><select  name = "projectSelected">
         ';
 // select project
-foreach($projectList as $pjt) {
-    $form_output .= '<option value = "'.$pjt["value"].'" '.(($projectSelectedId == $pjt["value"])?"selected":'').' >'.$pjt["label"].'</option>'."\n";
+foreach ($projectList as $pjt) {
+    $form_output .= '<option value = "'.$pjt["value"].'" '
+        .(($projectSelectedId == $pjt["value"])?"selected":'').' >'.$pjt["label"].'</option>'."\n";
 }
-$form_output .= '<option value = "-999" '.(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+$form_output .= '<option value = "-999" '
+    .(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
 
 $form_output .= '</select></td>';
 //}
@@ -218,14 +222,34 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
 
  //submit
  $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
- $form_output .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
-if(!empty($querryRes) && ($user->rights->facture->creer || version_compare(DOL_VERSION, "3.7") <= 0))$form_output .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='.dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='.$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
+ $form_output .= '<input class = "butAction button" type = "submit" value = "'.$langs->trans('getReport').'">';
+if (!empty($querryRes) && ($user->rights->facture->creer 
+    || version_compare(DOL_VERSION, "3.7") <= 0))
+        $form_output .= '<a class = "butAction button" href = "TimesheetProjectInvoice.php?step=0&dateStart='
+            .dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='
+            .$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard')
+            .'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 
-if(!empty($querryRes))$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if(!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$form_output .= '<a class = "butAction" href="?action=getExport&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
-if(!empty($querryRes))$form_output .= '<a class = "butAction" href="?action=reportproject&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly.'&ungroup='.$ungroup.'" >'.$langs->trans('Refresh').'</a>';
+if (!empty($querryRes))$form_output .= 
+    '<a class = "butAction button" href="?action=getpdf&dateStart='
+    .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
+    .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='
+    .$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
+    .'&ungroup='.$ungroup.'" >'.$langs->trans('TimesheetPDF').'</a>';
+if (!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$form_output .= 
+    '<a class = "butAction button" href="?action=getExport&dateStart='
+    .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
+    .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
+    .'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly
+    .'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
+if (!empty($querryRes))$form_output .= 
+    '<a class = "butAction button" href="?action=reportproject&dateStart='
+    .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
+    .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
+    .'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
+    .'&ungroup='.$ungroup.'" >'.$langs->trans('Refresh').'</a>';
 $form_output .= '</form>';
-if(!($optioncss != '' && !empty($_POST['userSelected']))) echo $form_output;
+if (!($optioncss != '' && !empty($_POST['userSelected']))) echo $form_output;
 echo $querryRes;
 /*
 // List of available export formats
@@ -238,7 +262,7 @@ print '</tr>'."\n";
 
 $liste = $objmodelexport->liste_modeles($db);
 $listeall = $liste;
-foreach($listeall as $key => $val)
+foreach ($listeall as $key => $val)
 {
     if (preg_match('/__\(Disabled\)__/', $listeall[$key]))
     {

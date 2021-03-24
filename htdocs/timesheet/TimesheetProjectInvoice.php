@@ -54,12 +54,12 @@ $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
-if($user->rights->facture->creer && hasProjectRight($userid, $projectId)) {
-    if($projectId>0)$staticProject->fetch($projectId);
-    if($socid == 0 || !is_numeric($socid))$socid = $staticProject->socid;
+if ($user->rights->facture->creer && hasProjectRight($userid, $projectId)) {
+    if ($projectId>0)$staticProject->fetch($projectId);
+    if ($socid == 0 || !is_numeric($socid))$socid = $staticProject->socid;
 $edit = 1;
 // avoid SQL issue
-if(empty($dateStart) || empty($dateEnd) ||$dateStart == $dateEnd) {
+if (empty($dateStart) || empty($dateEnd) ||$dateStart == $dateEnd) {
     $step = 0;
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
@@ -72,19 +72,19 @@ $langs->load('timesheet@timesheet');
         case 2:{
            $fields = ($mode == 'user')?'fk_user':(($mode == 'taskUser')?'fk_user, fk_task':'fk_task');
             $sql = 'SELECT  '.$fields.', SUM(tt.task_duration) as duration, ';
-            if($db->type!='pgsql') {
+            if ($db->type!='pgsql') {
                 $sql .= " GROUP_CONCAT(tt.rowid  SEPARATOR ', ') as task_time_list";
             } else{
                 $sql .= " STRING_AGG(to_char(tt.rowid, '9999999999999999'), ', ') as task_time_list";
             }
              $sql .= ' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
             $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task = t.rowid';
-            if($invoicabletaskOnly == 1)$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
+            if ($invoicabletaskOnly == 1)$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
             $sql .= ' WHERE t.fk_projet='.$projectId;
                 $sql .= " AND DATE(tt.task_datehour) BETWEEN '".$db->idate($dateStart);
                 $sql .= "' AND '".$db->idate($dateEnd)."'";
-             if($invoicabletaskOnly == 1)$sql .= ' AND tske.invoiceable = \'1\'';
-            if($ts2Invoice!='all') {
+             if ($invoicabletaskOnly == 1)$sql .= ' AND tske.invoiceable = \'1\'';
+            if ($ts2Invoice!='all') {
                 /*$sql .= ' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_s SEPARATOR ", ")';
                 $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval';
                 $sql .= ' WHERE status = "APPROVED" AND MONTH(date_start)='.$month;
@@ -92,7 +92,7 @@ $langs->load('timesheet@timesheet');
                 $sql .= ' AND YEAR(date_start) = "'.$year.'")';*/
                 $sql .= ' AND tt.status = '.APPROVED;
             }
-            if($tsNotInvoiced == 1) {
+            if ($tsNotInvoiced == 1) {
                 $sql .= ' AND tt.invoice_id IS NULL';
             }
             $sql .= ' GROUP BY '.$fields;
@@ -108,7 +108,7 @@ $langs->load('timesheet@timesheet');
             $resql = $db->query($sql);
             $num = 0;
             $resArray = array();
-            if($resql) {
+            if ($resql) {
                 $num = $db->num_rows($resql);
                 $i = 0;
                 // Loop on each record found,
@@ -147,7 +147,7 @@ $langs->load('timesheet@timesheet');
             $Form .= '<th >'.$langs->trans("Custom").':'.$langs->trans("Description").'</th><th >'.$langs->trans("Custom").':'.$langs->trans("UnitPriceHT").'</th>';
             $Form .= '<th >'.$langs->trans("Custom").':'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("savedDuration").'</th>';
             $form = new Form($db);
-            foreach($resArray as $res) {
+            foreach ($resArray as $res) {
                 $Form .= htmlPrintServiceChoice($res["USER"], $res["TASK"], 'oddeven', $res["DURATION"], $res['LIST'], $mysoc, $socid);
             }
             $Form .= '</table>';
@@ -167,7 +167,7 @@ $langs->load('timesheet@timesheet');
             $object->date = $dateinvoice;
             $object->fk_project = $projectId;
             $object->fetch_thirdparty();
-            if($propalId > 0){
+            if ($propalId > 0){
                 $object->origin = 'propal';
                 $object->origin_id = $propalId;
                 $object->linked_objects[$object->origin] = $object->origin_id;
@@ -179,23 +179,23 @@ $langs->load('timesheet@timesheet');
             $task_time_array = array();
                 
 
-            if($id > 0  && is_array($resArray)) {
+            if ($id > 0  && is_array($resArray)) {
                 $db->commit();
                 $invoicecard = str_replace(
                                 array("require '../../main.inc.php';","<?php","\$db->close();"),
                                 "",
                                 file_get_contents(DOL_DOCUMENT_ROOT.'/compta/facture/card.php'));
-                foreach($resArray as $uId => $userTaskService) {
+                foreach ($resArray as $uId => $userTaskService) {
                         //$userTaskService[$user][$task] = array('duration', 'VAT', 'Desc', 'PriceHT', 'Service', 'unit_duration', 'unit_duration_unit');
-                    if(is_array($userTaskService))foreach($userTaskService as  $tId => $service) {
+                    if (is_array($userTaskService))foreach ($userTaskService as  $tId => $service) {
                         $durationTab = explode(':', $service['duration']);
                         $duration = $durationTab[1]*60 + $durationTab[0]*3600;
                         //$startday = dol_mktime(12, 0, 0, $month, 1, $year);
                         //$endday = dol_mktime(12, 0, 0, $month, date('t', $startday), $year);
                         $details = '';
                         $result = '';
-                        if(($tId!='any') && $conf->global->TIMESHEET_INVOICE_SHOW_TASK)$details = "\n".$service['taskLabel'];
-                        if(($uId!='any')&& $conf->global->TIMESHEET_INVOICE_SHOW_USER)$details .= "\n".$service['userName'];
+                        if (($tId!='any') && $conf->global->TIMESHEET_INVOICE_SHOW_TASK)$details = "\n".$service['taskLabel'];
+                        if (($uId!='any')&& $conf->global->TIMESHEET_INVOICE_SHOW_USER)$details .= "\n".$service['userName'];
                         //prepare the CURL params
                         $postdata = array();
                         $postdata['action'] = 'addline';
@@ -210,7 +210,7 @@ $langs->load('timesheet@timesheet');
 
                         
 
-                        if($service['Service']>0) {
+                        if ($service['Service']>0) {
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $product = new Product($db);
@@ -242,7 +242,7 @@ $langs->load('timesheet@timesheet');
                             }
                             
                             $factor = intval(substr($product->duration, 0, -1));
-                            if($factor == 0)$factor = 1;//to avoid divided by $factor0
+                            if ($factor == 0)$factor = 1;//to avoid divided by $factor0
                             $quantity = round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);
                             $postdata['type'] = -1;
                             $postdata['prod_entry_mode'] = 'predef';
@@ -265,13 +265,13 @@ $langs->load('timesheet@timesheet');
                             $price = $prices['pu_ht'];
 
 
-                            if(!$conf->global->TIMESHEET_EVAL_ADDLINE){
+                            if (!$conf->global->TIMESHEET_EVAL_ADDLINE){
                                 $result = $object->addline($product->description.$details, $price, $quantity, $tva_tx, 
                                     $localtax1_tx, $localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', 
                                     $price_base_type, $price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, $label, 0, 100, '', 
                                     $product->fk_unit);
                             }
-                        } elseif($service['Service']<>-999) {
+                        } elseif ($service['Service']<>-999) {
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $factor = ($service['unit_duration_unit'] == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
@@ -283,15 +283,18 @@ $langs->load('timesheet@timesheet');
                             $postdata['tva_tx'] = $service['VAT'];
                             $postdata['price_ht'] = $service['PriceHT'];
                             $postdata['qty'] = (float) $quantity;
-                            if(!$conf->global->TIMESHEET_EVAL_ADDLINE){
-                                $result = $object->addline($service['Desc'].$details, $service['PriceHT'], $quantity, $service['VAT'], $localtax1_tx, $localtax2_tx, '', 0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', '');
+                            if (!$conf->global->TIMESHEET_EVAL_ADDLINE){
+                                $result = $object->addline($service['Desc'].$details, $service['PriceHT'], 
+                                    $quantity, $service['VAT'], $localtax1_tx, $localtax2_tx, '', 
+                                    0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 
+                                    0, 0, null, 0, '', 0, 100, '', '');
                             }
                         }
                         //add_invoice_line($postdata);
                         
                         
                         //eval used instead of include because the main.in.php cannot be included twice so it had to be removed from
-                        if($conf->global->TIMESHEET_EVAL_ADDLINE){
+                        if ($conf->global->TIMESHEET_EVAL_ADDLINE){
                             $post_temp = $_POST;
                             $_POST = $postdata;
                             ob_start();
@@ -300,13 +303,14 @@ $langs->load('timesheet@timesheet');
                             $_POST = $post_temp;
                         }
                         
-                        if($service['taskTimeList'] <> '' &&  $result>0)$task_time_array[$result] = $service['taskTimeList'];
+                        if ($service['taskTimeList'] <> '' &&  $result>0)
+                            $task_time_array[$result] = $service['taskTimeList'];
                     } else $error++;
                 }
                 // End of object creation, we show it
-                if(1) {
-                    if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
-                        foreach($task_time_array AS $idLine => $task_time_list) {
+                if (1) {
+                    if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
+                        foreach ($task_time_array AS $idLine => $task_time_list) {
                                 //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
                             Update_task_time_invoice($id, $idLine, $task_time_list);
                         }
@@ -331,7 +335,7 @@ $langs->load('timesheet@timesheet');
             require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
             $htmlother = new FormOther($db);
             $sqlTail = '';
-            //if(!$user->admin) {
+            //if (!$user->admin) {
             //    $sqlTailJoin = ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON t.rowid = element_id ';
             //    $sqlTailJoin .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
             //    $sqlTailWhere = ' ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND ctc.code LIKE \'%LEADER%\')) AND ctc.active = \'1\'  ';
@@ -339,7 +343,8 @@ $langs->load('timesheet@timesheet');
             //}
             $Form = '<form name = "settings" action="?step=2" method = "POST" >'."\n\t";
             $Form .= '<table class = "noborder" width = "100%">'."\n\t\t";
-            $Form .= '<tr class = "liste_titre" width = "100%" ><th colspan = "2">'.$langs->trans('generalInvoiceProjectParam').'</th></tr>';
+            $Form .= '<tr class = "liste_titre" width = "100%" ><th colspan = "2">'
+                .$langs->trans('generalInvoiceProjectParam').'</th></tr>';
             $invoicingMethod = $conf->global->TIMESHEET_INVOICE_METHOD;
             //$Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('Project').'</th><th align = "left" width = "80%" >';
             //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL' => 'NULL'), $sqlTailTable = '', $ajaxUrl = '')
@@ -349,25 +354,37 @@ $langs->load('timesheet@timesheet');
             //$sqlProjectArray = array('table' => 'projet', 'keyfield' => 't.rowid', 'fields' => 't.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
             //$Form .= select_sellist($sqlProjectArray, $htmlProjectArray, $projectId);
             $Form .= '<input type = "hidden" name = "projectid" value = "'.$projectId.'">';
-            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('DateStart').'</th>';
-            $Form .= '<th align = "left" width = "80%">'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
-            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('DateEnd').'</th>';
-            $Form .= '<th align = "left" width = "80%">'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
-            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('invoicingMethod').'</th><th align = "left"><input type = "radio" name = "invoicingMethod" value = "task" ';
+            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
+                .$langs->trans('DateStart').'</th>';
+            $Form .= '<th align = "left" width = "80%">'
+                .$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
+            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
+                .$langs->trans('DateEnd').'</th>';
+            $Form .= '<th align = "left" width = "80%">'
+                .$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
+            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
+                .$langs->trans('invoicingMethod').'</th><th align = "left"><input type = "radio" '
+                .'name = "invoicingMethod" value = "task" ';
             $Form .= ($invoicingMethod == "task"?"checked":"").'> '.$langs->trans("Tasks").'<br> ';
             $Form .= '<input type = "radio" name = "invoicingMethod" value = "user" ';
             $Form .= ($invoicingMethod == "user"?"checked":"").'> '.$langs->trans("User")."<br> ";
             $Form .= '<input type = "radio" name = "invoicingMethod" value = "taskUser" ';
-            $Form .= ($invoicingMethod == "taskUser"?"checked":"").'> '.$langs->trans("Tasks").' & '.$langs->trans("User")."</th></tr>\n\t\t";
+            $Form .= ($invoicingMethod == "taskUser"?"checked":"").'> '.$langs->trans("Tasks").' & '
+                .$langs->trans("User")."</th></tr>\n\t\t";
     //cust list
-            $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Customer').'</th><th  align = "left">'.$form->select_company($socid, 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3)', 1).'</th></tr>';
+            $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Customer')
+                .'</th><th  align = "left">'.$form->select_company($socid, 'socid', 
+                    '(s.client = 1 OR s.client = 2 OR s.client = 3)', 1).'</th></tr>';
     //propal
    
-        if($conf->global->MAIN_MODULE_PROPALE){
+        if ($conf->global->MAIN_MODULE_PROPALE){
             //http://localhost:18080/compta/facture/card.php?action=create&origin=propal&originid=34&socid=10
             $joinPropal = ' JOIN '.MAIN_DB_PREFIX.'c_stcomm as stp ON fk_statut = stp.id and stp.active = 1 ';
-            $sqlPropal = array('table' => 'propal' , 'keyfield' => 't.rowid', 'fields' => 't.ref, stp.libelle', 'join' => $joinPropal , 'where' => $socid?('t.fk_soc = '.$socid):'1 = 2', 'tail' => '');
-            $htmlPropal = array('name' => 'propalid', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => ' - ');
+            $sqlPropal = array('table' => 'propal' , 'keyfield' => 't.rowid', 
+                'fields' => 't.ref, stp.libelle', 'join' => $joinPropal , 
+                'where' => $socid?('t.fk_soc = '.$socid):'1 = 2', 'tail' => '');
+            $htmlPropal = array('name' => 'propalid', 'class' => '', 'otherparam' => '', 
+                'ajaxNbChar' => '', 'separator' => ' - ');
             $addChoices = null;
             $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Propal').'</th><th>';
             $Form .= select_sellist($sqlPropal, $htmlPropal, '', $addChoices ).'</th></tr>';
@@ -381,7 +398,7 @@ $langs->load('timesheet@timesheet');
                 for(index = 0;index < param_array.length;++index)
                 {
                     x = param_array[index].split(\'=\');
-                    if(x[0] == "projectid") {
+                    if (x[0] == "projectid") {
                         id = "projectid="+x[1];
                     }
 
@@ -398,32 +415,42 @@ $langs->load('timesheet@timesheet');
                 var dateEndmonth = "&dateEndmonth="+document.getElementById("dateEndmonth").value;
                 var dateEndyear = "&dateEndyear="+document.getElementById("dateEndyear").value;
                 
-                if( soc != null && soc != socOld){
-                    self.location = "'.$PHP_SELF.'?" + id  + "&socid=" + soc +  dateStartday + dateStartmonth + dateStartyear + dateEndday + dateEndmonth + dateEndyear;
+                if ( soc != null && soc != socOld){
+                    self.location = "'.$PHP_SELF
+                        .'?" + id  + "&socid=" + soc +  dateStartday + dateStartmonth + '
+                        .'dateStartyear + dateEndday + dateEndmonth + dateEndyear;
                 }
             });
          </script>';
     
      //all ts or only approved
            $ts2Invoice = $conf->global->TIMESHEET_INVOICE_TASKTIME;
-            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('TimesheetToInvoice').'</th><th align = "left"><input type = "radio" name = "ts2Invoice" value = "approved" ';
-            $Form .= ($ts2Invoice == "approved"?"checked":"").'> '.$langs->trans("approvedOnly").' <br>';
+            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
+                .$langs->trans('TimesheetToInvoice').'</th><th align = "left">'
+                .'<input type = "radio" name = "ts2Invoice" value = "approved" ';
+            $Form .= ($ts2Invoice == "approved"?"checked":"").'> '
+                .$langs->trans("approvedOnly").' <br>';
             $Form .= '<input type = "radio" name = "ts2Invoice" value = "all" ';
-            $Form .= ($ts2Invoice == "all"?"checked":"").'> '.$langs->trans("All")."</th></tr>";
+            $Form .= ($ts2Invoice == "all"?"checked":"").'> '
+                .$langs->trans("All")."</th></tr>";
     // not alreqdy invoice
-            if(version_compare(DOL_VERSION, "4.9.9") >= 0) {
-                    $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('TimesheetNotInvoiced');
-                    $Form .= '</th><th align = "left"><input type = "checkbox" name = "tsNotInvoiced" value = "1" ></th></tr>';
+            if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
+                    $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
+                        .$langs->trans('TimesheetNotInvoiced');
+                    $Form .= '</th><th align = "left">'
+                        .'<input type = "checkbox" name = "tsNotInvoiced" value = "1" ></th></tr>';
             } else{
                 $Form .= '<input type = "hidden" name = "tsNotInvoiced" value = "0">';
             }
             //$invoicabletaskOnly
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('InvoicableOnly');
-            $Form .= '</th><th align = "left"><input type = "checkbox" name = "invoicabletaskOnly" value = "1" '.(($invoicabletaskOnly == 1)?'checked':'').' ></th></tr>';
+            $Form .= '</th><th align = "left"><input type = "checkbox" name = "invoicabletaskOnly" value = "1" '
+                .(($invoicabletaskOnly == 1)?'checked':'').' ></th></tr>';
             $Form .= '</table>';
             $Form .= '<input type = "submit" onclick = "return checkEmptyFormFields(event,\'settings\',\'';
-            $Form .= $langs->trans("pleaseFillAll").'\')" class = "butAction" value = "'.$langs->trans('Next')."\">\n</from>";
-           // if($ajaxNbChar >= 0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
+            $Form .= $langs->trans("pleaseFillAll").'\')" class = "butAction" value = "'
+                .$langs->trans('Next')."\">\n</from>";
+           // if ($ajaxNbChar >= 0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
             break;
     }
 } else {
@@ -434,7 +461,8 @@ $langs->load('timesheet@timesheet');
 *
 * Put here all code to build page
 ****************************************************/
-$morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
+$morejs = array("/timesheet/core/js/jsparameters.php", 
+    "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 llxHeader('', $langs->trans('TimesheetToInvoice'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
 $project = new Project($db);
@@ -476,8 +504,9 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
 {
     global $form, $langs, $conf, $db;
     $taskLabel = '';
-    $userName = ($user == 'any')?(' - '):print_generic('user', 'rowid', $user, 'lastname', 'firstname', ' ');
-    if($task == 'any'){
+    $userName = ($user == 'any')?
+        (' - '):print_generic('user', 'rowid', $user, 'lastname', 'firstname', ' ');
+    if ($task == 'any'){
         $taskLabel = ' - ';
         $taskHTML = ' - ';
     } else {
@@ -485,7 +514,8 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
         $objtemp = new Task($db);
         $objtemp->fetch($task);
         $taskLabel = $objtemp->label ;
-        $taskHTML .= str_replace('classfortooltip', 'classfortooltip colTasks', $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
+        $taskHTML .= str_replace('classfortooltip', 'classfortooltip colTasks', 
+            $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
     }
 
     $html = '<tr class = "'.$class.'"><th align = "left" width = "20%">'.$userName;
@@ -494,30 +524,41 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     $html .= '<input type = "hidden"   name = "userTask['.$user.']['.$task.'][taskLabel]"  value = "'. $taskLabel.'">';
     $html .= '<input type = "hidden"   name = "userTask['.$user.']['.$task.'][taskTimeList]"  value = "'. $tasktimelist.'">';
     $defaultService = getDefaultService($user, $task);
-    $addchoices = array(0 => $langs->transnoentities('Custom').': '.$taskLabel, '-999'=> $langs->transnoentities('not2invoice'));
+    $addchoices = array(0 => $langs->transnoentities('Custom').': '
+        .$taskLabel, '-999'=> $langs->transnoentities('not2invoice'));
     $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
     $html .= '</th><th >';
-    $html .= select_sellist(array('table' => 'product', 'keyfield' => 'rowid', 'fields' => 'ref,label', 'where' => ' tosell = 1 AND fk_product_type = 1'),
-                        array('name' => 'userTask['.$user.']['.$task.'][Service]',  'separator' => ' - '),
-                        $defaultService,
-                        $addchoices);
+    $html .= select_sellist(array('table' => 'product', 
+        'keyfield' => 'rowid', 'fields' => 'ref,label', 
+        'where' => ' tosell = 1 AND fk_product_type = 1'),
+        array('name' => 'userTask['.$user.']['.$task.'][Service]',  'separator' => ' - '),
+                $defaultService,  $addchoices);
     $html .= '</th>';
     $unitValue = '0.0';
-    if(($user>0)){ // if the is no defaulf service, use the thm if available, if not use the tjm
+    if (($user>0)){ // if the is no defaulf service, use the thm if available, if not use the tjm
         $curUser = new User($db);
         $curUser->fetch($user);
-        if($curUser->thm)$unitValue = $curUser->thm;
-        else if($curUser->tjm)$unitValue = $curUser->tjm;
+        if ($curUser->thm)$unitValue = $curUser->thm;
+        else if ($curUser->tjm)$unitValue = $curUser->tjm;
     }
 
-    $html .= '<th ><input type = "text"  size = "30" name = "userTask['.$user.']['.$task.'][Desc]" ></th>';
-    $html .= '<th><input type = "text"  size = "6" name = "userTask['.$user.']['.$task.'][PriceHT]" value="'.number_format($unitValue,2).'" ></th>';
+    $html .= '<th ><input type = "text"  size = "30" name = "userTask['
+        .$user.']['.$task.'][Desc]" ></th>';
+    $html .= '<th><input type = "text"  size = "6" name = "userTask['
+        .$user.']['.$task.'][PriceHT]" value="'.number_format($unitValue,2).'" ></th>';
     //$html .= '<th><input type = "text" size = "6" name = "userTask['.$user.']['.$task.']["VAT"]" ></th>';
-    $html .= '<th>'.$form->load_tva('userTask['.$user.']['.$task.'][VAT]', -1, $seller, $buyer, 0, 0, '', false, 1).'</th>';
-    $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['.$user.']['.$task.'][unit_duration]" value = "1" >';
-    $html .= '<br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "h" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'':'checked').'>'.$langs->trans('Hour');
-    $html .= '<br><input name = "userTask['.$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "d" '.(($conf->global->TIMESHEET_TIME_TYPE == "days")?'checked':'').'>'.$langs->trans('Days').'</th>';
-    $html .= '<th><input type = "text" size = "2" onkeypress="return regexEvent(this,event,\'timeChr\')" maxlength = "5" name = "userTask['.$user.']['.$task.'][duration]" value = "'.$duration.'" >';
+    $html .= '<th>'.$form->load_tva('userTask['.$user.']['.$task.'][VAT]', 
+        -1, $seller, $buyer, 0, 0, '', false, 1).'</th>';
+    $html .= '<th><input type = "text" size = "2" maxlength = "2" name = "userTask['
+        .$user.']['.$task.'][unit_duration]" value = "1" >';
+    $html .= '<br><input name = "userTask['.$user.']['
+        .$task.'][unit_duration_unit]" type = "radio" value = "h" '
+        .(($conf->global->TIMESHEET_TIME_TYPE == "days")?'':'checked').'>'.$langs->trans('Hour');
+    $html .= '<br><input name = "userTask['
+        .$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "d" '
+        .(($conf->global->TIMESHEET_TIME_TYPE == "days")?'checked':'').'>'.$langs->trans('Days').'</th>';
+    $html .= '<th><input type = "text" size = "2" onkeypress="return regexEvent(this,event,\'timeChr\')"'
+        .' maxlength = "5" name = "userTask['.$user.']['.$task.'][duration]" value = "'.$duration.'" >';
     $html .= '</th</tr>';
     return $html;
 }
@@ -539,7 +580,7 @@ function getDefaultService($userid, $taskid)
     $sql .= ' LIMIT 1';
      dol_syslog("ProjectInvoice::getDefaultService", LOG_DEBUG);
     $resql = $db->query($sql);
-    if($db->num_rows($resql)>0) {
+    if ($db->num_rows($resql)>0) {
         $obj = $db->fetch_object($resql);
         $res = $obj->fk_service;
     }
@@ -557,16 +598,18 @@ function hasProjectRight($userid, $projectid)
 {
     global $db, $user;
     $res = true;
-    if($projectid && !($user->admin)) {
+    if ($projectid && !($user->admin)) {
         $res = false;
         $sql = ' SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec ';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
         $sql .= ' WHERE element_id = \''.$projectid;
-        $sql .= '\' AND (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%BILLING%\')) AND ctc.active = \'1\'  ';
+        $sql .= '\' AND (ctc.element in (\'project\')'
+            .' AND (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%BILLING%\'))'
+            .' AND ctc.active = \'1\'  ';
         $sql .= ' AND fk_socpeople = \''.$userid.'\' ';
         dol_syslog("ProjectInvoice::hasProjectRight", LOG_DEBUG);
         $resql = $db->query($sql);
-        if($db->num_rows($resql))$res = true;
+        if ($db->num_rows($resql))$res = true;
     }
     return $res;
 }
@@ -587,6 +630,6 @@ function Update_task_time_invoice($idInvoice, $idLine, $task_time_list)
     $sql .= " WHERE rowid in ({$task_time_list})";
     dol_syslog("ProjectInvoice::setnvoice", LOG_DEBUG);
     $resql = $db->query($sql);
-    if($db->num_rows($resql))$res = true;
+    if ($db->num_rows($resql))$res = true;
     return $res;
 }

@@ -30,7 +30,7 @@ $langs->load("admin");
 $langs->load("errors");
 $langs->load("other");
 $langs->load("timesheet@timesheet");
-if(!$user->admin) {
+if (!$user->admin) {
     $accessforbidden = accessforbidden("you need to be admin");
 }
 $action = getpost('action', 'alpha');
@@ -67,7 +67,7 @@ $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
 $approvalbyweek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
 $maxApproval = $conf->global->TIMESHEET_MAX_APPROVAL;
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
-if(count($apflows) != 6) {
+if (count($apflows) != 6) {
     $apflows = array('_', '0', '0', '0', '0', '0');
 }
 //Invoice part
@@ -98,7 +98,7 @@ $unblockClosed = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
 $reportInvoicedCol= $conf->global->TIMESHEET_REPORT_INVOICED_COL;
 $reportUngroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
 $allowPublic = $conf->global->TIMESHEET_ALLOW_PUBLIC;
-if(count($opendays)!=8) {
+if (count($opendays)!=8) {
     $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
 }
 
@@ -118,7 +118,7 @@ switch($action) {
     case "save":
         //general option
         $hoursperday = getpost('hoursperday', 'int');
-        if($hoursperday == 0) {
+        if ($hoursperday == 0) {
             //error handling if hour per day is empty
             $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
             setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"), 'errors');
@@ -128,7 +128,7 @@ switch($action) {
         $timetype = getpost('timeType', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         $timeSpan = getpost('timeSpan', 'alpha');
-        if($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN) {
+        if ($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN) {
             // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql .= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
@@ -209,13 +209,13 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
         // open days
         $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
-        foreach(getpost('opendays', 'array') as $key => $day) {
+        foreach (getpost('opendays', 'array') as $key => $day) {
             $opendays[$key] = $day;
         }
         dolibarr_set_const($db, "TIMESHEET_OPEN_DAYS", implode('', $opendays), 'chaine', 0, '', $conf->entity);
         //approval flows
         $apflows = array('_', '0', '0', '0', '0', '0');
-        foreach(getpost('apflows', 'array') as $key => $flow) {
+        foreach (getpost('apflows', 'array') as $key => $flow) {
             $apflows[$key] = $flow;
         }
         //INVOICE
@@ -271,7 +271,7 @@ switch($action) {
         break;
 }
 $headersT = explode('||', $headers);
-foreach($headersT as $header) {
+foreach ($headersT as $header) {
     switch($header) {
         case 'Project':
             $showProject = 1;
@@ -314,7 +314,8 @@ foreach($headersT as $header) {
 //permet d'afficher la structure dolibarr
 $morejs = array("/timesheet/core/js/timesheet.js?v2.0", "/timesheet/core/js/jscolor.js");
 llxHeader("", $langs->trans("timesheetSetup"), '', '', '', '', $morejs, '', 0, 0);
-if($action = "save")echo "<script>window.history.pushState('', '', '".explode('?', $_SERVER['REQUEST_URI'], 2)[0]."');</script>";
+if ($action = "save")echo "<script>window.history.pushState('', '', '".explode('?', 
+    $_SERVER['REQUEST_URI'], 2)[0]."');</script>";
 $linkback = '<a href = "'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("timesheetSetup"), $linkback, 'title_setup');
 
@@ -652,7 +653,7 @@ echo  '<td align="left"><input type = "checkbox" name = "evalAddLine" value="1" 
 echo (($evalAddLine == '1')?'checked':'')."></td></tr>";
 // export format
 $formats = array();
-foreach(glob(DOL_DOCUMENT_ROOT . "/core/modules/export/export_*.modules.php") as $file) {
+foreach (glob(DOL_DOCUMENT_ROOT . "/core/modules/export/export_*.modules.php") as $file) {
     preg_match_all("/export_(?<format>.+)\.modules\.php/", $file, $matches);
     $formats[] = $matches['format'][0];
 }

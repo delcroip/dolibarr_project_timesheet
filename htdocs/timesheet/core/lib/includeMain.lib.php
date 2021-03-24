@@ -23,10 +23,10 @@
 $res = 0;
 error_reporting(E_ALL);
 $currentTimesheetPath = dirname(__FILE__);
-if(! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
+if (! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
     include $currentTimesheetPath.'/dev.inc.php';
 }
-//if(! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+//if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
 if (! $res && file_exists($currentTimesheetPath."/../../../main.inc.php")) {
     $res = @include $currentTimesheetPath.'/../../../main.inc.php';// in HTdocs
     //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../../");
@@ -41,7 +41,7 @@ if (! $res && file_exists($currentTimesheetPath."/../../../../../main.inc.php"))
 }
 if (! $res) die("Include of main fails") ;
 
-if ($user->admin && version_compare("4.1", $conf->global->TIMESHEET_VERSION) > 0){
+if ($user->admin && version_compare("4.3.10", $conf->global->TIMESHEET_VERSION) > 0){
     setEventMessage("Version of timesheet updated, please deactivate then reactivate the module", 'warnings');
 }
 // return from functions

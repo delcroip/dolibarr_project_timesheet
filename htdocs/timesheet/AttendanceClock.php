@@ -28,10 +28,10 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/AttendanceEvent.class.php';
 require_once 'class/TimesheetTask.class.php';
-if(!$user->rights->timesheet->attendance->user) {
+if (!$user->rights->timesheet->attendance->user) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");
 }
-$tms = GETPOST('tms', 'alpha');
+$token = GETPOST('token', 'alpha');
 $action = GETPOST('action', 'alpha');
 $project = GETPOST('project', 'int');
 $task = GETPOST('taskid', 'int');
@@ -46,18 +46,18 @@ $langs->load('timesheet@timesheet');
 $userid = $user->id;
 $postUserId = GETPOST('userid', 'int');
 // if the user can enter ts for other the user id is diferent
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
-    if(!empty($postUserId)) {
+if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
+    if (!empty($postUserId)) {
         $newuserid = $postUserId;
     }else{
         $newuserid =$user->id;
     }
     $SubordiateIds = getSubordinates($db, $user->id, 2, array(), ALL, $entity = '1');
     $SubordiateIds[] = $user->id;
-    if(in_array($newuserid, $SubordiateIds) || $user->admin || $user->rights->timesheet->attendance->admin) {
+    if (in_array($newuserid, $SubordiateIds) || $user->admin || $user->rights->timesheet->attendance->admin) {
         //$SubordiateIds[] = $userid;
         $userid = $newuserid;
-    } elseif($action == 'getOtherTs') {
+    } elseif ($action == 'getOtherTs') {
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
         unset($action);
     }
@@ -97,8 +97,8 @@ switch($action) {
     default:
         break;
 }
-if(!empty($tms)) {
-    unset($_SESSION['timesheet_attendance'][$tms]);
+if (!empty($token)) {
+    unset($_SESSION['timesheet'][$token]);
 }
 
 /***************************************************
@@ -106,26 +106,28 @@ if(!empty($tms)) {
 *
 * Put here all code to build page
 ****************************************************/
-$morejs = array("/timesheet/core/js/stopWatch.js?".$conf->global->TIMESHEET_VERSION, "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
+$morejs = array("/timesheet/core/js/stopWatch.js?".$conf->global->TIMESHEET_VERSION, 
+    "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
 $morecss = array("/timesheet/core/css/stopWatch.css");
 llxHeader('', $langs->trans('Attendance'), '', '', '', "", $morejs, $morecss);
 
 //calculate the week days
 // clock
 $timesheet_attendance->fetch('', $user);
-if(isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 && ((is_array($SubordiateIds) && count($SubordiateIds) > 1 ) ||  $SubordiateIds > 0 ||  $user->admin)) {
+if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 
+    && ((is_array($SubordiateIds) && count($SubordiateIds) > 1 ) ||  $SubordiateIds > 0 ||  $user->admin)) {
         print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
 }
 $timesheet_attendance->printHTMLClock();
 $headers = explode('||', $conf->global->TIMESHEET_HEADERS);
 // remove tta note as it is useless there
 $key = array_search('Note', $headers);
-if($key !== false){
+if ($key !== false){
     unset($headers[$key]);
 }
 // remove total
 $key = array_search('Total', $headers);
-if($key !== false){
+if ($key !== false){
     unset($headers[$key]);
 }
 $ajax = false;
@@ -133,9 +135,9 @@ $ajax = false;
 //headers
 $html .= "<table id='chronoTable' class = 'noborder' width = '100%'>";
 $html .= "<tr>";
-foreach($headers as $key => $value) {
+foreach ($headers as $key => $value) {
     $html .= "\t<th ";
-    if(count($headers) == 1) {
+    if (count($headers) == 1) {
            $html .= 'colspan = "2" ';
     }
     $html .= "> <a onclick=\"sortTable('chronoTable', 'col{$value}', 'asc');\">".$langs->trans($value)."</a></th>\n";
@@ -145,11 +147,20 @@ $html .= "<th>".$langs->trans("Action")."</th></tr>";
 $html .= '<tr class = "timesheet_line" id = "searchline">';
 $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
 
-if($conf->global->TIMESHEET_WHITELIST == 1) {
+if ($conf->global->TIMESHEET_WHITELIST == 1) {
    $html .= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
-   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 2)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')"><a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('All').'</a></div>';
-   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 0)?'id = "defaultOpen"':'').' class = "inline-block tabsElem" onclick = "showFavoris(event,\'whitelist\')"><a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('blackWhiteList').'</a></div>';
-   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 1)?'id = "defaultOpen"':'').' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')"><a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'.$langs->trans('Others').'</a></div>';
+   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 2)?'id = "defaultOpen"':'')
+        .' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')">'
+        .'<a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'
+        .$langs->trans('All').'</a></div>';
+   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 0)?'id = "defaultOpen"':'')
+        .' class = "inline-block tabsElem" onclick = "showFavoris(event,\'whitelist\')">'
+        .'<a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'
+        .$langs->trans('blackWhiteList').'</a></div>';
+   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 1)?'id = "defaultOpen"':'')
+        .' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')">'
+        .'<a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'
+        .$langs->trans('Others').'</a></div>';
    $html .= '</div>';
 }
 $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
