@@ -21,6 +21,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once './core/lib/timesheet.lib.php';
 require_once './class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $htmlother = new FormOther($db);
 //$objmodelexport = new ModeleExports($db);
@@ -43,7 +45,7 @@ if (empty($mode)){
     $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
 }
 
-$projectSelectedId = GETPOST('projectSelected');
+$projectSelectedId = GETPOST('projectSelected', 'int');
 $year = GETPOST('year', 'int');
 $month = GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Date']))
 // Load traductions files requiredby by page
@@ -57,6 +59,7 @@ $langs->loadLangs(
 		'main',
 		'projects',
 		'timesheet@timesheet',
+		'companies',
 	)
 );
 
@@ -150,6 +153,45 @@ if ($action == 'getpdf') {
 }
 //$_SESSION["dateStart"] = $dateStart ;
 llxHeader('', $langs->trans('projectReport'), '');
+
+// Load project
+if ($projectSelectedId > 0 || !empty($ref))
+{
+	$project = new Project($db);
+	$project->fetch($projectSelectedId);
+	$headProject = project_prepare_head($project);
+	dol_fiche_head($headProject, 'report', $langs->trans("projectReport"), -1, 'project');
+
+	$ret = $project->fetch($projectSelectedId, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
+	if ($ret > 0) {
+		$project->fetch_thirdparty();
+		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($project, 'fetchComments') && empty($project->comments)) $project->fetchComments();
+		$id = $project->id;
+	}
+
+	$ref = GETPOST('ref', 'alpha');
+	$title = $langs->trans("projectReport").' - '.$project->ref.' '.$project->name;
+	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $project->name) $title = $project->ref.' '.$project->name.' - '.$langs->trans("projectReport");
+	$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+
+	$morehtmlref = '<div class="refidno">';
+	// Title
+	$morehtmlref .= $project->title;
+	// Thirdparty
+	if ($project->thirdparty->id > 0)
+	{
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
+	}
+	$morehtmlref .= '</div>';
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($project, 'projectSelected', $linkback, ($user->socid ? 0 : 1), 'ref','ref',$morehtmlref);
+
+	print '<div class="underbanner clearboth"></div>';
+
+	dol_fiche_end();
+}
 
 $querryRes = '';
 if ($projectSelectedId   &&!empty($dateStart)) {
