@@ -73,6 +73,8 @@ $dateEnd = strtotime(GETPOST('dateEnd', 'alpha'));
 $dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goTodate
 $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
+$hidetab = GETPOST('hidetab', 'int');
+$reporttab = GETPOST('reporttab', 'alpha');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
 if (empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
@@ -159,9 +161,11 @@ if ($projectSelectedId > 0 || !empty($ref))
 {
 	$project = new Project($db);
 	$project->fetch($projectSelectedId);
-	$headProject = project_prepare_head($project);
-	dol_fiche_head($headProject, 'report', $langs->trans("projectReport"), -1, 'project');
-
+    if($hidetab != 1){
+	    $headProject = project_prepare_head($project);
+	    dol_fiche_head($headProject, 'report', $langs->trans("projectReport"), -1, 'project');
+    }
+    
 	$ret = $project->fetch($projectSelectedId, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$project->fetch_thirdparty();
@@ -186,7 +190,9 @@ if ($projectSelectedId > 0 || !empty($ref))
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($project, 'projectSelected', $linkback, ($user->socid ? 0 : 1), 'ref','ref',$morehtmlref);
+	if($hidetab != 1){
+        dol_banner_tab($project, 'projectSelected', $linkback, ($user->socid ? 0 : 1), 'ref','ref',$morehtmlref);
+    }
 
 	print '<div class="underbanner clearboth"></div>';
 
@@ -202,33 +208,38 @@ if ($projectSelectedId   &&!empty($dateStart)) {
     }
 }
 
-$head = timesheet_report_prepare_head( 'project', $projectSelectedId );
-print dol_get_fiche_head( $head, 'showthismonth', $langs->trans( 'TimeSpent' ), - 1, 'clock' );
-
+$head = timesheet_report_prepare_head( 'project', $projectSelectedId, $hidetab );
+print dol_get_fiche_head( $head, $reporttab, $langs->trans( 'TimeSpent' ), - 1, 'clock' );
 $form_output = '';
 
 $form_output .= '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
         <table class="noborder"  width="100%">
         <tr>
-        <td>'.$langs->trans('Project').'</td>
+        '.($hidetab == 1?'<td>'.$langs->trans('Project').'</td>':'').'
         <td>'.$langs->trans('DateStart').'</td>
         <td>'.$langs->trans('DateEnd').'</td>
         <td>'.$langs->trans('Mode').'</td>
         <td>'.$langs->trans('Options').'</td>
         <td></td>
         </tr>
-        <tr >
-        <td><select  name = "projectSelected">
-        ';
-// select project
-foreach ($projectList as $pjt) {
-    $form_output .= '<option value = "'.$pjt["value"].'" '
-        .(($projectSelectedId == $pjt["value"])?"selected":'').' >'.$pjt["label"].'</option>'."\n";
-}
-$form_output .= '<option value = "-999" '
-    .(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+        <tr >';
 
-$form_output .= '</select></td>';
+if($hidetab == 1){
+        $form_output .='<td><select  name = "projectSelected">';
+// select project
+    foreach ($projectList as $pjt) {
+        $form_output .= '<option value = "'.$pjt["value"].'" '
+            .(($projectSelectedId == $pjt["value"])?"selected":'').' >'.$pjt["label"].'</option>'."\n";
+    }
+    $form_output .= '<option value = "-999" '
+        .(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+
+    $form_output .= '</select></td>';
+    $form_output .= '<input type = "hidden" name = "hidetab" value = 1 />';
+}else{
+    $form_output .= '<input type = "hidden" name = "projectSelected" value = "'.$projectSelectedId.'" />';
+    
+}
 //}
 // select start date
 $form_output .= '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
@@ -277,19 +288,19 @@ if (!empty($querryRes))$form_output .=
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='
     .$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
-    .'&ungroup='.$ungroup.'" >'.$langs->trans('TimesheetPDF').'</a>';
+    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if (!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$form_output .= 
     '<a class = "butAction button" href="?action=getExport&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly
-    .'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
+    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
 if (!empty($querryRes))$form_output .= 
     '<a class = "butAction button" href="?action=reportproject&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
-    .'&ungroup='.$ungroup.'" >'.$langs->trans('Refresh').'</a>';
+    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('Refresh').'</a>';
 $form_output .= '</form>';
 if (!($optioncss != '' && !empty($_POST['userSelected']))) echo $form_output;
 echo $querryRes;
