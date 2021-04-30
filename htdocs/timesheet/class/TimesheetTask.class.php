@@ -621,10 +621,10 @@ class TimesheetTask extends Task
      *
      *  @param      array(string)       $headers             Headers to display
      *  @param      string              $tsUserId            id that will be used for the total
-     *  @param      int                 $openOveride         0- no effect;1 - force edition;(-1) - block edition
+     *  @param      int/array           $blockOveride         0- no effect;-1 - force edition;(1) - block edition 
      *  @return     string                                   HTML result containing the timesheet info
      */
-    public function getTimesheetLine($headers, $tsUserId = 0, $openOveride = 0)
+    public function getTimesheetLine($headers, $tsUserId = 0, $blockOveride = 0, $holiday = array())
     {
         global $langs, $conf, $statusColor;
         // change the time to take all the TS per day
@@ -644,10 +644,14 @@ class TimesheetTask extends Task
         /*
         * Open task ?
         */
-        if ($this->status == INVOICED)$openOveride = -1;// once invoice it should not change
-        $isOpenStatus = ($openOveride == 1) || in_array($this->status, 
-            array(DRAFT, CANCELLED, REJECTED, PLANNED));
-        if ($openOveride == -1)$isOpenStatus = false;
+        if ($this->status == INVOICED)$blockOveride = 1;// once invoice it should not change
+        $isOpenStatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED, PLANNED));
+        
+        if( $blockOveride == 1){
+            $isOpenStatus = false;
+        }else if ($blockOveride == -1){
+            $isOpenStatus = true;
+        }
         /*
          * info section
          */
@@ -657,7 +661,11 @@ class TimesheetTask extends Task
         $html .= '>'."\n";
         //title section
         $html .= $this->getHTMLlineInfoCell($headers);
-        $html .= $this->getHTMLLineDayCell($isOpenStatus);
+        if(is_array($holiday) && $isOpenStatus){
+            $html .= $this->getHTMLLineDayCell($isOpenStatus, $holiday);
+        }else{
+            $html .= $this->getHTMLLineDayCell($isOpenStatus);
+        }
         $html .= "</tr>\n";
 
         return $html.$htmltail;
@@ -666,9 +674,10 @@ class TimesheetTask extends Task
     * function to generate the day cell content for HTML Display
     *
     *  @param      int               $isOpenStatus            is the line open for time entry
+    *  @param      array             $holidayList  
     *  @return     string                                         HTML result containing the timesheet info
     */
-    public function getHTMLLineDayCell($isOpenStatus)
+    public function getHTMLLineDayCell($isOpenStatus, $holidayList=array())
     {
         global $langs, $conf, $statusColor;
         $isOpen = false;
@@ -678,6 +687,7 @@ class TimesheetTask extends Task
         $unblockInvoiced = $conf->global->TIMESHEET_UNBLOCK_INVOICED;
         $unblockClosedDay = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
         $hidezeros = $conf->global->TIMESHEET_HIDE_ZEROS;
+        $blockholiday = $conf->global->TIMESHEET_BLOCK_HOLIDAY;
         $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
         $hidden = false;
         $default_timezone = (empty($_SESSION["dol_tz_string"])?
@@ -716,6 +726,9 @@ class TimesheetTask extends Task
                 $isInvoiced = $this->tasklist[$dayCur]['invoiced'];
                 if ($unblockClosedDay == 0) $isOpen = $isOpen  && $isOpenDay;
                 if ($unblockInvoiced == 0) $isOpen = $isOpen  && !$isInvoiced;
+                if ($blockholiday == 1 && count($holidayList)>=$dayCur){
+                    $isOpen = $isOpen && !($holidayList[$dayCur]['am'] && $holidayList[$dayCur]['pm']);
+                } 
 
                 $bkcolor = '';
                 if (!$isOpenDay){

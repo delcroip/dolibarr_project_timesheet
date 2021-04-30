@@ -54,7 +54,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_name = 'Patrick Delcroix';
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.3.10';
+                $this->version = '4.4.0';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -153,6 +153,8 @@ class modTimesheet extends DolibarrModules
                 $this->const[$r] = array("TIMESHEET_DAY_MAX_DURATION", "int", 12, "max working hours per days");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_ADD_HOLIDAY_TIME", "int", 1, "count the holiday in total or not");
+                $r++;
+                $this->const[$r] = array("TIMESHEET_BLOCK_HOLIDAY", "int", 1, "block time entry on  holiday");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_OPEN_DAYS", "chaine", "_1111100", "normal day for time booking");
                 $r++;
@@ -414,7 +416,7 @@ class modTimesheet extends DolibarrModules
                         'titre' => 'projectReport',
                         'mainmenu' => 'project',
                         'leftmenu' => 'projectReport',
-                        'url' => '/timesheet/TimesheetReportProject.php',
+                        'url' => '/timesheet/TimesheetReportProject.php?hidetab=1',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 120,
                         'enabled' => '$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.

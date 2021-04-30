@@ -26,8 +26,8 @@
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 class TimesheetHoliday extends Holiday
 {
-        private $holidaylist;
-        private $holidayPresent;
+        public $holidaylist;
+        public $holidayPresent;
     /** Object contructor
      *
      * @param database $db db object
