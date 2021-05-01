@@ -76,6 +76,7 @@ $dateStart = parseDate($dateStartday, $dateStartmonth, $dateStartyear, $dateStar
 $dateEnd = strtotime(GETPOST('dateEnd', 'alpha'));
 $dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goTodate
 $dateEndmonth = GETPOST('dateEndmonth', 'int');
+$reporttab = GETPOST('reporttab', 'alpha');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
@@ -139,7 +140,7 @@ if ($action == 'getpdf') {
 llxHeader('', $langs->trans('userReport'), '');
 
 $head = timesheet_report_prepare_head( 'user', $user->id );
-print dol_get_fiche_head( $head, 'showthismonth', $langs->trans( 'TimeSpent' ), - 1, 'clock' );
+print dol_get_fiche_head( $head, $reporttab, $langs->trans( 'TimeSpent' ), - 1, 'clock' );
 
 $form_output = '';
 

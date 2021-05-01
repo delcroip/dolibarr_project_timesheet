@@ -921,20 +921,26 @@ public function getHTMLtaskLines( $ajax = false)
     $i = 1;
     $Lines = '';
     $nbline = 0;
+    $holiday = array();
+
+    if (is_array($this->holidays->holidaylist) && count($this->holidays->holidaylist)>0){
+        $holiday = $this->holidays->holidaylist;
+    }
     if (!$ajax & is_array($this->taskTimesheet)) {
         $nbline = count($this->taskTimesheet);
         foreach ($this->taskTimesheet as $timesheet) {
             $row = new TimesheetTask($this->db);
             $row->unserialize($timesheet);
+            
             //$row->db = $this->db;
             if (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED))) {
-                $openOveride = 1;
+                $blockOveride = -1;
             } elseif (in_array($this->status, array(UNDERAPPROVAL, INVOICED, APPROVED, CHALLENGED, SUBMITTED))) {
-                $openOveride = -1;
+                $blockOveride = 1;
             } else{
-                $openOveride = 0;
+                $blockOveride = 0;
             }
-            $Lines .= $row->getTimesheetLine($this->headers, $this->id, $openOveride);
+            $Lines .= $row->getTimesheetLine($this->headers, $this->id, $blockOveride, $holiday);
             if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
             $i++;
         }
@@ -993,7 +999,10 @@ public function getHTMLNavigation($optioncss, $ajax = false)
     $form = new Form($this->db);
     $tail = '';
     //$tail = '&wlm='.$this->whitelistmode;
-    if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1)$tail = '&userid='.$this->userId;
+    if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) 
+        && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1){
+        $tail = '&userid='.$this->userId;
+    }
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
     if ($ajax) {
 //     $Nav .= '<a id = "navPrev" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, -1).'\', 0);';

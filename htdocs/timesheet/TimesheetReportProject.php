@@ -21,6 +21,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once './core/lib/timesheet.lib.php';
 require_once './class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $htmlother = new FormOther($db);
 //$objmodelexport = new ModeleExports($db);
@@ -43,7 +45,7 @@ if (empty($mode)){
     $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
 }
 
-$projectSelectedId = GETPOST('projectSelected');
+$projectSelectedId = GETPOST('projectSelected', 'int');
 $year = GETPOST('year', 'int');
 $month = GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Date']))
 // Load traductions files requiredby by page
@@ -57,6 +59,7 @@ $langs->loadLangs(
 		'main',
 		'projects',
 		'timesheet@timesheet',
+		'companies',
 	)
 );
 
@@ -70,6 +73,8 @@ $dateEnd = strtotime(GETPOST('dateEnd', 'alpha'));
 $dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goTodate
 $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
+$hidetab = GETPOST('hidetab', 'int');
+$reporttab = GETPOST('reporttab', 'alpha');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
 if (empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
@@ -80,7 +85,7 @@ if (empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
 $userid = is_object($user)?$user->id:$user;
 //querry to get the project where the user have priviledge;either project responsible or admin
 $sql = 'SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
-if (!$user->admin) {
+if (!$user->admin && !$user->rights->projet->all->lire &$user->rights->projet->all->creer) {
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid = element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR  ctc.code LIKE \'%BILLING%\'))) AND ctc.active = \'1\'  ';
@@ -151,6 +156,49 @@ if ($action == 'getpdf') {
 //$_SESSION["dateStart"] = $dateStart ;
 llxHeader('', $langs->trans('projectReport'), '');
 
+// Load project
+if ($projectSelectedId > 0 || !empty($ref))
+{
+	$project = new Project($db);
+	$project->fetch($projectSelectedId);
+    if($hidetab != 1){
+	    $headProject = project_prepare_head($project);
+	    dol_fiche_head($headProject, 'report', $langs->trans("projectReport"), -1, 'project');
+    }
+    
+	$ret = $project->fetch($projectSelectedId, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
+	if ($ret > 0) {
+		$project->fetch_thirdparty();
+		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($project, 'fetchComments') && empty($project->comments)) $project->fetchComments();
+		$id = $project->id;
+	}
+
+	$ref = GETPOST('ref', 'alpha');
+	$title = $langs->trans("projectReport").' - '.$project->ref.' '.$project->name;
+	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $project->name) $title = $project->ref.' '.$project->name.' - '.$langs->trans("projectReport");
+	$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+
+	$morehtmlref = '<div class="refidno">';
+	// Title
+	$morehtmlref .= $project->title;
+	// Thirdparty
+	if ($project->thirdparty->id > 0)
+	{
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
+	}
+	$morehtmlref .= '</div>';
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+	if($hidetab != 1){
+        dol_banner_tab($project, 'projectSelected', $linkback, ($user->socid ? 0 : 1), 'ref','ref',$morehtmlref);
+    }
+
+	print '<div class="underbanner clearboth"></div>';
+
+	dol_fiche_end();
+}
+
 $querryRes = '';
 if ($projectSelectedId   &&!empty($dateStart)) {
     if ($exportfriendly){
@@ -160,33 +208,40 @@ if ($projectSelectedId   &&!empty($dateStart)) {
     }
 }
 
-$head = timesheet_report_prepare_head( 'project', $projectSelectedId );
-print dol_get_fiche_head( $head, 'showthismonth', $langs->trans( 'TimeSpent' ), - 1, 'clock' );
-
+$head = timesheet_report_prepare_head( 'project', $projectSelectedId, $hidetab );
+print dol_get_fiche_head( $head, $reporttab, $langs->trans( 'TimeSpent' ), - 1, 'clock' );
 $form_output = '';
 
 $form_output .= '<form action="?action=reportproject'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
         <table class="noborder"  width="100%">
         <tr>
-        <td>'.$langs->trans('Project').'</td>
+        '.($hidetab == 1?'<td>'.$langs->trans('Project').'</td>':'').'
         <td>'.$langs->trans('DateStart').'</td>
         <td>'.$langs->trans('DateEnd').'</td>
         <td>'.$langs->trans('Mode').'</td>
         <td>'.$langs->trans('Options').'</td>
         <td></td>
         </tr>
-        <tr >
-        <td><select  name = "projectSelected">
-        ';
-// select project
-foreach ($projectList as $pjt) {
-    $form_output .= '<option value = "'.$pjt["value"].'" '
-        .(($projectSelectedId == $pjt["value"])?"selected":'').' >'.$pjt["label"].'</option>'."\n";
-}
-$form_output .= '<option value = "-999" '
-    .(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+        <tr >';
 
-$form_output .= '</select></td>';
+if($hidetab == 1){
+        $form_output .='<td><select  name = "projectSelected">';
+// select project
+    foreach ($projectList as $pjt) {
+        $form_output .= '<option value = "'.$pjt["value"].'" '
+            .(($projectSelectedId == $pjt["value"])?"selected":'').' >'.$pjt["label"].'</option>'."\n";
+    }
+    if(count($projectList)>1){}
+        $form_output .= '<option value = "-999" '
+        .(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+    }
+
+    $form_output .= '</select></td>';
+    $form_output .= '<input type = "hidden" name = "hidetab" value = 1 />';
+}else{
+    $form_output .= '<input type = "hidden" name = "projectSelected" value = "'.$projectSelectedId.'" />';
+    
+}
 //}
 // select start date
 $form_output .= '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
@@ -235,19 +290,19 @@ if (!empty($querryRes))$form_output .=
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='
     .$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
-    .'&ungroup='.$ungroup.'" >'.$langs->trans('TimesheetPDF').'</a>';
+    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if (!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$form_output .= 
     '<a class = "butAction button" href="?action=getExport&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly
-    .'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
+    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
 if (!empty($querryRes))$form_output .= 
     '<a class = "butAction button" href="?action=reportproject&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
-    .'&ungroup='.$ungroup.'" >'.$langs->trans('Refresh').'</a>';
+    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('Refresh').'</a>';
 $form_output .= '</form>';
 if (!($optioncss != '' && !empty($_POST['userSelected']))) echo $form_output;
 echo $querryRes;

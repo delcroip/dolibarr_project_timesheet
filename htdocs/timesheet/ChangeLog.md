@@ -1,7 +1,14 @@
 # dolibarr_project_timesheet changelog
+4.4.1(2021-05-01)
+- fix: tasknote deleteion not working
+- fix: week note not saved
+- new: allow project all rights to access to all project reports
+- new: allow attendance admin to enter time for everyone
 
-4.4.0 (2021-TBD)
+
+4.4.0 (2021-04-30)
 - fix: UI improvements
+- new: block holiday
 
 4.3.9 (2021-02-09)
 - new permission attendance->admin has the same priviledge as Admin 

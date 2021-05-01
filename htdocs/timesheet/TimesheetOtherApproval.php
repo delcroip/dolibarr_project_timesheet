@@ -362,7 +362,7 @@ function getHTMLRows($objectArray)
  //        $object->getTaskInfo();
         $object->getActuals();
         echo '<tr>';
-        echo $object->getTimesheetLine($headers, 0, '-1');
+        echo $object->getTimesheetLine($headers, 0, '1');
         echo "<tr>\n";
     }
 }

@@ -469,6 +469,35 @@ $project = new Project($db);
 $project->fetch($projectId);
 $headProject = project_prepare_head($project);
 dol_fiche_head($headProject, 'invoice', $langs->trans("Project"), 0, 'project');
+
+// Load object
+if ($projectId > 0 || !empty($ref))
+{
+	$ret = $project->fetch($projectId, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
+	if ($ret > 0) {
+		$project->fetch_thirdparty();
+		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($project, 'fetchComments') && empty($project->comments)) $project->fetchComments();
+		$id = $project->id;
+	}
+}
+$ref = GETPOST('ref', 'alpha');
+$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+$morehtmlref = '<div class="refidno">';
+// Title
+$morehtmlref .= $project->title;
+// Thirdparty
+if ($project->thirdparty->id > 0)
+{
+    $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
+}
+$morehtmlref .= '</div>';
+
+dol_banner_tab($project, 'projectid', $linkback, ($user->socid ? 0 : 1), 'ref','ref',$morehtmlref);
+print '<div class="underbanner clearboth"></div>';
+
+dol_fiche_end();
+
 print $Form;
 //javascript to reload the page with the poject selected
 /*print '

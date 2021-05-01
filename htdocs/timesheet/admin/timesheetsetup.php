@@ -62,6 +62,7 @@ $cancelledColor = $conf->global->TIMESHEET_COL_CANCELLED;
 $rejectedColor = $conf->global->TIMESHEET_COL_REJECTED;
 $maxhoursperday = $conf->global->TIMESHEET_DAY_MAX_DURATION;
 $addholidaytime = $conf->global->TIMESHEET_ADD_HOLIDAY_TIME;
+$blockholiday = $conf->global->TIMESHEET_BLOCK_HOLIDAY;
 $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
 //approval
 $approvalbyweek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
@@ -204,6 +205,9 @@ switch($action) {
         //holiday
         $addholidaytime = getpost('addholidaytime', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_ADD_HOLIDAY_TIME", $addholidaytime, 'chaine', 0, '', $conf->entity);
+        $addholidaytime = getpost('addholidaytime', 'alpha');
+        // block holday
+        dolibarr_set_const($db, "TIMESHEET_BLOCK_HOLIDAY", $blockholiday, 'chaine', 0, '', $conf->entity);
         //docs
         $adddocs = getpost('adddocs', 'int');
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
@@ -375,6 +379,11 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("addholidaytime");
 echo '</td><td align="left">'.$langs->trans("addholidaytimeDesc").'</td>';
 echo  '<td align="left"><input type = "checkbox" name = "addholidaytime" value="1" ';
 echo (($addholidaytime == '1')?'checked':'')."></td></tr>";
+// block holiday 
+echo  '<tr class="oddeven"><td align="left">'.$langs->trans("blockholiday");
+echo '</td><td align="left">'.$langs->trans("blockholidayDesc").'</td>';
+echo  '<td align="left"><input type = "checkbox" name = "blockholiday" value="1" ';
+echo (($blockholiday == '1')?'checked':'')."></td></tr>";
 // add docs
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("adddocs");
 echo '</td><td align="left">'.$langs->trans("adddocsDesc").'</td>';

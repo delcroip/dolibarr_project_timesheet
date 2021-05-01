@@ -58,7 +58,7 @@ if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER)
             $newuserid = $postUserId;
     }
     $SubordiateIds = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
-    $SubordiateIds[] = $userid;
+    //$SubordiateIds[] = $userid;
     if (in_array($newuserid, $SubordiateIds) || $user->admin 
         || $user->rights->timesheet->attendance->admin) {
         $SubordiateIds[] = $userid;
@@ -105,7 +105,7 @@ switch($action) {
         if (isset($_SESSION['timesheet'][$token])) {
             if ($tsUserId>0) {
                 $ret = 0;
-                $key = 1;
+                $key = GETPOST('tsUserId','int');
                 $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
                 $progressTask = GETPOST('progressTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
@@ -190,10 +190,11 @@ llxHeader('', $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 //tokentp = time();
 //fetch ts for others
-if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) 
-    && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 
-    && (count($SubordiateIds)>1 || $user->admin)) {
-    print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
+
+$admin = $user->rights->timesheet->attendance->admin || $user->admin;
+if ($conf->global->TIMESHEET_ADD_FOR_OTHER == 1 
+    && (count($SubordiateIds)>1|| $admin )) {
+    print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $admin);
 }
 //$ajax = false;
 $Form = $task_timesheet->getHTMLNavigation($optioncss);
