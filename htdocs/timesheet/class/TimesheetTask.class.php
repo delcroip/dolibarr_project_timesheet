@@ -1214,7 +1214,7 @@ class TimesheetTask extends Task
         
         dol_syslog(__METHOD__." taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user = $userId;
-        if (!empty($note) && $note != $this->note) {
+        if ($note != $this->note) {
             $this->note = $note;
             $noteUpdate = true;
         }
