@@ -2,6 +2,7 @@
 
 4.4.0 (2021-TBD)
 - fix: UI improvements
+- new: block holiday
 
 4.3.9 (2021-02-09)
 - new permission attendance->admin has the same priviledge as Admin 

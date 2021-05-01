@@ -105,7 +105,7 @@ switch($action) {
         if (isset($_SESSION['timesheet'][$token])) {
             if ($tsUserId>0) {
                 $ret = 0;
-                $key = 1;
+                $key = GETPOST('tsUserId','int');
                 $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
                 $progressTask = GETPOST('progressTask', 'array')[$tsUserId];
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
