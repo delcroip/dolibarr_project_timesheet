@@ -85,7 +85,7 @@ if (empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
 $userid = is_object($user)?$user->id:$user;
 //querry to get the project where the user have priviledge;either project responsible or admin
 $sql = 'SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
-if (!$user->admin) {
+if (!$user->admin && !$user->rights->projet->all->lire &$user->rights->projet->all->creer) {
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid = element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR  ctc.code LIKE \'%BILLING%\'))) AND ctc.active = \'1\'  ';
@@ -231,8 +231,10 @@ if($hidetab == 1){
         $form_output .= '<option value = "'.$pjt["value"].'" '
             .(($projectSelectedId == $pjt["value"])?"selected":'').' >'.$pjt["label"].'</option>'."\n";
     }
-    $form_output .= '<option value = "-999" '
+    if(count($projectList)>1){}
+        $form_output .= '<option value = "-999" '
         .(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
+    }
 
     $form_output .= '</select></td>';
     $form_output .= '<input type = "hidden" name = "hidetab" value = 1 />';
