@@ -24,6 +24,8 @@ Content
   - `ProjectReports`_
 
   - `ProjectInvoice`_
+
+  - `Perms`_
   
 
 
@@ -38,3 +40,5 @@ Content
 .. _ProjectReports: ProjectReports.rst
 
 .. _ProjectInvoice: ProjectInvoice.rst
+
+.. _Perms: Permission.rst
