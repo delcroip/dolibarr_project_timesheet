@@ -54,7 +54,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_name = 'Patrick Delcroix';
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.4.1';
+                $this->version = '4.4.2';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -268,9 +268,9 @@ class modTimesheet extends DolibarrModules
                 // Permissions
                 $this->rights = array();                // Permission array used by this module
                 $r = 0;
-                 $this->rights[$r][0] = 86100200;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'TimesheetUser';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][0] = 86100200;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'TimesheetUser';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
                 $this->rights[$r][4] = 'timesheet';
                 $this->rights[$r][5] = 'user';                                  // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                 //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
@@ -280,31 +280,31 @@ class modTimesheet extends DolibarrModules
                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
                 $this->rights[$r][4] = 'timesheet';
                 $this->rights[$r][5] = 'admin';                                  // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $r++;
-                //$r = 0;
+                //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;
+        //$r = 0;
                 $this->rights[$r][0] = 86100211;                                // Permission id(must not be already used)
                 $this->rights[$r][1] = 'ApprovalTeam';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $r++;
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;
                 $this->rights[$r][0] = 86100212;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'ApprovalAdmin';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][1] = 'ApprovalAdmin';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                 $r++;
                 $this->rights[$r][0] = 86100213;                                // Permission id(must not be already used)
                 $this->rights[$r][1] = 'ApprovalOther';        // Permission label
                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                 $this->rights[$r][5] = 'other';      
-                 $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
+                $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
                                 // Add here list of permission defined by an id, a label, a boolean and two constant strings.
                 $this->rights[$r][0] = 86100240;                                // Permission id(must not be already used)
                 $this->rights[$r][1] = 'ReportUser';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
                 $this->rights[$r][4] = 'report';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                 $this->rights[$r][5] = 'user';                 
                 $r++;                     
@@ -313,7 +313,7 @@ class modTimesheet extends DolibarrModules
                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
                 $this->rights[$r][4] = 'report';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                 $this->rights[$r][5] = 'project';                 
-                 $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
+                $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
                 $this->rights[$r][0] = 86100242;                                // Permission id(must not be already used)
                 $this->rights[$r][1] = 'ReportAdmin';        // Permission label
                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
@@ -321,17 +321,17 @@ class modTimesheet extends DolibarrModules
                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                 $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
                 $this->rights[$r][0] = 86100250;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'AttendanceUser';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'user';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $r++;
+                $this->rights[$r][1] = 'AttendanceUser';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'user';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;
                 $this->rights[$r][0] = 86100251;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'AttendanceAdmin';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $r++;
+                $this->rights[$r][1] = 'AttendanceAdmin';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;
 // Example:
                 // $this->rights[$r][0] = 2000;                                // Permission id(must not be already used)
                 // $this->rights[$r][1] = 'Permision label';        // Permission label
