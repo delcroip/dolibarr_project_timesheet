@@ -808,6 +808,8 @@ echo '<div id="other" class="tabBar">';
 
 	print load_fiche_titre( $langs->trans("Reminder"), '', '' );
 	print '<div>'.$langs->trans('reminderEmailProcess').'</div>';
+    print load_fiche_titre( $langs->trans("Traduction"), '', '' );
+    print '<a href="https://app.lokalise.com/public/761399855cb829e995d448.06757516">Localize Project</a>';
 
 echo '</div>'; // END TAB 'other'
 
