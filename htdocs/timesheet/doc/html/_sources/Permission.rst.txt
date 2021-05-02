@@ -60,5 +60,6 @@ reports
 
         - enable project report, list of project depend on project where the user is BILLING or LEADER. The admin and users with the right to access and modify all project will have access to all project
 
+    - admin:
 
-    - admin
+        - enable reports for all project and users.
