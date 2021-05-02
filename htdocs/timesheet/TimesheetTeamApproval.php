@@ -29,8 +29,9 @@ if ($apflows[1] == 0 && $role_key!== false) {
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
-if (!$user->rights->timesheet->approval) {
-    $accessforbidden = accessforbidden("you need to have the approver rights");
+$admin = $user->admin || $user->rights->timesheet->approval->admin;
+if (!$user->rights->timesheet->approval->team && !$admin) {
+    $accessforbidden = accessforbidden("you need to have the team or admin approver rights");
 }
 //$userId = GETPOST('userid');
 $userId = is_object($user)?$user->id:$user;
@@ -133,8 +134,7 @@ if (!empty($token)) {
     unset($_SESSION['timesheet'][$token]);
 }
 $token = getToken();
-$subId = ($user->admin || $user->rights->timesheet->attendance->admin)?
-    'all':getSubordinates($db, $userId, 2, array($userId), TEAM);
+$subId = ($admin)?'all':getSubordinates($db, $userId, 2, array($userId), TEAM);
 $selectList = getSelectAps($subId);
 $level = intval($conf->global->TIMESHEET_MAX_APPROVAL);
 $offset = 0;

@@ -20,6 +20,10 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'core/lib/generic.lib.php';
 require_once 'class/TimesheetTask.class.php';
+$admin = $user->admin || $user->rights->timesheet->approval->admin;
+if (!$user->rights->timesheet->approval->other && !$admin) {
+    $accessforbidden = accessforbidden("You don't have the approval projet or admin right");
+}
 /*******************************************************************
 * ACTIONS
 *
@@ -109,7 +113,7 @@ if ($action == 'submit') {
 *
 * Put here all code to build page
 ****************************************************/
-$subId = ($user->admin || $user->rights->timesheet->attendance->admin)?'all':
+$subId = ($admin)?'all':
     getSubordinates($db, $userId, 1, array($userId), $role_key);//FIx ME for other role
 $tasks = implode(', ', array_keys(getTasks($db, $userId)));
 if ($tasks == "")$tasks = 0;
