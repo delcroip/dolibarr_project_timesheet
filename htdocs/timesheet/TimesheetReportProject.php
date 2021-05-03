@@ -44,7 +44,12 @@ if (empty($mode)){
     $ungroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
     $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
 }
-
+$admin = $user->rights->projet->all->lire || $user->rights->projet->all->creer 
+    || $user->rights->timesheet->report->admin;
+    if (!$user->rights->timesheet->report->project && !$admin) {
+        $accessforbidden = accessforbidden("You don't have the timesheet user or admin right");
+    }
+    
 $projectSelectedId = GETPOST('projectSelected', 'int');
 $year = GETPOST('year', 'int');
 $month = GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Date']))
@@ -85,10 +90,10 @@ if (empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
 $userid = is_object($user)?$user->id:$user;
 //querry to get the project where the user have priviledge;either project responsible or admin
 $sql = 'SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_DB_PREFIX.'projet as pjt';
-if (!$user->admin && !$user->rights->projet->all->lire &$user->rights->projet->all->creer) {
+if (!$admin) {
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid = element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
-    $sql .= ' WHERE ((ctc.element in (\'project_task\') AND ctc.code LIKE \'%EXECUTIVE%\')OR (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR  ctc.code LIKE \'%BILLING%\'))) AND ctc.active = \'1\'  ';
+    $sql .= ' WHERE (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR  ctc.code LIKE \'%BILLING%\'))) AND ctc.active = \'1\'  ';
     $sql .= ' AND fk_socpeople = \''.$userid.'\' and fk_statut = \'1\'';
     $sql .= " AND pjt.entity IN (".getEntity('projet').")";
 } else{
@@ -231,7 +236,7 @@ if($hidetab == 1){
         $form_output .= '<option value = "'.$pjt["value"].'" '
             .(($projectSelectedId == $pjt["value"])?"selected":'').' >'.$pjt["label"].'</option>'."\n";
     }
-    if(count($projectList)>1){}
+    if(count($projectList)>1){
         $form_output .= '<option value = "-999" '
         .(($projectSelectedId == "-999")?"selected":'').' >'.$langs->trans('All').'</option>'."\n";
     }

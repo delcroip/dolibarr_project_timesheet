@@ -33,7 +33,10 @@ $exportFriendly = GETPOST('exportFriendly', 'alpha');
 if (empty($userIdSelected))$userIdSelected = $userid;
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-
+$admin = $user->admin || $user->rights->timesheet->report->admin || $user->rights->timesheet->timesheet->admin;
+if (!$user->rights->timesheet->report->user && !$admin) {
+    $accessforbidden = accessforbidden("You don't have the report user or admin right");
+}
 // Load translation files required by the page
 $langs->loadLangs(
 	array(
@@ -43,6 +46,7 @@ $langs->loadLangs(
 		'timesheet@timesheet',
 	)
 );
+
 
 //find the right week
 //$toDate = GETPOST('toDate', 'alpha');
@@ -62,6 +66,7 @@ if (empty($mode)){
 $short = GETPOST('short', 'int');
 $invoicedCol = GETPOST('invoicedcol', 'int');
 $ungroup = GETPOST('ungroup', 'int');
+
 
 //$userSelected = $userList[$userIdSelected];
 $year = GETPOST('year', 'int');
@@ -89,10 +94,10 @@ if (empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
 // if the user can see ts for other the user id is diferent
 $userIdlist = array();
 $userIdlistfull = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
-if (!empty($userIdSelected) && $userIdSelected <> -999) {
+if (!empty($userIdSelected) && $userIdSelected <> -999  && $userIdSelected <> $userid) {
     
     $userIdlistfull[] = $userid;
-    if (in_array($userIdSelected, $userIdlist) || $user->admin || $user->rights->timesheet->attendance->admin) {
+    if (in_array($userIdSelected, $userIdlist) || $admin ) {
         $userIdlist[] = $userIdSelected;
     } else{
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
@@ -156,8 +161,12 @@ $form_output .= '<form action="?action=reportUser'.(($optioncss != '')?'&amp;opt
         <tr >
         <td>
         ';
+if($admin){
+    $form_output .= $form->select_dolusers($userIdSelected, 'userSelected');
+} else {
+    $form_output .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null, 0, $userIdlist);
+}
 
-$form_output .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null, 0, $idsList);
 
 //$mode = 'PTD';
 $querryRes = '';

@@ -801,6 +801,7 @@ echo '<div id="other" class="tabBar">';
 	echo '<ul>';
 	echo '<li><a href="../doc/Module_timesheet.pdf">  PDF </a></li>';
 	echo '<li><a href="../doc/Module_timesheet.docx">  DOCX </a></li>';
+    echo '<li><a href="../doc/html/index.html">  HTML </a></li>';
 	echo '</ul>';
 
 	print load_fiche_titre( $langs->trans("Feedback"), '', '' );
@@ -808,6 +809,8 @@ echo '<div id="other" class="tabBar">';
 
 	print load_fiche_titre( $langs->trans("Reminder"), '', '' );
 	print '<div>'.$langs->trans('reminderEmailProcess').'</div>';
+    print load_fiche_titre( $langs->trans("Traduction"), '', '' );
+    print '<a href="https://app.lokalise.com/public/761399855cb829e995d448.06757516">Localize Project</a>';
 
 echo '</div>'; // END TAB 'other'
 

@@ -53,8 +53,9 @@ class box_approval extends ModeleBoxes
                         'text' => $text,
                         'limit' => dol_strlen($text)
       );
-        if ($user->rights->timesheet->approval) {
-            
+      $admin = $user->rights->timesheet->approval->admin || $user->admin;
+        if ($user->rights->timesheet->approval->team
+            || $user->rights->timesheet->approval->other || $admin) {
             $subordinate = implode(', ', getSubordinates($db, $userid, 2));
             if ($subordinate == '')$subordinate = 0;
             $tasks = implode(', ', array_keys(getTasks($db, $userid)));

@@ -41,8 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (!$user->rights->timesheet->attendance->admin) {
-    $accessforbidden = accessforbidden("You don't have the attendance/chrono admin right");
+$admin = $user->rights->timesheet->attendance->admin || $user->admin;
+if (!$admin) {
+    $accessforbidden = accessforbidden("You don't have the attendance admin right");
 }
 //require_once DOL_DOCUMENT_ROOT.'/projet/class/projet.class.php';
 $PHP_SELF = $_SERVER['PHP_SELF'];

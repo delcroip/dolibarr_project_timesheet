@@ -51,6 +51,11 @@ $postUserId = GETPOST('userid', 'int');
 $submitted = GETPOST('submit', 'alpha');
 $tsUserId = GETPOST('tsUserId', 'int');
 
+$admin = $user->admin || $user->rights->timesheet->timesheet->admin;
+if (!$user->rights->timesheet->timesheet->user && !$admin) {
+    $accessforbidden = accessforbidden("You don't have the timesheet user or admin right");
+}
+
 // if the user can enter ts for other the user id is diferent
 if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) 
     && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
@@ -59,8 +64,7 @@ if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER)
     }
     $SubordiateIds = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
     //$SubordiateIds[] = $userid;
-    if (in_array($newuserid, $SubordiateIds) || $user->admin 
-        || $user->rights->timesheet->attendance->admin) {
+    if (in_array($newuserid, $SubordiateIds) || $admin) {
         $SubordiateIds[] = $userid;
         $userid = $newuserid;
     } elseif ($action == 'getOtherTs') {
@@ -191,7 +195,6 @@ llxHeader('', $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //tokentp = time();
 //fetch ts for others
 
-$admin = $user->rights->timesheet->attendance->admin || $user->admin;
 if ($conf->global->TIMESHEET_ADD_FOR_OTHER == 1 
     && (count($SubordiateIds)>1|| $admin )) {
     print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $admin);

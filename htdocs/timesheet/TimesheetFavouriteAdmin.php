@@ -90,6 +90,14 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 $userId = is_object($user)?$user->id:$user;// 3.5 compatibility
+$admin = $user->admin  || $user->rights->timesheet->timesheet->admin 
+    || $user->rights->timesheet->attendance->admin;
+
+    
+if (!$user->rights->timesheet->timesheet->user && !$admin
+    && !$user->rights->timesheet->attendance->user) {
+    $accessforbidden = accessforbidden("You don't have the timesheet user or admin right");
+}
 // create object and set id or ref if provided as parameter
 $object = new TimesheetFavourite($db);
 if ($id>0) {
@@ -124,7 +132,7 @@ if ($cancel) {
             $action = ($action == 'add')?'create':'edit';
     }
     //retrive the data
-    $object->user = ($user->admin && $ajax!=1)?GETPOST('User', 'int'):$userId;
+    $object->user = ($admin && $ajax!=1)?GETPOST('User', 'int'):$userId;
     $object->project = GETPOST('Project', 'int');
     if ($object->project == -1)$object->project = '';
     $object->project_task = GETPOST('Task', 'int');
@@ -150,7 +158,7 @@ if ($cancel) {
 $result = '';
 switch($action) {
     case 'update':
-        $result = ($user->admin || ($user->id == $object->user))?$object->update():-1;
+        $result = ($admin || ($user->id == $object->user))?$object->update():-1;
         if ($result > 0) {
             // Creation OK
             setEventMessage('RecordUpdated', 'mesgs');
@@ -171,7 +179,7 @@ switch($action) {
         if ($id > 0 || !empty($ref)) {
             $result = $object->fetch($id, $ref);
             // only admin can check the whitelist of other
-            if (!$user->admin && $user->id != $object->user) {
+            if (!$admin && $user->id != $object->user) {
                 setEventMessage($langs->trans('notYourWhitelist').' id:'.$id, 'errors');
                 reloadpage();
             }
@@ -326,7 +334,7 @@ switch($action) {
         if ($edit == 1) {
             if (!empty($editedUser))$object->user = $editedUser;
             elseif ($new == 1) $object->user = $user->id;
-            print $form->select_dolusers($object->user, 'User', 1, '', !$user->admin);
+            print $form->select_dolusers($object->user, 'User', 1, '', !$admin);
         } else{
         print print_generic('user', 'rowid', $object->user, 'lastname', 'firstname', ' ');
         }
@@ -339,7 +347,7 @@ switch($action) {
             if (!empty($editedProject))$object->project = $editedProject;
             $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
             /* $formUserWhere = ' (t.datee >= \''.$object->db->idate(time()).'\' OR t.datee IS NULL)';
-           if (!$user->admin) {
+           if (!$admin) {
 
                 $formUserJoin = ' JOIN '.MAIN_DB_PREFIX.'element_contact  as ec ON t.rowid = ec.element_id';
                 $formUserJoin .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = fk_c_type_contact';
@@ -484,7 +492,7 @@ switch($action) {
             $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);// Note that $action and $object may have been modified by hook
             if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
             $userId = (is_object($user)?$user->id:$user);
-            if (empty($reshook) && ($user->admin || $userId == $object->user)) {
+            if (empty($reshook) && ($admin || $userId == $object->user)) {
                 print '<div class = "tabsAction">';
                 print '<a href = "'.$PHP_SELF.'?id='.$id.'&action=edit" class = "butAction">'
                     .$langs->trans('Update').'</a>';
@@ -528,7 +536,7 @@ switch($action) {
         //pass the search criteria
         if ($ls_user) {
             $sqlwhere .= natural_search(array('t.fk_user'), $ls_user);
-        } elseif (!$user->admin) {
+        } elseif (!$admin) {
             $sqlwhere .= ' AND t.fk_user = \''.$userId.'\'';
         }
         if ($ls_project) $sqlwhere .= natural_search(array('t.fk_project'), $ls_project);
@@ -603,7 +611,7 @@ switch($action) {
             print '<table class = "liste" width = "100%">'."\n";
             //TITLE
             print '<tr class = "liste_titre">';
-            if ($user->admin)print_liste_field_titre('User', 
+            if ($admin)print_liste_field_titre('User', 
                 $PHP_SELF, 't.fk_user', '', $param, '', $sortfield, $sortorder);
             print "\n";
             print_liste_field_titre('Project', 
@@ -625,7 +633,7 @@ switch($action) {
             //SEARCH FIELDS
             print '<tr class = "liste_titre">';
             //Search field foruser
-            if ($user->admin) {
+            if ($admin) {
                 print '<td class = "liste_titre" colspan = "1" >';
                 $ajaxNbChar = $conf->global->CONTACT_USE_SEARCH_TO_SELECT;
                 print $form->select_users($ls_user, 'ls_user');
@@ -691,7 +699,7 @@ switch($action) {
                     // You can use here results
                     print "<tr class = \"oddeven\"  onclick = \"location.href='";
                     print $basedurl.$obj->rowid."'\" >";
-                    if ($user->admin)
+                    if ($admin)
                         print "<td>".print_generic('user', 'rowid', $obj->fk_user, 'lastname', 'firstname', ' ')."</td>";
                     print "<td>".print_generic('projet', 'rowid', $obj->fk_project, 'ref', 'title', ' - ')."</td>";
                     print "<td>".print_generic('projet_task', 'rowid', $obj->fk_project_task, 'ref', 'label', ' - ')."</td>";

@@ -1,4 +1,8 @@
 # dolibarr_project_timesheet changelog
+4.4.2 (2021-05-02)
+- fix report user userlist
+- new: prems
+
 4.4.1(2021-05-01)
 - fix: tasknote deleteion not working
 - fix: week note not saved

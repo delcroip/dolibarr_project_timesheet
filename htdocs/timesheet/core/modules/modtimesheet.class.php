@@ -54,7 +54,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_name = 'Patrick Delcroix';
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.4.1';
+                $this->version = '4.4.2';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -268,44 +268,70 @@ class modTimesheet extends DolibarrModules
                 // Permissions
                 $this->rights = array();                // Permission array used by this module
                 $r = 0;
-                 $this->rights[$r][0] = 86100200;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'TimesheetUser';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'user';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $r++;
-                //$r = 0;
-                 $this->rights[$r][0] = 86100201;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'TeamApprover';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $r++;
-                 $this->rights[$r][0] = 86100202;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'ApprovalAdmin';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
-                 $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
-                 $this->rights[$r][0] = 86100203;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'ExportRead';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'read';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 //$this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
-                 $this->rights[$r][0] = 86100205;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'AttendanceUser';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'user';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $r++;
-                 $this->rights[$r][0] = 86100206;                                // Permission id(must not be already used)
-                 $this->rights[$r][1] = 'AttendanceAdmin';        // Permission label
-                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
-                 $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-                 $r++;
+                $this->rights[$r][0] = 86100200;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'TimesheetUser';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'timesheet';
+                $this->rights[$r][5] = 'user';                                  // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r ++;
+                $this->rights[$r][0] = 86100201;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'TimesheetAdmin';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'timesheet';
+                $this->rights[$r][5] = 'admin';                                  // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                //$this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;
+        //$r = 0;
+                $this->rights[$r][0] = 86100211;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'ApprovalTeam';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'team';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;
+                $this->rights[$r][0] = 86100212;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'ApprovalAdmin';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;
+                $this->rights[$r][0] = 86100213;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'ApprovalOther';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'approval';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'other';      
+                $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
+                                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
+                $this->rights[$r][0] = 86100240;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'ReportUser';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'report';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'user';                 
+                $r++;                     
+                $this->rights[$r][0] = 86100241;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'ReportProject';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'report';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'project';                 
+                $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
+                $this->rights[$r][0] = 86100242;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'ReportAdmin';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'report';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;                // Add here list of permission defined by an id, a label, a boolean and two constant strings.
+                $this->rights[$r][0] = 86100250;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'AttendanceUser';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'user';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;
+                $this->rights[$r][0] = 86100251;                                // Permission id(must not be already used)
+                $this->rights[$r][1] = 'AttendanceAdmin';        // Permission label
+                $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
+                $this->rights[$r][4] = 'attendance';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $this->rights[$r][5] = 'admin';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+                $r++;
 // Example:
                 // $this->rights[$r][0] = 2000;                                // Permission id(must not be already used)
                 // $this->rights[$r][1] = 'Permision label';        // Permission label
@@ -327,8 +353,8 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/Timesheet.php',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 100,
-                        'enabled' => '$user->rights->timesheet->user && !($user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE)',        // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled.
-                        'perms' => '1',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'enabled' => '$conf->timesheet->enabled && !($user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE)',        // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled.
+                        'perms' => '$user->rights->timesheet->timesheet->user || $user->rights->timesheet->timesheet->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);                                                // 0=Menu for internal users, 1=external users, 2=both
                 $r++;
@@ -340,8 +366,8 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/AttendanceClock.php',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 100,
-                        'enabled' => '$user->rights->timesheet->user && $user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE',
-                        'perms' => '1',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'enabled' => '$conf->timesheet->enabled && $user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE',
+                        'perms' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
                 $r++;
@@ -354,7 +380,7 @@ class modTimesheet extends DolibarrModules
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 100,
                         'enabled' => '$conf->timesheet->enabled',        // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled.
-                        'perms' => '1',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'perms' => '$user->rights->timesheet->timesheet->user || $user->rights->timesheet->timesheet->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);                                                // 0=Menu for internal users, 1=external users, 2=both
                 $r++;
@@ -366,8 +392,8 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/AttendanceClock.php?#',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 200,
-                        'enabled' => '$user->rights->timesheet->attendance->user',
-                        'perms' => '1',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'enabled' => '$conf->global->TIMESHEET_ATTENDANCE',
+                        'perms' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
                 $r++;
@@ -379,8 +405,8 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/AttendanceEventAdmin.php',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 210,
-                        'enabled' => '$user->rights->timesheet->attendance->admin',
-                        'perms' => '1',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'enabled' => '$conf->global->TIMESHEET_ATTENDANCE',
+                        'perms' => '$user->rights->timesheet->attendance->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
                 $r++;
@@ -393,7 +419,7 @@ class modTimesheet extends DolibarrModules
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 130,
                         'enabled' => '$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                        'perms' => '1',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'perms' => '$user->rights->timesheet->report->admin || $user->rights->timesheet->report->user',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
                 $r++;
@@ -407,7 +433,7 @@ class modTimesheet extends DolibarrModules
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 110,
                         'enabled' => '$conf->global->TIMESHEET_WHITELIST == 1', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                        'perms' => '1',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'perms' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin || $user->rights->timesheet->timesheet->user || $user->rights->timesheet->timesheet->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
                   $r++;
@@ -420,7 +446,7 @@ class modTimesheet extends DolibarrModules
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 120,
                         'enabled' => '$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                        'perms' => '1',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'perms' => '$user->rights->timesheet->report->admin || $user->rights->timesheet->report->project',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
                 $r++;
@@ -445,8 +471,8 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/TimesheetTeamApproval.php',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 300,
-                        'enabled' => '$user->rights->timesheet->approval', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
-                        'perms' => '$user->rights->timesheet->approval',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'enabled' => '$conf->global->TIMESHEET_APPROVAL_FLOWS != "_00000"', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'perms' => '$user->rights->timesheet->approval->team || $user->rights->timesheet->approval->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
                 $r++;
@@ -458,7 +484,7 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/TimesheetUserTasksAdmin.php?action=list&sortfield=t.date_start&sortorder=desc',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 310,
-                        'enabled' => '$user->rights->timesheet->approval->admin', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'enabled' => '$conf->global->TIMESHEET_APPROVAL_FLOWS != "_00000"', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                         'perms' => '$user->rights->timesheet->approval->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);

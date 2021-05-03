@@ -28,8 +28,9 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/AttendanceEvent.class.php';
 require_once 'class/TimesheetTask.class.php';
-if (!$user->rights->timesheet->attendance->user) {
-    $accessforbidden = accessforbidden("You don't have the attendance/chrono user right");
+$admin = $user->admin || $user->rights->timesheet->attendance->admin;
+if (!$user->rights->timesheet->attendance->user && !$admin) {
+    $accessforbidden = accessforbidden("You don't have the attendance/chrono user or admin right");
 }
 $token = GETPOST('token', 'alpha');
 $action = GETPOST('action', 'alpha');
@@ -45,6 +46,7 @@ $langs->load("projects");
 $langs->load('timesheet@timesheet');
 $userid = $user->id;
 $postUserId = GETPOST('userid', 'int');
+
 // if the user can enter ts for other the user id is diferent
 if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
     if (!empty($postUserId)) {
@@ -52,10 +54,11 @@ if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_AD
     }else{
         $newuserid =$user->id;
     }
+    
     $SubordiateIds = getSubordinates($db, $user->id, 2, array(), ALL, $entity = '1');
-    $SubordiateIds[] = $user->id;
-    if (in_array($newuserid, $SubordiateIds) || $user->admin || $user->rights->timesheet->attendance->admin) {
-        //$SubordiateIds[] = $userid;
+    //$SubordiateIds[] = $user->id;
+    if (in_array($newuserid, $SubordiateIds) || $admin) {
+        $SubordiateIds[] = $userid;
         $userid = $newuserid;
     } elseif ($action == 'getOtherTs') {
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
@@ -114,9 +117,9 @@ llxHeader('', $langs->trans('Attendance'), '', '', '', "", $morejs, $morecss);
 //calculate the week days
 // clock
 $timesheet_attendance->fetch('', $user);
-if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1 
-    && ((is_array($SubordiateIds) && count($SubordiateIds) > 1 ) ||  $SubordiateIds > 0 ||  $user->admin)) {
-        print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $user->admin);
+if ($conf->global->TIMESHEET_ADD_FOR_OTHER == 1 
+    && (  $SubordiateIds > 0 ||  $admin)) {
+        print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $admin);
 }
 $timesheet_attendance->printHTMLClock();
 $headers = explode('||', $conf->global->TIMESHEET_HEADERS);
