@@ -1,4 +1,8 @@
 # dolibarr_project_timesheet changelog
+4.4.3 (2021-05-03)
+- fix block holiday setting
+- fix missing perms trads
+
 4.4.2 (2021-05-02)
 - fix report user userlist
 - new: prems
