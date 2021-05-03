@@ -205,8 +205,8 @@ switch($action) {
         //holiday
         $addholidaytime = getpost('addholidaytime', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_ADD_HOLIDAY_TIME", $addholidaytime, 'chaine', 0, '', $conf->entity);
-        $addholidaytime = getpost('addholidaytime', 'alpha');
         // block holday
+        $blockholiday = getpost('blockholiday', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_BLOCK_HOLIDAY", $blockholiday, 'chaine', 0, '', $conf->entity);
         //docs
         $adddocs = getpost('adddocs', 'int');
