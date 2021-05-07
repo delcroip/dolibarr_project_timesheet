@@ -35,7 +35,7 @@
 //if (! defined("NOLOGIN"))        define("NOLOGIN", '1');                                // If this page is public (can be called outside logged session)
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
-if (!$user->rights->timesheet->approval->admin || $user->admin) {
+if (!$user->rights->timesheet->approval->admin || !$user->admin) {
     $accessforbidden = accessforbidden("you need to have the approver admin rights");
 }
 require_once 'core/lib/generic.lib.php';
