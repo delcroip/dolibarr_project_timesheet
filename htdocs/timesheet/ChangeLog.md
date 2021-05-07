@@ -1,4 +1,10 @@
 # dolibarr_project_timesheet changelog
+4.4.4 (2021-05-07)
+- fix: approval not working (likely since 4.4.0)
+- misc: hide project report if not the rights
+- fix: perm issue on approval admin
+
+
 4.4.3 (2021-05-03)
 - fix block holiday setting
 - fix missing perms trads

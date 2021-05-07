@@ -229,7 +229,8 @@ if (is_object($firstTimesheetUser)) {
     }
    // $offset += $i;
     if (!$print) {
-        $Form .= $firstTimesheetUser->getHTMLFooterAp($current, $token);
+        $firstTimesheetUser->token = $token;
+        $Form .= $firstTimesheetUser->getHTMLFooterAp($current);
     } else {
         $Form .= '<table width = "100%"><tr><td align = "center">'
             .$langs->trans('customerSignature').'</td><td align = "center">'
@@ -237,9 +238,11 @@ if (is_object($firstTimesheetUser)) {
             .$langs->trans('employeeSignature').'</td></tr></table>';
     }
 } else{
+    
     $Form .= '<h1>'.$langs->trans('NothingToValidate').'</h1>';
     $staticTs = new TimesheetUserTasks($db);
-    $Form .= $staticTs->getHTMLFooterAp($current, $token);
+    $staticTs->token = $token;
+    $Form .= $staticTs->getHTMLFooterAp($current);
 }
 //Javascript
 $timetype = $conf->global->TIMESHEET_TIME_TYPE;
