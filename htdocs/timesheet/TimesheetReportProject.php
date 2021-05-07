@@ -47,7 +47,7 @@ if (empty($mode)){
 $admin = $user->rights->projet->all->lire || $user->rights->projet->all->creer 
     || $user->rights->timesheet->report->admin;
     if (!$user->rights->timesheet->report->project && !$admin) {
-        $accessforbidden = accessforbidden("You don't have the timesheet user or admin right");
+        $accessforbidden = accessforbidden("You don't have the report projet or admin right");
     }
     
 $projectSelectedId = GETPOST('projectSelected', 'int');
