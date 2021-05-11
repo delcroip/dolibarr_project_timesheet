@@ -1,4 +1,7 @@
 # dolibarr_project_timesheet changelog
+4.4.5 (2021-05-11)
+- fix approval admin rights
+
 4.4.4 (2021-05-07)
 - fix: approval not working (likely since 4.4.0)
 - misc: hide project report if not the rights
