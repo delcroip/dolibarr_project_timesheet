@@ -159,6 +159,10 @@ if (!empty($token)) {
        unset($_SESSION['timesheet'][$token]);
 }
 $task_timesheet->fetchAll($dateStart, $whitelistmode);
+if ($action == 'importCalandar'){
+    $task_timesheet->importCalandar();
+}
+         
 if ($conf->global->TIMESHEET_ADD_DOCS) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
