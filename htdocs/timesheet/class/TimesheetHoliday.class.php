@@ -40,10 +40,10 @@ class TimesheetHoliday extends Holiday
     }
     /** Function to get the user public holiday for a given period
      * Support only 1 year - 1 day range max
-     * @param int $userid usaer id
-     * @param int|timestamp $datestart begining of the period
-     * @param int|timestamp $datestop end of the period
-     * @return error/success (object updated or not)
+     * @param   int $userId     usaer id
+     * @param   int|timestamp   $datestart begining of the period
+     * @param   int|timestamp   $datestop end of the period
+     * @return  int (object updated or not)
      * 
      */
     public function fetchUserWeek($userId, $datestart, $datestop)
@@ -120,15 +120,15 @@ class TimesheetHoliday extends Holiday
                 }
         }
     }
- /**
- * function to form a HTMLform line for this timesheet
- *
- *  @param    array               $headers             header to shows
- *  @param      string              $tsUserId            id that will be used for the total
- *  @param     int               $UserId           id of the user timesheet
- *  @return     string                                        HTML result containing the timesheet info
- */
-public function getHTMLFormLine($headers, $tsUserId, $userId)
+    /**
+     * function to form a HTMLform line for this timesheet
+     *
+     *  @param  array   $headers    header to shows
+     *  @param  string  $tsUserId   id that will be used for the total
+     *  @param  int $userId id of the user timesheet
+     *  @return string  HTML result containing the timesheet info
+     */
+    public function getHTMLFormLine($headers, $tsUserId, $userId)
     {
         global $langs;
         global $statusColor;
@@ -154,30 +154,30 @@ public function getHTMLFormLine($headers, $tsUserId, $userId)
                 mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             $html .= '<th style = "margin: 0;padding: 0;">';
             $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_publicholiday";
-            if ($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1)
+            if ($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1){
                 $html .= '<input type = "hidden" class = "'.$class.'"  value = "'.$value.'">';
+            }
             $html .= '<ul id = "holiday['.$i.']" class = "listHoliday" >';
-                $html .= '<li id = "holiday['.$i.'][0]" class = "listItemHoliday" ><a ';
-                if ($am) {
-                    $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
-                    $amColor = ($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
-                    $amClass = ($holiday['prev'])?'':' noPrevHoliday';
-                    $amClass .= ($pm && $pmId == $amId)?'':' noNextHoliday';
-                    $html .= ' class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
-                } else {
-                    $html .= ' class = "holiday" >&nbsp;</a></li>';
-                }
-                $html .= '<li id = "holiday['.$i.'][1]" class = "listItemHoliday" ><a ';
-                if ($pm) {
-                    $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
-                    $pmColor = ($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
-                    $pmClass = ($am && $pmId == $amId)?'':' noPrevHoliday';
-                    $pmClass .= ($holiday['next'])?'':' noNextHoliday';
-                    $html .= ' class = "holiday'.$pmClass.'" style = "'.$pmColor.'">&nbsp;</a></li>';
-                } else {
-                    $html .= ' class = "holiday" >&nbsp;</a></li>';
-                }
-           // }
+            $html .= '<li id = "holiday['.$i.'][0]" class = "listItemHoliday" ><a ';
+            if ($am) {
+                $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['amId'].'"';
+                $amColor = ($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
+                $amClass = ($holiday['prev'])?'':' noPrevHoliday';
+                $amClass .= ($pm && $pmId == $amId)?'':' noNextHoliday';
+                $html .= ' class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
+            } else {
+                $html .= ' class = "holiday" >&nbsp;</a></li>';
+            }
+            $html .= '<li id = "holiday['.$i.'][1]" class = "listItemHoliday" ><a ';
+            if ($pm) {
+                $html .= 'href = "'.DOL_URL_ROOT.'/holiday/card.php?id='.$holiday['pmId'].'"';
+                $pmColor = ($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
+                $pmClass = ($am && $pmId == $amId)?'':' noPrevHoliday';
+                $pmClass .= ($holiday['next'])?'':' noNextHoliday';
+                $html .= ' class = "holiday'.$pmClass.'" style = "'.$pmColor.'">&nbsp;</a></li>';
+            } else {
+                $html .= ' class = "holiday" >&nbsp;</a></li>';
+            }
             $html .= "</ul></th>\n";
             $i++;
         }
