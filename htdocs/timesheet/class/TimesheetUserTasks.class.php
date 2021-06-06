@@ -931,22 +931,26 @@ public function getHTMLtaskLines( $ajax = false)
     $i = 1;
     $Lines = '';
     $nbline = 0;
-    $personalHoliday = array();
-    $publicHoliday = array();
-    $nbHoliday = count($this->holidays->holidaylist);
-    if (is_array($this->holidays->holidaylist) && $nbHoliday>0){
+    $personalHoliday = null;
+    $publicHoliday = null;
+    if (is_array($this->holidays->holidaylist) && $this->holidays->holidayPresent){
         $personalHoliday = $this->holidays->holidaylist;
     }
-    $nbPublicHoliday = count($this->publicHolidays->holidaylist);
-    if (is_array($this->publicHolidays->holidaylist) && $nbPublicHoliday>0){
+    if (is_array($this->publicHolidays->holidaylist) && $this->publicHolidays->holidayPresent){
         $publicHoliday = $this->publicHolidays->holidaylist;
     }
     //$holiday =  $publicHoliday + $personalHoliday;
     $holiday = array();
-
-    for($i = 0; $i < max($nbHoliday,$nbPublicHoliday); $i++){
-        $holiday[$i] = array_merge($publicHoliday[$i],$personalHoliday[$i]);
+    if(is_array($personalHoliday) && is_array($publicHoliday)){
+        for($i = 0; $i < max(count($personalHoliday),count($publicHoliday)); $i++){
+            $holiday[$i] = array_merge($publicHoliday[$i],$personalHoliday[$i]);
+        }
+    }else if(is_array($personalHoliday)){
+        $holiday = $personalHoliday;
+    }else if(is_array($publicHoliday)){
+        $holiday = $personalHoliday;
     }
+  
     
     if (!$ajax & is_array($this->taskTimesheet)) {
         $nbline = count($this->taskTimesheet);

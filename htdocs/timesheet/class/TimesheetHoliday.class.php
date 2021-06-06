@@ -135,10 +135,7 @@ class TimesheetHoliday extends Holiday
         global $conf;
         $timetype = $conf->global->TIMESHEET_TIME_TYPE;
         $dayshours = $conf->global->TIMESHEET_DAY_DURATION;
-        if (!is_array($this->holidaylist))
-           return '<tr>ERROR: wrong parameters for getFormLine'
-            .empty($startDate).'|'.empty($stopDate).'|'.empty($headers).'</tr>';
-        if (!$this->holidayPresent) // don't show the holiday line if nothing present
+        if (!is_array($this->holidaylist) || !$this->holidayPresent) // don't show the holiday line if nothing present
            return '';
         $html = "<tr id = 'holiday'>\n";
         $html .= '<th colspan = "'.count($headers).'" align = "right" > '.$langs->trans('Holiday').' </th>';
