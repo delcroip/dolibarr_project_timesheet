@@ -38,11 +38,14 @@ class TimesheetHoliday extends Holiday
             //$this->date_end = strtotime('now -1 year');
             //$this->date_start = strtotime('now -1 year');
     }
-        /*public function initTimeSheet($weekWorkLoad, $taskTimeId)
-    {
-            $this->weekWorkLoad = $weekWorkLoad;
-            $this->taskTimeId = $taskTimeId;
-    }*/
+    /** Function to get the user public holiday for a given period
+     * Support only 1 year - 1 day range max
+     * @param int $userid usaer id
+     * @param int|timestamp $datestart begining of the period
+     * @param int|timestamp $datestop end of the period
+     * @return error/success (object updated or not)
+     * 
+     */
     public function fetchUserWeek($userId, $datestart, $datestop)
     {
         $SQLfilter = " AND (cp.date_fin >= '".$this->db->idate($datestart)."') ";
@@ -117,14 +120,15 @@ class TimesheetHoliday extends Holiday
                 }
         }
     }
- /*
+ /**
  * function to form a HTMLform line for this timesheet
  *
- *  @param    string               $headers             header to shows
- *  @param     int               $tsUserId           id of the user timesheet
+ *  @param    array               $headers             header to shows
+ *  @param      string              $tsUserId            id that will be used for the total
+ *  @param     int               $UserId           id of the user timesheet
  *  @return     string                                        HTML result containing the timesheet info
  */
-    public function getHTMLFormLine($headers, $tsUserId)
+public function getHTMLFormLine($headers, $tsUserId, $userId)
     {
         global $langs;
         global $statusColor;
@@ -139,7 +143,7 @@ class TimesheetHoliday extends Holiday
         $html = "<tr id = 'holiday'>\n";
         $html .= '<th colspan = "'.count($headers).'" align = "right" > '.$langs->trans('Holiday').' </th>';
         $i = 0;
-        foreach ($this->holidaylist as $holiday) {
+        foreach ($this->holidaylist as $day => $holiday) {
             $am = $holiday['am'];
             $pm = $holiday['pm'];
             $amId = $holiday['amId'];
@@ -149,9 +153,9 @@ class TimesheetHoliday extends Holiday
             $value = ($timetype == "hours")?date('H:i', 
                 mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             $html .= '<th style = "margin: 0;padding: 0;">';
+            $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_publicholiday";
             if ($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1)
-                $html .= '<input type = "hidden" class = "time4day['
-                    .$tsUserId.']['.$i.']"  value = "'.$value.'">';
+                $html .= '<input type = "hidden" class = "'.$class.'"  value = "'.$value.'">';
             $html .= '<ul id = "holiday['.$i.']" class = "listHoliday" >';
                 $html .= '<li id = "holiday['.$i.'][0]" class = "listItemHoliday" ><a ';
                 if ($am) {
