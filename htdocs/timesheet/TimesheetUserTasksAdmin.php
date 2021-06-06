@@ -398,6 +398,7 @@ switch($action) {
             print $object->userName." - ".dol_print_date($object->date_start, 'day');
             print $object->getHTMLHeader();
             print $object->getHTMLHolidayLines(false);
+            print $object->getHTMLPublicHolidayLines(false);
             print $object->getHTMLTotal();
             print $object->getHTMLtaskLines(false);
             print $object->getHTMLTotal();

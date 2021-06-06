@@ -1,4 +1,11 @@
 # dolibarr_project_timesheet changelog
+4.4.6 (2021-06-06)
+- new import from agenda
+- new show public holiday
+- new block time entry during public holiday
+- fix total takes holiday into account
+
+
 4.4.5 (2021-05-11)
 - fix approval admin rights
 

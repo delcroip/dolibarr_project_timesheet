@@ -20,6 +20,7 @@
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once 'TimesheetHoliday.class.php';
+require_once 'TimesheetPublicHoliday.class.php';
 require_once 'TimesheetTask.class.php';
 require_once 'TimesheetFavourite.class.php';
 if (file_exists('core/lib/generic.lib.php')) {
@@ -74,6 +75,7 @@ class TimesheetUserTasks extends CommonObject
     public $ref;
     public $user;
     public $holidays;
+    public $publicHolidays;
     public $taskTimesheet;
     public $headers;
     public $weekDays;
@@ -91,7 +93,6 @@ class TimesheetUserTasks extends CommonObject
     {
         global $user, $conf;
         $this->db = $db;
-        //$this->holidays = array();
         $this->user = $user;
         $this->userId = ($userId == 0)?(is_object($user)?$user->id:$user):$userId;
         $this->headers = explode('||', $conf->global->TIMESHEET_HEADERS);
@@ -440,16 +441,27 @@ class TimesheetUserTasks extends CommonObject
         $this->fetchTaskTimesheet();
         //$ret += $this->getTaskTimeIds();
         //FIXME module holiday should be activated ?
-        $this->fetchUserHoliday();
+        $this->fetchUserHolidays();
+        $this->fetchUserPublicHolidays();
         $this->saveInSession();
     }
     /* Funciton to fect the holiday of a single user for a single week.
     *  @return     string                                       result
     */
-    public function fetchUserHoliday()
+    public function fetchUserHolidays()
     {
        $this->holidays = new TimesheetHoliday($this->db);
        $ret = $this->holidays->fetchUserWeek($this->userId, $this->date_start, $this->date_end);
+       return $ret;
+    }
+
+        /* Funciton to fect the public holiday of a single user for a single week.
+    *  @return     string                                       result
+    */
+    public function fetchUserPublicHolidays()
+    {
+       $this->publicHolidays = new TimesheetPublicHolidays($this->db);
+       $ret = $this->publicHolidays->fetchUserWeek($this->userId, $this->date_start, $this->date_end);
        return $ret;
     }
 
@@ -469,6 +481,7 @@ class TimesheetUserTasks extends CommonObject
        $this->ref = $_SESSION['timesheet'][$token][$id]['ref'];
        $this->note = $_SESSION['timesheet'][$token][$id]['note'];
        $this->holidays = unserialize($_SESSION['timesheet'][$token][$id]['holiday']);
+       $this->publicHolidays = unserialize($_SESSION['timesheet'][$token][$id]['publicHolidays']);
        $this->taskTimesheet = unserialize($_SESSION['timesheet'][$token][$id]['taskTimesheet']);;
    }
 /*
@@ -483,6 +496,7 @@ public function saveInSession()
     $_SESSION['timesheet'][$this->token][$this->id]['dateEnd'] = $this->date_end;
     $_SESSION['timesheet'][$this->token][$this->id]['note'] = $this->note;
     $_SESSION['timesheet'][$this->token][$this->id]['holiday'] = serialize($this->holidays);
+    $_SESSION['timesheet'][$this->token][$this->id]['publicHolidays'] = serialize($this->publicHolidays);
     $_SESSION['timesheet'][$this->token][$this->id]['taskTimesheet'] = serialize($this->taskTimesheet);
 }
 /*
@@ -776,6 +790,7 @@ public function getHTML( $ajax = false, $Approval = false)
     $Form .= '<td><a>'.$langs->trans("Search").'</a></td>';
     $Form .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
     $Form .= $this->getHTMLHolidayLines($ajax);
+    $Form .= $this->getHTMLPublicHolidayLines($ajax);
     if (!$Approval)$Form .= $this->getHTMLTotal();
     //$Form .= '<tbody style = "overflow:auto;">';
     $Form .= $this->getHTMLtaskLines( $ajax);
@@ -916,11 +931,27 @@ public function getHTMLtaskLines( $ajax = false)
     $i = 1;
     $Lines = '';
     $nbline = 0;
-    $holiday = array();
-
-    if (is_array($this->holidays->holidaylist) && count($this->holidays->holidaylist)>0){
-        $holiday = $this->holidays->holidaylist;
+    $personalHoliday = null;
+    $publicHoliday = null;
+    if (is_array($this->holidays->holidaylist) && $this->holidays->holidayPresent){
+        $personalHoliday = $this->holidays->holidaylist;
     }
+    if (is_array($this->publicHolidays->holidaylist) && $this->publicHolidays->holidayPresent){
+        $publicHoliday = $this->publicHolidays->holidaylist;
+    }
+    //$holiday =  $publicHoliday + $personalHoliday;
+    $holiday = array();
+    if(is_array($personalHoliday) && is_array($publicHoliday)){
+        for($i = 0; $i < max(count($personalHoliday),count($publicHoliday)); $i++){
+            $holiday[$i] = array_merge($publicHoliday[$i],$personalHoliday[$i]);
+        }
+    }else if(is_array($personalHoliday)){
+        $holiday = $personalHoliday;
+    }else if(is_array($publicHoliday)){
+        $holiday = $personalHoliday;
+    }
+  
+    
     if (!$ajax & is_array($this->taskTimesheet)) {
         $nbline = count($this->taskTimesheet);
         foreach ($this->taskTimesheet as $timesheet) {
@@ -972,7 +1003,25 @@ public function getHTMLHolidayLines($ajax = false)
     $Lines = '';
     if (!$ajax) {
         if (is_object($this->holidays)){
-            $Lines .= $this->holidays->getHTMLFormLine($this->headers, $this->id);
+            $Lines .= $this->holidays->getHTMLFormLine($this->headers, $this->id, $this->userId);
+        }else{
+            dol_syslog(__METHOD__.": missing Holiday object", LOG_ERR);
+
+        }
+    }
+    return $Lines;
+}
+        /*
+ * function to genegate the timesheet list
+ *  @return     string                                                   html code
+ */
+public function getHTMLPublicHolidayLines($ajax = false)
+{
+    $i = 0;
+    $Lines = '';
+    if (!$ajax) {
+        if (is_object($this->publicHolidays)){
+            $Lines .= $this->publicHolidays->getHTMLFormLine($this->headers, $this->id, $this->userId);
         }else{
             dol_syslog(__METHOD__.": missing Holiday object", LOG_ERR);
 
