@@ -254,3 +254,5 @@ AttendanceUser = Chrono Benutzer
 ReportAdmin = meldet admin
 ReportUser = Berichte Benutzer
 ReportProject = Projektberichte
+PublicHoliday = Feiertag
+ImportCalandar = Aus Kalender importieren

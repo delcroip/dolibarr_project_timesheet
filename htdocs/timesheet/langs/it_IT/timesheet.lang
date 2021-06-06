@@ -254,3 +254,5 @@ AttendanceUser = Utente Chrono
 ReportAdmin = rapporti admin
 ReportUser = Rapporti utente
 ReportProject = relazioni sui progetti
+PublicHoliday = Festa nazionale
+ImportCalandar = Importa dal calendario

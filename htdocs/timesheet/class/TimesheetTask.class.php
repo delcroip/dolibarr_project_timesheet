@@ -622,10 +622,11 @@ class TimesheetTask extends Task
      *
      *  @param      array(string)       $headers             Headers to display
      *  @param      string              $tsUserId            id that will be used for the total
-     *  @param      int/array           $blockOveride         0- no effect;-1 - force edition;(1) - block edition 
+     *  @param      int|array           $blockOveride         0- no effect;-1 - force edition;(1) - block edition 
+     *  @param      array|null          $holiday                list of holiday
      *  @return     string                                   HTML result containing the timesheet info
      */
-    public function getTimesheetLine($headers, $tsUserId = 0, $blockOveride = 0, $holiday = array())
+    public function getTimesheetLine($headers, $tsUserId = 0, $blockOveride = 0, $holiday = array() )
     {
         global $langs, $conf, $statusColor;
         // change the time to take all the TS per day
@@ -728,7 +729,7 @@ class TimesheetTask extends Task
                 if ($unblockClosedDay == 0) $isOpen = $isOpen  && $isOpenDay;
                 if ($unblockInvoiced == 0) $isOpen = $isOpen  && !$isInvoiced;
                 if ($blockholiday == 1 && count($holidayList)>=$dayCur){
-                    $isOpen = $isOpen && !($holidayList[$dayCur]['am'] && $holidayList[$dayCur]['pm']);
+                    $isOpen = $isOpen && !($holidayList[$dayCur]['am'] && $holidayList[$dayCur]['pm']) && !$holidayList[$dayCur]['dayoff'];
                 } 
 
                 $bkcolor = '';
