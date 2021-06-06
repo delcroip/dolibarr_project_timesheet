@@ -595,6 +595,7 @@ class TimesheetTask extends Task
                 $obj = $this->db->fetch_object($resql);
                 $dateCur = $this->db->jdate($obj->task_date);
                 $day = getDayInterval($timeStart, $dateCur);
+                // put the other timesheet on the "other" list
                 if ($this->tasklist[$day]['duration'] > 0 || strlen($this->tasklist[$day]['note']) > 0){
                     $other[$day][] = array( 'duration' => $this->tasklist[$day]['duration'], 
                         'id' => $this->tasklist[$day]['id'], 'note' => $this->tasklist[$day]['note']);
@@ -1052,6 +1053,7 @@ class TimesheetTask extends Task
             case 2:
                 $ret = json_encode($arRet, JSON_PRETTY_PRINT);
                 break;
+
         }
         return $ret;
     }
@@ -1278,6 +1280,7 @@ class TimesheetTask extends Task
     public function saveTaskTime($Submitter, $duration, $daynote, $dayKey, $addmode = false)
     {
             $item = $this->tasklist[$dayKey];
+            $this->timespent_fk_user = $this->userId;
             dol_syslog(__METHOD__."   duration Old=".$item['duration']." New="
                 .$duration." Id=".$item['id'].", date=".$item['date'], LOG_DEBUG);
             $this->timespent_date = $item['date'];
@@ -1290,14 +1293,14 @@ class TimesheetTask extends Task
                 $this->timespent_note .= $item['note'];
                 if ($addmode) {
                     if (!empty($daynote)){
-                        $this->timespent_note .= " ".$daynote.".";
+                        $this->timespent_note .= "\n".$daynote;
                     }
                     $this->timespent_duration = $duration+$this->timespent_old_duration;
                 } else{
                     $this->timespent_note = $daynote;
                     $this->timespent_duration = $duration;
                 }
-                if ($item['duration']!=$duration || $daynote!=$item['note']) {
+                if ($item['duration']!=$this->timespent_duration || $this->timespent_note!=$item['note']) {
                     if ($this->timespent_duration>0 || !empty($daynote)) {
                         dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
                         if ($this->updateTimeSpent($Submitter, 0) >= 0) {
@@ -1327,7 +1330,13 @@ class TimesheetTask extends Task
                 }
             }
             //update the task list
-            $this->tasklist[$day]['duration'] = $duration;
+            if($this->tasklist[$dayKey]['duration'] != $this->timespent_duration){
+                $this->tasklist[$dayKey]['duration'] = $this->timespent_duration;
+            }
+            if($this->tasklist[$dayKey]['note'] != $this->timespent_note){
+                $this->tasklist[$dayKey]['note'] = $this->timespent_note;
+            }
+            
             return $resArray;
     }
     /**
@@ -1487,6 +1496,20 @@ class TimesheetTask extends Task
         $ret = $this->setStatus($user, SUBMITTED, $updteTS);// must be executed first to get the appid
         if ($ret>0)$ret = $this->updateTaskTime(SUBMITTED);
         return $ret+1;// team key is 0
+    }
+
+    /***
+     * 
+     */
+    public function getSumDay(){
+        $ttaDuration = array();
+        if (!is_array($this->tasklist))$this->getActuals();
+        foreach ($this->tasklist as $day => $item) {
+            $ttaDuration[$day] = $item['duration']
+                + array_sum(array_column($item['other'], 'duration'));;
+        }
+        return $ttaDuration;
+
     }
 }
 //TimesheetTask::init();

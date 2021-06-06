@@ -595,7 +595,7 @@ public function fetchTaskTimesheet($userid = '')
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
                 $row->getTaskInfo();// get task info include in fetch
                 $row->getActuals($datestart, $datestop, $userid);
-                $this->taskTimesheet[] = $row->serialize();
+                $this->taskTimesheet[$row->id] = $row->serialize();
             }
             return $ret;
     } else {
@@ -814,7 +814,7 @@ public function getHTMLHeader()
     $weeklength = getDayInterval($this->date_start, $this->date_end);
     $maxColSpan = $weeklength+count($this->headers);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
-    $html .= '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
+    $html = '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
      $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
      ///Whitelist tab
@@ -852,6 +852,7 @@ public function getHTMLFormHeader($ajax = false)
     $html = '<form id = "timesheetForm" name = "timesheet" onSubmit="removeUnchanged();" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
     if ($ajax)$html .= ' onsubmit = " return submitTimesheet(0);"';
     $html .= '>';
+    $html .= '<a class = "butAction" href="?action=importCalandar&startDate='.$this->date_start.'">'.$langs->trans('ImportCalandar').'</a>';
      return $html;
 }
   /* function to genegate ttotal line
@@ -911,19 +912,13 @@ public function getHTMLFooterAp($current)
 {
      global $langs;
     //form button
-    $html .= '<input type = "hidden" id="csrf-token"  name = "token" value = "'.$this->token."\"/>\n";
+    $html = '<input type = "hidden" id="csrf-token"  name = "token" value = "'.$this->token."\"/>\n";
     $html .= '<input type = "hidden" name = "target" value = "'.($current+1)."\"/>\n";
     $html .= '<div class = "tabsAction">';
-    if ($offset == 0 || $prevOffset!=$offset)$html .= '<input type = "submit" class = "butAction" name = "Send" value = "'.$langs->trans('Next')."\" />\n";
+    $html .= '<input type = "submit" class = "butAction" name = "Send" value = "'.$langs->trans('Next')."\" />\n";
     //$html .= '<input type = "submit" class = "butAction" name = "submit" onClick = "return submitTs();" value = "'.$langs->trans('Submit')."\" />\n";
     $html .= '</div>';
     $html .= "</form>\n";
-    if ($ajax) {
-        $html .= '<script type = "text/javascript">'."\n\t";
-        $html .= 'window.onload = function()
-    {loadXMLTimesheet("'.$this->date_start.'", '.$this->userId.');}';
-        $html .= "\n\t".'</script>'."\n";
-    }
      return $html;
 }
       /*
@@ -1326,5 +1321,138 @@ public function sendApprovalReminders()
           );
            $mailfile->sendfile();
           }
+    }
+
+        
+    /***
+     * @param int $userid user to import calcandar
+     * @param date $datestart datestart to use for the import 
+     */
+    function importCalandar($userid = '', $dateStart = '', $dateEnd = ''){
+        global $conf, $user;
+        if(!is_numeric($userid)){
+            if (is_numeric($this->userId)){
+                $userid = $this->userId;
+            }else{
+                return -1;
+            }
+        }
+        if(!is_a($dateStart,'DateTime') && !is_a($dateStart,'Date' && !is_numeric($dateStart) )){
+            $dateStart = $this->date_start;
+        }        
+        if(!is_a($dateEnd,'DateTime')  && !is_a($dateEnd,'Date') && !is_numeric($dateEnd) ){
+            $dateEnd = $this->date_end;
+        }
+        // get the calandar event that have a task assigned and assigned to userid + busy
+        $sql = 'SELECT a.id, a.code, a.label, a.fk_element as taskid, a.datep as datestart,';
+        $sql .= 'a.fulldayevent, a.datep2 as dateend ';
+        $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
+        // add the user
+        $sql .= " JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r";
+        // fectch the current time spent
+        $sql .= " ON r.element_type = 'user' AND r.fk_actioncomm = a.id";
+        $sql .= " WHERE a.transparency  = 1 AND a.elementtype  = 'task' AND r.fk_element= ".$userid;
+        $sql .= " AND a.datep BETWEEN '".$this->db->idate($dateStart)."' AND '".$this->db->idate($dateEnd)."'" ;
+        $sql .= " ORDER BY fulldayevent ASC, a.fk_element DESC";
+        // execute query
+        $resql = $this->db->query($sql);
+        //number of day in the period
+
+        $nbDay = ceil(($dateEnd - $dateStart) / 86400);
+
+        // day array for all day events
+        $days = array();
+        // local list of tasktime
+        $dayDuration = array();
+        $tasktime = array();
+        // execute the fuction only if there is querry results    
+        if ($resql && $this->db->num_rows($resql) > 0) {
+            //load already saved tasktime
+            foreach($this->taskTimesheet as $taskid => $taskline){
+                $tasktime[$taskid] = new TimesheetTask($this->db, $taskid);
+                $tasktime[$taskid]->unserialize($taskline);
+            }
+            // go through all querry result    
+            while ($obj = $this->db->fetch_object($resql)) {
+                //create a tasktime object if not yet present on local liss
+                if(!array_key_exists($obj->taskid, $tasktime)){
+                    $tasktime[$obj->taskid] = new TimesheetTask($this->db, $obj->taskid);
+                    $tasktime[$obj->taskid]->userId = $userid;
+                    $tasktime[$obj->taskid]->date_start_approval = $dateStart;
+                    $tasktime[$obj->taskid]->date_end_approval = $dateEnd;
+                    // search if there is a tasktime for this event 
+                }
+                $action_date_end = $this->db->jdate($obj->dateend);
+                $action_date_start = $this->db->jdate($obj->datestart);
+                // for each day
+                for($daykey = 0; $daykey < $nbDay; $daykey++){
+                    // init the dayduration for later
+                    $dayDuration[$daykey] = 0;
+                    $duration = 0;  
+                    //is the event in day y       
+                    if( $action_date_end > ($dateStart + $daykey * SECINDAY +1 ) 
+                        &&  $action_date_start <= ($dateStart + ($daykey+1) * SECINDAY )) {
+                        if($obj->fulldayevent == 0){
+                            //foreach task that are not "all day" define duration as 
+                            // duration = cal_duration>MAx? STD:cal_duration
+                            $duration = $action_date_end - $action_date_start;
+                            $duration = ( $duration > ($conf->global->TIMESHEET_DAY_MAX_DURATION * 3600))?
+                            $conf->global->TIMESHEET_DAY_DURATION * 3600
+                            :$duration;
+                            // write in database the new TS
+                            $daynote = $obj->code." - ".$obj->label.": ".formatTime($duration, -1); 
+                            // check and update only ifthe meeting is note already in noted
+                            if(!is_array($tasktime[$obj->taskid]->tasklist) 
+                                || !array_key_exists($daykey, $tasktime[$obj->taskid]->tasklist)
+                                || (strpos($tasktime[$obj->taskid]->tasklist[$daykey]['note'], $daynote) === false))  {
+                                    $tasktime[$obj->taskid]->saveTaskTime($user, 
+                                    $duration,  $daynote, $daykey, true);
+                            }
+    
+                        }else{
+                            $days[$daykey][$obj->taskid] = array('id' => $obj->taskid, 
+                                'title' => ($obj->code.' - '.$obj->label), 
+                            'duration' => 0);
+                        }                            
+                    } 
+                }
+            }
+            // generate the total per day
+            if(is_array($tasktime))foreach($tasktime as $taskline){
+                if(is_array($taskline->tasklist))foreach ($taskline->tasklist as $daykey => $item) {
+                    $dayDuration[$daykey] += $item['duration'];
+                    if(is_array($item['other']) && count($item['other'])>0){
+                        $dayDuration[$daykey] += array_sum(array_column($item['other'], 'duration'));
+                    }
+                }
+            }
+            // Create timespent for the all day event
+            foreach($days as $daykey => $day ){
+                $nbFullDayCurDay = count($day);
+                $duration = ($conf->global->TIMESHEET_DAY_DURATION * 3600
+                    - $dayDuration[$daykey]) / $nbFullDayCurDay ; 
+                //for eachfull day event
+                foreach($day as $taskid => $tasktimeDetails){
+                    $daynote = $tasktimeDetails['title'].": ".formatTime($duration, -1); 
+                    // check and update only ifthe meeting is note already in noted
+                    if(!is_array($tasktime[$obj->taskid]->tasklist) 
+                        || !array_key_exists($daykey, $tasktime[$obj->taskid]->tasklist)
+                        || (strpos($tasktime[$obj->taskid]->tasklist[$daykey]['note'], $daynote) === false))  {
+                        $tasktime[$taskid]->saveTaskTime($user, $duration, 
+                                    $daynote, $daykey, true);
+                    }
+                }
+            }
+            // save the updated taskline in the object
+            unset($this->taskTimesheet);
+            $this->taskTimesheet = array();
+            foreach($tasktime as $taskid => $taskline){
+                $this->taskTimesheet[$taskid]= $taskline->serialize();
+            }
+        }
+
+
+
+
     }
 }
