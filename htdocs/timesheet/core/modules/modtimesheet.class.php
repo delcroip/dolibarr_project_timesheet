@@ -525,8 +525,8 @@ class modTimesheet extends DolibarrModules
             $sql[0] = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql[0].= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
             if ($db->type=='pgsql') {
-                $sql[1] ="INSERT INTO ".MAIN_DB_PREFIX."document_model(nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.") ON CONFLICT(nom) DO NOTHING;";
-                $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active ) values (8210160, 'project',  'internal', 'PROJECTBILLING', 'Responsable Facturation Projet', 1) ON CONFLICT(rowid) DO NOTHING;"; 
+                $sql[1] ="INSERT INTO ".MAIN_DB_PREFIX."document_model(nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.") ON CONFLICT(nom, type, entity) DO NOTHING;";
+                $sql[2] ="INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active ) values (8210160, 'project',  'internal', 'PROJECTBILLING', 'Responsable Facturation Projet', 1) ON CONFLICT(element, source, code) DO NOTHING;"; 
             }else {
                 $sql[1] ="INSERT IGNORE INTO ".MAIN_DB_PREFIX."document_model(nom, type, entity) VALUES('rat', 'timesheetReport', ".$conf->entity.");";
                 $sql[2] ="INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active ) values (8210160, 'project',  'internal', 'PROJECTBILLING', 'Responsable Facturation Projet', 1);";
