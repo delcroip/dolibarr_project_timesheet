@@ -476,13 +476,13 @@ class TimesheetTask extends Task
             .' pt.dateo, pt.datee, pt.planned_workload, pt.duration_effective';
         if ($conf->global->TIMESHEET_HIDE_REF == 1) {
             $sql .= ', p.ref as title, pt.ref as label, pt.planned_workload';
-            if ($taskParent) $sql .= ', pt.fk_task_parent, ptp.label as taskParentLabel';
+            if ($taskParent) $sql .= ', pt.fk_task_parent, ptp.label as task_parent_label';
         } else {
             $sql .= ", CONCAT(p.ref, ' - ', p.title) as title";
             $sql .= ", CONCAT(pt.ref, ' - ', pt.label) as label";
-            if ($taskParent) $sql .= ", pt.fk_task_parent, CONCAT(ptp.ref, ' - ', ptp.label) as taskParentLabel";
+            if ($taskParent) $sql .= ", pt.fk_task_parent, CONCAT(ptp.ref, ' - ', ptp.label) as task_parent_label";
         }
-        if ($Company)$sql .= ', p.fk_soc as companyId, s.nom as companyName';
+        if ($Company)$sql .= ', p.fk_soc as company_id, s.nom as company_name';
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task AS pt";
         $sql .= " JOIN ".MAIN_DB_PREFIX."projet as p";
         $sql .= " ON pt.fk_projet = p.rowid";
@@ -512,11 +512,11 @@ class TimesheetTask extends Task
                 $this->pStatus = $obj->pstatus;
                 if ($taskParent) {
                     $this->fk_projet_task_parent = $obj->fk_projet_task_parent;
-                    $this->taskParentDesc = $obj->taskParentLabel;
+                    $this->taskParentDesc = $obj->task_parent_label;
                 }
                 if ($Company) {
-                    $this->companyName = $obj->companyName;
-                    $this->companyId = $obj->companyId;
+                    $this->companyName = $obj->company_name;
+                    $this->companyId = $obj->company_id;
                 }
             }
             $this->db->free($resql);
@@ -975,7 +975,7 @@ class TimesheetTask extends Task
         if ($this->date_end)
             $xml .= dol_mktime($this->date_end);
         $xml .= " </DateEnd>";
-        $xml .= "<Company id = \"{$this->companyId}\">{$this->companyName} </Company>";
+        $xml .= "<Company id = \"{$this->companyId}\">{$this->companyame} </Company>";
         $xml .= "<TaskProgress id = \"{$this->companyId}\">";
         if ($this->planned_workload) {
             $xml .= $this->parseTaskTime($this->planned_workload).'('.floor($this->duration_effective/$this->planned_workload*100).'%)';
