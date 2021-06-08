@@ -87,31 +87,48 @@ class TimesheetPublicHolidays extends CommonObject
         
         $sameYear = $yearStart == $yearStop;
         $this->holidayPresent = false;
-        $string_to_date_fct = 'STR_TO_DATE';
-        $string_to_date_format = '%Y%m%d';
+
         if ($this->db->type=='pgsql') {
             $string_to_date_fct = 'TO_DATE';
             $string_to_date_format = 'YYYYMMDD';
-        }
-                
-
-        $sql = 'SELECT code, dayrule, year, month, day  FROM '.MAIN_DB_PREFIX.'c_hrm_public_holiday';
-        $sql .= ' WHERE fk_country='.$this->userCountryId;
-        $sql .= ' AND active=1';
-        // if year is not 0
-        $sql .= ' AND (( year != 0 AND '.$string_to_date_fct;
-        $sql .= '(CONCAT(LPAD(year,4,0), LPAD(month,2,0), LPAD(day,2,0)),\''.$string_to_date_format.'\')';
-        $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
-        // if year is 0
-        $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStart;
-        $sql .= ', LPAD(month,2,0), LPAD(day,2,0)),\''.$string_to_date_format.'\')';
-        $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
-        if (!$sameYear){
-            $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStop;
+            $sql = 'SELECT code, dayrule, year, month, day  FROM '.MAIN_DB_PREFIX.'c_hrm_public_holiday';
+            $sql .= ' WHERE fk_country='.$this->userCountryId;
+            $sql .= ' AND active=1';
+            // if year is not 0
+            $sql .= ' AND (( year != 0 AND '.$string_to_date_fct;
+            $sql .= '(CONCAT(LPAD(CAST(year as TEXT),4,\'0\'), LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\''.$string_to_date_format.'\')';
+            $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
+            // if year is 0
+            $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStart;
+            $sql .= ', LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\''.$string_to_date_format.'\')';
+            $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
+            if (!$sameYear){
+                $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStop;
+                $sql .= ', LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\''.$string_to_date_format.'\')';
+                $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
+            }
+            $sql .= ')';
+        }else{
+            $string_to_date_fct = 'STR_TO_DATE';
+            $string_to_date_format = '%Y%m%d';   
+            $sql = 'SELECT code, dayrule, year, month, day  FROM '.MAIN_DB_PREFIX.'c_hrm_public_holiday';
+            $sql .= ' WHERE fk_country='.$this->userCountryId;
+            $sql .= ' AND active=1';
+            // if year is not 0
+            $sql .= ' AND (( year != 0 AND '.$string_to_date_fct;
+            $sql .= '(CONCAT(LPAD(year,4,0), LPAD(month,2,0), LPAD(day,2,0)),\''.$string_to_date_format.'\')';
+            $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
+            // if year is 0
+            $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStart;
             $sql .= ', LPAD(month,2,0), LPAD(day,2,0)),\''.$string_to_date_format.'\')';
             $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
+            if (!$sameYear){
+                $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStop;
+                $sql .= ', LPAD(month,2,0), LPAD(day,2,0)),\''.$string_to_date_format.'\')';
+                $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
+            }
+            $sql .= ')';
         }
-        $sql .= ')';
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
