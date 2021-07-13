@@ -138,7 +138,8 @@ class TimesheetHoliday extends Holiday
         if (!is_array($this->holidaylist) || !$this->holidayPresent) // don't show the holiday line if nothing present
            return '';
         $html = "<tr id = 'holiday'>\n";
-        $html .= '<th colspan = "'.count($headers).'" align = "right" > '.$langs->trans('Holiday').' </th>';
+        $nbHeader = count($headers);
+        $html .= '<th colspan = "'.($nbHeader == 1 ? 2 : $nbHeader).'" align = "right" > '.$langs->trans('Holiday').' </th>';
         $i = 0;
         foreach ($this->holidaylist as $day => $holiday) {
             $am = $holiday['am'];

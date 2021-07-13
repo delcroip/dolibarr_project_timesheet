@@ -180,7 +180,8 @@ class TimesheetPublicHolidays extends CommonObject
         if (!is_array($this->holidaylist) || (!$this->holidayPresent)) // don't show the holiday line if nothing present
            return '';
         $html = "<tr id = 'publicholiday'>\n";
-        $html .= '<th colspan = "'.count($headers).'" align = "right" > '.$langs->trans('PublicHoliday').' </th>';
+        $nbHeader = count($headers);
+        $html .= '<th colspan = "'.($nbHeader == 1 ? 2 : $nbHeader).'" align = "right" > '.$langs->trans('PublicHoliday').' </th>';
         $i = 0;
         foreach ($this->holidaylist as $day => $holiday) {
             $value = ($timetype == "hours")?date('H:i', 
