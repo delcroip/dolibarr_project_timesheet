@@ -151,7 +151,7 @@ class TimesheetHoliday extends Holiday
             $value = ($timetype == "hours")?date('H:i', 
                 mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             $html .= '<th style = "margin: 0;padding: 0;">';
-            $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_publicholiday";
+            $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_holiday";
             if ($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1){
                 $html .= '<input type = "hidden" class = "'.$class.'"  value = "'.$value.'">';
             }

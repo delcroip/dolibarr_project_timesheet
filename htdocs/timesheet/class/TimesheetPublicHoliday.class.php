@@ -204,10 +204,10 @@ class TimesheetPublicHolidays extends CommonObject
             $value = ($timetype == "hours")?date('H:i', 
                 mktime(0, 0, $holiday['dayoff']*$dayshours*3600)):$holiday['dayoff'];
             $html .= '<th style = "margin: 0;padding: 0;">';
-            if ($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1){
-                $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_publicholiday";
+            $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_publicholiday";
+            if ($conf->global->TIMESHEET_ADD_PUBLICHOLIDAY_TIME == 1){
+                $html .= '<input type = "hidden" class = "'.$class.'"  value = "'.$value.'">';
             }
-            $html .= '<input type = "hidden" class = "'.$class.'"  value = "'.$value.'">';
             $html .= '<a id = "holiday['.$i.'][0]" ';
             if ($holiday['dayoff']) {
                 $html .= 'title="'.$holiday['code'].'-'.$holiday['desc'].'"';

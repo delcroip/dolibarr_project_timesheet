@@ -690,6 +690,7 @@ class TimesheetTask extends Task
         $unblockClosedDay = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
         $hidezeros = $conf->global->TIMESHEET_HIDE_ZEROS;
         $blockholiday = $conf->global->TIMESHEET_BLOCK_HOLIDAY;
+        $blockPublicHoliday = $conf->global->TIMESHEET_BLOCK_PUBLICHOLIDAY;
         $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
         $hidden = false;
         $default_timezone = (empty($_SESSION["dol_tz_string"])?
@@ -728,9 +729,14 @@ class TimesheetTask extends Task
                 $isInvoiced = $this->tasklist[$dayCur]['invoiced'];
                 if ($unblockClosedDay == 0) $isOpen = $isOpen  && $isOpenDay;
                 if ($unblockInvoiced == 0) $isOpen = $isOpen  && !$isInvoiced;
-                if ($blockholiday == 1 && count($holidayList)>=$dayCur){
-                    $isOpen = $isOpen && !($holidayList[$dayCur]['am'] && $holidayList[$dayCur]['pm']) && !$holidayList[$dayCur]['dayoff'];
-                } 
+                if (count($holidayList)>=$dayCur){
+                    var_dump($holidayList);
+                    $isOpen = $isOpen && 
+                    !($blockholiday == 1 && $holidayList[$dayCur]['am'] && $holidayList[$dayCur]['pm']) &&
+                    !($blockPublicHoliday == 1 && $holidayList[$dayCur]['dayoff']);
+
+                }
+
 
                 $bkcolor = '';
                 if (!$isOpenDay){

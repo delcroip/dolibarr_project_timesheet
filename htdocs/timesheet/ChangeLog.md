@@ -1,4 +1,10 @@
 # dolibarr_project_timesheet changelog
+4.4.7 (2021-07-18)
+- new setting to manage public holiday time (separeated from holiday management)
+- fix: show public holiday without country
+- fix: pgsql issue
+
+
 4.4.6 (2021-06-06)
 - new import from agenda
 - new show public holiday
