@@ -948,7 +948,7 @@ public function getHTMLtaskLines( $ajax = false)
     }else if(is_array($personalHoliday)){
         $holiday = $personalHoliday;
     }else if(is_array($publicHoliday)){
-        $holiday = $personalHoliday;
+        $holiday = $publicHoliday;
     }
   
     

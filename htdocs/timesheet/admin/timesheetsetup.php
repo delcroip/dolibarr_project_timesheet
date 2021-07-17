@@ -63,6 +63,8 @@ $rejectedColor = $conf->global->TIMESHEET_COL_REJECTED;
 $maxhoursperday = $conf->global->TIMESHEET_DAY_MAX_DURATION;
 $addholidaytime = $conf->global->TIMESHEET_ADD_HOLIDAY_TIME;
 $blockholiday = $conf->global->TIMESHEET_BLOCK_HOLIDAY;
+$addpublicholidaytime = $conf->global->TIMESHEET_ADD_PUBLICHOLIDAY_TIME;
+$blockpublicholiday = $conf->global->TIMESHEET_BLOCK_PUBLICHOLIDAY;
 $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
 //approval
 $approvalbyweek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
@@ -208,6 +210,12 @@ switch($action) {
         // block holday
         $blockholiday = getpost('blockholiday', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_BLOCK_HOLIDAY", $blockholiday, 'chaine', 0, '', $conf->entity);
+        //public holiday
+        $addpublicholidaytime = getpost('addpublicholidaytime', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_ADD_PUBLICHOLIDAY_TIME", $addpublicholidaytime, 'chaine', 0, '', $conf->entity);
+        // block public holday
+        $blockpublicholiday = getpost('blockpublicholiday', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_BLOCK_PUBLICHOLIDAY", $blockpublicholiday, 'chaine', 0, '', $conf->entity);
         //docs
         $adddocs = getpost('adddocs', 'int');
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
@@ -384,6 +392,16 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("blockholiday");
 echo '</td><td align="left">'.$langs->trans("blockholidayDesc").'</td>';
 echo  '<td align="left"><input type = "checkbox" name = "blockholiday" value="1" ';
 echo (($blockholiday == '1')?'checked':'')."></td></tr>";
+// add public holiday time
+echo  '<tr class="oddeven"><td align="left">'.$langs->trans("addpublicholidaytime");
+echo '</td><td align="left">'.$langs->trans("addpublicholidaytimeDesc").'</td>';
+echo  '<td align="left"><input type = "checkbox" name = "addpublicholidaytime" value="1" ';
+echo (($addpublicholidaytime == '1')?'checked':'')."></td></tr>";
+// block public holiday 
+echo  '<tr class="oddeven"><td align="left">'.$langs->trans("blockpublicholiday");
+echo '</td><td align="left">'.$langs->trans("blockpublicholidayDesc").'</td>';
+echo  '<td align="left"><input type = "checkbox" name = "blockpublicholiday" value="1" ';
+echo (($blockpublicholiday == '1')?'checked':'')."></td></tr>";
 // add docs
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("adddocs");
 echo '</td><td align="left">'.$langs->trans("adddocsDesc").'</td>';
