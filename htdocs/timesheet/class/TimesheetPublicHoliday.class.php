@@ -92,8 +92,8 @@ class TimesheetPublicHolidays extends CommonObject
             $string_to_date_fct = 'TO_DATE';
             $string_to_date_format = 'YYYYMMDD';
             $sql = 'SELECT code, dayrule, year, month, day  FROM '.MAIN_DB_PREFIX.'c_hrm_public_holiday';
-            $sql .= ' WHERE fk_country='.$this->userCountryId;
-            $sql .= ' AND active=1';
+            $sql .= ' WHERE (fk_country=0 or fk_country='.$this->userCountryId;
+            $sql .= ') AND active=1';
             // if year is not 0
             $sql .= ' AND (( year != 0 AND '.$string_to_date_fct;
             $sql .= '(CONCAT(LPAD(CAST(year as TEXT),4,\'0\'), LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\''.$string_to_date_format.'\')';
@@ -112,8 +112,8 @@ class TimesheetPublicHolidays extends CommonObject
             $string_to_date_fct = 'STR_TO_DATE';
             $string_to_date_format = '%Y%m%d';   
             $sql = 'SELECT code, dayrule, year, month, day  FROM '.MAIN_DB_PREFIX.'c_hrm_public_holiday';
-            $sql .= ' WHERE fk_country='.$this->userCountryId;
-            $sql .= ' AND active=1';
+            $sql .= ' WHERE (fk_country=0 or fk_country='.$this->userCountryId;
+            $sql .= ') AND active=1';
             // if year is not 0
             $sql .= ' AND (( year != 0 AND '.$string_to_date_fct;
             $sql .= '(CONCAT(LPAD(year,4,0), LPAD(month,2,0), LPAD(day,2,0)),\''.$string_to_date_format.'\')';
