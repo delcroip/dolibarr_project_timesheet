@@ -138,7 +138,8 @@ class TimesheetHoliday extends Holiday
         if (!is_array($this->holidaylist) || !$this->holidayPresent) // don't show the holiday line if nothing present
            return '';
         $html = "<tr id = 'holiday'>\n";
-        $html .= '<th colspan = "'.count($headers).'" align = "right" > '.$langs->trans('Holiday').' </th>';
+        $nbHeader = count($headers);
+        $html .= '<th colspan = "'.($nbHeader == 1 ? 2 : $nbHeader).'" align = "right" > '.$langs->trans('Holiday').' </th>';
         $i = 0;
         foreach ($this->holidaylist as $day => $holiday) {
             $am = $holiday['am'];
@@ -150,7 +151,7 @@ class TimesheetHoliday extends Holiday
             $value = ($timetype == "hours")?date('H:i', 
                 mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             $html .= '<th style = "margin: 0;padding: 0;">';
-            $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_publicholiday";
+            $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_holiday";
             if ($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1){
                 $html .= '<input type = "hidden" class = "'.$class.'"  value = "'.$value.'">';
             }

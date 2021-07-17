@@ -54,7 +54,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_name = 'Patrick Delcroix';
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.4.6';
+                $this->version = '4.4.7.rc1';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -154,7 +154,11 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_ADD_HOLIDAY_TIME", "int", 1, "count the holiday in total or not");
                 $r++;
-                $this->const[$r] = array("TIMESHEET_BLOCK_HOLIDAY", "int", 1, "block time entry on  holiday");
+                $this->const[$r] = array("TIMESHEET_BLOCK_HOLIDAY", "int", 1, "block time entry on holiday");
+                $r++;
+                $this->const[$r] = array("TIMESHEET_ADD_PUBLICHOLIDAY_TIME", "int", 1, "count the public holiday in total or not");
+                $r++;
+                $this->const[$r] = array("TIMESHEET_BLOCK_PUBLICHOLIDAY", "int", 1, "block time entry on public holiday");
                 $r++;
                 $this->const[$r] = array("TIMESHEET_OPEN_DAYS", "chaine", "_1111100", "normal day for time booking");
                 $r++;
