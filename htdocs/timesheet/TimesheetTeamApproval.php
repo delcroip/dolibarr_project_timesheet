@@ -187,7 +187,7 @@ if (is_object($firstTimesheetUser)) {
             $TTU->fetchTaskTimesheet();
     //$ret += $this->getTaskTimeIds();
     //FIXME module holiday should be activated ?
-            $TTU->fetchUserHoliday();
+            $TTU->fetchUserHolidays();
             $Form .= $TTU->userName." - ".dol_print_date($TTU->date_start, 'day');
             $Form .= $TTU->getHTML(false, true);
             $_SESSION['timesheet'][$token]['tsUser'][$TTU->id] = $TTU->status;
