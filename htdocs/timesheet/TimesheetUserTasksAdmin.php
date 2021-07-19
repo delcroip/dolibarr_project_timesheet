@@ -187,7 +187,7 @@ switch($action) {
         if ($id > 0 || !empty($ref)) {
             //$result = $object->fetch($id, $ref);
             if ($result > 0)$result = $object->fetchTaskTimesheet();
-            if ($result > 0)$result = $object->fetchUserHoliday();
+            if ($result > 0)$result = $object->fetchUserHolidays();
             if ($result < 0) {
                 dol_print_error($db);
             } else { // fill the id & ref
@@ -394,7 +394,7 @@ switch($action) {
             $object->fetchTaskTimesheet();
             //$ret += $this->getTaskTimeIds();
             //FIXME module holiday should be activated ?
-            $object->fetchUserHoliday();
+            $object->fetchUserHolidays();
             print $object->userName." - ".dol_print_date($object->date_start, 'day');
             print $object->getHTMLHeader();
             print $object->getHTMLHolidayLines(false);

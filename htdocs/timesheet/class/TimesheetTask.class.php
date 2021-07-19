@@ -730,7 +730,6 @@ class TimesheetTask extends Task
                 if ($unblockClosedDay == 0) $isOpen = $isOpen  && $isOpenDay;
                 if ($unblockInvoiced == 0) $isOpen = $isOpen  && !$isInvoiced;
                 if (count($holidayList)>=$dayCur){
-                    var_dump($holidayList);
                     $isOpen = $isOpen && 
                     !($blockholiday == 1 && $holidayList[$dayCur]['am'] && $holidayList[$dayCur]['pm']) &&
                     !($blockPublicHoliday == 1 && $holidayList[$dayCur]['dayoff']);
