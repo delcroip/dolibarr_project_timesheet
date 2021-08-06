@@ -276,7 +276,7 @@ class TimesheetReport
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = fk_task ';
         $sql .= ' WHERE ';
         if (!empty($this->userid)) {
-            $sql .= ' ptt.fk_user IN (\''.implode("','", $this->userid).'\') ';
+            $sql .= ' ptt.fk_user IN (\''.implode("','", array_keys($this->user)).'\') ';
             $first = false;
         }
         if (!empty($this->projectid)) {

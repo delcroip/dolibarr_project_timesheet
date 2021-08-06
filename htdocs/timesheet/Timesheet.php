@@ -59,12 +59,14 @@ if (!$user->rights->timesheet->timesheet->user && !$admin) {
 // if the user can enter ts for other the user id is diferent
 if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) 
     && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
-    if (!empty($postUserId)) {
+        if (!empty($postUserId)) {
             $newuserid = $postUserId;
-    }
+        }else{
+            $newuserid = $user->id;
+        }
     $SubordiateIds = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
     //$SubordiateIds[] = $userid;
-    if (in_array($newuserid, $SubordiateIds) || $admin) {
+    if ($newuserid > 0 && in_array($newuserid, $SubordiateIds) || $admin) {
         $SubordiateIds[] = $userid;
         $userid = $newuserid;
     } elseif ($action == 'getOtherTs') {

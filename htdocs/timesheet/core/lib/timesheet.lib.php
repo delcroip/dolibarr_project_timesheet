@@ -670,7 +670,7 @@ function timesheet_report_prepare_head( $mode, $item_id , $hidetab=0) {
 	$head[$h][2] = 'showthisweek';
 	$h++;
 
-	$head[$h][0] = "?".$item."&reporttab=showthismonth&hidetab=".$hidetab."&dateStart=".dol_print_date(strtotime("first day of this month")."&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard'), 'dayxcard');
+	$head[$h][0] = "?".$item."&reporttab=showthismonth&hidetab=".$hidetab."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard');
 	$head[$h][1] = $langs->trans('thisMonth');
 	$head[$h][2] = 'showthismonth';
 	$h++;
