@@ -1134,7 +1134,7 @@ public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
     if (!$admin) {
         $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
     } else{
-         $HTML .= $form->select_dolusers($selected, 'userid');
+        $HTML .= $form->select_dolusers($selected, 'userid');
     }
     $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
     return $HTML;

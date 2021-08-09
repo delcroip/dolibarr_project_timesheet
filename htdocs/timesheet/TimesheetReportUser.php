@@ -104,7 +104,7 @@ if (!empty($userIdSelected) && $userIdSelected <> -999  && $userIdSelected <> $u
         unset($action);
         $userIdlist[] = $userid;
     }
-} elseif ($userIdSelected = -999)
+} elseif ($userIdSelected == -999)
 {
     $userIdlist = $userIdlistfull;
 }else{
