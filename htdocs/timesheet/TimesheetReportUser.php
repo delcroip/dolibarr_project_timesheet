@@ -95,7 +95,7 @@ if (empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
 $userIdlist = array();
 $userIdlistfull = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
 if (!empty($userIdSelected) && $userIdSelected <> -999  && $userIdSelected <> $userid) {
-    
+
     $userIdlistfull[] = $userid;
     if (in_array($userIdSelected, $userIdlist) || $admin ) {
         $userIdlist[] = $userIdSelected;
@@ -112,13 +112,13 @@ if (!empty($userIdSelected) && $userIdSelected <> -999  && $userIdSelected <> $u
 }
 
 $reportStatic = new TimesheetReport($db);
-$reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd, 
+$reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd,
     $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
 if ($action == 'getpdf') {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
     if ($pdf->writeFile($reportStatic, $langs)>0) {
-        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/" 
+        header("Location: ".DOL_URL_ROOT."/document.php?modulepart=timesheet&file=reports/"
         .dol_sanitizeFileName($reportStatic->name) . ".pdf");
         return;
     }
@@ -218,14 +218,14 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
 
 
 $form_output  .= '<div class="tabsAction"><div class="center">';
-$form_output  .= '<input class="butAction button" type="submit" value="' . $langs->trans( 'getReport' ) . '">';
+$form_output  .= '<input class="butAction" type="submit" value="' . $langs->trans( 'getReport' ) . '">';
 $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
 //if(!empty($querryRes))$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if ( ! empty( $querryRes ) && $conf->global->MAIN_MODULE_EXPORT ) {
-	$form_output .= '<a class = "butAction button" href="?action=getExport&dateStart=' . dol_print_date( $dateStart, 'dayxcard' ) . '&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) . '&userSelected=' . $userIdSelected . '&mode=DTU&model=' . $model . '&invoicabletaskOnly=' . $invoicabletaskOnly . '&ungroup=' . $ungroup . '" >' . $langs->trans( 'Export' ) . '</a>';
+	$form_output .= '<a class = "butAction" href="?action=getExport&dateStart=' . dol_print_date( $dateStart, 'dayxcard' ) . '&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) . '&userSelected=' . $userIdSelected . '&mode=DTU&model=' . $model . '&invoicabletaskOnly=' . $invoicabletaskOnly . '&ungroup=' . $ungroup . '" >' . $langs->trans( 'Export' ) . '</a>';
 }
 if ( ! empty( $querryRes ) ) {
-	$form_output .= '<a class = "butAction button" href="?action=getpdf&dateStart=' . dol_print_date( $dateStart, 'dayxcard' ) . '&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) . '&userSelected=' . $userIdSelected . '&mode=DTU&model=' . $model . '&invoicabletaskOnly=' . $invoicabletaskOnly . '&ungroup=' . $ungroup . '" >' . $langs->trans( 'PDF' ) . '</a>';
+	$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart=' . dol_print_date( $dateStart, 'dayxcard' ) . '&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) . '&userSelected=' . $userIdSelected . '&mode=DTU&model=' . $model . '&invoicabletaskOnly=' . $invoicabletaskOnly . '&ungroup=' . $ungroup . '" >' . $langs->trans( 'PDF' ) . '</a>';
 }
 $form_output .= '</div></div></form>';
 
