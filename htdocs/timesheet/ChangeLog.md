@@ -1,4 +1,10 @@
 # dolibarr_project_timesheet changelog
+4.4.8 (2021-08-06)
+- fix: This month link
+- fix: wrong user report for user with subordinates
+- fix white button
+
+
 4.4.7 (2021-07-18)
 - new setting to manage public holiday time (separeated from holiday management)
 - fix: show public holiday without country
