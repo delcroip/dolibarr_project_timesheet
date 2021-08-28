@@ -1,8 +1,8 @@
-Current version **4.1.3**
+Current version **4.4.9**
 
 Dolibarr minimum version : **3.5.6**
 
-Dolibarr latest version tested : **11.0**
+Dolibarr latest version tested : **13.0**
 
 Author: Patrick Delcroix patrick@pmpd.eu
 

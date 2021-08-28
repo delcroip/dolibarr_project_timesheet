@@ -1,3 +1,4 @@
+build/doc/build/*
 nbproject/0
 nbproject/
 htdocs/timesheet/php_errors.log
