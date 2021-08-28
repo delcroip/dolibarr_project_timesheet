@@ -44,12 +44,12 @@ if (empty($mode)){
     $ungroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
     $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
 }
-$admin = $user->rights->projet->all->lire || $user->rights->projet->all->creer 
+$admin = $user->rights->projet->all->lire || $user->rights->projet->all->creer
     || $user->rights->timesheet->report->admin;
     if (!$user->rights->timesheet->report->project && !$admin) {
         $accessforbidden = accessforbidden("You don't have the report projet or admin right");
     }
-    
+
 $projectSelectedId = GETPOST('projectSelected', 'int');
 $year = GETPOST('year', 'int');
 $month = GETPOST('month', 'alpha');//strtotime(str_replace('/', '-', $_POST['Date']))
@@ -142,7 +142,7 @@ if ($action == 'getpdf') {
     ob_end_flush();
     exit();
 } elseif ($action == 'getExport'){
-    $max_execution_time_for_export = 
+    $max_execution_time_for_export =
         (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?
             300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
     $max_time = @ini_get("max_execution_time");
@@ -170,7 +170,7 @@ if ($projectSelectedId > 0 || !empty($ref))
 	    $headProject = project_prepare_head($project);
 	    dol_fiche_head($headProject, 'report', $langs->trans("projectReport"), -1, 'project');
     }
-    
+
 	$ret = $project->fetch($projectSelectedId, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$project->fetch_thirdparty();
@@ -245,7 +245,7 @@ if($hidetab == 1){
     $form_output .= '<input type = "hidden" name = "hidetab" value = 1 />';
 }else{
     $form_output .= '<input type = "hidden" name = "projectSelected" value = "'.$projectSelectedId.'" />';
-    
+
 }
 //}
 // select start date
@@ -282,28 +282,28 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
 
  //submit
  $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
- $form_output .= '<input class = "butAction button" type = "submit" value = "'.$langs->trans('getReport').'">';
-if (!empty($querryRes) && ($user->rights->facture->creer 
+ $form_output .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
+if (!empty($querryRes) && ($user->rights->facture->creer
     || version_compare(DOL_VERSION, "3.7") <= 0))
-        $form_output .= '<a class = "butAction button" href = "TimesheetProjectInvoice.php?step=0&dateStart='
+        $form_output .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='
             .dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='
             .$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard')
             .'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 
-if (!empty($querryRes))$form_output .= 
-    '<a class = "butAction button" href="?action=getpdf&dateStart='
+if (!empty($querryRes))$form_output .=
+    '<a class = "butAction" href="?action=getpdf&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='
     .$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
     ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if (!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$form_output .= 
-    '<a class = "butAction button" href="?action=getExport&dateStart='
+if (!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$form_output .=
+    '<a class = "butAction" href="?action=getExport&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly
     ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
-if (!empty($querryRes))$form_output .= 
-    '<a class = "butAction button" href="?action=reportproject&dateStart='
+if (!empty($querryRes))$form_output .=
+    '<a class = "butAction" href="?action=reportproject&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
