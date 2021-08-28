@@ -3,7 +3,7 @@ Holiday
 
 based on the setup the timesheet page will (there is settigns for holiday and public holiday):
 
-- show the holiday and public above the timesheet entry boxes
+- show the paid and public holiday above the timesheet entry boxes
 
 - add day duration (in seetings) on the total for a day
 
