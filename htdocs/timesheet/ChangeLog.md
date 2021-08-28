@@ -1,8 +1,12 @@
 # dolibarr_project_timesheet changelog
+4.4.9 (2021-08-28)
+- fix white button
+- fix sunday not showed
+
+
 4.4.8 (2021-08-06)
 - fix: This month link
 - fix: wrong user report for user with subordinates
-- fix white button
 
 
 4.4.7 (2021-07-18)

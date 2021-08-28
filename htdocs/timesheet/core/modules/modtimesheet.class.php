@@ -54,7 +54,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_name = 'Patrick Delcroix';
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.4.8.rc1';
+                $this->version = '4.4.9';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
