@@ -84,47 +84,49 @@ class TimesheetPublicHolidays extends CommonObject
         // check it the period overlap on 2 years
         $yearStart = date('Y', $datestart);
         $yearStop = date('Y', $datestop);
+
+        //don't take the next day if the hour is 0
+        if(date('H', $datestop) == 0){
+            $datestop = $datestop -1;
+        }
+        
         
         $sameYear = $yearStart == $yearStop;
         $this->holidayPresent = false;
 
-        if ($this->db->type=='pgsql') {
-            $string_to_date_fct = 'TO_DATE';
-            $string_to_date_format = 'YYYYMMDD';
+        if ($this->db->type == 'pgsql') {
             $sql = 'SELECT code, dayrule, year, month, day  FROM '.MAIN_DB_PREFIX.'c_hrm_public_holiday';
             $sql .= ' WHERE (fk_country=0 or fk_country='.$this->userCountryId;
             $sql .= ') AND active=1';
             // if year is not 0
-            $sql .= ' AND (( year != 0 AND '.$string_to_date_fct;
-            $sql .= '(CONCAT(LPAD(CAST(year as TEXT),4,\'0\'), LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\''.$string_to_date_format.'\')';
+            $sql .= ' AND (( year != 0 AND TO_DATE';
+            $sql .= '(CONCAT(LPAD(CAST(year as TEXT),4,\'0\'), LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\'YYYYMMDD\')';
             $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
             // if year is 0
-            $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStart;
-            $sql .= ', LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\''.$string_to_date_format.'\')';
+            $sql .= ' OR ( year = 0 AND TO_DATE(CONCAT('.$yearStart;
+            $sql .= ', LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\'YYYYMMDD\')';
             $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
             if (!$sameYear){
-                $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStop;
-                $sql .= ', LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\''.$string_to_date_format.'\')';
+                $sql .= ' OR ( year = 0 AND TO_DATE(CONCAT('.$yearStop;
+                $sql .= ', LPAD(CAST(month as TEXT),2,\'0\'), LPAD(CAST(day as TEXT),2,\'0\')),\'YYYYMMDD\')';
                 $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
             }
             $sql .= ')';
         }else{
-            $string_to_date_fct = 'STR_TO_DATE';
-            $string_to_date_format = '%Y%m%d';   
             $sql = 'SELECT code, dayrule, year, month, day  FROM '.MAIN_DB_PREFIX.'c_hrm_public_holiday';
             $sql .= ' WHERE (fk_country=0 or fk_country='.$this->userCountryId;
             $sql .= ') AND active=1';
             // if year is not 0
-            $sql .= ' AND (( year != 0 AND '.$string_to_date_fct;
-            $sql .= '(CONCAT(LPAD(year,4,0), LPAD(month,2,0), LPAD(day,2,0)),\''.$string_to_date_format.'\')';
+            $sql .= ' AND (( year != 0 AND STR_TO_DATE';
+            $sql .= '(CONCAT(LPAD(year,4,0), LPAD(month,2,0), LPAD(day,2,0)),\'%Y%m%d\')';
             $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
             // if year is 0
-            $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStart;
-            $sql .= ', LPAD(month,2,0), LPAD(day,2,0)),\''.$string_to_date_format.'\')';
+            $sql .= ' OR ( year = 0 AND STR_TO_DATE(CONCAT('.$yearStart;
+            $sql .= ', LPAD(month,2,0), LPAD(day,2,0)),\'%Y%m%d\')';
             $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
             if (!$sameYear){
-                $sql .= ' OR ( year = 0 AND '.$string_to_date_fct.'(CONCAT('.$yearStop;
-                $sql .= ', LPAD(month,2,0), LPAD(day,2,0)),\''.$string_to_date_format.'\')';
+                $sql .= ' OR ( year = 0 AND STR_TO_DATE(CONCAT('.$yearStop;
+                $sql .= ', LPAD(month,2,0), LPAD(day,2,0)),\'%Y%m%d\')';
                 $sql .= ' BETWEEN \''.$this->db->idate($datestart).'\' AND \''.$this->db->idate($datestop).'\')';
             }
             $sql .= ')';
