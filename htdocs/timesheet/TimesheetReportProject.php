@@ -93,7 +93,7 @@ $sql = 'SELECT pjt.rowid, pjt.ref, pjt.title, pjt.dateo, pjt.datee FROM '.MAIN_D
 if (!$admin) {
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid = element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
-    $sql .= ' WHERE (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR  ctc.code LIKE \'%BILLING%\'))) AND ctc.active = \'1\'  ';
+    $sql .= ' WHERE (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR  ctc.code LIKE \'%BILLING%\')) AND ctc.active = \'1\'  ';
     $sql .= ' AND fk_socpeople = \''.$userid.'\' and fk_statut = \'1\'';
     $sql .= " AND pjt.entity IN (".getEntity('projet').")";
 } else{
