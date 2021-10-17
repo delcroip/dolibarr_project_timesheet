@@ -1235,7 +1235,7 @@ public function GetTimeSheetXML()
     /**
      *  Function that will send email to
      *
-     *        @return        bool success / failure
+     * @return bool success / failure
      */
     public function sendApprovalReminders()
     {
@@ -1258,20 +1258,24 @@ public function GetTimeSheetXML()
             for($i = 0;$i<$num;$i++)
             {
                 $obj = $this->db->fetch_object($resql);
-                $emails[$obj->tm_email][$obj->w_email][] = array("date_start" => $obj->date_start,
-                "date_end" => $obj->date_end);
+                $emails[$obj->tm_email][$obj->w_email][] = array(
+                    "date_start" => $obj->date_start,
+                    "date_end" => $obj->date_end
+                );
             }
         }else {
             dol_print_error($db);
             $list = array();
             $ret = false;
         }
-        if( $ret != false) {
-            foreach( $emails as $tm_email => $user_approuvals) {
-                foreach( $user_approuvals as $w_email => $dates) {
-                    $message = str_replace("__NB_TS__", count($dates), 
-                        str_replace('\n', "\n", $langs->trans('YouHaveApprovalPendingMsg')));
-                    foreach($dates as $date) {
+        if ($ret != false) {
+            foreach ($emails as $tm_email => $user_approuvals) {
+                foreach ($user_approuvals as $w_email => $dates) {
+                    $message = str_replace(
+                        "__NB_TS__", count($dates), 
+                        str_replace('\n', "\n", $langs->trans('YouHaveApprovalPendingMsg'))
+                    );
+                    foreach ($dates as $date) {
                         $message .= "\n * ".$date["date_start"]." - ".$date["date_end"];
                     }
                     $sendto = $tm_email;
@@ -1302,14 +1306,14 @@ public function GetTimeSheetXML()
 
     /**
      * Function that will send email upon timesheet not sent
-     * @return  bool success / failure
+     * @return bool success / failure
      */
     public function sendTimesheetReminders()
     {
         //check date: was yesterday a period end day ?
         $yesteday = date("Y-m-d"); - 24 * 60 *60;
         $date_end = getEndDate($yesteday);
-        if($yesteday == $date_end) {
+        if ($yesteday == $date_end) {
             //get the list of user that have the ts right
             $users = [];
             //foreach user check if there is: no timesheet approaval or a tta in draft or rejected
@@ -1324,11 +1328,11 @@ public function GetTimeSheetXML()
     }
 
 
-        /**
-         * function that will send email upon timesheet rejection
-         * @param    Doliuser   $user       objet
-         * @return        void
-         */
+    /**
+     * Function that will send email upon timesheet rejection
+     * @param    Doliuser   $user       objet
+     * @return        void
+     */
     public function sendRejectedReminders($user)
     {
         global $langs, $db, $dolibarr_main_url_root, $dolibarr_main_url_root_alt;
@@ -1363,7 +1367,7 @@ public function GetTimeSheetXML()
     }
 
         
-    /***
+    /**
      * @param int $userid user to import calcandar
      * @param date $datestart datestart to use for the import 
      */
