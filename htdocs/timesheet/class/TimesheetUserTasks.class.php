@@ -1232,85 +1232,84 @@ public function GetTimeSheetXML()
     $xml .= "</timesheet>";
     return $xml;
 }        */
-/**
- *        function that will send email to
- *
- *        @return        bool success / failure
- */
-public function sendApprovalReminders()
-{
-    global $langs;
-    $ret = true;
-    $sql = 'SELECT';
-    $sql .= ' t.date_start, t.date_end, ';
-    $sql .= ' u.email as w_email, utm.email as tm_email,';
-    $sql .= ' u.fk_user as approverid';
-    $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
-    $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
-    $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as utm on u.fk_user = utm.rowid ';
-    $sql .= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
-    $sql .= '  AND t.recipient='.TEAM.' ORDER BY u.fk_user';
-    dol_syslog(__METHOD__, LOG_DEBUG);
-    $emails = array();
-    $resql = $this->db->query($sql);
-    if ($resql) {
-        $num = $this->db->num_rows($resql);
-        for($i = 0;$i<$num;$i++)
-        {
-            $obj = $this->db->fetch_object($resql);
-            $emails[$obj->tm_email][$obj->w_email][] = array("date_start" => $obj->date_start,
-            "date_end" => $obj->date_end);
+    /**
+     *  Function that will send email to
+     *
+     *        @return        bool success / failure
+     */
+    public function sendApprovalReminders()
+    {
+        global $langs;
+        $ret = true;
+        $sql = 'SELECT';
+        $sql .= ' t.date_start, t.date_end, ';
+        $sql .= ' u.email as w_email, utm.email as tm_email,';
+        $sql .= ' u.fk_user as approverid';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
+        $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
+        $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as utm on u.fk_user = utm.rowid ';
+        $sql .= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
+        $sql .= '  AND t.recipient='.TEAM.' ORDER BY u.fk_user';
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $emails = array();
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $num = $this->db->num_rows($resql);
+            for($i = 0;$i<$num;$i++)
+            {
+                $obj = $this->db->fetch_object($resql);
+                $emails[$obj->tm_email][$obj->w_email][] = array("date_start" => $obj->date_start,
+                "date_end" => $obj->date_end);
+            }
+        }else {
+            dol_print_error($db);
+            $list = array();
+            $ret = false;
         }
-    }else {
-        dol_print_error($db);
-        $list = array();
-        $ret = false;
-    }
-    if( $ret != false){
-        foreach( $emails as $tm_email => $user_approuvals){
-            foreach( $user_approuvals as $w_email => $dates){
-                $message = str_replace("__NB_TS__", count($dates), str_replace('\n', "\n", $langs->trans('YouHaveApprovalPendingMsg')));
-                foreach($dates as $date){
-                    $message .= "\n * ".$date["date_start"]." - ".$date["date_end"];
+        if( $ret != false) {
+            foreach( $emails as $tm_email => $user_approuvals) {
+                foreach( $user_approuvals as $w_email => $dates) {
+                    $message = str_replace("__NB_TS__", count($dates), 
+                        str_replace('\n', "\n", $langs->trans('YouHaveApprovalPendingMsg')));
+                    foreach($dates as $date) {
+                        $message .= "\n * ".$date["date_start"]." - ".$date["date_end"];
+                    }
+                    $sendto = $tm_email;
+                    $replyto = $w_email;
+                    $addr_cc = null; //$addr_cc = $obj->w_email; // uncomment if the user should be in cc
+                    $subject = $langs->transnoentities("YouHaveApprovalPending");
+                    if (!empty($sendto) && $sendto!="NULL") {
+                        require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+                        $mailfile = new CMailFile(
+                            $subject,
+                            $sendto,
+                            $replyto,
+                            $message,
+                            $filename_list = array(),
+                            $mimetype_list = array(),
+                            $mimefilename_list = array(),
+                            $addr_cc, $addr_bcc = null,
+                            $deliveryreceipt = 0,
+                            $msgishtml = 1);
+                        $ret = $ret && $mailfile->sendfile();
+                    }
                 }
-                //$message = "Bonjour, \n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
-                $sendto = $tm_email;
-                $replyto = $w_email;
-                $addr_cc = null; //$addr_cc = $obj->w_email; // uncomment if the user should be in cc
-                $subject = $langs->transnoentities("YouHaveApprovalPending");
-                if (!empty($sendto) && $sendto!="NULL") {
-                    require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
-                    $mailfile = new CMailFile(
-                        $subject,
-                        $sendto,
-                        $replyto,
-                        $message,
-                        $filename_list = array(),
-                        $mimetype_list = array(),
-                        $mimefilename_list = array(),
-                        $addr_cc, $addr_bcc = null,
-                        $deliveryreceipt = 0,
-                        $msgishtml = 1);
-                    $ret = $ret && $mailfile->sendfile();
-                }
-            
             }
         }
+        return $ret;
     }
-    return $ret;
-}
 
 
     /**
-     * function that will send email upon timesheet not sent
-     * @return        bool success / failure
+     * Function that will send email upon timesheet not sent
+     * @return  bool success / failure
      */
     public function sendTimesheetReminders()
     {
         //check date: was yesterday a period end day ?
         $yesteday = date("Y-m-d"); - 24 * 60 *60;
         $date_end = getEndDate($yesteday);
-        if($yesteday == $date_end){
+        if($yesteday == $date_end) {
             //get the list of user that have the ts right
             $users = [];
             //foreach user check if there is: no timesheet approaval or a tta in draft or rejected
