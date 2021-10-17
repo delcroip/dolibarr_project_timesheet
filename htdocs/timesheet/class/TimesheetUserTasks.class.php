@@ -1338,35 +1338,35 @@ public function GetTimeSheetXML()
         global $langs, $db, $dolibarr_main_url_root, $dolibarr_main_url_root_alt;
         $tsUser = new User($db);
         $tsUser->fetch($this->userId);
-            $url = $dolibarr_main_url_root;
-            if (strpos($dolibarr_main_url_root_alt, $_SERVER['PHP_SELF'])>0) {
-                $url .= $dolibarr_main_url_root_alt;
-            }
-            $url .= '/timesheet/Timesheet.php?dateStart='.$this->date_start;
-            $message = $langs->trans(
-                'YouHaveTimesheetRejectedMsg', 
-                date(' d', $this->date_start), 
-                $url
+        $url = $dolibarr_main_url_root;
+        if (strpos($dolibarr_main_url_root_alt, $_SERVER['PHP_SELF'])>0) {
+            $url .= $dolibarr_main_url_root_alt;
+        }
+        $url .= '/timesheet/Timesheet.php?dateStart='.$this->date_start;
+        $message = $langs->trans(
+            'YouHaveTimesheetRejectedMsg', 
+            date(' d', $this->date_start), 
+            $url
+        );
+        $sendto = $tsUser->email;
+        $replyto = $user->email;
+        $subject = $langs->transnoentities("YouHaveTimesheetRejected");
+        if (!empty($sendto) && $sendto!="NULL") {
+            include_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+            $mailfile = new CMailFile(
+                $subject,
+                $sendto,
+                $replyto,
+                $message,
+                $filename_list = array(),
+                $mimetype_list = array(),
+                $mimefilename_list = array(),
+                $addr_cc, $addr_bcc = 0,
+                $deliveryreceipt = 0,
+                $msgishtml = 1
             );
-            $sendto = $tsUser->email;
-            $replyto = $user->email;
-            $subject = $langs->transnoentities("YouHaveTimesheetRejected");
-            if (!empty($sendto) && $sendto!="NULL") {
-                include_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile(
-                    $subject,
-                    $sendto,
-                    $replyto,
-                    $message,
-                    $filename_list = array(),
-                    $mimetype_list = array(),
-                    $mimefilename_list = array(),
-                    $addr_cc, $addr_bcc = 0,
-                    $deliveryreceipt = 0,
-                    $msgishtml = 1
-                );
-                $mailfile->sendfile();
-          }
+            $mailfile->sendfile();
+        }
     }
 
         
