@@ -1,4 +1,9 @@
 # dolibarr_project_timesheet changelog
+4.4.10 (2021-10-16)
+- fix sendapproval
+- Fix: User rights for viewing PDF. #165 
+- FIx: SQL syntax error. #164 
+
 4.4.9 (2021-08-28)
 - fix white button
 - fix sunday not showed
