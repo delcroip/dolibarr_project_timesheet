@@ -1302,6 +1302,29 @@ public function sendApprovalReminders()
 
 
     /**
+     * function that will send email upon timesheet not sent
+     * @return        bool success / failure
+     */
+    public function sendTimesheetReminders()
+    {
+        //check date: was yesterday a period end day ?
+        $yesteday = date("Y-m-d"); - 24 * 60 *60;
+        $date_end = getEndDate($yesteday);
+        if($yesteday == $date_end){
+            //get the list of user that have the ts right
+            $users = [];
+            //foreach user check if there is: no timesheet approaval or a tta in draft or rejected
+                // SELECT userid, "-1" as status FROM $user LEFT JOIN tta on userid=fk_user and $yesteray = date_end WHERE tta.id = NULL  
+                // UNION
+                // SELECT userid, status FROM tta where status in (DRAFT, REJECTED) and $yesteray = date_end
+
+            //send email to user that need to submit a timesheet
+            
+        }
+        return false; 
+    }
+
+
         /**
          * function that will send email upon timesheet rejection
          * @param    Doliuser   $user       objet
