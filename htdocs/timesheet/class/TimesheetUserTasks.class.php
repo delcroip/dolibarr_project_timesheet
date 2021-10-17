@@ -1255,15 +1255,14 @@ public function GetTimeSheetXML()
         $resql = $this->db->query($sql);
         if ($resql) {
             $num = $this->db->num_rows($resql);
-            for($i = 0;$i<$num;$i++)
-            {
+            for ($i = 0;$i<$num;$i++) {
                 $obj = $this->db->fetch_object($resql);
                 $emails[$obj->tm_email][$obj->w_email][] = array(
                     "date_start" => $obj->date_start,
                     "date_end" => $obj->date_end
                 );
             }
-        }else {
+        } else {
             dol_print_error($db);
             $list = array();
             $ret = false;
@@ -1294,7 +1293,8 @@ public function GetTimeSheetXML()
                             $mimefilename_list = array(),
                             $addr_cc, $addr_bcc = null,
                             $deliveryreceipt = 0,
-                            $msgishtml = 1);
+                            $msgishtml = 1
+                        );
                         $ret = $ret && $mailfile->sendfile();
                     }
                 }
@@ -1338,33 +1338,34 @@ public function GetTimeSheetXML()
         global $langs, $db, $dolibarr_main_url_root, $dolibarr_main_url_root_alt;
         $tsUser = new User($db);
         $tsUser->fetch($this->userId);
-          $url = $dolibarr_main_url_root;
-          if (strpos($dolibarr_main_url_root_alt, $_SERVER['PHP_SELF'])>0) {
-               $url .= $dolibarr_main_url_root_alt;
-          }
-          $url .= '/timesheet/Timesheet.php?dateStart='.$this->date_start;
-          $message = $langs->trans(
+            $url = $dolibarr_main_url_root;
+            if (strpos($dolibarr_main_url_root_alt, $_SERVER['PHP_SELF'])>0) {
+                $url .= $dolibarr_main_url_root_alt;
+            }
+            $url .= '/timesheet/Timesheet.php?dateStart='.$this->date_start;
+            $message = $langs->trans(
                 'YouHaveTimesheetRejectedMsg', 
-                date(' d', $this->date_start), $url
+                date(' d', $this->date_start), 
+                $url
             );
-          $sendto = $tsUser->email;
-          $replyto = $user->email;
-          $subject = $langs->transnoentities("YouHaveTimesheetRejected");
-          if (!empty($sendto) && $sendto!="NULL") {
-            include_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
-            $mailfile = new CMailFile(
-                $subject,
-                $sendto,
-                $replyto,
-                $message,
-                $filename_list = array(),
-                $mimetype_list = array(),
-                $mimefilename_list = array(),
-                $addr_cc, $addr_bcc = 0,
-                $deliveryreceipt = 0,
-                $msgishtml = 1
-          );
-           $mailfile->sendfile();
+            $sendto = $tsUser->email;
+            $replyto = $user->email;
+            $subject = $langs->transnoentities("YouHaveTimesheetRejected");
+            if (!empty($sendto) && $sendto!="NULL") {
+                include_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+                $mailfile = new CMailFile(
+                    $subject,
+                    $sendto,
+                    $replyto,
+                    $message,
+                    $filename_list = array(),
+                    $mimetype_list = array(),
+                    $mimefilename_list = array(),
+                    $addr_cc, $addr_bcc = 0,
+                    $deliveryreceipt = 0,
+                    $msgishtml = 1
+                );
+                $mailfile->sendfile();
           }
     }
 
