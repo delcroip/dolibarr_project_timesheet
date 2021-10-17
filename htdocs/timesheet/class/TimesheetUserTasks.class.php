@@ -1280,10 +1280,10 @@ public function GetTimeSheetXML()
                     }
                     $sendto = $tm_email;
                     $replyto = $w_email;
-                    $addr_cc = null; //$addr_cc = $obj->w_email; // uncomment if the user should be in cc
+                    $addr_cc = null; //$addr_cc = $obj->w_email;
                     $subject = $langs->transnoentities("YouHaveApprovalPending");
                     if (!empty($sendto) && $sendto!="NULL") {
-                        require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+                        include_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
                         $mailfile = new CMailFile(
                             $subject,
                             $sendto,
@@ -1343,13 +1343,15 @@ public function GetTimeSheetXML()
                $url .= $dolibarr_main_url_root_alt;
           }
           $url .= '/timesheet/Timesheet.php?dateStart='.$this->date_start;
-          $message = $langs->trans('YouHaveTimesheetRejectedMsg', date(' d', $this->date_start), $url);
-          //$message = "Bonjour, \n\nVous avez __NB_TS__ feuilles de temps à approuver, veuillez vous connecter à Dolibarr pour les approuver.\n\nCordialement.\n\nVotre administrateur Dolibarr.";
+          $message = $langs->trans(
+                'YouHaveTimesheetRejectedMsg', 
+                date(' d', $this->date_start), $url
+            );
           $sendto = $tsUser->email;
           $replyto = $user->email;
           $subject = $langs->transnoentities("YouHaveTimesheetRejected");
           if (!empty($sendto) && $sendto!="NULL") {
-            require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+            include_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
             $mailfile = new CMailFile(
                 $subject,
                 $sendto,
@@ -1368,8 +1370,10 @@ public function GetTimeSheetXML()
 
         
     /**
+     * Function to import the calandar item into the timesheets
      * @param int $userid user to import calcandar
-     * @param date $datestart datestart to use for the import 
+     * @param date $dateStart datestart to use for the import
+     * @param date $dateEnd dateEnd to use for the import 
      */
     function importCalandar($userid = '', $dateStart = '', $dateEnd = ''){
         global $conf, $user;
@@ -1380,7 +1384,7 @@ public function GetTimeSheetXML()
                 return -1;
             }
         }
-        if(!is_a($dateStart,'DateTime') && !is_a($dateStart,'Date' && !is_numeric($dateStart) )){
+        if(!is_a($dateStart,'DateTime') && !is_a($dateStart,'Date' && !is_numeric($dateStart))){
             $dateStart = $this->date_start;
         }        
         if(!is_a($dateEnd,'DateTime')  && !is_a($dateEnd,'Date') && !is_numeric($dateEnd) ){
