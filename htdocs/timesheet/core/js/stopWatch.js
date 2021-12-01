@@ -62,7 +62,11 @@ class Stopwatch {
         //var date_now.setTime(performance.now());
          this.timestampHeartbeart=performance.now();
          this.timestampClock=performance.now();
-         this.time =performance.now()+ (this.event.date_time_event_start-this.event.processedTime)*1000;
+         if(typeof this.time === 'undefined' ||  this.time == 0) {
+            this.time = (this.event.date_time_event_start-this.event.processedTime)*1000;
+         }else{
+            this.time = performance.now();
+         }
 
         if (this.event.event_type<3  && this.event.event_type!=0) { // launch the clock for heartbeat and
              this.running = true;
