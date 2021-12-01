@@ -1,4 +1,7 @@
 # dolibarr_project_timesheet changelog
+4.4.10 (2021-12-01)
+- fix the watch clock issue (going way to fast)
+
 4.4.10 (2021-10-16)
 - fix sendapproval
 - Fix: User rights for viewing PDF. #165 
