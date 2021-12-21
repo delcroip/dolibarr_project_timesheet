@@ -27,11 +27,11 @@ $res = 0;
 /**
  * Class to manage the box to show last invoices
  */
-class box_approval extends ModeleBoxes
+class box_time_count extends ModeleBoxes
 {
-    public $boxcode = "nbTsToApprove";
+    public $boxcode = "timecount";
     public $boximg = "timesheet";
-    public $boxlabel = "BoxApproval";
+    public $boxlabel = "TimeCount";
     public $depends = array("timesheet");
     public $db;
     public $param;
@@ -48,18 +48,14 @@ class box_approval extends ModeleBoxes
         global $conf, $user, $langs, $db;
         $this->max = $max;
         $userid = is_object($user)?$user->id:$user;
-        $text = $langs->trans('Approval');
+        $text = $langs->trans('Timesheet');
         $this->info_box_head = array(
                         'text' => $text,
                         'limit' => dol_strlen($text)
       );
-      $admin = $user->rights->timesheet->approval->admin || $user->admin;
-        if ($user->rights->timesheet->approval->team
-            || $user->rights->timesheet->approval->other || $admin) {
-            $subordinate = implode(', ', getSubordinates($db, $userid, 2));
-            if ($subordinate == '')$subordinate = 0;
-            $tasks = implode(', ', array_keys(getTasks($db, $userid)));
-            if ($tasks == '')$tasks = 0;
+      $admin = $user->admin || $user->rights->timesheet->timesheet->admin;
+      if ($user->rights->timesheet->timesheet->user ||$admin) {
+
             $sql = 'SELECT';
            // $sql .= ' COUNT(t.rowid) as nb, ';
             $sql .= ' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
