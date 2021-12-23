@@ -383,7 +383,7 @@ $langs->load('timesheet@timesheet');
             $sqlPropal = array('table' => 'propal' , 'keyfield' => 't.rowid', 
                 'fields' => 't.ref, stp.libelle', 'join' => $joinPropal , 
                 'where' => $socid?('t.fk_soc = '.$socid):'1 = 2', 'tail' => '');
-            $htmlPropal = array('name' => 'propalid', 'class' => '', 'otherparam' => '', 
+            $htmlPropal = array('name' => 'propalid', 'class' => 'not_mandatory', 'otherparam' => '', 
                 'ajaxNbChar' => '', 'separator' => ' - ');
             $addChoices = null;
             $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Propal').'</th><th>';
@@ -448,7 +448,7 @@ $langs->load('timesheet@timesheet');
                 .(($invoicabletaskOnly == 1)?'checked':'').' ></th></tr>';
             $Form .= '</table>';
             $Form .= '<input type = "submit" onclick = "return checkEmptyFormFields(event,\'settings\',\'';
-            $Form .= $langs->trans("pleaseFillAll").'\')" class = "butAction" value = "'
+            $Form .= addslashes($langs->trans("pleaseFillAll")).'\')" class = "butAction" value = "'
                 .$langs->trans('Next')."\">\n</from>";
            // if ($ajaxNbChar >= 0) $Form .= "\n<script type = 'text/javascript'>\n$('input#Project').change(function() {\nif($('input#search_Project').val().length>2)reload($(this).form)\n;});\n</script>\n";
             break;

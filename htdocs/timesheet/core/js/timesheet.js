@@ -454,11 +454,13 @@ function checkEmptyFormFields(even,Myform,msg){
     var fields=curform.getElementsByTagName("input");
     var error=0;
     for(field in fields){
-        if (fields[field].value=='' && fields[field].name!='')error++;
+        if (fields[field].value=='' && fields[field].name!=''
+        && !selects[select].classList.contains('not_mandatory'))error++;
     }
     var selects=curform.getElementsByTagName("select");
     for(select in selects){
-        if (selects[select].value=='-1' && fields[field].name!='')error++;
+        if (selects[select].value=='-1' && fields[field].name!='' 
+            && !selects[select].classList.contains('not_mandatory'))error++;
     }
 
     if (error){
