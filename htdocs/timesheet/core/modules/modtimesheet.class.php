@@ -208,7 +208,9 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("MAIN_DISABLE_AJAX_COMBOX", "int", "0", "disable combo box");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_ALLOW_PUBLIC", "int", "0", "Allow all internal contact to book time on public projects");// hours or days
+                $this->const[$r] = array("MAIN_DISABLE_AJAX_COMBOX", "int", "0", "disable combo box");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_OVERTIME_CHECK_WEEKS", "int", "30", "Number of week used for the overwork box");// hours or days
                 $r++;
                  //$this->const[2] = array("CONST3", "chaine", "valeur3", "Libelle3");
                 // Array to add new pages in new tabs
@@ -263,10 +265,15 @@ class modTimesheet extends DolibarrModules
         // Boxes
                 // Add here list of php file(s) stored in core/boxes that contains class to show a box.
         $this->boxes = array(
-            0 => array(
-        'file' => 'box_approval.php@timesheet',
-        'note' => 'timesheetApproval',
-        'enabledbydefaulton' => 'Home'));                        // List of boxes
+                0 => array(
+                        'file' => 'box_approval.php@timesheet',
+                        'note' => 'timesheetApproval',
+                        'enabledbydefaulton' => 'Home'),
+                1 => array(
+                        'file' => 'box_time.php@timesheet',
+                        'note' => 'timesheet',
+                        'enabledbydefaulton' => 'Home')
+        ); // List of boxes
                 // Example:
                 //$this->boxes=array(array(0 => array('file' => 'myboxa.php', 'note' => '', 'enabledbydefaulton' => 'Home'), 1 => array('file' => 'myboxb.php', 'note' => ''), 2 => array('file' => 'myboxc.php', 'note' => '')););
                 // Permissions

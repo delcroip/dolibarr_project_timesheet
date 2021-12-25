@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016 delcroip <patrick@pmpd.eu>
+/* Copyright (C) 2021 delcroip <patrick@pmpd.eu>
  * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation;either version 3 of the License, or
@@ -14,7 +14,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *        \file       htdocs/core/boxes/box_approval.php
+ *        \file       htdocs/core/boxes/box_time.php
  *        \ingroup    factures
  *        \brief      Module de generation de l'affichage de la box factures
  */
@@ -27,11 +27,11 @@ $res = 0;
 /**
  * Class to manage the box to show last invoices
  */
-class box_time_count extends ModeleBoxes
+class box_time extends ModeleBoxes
 {
     public $boxcode = "timecount";
     public $boximg = "timesheet";
-    public $boxlabel = "TimeCount";
+    public $boxlabel = "BoxTime";
     public $depends = array("timesheet");
     public $db;
     public $param;
@@ -48,79 +48,97 @@ class box_time_count extends ModeleBoxes
         global $conf, $user, $langs, $db;
         $this->max = $max;
         $userid = is_object($user)?$user->id:$user;
-        $text = $langs->trans('Timesheet');
+        $text = $langs->trans('TimesheetDelta');
         $this->info_box_head = array(
                         'text' => $text,
                         'limit' => dol_strlen($text)
-      );
-      $admin = $user->admin || $user->rights->timesheet->timesheet->admin;
-      if ($user->rights->timesheet->timesheet->user ||$admin) {
-
-            $sql = 'SELECT';
-           // $sql .= ' COUNT(t.rowid) as nb, ';
-            $sql .= ' COUNT(DISTINCT t.rowid) as nbtsk, count(DISTINCT fk_project_task_timesheet) as nbtm, t.recipient';
-            $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
-            $sql .= ' WHERE t.status IN ('.SUBMITTED.', '.UNDERAPPROVAL.', '.CHALLENGED.') AND ((t.recipient='.TEAM;
-            $sql .= ' AND t.fk_userid in ('.$subordinate.'))';//fixme should check subordinate and project
-            $sql .= ' OR (t.recipient='.PROJECT.' and fk_projet_task in ('.$tasks.')))';
-            $sql .= '  GROUP BY t.recipient ';
-            $sql .= ' UNION SELECT \'0\' as nbtsk, COUNT(utt.rowid)  as nbtm, \''.USER.'\' as recipient ';
-            $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as utt';
-            $sql .= ' WHERE utt.status = '.DRAFT.' AND utt.fk_userid= '.$userid;
-            $result = $db->query($sql);
+        );
+        $admin = $user->admin || $user->rights->timesheet->timesheet->admin;
+        if ($user->rights->timesheet->timesheet->user ||$admin) {
+            $sqlweek = '';
+            if ($this->db->type!='pgsql') {
+                $sqlweek = " 
+                with digit as (
+                    select 0 as d union all 
+                    select 1 union all select 2 union all select 3 union all
+                    select 4 union all select 5 union all select 6 union all
+                    select 7 union all select 8 union all select 9        
+                ),
+                seq as (
+                    select a.d + (10 * b.d) + (100 * c.d) + (1000 * d.d) as num
+                    from digit a
+                        cross join
+                        digit b
+                        cross join
+                        digit c
+                        cross join
+                        digit d
+                    order by 1        
+                )
+                SELECT SUM(pt.task_duration)/3600 as duration, 
+                w.week, u.weeklyhours
+                FROM (SELECT YEARWEEK(DATE_ADD(NOW(), INTERVAL - num WEEK)) as week 
+                    FROM seq WHERE num <= ".$conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS."
+                    AND num > 1 ) as w 
+                LEFT JOIN llx_projet_task_time pt ON YEARWEEK(pt.task_date) = w.week
+                LEFT JOIN llx_user u ON u.rowid =  ".$userid."
+                
+                WHERE pt.fk_user =  ".$userid." OR pt.fk_user is null
+                GROUP BY w.week;";
+            }else {
+                // to be validated
+                $sqlweek = " SELECT SUM(pt.task_duration)/3600 as duration, 
+                    TO_CHAR(generate_series, 'YYYYWW') week, u.weeklyhours
+                    FROM (generate_series(DATE_TRUNC('week', NOW() -  INTERVAL '".$conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS." WEEK'), DATE_TRUNC('week',NOW()) -  INTERVAL 1 WEEK' ))
+                    LEFT JOIN llx_projet_task_time pt ON generate_series = DATE_TRUNC('week',pt.task_date)
+                    LEFT JOIN llx_user u on pt.fk_user = ".$userid."
+                    WHERE pt.fk_user =  ".$userid." OR pt.fk_user is null
+                    GROUP BY generate_series;";
+            }
+            $result = $db->query($sqlweek);
+            $delta = array();
             if ($result) {
+                $p_duration = array();  // FIXME take worktime as delfaut nb day in week * nb hour per day
+                $a_duration = array();
+                $h_duration = array();
                 $num = $db->num_rows($result);
                 while($num>0)
                 {
                     $obj = $db->fetch_object($result);
-                    if ($obj->recipient == PROJECT) {
-                        $nbPrj = $obj->nbtsk;
-                    } elseif ($obj->recipient == TEAM) {
-                        $nbTm = $obj->nbtm;
-                    } elseif ($obj->recipient == USER) {
-                        $nbUsr = $obj->nbtm;
-                    }
+                    $p_duration[$obj->week] = isset($obj->weeklyhours) ? $obj->weeklyhours : $conf->global->TIMESHEET_DAY_DURATION * 5;  // FIXME take worktime as delfaut nb day in week * nb hour per day
+                    $a_duration[$obj->week] = isset($obj->duration) ? $obj->duration : 0;
+                    $h_duration[$obj->week] = $this->getHolidayTime($obj->week, $userid, $obj->weeklyhours); 
+                    $delta[$obj->week] = ($p_duration[$obj->week] - $h_duration[$obj->week] - $a_duration[$obj->week]);
                     $num--;
                 }
                 $i=0;
-                if ($nbTm>0){
+                // create the sums
+                $max_delta = max($delta);
+                $sum_delta = array_sum($delta);
+                if ($max_delta > 0){
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "left"',
-                        'text' => $langs->trans('team').': ',
-                        'text2'=> $langs->trans('nbTsToApprove'),
-                        'asis' => 1,
-                    );
-                        $this->info_box_contents[$i][] = array(
-                            'td' => 'align = "right"',
-                            'text' => $nbTm,
-                            'asis' => 1,
-                    );
-                    $i++;
-                }
-                if ($nbPrj>0){
-                    $this->info_box_contents[$i][] = array(
-                        'td' => 'align = "left"',
-                        'text' => $langs->trans('project').': ',
-                        'text2'=> $langs->trans('nbTsToApprove'),
+                        'text' => $langs->trans('Max').': ',
+                        'text2'=> $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS.' '.$langs->trans('weeks'),
                         'asis' => 1,
                     );
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "right"',
-                        'text' => $nbPrj,
+                        'text' => $max_delta,
                         'asis' => 1,
                     );
                     $i++;
                 }
-                if ($nbUsr>0){
+                if ($sum_delta){
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "left"',
-                        'text' => $langs->trans('Timesheet').': ',
-                        'text2'=> $langs->trans('nbTsToSubmit'),
+                        'text' => $langs->trans('Sum').': ',
+                        'text2'=> $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS.' '.$langs->trans('weeks'),
                         'asis' => 1,
                     );
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "right"',
-                        'text' => $nbUsr,
+                        'text' => $sum_delta,
                         'asis' => 1,
                     );
                     $i++;
@@ -130,14 +148,14 @@ class box_time_count extends ModeleBoxes
                 $this->info_box_contents[0][0] = array(
                     'td' => 'align = "left"',
                     'maxlength' => 500,
-                    'text' =>($db->error().' sql='.$sql),
-              );
+                    'text' =>($db->error().' sql='.$sqlweek),
+                );
             }
         } else {
             $this->info_box_contents[0][0] = array(
                 'td' => 'align = "left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed"),
-          );
+            );
         }
     }
     // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
@@ -152,5 +170,18 @@ class box_time_count extends ModeleBoxes
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         Parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
+
+    /**
+     *  Method get the holiday duration 
+     *
+     *  @param  int   $yearweek      yearweek to use
+     *  @param  INT   $userid   id of the user
+     *  @param  int   $weeklyhours   number of 
+     *  @return void
+     */
+    public function getHolidayTime($yearweek, $userid, $weeklyhours){ // FIXME should use weeklyhours to get the amout of hours per day. new custom fields nb day worked per week ?
+    // FIXME should use weeklyhours to get the amout of hours per day. new custom fields nb day worked per week ?
+        return 0;
     }
 }

@@ -65,7 +65,9 @@ $addholidaytime = $conf->global->TIMESHEET_ADD_HOLIDAY_TIME;
 $blockholiday = $conf->global->TIMESHEET_BLOCK_HOLIDAY;
 $addpublicholidaytime = $conf->global->TIMESHEET_ADD_PUBLICHOLIDAY_TIME;
 $blockpublicholiday = $conf->global->TIMESHEET_BLOCK_PUBLICHOLIDAY;
+$overtimecheckweeks = $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS;
 $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
+
 //approval
 $approvalbyweek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
 $maxApproval = $conf->global->TIMESHEET_MAX_APPROVAL;
@@ -73,6 +75,7 @@ $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 if (count($apflows) != 6) {
     $apflows = array('_', '0', '0', '0', '0', '0');
 }
+
 //Invoice part
 $invoicemethod = $conf->global->TIMESHEET_INVOICE_METHOD;
 $invoicetasktime = $conf->global->TIMESHEET_INVOICE_TASKTIME;
@@ -101,6 +104,8 @@ $unblockClosed = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
 $reportInvoicedCol= $conf->global->TIMESHEET_REPORT_INVOICED_COL;
 $reportUngroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
 $allowPublic = $conf->global->TIMESHEET_ALLOW_PUBLIC;
+
+
 if (count($opendays)!=8) {
     $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
 }
@@ -216,6 +221,10 @@ switch($action) {
         // block public holday
         $blockpublicholiday = getpost('blockpublicholiday', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_BLOCK_PUBLICHOLIDAY", $blockpublicholiday, 'chaine', 0, '', $conf->entity);
+
+        // number of week to check for overtime box
+        $overtimecheckweeks = getpost('overtimecheckweeks', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_OVERTIME_CHECK_WEEKS", $overtimecheckweeks, 'chaine', 0, '', $conf->entity);
         //docs
         $adddocs = getpost('adddocs', 'int');
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
@@ -402,6 +411,12 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("blockpublicholiday"
 echo '</td><td align="left">'.$langs->trans("blockpublicholidayDesc").'</td>';
 echo  '<td align="left"><input type = "checkbox" name = "blockpublicholiday" value="1" ';
 echo (($blockpublicholiday == '1')?'checked':'')."></td></tr>";
+// overtime week to check 
+echo '<tr class="oddeven"><td align="left">'.$langs->trans("overtimeCheckWeeks");//FIXTRAD
+echo '</td><td align="left">'.$langs->trans("overtimeCheckWeeksDesc").'</td>';// FIXTRAD
+echo '<td align="left"><input type = "text" name = "overtimecheckweeks" value="'.$overtimecheckweeks;
+echo "\" size = \"4\" ></td></tr>";
+
 // add docs
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("adddocs");
 echo '</td><td align="left">'.$langs->trans("adddocsDesc").'</td>';
