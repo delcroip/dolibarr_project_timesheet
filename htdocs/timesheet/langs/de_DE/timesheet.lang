@@ -261,3 +261,6 @@ addpublicholidaytimeDesc = Schließen Sie die Feiertagszeit in die Gesamtzeile e
 blockholidayDesc = Zeiteinträge während der Ferien sperren
 blockpublicholidayDesc = Sperrzeiteingabe am Feiertag
 blockpublicholiday = Feiertag sperren
+never2invoice = überprüft - nie in Rechnung gestellt
+TimesheetDelta = Arbeitszeittabellen-Delta mit Vertragsstunden
+Lumpsum = Pauschalbetrag

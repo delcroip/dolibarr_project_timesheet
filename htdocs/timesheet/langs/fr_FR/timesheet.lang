@@ -261,3 +261,6 @@ addpublicholidaytimeDesc = Inclure le temps du jour férié dans la ligne totale
 blockholidayDesc = Bloquer les entrées de temps pendant les vacances
 blockpublicholidayDesc = Blocage de la saisie des heures les jours fériés
 blockpublicholiday = Bloquer les jours fériés
+never2invoice = Traité - Ne jamais facturer
+TimesheetDelta = Delta de la feuille de temps avec les heures du contrat
+Lumpsum = forfaitaire

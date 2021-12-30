@@ -261,3 +261,6 @@ addpublicholidaytimeDesc = Include the public holiday time in the total line
 blockholidayDesc = Block time entries during holidays
 blockpublicholidayDesc = Block time entry on public holiday
 blockpublicholiday = Block public holiday
+never2invoice = reviewed - Never to invoice
+TimesheetDelta = Timesheet delta with contract hours
+Lumpsum = Lumpsum

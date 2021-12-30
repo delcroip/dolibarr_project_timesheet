@@ -261,3 +261,6 @@ addpublicholidaytimeDesc = Includere il tempo del giorno festivo nella linea tot
 blockholidayDesc = Bloccare le voci di tempo durante le vacanze
 blockpublicholidayDesc = Blocca l'inserimento del tempo nei giorni festivi
 blockpublicholiday = Blocca il giorno festivo
+never2invoice = rivisto - Non fatturare mai
+TimesheetDelta = Delta del foglio di lavoro con ore di contratto
+Lumpsum = Forfettario

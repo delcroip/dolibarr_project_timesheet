@@ -31,7 +31,7 @@ class box_time extends ModeleBoxes
 {
     public $boxcode = "timecount";
     public $boximg = "timesheet";
-    public $boxlabel = "BoxTime";
+    public $boxlabel = "TimesheetDelta";
     public $depends = array("timesheet");
     public $db;
     public $param;
@@ -119,7 +119,7 @@ class box_time extends ModeleBoxes
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "left"',
                         'text' => $langs->trans('Max').': ',
-                        'text2'=> $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS.' '.$langs->trans('weeks'),
+                        'text2'=> $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS.' '.$langs->trans('Weeks'),
                         'asis' => 1,
                     );
                     $this->info_box_contents[$i][] = array(
@@ -133,7 +133,7 @@ class box_time extends ModeleBoxes
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "left"',
                         'text' => $langs->trans('Sum').': ',
-                        'text2'=> $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS.' '.$langs->trans('weeks'),
+                        'text2'=> $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS.' '.$langs->trans('Weeks'),
                         'asis' => 1,
                     );
                     $this->info_box_contents[$i][] = array(

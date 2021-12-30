@@ -177,6 +177,7 @@ $langs->load('timesheet@timesheet');
             $resArray = $_POST['userTask'];
             $hoursPerDay = $conf->global->TIMESHEET_DAY_DURATION;
             $task_time_array = array();
+            $task_time_array_never = array();
                 
 
             if ($id > 0  && is_array($resArray)) {
@@ -194,6 +195,33 @@ $langs->load('timesheet@timesheet');
                         //$endday = dol_mktime(12, 0, 0, $month, date('t', $startday), $year);
                         $details = '';
                         $result = '';
+                        $factor = 1;
+                        $unit_duration_unit = $service['unit_duration_unit'];
+                        switch($unit_duration_unit){
+                            case 'h':
+                                $unit_factor = 3600;
+                            break;
+                            case 'i':
+                                $unit_factor = 60;
+                            break;
+                            case 's':
+                                $unit_factor = 1;
+                            break;
+                            case 'w':
+                                $unit_factor = 3600 * $hoursPerDay * 5;
+                            break;
+                            case 'm':
+                                $unit_factor = 3600 * $hoursPerDay * 65 / 3;
+                            break;
+                            case 'y':
+                                $unit_factor = 3600 * $hoursPerDay * 260;
+                            break;
+                            case 'l':
+                                $unit_factor = $duration;
+                            case 'd':
+                            default:
+                                $unit_factor = $hoursPerDay * 3600;
+                        }
                         if (($tId!='any') && $conf->global->TIMESHEET_INVOICE_SHOW_TASK)$details = "\n".$service['taskLabel'];
                         if (($uId!='any')&& $conf->global->TIMESHEET_INVOICE_SHOW_USER)$details .= "\n".$service['userName'];
                         //prepare the CURL params
@@ -207,43 +235,15 @@ $langs->load('timesheet@timesheet');
                         $postdata['date_endmonth'] = date('m', $dateEnd);
                         $postdata['date_endyear'] = date('Y', $dateEnd);
                         $postdata['addline']='Add';
-
-                        
-
-                        if ($service['Service']>0) {
+                        if ($service['Service'] > 0) {
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $product = new Product($db);
                             $product->fetch($service['Service']);
-
-                            $unit_duration_unit = substr($product->duration, -1);
-                            switch($unit_duration_unit){
-                                case 'h':
-                                    $unit_factor = 3600;
-                                break;
-                                case 'i':
-                                    $unit_factor = 60;
-                                break;
-                                case 's':
-                                    $unit_factor = 1;
-                                break;
-                                case 'w':
-                                    $unit_factor = 3600*$hoursPerDay*5;
-                                break;
-                                case 'm':
-                                    $unit_factor = 3600*$hoursPerDay*65/3;
-                                break;
-                                case 'y':
-                                    $unit_factor = 3600*$hoursPerDay*260;
-                                break;
-                                case 'd':
-                                default:
-                                    $unit_factor = $hoursPerDay*3600;
-                            }
-                            
                             $factor = intval(substr($product->duration, 0, -1));
-                            if ($factor == 0)$factor = 1;//to avoid divided by $factor0
-                            $quantity = round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);
+                            if ($factor == 0) $factor = 1;//to avoid divided by $factor0                         
+                            $quantity = ($duration == $factor*$unit_factor) ? 1 :
+                                round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);
                             $postdata['type'] = -1;
                             $postdata['prod_entry_mode'] = 'predef';
                             $postdata['idprod'] = $service['Service'];
@@ -270,14 +270,15 @@ $langs->load('timesheet@timesheet');
                                     $localtax1_tx, $localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', 
                                     $price_base_type, $price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, $label, 0, 100, '', 
                                     $product->fk_unit);
+                            }else{
+                                $result = 1;
                             }
-                        } elseif ($service['Service']<>-999) {
+                        } elseif ($service['Service'] == 0) { // customized service
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
-                            $factor = ($service['unit_duration_unit'] == 'h')?3600:$hoursPerDay*3600;//FIXME support week and month
-                            $factor = $factor*intval($service['unit_duration']);
-                            $quantity = round($duration/$factor, $conf->global->TIMESHEET_ROUND);
-                            $postdata['type'] = 1;
+                            $factor = intval($service['unit_duration']);
+                            $quantity = ($duration == $factor*$unit_factor) ? 1 :
+                                round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);                            $postdata['type'] = 1;
                             $postdata['prod_entry_mode'] = 'free';
                             $postdata['dp_desc'] = $service['Desc'];
                             $postdata['tva_tx'] = $service['VAT'];
@@ -288,7 +289,11 @@ $langs->load('timesheet@timesheet');
                                     $quantity, $service['VAT'], $localtax1_tx, $localtax2_tx, '', 
                                     0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 
                                     0, 0, null, 0, '', 0, 100, '', '');
+                            }else {
+                                $result = 1;
                             }
+                        }elseif ($service['Service'] == -998){ // never invoice
+                            $task_time_array_never[] = $service['taskTimeList']; 
                         }
                         //add_invoice_line($postdata);
                         
@@ -302,9 +307,10 @@ $langs->load('timesheet@timesheet');
                             ob_end_clean();
                             $_POST = $post_temp;
                         }
-                        
-                        if ($service['taskTimeList'] <> '' &&  $result>0)
+                        // set the taskTimeList to be updated in case of success of the invoice add line
+                        if ($service['taskTimeList'] != '' && ($result>0  )){
                             $task_time_array[$result] = $service['taskTimeList'];
+                        }
                     } else $error++;
                 }
                 // End of object creation, we show it
@@ -314,6 +320,10 @@ $langs->load('timesheet@timesheet');
                                 //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
                             Update_task_time_invoice($id, $idLine, $task_time_list);
                         }
+                        foreach ($task_time_array_never AS $idLine => $task_time_list) {
+                            //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
+                        Update_task_time_invoice(-1, -1, $task_time_list);
+                    }
                     }
                     ob_start();
                     header('Location: ' . $object->getNomUrl(0, '', 0, 1, ''));
@@ -554,7 +564,8 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     $html .= '<input type = "hidden"   name = "userTask['.$user.']['.$task.'][taskTimeList]"  value = "'. $tasktimelist.'">';
     $defaultService = getDefaultService($user, $task);
     $addchoices = array(0 => $langs->transnoentities('Custom').': '
-        .$taskLabel, '-999'=> $langs->transnoentities('not2invoice'));
+        .$taskLabel, '-999'=> $langs->transnoentities('not2invoice'),
+                     '-998' => $langs->transnoentities('never2invoice'));
     $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
     $html .= '</th><th >';
     $html .= select_sellist(array('table' => 'product', 
@@ -582,12 +593,14 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
         .$user.']['.$task.'][unit_duration]" value = "1" >';
     $html .= '<br><input name = "userTask['.$user.']['
         .$task.'][unit_duration_unit]" type = "radio" value = "h" '
-        .(($conf->global->TIMESHEET_TIME_TYPE == "days")?'':'checked').'>'.$langs->trans('Hour');
+        .(($conf->global->TIMESHEET_TIME_TYPE == "days")?'':'checked').' />'.$langs->trans('Hour');
     $html .= '<br><input name = "userTask['
         .$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "d" '
-        .(($conf->global->TIMESHEET_TIME_TYPE == "days")?'checked':'').'>'.$langs->trans('Days').'</th>';
+        .(($conf->global->TIMESHEET_TIME_TYPE == "days")?'checked':'').' />'.$langs->trans('Days');
+    $html .= '<br><input name = "userTask['
+        .$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "l"/>'.$langs->trans('Lumpsum').'</th>';
     $html .= '<th><input type = "text" size = "2" onkeypress="return regexEvent(this,event,\'timeChr\')"'
-        .' maxlength = "5" name = "userTask['.$user.']['.$task.'][duration]" value = "'.$duration.'" >';
+        .' maxlength = "5" name = "userTask['.$user.']['.$task.'][duration]" value = "'.$duration.'" />';
     $html .= '</th</tr>';
     return $html;
 }
