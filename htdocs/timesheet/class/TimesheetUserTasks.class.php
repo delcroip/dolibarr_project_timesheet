@@ -967,7 +967,7 @@ public function getHTMLtaskLines( $ajax = false)
                 $blockOveride = 0;
             }
             $Lines .= $row->getTimesheetLine($this->headers, $this->id, $blockOveride, $holiday);
-            if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
+            //if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
             $i++;
         }
     }

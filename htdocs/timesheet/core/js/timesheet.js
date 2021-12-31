@@ -261,6 +261,40 @@ function validateTime(object,col_id){
     updateAll();
 
 }
+
+/*
+ * Function to remove a recreate the total liens
+ * @param @table table object
+ * @returns None
+ */
+function generateDynTotal(table){
+{
+    var TotalList=document.getElementsByClassName('lineDynTotal');
+    for(i=0;i<nblineTotal;i++){
+        var i = TotalList[i].parentNode.parentNode.rowIndex;
+        //document.getElementById("myTable")
+        table.deleteRow(i);
+    }
+    $j = 0;
+    for (var i = 0, row; row = table.rows[i]; i++) {
+        //iterate through rows
+        //rows would be accessed using the "row" variable assigned in the for loop
+        if (row.style.display != 'None'){
+            $j++;// count to row actually displayed
+        }
+        if ($j % 10 == 0 && $i < table.length - 5)
+        // generate the line
+        for (var j = 0, col; col = row.cells[j]; j++) {
+
+            //iterate through columns
+            //columns would be accessed using the "col" variable assigned in the for loop
+          }  
+     }
+
+
+}
+
+
 /*
  * Function to update the line Total when there is any
  * @param
@@ -269,7 +303,7 @@ function validateTime(object,col_id){
 function updateAllLinesTotal(){
 
 
-    var TotalList=document.getElementsByClassName('lineTotal');
+    var TotalList=document.querySelectorAll('.lineTotal,.lineDynTotal');
         var nblineTotal = TotalList.length;
         for(i=0;i<nblineTotal;i++){
             var classLine='line_'+ TotalList[i].id;
