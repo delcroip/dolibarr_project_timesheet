@@ -105,6 +105,7 @@ function updateAll(){
     err=false;
     total=0;
     for(j=0;j<tsUser.length;j++){
+        generateDynTotal(tsUser[j].value);
         total=0;
         var daysClass="days_"+tsUser[j].value;
         var days= document.getElementsByClassName('daysClass');
@@ -112,6 +113,7 @@ function updateAll(){
         for(i=0;i<nbDays;i++){
             total+=updateTotals('column_'+days[i].id,'TotalColumn_'+days[i].id);
         }
+        
         var TotalList=document.getElementsByClassName('TotalUser_'+tsUser[j].value);
         var nblineTotal = TotalList.length;
           for (var i=0;i<nblineTotal;i++)
@@ -119,7 +121,7 @@ function updateAll(){
               TotalList[i].innerHTML = minutesToHTML(total);
           }
     }
-    updateAllLinesTotal();
+    //updateAllLinesTotal();
 }
 
 
@@ -267,29 +269,50 @@ function validateTime(object,col_id){
  * @param @table table object
  * @returns None
  */
-function generateDynTotal(table){
+function generateDynTotal(userId)
 {
-    var TotalList=document.getElementsByClassName('lineDynTotal');
-    for(i=0;i<nblineTotal;i++){
-        var i = TotalList[i].parentNode.parentNode.rowIndex;
-        //document.getElementById("myTable")
-        table.deleteRow(i);
+    var table = document.getElementById('timesheetTable_' + userId);
+    //get all existing lineDynTotal to delete them
+    var Tl=document.getElementsByClassName('lineDynTotal');
+    var num = Tl.length
+    for(var i = 0; i < num ; i++){
+        var rid = Tl[0].rowIndex;
+        table.deleteRow(rid);
     }
-    $j = 0;
-    for (var i = 0, row; row = table.rows[i]; i++) {
+    //get the nb header an day
+    header = table.querySelector('tr.liste_titre');
+    DCl = table.querySelectorAll('th.daysClass');
+
+    /*for (var cid = 0, col; col = table.rows[0].cells[cid]; cid++) {
+        if (col.classList.contains('daysClass')){
+            DCl++;
+        }
+    }  */  
+    var daysLenth = DCl.length;
+    var headerLenth = table.rows[0].cells.length - daysLenth;
+
+    //recreate a lineDynTotal every 10 lines actually displayed
+    var nld = 0;
+    for (var rid = 0, row; row = table.rows[rid]; rid++) {
         //iterate through rows
         //rows would be accessed using the "row" variable assigned in the for loop
-        if (row.style.display != 'None'){
-            $j++;// count to row actually displayed
+        if (row.style.display != 'None' && row.classList.contains('timesheet_line')){
+            // generate the line
+            if ( nld % 10 == 0 && nld < table.rows.length ){
+                var newRow = table.insertRow(rid);
+                html = '<tr>';
+                html += '<td colspan = "' + (headerLenth -1) + '" align = "right" > TOTAL </td>';
+                html += "<td><div class = 'TotalUser_"+ userId +"'>&nbsp;</div></td>";
+                for (var d = 0; d < daysLenth ; d++)
+                {
+                    html += "<td><div class = 'TotalColumn_"+userId+" TotalColumn_"+userId+"_"+d+"'>&nbsp;</div></td>";
+                }
+                newRow.innerHTML=   html + '</tr>';
+                newRow.className = 'lineDynTotal';
+            }
+            nld++;// count to row actually displayed
         }
-        if ($j % 10 == 0 && $i < table.length - 5)
-        // generate the line
-        for (var j = 0, col; col = row.cells[j]; j++) {
-
-            //iterate through columns
-            //columns would be accessed using the "col" variable assigned in the for loop
-          }  
-     }
+    }
 
 
 }
@@ -303,7 +326,7 @@ function generateDynTotal(table){
 function updateAllLinesTotal(){
 
 
-    var TotalList=document.querySelectorAll('.lineTotal,.lineDynTotal');
+    var TotalList=document.querySelectorAll('.lineTotal');
         var nblineTotal = TotalList.length;
         for(i=0;i<nblineTotal;i++){
             var classLine='line_'+ TotalList[i].id;
@@ -466,6 +489,8 @@ function showFavoris(evt, tabName) {
                wlist[i].style.display = "";
             }
         }
+        var tsUser = document.getElementsByName('tsUserId');
+        updateAll();
     }
 
 
