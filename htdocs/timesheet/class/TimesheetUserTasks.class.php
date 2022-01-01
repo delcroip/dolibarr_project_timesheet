@@ -784,18 +784,15 @@ Public function setStatus($user, $status, $id = 0)
 public function getHTML( $ajax = false, $Approval = false)
 {
     global $langs;
-    $Form = $this->getHTMLHeader();
+    $Form = $this->getHTMLHeader(true);
     // show the filter
-    $Form .= '<tr class = "timesheet_line" id = "searchline">';
-    $Form .= '<td><a>'.$langs->trans("Search").'</a></td>';
-    $Form .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
     $Form .= $this->getHTMLHolidayLines($ajax);
     $Form .= $this->getHTMLPublicHolidayLines($ajax);
-    if (!$Approval)$Form .= $this->getHTMLTotal();
+    //if (!$Approval)$Form .= $this->getHTMLTotal();
     //$Form .= '<tbody style = "overflow:auto;">';
     $Form .= $this->getHTMLtaskLines( $ajax);
     //$Form .= '</tbody>';// overflow div
-    $Form .= $this->getHTMLTotal();
+    //$Form .= $this->getHTMLTotal();
     $Form .= '</table>';
     $Form .= $this->getHTMLNote($ajax);
     if (!$Approval) {
@@ -805,19 +802,24 @@ public function getHTML( $ajax = false, $Approval = false)
     return $Form;
 }
 /* function to genegate the timesheet table header
- *
+ *   @param  bool $search  add search
   *  @return     string                                                   html code
  */
-public function getHTMLHeader()
+public function getHTMLHeader($search = false)
 {
     global $langs, $conf;
     $weeklength = getDayInterval($this->date_start, $this->date_end);
     $maxColSpan = $weeklength+count($this->headers);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
     $html = '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
-     $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
+    $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
-     ///Whitelist tab
+    if ($search){
+        $html .= '<tr  id = "searchline">';
+        $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
+        $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
+    }
+    ///Whitelist tab
     if ($conf->global->TIMESHEET_TIME_SPAN == "month") {
         $format = "%d";
         $html .= '<tr class = "liste_titre" id = "">'."\n";
@@ -967,7 +969,7 @@ public function getHTMLtaskLines( $ajax = false)
                 $blockOveride = 0;
             }
             $Lines .= $row->getTimesheetLine($this->headers, $this->id, $blockOveride, $holiday);
-            if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
+            //if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
             $i++;
         }
     }
