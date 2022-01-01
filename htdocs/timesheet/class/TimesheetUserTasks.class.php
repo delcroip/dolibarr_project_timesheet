@@ -802,8 +802,8 @@ public function getHTML( $ajax = false, $Approval = false)
     return $Form;
 }
 /* function to genegate the timesheet table header
- *   @param  bool $search  add search
-  *  @return     string                                                   html code
+ *   @param    bool    $search    dd search
+ *   @return     string                                                   html code
  */
 public function getHTMLHeader($search = false)
 {
@@ -814,7 +814,7 @@ public function getHTMLHeader($search = false)
     $html = '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
     $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
-    if ($search){
+    if ($search) {
         $html .= '<tr  id = "searchline">';
         $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
         $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';

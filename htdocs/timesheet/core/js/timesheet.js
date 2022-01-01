@@ -289,17 +289,17 @@ function generateDynTotal(userId)
         }
     }  */  
     var daysLenth = DCl.length;
-    var headerLenth = table.rows[0].cells.length - daysLenth;
+    var headerLenth = header.cells.length - daysLenth;
 
     //recreate a lineDynTotal every 10 lines actually displayed
     var nld = 0;
-    for (var rid = 0, row; row = table.rows[rid]; rid++) {
+    for (var r = 0, row; row = table.rows[r]; r++) {
         //iterate through rows
         //rows would be accessed using the "row" variable assigned in the for loop
         if (row.style.display != 'None' && row.classList.contains('timesheet_line')){
             // generate the line
             if ( nld % 10 == 0 && nld < table.rows.length ){
-                var newRow = table.insertRow(rid);
+                var newRow = table.insertRow(r);
                 html = '<tr>';
                 html += '<td colspan = "' + (headerLenth -1) + '" align = "right" > TOTAL </td>';
                 html += "<td><div class = 'TotalUser_"+ userId +"'>&nbsp;</div></td>";
