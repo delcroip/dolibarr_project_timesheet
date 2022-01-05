@@ -247,7 +247,7 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_INVOICE_TASKTIME", $invoicetasktime, 'chaine', 0, '', $conf->entity);
         $invoicetimetype = getpost('invoiceTimeType', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_TIMETYPE", $invoicetimetype, 'chaine', 0, '', $conf->entity);
-        $invoiceservice = getpost('invoiceService', 'int');
+        $invoiceservice = getpost('invoiceservice', 'int');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SERVICE", $invoiceservice, 'int', 0, '', $conf->entity);
         $invoiceshowtask = getpost('invoiceShowTask', 'int');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SHOW_TASK", $invoiceshowtask, 'int', 0, '', $conf->entity);
@@ -768,9 +768,9 @@ echo ($invoicetimetype == "days"?"checked":"").'> '.$langs->trans("Days")."</td>
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("invoiceService");
 echo '</td><td align="left">'.$langs->trans("invoiceServiceDesc").'</td>';
 echo  '<td align="left">';
-$addchoices = array('-999'=> $langs->transnoentitiesnoconv('not2invoice'), -1=> $langs->transnoentitiesnoconv('Custom'));
+$addchoices = array('-999'=> $langs->transnoentitiesnoconv('not2invoice'), -997=> $langs->transnoentitiesnoconv('Custom'));
 $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
-$htmlProductArray = array('name' => 'invoiceService', 'ajaxNbChar'=>$ajaxNbChar);
+$htmlProductArray = array('name' => 'invoiceservice', 'ajaxNbChar'=>$ajaxNbChar);
 $sqlProductArray = array('table' => 'product', 'keyfield' => 'rowid', 'fields' => 'ref, label', 'where' => 'tosell = 1 AND fk_product_type = 1', 'separator' => ' - ');
 print select_sellist($sqlProductArray, $htmlProductArray, $invoiceservice, $addchoices);
 echo "</td></tr>";

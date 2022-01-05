@@ -147,8 +147,20 @@ $langs->load('timesheet@timesheet');
             $Form .= '<th >'.$langs->trans("Custom").':'.$langs->trans("Description").'</th><th >'.$langs->trans("Custom").':'.$langs->trans("UnitPriceHT").'</th>';
             $Form .= '<th >'.$langs->trans("Custom").':'.$langs->trans("VAT").'</th><th >'.$langs->trans("unitDuration").'</th><th >'.$langs->trans("savedDuration").'</th>';
             $form = new Form($db);
+            $otherchoices = array('-999'=> $langs->transnoentities('not2invoice'),
+                     '-998' => $langs->transnoentities('never2invoice'));
+            if ($propalId > 0){
+                require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
+                $propal = new Propal($db);
+                $propal->fetch($propalId);
+                $propal->fetch_lines();
+                foreach($propal->lines as $lid => $line){
+                    $otherchoices[-$lid] = $langs->transnoentities('Propal').": ".$line->desc;
+                }
+            }
+        
             foreach ($resArray as $res) {
-                $Form .= htmlPrintServiceChoice($res["USER"], $res["TASK"], 'oddeven', $res["DURATION"], $res['LIST'], $mysoc, $socid);
+                $Form .= htmlPrintServiceChoice($res["USER"], $res["TASK"], 'oddeven', $res["DURATION"], $res['LIST'], $mysoc, $socid, $otherchoices);
             }
             $Form .= '</table>';
             $Form .= '<input type = "submit"  class = "butAction" value = "'.$langs->trans('Next')."\">\n</form>";
@@ -178,8 +190,36 @@ $langs->load('timesheet@timesheet');
             $hoursPerDay = $conf->global->TIMESHEET_DAY_DURATION;
             $task_time_array = array();
             $task_time_array_never = array();
-                
-
+                // copy the propal lines
+            $lineCount = 0; 
+            if ( $propalId > 0) { // PROPAL
+                $lineCount ++; 
+                require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
+                $propal = new Propal($db);
+                $propal->id= $propalId;
+                $propal->fetch_lines();
+                foreach($propal->lines as $lid => $line){
+                    $postdata['prod_entry_mode'] = 'predef';
+                    $postdata['dp_desc'] = $line->desc;
+                    $postdata['tva_tx'] = $line->tva_tx;
+                    $postdata['price_ht'] =$line->total_ht;
+                    $postdata['qty'] = (float) $line->qty;                      
+                    if (!$conf->global->TIMESHEET_EVAL_ADDLINE){
+                        $result = $object->addline($line->desc, $line->price, $line->qty, $line->tva_tx, 
+                        $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, 0, $dateStart, $dateEnd, 0, 0, '', 
+                            $line->vat_src_code, $line->total_ttc, $line->product_type , -1, 0, '', 0, 0, null, 0, $line->label, 0, 100, '', 
+                            $line->fk_unit);
+                    }else{
+                        $post_temp = $_POST;
+                        $_POST = $postdata;
+                        ob_start();
+                        eval($invoicecard);
+                        ob_end_clean();
+                        $_POST = $post_temp;  
+                    }
+                }                                
+            }
+            
             if ($id > 0  && is_array($resArray)) {
                 $db->commit();
                 $invoicecard = str_replace(
@@ -189,6 +229,7 @@ $langs->load('timesheet@timesheet');
                 foreach ($resArray as $uId => $userTaskService) {
                         //$userTaskService[$user][$task] = array('duration', 'VAT', 'Desc', 'PriceHT', 'Service', 'unit_duration', 'unit_duration_unit');
                     if (is_array($userTaskService))foreach ($userTaskService as  $tId => $service) {
+                         
                         $durationTab = explode(':', $service['duration']);
                         $duration = $durationTab[1]*60 + $durationTab[0]*3600;
                         //$startday = dol_mktime(12, 0, 0, $month, 1, $year);
@@ -236,10 +277,19 @@ $langs->load('timesheet@timesheet');
                         $postdata['date_endyear'] = date('Y', $dateEnd);
                         $postdata['addline']='Add';
                         if ($service['Service'] > 0) {
+                            $lineCount ++;
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $product = new Product($db);
                             $product->fetch($service['Service']);
+                            if ($object->thirdparty->default_lang != '' && is_array($product->multilangs[$object->thirdparty->default_lang]))
+                            {
+                                $desc = $product->multilangs[$object->thirdparty->default_lang]['description'];
+                                $label = $product->multilangs[$object->thirdparty->default_lang]['label'];
+                            }else{
+                                $desc = $product->description;
+                                $label = $product->label;
+                            }
                             $factor = intval(substr($product->duration, 0, -1));
                             if ($factor == 0) $factor = 1;//to avoid divided by $factor0                         
                             $quantity = ($duration == $factor*$unit_factor) ? 1 :
@@ -249,14 +299,7 @@ $langs->load('timesheet@timesheet');
                             $postdata['idprod'] = $service['Service'];
                             $postdata['qty'] = (float) $quantity;
             
-                            if ($object->thirdparty->default_lang != '' && is_array($product->multilangs[$object->thirdparty->default_lang]))
-                            {
-                                $desc = $product->multilangs[$object->thirdparty->default_lang]['description'];
-                                $label = $product->multilangs[$object->thirdparty->default_lang]['label'];
-                            }else{
-                                $desc = $product->description;
-                                $label = $product->label;
-                            }
+
 
                             $prices =  $product->getSellPrice( $mysoc,$object->thirdparty);
                             $price_base_type = $prices['price_base_type'];
@@ -271,9 +314,16 @@ $langs->load('timesheet@timesheet');
                                     $price_base_type, $price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, $label, 0, 100, '', 
                                     $product->fk_unit);
                             }else{
-                                $result = 1;
+                                $result = $lineCount;
                             }
-                        } elseif ($service['Service'] == 0) { // customized service
+                        } elseif ($service['Service'] == -997) { // propal
+                            if(isset($task_time_array_propal[-$service['Service']])){
+                                $task_time_array[-$service['Service']] .= $service['taskTimeList'];
+                            }else{
+                                $task_time_array[-$service['Service']] = $service['taskTimeList'];
+                            }
+                        } elseif ($service['Service'] == -997) { // customized service
+                            $lineCount ++;
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $factor = intval($service['unit_duration']);
@@ -290,7 +340,7 @@ $langs->load('timesheet@timesheet');
                                     0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 
                                     0, 0, null, 0, '', 0, 100, '', '');
                             }else {
-                                $result = 1;
+                                $result = $lineCount;
                             }
                         }elseif ($service['Service'] == -998){ // never invoice
                             $task_time_array_never[] = $service['taskTimeList']; 
@@ -313,6 +363,8 @@ $langs->load('timesheet@timesheet');
                         }
                     } else $error++;
                 }
+
+
                 // End of object creation, we show it
                 if (1) {
                     if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
@@ -537,9 +589,10 @@ $db->close();
  * @param string $tasktimelist list of the tasktimespendid on which the time was spent
  * @param type $seller  Seller id to calculate VAT
  * @param type $buyer   buyer id to calculate VAT
+ * @param array(id=> desc) otherchoice
  * @return string   HTML code
  */
-function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, $seller, $buyer)
+function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, $seller, $buyer, $addchoices)
 {
     global $form, $langs, $conf, $db;
     $taskLabel = '';
@@ -563,9 +616,7 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     $html .= '<input type = "hidden"   name = "userTask['.$user.']['.$task.'][taskLabel]"  value = "'. $taskLabel.'">';
     $html .= '<input type = "hidden"   name = "userTask['.$user.']['.$task.'][taskTimeList]"  value = "'. $tasktimelist.'">';
     $defaultService = getDefaultService($user, $task);
-    $addchoices = array(0 => $langs->transnoentities('Custom').': '
-        .$taskLabel, '-999'=> $langs->transnoentities('not2invoice'),
-                     '-998' => $langs->transnoentities('never2invoice'));
+    $addchoices[-997] = $langs->transnoentities('Custom').': '.$taskLabel;
     $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
     $html .= '</th><th >';
     $html .= select_sellist(array('table' => 'product', 
