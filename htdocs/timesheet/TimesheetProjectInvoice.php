@@ -155,7 +155,10 @@ $langs->load('timesheet@timesheet');
                 $propal->fetch($propalId);
                 $propal->fetch_lines();
                 foreach($propal->lines as $lid => $line){
-                    $otherchoices[-$lid] = $langs->transnoentities('Propal').": ".$line->desc;
+                    if($line->product_type == 1){
+                        if ($line->fk_product) $line->label = getproductlabel($line->fk_product);
+                        $otherchoices[-$lid] = $langs->transnoentities('Proposal').":".$line->label;
+                    }
                 }
             }
         
@@ -725,4 +728,16 @@ function Update_task_time_invoice($idInvoice, $idLine, $task_time_list)
     $resql = $db->query($sql);
     if ($db->num_rows($resql))$res = true;
     return $res;
+}
+
+/** get the label of a product
+ * @param int $productId $product Id
+ * @return sting label
+ */
+function getproductlabel($productId){
+    global $db;
+    require_once  DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+    $product = new Product($db);
+    $product->fetch($productId);
+    return $product->getNomUrl(0,'',0,-1,0);
 }
