@@ -306,6 +306,8 @@ class TimesheetReport
             $objtsk = new Task($this->db);
             $odlusrid=0;
             $objusr = new User($this->db);
+            $oldsocid = 0;
+            $objsoc = new Societe($this->db);
             // Loop on each record found,
             while($i < $numTaskTime)
             {
@@ -325,7 +327,13 @@ class TimesheetReport
                 if ($odlpjtid != $obj->projectid){
                     $objpjt->fetch($obj->projectid);
                     $odlpjtid = $obj->projectid;
-                }    
+                }
+                if ($oldsocid != $objpjt->socid && $objpjt->socid > 0){  
+                    $objsoc->fetch($objpjt->socid);
+                }
+
+                //update third party
+                
                 $resArray[$obj->id] = array('projectId' => $obj->projectid,
                     'projectLabel' => $objpjt->ref.(($conf->global->TIMESHEET_HIDE_REF == 0)?'':' - '.$objpjt->title),
                     'projectRef' => $objpjt->ref,
@@ -349,7 +357,7 @@ class TimesheetReport
                     'note' =>($obj->note),
                     'invoiceable' => ($obj->invoiceable==1)?'1':'0',
                     'invoiced' => ($obj->invoiced==1)?'1':'0',
-                    'socid' => $objpjt->socid);
+                    'socid' => $objpjt->socid>0?$objsoc->getNomUrl():'');
                 $i++;
             }
             $this->db->free($resql);
@@ -613,7 +621,7 @@ class TimesheetReport
             'taskRef' => 'TextAuto', 'tasktitle' => 'TextAuto', 'dateDisplay' => 'Date', 
             'durationHours' => 'TextAuto', 'durationDays' => 'Numeric', 'userId' => 'Numeric', 
             'firstName' => 'TextAuto', 'lastName' => 'TextAuto', 'note' => 'TextAuto', 
-            'invoiceable' => 'Numeric','invoiced' => 'TextAuto', 'socid' => 'Numeric');
+            'invoiceable' => 'Numeric','invoiced' => 'TextAuto', 'socid' => 'TextAuto');
         $arraySelected = array('projectRef' => 'projectRef', 'projectTitle' => 'projectTitle', 
             'taskRef' => 'taskRef', 'tasktitle' => 'tasktitle', 'userId' => 'userId', 
             'firstName' => 'firstName', 'lastName' => 'lastName', 'dateDisplay' => 'date', 
