@@ -195,23 +195,100 @@ $langs->load('timesheet@timesheet');
             $task_time_array_never = array();
                 // copy the propal lines
             $lineCount = 0; 
+            
             if ( $propalId > 0) { // PROPAL
-                $lineCount ++; 
+                
                 require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
                 $propal = new Propal($db);
                 $propal->id= $propalId;
                 $propal->fetch_lines();
                 foreach($propal->lines as $lid => $line){
+                    $label = (!empty($line->label) ? $line->label : '');
+					$desc = (!empty($line->desc) ? $line->desc : $line->libelle);
+                    $lineCount ++; 
+                    $product_type = ($line->product_type ? $line->product_type : 0);
+                    // Date start
+                    $date_start = false;
+                    if ($line->date_debut_prevue) {
+                        $date_start = $line->date_debut_prevue;
+                    }
+                    if ($line->date_debut_reel) {
+                        $date_start = $line->date_debut_reel;
+                    }
+                    if ($line->date_start) {
+                        $date_start = $line->date_start;
+                    }
+
+                    // Date end
+                    $date_end = false;
+                    if ($line->date_fin_prevue) {
+                        $date_end = $line->date_fin_prevue;
+                    }
+                    if ($line->date_fin_reel) {
+                        $date_end = $line->date_fin_reel;
+                    }
+                    if ($line->date_end) {
+                        $date_end = $line->date_end;
+                    }
+
+                    // Reset fk_parent_line for no child products and special product
+                    if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+                        $fk_parent_line = 0;
+                    }
+
+                    // Extrafields
+                    if (method_exists($line, 'fetch_optionals')) {
+                        $line->fetch_optionals();
+                        $array_options = $line->array_options;
+                    }
+
+                    $tva_tx = $line->tva_tx;
+                    if (!empty($line->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
+                        $tva_tx .= ' ('.$line->vat_src_code.')';
+                    }
+
+                    // View third's localtaxes for NOW and do not use value from origin.
+                    // TODO Is this really what we want ? Yes if source is template invoice but what if proposal or order ?
+                    $localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
+                    $localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
+
+                    
                     $postdata['prod_entry_mode'] = 'predef';
-                    $postdata['dp_desc'] = $line->desc;
-                    $postdata['tva_tx'] = $line->tva_tx;
+                    $postdata['dp_desc'] = $desc;
+                    $postdata['tva_tx'] = $$tva_tx;
                     $postdata['price_ht'] =$line->total_ht;
                     $postdata['qty'] = (float) $line->qty;                      
                     if (!$conf->global->TIMESHEET_EVAL_ADDLINE){
-                        $result = $object->addline($line->desc, $line->price, $line->qty, $line->tva_tx, 
-                        $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, 0, $dateStart, $dateEnd, 0, 0, '', 
-                            $line->vat_src_code, $line->total_ttc, $line->product_type , -1, 0, '', 0, 0, null, 0, $line->label, 0, 100, '', 
-                            $line->fk_unit);
+                        $result = $object->addline(
+                        $desc,
+                        $line->subprice,
+                        $line->qty,
+                        $tva_tx,
+                        $localtax1_tx,
+                        $localtax2_tx,
+                        $line->fk_product,
+                        $line->remise_percent,
+                        $date_start,
+                        $date_end,
+                        0,
+                        $line->info_bits,
+                        $line->fk_remise_except,
+                        'HT',
+                        0,
+                        $product_type,
+                        $line->rang,
+                        $line->special_code,
+                        $object->origin,
+                        $line->rowid,
+                        $fk_parent_line,
+                        $line->fk_fournprice,
+                        $line->pa_ht,
+                        $label,
+                        $array_options,
+                        $line->situation_percent,
+                        $line->fk_prev_id,
+                        $line->fk_unit
+                    );
                     }else{
                         $post_temp = $_POST;
                         $_POST = $postdata;
