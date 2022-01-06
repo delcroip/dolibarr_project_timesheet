@@ -357,7 +357,8 @@ class TimesheetReport
                     'note' =>($obj->note),
                     'invoiceable' => ($obj->invoiceable==1)?'1':'0',
                     'invoiced' => ($obj->invoiced==1)?'1':'0',
-                    'socid' => $objpjt->socid>0?$objsoc->getNomUrl():'');
+                    'socname' => $objpjt->socid>0?($objsoc->code_client != ''? $objsoc->code_client.' - ':'').$objsoc->getNomUrl():''
+                    );
                 $i++;
             }
             $this->db->free($resql);
@@ -616,17 +617,17 @@ class TimesheetReport
             'taskRef' => 'taskRef', 'tasktitle' => 'taskTitle', 'dateDisplay' => 'Date', 
             'durationHours' => 'Hours', 'durationDays' => 'Days', 'userId' => 'userId', 
             'firstName' => 'Firstname', 'lastName' => 'Lastname', 'note' => 'Note', 
-            'invoiceable' => 'Invoiceable','invoiced' => 'Invoiced', 'socid' => 'ThirdParty' );
+            'invoiceable' => 'Invoiceable','invoiced' => 'Invoiced', 'socname' => 'ThirdParty' );
         $arrayTypes = array('projectRef' => 'TextAuto', 'projectTitle' => 'TextAuto', 
             'taskRef' => 'TextAuto', 'tasktitle' => 'TextAuto', 'dateDisplay' => 'Date', 
             'durationHours' => 'TextAuto', 'durationDays' => 'Numeric', 'userId' => 'Numeric', 
             'firstName' => 'TextAuto', 'lastName' => 'TextAuto', 'note' => 'TextAuto', 
-            'invoiceable' => 'Numeric','invoiced' => 'TextAuto', 'socid' => 'TextAuto');
+            'invoiceable' => 'Numeric','invoiced' => 'TextAuto', 'socname' => 'TextAuto');
         $arraySelected = array('projectRef' => 'projectRef', 'projectTitle' => 'projectTitle', 
             'taskRef' => 'taskRef', 'tasktitle' => 'tasktitle', 'userId' => 'userId', 
             'firstName' => 'firstName', 'lastName' => 'lastName', 'dateDisplay' => 'date', 
             'durationHours' => 'durationHours', 'durationDays' => 'durationDays', 'note' => 'note', 
-            'invoiceable' => 'invoiceable','invoiced' => 'invoiced', 'socid' => 'socid');
+            'invoiceable' => 'invoiceable','invoiced' => 'invoiced', 'socname' => 'socname');
 
         $resArray = $this->getReportArray(!($this->ungroup ==1));
 
