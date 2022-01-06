@@ -348,7 +348,8 @@ class TimesheetReport
                     'userLink' => $objusr->getNomUrl(0),
                     'note' =>($obj->note),
                     'invoiceable' => ($obj->invoiceable==1)?'1':'0',
-                    'invoiced' => ($obj->invoiced==1)?'1':'0');
+                    'invoiced' => ($obj->invoiced==1)?'1':'0',
+                    'socid' => $objpjt->socid);
                 $i++;
             }
             $this->db->free($resql);
@@ -607,17 +608,17 @@ class TimesheetReport
             'taskRef' => 'taskRef', 'tasktitle' => 'taskTitle', 'dateDisplay' => 'Date', 
             'durationHours' => 'Hours', 'durationDays' => 'Days', 'userId' => 'userId', 
             'firstName' => 'Firstname', 'lastName' => 'Lastname', 'note' => 'Note', 
-            'invoiceable' => 'Invoiceable','invoiced' => 'Invoiced');
+            'invoiceable' => 'Invoiceable','invoiced' => 'Invoiced', 'socid' => 'ThirdParty' );
         $arrayTypes = array('projectRef' => 'TextAuto', 'projectTitle' => 'TextAuto', 
             'taskRef' => 'TextAuto', 'tasktitle' => 'TextAuto', 'dateDisplay' => 'Date', 
             'durationHours' => 'TextAuto', 'durationDays' => 'Numeric', 'userId' => 'Numeric', 
             'firstName' => 'TextAuto', 'lastName' => 'TextAuto', 'note' => 'TextAuto', 
-            'invoiceable' => 'Numeric','invoiced' => 'TextAuto');
+            'invoiceable' => 'Numeric','invoiced' => 'TextAuto', 'socid' => 'Numeric');
         $arraySelected = array('projectRef' => 'projectRef', 'projectTitle' => 'projectTitle', 
             'taskRef' => 'taskRef', 'tasktitle' => 'tasktitle', 'userId' => 'userId', 
             'firstName' => 'firstName', 'lastName' => 'lastName', 'dateDisplay' => 'date', 
             'durationHours' => 'durationHours', 'durationDays' => 'durationDays', 'note' => 'note', 
-            'invoiceable' => 'invoiceable','invoiced' => 'invoiced');
+            'invoiceable' => 'invoiceable','invoiced' => 'invoiced', 'socid' => 'socid');
 
         $resArray = $this->getReportArray(!($this->ungroup ==1));
 
