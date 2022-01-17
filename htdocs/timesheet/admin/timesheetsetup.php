@@ -97,6 +97,7 @@ $pdfHideName = intval($conf->global->TIMESHEET_PDF_HIDE_NAME);
 $exportFormat = $conf->global->TIMESHEET_EXPORT_FORMAT;
 $evalAddLine = $conf->global->TIMESHEET_EVAL_ADDLINE;
 $tsRound = intval($conf->global->TIMESHEET_ROUND);
+$importagenda = intval($conf->global->TIMESHEET_IMPORT_AGENDA);
 $dropdownAjax = $conf->global->MAIN_DISABLE_AJAX_COMBOX;
 $searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
 $unblockInvoiced = $conf->global->TIMESHEET_UNBLOCK_INVOICED;
@@ -285,7 +286,8 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_ALLOW_PUBLIC", $allowPublic, 'int', 0, '', $conf->entity);
         $tsRound = getpost('tsRound', 'int');
         dolibarr_set_const($db, "TIMESHEET_ROUND", $tsRound, 'int', 0, '', $conf->entity);
-
+        $importagenda = getpost('importagenda', 'int');
+        dolibarr_set_const($db, "TIMESHEET_IMPORT_AGENDA", $importagenda, 'int', 0, '', $conf->entity);
 
         break;
     default:
@@ -688,6 +690,11 @@ echo '<tr class="oddeven" ><td align="left">'.$langs->trans("tsRound");
 echo '</td><td align="left">'.$langs->trans("tsRoundDesc").'</td>';
 echo '<td  align="left"><input type = "text" name = "tsRound" value="'.$tsRound;
 echo "\" size = \"4\" ></td></tr>";
+// IMPORT AGENDA
+echo '<tr class="oddeven" ><td align="left">'.$langs->trans("ImportAgenda");
+echo '</td><td align="left">'.$langs->trans("ImportAgendaDesc").'</td>';
+echo  '<td align="left"><input type = "checkbox" name = "importagenda" value="1" ';
+echo (($importagenda == '1')?'checked':'')."></td></tr>";
 // eval ADDLINE
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("evalAddLine");
 echo '</td><td align="left">'.$langs->trans("evalAddLineDesc").'</td>';

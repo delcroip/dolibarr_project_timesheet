@@ -850,12 +850,14 @@ public function getHTMLHeader($search = false)
  */
 public function getHTMLFormHeader($ajax = false)
 {
-     global $langs;
+     global $langs, $conf;
     $html = '<form id = "timesheetForm" name = "timesheet" onSubmit="removeUnchanged();" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
     if ($ajax)$html .= ' onsubmit = " return submitTimesheet(0);"';
     $html .= '>';
-    $html .= '<a class = "butAction" href="?action=importCalandar&startDate='.$this->date_start.'">'.$langs->trans('ImportCalandar').'</a>';
-     return $html;
+    if($conf->agenda->enabled && $conf->global->TIMESHEET_IMPORT_AGENDA){
+        $html .= '<a class = "butAction" href="?action=importCalandar&startDate='.$this->date_start.'">'.$langs->trans('ImportCalandar').'</a>';
+    }
+    return $html;
 }
   /* function to genegate ttotal line
   *

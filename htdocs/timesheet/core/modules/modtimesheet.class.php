@@ -212,6 +212,9 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_OVERTIME_CHECK_WEEKS", "int", "30", "Number of week used for the overwork box");// hours or days
                 $r++;
+                $this->const[$r] = array("TIMESHEET_TIMESHEET_IMPORT_AGENDA", "int", "0", "Enable the import agenda button");// hours or days
+                $r++;
+                
                  //$this->const[2] = array("CONST3", "chaine", "valeur3", "Libelle3");
                 // Array to add new pages in new tabs
                 // Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@timesheet:$user->rights->timesheet->read:/timesheet/mynewtab1.php?id=__ID__',        // To add a new tab identified by code tabname1
