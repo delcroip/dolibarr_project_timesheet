@@ -85,26 +85,6 @@ class TimesheetReport
         $this->invoiceableOnly = $invoiceableOnly;
         $this->taskarray = $taskarray;
         $this->projectid = $projectid;// coul
-        if ($projectid && !is_array($projectid)) {
-            $this->project[$projectid] = new Project($this->db);
-            $this->project[$projectid]->fetch($projectid);
-            $this->ref[$projectid] = $this->project[$projectid]->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)
-                ?'':' - '.$this->project[$projectid]->title);
-            $first = true;
-            $this->thirdparty[$projectid] = new Societe($this->db);
-            $this->thirdparty[$projectid]->fetch($this->project[$projectid]->socid);
-        } elseif (is_array($projectid)){
-            foreach ($projectid as $id){
-                $this->project[$id] = new Project($this->db);
-                $this->project[$id]->fetch($id);
-                $this->ref[$id] = $this->project[$id]->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)?
-                    '':' - '.$this->project[$id]->title);
-                $this->thirdparty[$id] = new Societe($this->db);
-                $this->thirdparty[$id]->fetch($this->project[$id]->socid);
-            }
-
-            $first = true;
-        }
         $this->userid = $userid;// coul
         if ($userid && !is_array($userid)) {
             $this->user[$userid] = new User($this->db);
@@ -331,6 +311,15 @@ class TimesheetReport
                 if ($oldsocid != $objpjt->socid && $objpjt->socid > 0){  
                     $objsoc->fetch($objpjt->socid);
                 }
+                # save the project info
+                if(!isset($this->project[$objpjt->id])){
+                    $this->project[$objpjt->id] = $objpjt;
+                    $this->ref[$objpjt->id] = $objpjt->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)
+                        ?'':' - '.$objpjt->title);
+                    $first = true;
+                    $this->thirdparty[$objpjt->id] = new Societe($this->db);
+                    $this->thirdparty[$objpjt->id]->fetch($objpjt->id);
+                }
 
                 //update third party
                 
@@ -357,7 +346,7 @@ class TimesheetReport
                     'note' =>($obj->note),
                     'invoiceable' => ($obj->invoiceable==1)?'1':'0',
                     'invoiced' => ($obj->invoiced==1)?'1':'0',
-                    'socname' => $objpjt->socid>0?($objsoc->code_client != ''? $objsoc->code_client.' - ':'').$objsoc->getNomUrl():''
+                    'socname' => $objpjt->socid>0?($objsoc->code_client != ''? $objsoc->code_client.' - ':'').$objsoc->getNomUrl():''  
                     );
                 $i++;
             }
