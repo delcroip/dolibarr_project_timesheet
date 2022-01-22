@@ -66,7 +66,7 @@ if (empty($mode)){
 $short = GETPOST('short', 'int');
 $invoicedCol = GETPOST('invoicedcol', 'int');
 $ungroup = GETPOST('ungroup', 'int');
-
+$show_all = GETPOST('showAll', 'int');
 
 //$userSelected = $userList[$userIdSelected];
 $year = GETPOST('year', 'int');
@@ -93,8 +93,13 @@ if (empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
 
 // if the user can see ts for other the user id is diferent
 $userIdlist = array();
-$userIdlistfull = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
-if (!empty($userIdSelected) && $userIdSelected <> -999  && $userIdSelected <> $userid) {
+$userIdlistfull = getSubordinates($db, $userid, 2, array(), $admin ? ADMIN : ALL, $entity = '1', $admin);
+if ($show_all)
+{
+    $userIdlistfull[] = $userid;
+    $userIdlist = $userIdlistfull;
+
+}else if (!empty($userIdSelected)  && $userIdSelected <> $userid) {
 
     $userIdlistfull[] = $userid;
     if (in_array($userIdSelected, $userIdlist) || $admin ) {
@@ -104,10 +109,7 @@ if (!empty($userIdSelected) && $userIdSelected <> -999  && $userIdSelected <> $u
         unset($action);
         $userIdlist[] = $userid;
     }
-} elseif ($userIdSelected == -999)
-{
-    $userIdlist = $userIdlistfull;
-}else{
+} else{
     $userIdlist[] = $userid;
 }
 
@@ -163,6 +165,9 @@ $form_output .= '<form action="?action=reportUser'.(($optioncss != '')?'&amp;opt
         ';
 if($admin){
     $form_output .= $form->select_dolusers($userIdSelected, 'userSelected');
+    // select short
+    $form_output .= ' <br><input type = "checkbox" name = "showAll" value = "1" ';
+    $form_output .= ($show_all?'checked >':'>').$langs->trans('All') ;
 } else {
     $form_output .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null, 0, $userIdlist);
 }
@@ -222,10 +227,26 @@ $form_output  .= '<input class="butAction" type="submit" value="' . $langs->tran
 $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
 //if(!empty($querryRes))$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if ( ! empty( $querryRes ) && $conf->global->MAIN_MODULE_EXPORT ) {
-	$form_output .= '<a class = "butAction" href="?action=getExport&dateStart=' . dol_print_date( $dateStart, 'dayxcard' ) . '&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) . '&userSelected=' . $userIdSelected . '&mode=DTU&model=' . $model . '&invoicabletaskOnly=' . $invoicabletaskOnly . '&ungroup=' . $ungroup . '" >' . $langs->trans( 'Export' ) . '</a>';
+	$form_output .= '<a class = "butAction" href="?action=getExport&dateStart=' 
+        .dol_print_date( $dateStart, 'dayxcard' ) 
+        .'&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) 
+        .'&userSelected=' . $userIdSelected 
+        .'&mode=DTU&model=' . $model 
+        .'&invoicabletaskOnly=' . $invoicabletaskOnly 
+        .'&ungroup=' . $ungroup 
+        .'&showAll=' . $show_all 
+        . '" >' . $langs->trans( 'Export' ) . '</a>';
 }
 if ( ! empty( $querryRes ) ) {
-	$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart=' . dol_print_date( $dateStart, 'dayxcard' ) . '&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) . '&userSelected=' . $userIdSelected . '&mode=DTU&model=' . $model . '&invoicabletaskOnly=' . $invoicabletaskOnly . '&ungroup=' . $ungroup . '" >' . $langs->trans( 'PDF' ) . '</a>';
+	$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart=' 
+    . dol_print_date( $dateStart, 'dayxcard' ) 
+    . '&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) 
+    . '&userSelected=' . $userIdSelected 
+    . '&mode=DTU&model=' . $model 
+    . '&invoicabletaskOnly='  . $invoicabletaskOnly 
+    . '&ungroup=' . $ungroup 
+    . '&showAll=' . $show_all 
+    . '" >' . $langs->trans( 'PDF' ) . '</a>';
 }
 $form_output .= '</div></div></form>';
 
