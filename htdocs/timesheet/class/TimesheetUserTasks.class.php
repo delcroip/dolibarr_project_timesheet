@@ -557,9 +557,9 @@ public function fetchTaskTimesheet($userid = '')
     $sql .= ' AND (tsk.dateo <= \''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
     // show task only of people on the same project (not used for team leader)
     if ( !$user->admin && $userid != $user->id && !in_array($userid, $user->getAllChildIds())){
-        $sql .= " AND ((tsk.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
+        $sql .= " AND ((tsk.rowid in (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
         $sql .= " WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project_task' AND element_id = tsk.rowid ))";
-        $sql .= " OR (prj.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
+        $sql .= " OR (prj.rowid in (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
         $sql .= " WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project'  AND element_id = prj.rowid )))";
     }
     $sql .= '  ORDER BY prj.fk_soc, prjRef, tskRef ';
@@ -1122,27 +1122,27 @@ public function getHTMLNavigation($optioncss, $ajax = false)
         }
         return $result;
     }
-/**
-*        Return HTML to get other user
-*
-*        @param                string                        $idsList                list of user id
-*        @param                int                        $selected               id that shoudl be selected
-*        @param                int                        $admin                 is the user an admin
-*        @return                string                                                String with URL
-*/
-public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
-{
-    global $langs;
-    $form = new Form($this->db);
-    $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method = "POST">';
-    if (!$admin) {
-        $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
-    } else{
-        $HTML .= $form->select_dolusers($selected, 'userid');
+    /**
+    *        Return HTML to get other user
+    *
+    *        @param                string                        $idsList                list of user id
+    *        @param                int                        $selected               id that shoudl be selected
+    *        @param                int                        $admin                 is the user an admin
+    *        @return                string                                                String with URL
+    */
+    public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
+    {
+        global $langs;
+        $form = new Form($this->db);
+        $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method = "POST">';
+        if (!$admin) {
+            $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
+        } else{
+            $HTML .= $form->select_dolusers($selected, 'userid');
+        }
+        $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
+        return $HTML;
     }
-    $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
-    return $HTML;
-}
     /**
      *        Initialise object with example values
      *        Id must be 0 if object instance is a specimen
@@ -1177,6 +1177,7 @@ public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
             $this->note = 'this is a test usertasktime';
         }
     }
+
 /******************************************************************************
  *
  * AJAX methods
