@@ -1316,18 +1316,48 @@ public function GetTimeSheetXML()
     public function sendTimesheetReminders()
     {
         //check date: was yesterday a period end day ?
-        $yesteday = date("Y-m-d"); - 24 * 60 *60;
+        $yesteday = date("Y-m-d") - 24 * 60 *60;
         $date_end = getEndDate($yesteday);
         if ($yesteday == $date_end) {
+            $ret = true;
+            $sql = 'SELECT';
+            $sql .= ' t.date_start, t.date_end, ';
+            $sql .= ' u.email as w_email, utm.email as tm_email,';
+            $sql .= ' u.fk_user as approverid';
+            $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
+            $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
+            $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as utm on u.fk_user = utm.rowid ';
+            $sql .= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
+            $sql .= '  AND t.recipient='.TEAM.' ORDER BY u.fk_user';
+            dol_syslog(__METHOD__, LOG_DEBUG);
+            $emails = array();
+            $resql = $this->db->query($sql);
+            if ($resql) {
+                $num = $this->db->num_rows($resql);
+                for ($i = 0;$i<$num;$i++) {
+                    $obj = $this->db->fetch_object($resql);
+                    $emails[$obj->tm_email][$obj->w_email][] = array(
+                        "date_start" => $obj->date_start,
+                        "date_end" => $obj->date_end
+                    );
+                }
+            } else {
+                dol_print_error($db);
+                $list = array();
+                $ret = false;
+            }
+            if ($ret != false) {
             //get the list of user that have the ts right
             $users = [];
             //foreach user check if there is: no timesheet approaval or a tta in draft or rejected
+
                 // SELECT userid, "-1" as status FROM $user LEFT JOIN tta on userid=fk_user and $yesteray = date_end WHERE tta.id = NULL  
                 // UNION
                 // SELECT userid, status FROM tta where status in (DRAFT, REJECTED) and $yesteray = date_end
 
             //send email to user that need to submit a timesheet
             
+            }
         }
         return false; 
     }

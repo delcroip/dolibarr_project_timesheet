@@ -195,6 +195,8 @@ $langs->load('timesheet@timesheet');
             $task_time_array_never = array();
                 // copy the propal lines
             $lineCount = 0; 
+            // id -> db id
+            $propallines = []; 
             
             if ( $propalId > 0) { // PROPAL
                 
@@ -252,7 +254,7 @@ $langs->load('timesheet@timesheet');
                     $localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
                     $localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 
-                    
+                    $result = 0;
                     $postdata['prod_entry_mode'] = 'predef';
                     $postdata['dp_desc'] = $desc;
                     $postdata['tva_tx'] = $$tva_tx;
@@ -260,43 +262,45 @@ $langs->load('timesheet@timesheet');
                     $postdata['qty'] = (float) $line->qty;                      
                     if (!$conf->global->TIMESHEET_EVAL_ADDLINE){
                         $result = $object->addline(
-                        $desc,
-                        $line->subprice,
-                        $line->qty,
-                        $tva_tx,
-                        $localtax1_tx,
-                        $localtax2_tx,
-                        $line->fk_product,
-                        $line->remise_percent,
-                        $date_start,
-                        $date_end,
-                        0,
-                        $line->info_bits,
-                        $line->fk_remise_except,
-                        'HT',
-                        0,
-                        $product_type,
-                        $line->rang,
-                        $line->special_code,
-                        $object->origin,
-                        $line->rowid,
-                        $fk_parent_line,
-                        $line->fk_fournprice,
-                        $line->pa_ht,
-                        $label,
-                        $array_options,
-                        $line->situation_percent,
-                        $line->fk_prev_id,
-                        $line->fk_unit
-                    );
+                            $desc,
+                            $line->subprice,
+                            $line->qty,
+                            $tva_tx,
+                            $localtax1_tx,
+                            $localtax2_tx,
+                            $line->fk_product,
+                            $line->remise_percent,
+                            $date_start,
+                            $date_end,
+                            0,
+                            $line->info_bits,
+                            $line->fk_remise_except,
+                            'HT',
+                            0,
+                            $product_type,
+                            $line->rang,
+                            $line->special_code,
+                            $object->origin,
+                            $line->rowid,
+                            $fk_parent_line,
+                            $line->fk_fournprice,
+                            $line->pa_ht,
+                            $label,
+                            $array_options,
+                            $line->situation_percent,
+                            $line->fk_prev_id,
+                            $line->fk_unit
+                        );  
                     }else{
                         $post_temp = $_POST;
                         $_POST = $postdata;
                         ob_start();
                         eval($invoicecard);
                         ob_end_clean();
-                        $_POST = $post_temp;  
+                        $_POST = $post_temp;
+                        $result = get_lastest_id('facture_fourn_det');
                     }
+                    if ($result>0)$propallines[$lineCount] = $result;
                 }                                
             }
             
@@ -315,7 +319,7 @@ $langs->load('timesheet@timesheet');
                         //$startday = dol_mktime(12, 0, 0, $month, 1, $year);
                         //$endday = dol_mktime(12, 0, 0, $month, date('t', $startday), $year);
                         $details = '';
-                        $result = '';
+                        $result = 0;
                         $factor = 1;
                         $unit_duration_unit = $service['unit_duration_unit'];
                         switch($unit_duration_unit){
@@ -357,7 +361,7 @@ $langs->load('timesheet@timesheet');
                         $postdata['date_endyear'] = date('Y', $dateEnd);
                         $postdata['addline']='Add';
                         if ($service['Service'] > 0) {
-                            $lineCount ++;
+                            
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $product = new Product($db);
@@ -396,19 +400,21 @@ $langs->load('timesheet@timesheet');
                             }else{
                                 $result = $lineCount;
                             }
-                        } elseif ($service['Service'] == -997) { // propal
-                            if(isset($task_time_array_propal[-$service['Service']])){
-                                $task_time_array[-$service['Service']] .= $service['taskTimeList'];
+                            $lineCount ++;
+                        } elseif ($service['Service'] > -997) { // propal
+                            if(isset($task_time_array[$propallines[-$service['Service']]])){
+                                $task_time_array[$propallines[-$service['Service']]] .= ",".$service['taskTimeList'];
                             }else{
-                                $task_time_array[-$service['Service']] = $service['taskTimeList'];
+                                $task_time_array[$propallines[-$service['Service']]] = $service['taskTimeList'];
                             }
                         } elseif ($service['Service'] == -997) { // customized service
-                            $lineCount ++;
+                            
                             $localtax1_tx = get_localtax($service['VAT'], 1, $object->thirdparty);
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $factor = intval($service['unit_duration']);
                             $quantity = ($duration == $factor*$unit_factor) ? 1 :
-                                round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);                            $postdata['type'] = 1;
+                                round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);                            
+                            $postdata['type'] = 1;
                             $postdata['prod_entry_mode'] = 'free';
                             $postdata['dp_desc'] = $service['Desc'];
                             $postdata['tva_tx'] = $service['VAT'];
@@ -420,8 +426,10 @@ $langs->load('timesheet@timesheet');
                                     0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 
                                     0, 0, null, 0, '', 0, 100, '', '');
                             }else {
-                                $result = $lineCount;
+                                $result = get_lastest_id('facture_fourn_det');
                             }
+       
+                            $lineCount ++;
                         }elseif ($service['Service'] == -998){ // never invoice
                             $task_time_array_never[] = $service['taskTimeList']; 
                         }
@@ -817,4 +825,20 @@ function getproductlabel($productId){
     $product = new Product($db);
     $product->fetch($productId);
     return $product->getNomUrl(0,'',0,-1,0);
+}
+
+function get_lastest_id($table){
+    $sql = 'SELECT LAST_INSERT_ID() as lastid FROM'.MAIN_DB_PREFIX.$table;
+    $resql = $db->query($sql);
+    $num = 0;
+    $resArray = array();
+    if ($resql) {
+        $num = $db->num_rows($resql);
+        if($num == 1 )
+        {
+            $obj = $db->fetch_object($resql);
+            return $obj->lastid;
+        }
+    }
+    return 0;
 }
