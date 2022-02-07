@@ -1318,51 +1318,73 @@ public function GetTimeSheetXML()
      */
     public function sendTimesheetReminders()
     {
-        //check date: was yesterday a period end day ?
-        $yesteday = date("Y-m-d") - 24 * 60 *60;
-        $date_end = getEndDate($yesteday);
-        if ($yesteday == $date_end) {
-            $ret = true;
-            $sql = 'SELECT';
-            $sql .= ' t.date_start, t.date_end, ';
-            $sql .= ' u.email as w_email, utm.email as tm_email,';
-            $sql .= ' u.fk_user as approverid';
-            $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval as t';
-            $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as u on t.fk_userid = u.rowid ';
-            $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as utm on u.fk_user = utm.rowid ';
-            $sql .= ' WHERE (t.status='.SUBMITTED.' OR t.status='.UNDERAPPROVAL.' OR t.status='.CHALLENGED.') ';
-            $sql .= '  AND t.recipient='.TEAM.' ORDER BY u.fk_user';
-            dol_syslog(__METHOD__, LOG_DEBUG);
-            $emails = array();
-            $resql = $this->db->query($sql);
-            if ($resql) {
-                $num = $this->db->num_rows($resql);
-                for ($i = 0;$i<$num;$i++) {
-                    $obj = $this->db->fetch_object($resql);
-                    $emails[$obj->tm_email][$obj->w_email][] = array(
-                        "date_start" => $obj->date_start,
-                        "date_end" => $obj->date_end
-                    );
-                }
-            } else {
-                dol_print_error($db);
-                $list = array();
-                $ret = false;
-            }
-            if ($ret != false) {
-            //get the list of user that have the ts right
-            $users = [];
-            //foreach user check if there is: no timesheet approaval or a tta in draft or rejected
+    //check date: was yesterday a period end day ?
+    $date_start = getStartDate(time(), -1);
+    $date_end = getEndDate($date_start);
+        $ret = true;
+        $sql = "SELECT SUM(pt.task_duration)/3600 as duration,  u.weeklyhours
+            u.email, u.weeklyhours
+            FROM ".MAIN_DB_PREFIX."element_contact  as ec ON t.rowid = ec.element_id
+           LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = fk_c_type_contact
+            LEFT JOIN llx_projet_task_time pt ON  pt.fk_user = fk_socpeople
+            LEFT JOIN llx_user u ON u.rowid = fk_socpeople
+            WHERE  (ctc.element in (\'project\') 
+            and pt.task_date BETWEEN $date_start AND $date_end
+            GROUP BY u.rowid "; 
 
-                // SELECT userid, "-1" as status FROM $user LEFT JOIN tta on userid=fk_user and $yesteray = date_end WHERE tta.id = NULL  
-                // UNION
-                // SELECT userid, status FROM tta where status in (DRAFT, REJECTED) and $yesteray = date_end
-
-            //send email to user that need to submit a timesheet
-            
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $emails = array();
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $num = $this->db->num_rows($resql);
+            for ($i = 0;$i<$num;$i++) {
+                $obj = $this->db->fetch_object($resql);
+                // FIXME: addapt weekhour to openday / without holidays (union)
+                if ($obj->weeklyhours > $obj->duration) {
+                $emails[$obj->email][] = array(
+                    "weeklyhour" => $obj->date_start,
+                    "duration" => $obj->date_end
+                );
             }
+            }
+        } else {
+            dol_print_error($db);
+            $list = array();
+            $ret = false;
         }
-        return false; 
+        if ($ret != false) {
+            foreach ($emails as $email => $data) {
+            //get the list of user that have the ts right
+                $$url .= '/timesheet/Timesheet.php?dateStart='.$date_start;
+                $message = $langs->trans(
+                    'YouHaveMissingTimesheetMsg', 
+                    date(' d', $date_start), 
+                    $url
+                );
+                $sendto = $email;
+        
+                $subject = $langs->transnoentities("YouHaveMissingTimesheet");
+                if (!empty($sendto) && $sendto!="NULL") {
+                    include_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+                    $mailfile = new CMailFile(
+                        $subject,
+                        $sendto,
+                        null,
+                        $message,
+                        $filename_list = array(),
+                        $mimetype_list = array(),
+                        $mimefilename_list = array(),
+                        $addr_cc, $addr_bcc = 0,
+                        $deliveryreceipt = 0,
+                        $msgishtml = 1
+                    );
+                    $mailfile->sendfile();
+                }
+            }
+
+        }
+
+
     }
 
 
