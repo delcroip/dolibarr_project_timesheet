@@ -893,6 +893,9 @@ public function getHTMLFooter($ajax = false)
         //$html .= '<input type = "submit" class = "butAction" name = "submit" onClick = "return submitTs();" value = "'.$langs->trans('Submit')."\" />\n";
         if (in_array('1', array_slice($apflows, 1))) {
             $html .= '<input type = "submit"  class = "butAction" name = "submit"  value = "'.$langs->trans('Submit')."\" />\n";
+            $html .= '<input type = "submit"  class = "butAction" name = "submit_next"  value = "'.$langs->trans('SubmitNext')."\" />\n";
+        }else{
+            $html .= '<input type = "submit"  class = "butAction" name = "save_next"  value = "'.$langs->trans('SaveNext')."\" />\n";
         }
         $html .= '<a class = "butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
     } elseif ($this->status == SUBMITTED)$html .= '<input type = "submit" class = "butAction" name = "recall" " value = "'.$langs->trans('Recall')."\" />\n";
