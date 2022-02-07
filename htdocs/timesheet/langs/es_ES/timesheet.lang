@@ -264,3 +264,7 @@ blockpublicholiday = Bloquear el día festivo
 never2invoice = revisado - Nunca para facturar
 TimesheetDelta = Delta de hoja de tiempo con horas de contrato
 Lumpsum = Suma fija
+YouHaveMissingTimesheetMsg = Le falta la hoja de tiempo. \n\n solo hay %d h en los sistemas en sus %d horas semanales para el período %s - %s \n\n
+YouHaveMissingTimesheet = Le falta la hoja de tiempo
+SaveNext = Guardar y Siguiente
+SubmitNext = Enviar y Siguiente

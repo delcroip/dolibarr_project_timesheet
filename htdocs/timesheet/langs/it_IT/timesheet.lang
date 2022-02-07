@@ -264,3 +264,7 @@ blockpublicholiday = Blocca il giorno festivo
 never2invoice = rivisto - Non fatturare mai
 TimesheetDelta = Delta del foglio di lavoro con ore di contratto
 Lumpsum = Forfettario
+YouHaveMissingTimesheetMsg = Hai il foglio presenze mancante. \n\n ci sono solo %d h nei sistemi nelle tue %d ore settimanali per il periodo %s - %s \n\n
+YouHaveMissingTimesheet = Hai il foglio presenze mancante
+SaveNext = Salva & Avanti
+SubmitNext = Invia & Avanti

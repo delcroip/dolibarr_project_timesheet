@@ -264,3 +264,7 @@ blockpublicholiday = Feiertag sperren
 never2invoice = überprüft - nie in Rechnung gestellt
 TimesheetDelta = Arbeitszeittabellen-Delta mit Vertragsstunden
 Lumpsum = Pauschalbetrag
+YouHaveMissingTimesheetMsg = Sie haben einen fehlenden Stundenzettel. \n\n es gibt nur %d h in den Systemen zu Ihren %d Wochenstunden für den Zeitraum %s - %s \n\n
+YouHaveMissingTimesheet = Sie haben einen fehlenden Stundenzettel
+SaveNext = Speichern & Weiter
+SubmitNext = Einreichen & Weiter
