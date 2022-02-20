@@ -827,8 +827,11 @@ function getproductlabel($productId){
     return $product->getNomUrl(0,'',0,-1,0);
 }
 
-function get_lastest_id($table){
-    $sql = 'SELECT LAST_INSERT_ID() as lastid FROM'.MAIN_DB_PREFIX.$table;
+function get_lastest_id($table, $id){
+    global $db;
+    $sql = 'SELECT TOP 1 rowid as lastid FROM'.MAIN_DB_PREFIX.$table
+        .' WHERE fk_facture_fourn ='.$id
+        .' ORDER BY rowid DESC';
     $resql = $db->query($sql);
     $num = 0;
     $resArray = array();
