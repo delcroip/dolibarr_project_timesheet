@@ -17,8 +17,8 @@
 -- ===================================================================
 -- TS Revision 2.0.2
 
-ALTER TABLE llx_project_task_timesheet ADD CONSTRAINT fk_ptts_user_idc  FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_timesheet ADD CONSTRAINT fk_ptts_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_timesheet ADD CONSTRAINT fk_ptts_user_idc  FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_timesheet ADD CONSTRAINT fk_ptts_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --/*llx_project_task_timesheet remove enum 2.3.3.5 --> 2.4*/
 ALTER TABLE llx_project_task_timesheet MODIFY COLUMN status   integer default 1;

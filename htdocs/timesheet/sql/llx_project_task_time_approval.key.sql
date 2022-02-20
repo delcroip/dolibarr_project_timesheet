@@ -20,16 +20,16 @@
 
 -- this table is used to store the timesheet favorite
 
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idat  FOREIGN KEY (fk_user_app_team) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idap  FOREIGN KEY (fk_user_app_project) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idac  FOREIGN KEY (fk_user_app_customer) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idas  FOREIGN KEY (fk_user_app_suplier) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idac  FOREIGN KEY (fk_user_app_other) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idat  FOREIGN KEY (fk_user_app_team) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idap  FOREIGN KEY (fk_user_app_project) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idac  FOREIGN KEY (fk_user_app_customer) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idas  FOREIGN KEY (fk_user_app_suplier) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idac  FOREIGN KEY (fk_user_app_other) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idc  FOREIGN KEY (fk_user_creation) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_id  FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_task_id  FOREIGN KEY (fk_projet_task) REFERENCES llx_projet_task(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idc  FOREIGN KEY (fk_user_creation) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_user_id  FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE llx_project_task_time_approval ADD CONSTRAINT fk_ptta_task_id  FOREIGN KEY (fk_projet_task) REFERENCES llx_projet_task(rowid) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
 --/*llx_project_task_time_approval remove enum 2.3.3.5 --> 2.4 */

@@ -20,8 +20,8 @@
 -- this table is used to store the timesheet favorit
 
 
-ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_user_id  FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_project_id FOREIGN KEY (fk_project) REFERENCES llx_projet(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_third_party FOREIGN KEY (fk_third_party REFERENCES llx_soc(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
-ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_task FOREIGN KEY (fk_task) REFERENCES llx_projet_task(rowid) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_user_idm  FOREIGN KEY (fk_user_modification) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_user_id  FOREIGN KEY (fk_userid) REFERENCES llx_user(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_project_id FOREIGN KEY (fk_project) REFERENCES llx_projet(rowid) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_third_party FOREIGN KEY (fk_third_party REFERENCES llx_soc(rowid) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE llx_attendance_event ADD CONSTRAINT fk_ts_ae_task FOREIGN KEY (fk_task) REFERENCES llx_projet_task(rowid) ON DELETE CASCADE ON UPDATE CASCADE;

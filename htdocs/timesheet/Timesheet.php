@@ -49,6 +49,8 @@ if ($whitelistmode == '') {
 $userid = is_object($user)?$user->id:$user;
 $postUserId = GETPOST('userid', 'int');
 $submitted = GETPOST('submit', 'alpha');
+$submitted_next = GETPOST('submit_next', 'alpha');
+$save_next = GETPOST('save_next', 'alpha');
 $tsUserId = GETPOST('tsUserId', 'int');
 
 $admin = $user->admin || $user->rights->timesheet->timesheet->admin;
@@ -66,7 +68,7 @@ if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER)
         }
     $SubordiateIds = getSubordinates($db, $userid, 2, array(), ALL, $entity = '1');
     //$SubordiateIds[] = $userid;
-    if ($newuserid > 0 && in_array($newuserid, $SubordiateIds) || $admin) {
+    if ($newuserid > 0 && in_array($newuserid, $SubordiateIds) || $admin || $newuserid == $userid) {
         $SubordiateIds[] = $userid;
         $userid = $newuserid;
     } elseif ($action == 'getOtherTs') {
@@ -124,7 +126,7 @@ switch($action) {
                     $task_timesheet->update($user);
                 }
                 $ret = $task_timesheet->updateActuals($tasktab, $notesTask, $progressTask);
-                if ($submitted) {
+                if ($submitted || $submitted_next) {
                         $task_timesheet->setStatus($user, SUBMITTED);
                         $ret++;
                     //$task_timesheet->status = "SUBMITTED";
@@ -160,6 +162,15 @@ switch($action) {
 if (!empty($token)) {
        unset($_SESSION['timesheet'][$token]);
 }
+
+if ($submitted_next ||$saved_next ){
+    $dateStart = getStartDate($dateStart, 1);
+    $_SESSION["dateStart"] = $dateStart ;
+}
+
+
+
+
 $task_timesheet->fetchAll($dateStart, $whitelistmode);
 if ($action == 'importCalandar'){
     $task_timesheet->importCalandar();

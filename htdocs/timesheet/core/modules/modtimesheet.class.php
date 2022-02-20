@@ -54,7 +54,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_name = 'Patrick Delcroix';
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.4.11';
+                $this->version = '4.5.0';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -208,8 +208,13 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("MAIN_DISABLE_AJAX_COMBOX", "int", "0", "disable combo box");// hours or days
                 $r++;
-                $this->const[$r] = array("TIMESHEET_ALLOW_PUBLIC", "int", "0", "Allow all internal contact to book time on public projects");// hours or days
+                $this->const[$r] = array("MAIN_DISABLE_AJAX_COMBOX", "int", "0", "disable combo box");// hours or days
                 $r++;
+                $this->const[$r] = array("TIMESHEET_OVERTIME_CHECK_WEEKS", "int", "30", "Number of week used for the overwork box");// hours or days
+                $r++;
+                $this->const[$r] = array("TIMESHEET_TIMESHEET_IMPORT_AGENDA", "int", "0", "Enable the import agenda button");// hours or days
+                $r++;
+                
                  //$this->const[2] = array("CONST3", "chaine", "valeur3", "Libelle3");
                 // Array to add new pages in new tabs
                 // Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@timesheet:$user->rights->timesheet->read:/timesheet/mynewtab1.php?id=__ID__',        // To add a new tab identified by code tabname1
@@ -263,10 +268,15 @@ class modTimesheet extends DolibarrModules
         // Boxes
                 // Add here list of php file(s) stored in core/boxes that contains class to show a box.
         $this->boxes = array(
-            0 => array(
-        'file' => 'box_approval.php@timesheet',
-        'note' => 'timesheetApproval',
-        'enabledbydefaulton' => 'Home'));                        // List of boxes
+                0 => array(
+                        'file' => 'box_approval.php@timesheet',
+                        'note' => 'timesheetApproval',
+                        'enabledbydefaulton' => 'Home'),
+                1 => array(
+                        'file' => 'box_time.php@timesheet',
+                        'note' => 'timesheet',
+                        'enabledbydefaulton' => 'Home')
+        ); // List of boxes
                 // Example:
                 //$this->boxes=array(array(0 => array('file' => 'myboxa.php', 'note' => '', 'enabledbydefaulton' => 'Home'), 1 => array('file' => 'myboxb.php', 'note' => ''), 2 => array('file' => 'myboxc.php', 'note' => '')););
                 // Permissions

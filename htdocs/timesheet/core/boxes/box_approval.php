@@ -48,7 +48,7 @@ class box_approval extends ModeleBoxes
         global $conf, $user, $langs, $db;
         $this->max = $max;
         $userid = is_object($user)?$user->id:$user;
-        $text = $langs->trans('Timesheet');
+        $text = $langs->trans('Approval');
         $this->info_box_head = array(
                         'text' => $text,
                         'limit' => dol_strlen($text)

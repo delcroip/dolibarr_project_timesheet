@@ -65,7 +65,9 @@ $addholidaytime = $conf->global->TIMESHEET_ADD_HOLIDAY_TIME;
 $blockholiday = $conf->global->TIMESHEET_BLOCK_HOLIDAY;
 $addpublicholidaytime = $conf->global->TIMESHEET_ADD_PUBLICHOLIDAY_TIME;
 $blockpublicholiday = $conf->global->TIMESHEET_BLOCK_PUBLICHOLIDAY;
+$overtimecheckweeks = $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS;
 $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
+
 //approval
 $approvalbyweek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
 $maxApproval = $conf->global->TIMESHEET_MAX_APPROVAL;
@@ -73,6 +75,7 @@ $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 if (count($apflows) != 6) {
     $apflows = array('_', '0', '0', '0', '0', '0');
 }
+
 //Invoice part
 $invoicemethod = $conf->global->TIMESHEET_INVOICE_METHOD;
 $invoicetasktime = $conf->global->TIMESHEET_INVOICE_TASKTIME;
@@ -94,6 +97,7 @@ $pdfHideName = intval($conf->global->TIMESHEET_PDF_HIDE_NAME);
 $exportFormat = $conf->global->TIMESHEET_EXPORT_FORMAT;
 $evalAddLine = $conf->global->TIMESHEET_EVAL_ADDLINE;
 $tsRound = intval($conf->global->TIMESHEET_ROUND);
+$importagenda = intval($conf->global->TIMESHEET_IMPORT_AGENDA);
 $dropdownAjax = $conf->global->MAIN_DISABLE_AJAX_COMBOX;
 $searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
 $unblockInvoiced = $conf->global->TIMESHEET_UNBLOCK_INVOICED;
@@ -101,6 +105,8 @@ $unblockClosed = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
 $reportInvoicedCol= $conf->global->TIMESHEET_REPORT_INVOICED_COL;
 $reportUngroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
 $allowPublic = $conf->global->TIMESHEET_ALLOW_PUBLIC;
+
+
 if (count($opendays)!=8) {
     $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
 }
@@ -216,6 +222,10 @@ switch($action) {
         // block public holday
         $blockpublicholiday = getpost('blockpublicholiday', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_BLOCK_PUBLICHOLIDAY", $blockpublicholiday, 'chaine', 0, '', $conf->entity);
+
+        // number of week to check for overtime box
+        $overtimecheckweeks = getpost('overtimecheckweeks', 'alpha');
+        dolibarr_set_const($db, "TIMESHEET_OVERTIME_CHECK_WEEKS", $overtimecheckweeks, 'chaine', 0, '', $conf->entity);
         //docs
         $adddocs = getpost('adddocs', 'int');
         dolibarr_set_const($db, "TIMESHEET_ADD_DOCS", $adddocs, 'chaine', 0, '', $conf->entity);
@@ -238,7 +248,7 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_INVOICE_TASKTIME", $invoicetasktime, 'chaine', 0, '', $conf->entity);
         $invoicetimetype = getpost('invoiceTimeType', 'alpha');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_TIMETYPE", $invoicetimetype, 'chaine', 0, '', $conf->entity);
-        $invoiceservice = getpost('invoiceService', 'int');
+        $invoiceservice = getpost('invoiceservice', 'int');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SERVICE", $invoiceservice, 'int', 0, '', $conf->entity);
         $invoiceshowtask = getpost('invoiceShowTask', 'int');
         dolibarr_set_const($db, "TIMESHEET_INVOICE_SHOW_TASK", $invoiceshowtask, 'int', 0, '', $conf->entity);
@@ -276,7 +286,8 @@ switch($action) {
         dolibarr_set_const($db, "TIMESHEET_ALLOW_PUBLIC", $allowPublic, 'int', 0, '', $conf->entity);
         $tsRound = getpost('tsRound', 'int');
         dolibarr_set_const($db, "TIMESHEET_ROUND", $tsRound, 'int', 0, '', $conf->entity);
-
+        $importagenda = getpost('importagenda', 'int');
+        dolibarr_set_const($db, "TIMESHEET_IMPORT_AGENDA", $importagenda, 'int', 0, '', $conf->entity);
 
         break;
     default:
@@ -402,6 +413,12 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("blockpublicholiday"
 echo '</td><td align="left">'.$langs->trans("blockpublicholidayDesc").'</td>';
 echo  '<td align="left"><input type = "checkbox" name = "blockpublicholiday" value="1" ';
 echo (($blockpublicholiday == '1')?'checked':'')."></td></tr>";
+// overtime week to check 
+echo '<tr class="oddeven"><td align="left">'.$langs->trans("overtimeCheckWeeks");//FIXTRAD
+echo '</td><td align="left">'.$langs->trans("overtimeCheckWeeksDesc").'</td>';// FIXTRAD
+echo '<td align="left"><input type = "text" name = "overtimecheckweeks" value="'.$overtimecheckweeks;
+echo "\" size = \"4\" ></td></tr>";
+
 // add docs
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("adddocs");
 echo '</td><td align="left">'.$langs->trans("adddocsDesc").'</td>';
@@ -673,6 +690,11 @@ echo '<tr class="oddeven" ><td align="left">'.$langs->trans("tsRound");
 echo '</td><td align="left">'.$langs->trans("tsRoundDesc").'</td>';
 echo '<td  align="left"><input type = "text" name = "tsRound" value="'.$tsRound;
 echo "\" size = \"4\" ></td></tr>";
+// IMPORT AGENDA
+echo '<tr class="oddeven" ><td align="left">'.$langs->trans("ImportAgenda");
+echo '</td><td align="left">'.$langs->trans("ImportAgendaDesc").'</td>';
+echo  '<td align="left"><input type = "checkbox" name = "importagenda" value="1" ';
+echo (($importagenda == '1')?'checked':'')."></td></tr>";
 // eval ADDLINE
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("evalAddLine");
 echo '</td><td align="left">'.$langs->trans("evalAddLineDesc").'</td>';
@@ -753,9 +775,9 @@ echo ($invoicetimetype == "days"?"checked":"").'> '.$langs->trans("Days")."</td>
 echo  '<tr class="oddeven"><td align="left">'.$langs->trans("invoiceService");
 echo '</td><td align="left">'.$langs->trans("invoiceServiceDesc").'</td>';
 echo  '<td align="left">';
-$addchoices = array('-999'=> $langs->transnoentitiesnoconv('not2invoice'), -1=> $langs->transnoentitiesnoconv('Custom'));
+$addchoices = array('-999'=> $langs->transnoentitiesnoconv('not2invoice'), -997=> $langs->transnoentitiesnoconv('Custom'));
 $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
-$htmlProductArray = array('name' => 'invoiceService', 'ajaxNbChar'=>$ajaxNbChar);
+$htmlProductArray = array('name' => 'invoiceservice', 'ajaxNbChar'=>$ajaxNbChar);
 $sqlProductArray = array('table' => 'product', 'keyfield' => 'rowid', 'fields' => 'ref, label', 'where' => 'tosell = 1 AND fk_product_type = 1', 'separator' => ' - ');
 print select_sellist($sqlProductArray, $htmlProductArray, $invoiceservice, $addchoices);
 echo "</td></tr>";

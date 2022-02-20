@@ -557,9 +557,9 @@ public function fetchTaskTimesheet($userid = '')
     $sql .= ' AND (tsk.dateo <= \''.$this->db->idate($datestop).'\' OR tsk.dateo IS NULL)';
     // show task only of people on the same project (not used for team leader)
     if ( !$user->admin && $userid != $user->id && !in_array($userid, $user->getAllChildIds())){
-        $sql .= " AND ((tsk.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
+        $sql .= " AND ((tsk.rowid in (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
         $sql .= " WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project_task' AND element_id = tsk.rowid ))";
-        $sql .= " OR (prj.rowid = (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
+        $sql .= " OR (prj.rowid in (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
         $sql .= " WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project'  AND element_id = prj.rowid )))";
     }
     $sql .= '  ORDER BY prj.fk_soc, prjRef, tskRef ';
@@ -784,18 +784,15 @@ Public function setStatus($user, $status, $id = 0)
 public function getHTML( $ajax = false, $Approval = false)
 {
     global $langs;
-    $Form = $this->getHTMLHeader();
+    $Form = $this->getHTMLHeader(true);
     // show the filter
-    $Form .= '<tr class = "timesheet_line" id = "searchline">';
-    $Form .= '<td><a>'.$langs->trans("Search").'</a></td>';
-    $Form .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
     $Form .= $this->getHTMLHolidayLines($ajax);
     $Form .= $this->getHTMLPublicHolidayLines($ajax);
-    if (!$Approval)$Form .= $this->getHTMLTotal();
+    //if (!$Approval)$Form .= $this->getHTMLTotal();
     //$Form .= '<tbody style = "overflow:auto;">';
     $Form .= $this->getHTMLtaskLines( $ajax);
     //$Form .= '</tbody>';// overflow div
-    $Form .= $this->getHTMLTotal();
+    //$Form .= $this->getHTMLTotal();
     $Form .= '</table>';
     $Form .= $this->getHTMLNote($ajax);
     if (!$Approval) {
@@ -805,19 +802,24 @@ public function getHTML( $ajax = false, $Approval = false)
     return $Form;
 }
 /* function to genegate the timesheet table header
- *
-  *  @return     string                                                   html code
+ *   @param    bool    $search    dd search
+ *   @return     string                                                   html code
  */
-public function getHTMLHeader()
+public function getHTMLHeader($search = false)
 {
     global $langs, $conf;
     $weeklength = getDayInterval($this->date_start, $this->date_end);
     $maxColSpan = $weeklength+count($this->headers);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
     $html = '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
-     $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
+    $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
-     ///Whitelist tab
+    if ($search) {
+        $html .= '<tr  id = "searchline">';
+        $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
+        $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
+    }
+    ///Whitelist tab
     if ($conf->global->TIMESHEET_TIME_SPAN == "month") {
         $format = "%d";
         $html .= '<tr class = "liste_titre" id = "">'."\n";
@@ -848,12 +850,14 @@ public function getHTMLHeader()
  */
 public function getHTMLFormHeader($ajax = false)
 {
-     global $langs;
+     global $langs, $conf;
     $html = '<form id = "timesheetForm" name = "timesheet" onSubmit="removeUnchanged();" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
     if ($ajax)$html .= ' onsubmit = " return submitTimesheet(0);"';
     $html .= '>';
-    $html .= '<a class = "butAction" href="?action=importCalandar&startDate='.$this->date_start.'">'.$langs->trans('ImportCalandar').'</a>';
-     return $html;
+    if($conf->agenda->enabled && $conf->global->TIMESHEET_IMPORT_AGENDA){
+        $html .= '<a class = "butAction" href="?action=importCalandar&startDate='.$this->date_start.'">'.$langs->trans('ImportCalandar').'</a>';
+    }
+    return $html;
 }
   /* function to genegate ttotal line
   *
@@ -889,6 +893,9 @@ public function getHTMLFooter($ajax = false)
         //$html .= '<input type = "submit" class = "butAction" name = "submit" onClick = "return submitTs();" value = "'.$langs->trans('Submit')."\" />\n";
         if (in_array('1', array_slice($apflows, 1))) {
             $html .= '<input type = "submit"  class = "butAction" name = "submit"  value = "'.$langs->trans('Submit')."\" />\n";
+            $html .= '<input type = "submit"  class = "butAction" name = "submit_next"  value = "'.$langs->trans('SubmitNext')."\" />\n";
+        }else{
+            $html .= '<input type = "submit"  class = "butAction" name = "save_next"  value = "'.$langs->trans('SaveNext')."\" />\n";
         }
         $html .= '<a class = "butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
     } elseif ($this->status == SUBMITTED)$html .= '<input type = "submit" class = "butAction" name = "recall" " value = "'.$langs->trans('Recall')."\" />\n";
@@ -967,7 +974,7 @@ public function getHTMLtaskLines( $ajax = false)
                 $blockOveride = 0;
             }
             $Lines .= $row->getTimesheetLine($this->headers, $this->id, $blockOveride, $holiday);
-            if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
+            //if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
             $i++;
         }
     }
@@ -1118,27 +1125,27 @@ public function getHTMLNavigation($optioncss, $ajax = false)
         }
         return $result;
     }
-/**
-*        Return HTML to get other user
-*
-*        @param                string                        $idsList                list of user id
-*        @param                int                        $selected               id that shoudl be selected
-*        @param                int                        $admin                 is the user an admin
-*        @return                string                                                String with URL
-*/
-public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
-{
-    global $langs;
-    $form = new Form($this->db);
-    $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method = "POST">';
-    if (!$admin) {
-        $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
-    } else{
-        $HTML .= $form->select_dolusers($selected, 'userid');
+    /**
+    *        Return HTML to get other user
+    *
+    *        @param                string                        $idsList                list of user id
+    *        @param                int                        $selected               id that shoudl be selected
+    *        @param                int                        $admin                 is the user an admin
+    *        @return                string                                                String with URL
+    */
+    public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
+    {
+        global $langs;
+        $form = new Form($this->db);
+        $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method = "POST">';
+        if (!$admin) {
+            $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
+        } else{
+            $HTML .= $form->select_dolusers($selected, 'userid');
+        }
+        $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
+        return $HTML;
     }
-    $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
-    return $HTML;
-}
     /**
      *        Initialise object with example values
      *        Id must be 0 if object instance is a specimen
@@ -1173,6 +1180,7 @@ public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
             $this->note = 'this is a test usertasktime';
         }
     }
+
 /******************************************************************************
  *
  * AJAX methods
@@ -1310,21 +1318,73 @@ public function GetTimeSheetXML()
      */
     public function sendTimesheetReminders()
     {
-        //check date: was yesterday a period end day ?
-        $yesteday = date("Y-m-d"); - 24 * 60 *60;
-        $date_end = getEndDate($yesteday);
-        if ($yesteday == $date_end) {
-            //get the list of user that have the ts right
-            $users = [];
-            //foreach user check if there is: no timesheet approaval or a tta in draft or rejected
-                // SELECT userid, "-1" as status FROM $user LEFT JOIN tta on userid=fk_user and $yesteray = date_end WHERE tta.id = NULL  
-                // UNION
-                // SELECT userid, status FROM tta where status in (DRAFT, REJECTED) and $yesteray = date_end
+    //check date: was yesterday a period end day ?
+    $date_start = getStartDate(time(), -1);
+    $date_end = getEndDate($date_start);
+        $ret = true;
+        $sql = "SELECT SUM(pt.task_duration)/3600 as duration,  u.weeklyhours
+            u.email, u.weeklyhours
+            FROM ".MAIN_DB_PREFIX."element_contact  as ec ON t.rowid = ec.element_id
+           LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = fk_c_type_contact
+            LEFT JOIN llx_projet_task_time pt ON  pt.fk_user = fk_socpeople
+            LEFT JOIN llx_user u ON u.rowid = fk_socpeople
+            WHERE  (ctc.element in (\'project\') 
+            and pt.task_date BETWEEN $date_start AND $date_end
+            GROUP BY u.rowid "; 
 
-            //send email to user that need to submit a timesheet
-            
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $emails = array();
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $num = $this->db->num_rows($resql);
+            for ($i = 0;$i<$num;$i++) {
+                $obj = $this->db->fetch_object($resql);
+                // FIXME: addapt weekhour to openday / without holidays (union)
+                if ($obj->weeklyhours > $obj->duration) {
+                $emails[$obj->email][] = array(
+                    "weeklyhour" => $obj->date_start,
+                    "duration" => $obj->date_end
+                );
+            }
+            }
+        } else {
+            dol_print_error($db);
+            $list = array();
+            $ret = false;
         }
-        return false; 
+        if ($ret != false) {
+            foreach ($emails as $email => $data) {
+            //get the list of user that have the ts right
+                $$url .= '/timesheet/Timesheet.php?dateStart='.$date_start;
+                $message = $langs->trans(
+                    'YouHaveMissingTimesheetMsg', 
+                    date(' d', $date_start), 
+                    $url
+                );
+                $sendto = $email;
+        
+                $subject = $langs->transnoentities("YouHaveMissingTimesheet");
+                if (!empty($sendto) && $sendto!="NULL") {
+                    include_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+                    $mailfile = new CMailFile(
+                        $subject,
+                        $sendto,
+                        null,
+                        $message,
+                        $filename_list = array(),
+                        $mimetype_list = array(),
+                        $mimefilename_list = array(),
+                        $addr_cc, $addr_bcc = 0,
+                        $deliveryreceipt = 0,
+                        $msgishtml = 1
+                    );
+                    $mailfile->sendfile();
+                }
+            }
+
+        }
+
+
     }
 
 

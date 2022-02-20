@@ -195,21 +195,23 @@ if (is_object($firstTimesheetUser)) {
                 if ($conf->global->TIMESHEET_ADD_DOCS == 1) {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
                     include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-                    $formfile = new FormFile($db);
                     $object = $TTU;
-                    $relativepathwithnofile = '';
                     $modulepart = 'timesheet';
                     $permission = 1;//$user->rights->timesheet->add;
-                    $param = '&action=viewdoc&id='.$object->id;
                     $ref = dol_sanitizeFileName($object->ref);
-                    $upload_dir = $conf->timesheet->dir_output.'/tasks/'
+                    $upload_dir = $conf->timesheet->dir_output.'/users/'
                         .get_exdir($object->id, 2, 0, 0, $object, 'timesheet').$ref;
-                    $filearray = dol_dir_list($upload_dir, 'files', 
-                        0, '', '\.meta$', $sortfield, 
+                    $filearray = dol_dir_list($upload_dir, 'files', 0, '', '\.meta$', $sortfield, 
                         (strtolower($sortorder) == 'desc'?SORT_DESC:SORT_ASC), 1);
+                    //$param = 'action = submitfile&id='.$object->id;
+                    $param = '';
+                    $disablemove = 1;
+                    $formfile = new FormFile($db);
                     ob_start();
-                    $formfile->list_of_documents($filearray, $object, $modulepart, 
-                        $param, 0, $relativepathwithnofile, $permission);
+                    $formfile->list_of_documents(
+                            $filearray, $object, $modulepart, $param, 
+                            0, '',  0, 0, '', 0, '', '', 0, 0, 
+                            $upload_dir, $sortfield, $sortorder, $disablemove);
                     $Form .= ob_get_contents().'<br>'."\n";
                     ob_end_clean();
                 }
@@ -313,9 +315,10 @@ function getTStobeApproved($level, $offset, $role, $subId)
             $obj = $db->fetch_object($resql);
             $tmpTs = NEW TimesheetUserTasks($db, $obj->fk_userid);
             $tmpTs->id = $obj->rowid;
-            //$tmpTs->userId = $obj->fk_userid;
+            $tmpTs->userId = $obj->fk_userid;
             $tmpTs->date_start = $tmpTs->db->jdate($obj->date_start);
-            $tmpTs->date_start_end = $tmpTs->db->jdate($obj->date_start);
+            $tmpTs->ref = $tmpTs->date_start.'_'.$tmpTs->userId;
+            //$tmpTs->date_end = $tmpTs->db->jdate($obj->date_start);
             $tmpTs->status = $obj->status;
             $tmpTs->planned_workload = $obj->planned_workload;
             $tmpTs->note = $obj->note;

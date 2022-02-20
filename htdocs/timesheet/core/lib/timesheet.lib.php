@@ -38,7 +38,8 @@ Define("CUSTOMER", 3);
 Define("SUPPLIER", 4);
 Define("OTHER", 5);
 Define("ALL", 6);
-Define("ROLEMAX", 7);
+Define("ADMIN", 7);
+Define("ROLEMAX", 8);
 // back ground colors
 $statusColor = array(
     DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
@@ -115,31 +116,35 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
       $list = $user->getAllChildIds();
 
     }
-    if ($role == PROJECT || $role == ALL){
+    if ($role == PROJECT || $role == ALL || $role == ADMIN){
         $sql[0] = 'SELECT DISTINCT fk_socpeople as userid FROM '.MAIN_DB_PREFIX.'element_contact';
-        $sql[0] .= ' WHERE element_id in (SELECT element_id';
-        $sql[0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
-        $sql[0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
-        $sql[0] .= ' WHERE ctc.active = \'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%BILLING%\' OR ctc.code LIKE \'%EXECUTIVE%\')';
-        $sql[0] .= ' AND fk_socpeople in (';
-        $sql[2] = ')) AND fk_socpeople not in (';
-        $sql[4] = ')';
-        $idlist = '';
-        if (is_array($userid)) {
-            $ecludeduserid = array_merge($userid, $ecludeduserid);
-            $idlist = implode(", ", $userid);
-        } else{
-            $ecludeduserid[] = $userid;
-            $idlist = $userid;
+        if ($role != ADMIN){
+            $sql[0] .= ' WHERE element_id in (SELECT element_id';
+            $sql[0] .= ' FROM '.MAIN_DB_PREFIX.'element_contact AS ec';
+            $sql[0] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
+            if($role == PROJECT)$sql[0] .= ' WHERE ctc.active = \'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%LEADER%\' OR ctc.code LIKE \'%BILLING%\' OR ctc.code LIKE \'%EXECUTIVE%\')';
+            // only billing can see all
+            if($role == ALL)$sql[0] .= ' WHERE ctc.active = \'1\' AND ctc.element in (\'project\', \'project_task\') AND  (ctc.code LIKE \'%BILLING%\')';
+            $sql[0] .= ' AND fk_socpeople in (';
+            $sql[2] = ')) AND fk_socpeople not in (';
+            $sql[4] = ')';
+            $idlist = '';
+            if (is_array($userid)) {
+                $ecludeduserid = array_merge($userid, $ecludeduserid);
+                $idlist = implode(", ", $userid);
+            } else{
+                $ecludeduserid[] = $userid;
+                $idlist = $userid;
+            }
+            $sql[1] = $idlist;
+            $idlist = '';
+            if (is_array($ecludeduserid)) {
+                $idlist = implode(", ", $ecludeduserid);
+            } elseif (!empty($ecludeduserid)) {
+                $idlist = $ecludeduserid;
+            }
+            $sql[3] = $idlist;
         }
-        $sql[1] = $idlist;
-        $idlist = '';
-        if (is_array($ecludeduserid)) {
-            $idlist = implode(", ", $ecludeduserid);
-        } elseif (!empty($ecludeduserid)) {
-            $idlist = $ecludeduserid;
-        }
-        $sql[3] = $idlist;
         ksort($sql, SORT_NUMERIC);
         $sqlused = implode($sql);
         dol_syslog('form::get_subordinate role='.$role, LOG_DEBUG);

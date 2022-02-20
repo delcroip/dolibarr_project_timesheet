@@ -103,7 +103,8 @@ switch($action) {
 if (!empty($token)) {
     unset($_SESSION['timesheet'][$token]);
 }
-
+$token = getToken();
+$_SESSION['timesheet'][$token] = array();
 /***************************************************
 * VIEW
 *
@@ -167,6 +168,7 @@ if ($conf->global->TIMESHEET_WHITELIST == 1) {
    $html .= '</div>';
 }
 $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
+$html .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token."\"/>\n";
 $htmltmp .= $timesheet_attendance->printHTMLTaskList($headers, $userid);
 $pattern  = "/(progressTask\[[^\]]+\]\[[^\]]+\])/i";
 $replacement = '$1" onchange="updateProgress(event);';
