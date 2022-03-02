@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
  * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2022      Pierre Ardoin <mapiolca@me.com>
  *
  * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,8 @@ require_once './core/modules/modules_timesheet.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 /**
  *        Class to manage generation of project document Baleine
  */
@@ -477,7 +480,12 @@ public function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outpu
  */
 public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid, $userName = "")
 {
-    global $langs, $conf, $mysoc;
+    global $langs, $conf, $mysoc, $db;
+
+    $project = new Project($db);
+    $project->fetch($projectid);
+    $project->fetch_thirdparty();
+
     $default_font_size = pdf_getPDFFontSize($outputlangs);
     pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
     $pdf->SetTextColor(0, 0, 60);
@@ -513,7 +521,7 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
     $pdf->SetFont('', 'B', $default_font_size +1);
     $pdf->SetXY($this->marge_gauche+$logoWidth, $posy);
     $pdf->SetTextColor(0, 0, 60);
-    $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($object->ref[$projectid]), '', 'R');
+    $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($project->ref." - ".$project->title), '', 'R');
     //worker name
     if (!empty($userName) && !$conf->global->TIMESHEET_PDF_HIDE_NAME) {
         $pdf->SetXY($this->marge_gauche, $height+$default_font_size + 3);
@@ -530,10 +538,10 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
     $pdf->SetXY($posx, $posy);
     $pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->stopDate, 'day', false, $outputlangs, true), '', 'R');
     // third party name
-    if (is_object($object->thirdparty[$projectid])) {
+    if ($project->thirdparty->id > 0) {
             $posy += 5;
             $pdf->SetXY($posx, $posy);
-            $pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $object->thirdparty[$projectid]->getFullName($outputlangs), '', 'R');
+            $pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $project->thirdparty->getFullName($outputlangs), '', 'R');
     }
     $pdf->SetTextColor(0, 0, 60);
 }

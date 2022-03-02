@@ -1,4 +1,23 @@
 # dolibarr_project_timesheet changelog
+4.5.1
+- Fix Project data on reports 
+
+4.5.0
+- new; first verison of the TS missing reminder
+- new: add submit/save next button on ts pages
+- new: add propal lines in the invoice service assignation screen (behave as lumpsum)
+- new: add lump sum option the invoice service assignation screen
+- new: show "all users" report
+- new: enable masking "import from agenda"
+- new add customer code in exports
+- new: total lines are dynamic
+- new: box for average/Max timesheet delta with hours per week for the user
+- fix: role authorisation issue on project/task
+- fix issue when selecting "curent user" in ts for other option
+- fix: unblock holiday if not approved
+- fix: project name on user report
+
+
 4.4.10 (2021-12-01)
 - fix the watch clock issue (going way to fast)
 
