@@ -94,14 +94,13 @@ if (empty($dateStart) || empty($dateEnd) || empty($userIdSelected)) {
 // if the user can see ts for other the user id is diferent
 $userIdlist = array();
 $userIdlistfull = getSubordinates($db, $userid, 2, array(), $admin ? ADMIN : ALL, $entity = '1', $admin);
+$userIdlistfull[] = $userid;
 if ($show_all)
 {
-    $userIdlistfull[] = $userid;
+    
     $userIdlist = $userIdlistfull;
-
 }else if (!empty($userIdSelected)  && $userIdSelected <> $userid) {
 
-    $userIdlistfull[] = $userid;
     if (in_array($userIdSelected, $userIdlist) || $admin ) {
         $userIdlist[] = $userIdSelected;
     } else{
@@ -111,6 +110,7 @@ if ($show_all)
     }
 } else{
     $userIdlist[] = $userid;
+    $userIdSelected = $userid;
 }
 
 $reportStatic = new TimesheetReport($db);
@@ -165,11 +165,13 @@ $form_output .= '<form action="?action=reportUser'.(($optioncss != '')?'&amp;opt
         ';
 if($admin){
     $form_output .= $form->select_dolusers($userIdSelected, 'userSelected');
-    // select short
+
+} else {
+    $form_output .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null, 0, $userIdlistfull);
+}
+if (count($userIdlistfull)>1) {
     $form_output .= ' <br><input type = "checkbox" name = "showAll" value = "1" ';
     $form_output .= ($show_all?'checked >':'>').$langs->trans('All') ;
-} else {
-    $form_output .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null, 0, $userIdlist);
 }
 
 
