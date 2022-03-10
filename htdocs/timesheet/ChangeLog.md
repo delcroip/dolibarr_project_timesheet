@@ -1,4 +1,9 @@
 # dolibarr_project_timesheet changelog
+4.5.2
+- fix missing subordinates on user reports
+- add "all" whenever someone have subordinates
+- add date sorting in the pdf reports
+
 4.5.1
 - Fix Project data on reports 
 
