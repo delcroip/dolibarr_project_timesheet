@@ -722,7 +722,7 @@ function updateProgressElement(element){
         
         if (typeof data.status!== 'undefined' && data.status && data.status!=""){ //  display status
             var obj=JSON.parse(data.status);
-            Object.keys(obj).foreach (function(key){
+            Object.keys(obj).forEach (function(key){
                 $.jnotify(obj[key].text+obj[key].param,obj[key].type)
                 if (obj[key].type == 'megs'){// only one will be returned
                 }
@@ -737,7 +737,7 @@ function updateProgressElement(element){
 
   function updateAllProgress(){
     selectElements = document.getElementsByTagName('select')
-    Object.keys(selectElements).foreach (function(key){
+    Object.keys(selectElements).forEach (function(key){
             current = selectElements[key];
             selectName = current.getAttribute("name");
             if (selectName && selectName.indexOf("progressTask") === 0) {
