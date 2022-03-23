@@ -94,7 +94,7 @@ class Stopwatch {
 
      if (typeof data.status!== 'undefined' && data.status && data.status!=""){ //  display status
                 var obj=JSON.parse(data.status);
-                Object.keys(obj).foreach (function(key){
+                Object.keys(obj).forEach (function(key){
                     $.jnotify(obj[key].text+obj[key].param,obj[key].type)
         });
      }
