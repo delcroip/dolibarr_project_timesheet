@@ -233,7 +233,7 @@ if ( ! empty( $querryRes ) && $conf->global->MAIN_MODULE_EXPORT ) {
         .dol_print_date( $dateStart, 'dayxcard' ) 
         .'&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) 
         .'&userSelected=' . $userIdSelected 
-        .'&mode='.$mode.'model=' . $model 
+        .'&mode='.$mode.'&model=' . $model 
         .'&invoicabletaskOnly=' . $invoicabletaskOnly 
         .'&ungroup=' . $ungroup 
         .'&showAll=' . $show_all 
@@ -244,7 +244,7 @@ if ( ! empty( $querryRes ) ) {
     . dol_print_date( $dateStart, 'dayxcard' ) 
     . '&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) 
     . '&userSelected=' . $userIdSelected 
-    . '&mode='.$mode.'model=' . $model 
+    . '&mode='.$mode.'&model=' . $model 
     . '&invoicabletaskOnly='  . $invoicabletaskOnly 
     . '&ungroup=' . $ungroup 
     . '&showAll=' . $show_all 
