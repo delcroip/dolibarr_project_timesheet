@@ -101,7 +101,7 @@ if ($show_all)
     $userIdlist = $userIdlistfull;
 }else if (!empty($userIdSelected)  && $userIdSelected <> $userid) {
 
-    if (in_array($userIdSelected, $userIdlist) || $admin ) {
+    if (in_array($userIdSelected, $userIdlistfull) || $admin ) {
         $userIdlist[] = $userIdSelected;
     } else{
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
