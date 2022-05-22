@@ -219,6 +219,7 @@ if ($conf->global->TIMESHEET_ADD_FOR_OTHER == 1
 //$ajax = false;
 $Form = $task_timesheet->getHTMLNavigation($optioncss);
 $Form .= $task_timesheet->getHTMLFormHeader();
+$Form .= $task_timesheet->getHTMLActions();
      if ($conf->global->TIMESHEET_WHITELIST == 1) {
         $Form .= '<div class="tabs" data-role="controlgroup" data-type = "horizontal"  >';
         $Form .= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'')

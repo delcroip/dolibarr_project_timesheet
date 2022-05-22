@@ -752,14 +752,14 @@ Public function setStatus($user, $status, $id = 0)
     $error = ($this->id <= 0)?$this->create($user):$this->update($user);
     if ($error>0) {
         if ($status == REJECTED)$this->sendRejectedReminders($user);
-        if (count($this->taskTimesheet)<1) {
+        if (is_array($this->taskTimesheet) && count($this->taskTimesheet)<1) {
         $this->fetch($id);
         }
         $this->status = DRAFT;// SET THE STATUS TO DRAFT TO GET ALL
         $this->fetchTaskTimesheet();
         $this->status = $status;
         $this->status = $status;
-        if (count($this->taskTimesheet)>0)foreach ($this->taskTimesheet as $ts) {
+        if (is_array($this->taskTimesheet) && count($this->taskTimesheet)>0)foreach ($this->taskTimesheet as $ts) {
             $tasktime = new TimesheetTask($this->db);
             $tasktime->unserialize($ts);
             //$tasktime->appId = $this->id;
@@ -827,6 +827,7 @@ public function getHTMLHeader($search = false)
         $html .= '</tr>';
     }
     $html .= '<tr class = "liste_titre" id = "">'."\n";
+    
     foreach ($this->headers as $key => $value) {
         $html .= "\t<th ";
         if (count($this->headers) == 1) {
@@ -865,7 +866,7 @@ public function getHTMLFormHeader($ajax = false)
  */
 public function getHTMLTotal()
 {
-    $html .= "<tr class = 'liste_titre'>\n";
+    $html = "<tr class = 'liste_titre'>\n";
     $html .= '<th colspan = "'.(count($this->headers)-1).'" align = "right" > TOTAL </th>';
     $length = getDayInterval($this->date_start, $this->date_end);
     $html .= "<th><div class = \"TotalUser_{$this->id}\">&nbsp;</div></th>\n";
@@ -883,11 +884,29 @@ public function getHTMLTotal()
  */
 public function getHTMLFooter($ajax = false)
 {
-     global $langs, $apflows;
+    global $langs;
     //form button
     $html = '<input type = "hidden" id="csrf-token" name = "token" value = "'.$this->token."\"/>\n";
-    $html .= '<div class = "tabsAction">';
-     $isOpenSatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED));
+    $html .= $this->getHTMLActions();
+    $html .= "</form>\n";
+    if ($ajax) {
+        $html .= '<script type = "text/javascript">'."\n\t";
+        $html .= 'window.onload = function()
+            {loadXMLTimesheet("'.$this->date_start.'", '.$this->userId.');}';
+        $html .= "\n\t".'</script>'."\n";
+    }
+     return $html;
+}
+
+/**
+ * 
+ * 
+ */
+
+public function getHTMLActions(){
+    global $langs, $apflows;
+    $html = '<div class = "tabsAction">';
+    $isOpenSatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED));
     if ($isOpenSatus) {
         $html .= '<input type = "submit"   class = "butAction" name = "save" value = "'.$langs->trans('Save')."\" />\n";
         //$html .= '<input type = "submit" class = "butAction" name = "submit" onClick = "return submitTs();" value = "'.$langs->trans('Submit')."\" />\n";
@@ -900,15 +919,8 @@ public function getHTMLFooter($ajax = false)
         $html .= '<a class = "butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
     } elseif ($this->status == SUBMITTED)$html .= '<input type = "submit" class = "butAction" name = "recall" " value = "'.$langs->trans('Recall')."\" />\n";
     $html .= '</div>';
-    $html .= "</form>\n";
-    if ($ajax) {
-        $html .= '<script type = "text/javascript">'."\n\t";
-        $html .= 'window.onload = function()
-            {loadXMLTimesheet("'.$this->date_start.'", '.$this->userId.');}';
-        $html .= "\n\t".'</script>'."\n";
-    }
-     return $html;
-}
+    return $html;
+ }
    /* function to genegate the timesheet table header
  *
  *  @param    int           $current           number associated with the TS AP
