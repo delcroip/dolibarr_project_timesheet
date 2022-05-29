@@ -1,4 +1,14 @@
 # dolibarr_project_timesheet changelog
+4.5.2
+- fix missing subordinates on user reports
+- add "all" whenever someone have subordinates
+- add date sorting in the pdf reports
+- trads updates (visa -> signature + DE fixes)
+- adds the buttons on top and bottom of the page 
+- fix bad report url
+- fix foreach js syntax (nicolasb827)
+
+
 4.5.1
 - Fix Project data on reports 
 
