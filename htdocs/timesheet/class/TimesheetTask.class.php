@@ -1250,7 +1250,7 @@ class TimesheetTask extends Task
             + $_SESSION['timesheet'][$token]['timeSpendDeleted'] 
             + $_SESSION['timesheet'][$token]['timeSpendCreated']) ;
         # update the time used on the task level
-        if ($nbUpdate > 0) {
+        if (($nbUpdate + $progressUpdate) > 0) {
             $this->updateTimeUsed();
             if ($progressUpdate)$_SESSION['timesheet'][$token]['ProgressUpdate']++;
         }
