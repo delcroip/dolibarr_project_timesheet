@@ -1,4 +1,9 @@
 # dolibarr_project_timesheet changelog
+4.5.4
+- fix: save and next
+- fix: update progress only #190
+- fix: calcualte total lines
+
 4.5.3
 - better adaptative header size in PDF
 
