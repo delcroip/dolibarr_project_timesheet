@@ -121,7 +121,7 @@ function updateAll(){
               TotalList[i].innerHTML = minutesToHTML(total);
           }
     }
-    //updateAllLinesTotal();
+    updateAllLinesTotal();
 }
 
 
