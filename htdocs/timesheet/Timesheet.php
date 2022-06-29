@@ -50,7 +50,7 @@ $userid = is_object($user)?$user->id:$user;
 $postUserId = GETPOST('userid', 'int');
 $submitted = GETPOST('submit', 'alpha');
 $submitted_next = GETPOST('submit_next', 'alpha');
-$save_next = GETPOST('save_next', 'alpha');
+$saved_next = GETPOST('save_next', 'alpha');
 $tsUserId = GETPOST('tsUserId', 'int');
 
 $admin = $user->admin || $user->rights->timesheet->timesheet->admin;
