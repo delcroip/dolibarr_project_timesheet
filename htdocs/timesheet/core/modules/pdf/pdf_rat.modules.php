@@ -220,12 +220,8 @@ public function writeFile($object, $outputlangs)
         //constant
         $default_font_size = pdf_getPDFFontSize($outputlangs);        // Must be after pdf_getInstance
         //$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);        // Height reserved to output the free text on last page
-        $tab_top = 42;
-        $tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
-        $writable_height = 170;
+
         $tab_height_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?170:202);
-        $height_note = 0;
-        $tab_height = $writable_height - $height_note;
         //$cur_tab_height = $tab_height;
         $HeightSignBox = 30;
         $heightforlastfooter = ($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX == 1)?7:($HeightSignBox + 7);
@@ -234,7 +230,6 @@ public function writeFile($object, $outputlangs)
         $heightoftitleline = 6;
         $bottomlasttab = $this->page_hauteur - $heightforlastfooter - $heightforfooter + 1;
         $widthSignBox = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/2-1;
-        $cur_tab_height = $tab_height;
         $pdf->AddPage();
         //init pdf cursor
         $pdf->setPage($pagenb);
@@ -280,7 +275,6 @@ public function writeFile($object, $outputlangs)
            // action when a page break is required : rollback and write on the next page
             if ($addpagebreak == true) {
                 $starty=10;
-                $cur_tab_height = $tab_height_newpage;
                 $pdf->rollbackTransaction(true);
                 // new page
                 $pageposafter = $pageposbefore+1;
@@ -289,7 +283,7 @@ public function writeFile($object, $outputlangs)
                 if (! empty($tplidx)) $pdf->useTemplate($tplidx);
                 $pdf->setPage($pageposafter);
                 if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $starty = $this->pageHead($pdf, $object, 1, $outputlangs, $projectid, $tasktimearray['lines'][0]['userName']);
-                $curY = $starty;
+                $curY = $starty + $heightoftitleline + 1;
                 $pdf->SetFont('', '', $default_font_size - 1);// On repositionne la police par defaut
                 $pdf->MultiCell(0, 3, '');                // Set interline to 3
                 $pdf->SetTextColor(0, 0, 0);
@@ -304,7 +298,7 @@ public function writeFile($object, $outputlangs)
                 //$this->pageFoot($pdf, $object, $outputlangs, 1);
                 $pdf->setPage($pagenb);
                 $pdf->setPageOrientation('', 1, 0);        // The only function to edit the bottom margin of current page to set it.
-                if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->pageHead($pdf, $object, 0, $outputlangs, $startday, $stopday, $projectid);
+                //if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $starty = $this->pageHead($pdf, $object, 0, $outputlangs, $startday, $stopday, $projectid);
                 $pagenb++;
                 $pdf->setPage($pageposafter);
                 $pageposafter = $pdf->getPage();
@@ -524,23 +518,23 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
     $pdf->SetTextColor(0, 0, 60);
     $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite  - $logoWidth, 4, $outputlangs->convToOutputCharset($project->ref." - ".$project->title), '', 'R');
     $pdf->SetFont('', '', $default_font_size);
-    $posy += ($default_font_size+1)/2;
+    $posy = $pdf->GetY() + 1;
     //dateStart
     
     $pdf->SetXY($posx, $posy);
     $pdf->SetTextColor(0, 0, 60);
     $pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : " . dol_print_date($object->startDate, 'day', false, $outputlangs, true), '', 'R');
-    $posy += $default_font_size/2;
+    $posy = $pdf->GetY() + 1;
     //DateStop
     $pdf->SetXY($posx, $posy);
     $pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->stopDate, 'day', false, $outputlangs, true), '', 'R');
-    $posy += $default_font_size/2;
+    $posy = $pdf->GetY() + 1;
     // third party name
     if ($project->thirdparty->id > 0) {
             
             $pdf->SetXY($posx, $posy);
             $pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $project->thirdparty->getFullName($outputlangs), '', 'R');
-            $posy += $default_font_size/2;
+            $posy = $pdf->GetY() + 1;
     }
     $pdf->SetTextColor(0, 0, 60);
         //worker name

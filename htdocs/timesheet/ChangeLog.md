@@ -1,4 +1,9 @@
 # dolibarr_project_timesheet changelog
+4.5.5
+- fix: pdf header with small pictures
+- misc: white logo
+
+
 4.5.4
 - fix: save and next
 - fix: update progress only #190
