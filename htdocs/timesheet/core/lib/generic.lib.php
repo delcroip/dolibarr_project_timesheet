@@ -314,12 +314,20 @@ function crypto_rand_secure($min, $max)
 function getToken($length = 32)
 {
     $token = "";
-    $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    $codeAlphabet .= "abcdefghijklmnopqrstuvwxyz";
-    $codeAlphabet .= "0123456789";
-    for($i = 0;$i<$length;$i++)
-    {
-        $token .= $codeAlphabet[crypto_rand_secure(0, strlen($codeAlphabet))];
+
+    if (function_exists("newToken")){
+        # use the CSRF from the core
+        $token = newToken();
+    }else if (key_exists("token",$_SESSION)){
+        $token = $_SESSION["token"];
+    }else{
+        $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $codeAlphabet .= "abcdefghijklmnopqrstuvwxyz";
+        $codeAlphabet .= "0123456789";
+        for($i = 0;$i<$length;$i++)
+        {
+            $token .= $codeAlphabet[crypto_rand_secure(0, strlen($codeAlphabet))];
+        }
     }
     return $token;
 }
