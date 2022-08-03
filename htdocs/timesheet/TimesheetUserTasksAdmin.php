@@ -556,6 +556,7 @@ switch($action) {
             //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
             print_barre_liste($langs->trans("Timesheetuser"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
             print '<form method = "POST" action = "'.$_SERVER["PHP_SELF"].'">';
+            print '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
             print '<table class = "liste" style = "border-collapse:separate;" width = "100%">'."\n";
             //TITLE
             print '<tr class = "liste_titre">';

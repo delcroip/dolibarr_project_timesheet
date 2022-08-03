@@ -365,6 +365,8 @@ function getHTMLNavigation($optioncss, $selectList, $current = 0)
     }
     $Nav .= "</th>\n\t\t<th>\n\t\t\t";
     $Nav .= '<form name = "goTo" action="?action=goTo" method = "POST" >'."\n\t\t\t";
+    $Nav .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
     $Nav .= $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
     $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
     if ($current<count($selectList)) {

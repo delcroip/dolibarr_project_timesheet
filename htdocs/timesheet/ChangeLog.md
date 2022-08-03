@@ -1,4 +1,8 @@
 # dolibarr_project_timesheet changelog
+4.5.6
+- fix csrf issue in other pages
+- fix box issue
+
 4.5.5
 - fix: pdf header with small pictures
 - misc: white logo

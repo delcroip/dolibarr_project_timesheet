@@ -758,6 +758,9 @@ public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
          $HTML .= $form->select_dolusers($selected, 'userid');
     }
     $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
+    //FIXME should take token as input
+    $token = getToken();
+    $HTML .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
 
     return $HTML;
 }
