@@ -228,6 +228,9 @@ $form_output .= '<form action="?action=reportproject'.(($optioncss != '')?'&amp;
         <td></td>
         </tr>
         <tr >';
+$token = getToken();
+$form_output .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
 
 if($hidetab == 1){
         $form_output .='<td><select  name = "projectSelected">';
@@ -295,19 +298,19 @@ if (!empty($querryRes))$form_output .=
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='
     .$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
-    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('TimesheetPDF').'</a>';
+    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'&token='.$token.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if (!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$form_output .=
     '<a class = "butAction" href="?action=getExport&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly
-    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('Export').'</a>';
+    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'&token='.$token.'" >'.$langs->trans('Export').'</a>';
 if (!empty($querryRes))$form_output .=
     '<a class = "butAction" href="?action=reportproject&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
-    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'" >'.$langs->trans('Refresh').'</a>';
+    ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'&token='.$token.'" >'.$langs->trans('Refresh').'</a>';
 $form_output .= '</form>';
 if (!($optioncss != '' && !empty($_POST['userSelected']))) echo $form_output;
 echo $querryRes;

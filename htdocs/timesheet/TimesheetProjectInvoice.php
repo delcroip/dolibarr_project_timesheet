@@ -25,6 +25,7 @@ define('$conf->global->TIMESHEET_INVOICE_SHOW_USER', '1');
 include 'core/lib/includeMain.lib.php';
 include 'core/lib/generic.lib.php';
 include 'core/lib/timesheet.lib.php';
+$token = getToken();
 require_once DOL_DOCUMENT_ROOT .'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -105,6 +106,8 @@ $langs->load('timesheet@timesheet');
             $Form .= '<input type = "hidden" name = "socid" value = "'.$socid.'">';
             $Form .= '<input type = "hidden" name = "invoicingMethod" value = "'.$mode.'">';
             $Form .= '<input type = "hidden" name = "ts2Invoice" value = "'.$ts2Invoice.'">';
+            $Form .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
             $resql = $db->query($sql);
             $num = 0;
             $resArray = array();
@@ -492,6 +495,7 @@ $langs->load('timesheet@timesheet');
             //    $sqlTailWhere .= ' AND fk_socpeople = \''.$userid.'\' and t.fk_statut = \'1\'';
             //}
             $Form = '<form name = "settings" action="?step=2" method = "POST" >'."\n\t";
+            $Form .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
             $Form .= '<table class = "noborder" width = "100%">'."\n\t\t";
             $Form .= '<tr class = "liste_titre" width = "100%" ><th colspan = "2">'
                 .$langs->trans('generalInvoiceProjectParam').'</th></tr>';

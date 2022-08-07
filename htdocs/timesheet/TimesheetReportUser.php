@@ -163,6 +163,9 @@ $form_output .= '<form action="?action=reportUser'.(($optioncss != '')?'&amp;opt
         <tr >
         <td>
         ';
+$token = getToken();
+$form_output .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
 if($admin){
     $form_output .= $form->select_dolusers($userIdSelected, 'userSelected');
 
@@ -237,7 +240,7 @@ if ( ! empty( $querryRes ) && $conf->global->MAIN_MODULE_EXPORT ) {
         .'&invoicabletaskOnly=' . $invoicabletaskOnly 
         .'&ungroup=' . $ungroup 
         .'&showAll=' . $show_all 
-        . '" >' . $langs->trans( 'Export' ) . '</a>';
+        . '&token='.$token.'" >' . $langs->trans( 'Export' ) . '</a>';
 }
 if ( ! empty( $querryRes ) ) {
 	$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart=' 
@@ -248,7 +251,7 @@ if ( ! empty( $querryRes ) ) {
     . '&invoicabletaskOnly='  . $invoicabletaskOnly 
     . '&ungroup=' . $ungroup 
     . '&showAll=' . $show_all 
-    . '" >' . $langs->trans( 'PDF' ) . '</a>';
+    . '&token='.$token.'" >' . $langs->trans( 'PDF' ) . '</a>';
 }
 $form_output .= '</div></div></form>';
 
