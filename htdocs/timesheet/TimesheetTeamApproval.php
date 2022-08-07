@@ -297,7 +297,7 @@ function getTStobeApproved($level, $offset, $role, $subId)
             $sql .= ' ORDER BY YEAR(date_start) DESC, MONTH(date_start) DESC, fk_userid DESC';
         } else {
             $sql .= ' ORDER BY date_part(\'year\', date_start) DESC, '
-                .'ate_part(\'month\', date_start) DESC, fk_userid DESC';
+                .'date_part(\'month\', date_start) DESC, fk_userid DESC';
         }
     }
     $sql .= ' LIMIT '.$level;
