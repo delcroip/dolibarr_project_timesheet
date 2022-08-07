@@ -360,6 +360,8 @@ print '<span class="opacitymedium">'.$langs->trans("GeneralTabDesc").'</span>';
 print load_fiche_titre( $langs->trans( "GeneralOption" ), '', '' );
 
 echo '<form name="settings" action="?action=save" method="POST">';
+$token = getToken();
+echo '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
 echo '<table class="noborder" width = "100%">';
 echo '<tr class="liste_titre" width = "100%" ><th width = "200px">'.$langs->trans("Name").'</th><th>';
 echo $langs->trans("Description").'</th><th>'.$langs->trans("Value")."</th></tr>";

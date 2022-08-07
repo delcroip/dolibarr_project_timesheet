@@ -515,6 +515,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
         dol_print_error($db);
     }
     print '</table>'."\n";
+    print '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
     print '</form>'."\n";
     // new button
    // print '<a href = "attendanceeventCard.php?action=create" class="butAction"role="button">'.$langs->trans('New');

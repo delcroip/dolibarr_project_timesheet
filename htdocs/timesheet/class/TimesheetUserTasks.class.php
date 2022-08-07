@@ -1061,33 +1061,25 @@ public function getHTMLNavigation($optioncss, $ajax = false)
     global $langs, $conf;
     $form = new Form($this->db);
     $tail = '';
-    //$tail = '&wlm='.$this->whitelistmode;
     if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) 
         && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1){
         $tail = '&userid='.$this->userId;
     }
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
     if ($ajax) {
-//     $Nav .= '<a id = "navPrev" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, -1).'\', 0);';
     } else{
         $Nav .= '<a href="?dateStart='.getStartDate($this->date_start, -1).$tail;
     }
     if ($optioncss != '')$Nav .= '&amp;optioncss='.$optioncss;
     $Nav .= '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-//  if ($ajax)
-//  {
-    //    $Nav .= '<form name = "goToDate" onsubmit = "return toDateHandler();" action="?action=goToDate&wlm='.$this->whitelistmode.'" method = "POST">'."\n\t\t\t";
-    //} else{
-        $Nav .= '<form name = "goToDate" action="?action=goToDate'.$tail.'" method = "POST" >'."\n\t\t\t";
-    //}
+    $Nav .= '<form name = "goToDate" action="?action=goToDate'.$tail.'" method = "POST" >'."\n\t\t\t";
+    //FIXME should take token as input
+    $token = getToken();
+    $Nav .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
     $Nav .= $langs->trans("GoTo").': '.$form->select_date(-1, 'toDate', 0, 0, 0, "", 1, 1, 1)."\n\t\t\t";;
     $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-    //if ($ajax)
-//    {
-    //    $Nav .= '<a id = "navNext" onClick = "loadXMLTimesheet(\''.getStartDate($this->date_start, 1).'\', 0);';
-    //} else{
-        $Nav .= '<a href="?dateStart='.getStartDate($this->date_start, 1).$tail;
-    //}
+    $Nav .= '<a href="?dateStart='.getStartDate($this->date_start, 1).$tail;
     if ($optioncss != '') $Nav .= '&amp;optioncss='.$optioncss;
     $Nav .= '">'.$langs->trans("Next").' &gt;&gt;</a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
     return $Nav;
@@ -1155,7 +1147,12 @@ public function getHTMLNavigation($optioncss, $ajax = false)
         } else{
             $HTML .= $form->select_dolusers($selected, 'userid');
         }
+        //FIXME should take token as input
+        $token = getToken();
+        $HTML .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
         $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
+        
         return $HTML;
     }
     /**
