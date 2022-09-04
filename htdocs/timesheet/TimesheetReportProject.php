@@ -20,6 +20,7 @@ include 'core/lib/includeMain.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once './core/lib/timesheet.lib.php';
 require_once './class/TimesheetReport.class.php';
+require_once 'core/lib/generic.lib.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';

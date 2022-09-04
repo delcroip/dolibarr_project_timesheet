@@ -1,4 +1,8 @@
 # dolibarr_project_timesheet changelog
+4.5.8
+- fix mysql issue (approval and box)
+- fix missing include (getToken)
+
 4.5.7
 - fix psql issue (approval and box)
 

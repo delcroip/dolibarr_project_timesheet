@@ -28,6 +28,7 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/AttendanceEvent.class.php';
 require_once 'class/TimesheetTask.class.php';
+require_once 'core/lib/generic.lib.php';
 $admin = $user->admin || $user->rights->timesheet->attendance->admin;
 if (!$user->rights->timesheet->attendance->user && !$admin) {
     $accessforbidden = accessforbidden("You don't have the attendance/chrono user or admin right");
