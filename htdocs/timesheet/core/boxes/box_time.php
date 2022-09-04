@@ -59,10 +59,10 @@ class box_time extends ModeleBoxes
             if ($this->db->type!='pgsql') {
                 $sqlweek = " 
                 with digit as (
-                    select 0 union all 
-                    select 1 union all select 2 union all select 3 union all
-                    select 4 union all select 5 union all select 6 union all
-                    select 7 union all select 8 union all select 9        
+                    select 0 as d union all 
+                    select 1 as d union all select 2 as d union all select 3 as d union all
+                    select 4 as d union all select 5 as d union all select 6 as d union all
+                    select 7 as d union all select 8 as d union all select 9 as d        
                 ),
                 seq as (
                     select a.d + (10 * b.d) + (100 * c.d) + (1000 * d.d) as num
