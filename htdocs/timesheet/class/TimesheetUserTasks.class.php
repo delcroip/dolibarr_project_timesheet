@@ -1334,9 +1334,9 @@ public function GetTimeSheetXML()
         $sql = "SELECT SUM(pt.task_duration)/3600 as duration,  u.weeklyhours
             u.email, u.weeklyhours
             FROM ".MAIN_DB_PREFIX."element_contact  as ec ON t.rowid = ec.element_id
-           LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = fk_c_type_contact
-            LEFT JOIN llx_projet_task_time pt ON  pt.fk_user = fk_socpeople
-            LEFT JOIN llx_user u ON u.rowid = fk_socpeople
+           LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON ctc.rowid = fk_c_type_contact
+            LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time pt ON  pt.fk_user = fk_socpeople
+            LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = fk_socpeople
             WHERE  (ctc.element in (\'project\') 
             and pt.task_date BETWEEN $date_start AND $date_end
             GROUP BY u.rowid "; 
