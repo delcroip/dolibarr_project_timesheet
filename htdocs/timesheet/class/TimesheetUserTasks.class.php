@@ -507,7 +507,7 @@ public function saveInSession()
  */
 public function fetchTaskTimesheet($userid = '')
 {
-    global $conf, $user;
+    global $conf, $user, $langs;
     $res = array();
     if ($userid == '') {
         $userid = $this->userId;
@@ -521,10 +521,8 @@ public function fetchTaskTimesheet($userid = '')
     $whiteList = $staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
     $tasksList = array();
-    $sqlwhiteList = '';
     $sql = 'SELECT DISTINCT element_id as taskid, prj.fk_soc, tsk.fk_projet, tsk.progress, ';
     $sql .= 'tsk.fk_task_parent, tsk.rowid, app.rowid as appid, prj.ref as prjRef, tsk.ref as tskRef';
-    $sql .= $sqlwhiteList;
     $sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact  AND ctc.active = \'1\') ';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = ec.element_id ';
@@ -589,14 +587,27 @@ public function fetchTaskTimesheet($userid = '')
                     $ret[$obj->taskid] = $obj->appid;
             }
             $this->db->free($resql);
-             $i = 0;
-            if (isset($this->taskTimesheet))unset($this->taskTimesheet);
+            $i = 0;
+            $othertaskid = array();
+            if(isset($this->taskTimesheet))unset($this->taskTimesheet);
             foreach ($tasksList as $row) {
+                $othertaskid[] = $row->id;
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
                 $row->getTaskInfo();// get task info include in fetch
                 $row->getActuals($datestart, $datestop, $userid);
                 $this->taskTimesheet[$row->id] = $row->serialize();
             }
+            // bundle all other time in a line
+            $other = NEW TimesheetTask($this->db, -1);
+            $other->exclusionlist = $othertaskid;
+            $other->date_start_approval = $this->date_start;
+            $other->date_end_approval = $this->date_end;
+            $other->userId = $this->userId;
+            $other->description = $langs->trans("Other");
+            $other->title= $langs->trans("Other");
+            $row->getActuals($datestart, $datestop, $userid);
+            $this->taskTimesheet[0] = $other->serialize();
+
             return $ret;
     } else {
             dol_print_error($this->db);

@@ -38,7 +38,7 @@ class TimesheetTask extends Task
     private $stopDatePjct;
     private $pStatus;
     //whitelist
-    private $hidden;// in the whitelist
+    public $exclusionlist;// in the whitelist
         //time
     // from db
     public $appId;
@@ -527,6 +527,8 @@ class TimesheetTask extends Task
             return -1;
         }
     }
+
+
     /**
      *  FUNCTION TO GET THE ACTUALS FOR A WEEK AND AN USER
      *  @param    Datetime              $timeStart       start date to look for actuals
@@ -558,14 +560,19 @@ class TimesheetTask extends Task
         $dayelapsed = getDayInterval($timeStart, $timeEnd);
         if ($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.task_duration, DATE(ptt.task_datehour) AS task_date, ptt.note";
-        if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
+         if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
             $sql .= ', (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced';
         }else{
             $sql .= ', 0 AS invoiced';
         }
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ";
-        if (in_array($this->status, array(SUBMITTED, UNDERAPPROVAL, APPROVED, CHALLENGED, INVOICED))) {
+        if ($this->id == -1 && is_array($this->exclusionlist)){
+            $sql .= " ptt.fk_task not in  '".implode("','",$this->exclusionlist)."' ";
+            $sql .= " AND (ptt.fk_user = '".$userid."') ";
+            $sql .= " AND (DATE(ptt.task_datehour) >= '".$this->db->idate($timeStart)."') ";
+            $sql .= " AND (DATE(ptt.task_datehour)<'".$this->db->idate($timeEnd)."')";
+        }elseif (in_array($this->status, array(SUBMITTED, UNDERAPPROVAL, APPROVED, CHALLENGED, INVOICED))) {
             $sql .= ' ptt.fk_task_time_approval = \''.$this->appId.'\'';
         } else {
             $sql .= " ptt.fk_task = '".$this->id."' ";
@@ -721,7 +728,7 @@ class TimesheetTask extends Task
             }
             $other = formatTime($otherSec, -1);
             
-            if ($isOpenStatus) {
+            if ($isOpenStatus && $this->id>0) {
                 $isOpen = $isOpenStatus && (($startDates == 0) || ($startDates <= $today_end ));
                 $isOpen = $isOpen && (($stopDates == 0) ||($stopDates >= $today));
                 $isOpen = $isOpen && ($this->pStatus < "2") ;
