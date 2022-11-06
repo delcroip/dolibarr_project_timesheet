@@ -605,7 +605,7 @@ public function fetchTaskTimesheet($userid = '')
             $other->userId = $this->userId;
             $other->description = $langs->trans("Other");
             $other->title= $langs->trans("Other");
-            $row->getActuals($datestart, $datestop, $userid);
+            $other->getActuals($datestart, $datestop, $userid);
             $this->taskTimesheet[0] = $other->serialize();
 
             return $ret;
@@ -996,8 +996,10 @@ public function getHTMLtaskLines( $ajax = false)
             } else{
                 $blockOveride = 0;
             }
-            $Lines .= $row->getTimesheetLine($this->headers, $this->id, $blockOveride, $holiday);
-            //if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
+            if ($row->id != -1 or $row->getSavedTimeTotal() != 0){
+                $Lines .= $row->getTimesheetLine($this->headers, $this->id, $blockOveride, $holiday);
+            }
+                //if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
             $i++;
         }
     }

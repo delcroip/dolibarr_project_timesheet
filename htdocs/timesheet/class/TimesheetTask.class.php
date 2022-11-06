@@ -624,6 +624,25 @@ class TimesheetTask extends Task
             return -1;
         }
     }
+
+    /**
+     * funciton get_week_total
+     * 
+     * @return number of second
+     */
+
+     public function getSavedTimeTotal()
+     {
+        if (is_array($this->tasklist))
+        {
+            $total = 0;
+            foreach ($this->tasklist as $key => $daytasktime) {
+                $total+= $daytasktime['duration'];
+            }
+        }
+        return $total;
+     }
+
     /**
      * function to form a HTMLform line for this timesheet
      *
@@ -828,7 +847,9 @@ class TimesheetTask extends Task
         $htmlTitle = '';
         foreach ($headers as $key => $title) {
             $html = '';
-            switch($title) {
+            if($this->id == -1){
+                $html .= '<div class="colOther">'.$langs->trans('Other').' </div>';    
+            }else switch($title) {
                 case 'Project':
                     $html .= '<div class="colProject">';
                     $objtemp = new Project($this->db);

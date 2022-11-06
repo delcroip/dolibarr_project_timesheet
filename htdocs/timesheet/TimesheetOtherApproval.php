@@ -365,9 +365,12 @@ function getHTMLRows($objectArray)
     foreach ($objectArray as $key => $object) {
  //        $object->getTaskInfo();
         $object->getActuals();
-        echo '<tr>';
-        echo $object->getTimesheetLine($headers, 0, '1');
-        echo "<tr>\n";
+        if ($object->id != -1 or $object->getSavedTimeTotal() != 0){
+            echo '<tr>';
+            echo $object->getTimesheetLine($headers, 0, '1');
+            echo "<tr>\n";
+        }
+
     }
 }
  /** function that provide the code of a character
