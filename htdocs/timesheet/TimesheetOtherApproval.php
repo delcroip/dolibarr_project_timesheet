@@ -154,7 +154,7 @@ llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 showTimesheetApTabs($role_key);
 echo '<div id = "'.$role.'" class = "tabBar">';
-if (!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $current);
+if (!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $token, $current);
 // form header
 echo '<form action="?action=submit" method = "POST" name = "OtherAp" id = "OtherAp">';
 echo '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
@@ -189,7 +189,7 @@ llxFooter();
  *
  *  @return     string                                         HTML
  */
-function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
+function getHTMLNavigation($role, $optioncss, $selectList,$token, $current = 0)
 {
     global $langs, $db;
     $htmlSelect = '<select name = "target">';
@@ -210,6 +210,8 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
     $Nav .= '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
     $Nav .= $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
     $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+    $Nav .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
     if ($current<count($selectList)) {
         $Nav .= '<a href="?action=goTo&target='.($current+1);
         $Nav .= '&role='.($role);
@@ -320,7 +322,6 @@ function getSelectAps($subId, $tasks, $role_key)
             $i++;
         }
     } else {
-        $error++;
         dol_print_error($db);
         $list = array();
     }

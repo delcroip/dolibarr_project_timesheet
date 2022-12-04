@@ -179,7 +179,7 @@ showTimesheetApTabs(TEAM);
 echo '<div id = "Team" class = "tabBar">';
 //tokentp = time();
 if (is_object($firstTimesheetUser)) {
-    if (!$print) echo getHTMLNavigation($optioncss, $selectList, $current);
+    if (!$print) echo getHTMLNavigation($optioncss, $selectList, $token, $current);
     $Form .= $firstTimesheetUser->getHTMLFormHeader($ajax);
     foreach ($objectArray as $key => $TTU) {
 
@@ -344,10 +344,11 @@ function getTStobeApproved($level, $offset, $role, $subId)
  *
  *  @param    string               $optioncss            get print mode
  *  @param     int               $selectList           List of pages
+ *  @param      string                $token            csrf token
  *  @param     object              $current                current page
  *  @return     string                                         HTML
  */
-function getHTMLNavigation($optioncss, $selectList, $current = 0)
+function getHTMLNavigation($optioncss, $selectList, $token, $current = 0)
 {
     global $langs, $db;
     $htmlSelect = '<select name = "target">';
@@ -389,7 +390,7 @@ function getSelectAps($subId)
     if ((!is_array($subId) || !count($subId)) && $subId!='all')return array();
     global $db, $langs, $conf;
     $sql = '';
-    $sqlWhere .= ' WHERE ts.status  in ('.SUBMITTED.', '.CHALLENGED.')';
+    $sqlWhere = ' WHERE ts.status  in ('.SUBMITTED.', '.CHALLENGED.')';
     if ($subId!='all')$sqlWhere .= ' AND ts.fk_userid in ('.implode(', ', $subId).')';
     if ($conf->global->TIMESHEET_APPROVAL_BY_WEEK == 1) {
         $sql = 'SELECT COUNT(ts.date_start) as nb, ts.date_start as id, ';
@@ -445,7 +446,6 @@ function getSelectAps($subId)
             $i++;
         }
     } else {
-        $error++;
         dol_print_error($db);
         $list = array();
     }
