@@ -23,32 +23,11 @@ require_once 'TimesheetHoliday.class.php';
 require_once 'TimesheetPublicHoliday.class.php';
 require_once 'TimesheetTask.class.php';
 require_once 'TimesheetFavourite.class.php';
-if (file_exists('core/lib/generic.lib.php')) {
-    require_once 'core/lib/generic.lib.php';
-}else{
-    //called outside the module
-    Define("NULL", 0);
-    Define("DRAFT", 1);
-    Define("SUBMITTED", 2);
-    Define("APPROVED", 3);
-    Define("CANCELLED", 4);
-    Define("REJECTED", 5);
-    Define("CHALLENGED", 6);
-    Define("INVOICED", 7);
-    Define("UNDERAPPROVAL", 8);
-    Define("PLANNED", 9);
-    Define("STATUSMAX", 10);
-    //APPFLOW
-    //const LINKED_ITEM = [
-    Define("USER", 0);
-    Define("TEAM", 1);
-    Define("PROJECT", 2);
-    Define("CUSTOMER", 3);
-    Define("SUPPLIER", 4);
-    Define("OTHER", 5);
-    Define("ALL", 6);
-    Define("ROLEMAX", 7);
-}
+
+require_once 'core/lib/generic.lib.php';
+require_once 'core/lib/timesheet.lib.php';
+
+
 
 class TimesheetUserTasks extends CommonObject
 {
@@ -582,7 +561,7 @@ public function fetchTaskTimesheet($userid = '')
                     $tasksList[$i]->date_end_approval = $this->date_end;
                     $tasksList[$i]->task_timesheet = $this->id;
                     $tasksList[$i]->progress = $obj->progress;
-                    $tasksList[$i]->listed = $whiteList[$obj->taskid];
+                    $tasksList[$i]->listed = is_array($whiteList)?$whiteList[$obj->taskid]:null;
                     $i++;
                     $ret[$obj->taskid] = $obj->appid;
             }
@@ -1269,7 +1248,7 @@ public function GetTimeSheetXML()
      */
     public function sendApprovalReminders()
     {
-        global $langs;
+        global $langs, $db;
         $ret = true;
         $sql = 'SELECT';
         $sql .= ' t.date_start, t.date_end, ';
@@ -1340,6 +1319,7 @@ public function GetTimeSheetXML()
      */
     public function sendTimesheetReminders()
     {
+        global $db;
     //check date: was yesterday a period end day ?
     $date_start = getStartDate(time(), -1);
     $date_end = getEndDate($date_start);

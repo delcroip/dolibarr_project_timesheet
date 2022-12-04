@@ -374,7 +374,7 @@ public function writeLine(&$pdf, $line, $curY, $outputlangs)
     // Ref of task
     $pdf->SetXY($this->posxref, $curY);
     $pdf->MultiCell($this->posxdate-$this->posxref, 0, dol_string_nohtmltag($ref), 0, 'L');
-    $nexY = max($nexY, $pdf->GetY());
+    $nexY = $pdf->GetY();
     // date
     $pdf->SetXY($this->posxdate, $curY);
     $pdf->MultiCell($this->posxlabel-$this->posxdate, 0, $date, 0, 'L');
@@ -492,7 +492,7 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
     if ($mysoc->logo) {
         if (is_readable($logo)) {
             $image_height = pdf_getHeightForLogo($logo);
-            $tmp = dol_getImageSize($logo, $url);
+            $tmp = dol_getImageSize($logo, '');
             $logoWidth = $tmp['width']>130?130:$tmp['width'];
             $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);        // width=0(auto)
         } else {

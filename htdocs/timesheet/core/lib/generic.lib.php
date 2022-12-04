@@ -197,6 +197,7 @@ function print_sellist(
     $url = ''
 ) {
     global $conf, $langs, $db;
+    $select = "";
     if (!isset($sqlarray['table'])|| !isset($sqlarray['keyfield'])||!isset($sqlarray['fields'])) {
         return 'error, one of the mandatory field of the function  select_sellist is missing:'.$sqlarray['table'].$sqlarray['keyfield'].$sqlarray['fields'];
     } elseif (empty($selected)) {
@@ -249,9 +250,8 @@ function print_sellist(
             $select = "NULL";
         }
     } else {
-        $error++;
         dol_print_error($db);
-       $select .= "ERROR";
+        $select .= "ERROR";
     }
       //$select .= "\n";
       return $select;

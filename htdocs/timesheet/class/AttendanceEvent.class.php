@@ -294,6 +294,7 @@ public $date_time_event_start;
         }else if ($id){
             $card .= $langs->trans("#").': '.$id;
         }
+        $morecss = '';
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -531,7 +532,7 @@ public $date_time_event_start;
      *        will create the sql part to update the parameters
      *
      *  @param USER $user user that will update
-     *        @return        void
+     *        @return        string
      */
     public function setSQLfields($user)
     {
@@ -884,7 +885,7 @@ public function createTimeSpend($user, $token = '')
             $tasksList[$i]->id = $obj->taskid;
             $tasksList[$i]->userId = $this->userid;
             $tasksList[$i]->getTaskInfo();
-            $tasksList[$i]->listed = $whiteList[$obj->taskid];
+            $tasksList[$i]->listed = is_array($whiteList)?$whiteList[$obj->taskid]:null;
             $i++;
         }
         $this->db->free($resql);

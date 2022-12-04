@@ -38,7 +38,7 @@ $action = GETPOST('action', 'alpha');
 $project = GETPOST('project', 'int');
 $task = GETPOST('taskid', 'int');
 $customer = GETPOST('customer', 'int');
-$json = $_POST['json'];//], 'alpha');
+$json = GETPOST('json');//], 'alpha');
 $today = time();
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -138,7 +138,7 @@ if ($key !== false){
 $ajax = false;
 
 //headers
-$html .= "<table id='chronoTable' class = 'noborder' width = '100%'>";
+$html = "<table id='chronoTable' class = 'noborder' width = '100%'>";
 $html .= "<tr>";
 foreach ($headers as $key => $value) {
     $html .= "\t<th ";
@@ -166,11 +166,11 @@ if ($conf->global->TIMESHEET_WHITELIST == 1) {
         .' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')">'
         .'<a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'
         .$langs->trans('Others').'</a></div>';
-   $html .= '</div>';
+   $html .= '</div>';       
 }
 $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
 $html .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token."\"/>\n";
-$htmltmp .= $timesheet_attendance->printHTMLTaskList($headers, $userid);
+$htmltmp = $timesheet_attendance->printHTMLTaskList($headers, $userid);
 $pattern  = "/(progressTask\[[^\]]+\]\[[^\]]+\])/i";
 $replacement = '$1" onchange="updateProgress(event);';
 $html .=  preg_replace($pattern, $replacement, $htmltmp);

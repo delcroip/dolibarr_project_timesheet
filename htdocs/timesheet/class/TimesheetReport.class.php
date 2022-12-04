@@ -372,6 +372,7 @@ class TimesheetReport
     public function getHTMLreportExport()
     {
         $resArray = $this->getReportArray(!($this->ungroup ==1));
+        $titleWidth = array();
         $HTMLRes = '<h1>'.$this->name.'</h1>';
         $HTMLRes .= $this->getHTMLReportHeaders();
         foreach ($resArray as $key => $item) {

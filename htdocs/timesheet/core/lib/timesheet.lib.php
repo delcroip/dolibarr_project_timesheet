@@ -74,20 +74,7 @@ $statusA = array(0=> $langs->trans('null'), 1 => $langs->trans('draft'), 2=>$lan
 $apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
 
 
-//const REDUNDANCY = [
-/*Define("NULL", 0);
-Define("NONE", 1);
-Define("WEEK", 2);
-Define("MONTH", 3);
-Define("QUARTER", 4);
-Define("YEAR", 5);
-//const LINKED_ITEM = [
-Define("NULL", 0);
-Define("NONE", 1);
-Define("TASK", 2);
-Define("PROJECT", 3);
-Define("TIMESPENT", 4);
-*/
+
 //global $db;
 // to get the whitlist object
 //require_once 'class/TimesheetFavourite.class.php';
@@ -174,7 +161,6 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
                 //$list[] = $userid;
             }
         } else {
-            $error++;
             dol_print_error($db);
             $list = array();
         }
@@ -274,13 +260,13 @@ function getUsersName($userids)
             $i++;
         }
     } else {
-        $error++;
         dol_print_error($db);
         $list = array();
     }
       //$select .= "\n";
     return $list;
 }
+
 if (!is_callable("GETPOSTISSET")) {
 /**
  * Return true if we are in a context of submitting a parameter
@@ -293,6 +279,8 @@ if (!is_callable("GETPOSTISSET")) {
             return(isset($_POST[$paramname]) || isset($_GET[$paramname]));
     }
 }
+
+
 if (!is_callable("setEventMessages")) {
     // function from /htdocs/core/lib/function.lib.php in Dolibarr 3.8
     function setEventMessages($mesg, $mesgs, $style = 'mesgs')
