@@ -413,7 +413,7 @@ class TimesheetTask extends Task
      *  @param      int               $status  status
      *  @return     int               <0 if KO, Id of created object if OK
      */
-    Public function updateTaskTime($status)
+    Public function updateTaskTime($status, $notrigger = True)
     {
         $error = 0;
         if ($status<0 || $status>STATUSMAX) return -1;// role not valide
@@ -438,6 +438,7 @@ class TimesheetTask extends Task
             $error++;
             $this->errors[] = "Error ".$this->db->lasterror();
         }
+
         if (! $error) {
             if (! $notrigger) {
                 // Uncomment this and change MYOBJECT to your own tag if you
@@ -511,7 +512,7 @@ class TimesheetTask extends Task
                 $this->stopDatePjct = $this->db->jdate($obj->pdatee);
                 $this->pStatus = $obj->pstatus;
                 if ($taskParent) {
-                    $this->fk_projet_task_parent = $obj->fk_projet_task_parent;
+                    $this->fk_task_parent = $obj->fk_task_parent;
                     $this->taskParentDesc = $obj->task_parent_label;
                 }
                 if ($Company) {
@@ -861,7 +862,7 @@ class TimesheetTask extends Task
                 case 'TaskParent':
                     $html .= '<div class="colTaskParent">';
                     $objtemp = new Task($this->db);
-                    $objtemp->fetch($this->fk_projet_task_parent);
+                    $objtemp->fetch($this->fk_task_parent);
                     $html .= str_replace('classfortooltip', 'classfortooltip colTaskParent', 
                         $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
                     $html .= '</div>';
@@ -998,7 +999,7 @@ class TimesheetTask extends Task
         //title section
         $xml .= "<Tasks id = \"{$this->id}\">{$this->description} </Tasks>";
         $xml .= "<Project id = \"{$this->fk_project}\">{$this->ProjectTitle} </Project>";
-        $xml .= "<TaskParent id = \"{$this->fk_projet_task_parent}\">{$this->taskParentDesc} </TaskParent>";
+        $xml .= "<TaskParent id = \"{$this->fk_task_parent}\">{$this->taskParentDesc} </TaskParent>";
         //$xml .= "<task id = \"{$this->id}\" name = \"{$this->description}\">\n";
         $xml .= "<DateStart unix = \"$this->date_start\">";
         if ($this->date_start)
@@ -1065,7 +1066,7 @@ class TimesheetTask extends Task
         $arRet['date_end_approval'] = $this->date_end_approval        ;
         $arRet['duration_effective'] = $this->duration_effective ;
         $arRet['planned_workload'] = $this->planned_workload ;
-        $arRet['fk_projet_task_parent'] = $this->fk_projet_task_parent ;
+        $arRet['fk_task_parent'] = $this->fk_task_parent ;
         $arRet['taskParentDesc'] = $this->taskParentDesc ;
         $arRet['companyName'] = $this->companyName  ;
         $arRet['companyId'] = $this->companyId;
@@ -1312,65 +1313,66 @@ class TimesheetTask extends Task
      */
     public function saveTaskTime($Submitter, $duration, $daynote, $dayKey, $addmode = false)
     {
-            $item = $this->tasklist[$dayKey];
-            $this->timespent_fk_user = $this->userId;
-            dol_syslog(__METHOD__."   duration Old=".$item['duration']." New="
-                .$duration." Id=".$item['id'].", date=".$item['date'], LOG_DEBUG);
-            $this->timespent_date = $item['date'];
-            if (isset($this->timespent_datehour)) {
-                $this->timespent_datehour = $item['date'];
-            }
-            if ($item['id']>0) {
-                $this->timespent_id = $item['id'];
-                $this->timespent_old_duration = $item['duration'];
-                $this->timespent_note .= $item['note'];
-                if ($addmode) {
-                    if (!empty($daynote)){
-                        $this->timespent_note .= "\n".$daynote;
-                    }
-                    $this->timespent_duration = $duration+$this->timespent_old_duration;
-                } else{
-                    $this->timespent_note = $daynote;
-                    $this->timespent_duration = $duration;
+        $item = $this->tasklist[$dayKey];
+        $resArray = array();
+        $this->timespent_fk_user = $this->userId;
+        dol_syslog(__METHOD__."   duration Old=".$item['duration']." New="
+            .$duration." Id=".$item['id'].", date=".$item['date'], LOG_DEBUG);
+        $this->timespent_date = $item['date'];
+        if (isset($this->timespent_datehour)) {
+            $this->timespent_datehour = $item['date'];
+        }
+        if ($item['id']>0) {
+            $this->timespent_id = $item['id'];
+            $this->timespent_old_duration = $item['duration'];
+            $this->timespent_note .= $item['note'];
+            if ($addmode) {
+                if (!empty($daynote)){
+                    $this->timespent_note .= "\n".$daynote;
                 }
-                if ($item['duration']!=$this->timespent_duration || $this->timespent_note!=$item['note']) {
-                    if ($this->timespent_duration>0 || !empty($daynote)) {
-                        dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
-                        if ($this->updateTimeSpent($Submitter, 0) >= 0) {
-                            $resArray['timeSpendModified']++;
-                        } else {
-                            $resArray['updateError']++;
-                        }
-                    } else {
-                        dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
-                        if ($this->delTimeSpent($Submitter, 0) >= 0) {
-                            $resArray['timeSpendDeleted']++;
-                            $this->tasklist[$dayKey]['id'] = 0;
-                        } else {
-                            $resArray['updateError']++;
-                        }
-                    }
-                }
-            } elseif ($duration>0 || !empty($daynote)) {
+                $this->timespent_duration = $duration+$this->timespent_old_duration;
+            } else{
                 $this->timespent_note = $daynote;
                 $this->timespent_duration = $duration;
-                $newId = $this->addTimeSpent($Submitter, 0);
-                if ($newId >= 0) {
-                    $resArray['timeSpendCreated']++;
-                    $this->tasklist[$dayKey]['id'] = $newId;
+            }
+            if ($item['duration']!=$this->timespent_duration || $this->timespent_note!=$item['note']) {
+                if ($this->timespent_duration>0 || !empty($daynote)) {
+                    dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
+                    if ($this->updateTimeSpent($Submitter, 0) >= 0) {
+                        $resArray['timeSpendModified']++;
+                    } else {
+                        $resArray['updateError']++;
+                    }
                 } else {
-                    $resArray['updateError']++;
+                    dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
+                    if ($this->delTimeSpent($Submitter, 0) >= 0) {
+                        $resArray['timeSpendDeleted']++;
+                        $this->tasklist[$dayKey]['id'] = 0;
+                    } else {
+                        $resArray['updateError']++;
+                    }
                 }
             }
-            //update the task list
-            if($this->tasklist[$dayKey]['duration'] != $this->timespent_duration){
-                $this->tasklist[$dayKey]['duration'] = $this->timespent_duration;
+        } elseif ($duration>0 || !empty($daynote)) {
+            $this->timespent_note = $daynote;
+            $this->timespent_duration = $duration;
+            $newId = $this->addTimeSpent($Submitter, 0);
+            if ($newId >= 0) {
+                $resArray['timeSpendCreated']++;
+                $this->tasklist[$dayKey]['id'] = $newId;
+            } else {
+                $resArray['updateError']++;
             }
-            if($this->tasklist[$dayKey]['note'] != $this->timespent_note){
-                $this->tasklist[$dayKey]['note'] = $this->timespent_note;
-            }
-            
-            return $resArray;
+        }
+        //update the task list
+        if($this->tasklist[$dayKey]['duration'] != $this->timespent_duration){
+            $this->tasklist[$dayKey]['duration'] = $this->timespent_duration;
+        }
+        if($this->tasklist[$dayKey]['note'] != $this->timespent_note){
+            $this->tasklist[$dayKey]['note'] = $this->timespent_note;
+        }
+        
+        return $resArray;
     }
     /**
          *        function that will send email to
