@@ -133,8 +133,8 @@ class TimesheetHoliday extends Holiday
         global $langs;
         global $statusColor;
         global $conf;
-        $timetype = $conf->global->TIMESHEET_TIME_TYPE;
-        $dayshours = $conf->global->TIMESHEET_DAY_DURATION;
+        $timetype = getConf('TIMESHEET_TIME_TYPE','hours');
+        $dayshours = getConf('TIMESHEET_DAY_DURATION',8);
         if (!is_array($this->holidaylist) || !$this->holidayPresent) // don't show the holiday line if nothing present
            return '';
         $html = "<tr id = 'holiday'>\n";
@@ -152,7 +152,7 @@ class TimesheetHoliday extends Holiday
                 mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             $html .= '<th style = "margin: 0;padding: 0;">';
             $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_holiday";
-            if ($conf->global->TIMESHEET_ADD_HOLIDAY_TIME == 1){
+            if (getConf('TIMESHEET_ADD_HOLIDAY_TIME') == 1){
                 $html .= '<input type = "hidden" class = "'.$class.'"  value = "'.$value.'">';
             }
             $html .= '<ul id = "holiday['.$i.']" class = "listHoliday" >';

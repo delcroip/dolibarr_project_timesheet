@@ -26,7 +26,6 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
-require_once 'core/lib/generic.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 $action = GETPOST('action', 'alpha');
 $datestart = GETPOST('dateStart', 'alpha');
@@ -36,16 +35,16 @@ $xml = GETPOST('xml', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $id = GETPOST('id', 'int');
 //$toDate = GETPOST('toDate');
-$toDate = GETPOST('toDate', 'alpha');
-if (!empty($toDate) && $action == 'goToDate') {
-$toDateday = GETPOST('toDateday', 'int');// to not look for the date if action not goTodate
-$toDatemonth = GETPOST('toDatemonth', 'int');
-$toDateyear = GETPOST('toDateyear', 'int');
-}
+$toDate = GETPOST('toDate', 'alpha')?:'';
+
+$toDateday = (!empty($toDate) && $action == 'goToDate')?GETPOST('toDateday', 'int') :0;// to not look for the date if action not goTodate
+$toDatemonth = (!empty($toDate) && $action == 'goToDate')?GETPOST('toDatemonth', 'int'):0;
+$toDateyear = (!empty($toDate) && $action == 'goToDate')?GETPOST('toDateyear', 'int'):0;
+
 $token = GETPOST('token', 'alpha');
 $whitelistmode = GETPOST('wlm', 'int');
 if ($whitelistmode == '') {
-    $whitelistmode = $conf->global->TIMESHEET_WHITELIST_MODE;
+    $whitelistmode = getConf('TIMESHEET_WHITELIST_MODE');
 }
 $userid = is_object($user)?$user->id:$user;
 $postUserId = GETPOST('userid', 'int');
@@ -60,8 +59,7 @@ if (!$user->rights->timesheet->timesheet->user && !$admin) {
 }
 
 // if the user can enter ts for other the user id is diferent
-if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) 
-    && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
+if ( getConf('TIMESHEET_ADD_FOR_OTHER') == 1) {
         if (!empty($postUserId)) {
             $newuserid = $postUserId;
         }else{
@@ -163,7 +161,7 @@ switch($action) {
 if (!empty($token)) {
        unset($_SESSION['timesheet'][$token]);
 }
-
+$token = getToken();
 if ($submitted_next ||$saved_next ){
     $dateStart = getStartDate($dateStart, 1);
     $_SESSION["dateStart"] = $dateStart ;
@@ -177,7 +175,7 @@ if ($action == 'importCalandar'){
     $task_timesheet->importCalandar();
 }
          
-if ($conf->global->TIMESHEET_ADD_DOCS) {
+if (getConf('TIMESHEET_ADD_DOCS')) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     $modulepart = 'timesheet';
@@ -207,21 +205,21 @@ exit();
 }
 $morejs = array("/timesheet/core/js/jsparameters.php", 
     "/timesheet/core/js/timesheet.js?"
-    .$conf->global->TIMESHEET_VERSION);
+    .getConf('TIMESHEET_VERSION'));
 llxHeader('', $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 //tokentp = time();
 //fetch ts for others
 
-if ($conf->global->TIMESHEET_ADD_FOR_OTHER == 1 
+if (getConf('TIMESHEET_ADD_FOR_OTHER') == 1 
     && (count($SubordiateIds)>1|| $admin )) {
-    print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $admin);
+    print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $admin, $token);
 }
 //$ajax = false;
 $Form = $task_timesheet->getHTMLNavigation($optioncss);
 $Form .= $task_timesheet->getHTMLFormHeader();
 $Form .= $task_timesheet->getHTMLActions();
-     if ($conf->global->TIMESHEET_WHITELIST == 1) {
+     if (getConf('TIMESHEET_WHITELIST') == 1) {
         $Form .= '<div class="tabs" data-role="controlgroup" data-type = "horizontal"  >';
         $Form .= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'')
             .' class="inline-block tabsElem" onclick="showFavoris(event,\'All\')">'
@@ -243,12 +241,12 @@ $Form .= '<script>document.getElementById("defaultOpen").click()</script>';
 //Javascript
 //$Form .= ' <script type = "text/javascript" src = "core/js/timesheet.js"></script>'."\n";
 $Form .= '<script type = "text/javascript">'."\n\t";
-$Form .= 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');closeNotes();';
+$Form .= 'updateAll('.getConf('TIMESHEET_HIDE_ZEROS').');closeNotes();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $Form;
 //add attachement
-if ($conf->global->TIMESHEET_ADD_DOCS == 1) {
+if (getConf('TIMESHEET_ADD_DOCS') == 1) {
         $object = $task_timesheet;
         $modulepart = 'timesheet';
         $permission = 1;//$user->rights->timesheet->add;

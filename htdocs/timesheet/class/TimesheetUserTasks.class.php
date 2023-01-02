@@ -74,7 +74,7 @@ class TimesheetUserTasks extends CommonObject
         $this->db = $db;
         $this->user = $user;
         $this->userId = ($userId == 0)?(is_object($user)?$user->id:$user):$userId;
-        $this->headers = explode('||', $conf->global->TIMESHEET_HEADERS);
+        $this->headers = explode('||', getConf('TIMESHEET_HEADERS',''));
         $this->getUserName();
     }
  /******************************************************************************
@@ -411,7 +411,7 @@ class TimesheetUserTasks extends CommonObject
     public function fetchAll($startdate, $whitelistmode = false)
     {
         global $conf;
-        $this->whitelistmode = (is_numeric($whitelistmode)&& !empty($whitelistmode))?$whitelistmode:$conf->global->TIMESHEET_WHITELIST_MODE;
+        $this->whitelistmode = (is_numeric($whitelistmode)&& !empty($whitelistmode))?$whitelistmode:getConf('TIMESHEET_WHITELIST_MODE');
         $this->date_start = getStartDate($startdate);
         $this->ref = $this->date_start.'_'.$this->userId;
         $this->date_end = getEndDate($this->date_start);
@@ -518,12 +518,12 @@ public function fetchTaskTimesheet($userid = '')
     //end approval
     $sql .= " WHERE ((ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task') ";
     // SHOW TASK ON PUBLIC PROEJCT
-    if ($conf->global->TIMESHEET_ALLOW_PUBLIC == '1') {
+    if (getConf('TIMESHEET_ALLOW_PUBLIC') == '1') {
         $sql .= '  OR  prj.public =  \'1\')';
     }else{
         $sql .= ' )';
     }
-    if ($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
+    if (getConf('TIMESHEET_HIDE_DRAFT') == '1') {
         $sql .= ' AND prj.fk_statut =  \'1\'';
     }else{
         $sql .= ' AND prj.fk_statut in (\'0\',\'1\')';
@@ -810,7 +810,7 @@ public function getHTMLHeader($search = false)
         $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
     }
     ///Whitelist tab
-    if ($conf->global->TIMESHEET_TIME_SPAN == "month") {
+    if (getConf('TIMESHEET_TIME_SPAN','week') == "month") {
         $format = "%d";
         $html .= '<tr class = "liste_titre" id = "">'."\n";
         $html .= '<td colspan = "'.$maxColSpan.'" align = "center"><a >'.$langs->trans(date('F', $this->date_start)).' '.date('Y', $this->date_start).'</a></td>';
@@ -825,11 +825,11 @@ public function getHTMLHeader($search = false)
         }
         $html .= "> <a onclick=\"sortTable('timesheetTable_{$this->id}', 'col{$value}', 'asc');\">".$langs->trans($value)."</a></th>\n";
     }
-    $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
+    $opendays = str_split(getConf('TIMESHEET_OPEN_DAYS',"x1111100"));
     for ($i = 0;$i<$weeklength;$i++)
     {
         $curDay = $this->date_start+ SECINDAY*$i+SECINDAY/4;
-        $htmlDay = ($conf->global->TIMESHEET_TIME_SPAN == "month")?substr($langs->trans(date('l', $curDay)), 0, 3):$langs->trans(date('l', $curDay));
+        $htmlDay = (getConf('TIMESHEET_TIME_SPAN','week') == "month")?substr($langs->trans(date('l', $curDay)), 0, 3):$langs->trans(date('l', $curDay));
         $html .= "\t".'<th class = "daysClass days_'.$this->id.'" id = "'.$this->id.'_'.$i.'" width = "35px" style = "text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
     }
     return $html;
@@ -845,7 +845,7 @@ public function getHTMLFormHeader($ajax = false)
     $html = '<form id = "timesheetForm" name = "timesheet" onSubmit="removeUnchanged();" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
     if ($ajax)$html .= ' onsubmit = " return submitTimesheet(0);"';
     $html .= '>';
-    if($conf->agenda->enabled && $conf->global->TIMESHEET_IMPORT_AGENDA){
+    if($conf->agenda->enabled && getConf('TIMESHEET_IMPORT_AGENDA')){
         $html .= '<a class = "butAction" href="?action=importCalandar&startDate='.$this->date_start.'">'.$langs->trans('ImportCalandar').'</a>';
     }
     return $html;
@@ -879,7 +879,7 @@ public function getHTMLFooter($ajax = false)
     $html = '<input type = "hidden" id="csrf-token" name = "token" value = "'.$this->token."\"/>\n";
     $html .= $this->getHTMLActions();
     $html .= "</form>\n";
-    if ($ajax) {
+    if ($ajax ==true) {
         $html .= '<script type = "text/javascript">'."\n\t";
         $html .= 'window.onload = function()
             {loadXMLTimesheet("'.$this->date_start.'", '.$this->userId.');}';
@@ -1053,8 +1053,7 @@ public function getHTMLNavigation($optioncss, $ajax = false)
     global $langs, $conf;
     $form = new Form($this->db);
     $tail = '';
-    if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) 
-        && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1){
+    if (getConf('TIMESHEET_ADD_FOR_OTHER') == 1){
         $tail = '&userid='.$this->userId;
     }
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
@@ -1133,15 +1132,13 @@ public function getHTMLNavigation($optioncss, $ajax = false)
     {
         global $langs;
         $form = new Form($this->db);
-        $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method = "POST">';
+        $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'&token='.$this->token.'" method = "POST">';
         if (!$admin) {
             $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
         } else{
             $HTML .= $form->select_dolusers($selected, 'userid');
         }
-        //FIXME should take token as input
-        $token = getToken();
-        $HTML .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+        $HTML .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$this->token.'"/>';
 
         $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
         
@@ -1175,8 +1172,8 @@ public function getHTMLNavigation($optioncss, $ajax = false)
         $this->note = '';
         if ($test) {
             $this->userId = 1;
-            $this->date_start = srttotime('this monday', dol_mktime());
-            $this->date_end = srttotime('next monday', dol_mktime())-1;
+            $this->date_start = srttotime('this monday', dol_time());
+            $this->date_end = srttotime('next monday', dol_time())-1;
             $this->task = 1;
             $this->note = 'this is a test usertasktime';
         }
@@ -1196,7 +1193,7 @@ public function getHTMLNavigation($optioncss, $ajax = false)
 public function GetTimeSheetXML()
 {
     global $langs, $conf;
-    $xml .= "<timesheet dateStart = \"{$this->date_start}\" token = \"{$this->token}\" timetype = \"".$conf->global->TIMESHEET_TIME_TYPE."\"";
+    $xml .= "<timesheet dateStart = \"{$this->date_start}\" token = \"{$this->token}\" timetype = \"".getConf('TIMESHEET_TIME_TYPE','hours')."\"";
     $xml .= ' nextWeek = "'.date('Y\WW', strtotime($this->date_start."+3 days +1 week")).'" prevWeek = "'.date('Y\WW', strtotime($this->date_start."+3 days -1 week")).'">';
     //error handling
     $xml .= getEventMessagesXML();
@@ -1506,9 +1503,8 @@ public function GetTimeSheetXML()
                             //foreach task that are not "all day" define duration as 
                             // duration = cal_duration>MAx? STD:cal_duration
                             $duration = $action_date_end - $action_date_start;
-                            $duration = ( $duration > ($conf->global->TIMESHEET_DAY_MAX_DURATION * 3600))?
-                            $conf->global->TIMESHEET_DAY_DURATION * 3600
-                            :$duration;
+                            $max_dur_day = getConf('TIMESHEET_DAY_MAX_DURATION') * 3600;
+                            $duration = min( $duration , $max_dur_day);
                             // write in database the new TS
                             $daynote = $obj->code." - ".$obj->label.": ".formatTime($duration, -1); 
                             // check and update only ifthe meeting is note already in noted
@@ -1539,7 +1535,7 @@ public function GetTimeSheetXML()
             // Create timespent for the all day event
             foreach($days as $daykey => $day ){
                 $nbFullDayCurDay = count($day);
-                $duration = ($conf->global->TIMESHEET_DAY_DURATION * 3600
+                $duration = (getConf('TIMESHEET_DAY_DURATION',0) * 3600
                     - $dayDuration[$daykey]) / $nbFullDayCurDay ; 
                 //for eachfull day event
                 foreach($day as $taskid => $tasktimeDetails){

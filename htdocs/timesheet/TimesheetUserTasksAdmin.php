@@ -235,7 +235,7 @@ switch($action) {
         break;
 }
         //document handling
-if ($conf->global->TIMESHEET_ADD_DOCS && $id>0) {
+if (getConf('TIMESHEET_ADD_DOCS') && $id>0) {
     $object->fetch($id);
     $ref = dol_sanitizeFileName($object->ref);
     $upload_dir = $conf->timesheet->dir_output.'/tasks/'
@@ -261,7 +261,7 @@ if (($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))) {
 * Put here all code to build page
 ****************************************************/
 $morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?"
-    .$conf->global->TIMESHEET_VERSION);
+    .getConf('TIMESHEET_VERSION'));
 llxHeader('', $langs->trans('TimesheetUser'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
 $form = new Form($db);
@@ -404,7 +404,7 @@ switch($action) {
             print $object->getHTMLTotal();
             print "</table>";
             print  '<script type = "text/javascript">'."\n\t";
-            print 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');';
+            print 'updateAll('.getConf('TIMESHEET_HIDE_ZEROS').');';
             print  "\n\t".'</script>'."\n";
         }
         print '<div class = "center">';
@@ -529,7 +529,7 @@ switch($action) {
     }
     // Count total nb of records
     $nbtotalofrecords = 0;
-    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+    if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
             $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
             if (!empty($sqlwhere))
                 $sqlcount .= ' WHERE '.substr($sqlwhere, 5);

@@ -472,10 +472,10 @@ class TimesheetTask extends Task
     {
         global $conf;
         $Company = true;// fixme should be base on the third party module activation
-        $taskParent = strpos($conf->global->TIMESHEET_HEADERS, 'TaskParent')!== false;
+        $taskParent = strpos(getConf('TIMESHEET_HEADERS'), 'TaskParent')!== false;
         $sql = 'SELECT p.rowid, p.datee as pdatee, p.fk_statut as pstatus, p.dateo as pdateo,'
             .' pt.dateo, pt.datee, pt.planned_workload, pt.duration_effective';
-        if ($conf->global->TIMESHEET_HIDE_REF == 1) {
+        if (getConf('TIMESHEET_HIDE_REF') == 1) {
             $sql .= ', p.ref as title, pt.ref as label, pt.planned_workload';
             if ($taskParent) $sql .= ', pt.fk_task_parent, ptp.label as task_parent_label';
         } else {
@@ -603,6 +603,9 @@ class TimesheetTask extends Task
                 $obj = $this->db->fetch_object($resql);
                 $dateCur = $this->db->jdate($obj->task_date);
                 $day = getDayInterval($timeStart, $dateCur);
+                if(!isset($this->tasklist[$day]['note'])){
+                    $this->tasklist[$day]['note'] = '';
+                }
                 // put the other timesheet on the "other" list
                 if ($this->tasklist[$day]['duration'] > 0 || strlen($this->tasklist[$day]['note']) > 0){
                     $other[$day][] = array( 'duration' => $this->tasklist[$day]['duration'], 
@@ -713,12 +716,12 @@ class TimesheetTask extends Task
         $html = '';
         $dayelapsed = getDayInterval($this->date_start_approval, $this->date_end_approval);
         // day section
-        $unblockInvoiced = $conf->global->TIMESHEET_UNBLOCK_INVOICED;
-        $unblockClosedDay = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
-        $hidezeros = $conf->global->TIMESHEET_HIDE_ZEROS;
-        $blockholiday = $conf->global->TIMESHEET_BLOCK_HOLIDAY;
-        $blockPublicHoliday = $conf->global->TIMESHEET_BLOCK_PUBLICHOLIDAY;
-        $opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
+        $unblockInvoiced = getConf('TIMESHEET_UNBLOCK_INVOICED');
+        $unblockClosedDay = getConf('TIMESHEET_UNBLOCK_CLOSED');
+        $hidezeros = getConf('TIMESHEET_HIDE_ZEROS');
+        $blockholiday = getConf('TIMESHEET_BLOCK_HOLIDAY');
+        $blockPublicHoliday = getConf('TIMESHEET_BLOCK_PUBLICHOLIDAY');
+        $opendays = str_split(getConf('TIMESHEET_OPEN_DAYS','x1111100'));
         $hidden = false;
         $default_timezone = (empty($_SESSION["dol_tz_string"])?
             @date_default_timezone_get():$_SESSION["dol_tz_string"]);
@@ -753,7 +756,7 @@ class TimesheetTask extends Task
                 $isOpen = $isOpen && (($stopDates == 0) ||($stopDates >= $today));
                 $isOpen = $isOpen && ($this->pStatus < "2") ;
                 $isOpenDay = $opendays[date("N", $today)];
-                $isInvoiced = $this->tasklist[$dayCur]['invoiced'];
+                $isInvoiced =isset($this->tasklist[$dayCur]['invoiced'])?$this->tasklist[$dayCur]['invoiced']:0;
                 if ($unblockClosedDay == 0) $isOpen = $isOpen  && $isOpenDay;
                 if ($unblockInvoiced == 0) $isOpen = $isOpen  && !$isInvoiced;
                 if (count($holidayList)>=$dayCur){
@@ -781,7 +784,7 @@ class TimesheetTask extends Task
                 
                 $html .= "<td>\n";
                 // add note popup
-                if ($isOpen && $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE) {
+                if ($isOpen && getConf('TIMESHEET_SHOW_TIMESPENT_NOTE')) {
                 $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'
                     .$this->userId.'_'.$this->id.'_'.$dayCur.
                     '" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'
@@ -856,7 +859,7 @@ class TimesheetTask extends Task
                     $objtemp = new Project($this->db);
                     $objtemp->fetch($this->fk_project);
                     $html .= str_replace('classfortooltip', 'classfortooltip colProject', 
-                        $objtemp->getNomUrl(0, '', $conf->global->TIMESHEET_HIDE_REF));
+                        $objtemp->getNomUrl(0, '', getConf('TIMESHEET_HIDE_REF')));
                     $html .= '</div>';
                     break;
                 case 'TaskParent':
@@ -864,18 +867,18 @@ class TimesheetTask extends Task
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->fk_task_parent);
                     $html .= str_replace('classfortooltip', 'classfortooltip colTaskParent', 
-                        $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
+                        $objtemp->getNomUrl(0, "withproject", "task", getConf('TIMESHEET_HIDE_REF')));
                     $html .= '</div>';
                     break;
                 case 'Tasks':
-                    if ($conf->global->TIMESHEET_WHITELIST == 1)$html .= '<img id = "'
+                    if (getConf('TIMESHEET_WHITELIST') == 1)$html .= '<img id = "'
                         .$this->listed.'" src = "img/fav_'.(($this->listed>0)?'on':'off')
                         .'.png" onClick = favOnOff(event,'.$this->fk_project.','
                         .$this->id.') style = "cursor:pointer;">  ';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->id);
                     $html .= str_replace('classfortooltip', 'classfortooltip colTasks', 
-                        $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
+                        $objtemp->getNomUrl(0, "withproject", "task", getConf('TIMESHEET_HIDE_REF')));
                     break;
                 case 'DateStart':
                     $html .= '<div class="colDateStart">';
@@ -992,9 +995,9 @@ class TimesheetTask extends Task
     *//*
     public function getXML($startDate)
     {
-        $timetype = $conf->global->TIMESHEET_TIME_TYPE;
-        $dayshours = $conf->global->TIMESHEET_DAY_DURATION;
-        $hidezeros = $conf->global->TIMESHEET_HIDE_ZEROS;
+        $timetype = getConf('TIMESHEET_TIME_TYPE','hours');
+        $dayshours = getConf('TIMESHEET_DAY_DURATION',8);
+        $hidezeros = getConf('TIMESHEET_HIDE_ZEROS');
         $xml = "<task id = \"{$this->id}\" >";
         //title section
         $xml .= "<Tasks id = \"{$this->id}\">{$this->description} </Tasks>";
@@ -1263,8 +1266,8 @@ class TimesheetTask extends Task
             $wkload = $dayData[0];
             $daynote = $dayData[1];
             $duration = 0;
-            if ($conf->global->TIMESHEET_TIME_TYPE == "days") {
-                $duration = (float) $wkload*$conf->global->TIMESHEET_DAY_DURATION*3600;
+            if (getConf('TIMESHEET_TIME_TYPE','hours') == "days") {
+                $duration = (float) $wkload*getConf('TIMESHEET_DAY_DURATION',8)*3600;
             } else {
                 $durationTab = date_parse($wkload);
                 $duration = $durationTab['minute']*60+$durationTab['hour']*3600;

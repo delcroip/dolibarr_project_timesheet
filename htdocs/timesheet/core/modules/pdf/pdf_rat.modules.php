@@ -50,7 +50,7 @@ class pdf_rat extends ModelPDFTimesheetReport
         $langs->load("main");
         $langs->load("projects");
         $langs->load("companies");
-        $this->noteISOtask=$conf->global->TIMESHEET_PDF_NOTEISOTASK;
+        $this->noteISOtask=getConf('TIMESHEET_PDF_NOTEISOTASK');
         $this->db = $db;
         $this->name = "rat";
         $this->description = $langs->trans("DocumentModelRat");
@@ -60,10 +60,10 @@ class pdf_rat extends ModelPDFTimesheetReport
         $this->page_largeur = $formatarray['width'];
         $this->page_hauteur = $formatarray['height'];
         $this->format = array($this->page_largeur, $this->page_hauteur);
-        $this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
-        $this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
-        $this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
-        $this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
+        $this->marge_gauche=getConf('MAIN_PDF_MARGIN_LEFT',10);
+        $this->marge_droite=getConf('MAIN_PDF_MARGIN_RIGHT',10);
+        $this->marge_haute = getConf('MAIN_PDF_MARGIN_TOP',10);
+        $this->marge_basse = getConf('MAIN_PDF_MARGIN_BOTTOM',10);
         $this->option_logo = 1;// Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;// Gere option tva FACTURE_TVAOPTION
         $this->option_codeproduitservice = 1;// Affiche code produit-service
@@ -102,7 +102,7 @@ public function writeFile($object, $outputlangs)
     global $conf, $hookmanager, $langs, $user;
     if (! is_object($outputlangs)) $outputlangs = $langs;
     // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-    if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
+    if ( getConf('MAIN_USE_FPDF') == 1) $outputlangs->charset_output='ISO-8859-1';
     //load langs
     $outputlangs->load("main");
     $outputlangs->load("dict");
@@ -141,8 +141,8 @@ public function writeFile($object, $outputlangs)
             }
             $pdf->SetFont(pdf_getPDFFont($outputlangs));
             // Set path to the background PDF File
-            if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-                $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+            if (getConf('MAIN_DISABLE_FPDI') == false && getConf('MAIN_ADD_PDF_BACKGROUND') == 1) {
+                $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.getConf('MAIN_ADD_PDF_BACKGROUND'));
                 $tplidx = $pdf->importPage(1);
             }
             //get data
@@ -172,7 +172,7 @@ public function writeFile($object, $outputlangs)
             $pdf->SetCreator("Dolibarr ".DOL_VERSION);
             $pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
             $pdf->SetKeyWords(implode(',', $object->ref));//FIXME add all project refs
-            if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+            if (getConf('MAIN_DISABLE_PDF_COMPRESSION') == 1) $pdf->SetCompression(false);
             $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);// Left, Top, Right
             //generate pages per userid
             foreach ($userTaskArray as $projectid => $userArray){
@@ -192,8 +192,8 @@ public function writeFile($object, $outputlangs)
             $parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
             global $action;
             $reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);// Note that $action and $object may have been modified by some hooks
-            if (! empty($conf->global->MAIN_UMASK))
-                    @chmod($file, octdec($conf->global->MAIN_UMASK));
+            if ( getConf('MAIN_UMASK') != false)
+                    @chmod($file, octdec(getConf('MAIN_UMASK')));
             $this->result = array('fullpath'=>$file);
             return 1;// Pas d'erreur
         }
@@ -219,12 +219,12 @@ public function writeFile($object, $outputlangs)
         global $conf;
         //constant
         $default_font_size = pdf_getPDFFontSize($outputlangs);        // Must be after pdf_getInstance
-        //$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);        // Height reserved to output the free text on last page
+        //$heightforfreetext = (isset(getConf('MAIN_PDF_FREETEXT_HEIGHT'))?getConf('MAIN_PDF_FREETEXT_HEIGHT'):5);        // Height reserved to output the free text on last page
 
-        $tab_height_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?170:202);
+        $tab_height_newpage = (getConf('MAIN_PDF_DONOTREPEAT_HEAD') == false?170:202);
         //$cur_tab_height = $tab_height;
         $HeightSignBox = 30;
-        $heightforlastfooter = ($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX == 1)?7:($HeightSignBox + 7);
+        $heightforlastfooter = (getConf('TIMESHEET_PDF_HIDE_SIGNBOX') == 1)?7:($HeightSignBox + 7);
         $heightforfooter = $this->marge_basse+1;        // Height reserved to output the footer(value include bottom margin)
         $pageposbefore = 0;
         $heightoftitleline = 6;
@@ -282,7 +282,7 @@ public function writeFile($object, $outputlangs)
                 // init page
                 if (! empty($tplidx)) $pdf->useTemplate($tplidx);
                 $pdf->setPage($pageposafter);
-                if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $starty = $this->pageHead($pdf, $object, 1, $outputlangs, $projectid, $tasktimearray['lines'][0]['userName']);
+                if (getConf('MAIN_PDF_DONOTREPEAT_HEAD') == false) $starty = $this->pageHead($pdf, $object, 1, $outputlangs, $projectid, $tasktimearray['lines'][0]['userName']);
                 $curY = $starty + $heightoftitleline + 1;
                 $pdf->SetFont('', '', $default_font_size - 1);// On repositionne la police par defaut
                 $pdf->MultiCell(0, 3, '');                // Set interline to 3
@@ -298,7 +298,7 @@ public function writeFile($object, $outputlangs)
                 //$this->pageFoot($pdf, $object, $outputlangs, 1);
                 $pdf->setPage($pagenb);
                 $pdf->setPageOrientation('', 1, 0);        // The only function to edit the bottom margin of current page to set it.
-                //if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $starty = $this->pageHead($pdf, $object, 0, $outputlangs, $startday, $stopday, $projectid);
+                //if (getConf('MAIN_PDF_DONOTREPEAT_HEAD') != false) $starty = $this->pageHead($pdf, $object, 0, $outputlangs, $startday, $stopday, $projectid);
                 $pagenb++;
                 $pdf->setPage($pageposafter);
                 $pageposafter = $pdf->getPage();
@@ -312,15 +312,15 @@ public function writeFile($object, $outputlangs)
         // Show table border for last page
         $this->tableau($pdf, $starty, $this->page_hauteur - $starty - $heightforlastfooter -   $heightforfooter, $heightoftitleline, $outputlangs, 0);
         // show the sign box & total on the last page for the user
-        if ($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX == 1) {
-            $txtTotal = $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
+        if (getConf('TIMESHEET_PDF_HIDE_SIGNBOX') == 1) {
+            $txtTotal = $tasktimearray['Total']." ".((getConf('TIMESHEET_INVOICE_TIMETYPE','days') == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1, 0, true, 'L');
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $txtTotal, 0, 1, 0, true, 'R');
             $pdf->Rect($this->page_largeur-$this->marge_droite-60, $bottomlasttab, 60, 5);
         }else
         {
             $pdf->SetFont('', 'B', $default_font_size);
-            $txtTotal = $tasktimearray['Total']." ".(($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
+            $txtTotal = $tasktimearray['Total']." ".((getConf('TIMESHEET_INVOICE_TIMETYPE','days') == "days")?$outputlangs->transnoentities('Days'):$outputlangs->transnoentities('Hours'));
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $outputlangs->transnoentities('Total').": ", 0, 1, 0, true, 'L');
             $pdf->writeHTMLCell(60, 3, $this->page_largeur-$this->marge_droite-60, $bottomlasttab, $txtTotal, 0, 1, 0, true, 'R');
             $pdf->SetFont('', '', $default_font_size - 1);
@@ -450,7 +450,7 @@ public function tableau(&$pdf, $tab_top, $tab_height, $heightoftitleline, $outpu
         $pdf->MultiCell($this->posxduration-$this->posxlabel, 3, $libelleline, 0, 'L');
         //duration title
         $pdf->SetXY($this->posxduration, $tab_top+1);
-        if ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "hours") {
+        if (getConf('TIMESHEET_INVOICE_TIMETYPE','days') == "hours") {
             $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, 'h:m', 0, 'R');
         } else{
             $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxduration, 3, $outputlangs->transnoentities("Days"), 0, 'R');
@@ -539,7 +539,7 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
     $pdf->SetTextColor(0, 0, 60);
         //worker name
     $posy = max($posy, $posy_l);
-    if (!empty($userName) && !$conf->global->TIMESHEET_PDF_HIDE_NAME) {
+    if (!empty($userName) && getConf('TIMESHEET_PDF_HIDE_NAME') == false) {
         $pdf->SetXY($this->marge_gauche,  $posy);
         $pdf->MultiCell($this->page_largeur - $this->marge_gauche -  $this->marge_droite, 4, $outputlangs->transnoentities('Employee').': '.$outputlangs->convToOutputCharset($userName), 0, 'L');
     }
@@ -557,7 +557,7 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
 /*function pageFoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 {
     global $conf;
-    //$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+    //$showdetails = getConf('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS');
     //return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 }*/
 }

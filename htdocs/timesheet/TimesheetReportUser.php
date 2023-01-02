@@ -61,8 +61,8 @@ $ungroup = GETPOST('ungroup', 'int');
 $model = GETPOST('model', 'alpha');
 if (empty($mode)){
     $mode = 'PTD';
-    $ungroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
-    $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
+    $ungroup = getConf('TIMESHEET_REPORT_UNGROUP');
+    $invoicedCol = getConf('TIMESHEET_REPORT_INVOICED_COL');
 }
 $short = GETPOST('short', 'int');
 $invoicedCol = GETPOST('invoicedcol', 'int');
@@ -128,8 +128,7 @@ if ($action == 'getpdf') {
     ob_end_flush();
     exit();
 } elseif ($action == 'getExport'){
-    $max_execution_time_for_export = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?
-        300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+    $max_execution_time_for_export = getConf('EXPORT_MAX_EXECUTION_TIME',300) .
     $max_time = @ini_get("max_execution_time");
     if ($max_time && $max_time < $max_execution_time_for_export)
     {
@@ -230,9 +229,9 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
 
 $form_output  .= '<div class="tabsAction"><div class="center">';
 $form_output  .= '<input class="butAction" type="submit" value="' . $langs->trans( 'getReport' ) . '">';
-$model = $conf->global->TIMESHEET_EXPORT_FORMAT;
+$model = getConf('TIMESHEET_EXPORT_FORMAT');
 //if(!empty($querryRes))$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if ( ! empty( $querryRes ) && $conf->global->MAIN_MODULE_EXPORT ) {
+if ( ! empty( $querryRes ) && getConf('MAIN_MODULE_EXPORT') ) {
 	$form_output .= '<a class = "butAction" href="?action=getExport&dateStart=' 
         .dol_print_date( $dateStart, 'dayxcard' ) 
         .'&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) 

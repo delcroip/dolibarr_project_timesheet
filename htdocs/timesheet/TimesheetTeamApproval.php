@@ -136,7 +136,7 @@ if (!empty($token)) {
 $token = getToken();
 $subId = ($admin)?'all':getSubordinates($db, $userId, 2, array($userId), TEAM);
 $selectList = getSelectAps($subId);
-$level = intval($conf->global->TIMESHEET_MAX_APPROVAL);
+$level = intval(getConf('TIMESHEET_MAX_APPROVAL'));
 $offset = 0;
 if (is_array($selectList)&& count($selectList)) {
     if ($current >= count($selectList))$current = 0;
@@ -172,7 +172,7 @@ exit();
 $TTU = new TimesheetUserTasks($db);
 $head = ($print)?'<style type = "text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
 $morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?"
-    .$conf->global->TIMESHEET_VERSION);
+    .getConf('TIMESHEET_VERSION'));
 llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 showTimesheetApTabs(TEAM);
@@ -192,7 +192,7 @@ if (is_object($firstTimesheetUser)) {
             $Form .= $TTU->getHTML(false, true);
             $_SESSION['timesheet'][$token]['tsUser'][$TTU->id] = $TTU->status;
             if (!$print) {
-                if ($conf->global->TIMESHEET_ADD_DOCS == 1) {
+                if (getConf('TIMESHEET_ADD_DOCS') == 1) {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
                     include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
                     $object = $TTU;
@@ -247,10 +247,10 @@ if (is_object($firstTimesheetUser)) {
     $Form .= $staticTs->getHTMLFooterAp($current);
 }
 //Javascript
-$timetype = $conf->global->TIMESHEET_TIME_TYPE;
+$timetype = getConf('TIMESHEET_TIME_TYPE','hours');
 //$Form .= ' <script type = "text/javascript" src = "timesheet.js"></script>'."\n";
 $Form .= '<script type = "text/javascript">'."\n\t";
-$Form .= 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');';
+$Form .= 'updateAll('.getConf('TIMESHEET_HIDE_ZEROS').');';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $Form;
@@ -269,7 +269,7 @@ function getTStobeApproved($level, $offset, $role, $subId)
 {
     global $db, $conf;
     if ((!is_array($subId) || !count($subId)) && $subId!='all')return array();
-    $byWeek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
+    $byWeek = getConf('TIMESHEET_APPROVAL_BY_WEEK');
     //if ($role = 'team')
     $sql = "SELECT *";
     if ($byWeek == 2) {
@@ -392,14 +392,14 @@ function getSelectAps($subId)
     $sql = '';
     $sqlWhere = ' WHERE ts.status  in ('.SUBMITTED.', '.CHALLENGED.')';
     if ($subId!='all')$sqlWhere .= ' AND ts.fk_userid in ('.implode(', ', $subId).')';
-    if ($conf->global->TIMESHEET_APPROVAL_BY_WEEK == 1) {
+    if (getConf('TIMESHEET_APPROVAL_BY_WEEK') == 1) {
         $sql = 'SELECT COUNT(ts.date_start) as nb, ts.date_start as id, ';
         $sql .= " DATE_FORMAT(ts.date_start, '".$langs->trans('Week')." %u(%m/%Y)') as label";
         $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts';
         $sql .= ' JOIN '.MAIN_DB_PREFIX.'user as usr on ts.fk_userid = usr.rowid ';
         $sql .= $sqlWhere;
         $sql .= ' group by ts.date_start ORDER BY ts.date_start DESC';
-    } elseif ($conf->global->TIMESHEET_APPROVAL_BY_WEEK == 0) {
+    } elseif (getConf('TIMESHEET_APPROVAL_BY_WEEK') == 0) {
         $sql = 'SELECT COUNT(ts.rowid) as nb, ts.fk_userid as id, ';
         $sql .= " MAX(CONCAT(usr.firstname, ' ', usr.lastname)) as label";
         $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_timesheet as ts';
@@ -430,18 +430,18 @@ function getSelectAps($subId)
                 $j = 1;
                 $nb = $obj->nb;
                 // split the nb in x line to avoid going over the max approval
-                while($nb>$conf->global->TIMESHEET_MAX_APPROVAL)
+                while($nb>getConf('TIMESHEET_MAX_APPROVAL'))
                 {
                     $list[] = array("id"=>$obj->id, "label"=>$obj->label.' ('
-                        .$j."/".ceil($obj->nb/$conf->global->TIMESHEET_MAX_APPROVAL).')', 
-                        "count"=>$conf->global->TIMESHEET_MAX_APPROVAL);
-                    $nb -= $conf->global->TIMESHEET_MAX_APPROVAL;
+                        .$j."/".ceil($obj->nb/getConf('TIMESHEET_MAX_APPROVAL')).')', 
+                        "count"=>getConf('TIMESHEET_MAX_APPROVAL'));
+                    $nb -= getConf('TIMESHEET_MAX_APPROVAL');
                     $j++;
                 }
                 // at minimum a row shoud gnerate one option
                 $list[] = array("id"=>$obj->id, "label"=>$obj->label.' '
-                    .(($obj->nb>$conf->global->TIMESHEET_MAX_APPROVAL)?'('.$j.'/'
-                    .ceil($obj->nb/$conf->global->TIMESHEET_MAX_APPROVAL).')':''), "count"=>$nb);
+                    .(($obj->nb>getConf('TIMESHEET_MAX_APPROVAL'))?'('.$j.'/'
+                    .ceil($obj->nb/getConf('TIMESHEET_MAX_APPROVAL')).')':''), "count"=>$nb);
             }
             $i++;
         }

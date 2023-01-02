@@ -345,7 +345,7 @@ switch($action) {
         print '<td class = "fieldrequired">'.$langs->trans('Project').' </td><td>';
         if ($edit == 1) {
             if (!empty($editedProject))$object->project = $editedProject;
-            $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
+            $ajaxNbChar = getConf('PROJECT_USE_SEARCH_TO_SELECT',2);
             /* $formUserWhere = ' (t.datee >= \''.$object->db->idate(time()).'\' OR t.datee IS NULL)';
            if (!$admin) {
 
@@ -567,7 +567,7 @@ switch($action) {
         }
         // Count total nb of records
         $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+        if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
             $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'timesheet_whitelist as t';
             if (!empty($sqlwhere))
                 $sqlcount .= ' WHERE '.substr($sqlwhere, 5);
@@ -635,13 +635,13 @@ switch($action) {
             //Search field foruser
             if ($admin) {
                 print '<td class = "liste_titre" colspan = "1" >';
-                $ajaxNbChar = $conf->global->CONTACT_USE_SEARCH_TO_SELECT;
+                $ajaxNbChar = getConf('CONTACT_USE_SEARCH_TO_SELECT');
                 print $form->select_users($ls_user, 'ls_user');
                 print '</td>';
             }
             //Search field forproject
             print '<td class = "liste_titre" colspan = "1" >';
-            $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
+            $ajaxNbChar = getConf('PROJECT_USE_SEARCH_TO_SELECT');
             $htmlProjectArray = array('name' => 'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
             $sqlProjectArray = array('table' => 'projet', 'keyfield' => 'rowid', 
                 'fields' => 'ref, title', 'join'=>$formUserJoin, 
@@ -650,7 +650,7 @@ switch($action) {
             print '</td>';
             //Search field forproject_task
             print '<td class = "liste_titre" colspan = "1" >';
-            $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
+            $ajaxNbChar = intval(getConf('TIMESHEET_SEARCHBOX',2));
             $htmlProjectTaskArray = array('name' => 'ls_project_task', 
                 'ajaxNbChar'=>$ajaxNbChar);
             $sqlProjectTaskArray = array('table' => 'projet_task', 

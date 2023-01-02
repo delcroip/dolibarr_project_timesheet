@@ -181,7 +181,7 @@ if (isset($_SESSION['Attendanceevent'][$token])) {
 * Put here all code to build page
 ****************************************************/
 $morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?"
-    .$conf->global->TIMESHEET_VERSION);
+    .getConf('TIMESHEET_VERSION'));
 llxHeader('', $langs->trans('AttendanceAdmin'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
 $form = new Form($db);
@@ -265,7 +265,7 @@ jQuery(document).ready(function()
         $sql .= ' WHERE '.substr($sqlwhere, 5);
 // Count total nb of records
 $nbtotalofrecords = 0;
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
         $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'attendance_event as t';
         if (!empty($sqlwhere))
             $sqlcount .= ' WHERE '.substr($sqlwhere, 5);

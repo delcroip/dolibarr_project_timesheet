@@ -115,7 +115,7 @@ class TimesheetTest extends PHPUnit_Framework_Testcase
                 $db = $this->savdb;
                 $localobject = new TimesheetUserTasks($this->savdb, 1);//FIXEME
         $localobject->initAsSpecimen();
-        $localobject->date_start= mktime();
+        $localobject->date_start= time();
         $result = $localobject->create($user);
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
