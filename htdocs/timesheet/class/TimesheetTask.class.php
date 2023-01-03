@@ -721,14 +721,13 @@ class TimesheetTask extends Task
         $hidezeros = getConf('TIMESHEET_HIDE_ZEROS');
         $blockholiday = getConf('TIMESHEET_BLOCK_HOLIDAY');
         $blockPublicHoliday = getConf('TIMESHEET_BLOCK_PUBLICHOLIDAY');
-        $opendays = str_split(getConf('TIMESHEET_OPEN_DAYS','x1111100'));
+        $opendays = str_split(getConf('TIMESHEET_OPEN_DAYS','_1111100'));
         $hidden = false;
         $default_timezone = (empty($_SESSION["dol_tz_string"])?
             @date_default_timezone_get():$_SESSION["dol_tz_string"]);
         $timezoneoffset = get_timezone_offset($default_timezone, 'UTC');
         for($dayCur = 0;$dayCur<$dayelapsed;$dayCur++)
         {
-            //$shrinkedStyle = (!$opendays[$dayCur+1] && $shrinked)?'display:none;':'';
 
             $today = $this->date_start_approval+SECINDAY*$dayCur ;
             $today_end = $today + SECINDAY-1 ;
@@ -753,15 +752,15 @@ class TimesheetTask extends Task
             
             if ($isOpenStatus && $this->id>0) {
                 $isOpen = $isOpenStatus && (($startDates == 0) || ($startDates <= $today_end ));
-                $isOpen = $isOpen && (($stopDates == 0) ||($stopDates >= $today));
+                $isOpen = $isOpen && (empty($stopDates) ||($stopDates >= $today));
                 $isOpen = $isOpen && ($this->pStatus < "2") ;
                 $isOpenDay = $opendays[date("N", $today)];
-                $isInvoiced =isset($this->tasklist[$dayCur]['invoiced'])?$this->tasklist[$dayCur]['invoiced']:0;
+                $isInvoiced = isset($this->tasklist[$dayCur]['invoiced'])?$this->tasklist[$dayCur]['invoiced']:0;
                 if ($unblockClosedDay == 0) $isOpen = $isOpen  && $isOpenDay;
                 if ($unblockInvoiced == 0) $isOpen = $isOpen  && !$isInvoiced;
-                if (count($holidayList)>=$dayCur){
+                if (isset($holidayList[$dayCur])){
                     $isOpen = $isOpen && 
-                    !($blockholiday == 1 && $holidayList[$dayCur]['am'] == true && $holidayList[$dayCur]['pm'] == true) &&
+                    !($blockholiday == 1 && array_key_exists('am',$holidayList[$dayCur]) && $holidayList[$dayCur]['am'] == true && array_key_exists('pm',$holidayList[$dayCur]) && $holidayList[$dayCur]['pm'] == true) &&
                     !($blockPublicHoliday == 1 && $holidayList[$dayCur]['dayoff']);
 
                 }
@@ -785,10 +784,10 @@ class TimesheetTask extends Task
                 $html .= "<td>\n";
                 // add note popup
                 if ($isOpen && getConf('TIMESHEET_SHOW_TIMESPENT_NOTE')) {
-                $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'
-                    .$this->userId.'_'.$this->id.'_'.$dayCur.
-                    '" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'
-                    .$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
+                    $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'
+                        .$this->userId.'_'.$this->id.'_'.$dayCur.
+                        '" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'
+                        .$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
                 //note code
                 $html .= '<div class = "modal" id = "note_'.$this->userId.'_'.$this->id.'_'.$dayCur.'" >';
                 $html .= '<div class = "modal-content">';
@@ -797,7 +796,7 @@ class TimesheetTask extends Task
                     .$this->description.', '.dol_print_date($today, 'day').")".'</a><br>';
                 $html .= '<textarea class = "flat"  rows = "3" style = "width:350px;top:10px"';
                 $html .= ' name = "task['.$this->userId.']['.$this->id.']['.$dayCur.'][1]" ';
-                $html .= '>'.$this->tasklist[$dayCur]['note'].'</textarea>';
+                $html .= '>'.(array_key_exists('note', $this->tasklist[$dayCur])?$this->tasklist[$dayCur]['note']:'').'</textarea>';
                 $html .= '</div></div>';
                 }
                 //add input day
@@ -1258,26 +1257,33 @@ class TimesheetTask extends Task
             $this->note = $note;
             $noteUpdate = true;
         }
+        $progressUpdate = 0;
         if (!empty($progress) && $progress != $this->progress) {
             $this->progress = $progress;
-            $progressUpdate = true;
+            $progressUpdate = 1;
         }
-        if (is_array($timesheetPost))foreach ($timesheetPost as $dayKey => $dayData) {
-            $wkload = $dayData[0];
-            $daynote = $dayData[1];
-            $duration = 0;
-            if (getConf('TIMESHEET_TIME_TYPE','hours') == "days") {
-                $duration = (float) $wkload*getConf('TIMESHEET_DAY_DURATION',8)*3600;
-            } else {
-                $durationTab = date_parse($wkload);
-                $duration = $durationTab['minute']*60+$durationTab['hour']*3600;
+        $_SESSION['timesheet'][$token]['timeSpendModified'] = 0;
+        $_SESSION['timesheet'][$token]['updateError'] = 0;
+        $_SESSION['timesheet'][$token]['timeSpendDeleted'] = 0;
+        $_SESSION['timesheet'][$token]['timeSpendCreated'] = 0;
+        $_SESSION['timesheet'][$token]['ProgressUpdate'] = 0;
+        if (is_array($timesheetPost))
+            foreach ($timesheetPost as $dayKey => $dayData) {
+                $wkload = $dayData[0];
+                $daynote = array_key_exists(1,$dayData )?$dayData[1]:'';
+                $duration = 0;
+                if (getConf('TIMESHEET_TIME_TYPE', 'hours') == "days") {
+                    $duration = (float) $wkload * getConf('TIMESHEET_DAY_DURATION', 8) * 3600;
+                } else {
+                    $durationTab = date_parse($wkload);
+                    $duration = $durationTab['minute'] * 60 + $durationTab['hour'] * 3600;
+                }
+                $lineresult = $this->saveTaskTime($Submitter, $duration, $daynote, $dayKey);
+                $_SESSION['timesheet'][$token]['timeSpendModified'] += array_key_exists('timeSpendModified', $lineresult) ? $lineresult['timeSpendModified'] : 0;
+                $_SESSION['timesheet'][$token]['updateError'] += array_key_exists('updateError', $lineresult) ? $lineresult['updateError'] : 0;
+                $_SESSION['timesheet'][$token]['timeSpendDeleted'] += array_key_exists('timeSpendDeleted', $lineresult) ? $lineresult['timeSpendDeleted'] : 0;
+                $_SESSION['timesheet'][$token]['timeSpendCreated'] += array_key_exists('timeSpendCreated', $lineresult) ? $lineresult['timeSpendCreated'] : 0;
             }
-            $lineresult = $this->saveTaskTime($Submitter, $duration, $daynote, $dayKey);
-            $_SESSION['timesheet'][$token]['timeSpendModified']+=$lineresult['timeSpendModified'];
-            $_SESSION['timesheet'][$token]['updateError']+=$lineresult['updateError'];
-            $_SESSION['timesheet'][$token]['timeSpendDeleted']+=$lineresult['timeSpendDeleted'];
-            $_SESSION['timesheet'][$token]['timeSpendCreated']+=$lineresult['timeSpendCreated'];
-        }
         $nbUpdate = ($_SESSION['timesheet'][$token]['timeSpendModified'] 
             + $_SESSION['timesheet'][$token]['timeSpendDeleted'] 
             + $_SESSION['timesheet'][$token]['timeSpendCreated']) ;
@@ -1317,7 +1323,7 @@ class TimesheetTask extends Task
     public function saveTaskTime($Submitter, $duration, $daynote, $dayKey, $addmode = false)
     {
         $item = $this->tasklist[$dayKey];
-        $resArray = array();
+        $resArray = ['timeSpendDeleted'=>0, 'timeSpendModified' => 0, 'timeSpendCreated'=>0, 'updateError'=> 0, ];
         $this->timespent_fk_user = $this->userId;
         dol_syslog(__METHOD__."   duration Old=".$item['duration']." New="
             .$duration." Id=".$item['id'].", date=".$item['date'], LOG_DEBUG);
@@ -1327,7 +1333,7 @@ class TimesheetTask extends Task
         }
         if ($item['id']>0) {
             $this->timespent_id = $item['id'];
-            $this->timespent_old_duration = $item['duration'];
+            $this->timespent_old_duration = $item['duration'];  
             $this->timespent_note .= $item['note'];
             if ($addmode) {
                 if (!empty($daynote)){
@@ -1361,6 +1367,7 @@ class TimesheetTask extends Task
             $this->timespent_duration = $duration;
             $newId = $this->addTimeSpent($Submitter, 0);
             if ($newId >= 0) {
+
                 $resArray['timeSpendCreated']++;
                 $this->tasklist[$dayKey]['id'] = $newId;
             } else {
@@ -1368,10 +1375,10 @@ class TimesheetTask extends Task
             }
         }
         //update the task list
-        if($this->tasklist[$dayKey]['duration'] != $this->timespent_duration){
+        if(!array_key_exists('duration', $this->tasklist[$dayKey]) || $this->tasklist[$dayKey]['duration'] != $this->timespent_duration){
             $this->tasklist[$dayKey]['duration'] = $this->timespent_duration;
         }
-        if($this->tasklist[$dayKey]['note'] != $this->timespent_note){
+        if(!array_key_exists('note', $this->tasklist[$dayKey]) || $this->tasklist[$dayKey]['note'] != $this->timespent_note){
             $this->tasklist[$dayKey]['note'] = $this->timespent_note;
         }
         

@@ -550,7 +550,7 @@ function formatTime($duration, $hoursperdays = -1)
         $TotalHours = floor(($duration-$TotalSec-$TotalMin*60)/3600);
         return sprintf("%02s", $TotalHours).':'.sprintf("%02s", $TotalMin);
     } else {
-        $totalDay = round($duration/3600/$hoursperdays, getConf('TIMESHEET_ROUND',1));
+        $totalDay = round($duration/3600/$hoursperdays, getConf('TIMESHEET_ROUND'));
         return strval($totalDay);
     }
 }
@@ -565,16 +565,16 @@ function formatTime($duration, $hoursperdays = -1)
     {
         global $langs;
         $messages = array();
-        if ($arraymessage['timeSpendCreated']) $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
-        if ($arraymessage['timeSpendModified'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
-        if ($arraymessage['timeSpendDeleted'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
+        if (array_key_exists('timeSpendCreated', $arraymessage) && $arraymessage['timeSpendCreated']) $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
+        if (array_key_exists('timeSpendModified', $arraymessage) && $arraymessage['timeSpendModified'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
+        if (array_key_exists('timeSpendDeleted', $arraymessage) && $arraymessage['timeSpendDeleted'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
         $default = array('type' => 'warning', 'text' => 'NothingChanged', 'param' => 0);
-        if ($arraymessage['NoteUpdated'])$messages[] = array('type' => 'mesgs', 'text' => 'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
-        if ($arraymessage['ProgressUpdate'])$messages[] = array('type' => 'mesgs', 'text' => 'ProgressUpdate', 'param'=>'');
-        if ($arraymessage['updateError'])$messages[] = array('type' => 'error', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
-        if ($arraymessage['NoActiveEvent'])$messages[] = array('type' => 'warning', 'text' => 'NoActiveEvent', 'param'=>'');
-        if ($arraymessage['EventNotActive'])$messages[] = array('type' => 'error', 'text' => 'EventNotActive', 'param'=>'');
-        if ($arraymessage['DbError'])$messages[] = array('type' => 'error', 'text' => 'DbError', 'param'=>'');
+        if (array_key_exists('NoteUpdated', $arraymessage) && $arraymessage['NoteUpdated'])$messages[] = array('type' => 'mesgs', 'text' => 'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
+        if (array_key_exists('ProgressUpdate', $arraymessage) && $arraymessage['ProgressUpdate'])$messages[] = array('type' => 'mesgs', 'text' => 'ProgressUpdate', 'param'=>'');
+        if (array_key_exists('updateError', $arraymessage) && $arraymessage['updateError'])$messages[] = array('type' => 'error', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
+        if (array_key_exists('NoActiveEvent', $arraymessage) && $arraymessage['NoActiveEvent'])$messages[] = array('type' => 'warning', 'text' => 'NoActiveEvent', 'param'=>'');
+        if (array_key_exists('EventNotActive', $arraymessage) && $arraymessage['EventNotActive'])$messages[] = array('type' => 'error', 'text' => 'EventNotActive', 'param'=>'');
+        if (array_key_exists('DbError', $arraymessage) && $arraymessage['DbError'])$messages[] = array('type' => 'error', 'text' => 'DbError', 'param'=>'');
 
         $nbr = 0;
         foreach ($messages as $key => $message) {

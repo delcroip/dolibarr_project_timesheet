@@ -545,8 +545,10 @@ public function fetchTaskTimesheet($userid = '')
     if ($resql) {
         $this->taskTimesheet = array();
             $num = $this->db->num_rows($resql);
+            $tasksList = array();
             $i = 0;
             // Loop on each record found, so each couple (project id, task id)
+            $ret = array();
             while($i < $num)
             {
                     $error = 0;
@@ -562,13 +564,16 @@ public function fetchTaskTimesheet($userid = '')
                     $tasksList[$i]->task_timesheet = $this->id;
                     $tasksList[$i]->progress = $obj->progress;
                     $tasksList[$i]->listed = is_array($whiteList)?$whiteList[$obj->taskid]:null;
+
                     $i++;
                     $ret[$obj->taskid] = $obj->appid;
+
             }
             $this->db->free($resql);
             $i = 0;
             $othertaskid = array();
             if(isset($this->taskTimesheet))unset($this->taskTimesheet);
+            $this->taskTimesheet = array();
             foreach ($tasksList as $row) {
                 $othertaskid[] = $row->id;
                 dol_syslog(__METHOD__.'::task='.$row->id, LOG_DEBUG);
@@ -576,6 +581,7 @@ public function fetchTaskTimesheet($userid = '')
                 $row->getActuals($datestart, $datestop, $userid);
                 $this->taskTimesheet[$row->id] = $row->serialize();
             }
+            unset($tasksList);
             // bundle all other time in a line
             $other = NEW TimesheetTask($this->db, -1);
             $other->exclusionlist = $othertaskid;
@@ -601,7 +607,7 @@ public function fetchTaskTimesheet($userid = '')
  *  @param    array(int)               $progress               array sent by POST with the task dstated progress
  *  @return     int                                                        number of tasktime creatd/changed
  */
-public function updateActuals($tabPost, $notes = array(), $progress = array())
+public function updateActuals($tabPost, $notes = array(), $progresses = array())
 {
     
      //FIXME, tta should be creted
@@ -621,11 +627,11 @@ public function updateActuals($tabPost, $notes = array(), $progress = array())
             foreach ($this->taskTimesheet as $key => $row) { 
                 $tasktime = new TimesheetTask($this->db);
                 $tasktime->unserialize($row);
-                if (isset($tabPost[$tasktime->id])){  
-                    
+                if (isset($tabPost[$tasktime->id])){
+                    $note = array_key_exists($tasktime->id,$notes)?$notes[$tasktime->id]:null;
+                    $progress = array_key_exists($tasktime->id,$progresses)?$progresses[$tasktime->id]:null;
                     $ret += $tasktime->postTaskTimeActual($tabPost[$tasktime->id], 
-                        $this->userId, $this->user, $this->token,  
-                        $notes[$tasktime->id], $progress[$tasktime->id]);
+                        $this->userId, $this->user, $this->token, $note, $progress);
                 }
                 $this->taskTimesheet[$key] = $tasktime->serialize();
             }
@@ -810,7 +816,7 @@ public function getHTMLHeader($search = false)
         $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
     }
     ///Whitelist tab
-    if (getConf('TIMESHEET_TIME_SPAN','week') == "month") {
+    if (getConf('TIMESHEET_TIME_SPAN') == "month") {
         $format = "%d";
         $html .= '<tr class = "liste_titre" id = "">'."\n";
         $html .= '<td colspan = "'.$maxColSpan.'" align = "center"><a >'.$langs->trans(date('F', $this->date_start)).' '.date('Y', $this->date_start).'</a></td>';
@@ -825,11 +831,10 @@ public function getHTMLHeader($search = false)
         }
         $html .= "> <a onclick=\"sortTable('timesheetTable_{$this->id}', 'col{$value}', 'asc');\">".$langs->trans($value)."</a></th>\n";
     }
-    $opendays = str_split(getConf('TIMESHEET_OPEN_DAYS',"x1111100"));
     for ($i = 0;$i<$weeklength;$i++)
     {
         $curDay = $this->date_start+ SECINDAY*$i+SECINDAY/4;
-        $htmlDay = (getConf('TIMESHEET_TIME_SPAN','week') == "month")?substr($langs->trans(date('l', $curDay)), 0, 3):$langs->trans(date('l', $curDay));
+        $htmlDay = (getConf('TIMESHEET_TIME_SPAN') == "month")?substr($langs->trans(date('l', $curDay)), 0, 3):$langs->trans(date('l', $curDay));
         $html .= "\t".'<th class = "daysClass days_'.$this->id.'" id = "'.$this->id.'_'.$i.'" width = "35px" style = "text-align:center;" >'.$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
     }
     return $html;
@@ -945,7 +950,7 @@ public function getHTMLtaskLines( $ajax = false)
     if (is_array($this->holidays->holidaylist) && $this->holidays->holidayPresent){
         $personalHoliday = $this->holidays->holidaylist;
     }
-    if (is_array($this->publicHolidays->holidaylist) && $this->publicHolidays->holidayPresent){
+    if (isset($this->publicHolidays->holidaylist) && is_array($this->publicHolidays->holidaylist) && $this->publicHolidays->holidayPresent){
         $publicHoliday = $this->publicHolidays->holidaylist;
     }
     //$holiday =  $publicHoliday + $personalHoliday;
@@ -966,7 +971,6 @@ public function getHTMLtaskLines( $ajax = false)
         foreach ($this->taskTimesheet as $timesheet) {
             $row = new TimesheetTask($this->db);
             $row->unserialize($timesheet);
-            
             //$row->db = $this->db;
             if (in_array($this->status, array(REJECTED, DRAFT, PLANNED, CANCELLED))) {
                 $blockOveride = -1;
@@ -978,6 +982,8 @@ public function getHTMLtaskLines( $ajax = false)
             if ($row->id != -1 or $row->getSavedTimeTotal() != 0){
                 $Lines .= $row->getTimesheetLine($this->headers, $this->id, $blockOveride, $holiday);
             }
+                
+
                 //if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
             $i++;
         }

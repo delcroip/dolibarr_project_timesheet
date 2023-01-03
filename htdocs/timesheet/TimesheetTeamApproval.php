@@ -39,7 +39,8 @@ $action = GETPOST('action', 'alpha');
 //should return the XMLDoc
 $ajax = GETPOST('ajax', 'int');
 $xml = GETPOST('xml', 'int');
-if (!is_numeric($offset))$offset = 0;
+$offset= GETPOST('offset', 'int');
+if (!isset($offset) || !is_numeric($offset))$offset = 0;
 $print = (GETPOST('optioncss', 'alpha') == 'print')?true:false;
 $current = GETPOST('target', 'int');
 if ($current == ''){
@@ -81,7 +82,10 @@ if ($action == 'submit') {
                 $curTaskTimesheet->fetch($tsuId);
                 $arrayTTA = $curTaskTimesheet->fetchTaskTimesheet();
                 $curTaskTimesheet->token = $token;
-                $curTaskTimesheet->updateActuals($arrayTTA, $notesTask[$tsuId],$progressTask[$tsuId]);
+                $curNotesTask = array_key_exists($tsuId, $notesTask) ? coalesce($notesTask[$tsuId], array()) : array();
+                $curProgressTask = array_key_exists($tsuId, $progressTask) ? coalesce($progressTask[$tsuId], array()) : array();
+                
+                $curTaskTimesheet->updateActuals($arrayTTA, $curNotesTask,$curProgressTask);
                 //if ($approvals[$key]!=$tsUser)
                 switch($approvals[$tsuId]) {
                     case 'Approved':
@@ -179,12 +183,12 @@ showTimesheetApTabs(TEAM);
 echo '<div id = "Team" class = "tabBar">';
 //tokentp = time();
 if (is_object($firstTimesheetUser)) {
-    if (!$print) echo getHTMLNavigation($optioncss, $selectList, $token, $current);
-    $Form .= $firstTimesheetUser->getHTMLFormHeader($ajax);
+    if (!$print) echo getHTMLNavigation('', $selectList, $token, $current);
+    $Form = $firstTimesheetUser->getHTMLFormHeader($ajax);
     foreach ($objectArray as $key => $TTU) {
 
         if ($i<$level) {
-            $TTU->fetchTaskTimesheet();
+            $TTU->fetchAll($TTU->date_start);
     //$ret += $this->getTaskTimeIds();
     //FIXME module holiday should be activated ?
             $TTU->fetchUserHolidays();
@@ -267,7 +271,7 @@ $db->close();
 */
 function getTStobeApproved($level, $offset, $role, $subId)
 {
-    global $db, $conf;
+    global $db, $conf, $user;
     if ((!is_array($subId) || !count($subId)) && $subId!='all')return array();
     $byWeek = getConf('TIMESHEET_APPROVAL_BY_WEEK');
     //if ($role = 'team')
@@ -318,19 +322,21 @@ function getTStobeApproved($level, $offset, $role, $subId)
             $tmpTs->userId = $obj->fk_userid;
             $tmpTs->date_start = $tmpTs->db->jdate($obj->date_start);
             $tmpTs->ref = $tmpTs->date_start.'_'.$tmpTs->userId;
+            
             //$tmpTs->date_end = $tmpTs->db->jdate($obj->date_start);
             $tmpTs->status = $obj->status;
-            $tmpTs->planned_workload = $obj->planned_workload;
             $tmpTs->note = $obj->note;
             $tmpTs->date_creation = $tmpTs->db->jdate($obj->date_creation);
             $tmpTs->date_modification = $tmpTs->db->jdate($obj->date_modification);
-            $tmpTs->user_creation = $obj->fk_user_creation;
+            $tmpTs->user_creation = property_exists($obj, 'fk_user_creation')?$obj->fk_user_creation:$user->id;
             $tmpTs->user_modification = $obj->fk_user_modification;
             $tmpTs->whitelistmode = 2;// no impact
             $tmpTs->date_end = $tmpTs->db->jdate($obj->date_end);
             //}
+            
             $i++;
             $tsList[] = $tmpTs;
+            unset($tmpTs);
         }
         $db->free($resql);
         return $tsList;

@@ -28,7 +28,7 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 $action = GETPOST('action', 'alpha');
-$datestart = GETPOST('dateStart', 'alpha');
+$datestart = GETPOST('dateStart', 'int');
 //should return the XMLDoc
 $ajax = GETPOST('ajax', 'int');
 $xml = GETPOST('xml', 'int');
@@ -76,11 +76,14 @@ if ( getConf('TIMESHEET_ADD_FOR_OTHER') == 1) {
     }
 }
 $confirm = GETPOST('confirm', 'alpha');
-if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
-    $dateStart = $_SESSION["dateStart"];
-} else {
-    $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
-    if ($dateStart == 0)$dateStart = getStartDate(time(), 0);
+$dateStart = intval(GETPOST('startDate', 'int'));
+if ($dateStart == 0){
+    if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
+        $dateStart = $_SESSION["dateStart"];
+    } else{
+        $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
+        if ($dateStart == 0)$dateStart = getStartDate(time(), 0);
+    }
 }
 $_SESSION["dateStart"] = $dateStart ;
 
@@ -113,10 +116,13 @@ switch($action) {
             if ($tsUserId>0) {
                 $ret = 0;
                 $key = GETPOST('tsUserId','int');
-                $notesTask = GETPOST('notesTask', 'array')[$tsUserId];
-                $progressTask = GETPOST('progressTask', 'array')[$tsUserId];
+                $notesTaskA = GETPOST('notesTask', 'array');
+                $notesTask = array_key_exists($tsUserId, $notesTaskA)?$notesTaskA[$tsUserId]:array();
+                $progressTaskA = GETPOST('progressTask', 'array');
+                $progressTask = array_key_exists($tsUserId, $progressTaskA)?$progressTaskA[$tsUserId]:array();
                 $notesTaskApproval = GETPOST('noteTaskApproval', 'array');
-                $tasktab = GETPOST('task', 'array')[$tsUserId];
+                $tasktabA = GETPOST('task', 'array');
+                $tasktab = array_key_exists($tsUserId, $tasktabA)?$tasktabA[$tsUserId]:array();
                 $task_timesheet->loadFromSession($token, $tsUserId);
                 if ($task_timesheet->note != $notesTaskApproval[$key]) {
                     $update = true;
@@ -163,7 +169,7 @@ if (!empty($token)) {
 }
 $token = getToken();
 if ($submitted_next ||$saved_next ){
-    $dateStart = getStartDate($dateStart, 1);
+    $dateStart = getStartDate($dateStart+1, 1);
     $_SESSION["dateStart"] = $dateStart ;
 }
 

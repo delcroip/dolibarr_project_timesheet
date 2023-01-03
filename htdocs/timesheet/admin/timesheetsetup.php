@@ -39,7 +39,7 @@ $attendance = getConf('TIMESHEET_ATTENDANCE');
 
 $timetype = getConf('TIMESHEET_TIME_TYPE','hours');
 $hoursperday = getConf('TIMESHEET_DAY_DURATION',8);
-$timeSpan = getConf('TIMESHEET_TIME_SPAN','week');
+$timeSpan = getConf('TIMESHEET_TIME_SPAN');
 //hide/show
 $hidedraft = getConf('TIMESHEET_HIDE_DRAFT');
 $hidezeros = getConf('TIMESHEET_HIDE_ZEROS');
@@ -67,7 +67,7 @@ $blockholiday = getConf('TIMESHEET_BLOCK_HOLIDAY');
 $addpublicholidaytime = getConf('TIMESHEET_ADD_PUBLICHOLIDAY_TIME');
 $blockpublicholiday = getConf('TIMESHEET_BLOCK_PUBLICHOLIDAY');
 $overtimecheckweeks = getConf('TIMESHEET_OVERTIME_CHECK_WEEKS');
-$opendays = str_split(getConf('TIMESHEET_OPEN_DAYS'));
+$opendays = str_split(getConf('TIMESHEET_OPEN_DAYS',"_1111100"));
 
 //approval
 $approvalbyweek = getConf('TIMESHEET_APPROVAL_BY_WEEK');
@@ -150,7 +150,7 @@ switch($action) {
         $timetype = getpost('timeType', 'alpha')?:'d';
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         $timeSpan = getpost('timeSpan', 'alpha');
-        if ($timeSpan!=getConf('TIMESHEET_TIME_SPAN','week')) {
+        if ($timeSpan!=getConf('TIMESHEET_TIME_SPAN')) {
             // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql .= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'

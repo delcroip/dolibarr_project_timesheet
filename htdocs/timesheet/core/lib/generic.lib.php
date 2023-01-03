@@ -65,6 +65,19 @@ function getConf($cName, $default = false){
     }
 }
 
+function coalesce(...$params ){
+    $i = 0;
+
+    while($i < count($params))
+    {
+        if (isset($params[$i])){
+            return $params[$i];
+        }
+        $i++;
+    }
+    return null;
+}
+
 function select_sellist(
     $sqlarray = array('table' => 'user', 'keyfield' => 'rowid', 'fields' => 'firstname, lastname', 'join' => '', 'where' => '', 'tail' => ''), $htmlarray = array('name' => 'HTMLSellist', 'class' => '', 'otherparam' => '', '$ajaxNbChar' => '', 'separator' => ' ', 'noajax' => 0), $selected = '', $addtionnalChoices = array('NULL' => 'NULL'))
 {
