@@ -60,6 +60,9 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $token = GETPOST('$token', 'alpha');
+$filter = GETPOST('filter', 'alpha');
+$param = GETPOST('param', 'alpha');
+
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
@@ -284,6 +287,7 @@ jQuery(document).ready(function()
 });
 </script>';*/
 $edit = $new = 0;
+$param = '';
 switch($action) {
     case 'create':
         $new = 1;
@@ -541,7 +545,7 @@ switch($action) {
             $sql .= $db->plimit($limit+1, $offset);
     }
     //execute SQL
-    dol_syslog($script_file, LOG_DEBUG);
+    dol_syslog($sql, LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql) {
         if (!empty($ls_userId))        $param .= '&ls_userId='.urlencode($ls_userId);

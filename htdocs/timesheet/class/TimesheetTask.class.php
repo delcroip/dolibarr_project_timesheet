@@ -61,7 +61,7 @@ class TimesheetTask extends Task
     public $duration;
     public $weekDays;
     public $userName;
-    
+
     /**
      *  init the static variable
      *
@@ -658,6 +658,11 @@ class TimesheetTask extends Task
      */
     public function getTimesheetLine($headers, $tsUserId = 0, $blockOveride = 0, $holiday = array() )
     {
+        $totalDuration = $this->getDuration();
+        //hide closed project if no time
+        if ($this->pStatus >1 and $totalDuration == 0){
+            return '';
+        }
         global $langs, $conf, $statusColor;
         // change the time to take all the TS per day
         $dayelapsed = getDayInterval($this->date_start_approval, $this->date_end_approval);
@@ -668,7 +673,7 @@ class TimesheetTask extends Task
             'timesheet_whitelist':'timesheet_blacklist').' timesheet_line line_'.$tsUserId;
         $htmltail = '';
         $linestyle = '';
-        if (($this->pStatus == "2")) {
+        if (($this->pStatus > 1)) {
             $linestyle .= 'background:#'.$statusColor[FROZEN].';';
         } elseif ($statusColor[$this->status]!='' &&  $statusColor[$this->status]!='FFFFFF') {
             $linestyle .= 'background:#'.$statusColor[$this->status].';';

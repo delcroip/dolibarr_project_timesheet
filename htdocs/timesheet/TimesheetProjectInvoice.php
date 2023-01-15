@@ -380,7 +380,7 @@ $langs->load('timesheet@timesheet');
                             $factor = intval(substr($product->duration, 0, -1));
                             if ($factor == 0) $factor = 1;//to avoid divided by $factor0                         
                             $quantity = ($duration == $factor*$unit_factor) ? 1 :
-                                round($duration/($factor*$unit_factor), getConf('TIMESHEET_ROUND',1));
+                                round($duration/($factor*$unit_factor), getConf('TIMESHEET_ROUND'));
                             $postdata['type'] = -1;
                             $postdata['prod_entry_mode'] = 'predef';
                             $postdata['idprod'] = $service['Service'];

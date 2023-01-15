@@ -60,6 +60,8 @@ $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'aplha');
 $cancel = GETPOST('cancel', 'aplha');
 $confirm = GETPOST('confirm', 'aplha');
+$filter = GETPOST('filter', 'aplha');
+$param = GETPOST('param', 'aplha');
 $token = GETPOST('token', 'alpha');
 $ajax = GETPOST('ajax', 'int');
 //// Get parameters
@@ -583,9 +585,10 @@ switch($action) {
             $sql .= $db->plimit($limit+1, $offset);
         }
         //execute SQL
-        dol_syslog($script_file, LOG_DEBUG);
+        dol_syslog($sql, LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql) {
+            $param = '';
             if (!empty($ls_user))
                 $param .= '&ls_user='.urlencode($ls_user);
             if (!empty($ls_project))
@@ -643,6 +646,8 @@ switch($action) {
             print '<td class = "liste_titre" colspan = "1" >';
             $ajaxNbChar = getConf('PROJECT_USE_SEARCH_TO_SELECT');
             $htmlProjectArray = array('name' => 'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
+            $formUserJoin = '';
+            $formUserWhere = '';
             $sqlProjectArray = array('table' => 'projet', 'keyfield' => 'rowid', 
                 'fields' => 'ref, title', 'join'=>$formUserJoin, 
                 'where'=>$formUserWhere, 'separator' => ' - ');
@@ -653,6 +658,8 @@ switch($action) {
             $ajaxNbChar = intval(getConf('TIMESHEET_SEARCHBOX',2));
             $htmlProjectTaskArray = array('name' => 'ls_project_task', 
                 'ajaxNbChar'=>$ajaxNbChar);
+            $formTaskJoin = '';
+            $formTaskWhere = '';
             $sqlProjectTaskArray = array('table' => 'projet_task', 
                 'keyfield' => 'rowid', 'fields' => 'ref, label', 
                  'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');

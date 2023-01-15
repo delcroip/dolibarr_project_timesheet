@@ -58,6 +58,7 @@ $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
 $token = GETPOST('token', 'alpha');
+$filter = GETPOST('filter', 'alpha');
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
@@ -281,7 +282,7 @@ if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
             $sql .= $db->plimit($limit+1, $offset);
     }
     //execute SQL
-    dol_syslog($script_file, LOG_DEBUG);
+    dol_syslog($sql, LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql) {
         $param = '';

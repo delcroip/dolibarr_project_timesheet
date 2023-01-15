@@ -344,7 +344,7 @@ class TimesheetReport
                     'lastName' => trim($objusr->lastname),
                     'userLink' => $objusr->getNomUrl(0),
                     'note' =>($obj->note),
-                    'invoiceable' => ($obj->invoiceable==1)?'1':'0',
+                    'invoiceable' => (isset($obj->invoiceable) && $obj->invoiceable==1)?'1':'0',
                     'invoiced' => ($obj->invoiced==1)?'1':'0',
                     'socname' => $objpjt->socid>0?($objsoc->code_client != ''? $objsoc->code_client.' - ':'').$objsoc->getNomUrl():''  
                     );

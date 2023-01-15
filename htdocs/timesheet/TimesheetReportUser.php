@@ -115,6 +115,7 @@ if ($show_all)
 }
 
 $reportStatic = new TimesheetReport($db);
+$reportName = '';
 $reportStatic->initBasic('', $userIdlist, $reportName, $dateStart, $dateEnd,
     $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
 if ($action == 'getpdf') {

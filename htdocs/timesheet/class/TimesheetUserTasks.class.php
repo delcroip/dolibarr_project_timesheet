@@ -501,7 +501,7 @@ public function fetchTaskTimesheet($userid = '')
      // Save the param in the SeSSION
     $tasksList = array();
     $sql = 'SELECT DISTINCT element_id as taskid, prj.fk_soc, tsk.fk_projet, tsk.progress, ';
-    $sql .= 'tsk.fk_task_parent, tsk.rowid, app.rowid as appid, prj.ref as prjRef, tsk.ref as tskRef';
+    $sql .= 'tsk.fk_task_parent, tsk.rowid, app.rowid as appid, prj.ref as prjRef, tsk.ref as tskRef, prj.fk_statut as p_status';
     $sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact  AND ctc.active = \'1\') ';
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = ec.element_id ';
@@ -524,9 +524,7 @@ public function fetchTaskTimesheet($userid = '')
         $sql .= ' )';
     }
     if (getConf('TIMESHEET_HIDE_DRAFT') == '1') {
-        $sql .= ' AND prj.fk_statut =  \'1\'';
-    }else{
-        $sql .= ' AND prj.fk_statut in (\'0\',\'1\')';
+        $sql .= ' AND prj.fk_statut !=  \'0\'';
     }
     $sql .= ' AND (prj.datee >= \''.$this->db->idate($datestart).'\' OR prj.datee IS NULL)';
     $sql .= ' AND (prj.dateo <= \''.$this->db->idate($datestop).'\' OR prj.dateo IS NULL)';
@@ -551,22 +549,23 @@ public function fetchTaskTimesheet($userid = '')
             $ret = array();
             while($i < $num)
             {
-                    $error = 0;
-                    $obj = $this->db->fetch_object($resql);
-                    $tasksList[$i] = NEW TimesheetTask($this->db, $obj->taskid);
-                    //$tasksList[$i]->id = $obj->taskid;
-                    if ($obj->appid) {
-                        $tasksList[$i]->fetch($obj->appid);
-                    }
-                    $tasksList[$i]->userId = $this->userId;
-                    $tasksList[$i]->date_start_approval = $this->date_start;
-                    $tasksList[$i]->date_end_approval = $this->date_end;
-                    $tasksList[$i]->task_timesheet = $this->id;
-                    $tasksList[$i]->progress = $obj->progress;
-                    $tasksList[$i]->listed = is_array($whiteList)?$whiteList[$obj->taskid]:null;
+                $error = 0;
+                $obj = $this->db->fetch_object($resql);
+                $tasksList[$i] = NEW TimesheetTask($this->db, $obj->taskid);
+                //$tasksList[$i]->id = $obj->taskid;
+                if ($obj->appid) {
+                    $tasksList[$i]->fetch($obj->appid);
+                }
+                $tasksList[$i]->userId = $this->userId;
+                $tasksList[$i]->date_start_approval = $this->date_start;
+                $tasksList[$i]->date_end_approval = $this->date_end;
+                $tasksList[$i]->task_timesheet = $this->id;
+                $tasksList[$i]->progress = $obj->progress;
+                $tasksList[$i]->listed = is_array($whiteList)?$whiteList[$obj->taskid]:null;
+               // $tasksList[$i]->pStatus = $obj->p_status;
 
-                    $i++;
-                    $ret[$obj->taskid] = $obj->appid;
+                $i++;
+                $ret[$obj->taskid] = $obj->appid;
 
             }
             $this->db->free($resql);
