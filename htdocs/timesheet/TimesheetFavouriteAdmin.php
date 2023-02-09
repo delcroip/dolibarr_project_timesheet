@@ -57,11 +57,11 @@ $langs->load("Timesheet");
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
-$backtopage = GETPOST('backtopage', 'aplha');
-$cancel = GETPOST('cancel', 'aplha');
-$confirm = GETPOST('confirm', 'aplha');
-$filter = GETPOST('filter', 'aplha');
-$param = GETPOST('param', 'aplha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$filter = GETPOST('filter', 'alpha');
+$param = GETPOST('param', 'alpha');
 $token = GETPOST('token', 'alpha');
 $ajax = GETPOST('ajax', 'int');
 //// Get parameters
@@ -121,16 +121,14 @@ if ($cancel) {
     if (GETPOST('User', 'int') == "") {
         //to keep the token on javvascript reload {
         $token = getToken();
-        $_SESSION['timesheet'][$token] = array();
-        $_SESSION['timesheet'][$token]['action'] = $action;
     } else {
         $editedUser = GETPOST('User', 'int');
         $editedProject = GETPOST('Project', 'int');
     }
 } elseif (($action == 'add') || ($action == 'update' && ($id>0 || !empty($ref)))) {
     //block resubmit
-    if ((empty($token) || (!isset($_SESSION['timesheet'][$token])))) {
-            setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
+    if ((empty($token))) {
+            setEventMessage('errors');
             $action = ($action == 'add')?'create':'edit';
     }
     //retrive the data
@@ -254,8 +252,6 @@ if ($ajax == 1) {
     echo json_encode(array('errors'=> $object->errors));
     ob_end_flush();
     exit();
-} else {
-    unset($_SESSION['timesheet'][$token]);
 }
 /***************************************************
 * VIEW
