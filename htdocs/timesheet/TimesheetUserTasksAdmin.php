@@ -60,6 +60,9 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $token = GETPOST('$token', 'alpha');
+$filter = GETPOST('filter', 'alpha');
+$param = GETPOST('param', 'alpha');
+
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha')?GETPOST('sortorder', 'alpha'):'ASC';
@@ -235,7 +238,7 @@ switch($action) {
         break;
 }
         //document handling
-if ($conf->global->TIMESHEET_ADD_DOCS && $id>0) {
+if (getConf('TIMESHEET_ADD_DOCS') && $id>0) {
     $object->fetch($id);
     $ref = dol_sanitizeFileName($object->ref);
     $upload_dir = $conf->timesheet->dir_output.'/tasks/'
@@ -261,7 +264,7 @@ if (($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))) {
 * Put here all code to build page
 ****************************************************/
 $morejs = array("/timesheet/core/js/jsparameters.php", "/timesheet/core/js/timesheet.js?"
-    .$conf->global->TIMESHEET_VERSION);
+    .getConf('TIMESHEET_VERSION'));
 llxHeader('', $langs->trans('TimesheetUser'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
 $form = new Form($db);
@@ -284,6 +287,7 @@ jQuery(document).ready(function()
 });
 </script>';*/
 $edit = $new = 0;
+$param = '';
 switch($action) {
     case 'create':
         $new = 1;
@@ -404,7 +408,7 @@ switch($action) {
             print $object->getHTMLTotal();
             print "</table>";
             print  '<script type = "text/javascript">'."\n\t";
-            print 'updateAll('.$conf->global->TIMESHEET_HIDE_ZEROS.');';
+            print 'updateAll('.getConf('TIMESHEET_HIDE_ZEROS').');';
             print  "\n\t".'</script>'."\n";
         }
         print '<div class = "center">';
@@ -529,7 +533,7 @@ switch($action) {
     }
     // Count total nb of records
     $nbtotalofrecords = 0;
-    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+    if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
             $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'project_task_timesheet as t';
             if (!empty($sqlwhere))
                 $sqlcount .= ' WHERE '.substr($sqlwhere, 5);
@@ -541,7 +545,7 @@ switch($action) {
             $sql .= $db->plimit($limit+1, $offset);
     }
     //execute SQL
-    dol_syslog($script_file, LOG_DEBUG);
+    dol_syslog($sql, LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql) {
         if (!empty($ls_userId))        $param .= '&ls_userId='.urlencode($ls_userId);

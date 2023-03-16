@@ -194,8 +194,8 @@ class TimesheetPublicHolidays extends CommonObject
         global $langs;
         global $statusColor;
         global $conf;
-        $timetype = $conf->global->TIMESHEET_TIME_TYPE;
-        $dayshours = $conf->global->TIMESHEET_DAY_DURATION;
+        $timetype = getConf('TIMESHEET_TIME_TYPE','hours');
+        $dayshours = getConf('TIMESHEET_DAY_DURATION',8);
         if (!is_array($this->holidaylist) || (!$this->holidayPresent)) // don't show the holiday line if nothing present
            return '';
         $html = "<tr id = 'publicholiday'>\n";
@@ -207,7 +207,7 @@ class TimesheetPublicHolidays extends CommonObject
                 mktime(0, 0, $holiday['dayoff']*$dayshours*3600)):$holiday['dayoff'];
             $html .= '<th style = "margin: 0;padding: 0;">';
             $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_publicholiday";
-            if ($conf->global->TIMESHEET_ADD_PUBLICHOLIDAY_TIME == 1){
+            if (getConf('TIMESHEET_ADD_PUBLICHOLIDAY_TIME') == 1){
                 $html .= '<input type = "hidden" class = "'.$class.'"  value = "'.$value.'">';
             }
             $html .= '<a id = "holiday['.$i.'][0]" ';

@@ -294,9 +294,10 @@ public $date_time_event_start;
         }else if ($id){
             $card .= $langs->trans("#").': '.$id;
         }
+        $morecss = '';
         if (empty($notooltip))
         {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            if (! getConf('MAIN_OPTIMIZEFORTEXTBROWSER') != false)
             {
                 $label = $langs->trans("AttendanceEvent");
                 $linkclose .= ' alt = "'.dol_escape_htmltag($label, 1).'"';
@@ -531,7 +532,7 @@ public $date_time_event_start;
      *        will create the sql part to update the parameters
      *
      *  @param USER $user user that will update
-     *        @return        void
+     *        @return        string
      */
     public function setSQLfields($user)
     {
@@ -593,7 +594,7 @@ public $date_time_event_start;
         if (!empty($customer)) $this->third_party = trim($customer);
         $this->token = getToken();
         $this->event_type = EVENT_START;
-        $this->date_time_event = mktime()+1;
+        $this->date_time_event = time()+1;
         $this->date_time_event_start = $this->date_time_event;
         $this->event_location_ref = $location_ref;
         $this->create($user);
@@ -646,28 +647,28 @@ public $date_time_event_start;
                 $this->note = $note;
             }
             $this->event_type = EVENT_STOP;
-            $this->date_time_event = mktime();
+            $this->date_time_event = time();
             $duration = $this->date_time_event-$this->date_time_event_start;
             //if the max time is breach
-            if (($conf->global->TIMESHEET_EVENT_MAX_DURATION>0 &&
-                $duration>$conf->global->TIMESHEET_EVENT_MAX_DURATION*3600))
+            if ((getConf('TIMESHEET_EVENT_MAX_DURATION')>0 &&
+                $duration>getConf('TIMESHEET_EVENT_MAX_DURATION',0)*3600))
                 {
                 // put the max time per default
                     $this->date_time_event = 
-                        $conf->global->TIMESHEET_EVENT_DEFAULT_DURATION*3600
+                        getConf('TIMESHEET_EVENT_DEFAULT_DURATION',0)*3600
                         +$this->date_time_event_start;
                     if (empty($tokenJson) && $auto) { // if it's auto close but without json sent
                         $this->event_type = EVENT_AUTO_STOP;
                     }
             }else { //there is a start time and it's in the acceptable limit
-                if ($duration < $conf->global->TIMESHEET_EVENT_MIN_DURATION){
+                if ($duration < getConf('TIMESHEET_EVENT_MIN_DURATION',0)){
                     $this->date_time_event = $this->date_time_event_start 
-                        + $conf->global->TIMESHEET_EVENT_MIN_DURATION;
+                        + getConf('TIMESHEET_EVENT_MIN_DURATION');
                 }
                 $this->event_type = EVENT_STOP;
             }
             $ret = $this->create($user);
-            if ($ret>0 && $conf->global->TIMESHEET_EVENT_NOT_CREATE_TIMESPENT == 0) {
+            if ($ret>0 && getConf('TIMESHEET_EVENT_NOT_CREATE_TIMESPENT') == 0) {
                 $this->createTimeSpend($user, $tokenDb);
             } else{
                 $this->initAsSpecimen();
@@ -676,7 +677,7 @@ public $date_time_event_start;
                 $this->status = TimesheetsetEventMessage($arrayRes, true);
             }
         }
-        return $this->serialize(2);;
+        return $this->serialize(2);
     }
 
     /**
@@ -723,7 +724,7 @@ public $date_time_event_start;
                 $this->getInfo();
             }
             // update the required fields
-            $this->date_time_event = mktime();
+            $this->date_time_event = time();
             if ($this->event_type!=EVENT_HEARTBEAT) {
                 // create an heartbeat only if there is none
                 $this->event_type = EVENT_HEARTBEAT;
@@ -757,10 +758,10 @@ public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
     } else{
          $HTML .= $form->select_dolusers($selected, 'userid');
     }
+    $HTML .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$this->token.'"/>';
+
     $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
-    //FIXME should take token as input
-    $token = getToken();
-    $HTML .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
 
     return $HTML;
 }
@@ -854,12 +855,12 @@ public function createTimeSpend($user, $token = '')
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
     $sql .= " WHERE ((ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task') ";
     // SHOW TASK ON PUBLIC PROEJCT
-    if ($conf->global->TIMESHEET_ALLOW_PUBLIC == '1') {
+    if (getConf('TIMESHEET_ALLOW_PUBLIC') == '1') {
         $sql .= '  OR  prj.public =  \'1\')';
     }else{
         $sql .= ' )';
     }
-    if ($conf->global->TIMESHEET_HIDE_DRAFT == '1') {
+    if (getConf('TIMESHEET_HIDE_DRAFT') == '1') {
         $sql .= ' AND prj.fk_statut =  \'1\'';
     }else{
         $sql .= ' AND prj.fk_statut in (\'0\', \'1\')';
@@ -884,7 +885,7 @@ public function createTimeSpend($user, $token = '')
             $tasksList[$i]->id = $obj->taskid;
             $tasksList[$i]->userId = $this->userid;
             $tasksList[$i]->getTaskInfo();
-            $tasksList[$i]->listed = $whiteList[$obj->taskid];
+            $tasksList[$i]->listed = is_array($whiteList)?$whiteList[$obj->taskid]:null;
             $i++;
         }
         $this->db->free($resql);
@@ -921,7 +922,7 @@ public function serialize($mode = 0)
     $array['projectLabel'] = $this->projectLabel;
     $array['token'] = $this->token;
     $array['status'] = $this->status;
-    $array['processedTime'] = mktime();
+    $array['processedTime'] = time();
     // working var
     //$array[''] = $this->tasks;// aarray of tasktimesheet
     switch($mode) {

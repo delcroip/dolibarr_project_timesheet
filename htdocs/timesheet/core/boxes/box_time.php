@@ -78,19 +78,19 @@ class box_time extends ModeleBoxes
                 SELECT SUM(pt.task_duration)/3600 as duration, 
                 w.week, u.weeklyhours
                 FROM (SELECT YEARWEEK(DATE_ADD(NOW(), INTERVAL - num WEEK)) as week 
-                    FROM seq WHERE num <= ".$conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS."
+                    FROM seq WHERE num <= ".getConf('TIMESHEET_OVERTIME_CHECK_WEEKS',4)."
                     AND num > 1 ) as w 
-                LEFT JOIN llx_projet_task_time pt ON YEARWEEK(pt.task_date) = w.week
-                LEFT JOIN llx_user u ON u.rowid =  ".$userid."
+                LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time pt ON YEARWEEK(pt.task_date) = w.week
+                LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid =  ".$userid."
                 
                 WHERE pt.fk_user =  ".$userid." OR pt.fk_user is null
                 GROUP BY w.week;";
             }else {
                 // to be validated
                 $sqlweek = "SELECT SUM(pt.task_duration)/3600 as duration, TO_CHAR(generate_series, 'YYYYWW') as week, u.weeklyhours 
-                FROM generate_series(DATE_TRUNC('week', (now() - INTERVAL '".$conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS." week'))::timestamp, DATE_TRUNC('week', (now() - INTERVAL '1 WEEK' ))::timestamp, interval '1 week') 
-                LEFT JOIN llx_projet_task_time pt ON (generate_series = DATE_TRUNC('week',pt.task_date)) 
-                LEFT JOIN llx_user u on (pt.fk_user = ".$userid.") WHERE pt.fk_user = ".$userid." OR pt.fk_user is null 
+                FROM generate_series(DATE_TRUNC('week', (now() - INTERVAL '".getConf('TIMESHEET_OVERTIME_CHECK_WEEKS',4)." week'))::timestamp, DATE_TRUNC('week', (now() - INTERVAL '1 WEEK' ))::timestamp, interval '1 week') 
+                LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time pt ON (generate_series = DATE_TRUNC('week',pt.task_date)) 
+                LEFT JOIN ".MAIN_DB_PREFIX."user u on (pt.fk_user = ".$userid.") WHERE pt.fk_user = ".$userid." OR pt.fk_user is null 
                 GROUP BY generate_series, u.weeklyhours;";
             }
             $result = $db->query($sqlweek);
@@ -103,7 +103,7 @@ class box_time extends ModeleBoxes
                 while($num>0)
                 {
                     $obj = $db->fetch_object($result);
-                    $p_duration[$obj->week] = isset($obj->weeklyhours) ? $obj->weeklyhours : $conf->global->TIMESHEET_DAY_DURATION * 5;  // FIXME take worktime as delfaut nb day in week * nb hour per day
+                    $p_duration[$obj->week] = isset($obj->weeklyhours) ? $obj->weeklyhours : getConf('TIMESHEET_DAY_DURATION',8) * 5;  // FIXME take worktime as delfaut nb day in week * nb hour per day
                     $a_duration[$obj->week] = isset($obj->duration) ? $obj->duration : 0;
                     $h_duration[$obj->week] = $this->getHolidayTime($obj->week, $userid, $obj->weeklyhours); 
                     $delta[$obj->week] = ($p_duration[$obj->week] - $h_duration[$obj->week] - $a_duration[$obj->week]);
@@ -117,7 +117,7 @@ class box_time extends ModeleBoxes
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "left"',
                         'text' => $langs->trans('Max').': ',
-                        'text2'=> $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS.' '.$langs->trans('Weeks'),
+                        'text2'=> getConf('TIMESHEET_OVERTIME_CHECK_WEEKS',4).' '.$langs->trans('Weeks'),
                         'asis' => 1,
                     );
                     $this->info_box_contents[$i][] = array(
@@ -131,7 +131,7 @@ class box_time extends ModeleBoxes
                     $this->info_box_contents[$i][] = array(
                         'td' => 'align = "left"',
                         'text' => $langs->trans('Sum').': ',
-                        'text2'=> $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS.' '.$langs->trans('Weeks'),
+                        'text2'=> getConf('TIMESHEET_OVERTIME_CHECK_WEEKS',4).' '.$langs->trans('Weeks'),
                         'asis' => 1,
                     );
                     $this->info_box_contents[$i][] = array(

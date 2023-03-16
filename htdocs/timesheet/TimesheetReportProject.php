@@ -42,8 +42,8 @@ $mode = GETPOST('mode', 'alpha');
 $model = GETPOST('model', 'alpha');
 if (empty($mode)){
     $mode = 'UTD';
-    $ungroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
-    $invoicedCol = $conf->global->TIMESHEET_REPORT_INVOICED_COL;
+    $ungroup = getConf('TIMESHEET_REPORT_UNGROUP');
+    $invoicedCol = getConf('TIMESHEET_REPORT_INVOICED_COL');
 }
 $admin = $user->rights->projet->all->lire || $user->rights->projet->all->creer
     || $user->rights->timesheet->report->admin;
@@ -143,9 +143,7 @@ if ($action == 'getpdf') {
     ob_end_flush();
     exit();
 } elseif ($action == 'getExport'){
-    $max_execution_time_for_export =
-        (empty($conf->global->EXPORT_MAX_EXECUTION_TIME)?
-            300:$conf->global->EXPORT_MAX_EXECUTION_TIME);    // 5mn if not defined
+    $max_execution_time_for_export = getConf('EXPORT_MAX_EXECUTION_TIME',300);    // 5mn if not defined
     $max_time = @ini_get("max_execution_time");
     if ($max_time && $max_time < $max_execution_time_for_export)
     {
@@ -175,13 +173,13 @@ if ($projectSelectedId > 0 || !empty($ref))
 	$ret = $project->fetch($projectSelectedId, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$project->fetch_thirdparty();
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($project, 'fetchComments') && empty($project->comments)) $project->fetchComments();
+		if (!getConf('PROJECT_ALLOW_COMMENT_ON_PROJECT') != false && method_exists($project, 'fetchComments') && empty($project->comments)) $project->fetchComments();
 		$id = $project->id;
 	}
 
 	$ref = GETPOST('ref', 'alpha');
 	$title = $langs->trans("projectReport").' - '.$project->ref.' '.$project->name;
-	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $project->name) $title = $project->ref.' '.$project->name.' - '.$langs->trans("projectReport");
+	if (!getConf('MAIN_HTML_TITLE') != false && preg_match('/projectnameonly/', getConf('MAIN_HTML_TITLE')) && $project->name) $title = $project->ref.' '.$project->name.' - '.$langs->trans("projectReport");
 	$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
 	$morehtmlref = '<div class="refidno">';
@@ -285,7 +283,7 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
  $form_output .= '</tr></table>';
 
  //submit
- $model = $conf->global->TIMESHEET_EXPORT_FORMAT;
+ $model = getConf('TIMESHEET_EXPORT_FORMAT');
  $form_output .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
 if (!empty($querryRes) && ($user->rights->facture->creer
     || version_compare(DOL_VERSION, "3.7") <= 0))
@@ -300,7 +298,7 @@ if (!empty($querryRes))$form_output .=
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='
     .$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
     ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'&token='.$token.'" >'.$langs->trans('TimesheetPDF').'</a>';
-if (!empty($querryRes) && $conf->global->MAIN_MODULE_EXPORT)$form_output .=
+if (!empty($querryRes) && getConf('MAIN_MODULE_EXPORT'))$form_output .=
     '<a class = "butAction" href="?action=getExport&dateStart='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId

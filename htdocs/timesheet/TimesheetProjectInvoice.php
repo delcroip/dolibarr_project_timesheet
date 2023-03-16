@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /*
-define('$conf->global->TIMESHEET_INVOICE_METHOD', 'user');
-define('$conf->global->TIMESHEET_INVOICE_TASKTIME', 'user');
-define('$conf->global->TIMESHEET_INVOICE_SERVICE', '1');
-define('$conf->global->TIMESHEET_INVOICE_SHOW_TASK', '1');
-define('$conf->global->TIMESHEET_INVOICE_SHOW_USER', '1');
+define('getConf('TIMESHEET_INVOICE_METHOD')', 'user');
+define('getConf('TIMESHEET_INVOICE_TASKTIME')', 'user');
+define('getConf('TIMESHEET_INVOICE_SERVICE')', '1');
+define('getConf('TIMESHEET_INVOICE_SHOW_TASK')', '1');
+define('getConf('TIMESHEET_INVOICE_SHOW_USER')', '1');
 */
 //load class
 include 'core/lib/includeMain.lib.php';
@@ -193,7 +193,7 @@ $langs->load('timesheet@timesheet');
             //origin=propal&originid=34&socid=10
             $id = $object->create($user);
             $resArray = $_POST['userTask'];
-            $hoursPerDay = $conf->global->TIMESHEET_DAY_DURATION;
+            $hoursPerDay = getConf('TIMESHEET_DAY_DURATION',8);
             $task_time_array = array();
             $task_time_array_never = array();
                 // copy the propal lines
@@ -263,7 +263,7 @@ $langs->load('timesheet@timesheet');
                     $postdata['tva_tx'] = $$tva_tx;
                     $postdata['price_ht'] =$line->total_ht;
                     $postdata['qty'] = (float) $line->qty;                      
-                    if (!$conf->global->TIMESHEET_EVAL_ADDLINE){
+                    if (!getConf('TIMESHEET_EVAL_ADDLINE')){
                         $result = $object->addline(
                             $desc,
                             $line->subprice,
@@ -350,8 +350,8 @@ $langs->load('timesheet@timesheet');
                             default:
                                 $unit_factor = $hoursPerDay * 3600;
                         }
-                        if (($tId!='any') && $conf->global->TIMESHEET_INVOICE_SHOW_TASK)$details = "\n".$service['taskLabel'];
-                        if (($uId!='any')&& $conf->global->TIMESHEET_INVOICE_SHOW_USER)$details .= "\n".$service['userName'];
+                        if (($tId!='any') && getConf('TIMESHEET_INVOICE_SHOW_TASK'))$details = "\n".$service['taskLabel'];
+                        if (($uId!='any')&& getConf('TIMESHEET_INVOICE_SHOW_USER'))$details .= "\n".$service['userName'];
                         //prepare the CURL params
                         $postdata = array();
                         $postdata['action'] = 'addline';
@@ -380,7 +380,7 @@ $langs->load('timesheet@timesheet');
                             $factor = intval(substr($product->duration, 0, -1));
                             if ($factor == 0) $factor = 1;//to avoid divided by $factor0                         
                             $quantity = ($duration == $factor*$unit_factor) ? 1 :
-                                round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);
+                                round($duration/($factor*$unit_factor), getConf('TIMESHEET_ROUND'));
                             $postdata['type'] = -1;
                             $postdata['prod_entry_mode'] = 'predef';
                             $postdata['idprod'] = $service['Service'];
@@ -395,7 +395,7 @@ $langs->load('timesheet@timesheet');
                             $price = $prices['pu_ht'];
 
 
-                            if (!$conf->global->TIMESHEET_EVAL_ADDLINE){
+                            if (!getConf('TIMESHEET_EVAL_ADDLINE')){
                                 $result = $object->addline($product->description.$details, $price, $quantity, $tva_tx, 
                                     $localtax1_tx, $localtax2_tx, $service['Service'], 0, $dateStart, $dateEnd, 0, 0, '', 
                                     $price_base_type, $price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, $label, 0, 100, '', 
@@ -416,14 +416,14 @@ $langs->load('timesheet@timesheet');
                             $localtax2_tx = get_localtax($service['VAT'], 2, $object->thirdparty);
                             $factor = intval($service['unit_duration']);
                             $quantity = ($duration == $factor*$unit_factor) ? 1 :
-                                round($duration/($factor*$unit_factor), $conf->global->TIMESHEET_ROUND);                            
+                                round($duration/($factor*$unit_factor), getConf('TIMESHEET_ROUND',0));                            
                             $postdata['type'] = 1;
                             $postdata['prod_entry_mode'] = 'free';
                             $postdata['dp_desc'] = $service['Desc'];
                             $postdata['tva_tx'] = $service['VAT'];
                             $postdata['price_ht'] = $service['PriceHT'];
                             $postdata['qty'] = (float) $quantity;
-                            if (!$conf->global->TIMESHEET_EVAL_ADDLINE){
+                            if (!getConf('TIMESHEET_EVAL_ADDLINE')){
                                 $result = $object->addline($service['Desc'].$details, $service['PriceHT'], 
                                     $quantity, $service['VAT'], $localtax1_tx, $localtax2_tx, '', 
                                     0, $dateStart, $dateEnd, 0, 0, '', 'HT', '', 1, -1, 0, '', 
@@ -440,7 +440,7 @@ $langs->load('timesheet@timesheet');
                         
                         
                         //eval used instead of include because the main.in.php cannot be included twice so it had to be removed from
-                        if ($conf->global->TIMESHEET_EVAL_ADDLINE){
+                        if (getConf('TIMESHEET_EVAL_ADDLINE')){
                             $post_temp = $_POST;
                             $_POST = $postdata;
                             ob_start();
@@ -499,10 +499,10 @@ $langs->load('timesheet@timesheet');
             $Form .= '<table class = "noborder" width = "100%">'."\n\t\t";
             $Form .= '<tr class = "liste_titre" width = "100%" ><th colspan = "2">'
                 .$langs->trans('generalInvoiceProjectParam').'</th></tr>';
-            $invoicingMethod = $conf->global->TIMESHEET_INVOICE_METHOD;
+            $invoicingMethod = getConf('TIMESHEET_INVOICE_METHOD');
             //$Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('Project').'</th><th align = "left" width = "80%" >';
             //select_generic($table, $fieldValue, $htmlName, $fieldToShow1, $fieldToShow2 = '', $selected = '', $separator = ' - ', $sqlTailWhere = '', $selectparam = '', $addtionnalChoices = array('NULL' => 'NULL'), $sqlTailTable = '', $ajaxUrl = '')
-            //$ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
+            //$ajaxNbChar = getConf('PROJECT_USE_SEARCH_TO_SELECT');
             //$Form .= select_generic('projet', 'rowid', 'projectid', 'ref', 'title', $projectId, ' - ', $sqlTailWhere, '', null, , $ajaxNbChar);
             //$htmlProjectArray = array('name' => 'projectid', 'ajaxNbChar'=>$ajaxNbChar, 'otherparam' => ' onchange = "reload(this.form)"');
             //$sqlProjectArray = array('table' => 'projet', 'keyfield' => 't.rowid', 'fields' => 't.ref, t.title ', 'join'=>$sqlTailJoin, 'where'=>$sqlTailWhere, 'separator' => ' - ');
@@ -531,7 +531,7 @@ $langs->load('timesheet@timesheet');
                     '(s.client = 1 OR s.client = 2 OR s.client = 3)', 1).'</th></tr>';
     //propal
    
-        if ($conf->global->MAIN_MODULE_PROPALE){
+        if (getConf('MAIN_MODULE_PROPALE')){
             //http://localhost:18080/compta/facture/card.php?action=create&origin=propal&originid=34&socid=10
             $joinPropal = ' JOIN '.MAIN_DB_PREFIX.'c_stcomm as stp ON fk_statut = stp.id and stp.active = 1 ';
             $sqlPropal = array('table' => 'propal' , 'keyfield' => 't.rowid', 
@@ -578,7 +578,7 @@ $langs->load('timesheet@timesheet');
          </script>';
     
      //all ts or only approved
-           $ts2Invoice = $conf->global->TIMESHEET_INVOICE_TASKTIME;
+           $ts2Invoice = getConf('TIMESHEET_INVOICE_TASKTIME');
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
                 .$langs->trans('TimesheetToInvoice').'</th><th align = "left">'
                 .'<input type = "radio" name = "ts2Invoice" value = "approved" ';
@@ -616,7 +616,7 @@ $langs->load('timesheet@timesheet');
 * Put here all code to build page
 ****************************************************/
 $morejs = array("/timesheet/core/js/jsparameters.php", 
-    "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
+    "/timesheet/core/js/timesheet.js?".getConf('TIMESHEET_VERSION'));
 llxHeader('', $langs->trans('TimesheetToInvoice'), '', '', '', '', $morejs);
 print "<div> <!-- module body-->";
 $project = new Project($db);
@@ -630,7 +630,7 @@ if ($projectId > 0 || !empty($ref))
 	$ret = $project->fetch($projectId, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$project->fetch_thirdparty();
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($project, 'fetchComments') && empty($project->comments)) $project->fetchComments();
+		if (!getConf('PROJECT_ALLOW_COMMENT_ON_PROJECT') != false && method_exists($project, 'fetchComments') && empty($project->comments)) $project->fetchComments();
 		$id = $project->id;
 	}
 }
@@ -699,7 +699,7 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
         $objtemp->fetch($task);
         $taskLabel = $objtemp->label ;
         $taskHTML .= str_replace('classfortooltip', 'classfortooltip colTasks', 
-            $objtemp->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF));
+            $objtemp->getNomUrl(0, "withproject", "task", getConf('TIMESHEET_HIDE_REF')));
     }
 
     $html = '<tr class = "'.$class.'"><th align = "left" width = "20%">'.$userName;
@@ -709,7 +709,7 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
     $html .= '<input type = "hidden"   name = "userTask['.$user.']['.$task.'][taskTimeList]"  value = "'. $tasktimelist.'">';
     $defaultService = getDefaultService($user, $task);
     $addchoices[-997] = $langs->transnoentities('Custom').': '.$taskLabel;
-    $ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
+    $ajaxNbChar = getConf('PRODUIT_USE_SEARCH_TO_SELECT');
     $html .= '</th><th >';
     $html .= select_sellist(array('table' => 'product', 
         'keyfield' => 'rowid', 'fields' => 'ref,label', 
@@ -736,10 +736,10 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
         .$user.']['.$task.'][unit_duration]" value = "1" >';
     $html .= '<br><input name = "userTask['.$user.']['
         .$task.'][unit_duration_unit]" type = "radio" value = "h" '
-        .(($conf->global->TIMESHEET_TIME_TYPE == "days")?'':'checked').' />'.$langs->trans('Hour');
+        .((getConf('TIMESHEET_TIME_TYPE','hours') == "days")?'':'checked').' />'.$langs->trans('Hour');
     $html .= '<br><input name = "userTask['
         .$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "d" '
-        .(($conf->global->TIMESHEET_TIME_TYPE == "days")?'checked':'').' />'.$langs->trans('Days');
+        .((getConf('TIMESHEET_TIME_TYPE','hours') == "days")?'checked':'').' />'.$langs->trans('Days');
     $html .= '<br><input name = "userTask['
         .$user.']['.$task.'][unit_duration_unit]" type = "radio" value = "l"/>'.$langs->trans('Lumpsum').'</th>';
     $html .= '<th><input type = "text" size = "2" onkeypress="return regexEvent(this,event,\'timeChr\')"'
@@ -769,7 +769,7 @@ function getDefaultService($userid, $taskid)
         $obj = $db->fetch_object($resql);
         $res = $obj->fk_service;
     }
-    return($res>0)?$res:$conf->global->TIMESHEET_INVOICE_SERVICE;
+    return($res>0)?$res:getConf('TIMESHEET_INVOICE_SERVICE');
 }
 /** to check who has the rights
  *

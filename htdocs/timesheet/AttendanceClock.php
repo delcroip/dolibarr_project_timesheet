@@ -38,7 +38,7 @@ $action = GETPOST('action', 'alpha');
 $project = GETPOST('project', 'int');
 $task = GETPOST('taskid', 'int');
 $customer = GETPOST('customer', 'int');
-$json = $_POST['json'];//], 'alpha');
+$json = GETPOST('json');//], 'alpha');
 $today = time();
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -49,7 +49,7 @@ $userid = $user->id;
 $postUserId = GETPOST('userid', 'int');
 
 // if the user can enter ts for other the user id is diferent
-if (isset($conf->global->TIMESHEET_ADD_FOR_OTHER) && $conf->global->TIMESHEET_ADD_FOR_OTHER == 1) {
+if ( getConf('TIMESHEET_ADD_FOR_OTHER') == 1) {
     if (!empty($postUserId)) {
         $newuserid = $postUserId;
     }else{
@@ -80,6 +80,7 @@ switch($action) {
     case 'start':
         $json = $timesheet_attendance->ajaxStart($user, $json, $customer, $project, $task);
        // ob_clean();
+        ob_clean();
         header("Content-type: text/json;charset = utf-8");
         echo $json;
         ob_end_flush();
@@ -88,6 +89,7 @@ switch($action) {
         $json = $timesheet_attendance->ajaxStop($user, $json);
        // ob_clean();
         header("Content-type: text/json;charset = utf-8");
+        ob_clean();
         echo $json;
         ob_end_flush();
         exit();
@@ -95,6 +97,7 @@ switch($action) {
         $json = $timesheet_attendance->ajaxheartbeat($user, $json);
        // ob_clean();
         header("Content-type: text/json;charset = utf-8");
+        ob_clean();
         echo $json;
         ob_end_flush();
         exit();
@@ -111,20 +114,21 @@ $_SESSION['timesheet'][$token] = array();
 *
 * Put here all code to build page
 ****************************************************/
-$morejs = array("/timesheet/core/js/stopWatch.js?".$conf->global->TIMESHEET_VERSION, 
-    "/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
+$morejs = array("/timesheet/core/js/stopWatch.js?".getConf('TIMESHEET_VERSION'), 
+    "/timesheet/core/js/timesheet.js?".getConf('TIMESHEET_VERSION'));
 $morecss = array("/timesheet/core/css/stopWatch.css");
 llxHeader('', $langs->trans('Attendance'), '', '', '', "", $morejs, $morecss);
 
 //calculate the week days
 // clock
 $timesheet_attendance->fetch('', $user);
-if ($conf->global->TIMESHEET_ADD_FOR_OTHER == 1 
+$timesheet_attendance->token = $token;
+if (getConf('TIMESHEET_ADD_FOR_OTHER') == 1 
     && (  $SubordiateIds > 0 ||  $admin)) {
         print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $admin);
 }
 $timesheet_attendance->printHTMLClock();
-$headers = explode('||', $conf->global->TIMESHEET_HEADERS);
+$headers = explode('||', getConf('TIMESHEET_HEADERS'));
 // remove tta note as it is useless there
 $key = array_search('Note', $headers);
 if ($key !== false){
@@ -138,7 +142,7 @@ if ($key !== false){
 $ajax = false;
 
 //headers
-$html .= "<table id='chronoTable' class = 'noborder' width = '100%'>";
+$html = "<table id='chronoTable' class = 'noborder' width = '100%'>";
 $html .= "<tr>";
 foreach ($headers as $key => $value) {
     $html .= "\t<th ";
@@ -152,25 +156,25 @@ $html .= "<th>".$langs->trans("Action")."</th></tr>";
 $html .= '<tr class = "timesheet_line" id = "searchline">';
 $html .= '<td><a>'.$langs->trans("Search").'</a></td>';
 
-if ($conf->global->TIMESHEET_WHITELIST == 1) {
+if (getConf('TIMESHEET_WHITELIST') == 1) {
    $html .= '<div class = "tabs" data-role = "controlgroup" data-type = "horizontal"  >';
-   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 2)?'id = "defaultOpen"':'')
+   $html .= '  <div '.((getConf('TIMESHEET_WHITELIST_MODE') == 2)?'id = "defaultOpen"':'')
         .' class = "inline-block tabsElem" onclick = "showFavoris(event,\'All\')">'
         .'<a  href = "javascript:void(0);"  class = "tabunactive tab inline-block" data-role = "button">'
         .$langs->trans('All').'</a></div>';
-   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 0)?'id = "defaultOpen"':'')
+   $html .= '  <div '.((getConf('TIMESHEET_WHITELIST_MODE') == 0)?'id = "defaultOpen"':'')
         .' class = "inline-block tabsElem" onclick = "showFavoris(event,\'whitelist\')">'
         .'<a  href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'
         .$langs->trans('blackWhiteList').'</a></div>';
-   $html .= '  <div '.(($conf->global->TIMESHEET_WHITELIST_MODE == 1)?'id = "defaultOpen"':'')
+   $html .= '  <div '.((getConf('TIMESHEET_WHITELIST_MODE') == 1)?'id = "defaultOpen"':'')
         .' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')">'
         .'<a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'
         .$langs->trans('Others').'</a></div>';
-   $html .= '</div>';
+   $html .= '</div>';       
 }
 $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
 $html .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token."\"/>\n";
-$htmltmp .= $timesheet_attendance->printHTMLTaskList($headers, $userid);
+$htmltmp = $timesheet_attendance->printHTMLTaskList($headers, $userid);
 $pattern  = "/(progressTask\[[^\]]+\]\[[^\]]+\])/i";
 $replacement = '$1" onchange="updateProgress(event);';
 $html .=  preg_replace($pattern, $replacement, $htmltmp);
@@ -178,7 +182,7 @@ $html .= "</table>";
 //Javascript
 //$Form .= ' <script type = "text/javascript" src = "core/js/timesheet.js"></script>'."\n";
 $html .= '<script type = "text/javascript">'."\n\t";
-$html .= "let stopwatch = new Stopwatch(document.getElementById('stopwatch'),".$userid.");stopwatch.load();";
+$html .= "let stopwatch = new Stopwatch(document.getElementById('stopwatch'),".$userid.", '".$token."');stopwatch.load();";
 $html .= "updateAllProgress();\n";
 $html .= "document.getElementById('defaultOpen').click();\n";
 $html .= "\n\t".'</script>'."\n";

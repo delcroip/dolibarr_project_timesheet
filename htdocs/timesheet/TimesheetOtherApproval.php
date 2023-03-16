@@ -149,12 +149,12 @@ if (is_array($objectArray)) {
 ****************************************************/
 $head = ($print)?'<style type = "text/css" >@page { size: A4 landscape;marks:none;margin: 1cm ;}</style>':'';
 $morejs = array();
-$morejs = array("/timesheet/core/js/timesheet.js?".$conf->global->TIMESHEET_VERSION);
+$morejs = array("/timesheet/core/js/timesheet.js?".getConf('TIMESHEET_VERSION'));
 llxHeader($head, $langs->trans('Timesheet'), '', '', '', '', $morejs);
 //calculate the week days
 showTimesheetApTabs($role_key);
 echo '<div id = "'.$role.'" class = "tabBar">';
-if (!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $current);
+if (!$print) echo getHTMLNavigation($role, $optioncss, $selectList, $token, $current);
 // form header
 echo '<form action="?action=submit" method = "POST" name = "OtherAp" id = "OtherAp">';
 echo '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
@@ -189,7 +189,7 @@ llxFooter();
  *
  *  @return     string                                         HTML
  */
-function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
+function getHTMLNavigation($role, $optioncss, $selectList,$token, $current = 0)
 {
     global $langs, $db;
     $htmlSelect = '<select name = "target">';
@@ -210,6 +210,8 @@ function getHTMLNavigation($role, $optioncss, $selectList, $current = 0)
     $Nav .= '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
     $Nav .= $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
     $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+    $Nav .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+
     if ($current<count($selectList)) {
         $Nav .= '<a href="?action=goTo&target='.($current+1);
         $Nav .= '&role='.($role);
@@ -248,7 +250,7 @@ function getSelectAps($subId, $tasks, $role_key)
     if ((!is_array($subId) || !count($subId)) && $subId!='all')return array();
     global $db, $langs, $conf, $roles;
     $sql = "SELECT COUNT(ts.rowid) as nb, ";
-    switch($conf->global->TIMESHEET_TIME_SPAN) {
+    switch(getConf('TIMESHEET_TIME_SPAN')) {
         case 'month':
             $sql .= " CONCAT(DATE_FORMAT(ts.date_start, '%m/%Y'), '-', pjt.ref) as id, ";
             if ($db->type!='pgsql') {
@@ -320,7 +322,6 @@ function getSelectAps($subId, $tasks, $role_key)
             $i++;
         }
     } else {
-        $error++;
         dol_print_error($db);
         $list = array();
     }
@@ -349,14 +350,14 @@ function getHTMLRows($objectArray)
         $objectArray[0]->date_end_approval);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?
         $langs->trans("FormatDateShort"):$conf->format_date_short);
-    if ($conf->global->TIMESHEET_TIME_SPAN == "month") {
+    if (getConf('TIMESHEET_TIME_SPAN') == "month") {
         //remove Year
         $format = str_replace('Y', '', str_replace('%Y', '', str_replace('Y/', '', str_replace('/%Y', '', $format))));
     }
     for ($i = 0;$i<$weeklength;$i++)
     {
         $curDay = $objectArray[0]->date_start_approval+ SECINDAY*$i+SECINDAY/4;
-        $htmlDay = ($conf->global->TIMESHEET_TIME_SPAN == "month")?
+        $htmlDay = (getConf('TIMESHEET_TIME_SPAN') == "month")?
             substr($langs->trans(date('l', $curDay)), 0, 3):$langs->trans(date('l', $curDay));
         echo"\t".'<th width = "60px" style = "text-align:center;" >'
             .$htmlDay.'<br>'.dol_print_date($curDay, $format)."</th>\n";
@@ -365,9 +366,12 @@ function getHTMLRows($objectArray)
     foreach ($objectArray as $key => $object) {
  //        $object->getTaskInfo();
         $object->getActuals();
-        echo '<tr>';
-        echo $object->getTimesheetLine($headers, 0, '1');
-        echo "<tr>\n";
+        if ($object->id != -1 or $object->getSavedTimeTotal() != 0){
+            echo '<tr>';
+            echo $object->getTimesheetLine($headers, 0, '1');
+            echo "<tr>\n";
+        }
+
     }
 }
  /** function that provide the code of a character

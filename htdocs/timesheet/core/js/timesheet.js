@@ -273,7 +273,7 @@ function generateDynTotal(userId)
 {
     var table = document.getElementById('timesheetTable_' + userId);
     //get all existing lineDynTotal to delete them
-    var Tl=document.getElementsByClassName('lineDynTotal');
+    var Tl=table.getElementsByClassName('lineDynTotal');
     var num = Tl.length
     for(var i = 0; i < num ; i++){
         var rid = Tl[0].rowIndex;

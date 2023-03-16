@@ -16,6 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 //const STATUS = [
+require_once 'generic.lib.php';
+
 Define("NULL", 0);
 Define("DRAFT", 1);
 Define("SUBMITTED", 2);
@@ -42,17 +44,17 @@ Define("ADMIN", 7);
 Define("ROLEMAX", 8);
 // back ground colors
 $statusColor = array(
-    DRAFT=>$conf->global->TIMESHEET_COL_DRAFT,
-    VALUE=>$conf->global->TIMESHEET_COL_VALUE,
-    FROZEN=>$conf->global->TIMESHEET_COL_FROZEN,
-    SUBMITTED=>$conf->global->TIMESHEET_COL_SUBMITTED,
-    APPROVED=>$conf->global->TIMESHEET_COL_APPROVED,
-    CANCELLED=>$conf->global->TIMESHEET_COL_CANCELLED,
-    REJECTED=>$conf->global->TIMESHEET_COL_REJECTED,
-    CHALLENGED=>$conf->global->TIMESHEET_COL_REJECTED,
-    INVOICED=>$conf->global->TIMESHEET_COL_APPROVED,
-    UNDERAPPROVAL=>$conf->global->TIMESHEET_COL_SUBMITTED,
-    PLANNED=>$conf->global->TIMESHEET_COL_DRAFT);
+    DRAFT=>getConf('TIMESHEET_COL_DRAFT'),
+    VALUE=>getConf('TIMESHEET_COL_VALUE'),
+    FROZEN=>getConf('TIMESHEET_COL_FROZEN'),
+    SUBMITTED=>getConf('TIMESHEET_COL_SUBMITTED'),
+    APPROVED=>getConf('TIMESHEET_COL_APPROVED'),
+    CANCELLED=>getConf('TIMESHEET_COL_CANCELLED'),
+    REJECTED=>getConf('TIMESHEET_COL_REJECTED'),
+    CHALLENGED=>getConf('TIMESHEET_COL_REJECTED'),
+    INVOICED=>getConf('TIMESHEET_COL_APPROVED'),
+    UNDERAPPROVAL=>getConf('TIMESHEET_COL_SUBMITTED'),
+    PLANNED=>getConf('TIMESHEET_COL_DRAFT'));
 // attendance
 define('EVENT_AUTO_START', -2);
 define('EVENT_HEARTBEAT', 1);
@@ -71,28 +73,16 @@ $statusA = array(0=> $langs->trans('null'), 1 => $langs->trans('draft'), 2=>$lan
     3=>$langs->trans('approved'), 4=>$langs->trans('cancelled'), 5=>$langs->trans('rejected'),
     6=>$langs->trans('challenged'), 7=>$langs->trans('invoiced'), 8=>$langs->trans('underapproval'),
     9=>$langs->trans('planned'));
-$apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
+$apflows = str_split(getConf('TIMESHEET_APPROVAL_FLOWS',''));
 
 
-//const REDUNDANCY = [
-/*Define("NULL", 0);
-Define("NONE", 1);
-Define("WEEK", 2);
-Define("MONTH", 3);
-Define("QUARTER", 4);
-Define("YEAR", 5);
-//const LINKED_ITEM = [
-Define("NULL", 0);
-Define("NONE", 1);
-Define("TASK", 2);
-Define("PROJECT", 3);
-Define("TIMESPENT", 4);
-*/
+
 //global $db;
 // to get the whitlist object
 //require_once 'class/TimesheetFavourite.class.php';
 //require_once 'class/TimesheetUserTasks.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
  /*
  * function to genegate list of the subordinate ID
  *
@@ -174,7 +164,6 @@ function getSubordinates($db, $userid, $depth = 5, $ecludeduserid = array(), $ro
                 //$list[] = $userid;
             }
         } else {
-            $error++;
             dol_print_error($db);
             $list = array();
         }
@@ -274,13 +263,13 @@ function getUsersName($userids)
             $i++;
         }
     } else {
-        $error++;
         dol_print_error($db);
         $list = array();
     }
       //$select .= "\n";
     return $list;
 }
+
 if (!is_callable("GETPOSTISSET")) {
 /**
  * Return true if we are in a context of submitting a parameter
@@ -293,6 +282,11 @@ if (!is_callable("GETPOSTISSET")) {
             return(isset($_POST[$paramname]) || isset($_GET[$paramname]));
     }
 }
+
+
+
+
+
 if (!is_callable("setEventMessages")) {
     // function from /htdocs/core/lib/function.lib.php in Dolibarr 3.8
     function setEventMessages($mesg, $mesgs, $style = 'mesgs')
@@ -382,7 +376,7 @@ function getStartDate($datetime, $prevNext = 0)
     /**************************
      * calculate the start date form php date
      ***************************/
-    switch($conf->global->TIMESHEET_TIME_SPAN) {
+    switch(getConf('TIMESHEET_TIME_SPAN','week')) {
         case 'month': //by Month
         //     $startDate = strtotime('first day of '.$prefix.' month midnight', $datetime);
         //     break;
@@ -445,7 +439,7 @@ function getEndDate($datetime)
     /**************************
      * calculate the end date form php date
      ***************************/
-    switch($conf->global->TIMESHEET_TIME_SPAN) {
+    switch(getConf('TIMESHEET_TIME_SPAN','week')) {
         case 'month':
             $endDate = strtotime('first day of next month midnight', $datetime);
             break;
@@ -543,11 +537,11 @@ function formatTime($duration, $hoursperdays = -1)
 {
     global $conf;
     if ($hoursperdays == -1) {
-        $hoursperdays = ($conf->global->TIMESHEET_TIME_TYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
+        $hoursperdays = (getConf('TIMESHEET_TIME_TYPE','hours') == "days")?getConf('TIMESHEET_DAY_DURATION',8):0;
     } elseif ($hoursperdays == -2) {
-        $hoursperdays = ($conf->global->TIMESHEET_INVOICE_TIMETYPE == "days")?$conf->global->TIMESHEET_DAY_DURATION:0;
+        $hoursperdays = (getConf('TIMESHEET_INVOICE_TIMETYPE','days') == "days")?getConf('TIMESHEET_DAY_DURATION',8):0;
     } elseif ($hoursperdays == -3) {
-        $hoursperdays = $conf->global->TIMESHEET_DAY_DURATION;
+        $hoursperdays = getConf('TIMESHEET_DAY_DURATION',8);
     }
     if (!is_numeric($duration))$duration = 0;
     if ($hoursperdays == 0) {
@@ -556,7 +550,7 @@ function formatTime($duration, $hoursperdays = -1)
         $TotalHours = floor(($duration-$TotalSec-$TotalMin*60)/3600);
         return sprintf("%02s", $TotalHours).':'.sprintf("%02s", $TotalMin);
     } else {
-        $totalDay = round($duration/3600/$hoursperdays, $conf->global->TIMESHEET_ROUND);
+        $totalDay = round($duration/3600/$hoursperdays, getConf('TIMESHEET_ROUND'));
         return strval($totalDay);
     }
 }
@@ -571,16 +565,16 @@ function formatTime($duration, $hoursperdays = -1)
     {
         global $langs;
         $messages = array();
-        if ($arraymessage['timeSpendCreated']) $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
-        if ($arraymessage['timeSpendModified'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
-        if ($arraymessage['timeSpendDeleted'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
+        if (array_key_exists('timeSpendCreated', $arraymessage) && $arraymessage['timeSpendCreated']) $messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendCreated', 'param'=>$arraymessage['timeSpendCreated']);
+        if (array_key_exists('timeSpendModified', $arraymessage) && $arraymessage['timeSpendModified'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendModified', 'param'=>$arraymessage['timeSpendModified']);
+        if (array_key_exists('timeSpendDeleted', $arraymessage) && $arraymessage['timeSpendDeleted'])$messages[] = array('type' => 'mesgs', 'text' => 'NumberOfTimeSpendDeleted', 'param'=>$arraymessage['timeSpendDeleted']);
         $default = array('type' => 'warning', 'text' => 'NothingChanged', 'param' => 0);
-        if ($arraymessage['NoteUpdated'])$messages[] = array('type' => 'mesgs', 'text' => 'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
-        if ($arraymessage['ProgressUpdate'])$messages[] = array('type' => 'mesgs', 'text' => 'ProgressUpdate', 'param'=>'');
-        if ($arraymessage['updateError'])$messages[] = array('type' => 'error', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
-        if ($arraymessage['NoActiveEvent'])$messages[] = array('type' => 'warning', 'text' => 'NoActiveEvent', 'param'=>'');
-        if ($arraymessage['EventNotActive'])$messages[] = array('type' => 'error', 'text' => 'EventNotActive', 'param'=>'');
-        if ($arraymessage['DbError'])$messages[] = array('type' => 'error', 'text' => 'DbError', 'param'=>'');
+        if (array_key_exists('NoteUpdated', $arraymessage) && $arraymessage['NoteUpdated'])$messages[] = array('type' => 'mesgs', 'text' => 'NoteUpdated', 'param'=>$arraymessage['NoteUpdated']);
+        if (array_key_exists('ProgressUpdate', $arraymessage) && $arraymessage['ProgressUpdate'])$messages[] = array('type' => 'mesgs', 'text' => 'ProgressUpdate', 'param'=>'');
+        if (array_key_exists('updateError', $arraymessage) && $arraymessage['updateError'])$messages[] = array('type' => 'error', 'text' => 'updateError', 'param'=>$arraymessage['updateError']);
+        if (array_key_exists('NoActiveEvent', $arraymessage) && $arraymessage['NoActiveEvent'])$messages[] = array('type' => 'warning', 'text' => 'NoActiveEvent', 'param'=>'');
+        if (array_key_exists('EventNotActive', $arraymessage) && $arraymessage['EventNotActive'])$messages[] = array('type' => 'error', 'text' => 'EventNotActive', 'param'=>'');
+        if (array_key_exists('DbError', $arraymessage) && $arraymessage['DbError'])$messages[] = array('type' => 'error', 'text' => 'DbError', 'param'=>'');
 
         $nbr = 0;
         foreach ($messages as $key => $message) {
@@ -690,7 +684,7 @@ function timesheet_report_prepare_head( $mode, $item_id , $hidetab=0) {
 	$head[$h][2] = 'showlastmonth';
 	$h++;
 
-	$today = dol_print_date(mktime(), 'dayxcard');
+	$today = dol_print_date(time(), 'dayxcard');
 
 	$head[$h][0] = "?".$item."&reporttab=showtoday&hidetab=".$hidetab."&dateStart=".$today."&dateEnd=".$today;
 	$head[$h][1] = $langs->trans('Today');

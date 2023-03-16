@@ -1,4 +1,13 @@
 # dolibarr_project_timesheet changelog
+4.6.0
+- fix missing line in approvals
+- fix php _ errors
+- fix remaining csrf missing token
+- add empty line if other tieme registered
+- fix holiday blockade on half days
+- fix table prefix 
+- 
+
 4.5.8
 - fix mysql issue (approval and box)
 - fix missing include (getToken)

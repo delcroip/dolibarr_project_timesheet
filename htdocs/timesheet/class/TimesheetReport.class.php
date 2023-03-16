@@ -314,7 +314,7 @@ class TimesheetReport
                 # save the project info
                 if(!isset($this->project[$objpjt->id])){
                     $this->project[$objpjt->id] = $objpjt;
-                    $this->ref[$objpjt->id] = $objpjt->ref.(($conf->global->TIMESHEET_HIDE_REF == 1)
+                    $this->ref[$objpjt->id] = $objpjt->ref.((getConf('TIMESHEET_HIDE_REF') == 1)
                         ?'':' - '.$objpjt->title);
                     $first = true;
                     $this->thirdparty[$objpjt->id] = new Societe($this->db);
@@ -324,14 +324,14 @@ class TimesheetReport
                 //update third party
                 
                 $resArray[$obj->id] = array('projectId' => $obj->projectid,
-                    'projectLabel' => $objpjt->ref.(($conf->global->TIMESHEET_HIDE_REF == 0)?'':' - '.$objpjt->title),
+                    'projectLabel' => $objpjt->ref.((getConf('TIMESHEET_HIDE_REF') == false)?'':' - '.$objpjt->title),
                     'projectRef' => $objpjt->ref,
                     'projectTitle' => $objpjt->title,
-                    'projectLink' => $objpjt->getNomUrl(0, '', $conf->global->TIMESHEET_HIDE_REF),
+                    'projectLink' => $objpjt->getNomUrl(0, '', getConf('TIMESHEET_HIDE_REF')),
                     'taskId' => $obj->taskid,
-                    'taskLabel' => $objtsk->ref.(($conf->global->TIMESHEET_HIDE_REF == 0)?'':' - '.$objtsk->label),
+                    'taskLabel' => $objtsk->ref.((getConf('TIMESHEET_HIDE_REF') == false)?'':' - '.$objtsk->label),
                     'taskRef' => $objtsk->ref,
-                    'taskLink' => $objtsk->getNomUrl(0, "withproject", "task", $conf->global->TIMESHEET_HIDE_REF),
+                    'taskLink' => $objtsk->getNomUrl(0, "withproject", "task", getConf('TIMESHEET_HIDE_REF')),
                     'tasktitle' => $objtsk->label,
                     'date' => $this->db->jdate($obj->task_date),
                     'dateDisplay' => dol_print_date($this->db->jdate($obj->task_date), 'day'),
@@ -344,7 +344,7 @@ class TimesheetReport
                     'lastName' => trim($objusr->lastname),
                     'userLink' => $objusr->getNomUrl(0),
                     'note' =>($obj->note),
-                    'invoiceable' => ($obj->invoiceable==1)?'1':'0',
+                    'invoiceable' => (isset($obj->invoiceable) && $obj->invoiceable==1)?'1':'0',
                     'invoiced' => ($obj->invoiced==1)?'1':'0',
                     'socname' => $objpjt->socid>0?($objsoc->code_client != ''? $objsoc->code_client.' - ':'').$objsoc->getNomUrl():''  
                     );
@@ -372,6 +372,7 @@ class TimesheetReport
     public function getHTMLreportExport()
     {
         $resArray = $this->getReportArray(!($this->ungroup ==1));
+        $titleWidth = array();
         $HTMLRes = '<h1>'.$this->name.'</h1>';
         $HTMLRes .= $this->getHTMLReportHeaders();
         foreach ($resArray as $key => $item) {

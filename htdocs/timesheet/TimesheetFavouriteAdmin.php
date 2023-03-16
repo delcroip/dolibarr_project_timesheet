@@ -60,6 +60,8 @@ $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'aplha');
 $cancel = GETPOST('cancel', 'aplha');
 $confirm = GETPOST('confirm', 'aplha');
+$filter = GETPOST('filter', 'aplha');
+$param = GETPOST('param', 'aplha');
 $token = GETPOST('token', 'alpha');
 $ajax = GETPOST('ajax', 'int');
 //// Get parameters
@@ -345,7 +347,7 @@ switch($action) {
         print '<td class = "fieldrequired">'.$langs->trans('Project').' </td><td>';
         if ($edit == 1) {
             if (!empty($editedProject))$object->project = $editedProject;
-            $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
+            $ajaxNbChar = getConf('PROJECT_USE_SEARCH_TO_SELECT',2);
             /* $formUserWhere = ' (t.datee >= \''.$object->db->idate(time()).'\' OR t.datee IS NULL)';
            if (!$admin) {
 
@@ -567,7 +569,7 @@ switch($action) {
         }
         // Count total nb of records
         $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+        if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
             $sqlcount = 'SELECT COUNT(*) as count FROM '.MAIN_DB_PREFIX.'timesheet_whitelist as t';
             if (!empty($sqlwhere))
                 $sqlcount .= ' WHERE '.substr($sqlwhere, 5);
@@ -583,9 +585,10 @@ switch($action) {
             $sql .= $db->plimit($limit+1, $offset);
         }
         //execute SQL
-        dol_syslog($script_file, LOG_DEBUG);
+        dol_syslog($sql, LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql) {
+            $param = '';
             if (!empty($ls_user))
                 $param .= '&ls_user='.urlencode($ls_user);
             if (!empty($ls_project))
@@ -635,14 +638,16 @@ switch($action) {
             //Search field foruser
             if ($admin) {
                 print '<td class = "liste_titre" colspan = "1" >';
-                $ajaxNbChar = $conf->global->CONTACT_USE_SEARCH_TO_SELECT;
+                $ajaxNbChar = getConf('CONTACT_USE_SEARCH_TO_SELECT');
                 print $form->select_users($ls_user, 'ls_user');
                 print '</td>';
             }
             //Search field forproject
             print '<td class = "liste_titre" colspan = "1" >';
-            $ajaxNbChar = $conf->global->PROJECT_USE_SEARCH_TO_SELECT;
+            $ajaxNbChar = getConf('PROJECT_USE_SEARCH_TO_SELECT');
             $htmlProjectArray = array('name' => 'ls_project', 'ajaxNbChar'=>$ajaxNbChar);
+            $formUserJoin = '';
+            $formUserWhere = '';
             $sqlProjectArray = array('table' => 'projet', 'keyfield' => 'rowid', 
                 'fields' => 'ref, title', 'join'=>$formUserJoin, 
                 'where'=>$formUserWhere, 'separator' => ' - ');
@@ -650,9 +655,11 @@ switch($action) {
             print '</td>';
             //Search field forproject_task
             print '<td class = "liste_titre" colspan = "1" >';
-            $ajaxNbChar = intval($conf->global->TIMESHEET_SEARCHBOX);
+            $ajaxNbChar = intval(getConf('TIMESHEET_SEARCHBOX',2));
             $htmlProjectTaskArray = array('name' => 'ls_project_task', 
                 'ajaxNbChar'=>$ajaxNbChar);
+            $formTaskJoin = '';
+            $formTaskWhere = '';
             $sqlProjectTaskArray = array('table' => 'projet_task', 
                 'keyfield' => 'rowid', 'fields' => 'ref, label', 
                  'join'=>$formTaskJoin, 'where'=>$formTaskWhere, 'separator' => ' - ');

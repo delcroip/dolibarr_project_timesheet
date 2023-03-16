@@ -42,11 +42,12 @@ class event{
 
 }
 class Stopwatch {
-    constructor(display, user) {
+    constructor(display, user, token) {
         this.running = false;
         this.display = display;
         this.times = [ 0, 0, 0,0];
         this.event = new event();
+        this.token= token;
         //this.reset();
         this.animationframeID=null;
         this.userid = user;
@@ -141,6 +142,7 @@ class Stopwatch {
  //       this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
         var Url="AttendanceClock.php?action=start"
         if (taskid!==0) Url+="&taskid="+taskid;
+        Url+="&token="+this.token;
         $.ajax({
             type: "POST",
             url: Url,
@@ -154,6 +156,7 @@ class Stopwatch {
 //        this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
         var Url="AttendanceClock.php?action=heartbeat"
         Url+="&eventToken="+this.event.token;
+        Url+="&token="+this.token;
         $.ajax({
             type: "POST",
             url: Url,
@@ -186,6 +189,7 @@ class Stopwatch {
  //       this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
         var Url="AttendanceClock.php?action=stop"
         Url+="&eventToken="+this.event.token;
+        Url+="&token="+this.token;
         this.event_type=3;
         $.ajax({
             type: "POST",

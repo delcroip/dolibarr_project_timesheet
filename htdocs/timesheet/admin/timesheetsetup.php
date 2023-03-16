@@ -20,6 +20,7 @@
  */
 include '../core/lib/includeMain.lib.php';
 include '../core/lib/generic.lib.php';
+require_once '../core/lib/timesheet.lib.php';
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
@@ -34,78 +35,90 @@ if (!$user->admin) {
     $accessforbidden = accessforbidden("you need to be admin");
 }
 $action = getpost('action', 'alpha');
-$attendance = $conf->global->TIMESHEET_ATTENDANCE;
+$attendance = getConf('TIMESHEET_ATTENDANCE');
 
-$timetype = $conf->global->TIMESHEET_TIME_TYPE;
-$hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
-$timeSpan = $conf->global->TIMESHEET_TIME_SPAN;
+$timetype = getConf('TIMESHEET_TIME_TYPE','hours');
+$hoursperday = getConf('TIMESHEET_DAY_DURATION',8);
+$timeSpan = getConf('TIMESHEET_TIME_SPAN');
 //hide/show
-$hidedraft = $conf->global->TIMESHEET_HIDE_DRAFT;
-$hidezeros = $conf->global->TIMESHEET_HIDE_ZEROS;
-$headers = $conf->global->TIMESHEET_HEADERS;
-$hideref = $conf->global->TIMESHEET_HIDE_REF;
-$showTimespentNote = $conf->global->TIMESHEET_SHOW_TIMESPENT_NOTE;
+$hidedraft = getConf('TIMESHEET_HIDE_DRAFT');
+$hidezeros = getConf('TIMESHEET_HIDE_ZEROS');
+$headers = getConf('TIMESHEET_HEADERS');
+$hideref = getConf('TIMESHEET_HIDE_REF');
+$showTimespentNote = getConf('TIMESHEET_SHOW_TIMESPENT_NOTE');
 
-$adddocs = $conf->global->TIMESHEET_ADD_DOCS;
+$adddocs = getConf('TIMESHEET_ADD_DOCS');
 
 
-$addForOther = $conf->global->TIMESHEET_ADD_FOR_OTHER;
-$whiteListMode = $conf->global->TIMESHEET_WHITELIST_MODE;
-$whiteList = $conf->global->TIMESHEET_WHITELIST;
+$addForOther = getConf('TIMESHEET_ADD_FOR_OTHER');
+$whiteListMode = getConf('TIMESHEET_WHITELIST_MODE');
+$whiteList = getConf('TIMESHEET_WHITELIST');
 
-$draftColor = $conf->global->TIMESHEET_COL_DRAFT;
-$valueColor = $conf->global->TIMESHEET_COL_VALUE;
-$frozenColor = $conf->global->TIMESHEET_COL_FROZEN;
-$submittedColor = $conf->global->TIMESHEET_COL_SUBMITTED;
-$approvedColor = $conf->global->TIMESHEET_COL_APPROVED;
-$cancelledColor = $conf->global->TIMESHEET_COL_CANCELLED;
-$rejectedColor = $conf->global->TIMESHEET_COL_REJECTED;
-$maxhoursperday = $conf->global->TIMESHEET_DAY_MAX_DURATION;
-$addholidaytime = $conf->global->TIMESHEET_ADD_HOLIDAY_TIME;
-$blockholiday = $conf->global->TIMESHEET_BLOCK_HOLIDAY;
-$addpublicholidaytime = $conf->global->TIMESHEET_ADD_PUBLICHOLIDAY_TIME;
-$blockpublicholiday = $conf->global->TIMESHEET_BLOCK_PUBLICHOLIDAY;
-$overtimecheckweeks = $conf->global->TIMESHEET_OVERTIME_CHECK_WEEKS;
-$opendays = str_split($conf->global->TIMESHEET_OPEN_DAYS);
+$draftColor = getConf('TIMESHEET_COL_DRAFT');
+$valueColor = getConf('TIMESHEET_COL_VALUE');
+$frozenColor = getConf('TIMESHEET_COL_FROZEN');
+$submittedColor = getConf('TIMESHEET_COL_SUBMITTED');
+$approvedColor = getConf('TIMESHEET_COL_APPROVED');
+$cancelledColor = getConf('TIMESHEET_COL_CANCELLED');
+$rejectedColor = getConf('TIMESHEET_COL_REJECTED');
+$maxhoursperday = getConf('TIMESHEET_DAY_MAX_DURATION');
+$addholidaytime = getConf('TIMESHEET_ADD_HOLIDAY_TIME');
+$blockholiday = getConf('TIMESHEET_BLOCK_HOLIDAY');
+$addpublicholidaytime = getConf('TIMESHEET_ADD_PUBLICHOLIDAY_TIME');
+$blockpublicholiday = getConf('TIMESHEET_BLOCK_PUBLICHOLIDAY');
+$overtimecheckweeks = getConf('TIMESHEET_OVERTIME_CHECK_WEEKS');
+$opendays = str_split(getConf('TIMESHEET_OPEN_DAYS',"_1111100"));
 
 //approval
-$approvalbyweek = $conf->global->TIMESHEET_APPROVAL_BY_WEEK;
-$maxApproval = $conf->global->TIMESHEET_MAX_APPROVAL;
-$apflows = str_split($conf->global->TIMESHEET_APPROVAL_FLOWS);
+$approvalbyweek = getConf('TIMESHEET_APPROVAL_BY_WEEK');
+$maxApproval = getConf('TIMESHEET_MAX_APPROVAL');
+$apflows = str_split(getConf('TIMESHEET_APPROVAL_FLOWS'));
 if (count($apflows) != 6) {
     $apflows = array('_', '0', '0', '0', '0', '0');
 }
 
 //Invoice part
-$invoicemethod = $conf->global->TIMESHEET_INVOICE_METHOD;
-$invoicetasktime = $conf->global->TIMESHEET_INVOICE_TASKTIME;
-$invoicetimetype = $conf->global->TIMESHEET_INVOICE_TIMETYPE;
-$invoiceservice = $conf->global->TIMESHEET_INVOICE_SERVICE;
-$invoiceshowtask = $conf->global->TIMESHEET_INVOICE_SHOW_TASK;
-$invoiceshowuser = $conf->global->TIMESHEET_INVOICE_SHOW_USER;
+$invoicemethod = getConf('TIMESHEET_INVOICE_METHOD');
+$invoicetasktime = getConf('TIMESHEET_INVOICE_TASKTIME');
+$invoicetimetype = getConf('TIMESHEET_INVOICE_TIMETYPE','Days');
+$invoiceservice = getConf('TIMESHEET_INVOICE_SERVICE');
+$invoiceshowtask = getConf('TIMESHEET_INVOICE_SHOW_TASK');
+$invoiceshowuser = getConf('TIMESHEET_INVOICE_SHOW_USER');
 
 //event
-$maxhoursperevent = $conf->global->TIMESHEET_EVENT_MAX_DURATION;
-$minsecondsperevent = $conf->global->TIMESHEET_EVENT_MIN_DURATION;
-$defaulthoursperevent = $conf->global->TIMESHEET_EVENT_DEFAULT_DURATION;
-$blockTimespent = $conf->global->TIMESHEET_EVENT_NOT_CREATE_TIMESPENT;
+$maxhoursperevent = getConf('TIMESHEET_EVENT_MAX_DURATION');
+$minsecondsperevent = getConf('TIMESHEET_EVENT_MIN_DURATION');
+$defaulthoursperevent = getConf('TIMESHEET_EVENT_DEFAULT_DURATION');
+$blockTimespent = getConf('TIMESHEET_EVENT_NOT_CREATE_TIMESPENT');
 //pdf
-$pdfhidesignbox = intval($conf->global->TIMESHEET_PDF_HIDE_SIGNBOX);
-$noteOnPDF = $conf->global->TIMESHEET_PDF_NOTEISOTASK;
-$pdfHideName = intval($conf->global->TIMESHEET_PDF_HIDE_NAME);
+$pdfhidesignbox = intval(getConf('TIMESHEET_PDF_HIDE_SIGNBOX'));
+$noteOnPDF = getConf('TIMESHEET_PDF_NOTEISOTASK');
+$pdfHideName = intval(getConf('TIMESHEET_PDF_HIDE_NAME'));
 //advanced
-$exportFormat = $conf->global->TIMESHEET_EXPORT_FORMAT;
-$evalAddLine = $conf->global->TIMESHEET_EVAL_ADDLINE;
-$tsRound = intval($conf->global->TIMESHEET_ROUND);
-$importagenda = intval($conf->global->TIMESHEET_IMPORT_AGENDA);
-$dropdownAjax = $conf->global->MAIN_DISABLE_AJAX_COMBOX;
-$searchbox = intval($conf->global->TIMESHEET_SEARCHBOX);
-$unblockInvoiced = $conf->global->TIMESHEET_UNBLOCK_INVOICED;
-$unblockClosed = $conf->global->TIMESHEET_UNBLOCK_CLOSED;
-$reportInvoicedCol= $conf->global->TIMESHEET_REPORT_INVOICED_COL;
-$reportUngroup = $conf->global->TIMESHEET_REPORT_UNGROUP;
-$allowPublic = $conf->global->TIMESHEET_ALLOW_PUBLIC;
+$exportFormat = getConf('TIMESHEET_EXPORT_FORMAT');
+$evalAddLine = getConf('TIMESHEET_EVAL_ADDLINE');
+$tsRound = intval(getConf('TIMESHEET_ROUND'));
+$importagenda = intval(getConf('TIMESHEET_IMPORT_AGENDA'));
+$dropdownAjax = getConf('MAIN_DISABLE_AJAX_COMBOX');
+$searchbox = intval(getConf('TIMESHEET_SEARCHBOX'));
+$unblockInvoiced = getConf('TIMESHEET_UNBLOCK_INVOICED');
+$unblockClosed = getConf('TIMESHEET_UNBLOCK_CLOSED');
+$reportInvoicedCol= getConf('TIMESHEET_REPORT_INVOICED_COL');
+$reportUngroup = getConf('TIMESHEET_REPORT_UNGROUP');
+$allowPublic = getConf('TIMESHEET_ALLOW_PUBLIC');
 
+
+//headers handling
+$showProject = getpost('showProject', 'int')?:0;
+$showTaskParent = getpost('showTaskParent', 'int')?:0;
+$showTasks = getpost('showTasks', 'int')?:0;
+$showDateStart = getpost('showDateStart', 'int')?:0;
+$showDateEnd = getpost('showDateEnd', 'int')?:0;
+$showProgress = getpost('showProgress', 'int')?:0;
+$showCompany = getpost('showCompany', 'int')?:0;
+$showNote = getpost('showNote', 'int')?:0;
+$showTotal = getpost('showTotal', 'int')?:0;
+$showProgressDeclared = getpost('showProgressDeclared', 'int')?:0;
 
 if (count($opendays)!=8) {
     $opendays = array('_', '0', '0', '0', '0', '0', '0', '0');
@@ -126,18 +139,18 @@ function null2int($var, $int = 0)
 switch($action) {
     case "save":
         //general option
-        $hoursperday = getpost('hoursperday', 'int');
+        $hoursperday = getpost('hoursperday', 'int')?:0;
         if ($hoursperday == 0) {
             //error handling if hour per day is empty
-            $hoursperday = $conf->global->TIMESHEET_DAY_DURATION;
+            $hoursperday = getConf('TIMESHEET_DAY_DURATION',8);
             setEventMessage($langs->transnoentitiesnoconv("HourPerDayNotNull"), 'errors');
             break;
         }
         dolibarr_set_const($db, "TIMESHEET_DAY_DURATION", $hoursperday, 'chaine', 0, '', $conf->entity);
-        $timetype = getpost('timeType', 'alpha');
+        $timetype = getpost('timeType', 'alpha')?:'d';
         dolibarr_set_const($db, "TIMESHEET_TIME_TYPE", $timetype, 'chaine', 0, '', $conf->entity);
         $timeSpan = getpost('timeSpan', 'alpha');
-        if ($timeSpan!=$conf->global->TIMESHEET_TIME_SPAN) {
+        if ($timeSpan!=getConf('TIMESHEET_TIME_SPAN')) {
             // delete the unsubmitted timesheet so the new time span will be applied
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'project_task_timesheet';
             $sql .= ' WHERE status IN (1, 5)';//'DRAFT', 'REJECTED'
@@ -173,17 +186,7 @@ switch($action) {
         dolibarr_set_const($db, "MAIN_DISABLE_AJAX_COMBOX", $dropdownAjax, 'int', 0, '', $conf->entity);
         $addForOther = getpost('addForOther', 'int');
         dolibarr_set_const($db, "TIMESHEET_ADD_FOR_OTHER", $addForOther, 'int', 0, '', $conf->entity);
-        //headers handling
-        $showProject = getpost('showProject', 'int');
-        $showTaskParent = getpost('showTaskParent', 'int');
-        $showTasks = getpost('showTasks', 'int');
-        $showDateStart = getpost('showDateStart', 'int');
-        $showDateEnd = getpost('showDateEnd', 'int');
-        $showProgress = getpost('showProgress', 'int');
-        $showCompany = getpost('showCompany', 'int');
-        $showNote = getpost('showNote', 'int');
-        $showTotal = getpost('showTotal', 'int');
-        $showProgressDeclared = getpost('showProgressDeclared', 'int');
+
         $headers = $showNote?'Note':'';
         $headers .= $showCompany?(empty($headers)?'':'||').'Company':'';
         $headers .= $showProject?(empty($headers)?'':'||').'Project':'';
@@ -778,7 +781,7 @@ echo  '<tr class="oddeven"><td align="left">'.$langs->trans("invoiceService");
 echo '</td><td align="left">'.$langs->trans("invoiceServiceDesc").'</td>';
 echo  '<td align="left">';
 $addchoices = array('-999'=> $langs->transnoentitiesnoconv('not2invoice'), -997=> $langs->transnoentitiesnoconv('Custom'));
-$ajaxNbChar = $conf->global->PRODUIT_USE_SEARCH_TO_SELECT;
+$ajaxNbChar = getConf('PRODUIT_USE_SEARCH_TO_SELECT');
 $htmlProductArray = array('name' => 'invoiceservice', 'ajaxNbChar'=>$ajaxNbChar);
 $sqlProductArray = array('table' => 'product', 'keyfield' => 'rowid', 'fields' => 'ref, label', 'where' => 'tosell = 1 AND fk_product_type = 1', 'separator' => ' - ');
 print select_sellist($sqlProductArray, $htmlProductArray, $invoiceservice, $addchoices);
