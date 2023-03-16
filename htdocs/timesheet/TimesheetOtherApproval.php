@@ -47,8 +47,11 @@ if (!$role) {
 // end find the role
 // get other param
 $action = GETPOST('action', 'alpha');
+$offset = GETPOST('offset', 'int');
 if (!is_numeric($offset))$offset = 0;
-$print = (GETPOST('optioncss', 'alpha') == 'print')?true:false;
+$optioncss = GETPOST('optioncss', 'alpha');
+$print = ($optioncss == 'print')?true:false;
+
 $current = GETPOST('target', 'int');
 $token = GETPOST('token', 'alpha');
 if ($current == null)$current = '0';
@@ -201,19 +204,20 @@ function getHTMLNavigation($role, $optioncss, $selectList,$token, $current = 0)
     $form = new Form($db);
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
     if ($current!=0) {
-        $Nav .= '<a href="?action=goTo&target='.($current-1);
+        $Nav .= '<a href="?action=goTo&token='.$token.'&target='.($current-1);
         $Nav .= '&role='.($role);
         if ($optioncss != '')$Nav .= '&amp;optioncss='.$optioncss;
         $Nav .= '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
     }
     $Nav .= "</th>\n\t\t<th>\n\t\t\t";
     $Nav .= '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
-    $Nav .= $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
-    $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+    $Nav .= $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";
     $Nav .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
+    $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+   
 
     if ($current<count($selectList)) {
-        $Nav .= '<a href="?action=goTo&target='.($current+1);
+        $Nav .= '<a href="?action=goTo&token='.$token.'&target='.($current+1);
         $Nav .= '&role='.($role);
         if ($optioncss != '') $Nav .= '&amp;optioncss='.$optioncss;
         $Nav .= '">'.$langs->trans("Next").' &gt;&gt;</a>';
@@ -229,7 +233,7 @@ function getHTMLNavigation($role, $optioncss, $selectList,$token, $current = 0)
 function getTStobeApproved($current, $selectList)
 {
     global $db;
-    if ((!is_array($selectList) || !is_array($selectList[$current]['idList'])))return array();
+    if ((!is_array($selectList) ||  !array_key_exists($current,$selectList) ||!is_array($selectList[$current]['idList'])))return array();
     $listTTA = array();
     foreach ($selectList[$current]['idList'] as $idTTA) {
         $TTA = new TimesheetTask($db);
@@ -340,7 +344,7 @@ function getHTMLRows($objectArray)
 {
     global $langs, $conf;
     $headers = array('Approval', 'Note', 'Tasks', 'User');
-    if (!is_array($objectArray) || !is_object($objectArray[0])) return -1;
+    if (!is_array($objectArray) || !array_key_exists(0,$objectArray) || !is_object($objectArray[0])) return -1;
     echo '<tr class = "liste_titre">';
     echo '<th>'.$langs->trans('Approval').'</th>';
     echo '<th>'.$langs->trans('Note').'</th>';

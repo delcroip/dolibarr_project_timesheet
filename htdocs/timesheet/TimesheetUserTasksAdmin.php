@@ -295,7 +295,7 @@ switch($action) {
         $edit = 1;
     case 'delete';
         if ($action == 'delete' && ($id>0 || $ref!="")) {
-         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&token='.$token.'&id='
             .$id, $langs->trans('DeleteTimesheetuser'), 
             $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
         if ($ret == 'html') print '<br />';
@@ -434,12 +434,12 @@ switch($action) {
                 //if ($user->rights->Timesheetuser->edit)
                 //{
                     print '<a href = "'.$PHP_SELF.'?id='.$id
-                        .'&action=edit" class = "butAction">'.$langs->trans('Update').'</a>';
+                        .'&action=edit&token='.$token.'" class = "butAction">'.$langs->trans('Update').'</a>';
                 //}
                 //if ($user->rights->Timesheetuser->delete)
                 //{
                     print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='
-                        .$id.'&action=delete">'.$langs->trans('Delete').'</a>';
+                        .$id.'&action=delete&token='.$token.'">'.$langs->trans('Delete').'</a>';
                 //}
                 //else
                 //{
@@ -494,7 +494,7 @@ switch($action) {
         break;
     case 'delete':
         if (($id>0 || $ref!='')) {
-         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, $langs->trans('DeleteTimesheetuser'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&token='.$token.'&id='.$id, $langs->trans('DeleteTimesheetuser'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background
         }
@@ -630,7 +630,7 @@ switch($action) {
                             print "<td>".print_generic('user', 'rowid', $obj->fk_userid, 'lastname', 'firstname', ' ')."</td>";
                             print "<td>".dol_print_date($obj->date_start, 'day')."</td>";
                             print "<td>".$langs->trans(strtolower($statusA[$obj->status]))."</td>";
-                            print '<td><a href = "'.$PHP_SELF.'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+                            print '<td><a href = "'.$PHP_SELF.'?action=delete&token='.$token.'&id='.$obj->rowid.'">'.img_delete().'</a></td>';
                             print "</tr>";
                     }
                     $i++;
@@ -656,6 +656,7 @@ dol_fiche_end();
  */
 function reloadpage($backtopage, $id)
 {
+    global $token;
     if (!empty($backtopage)) {
         header("Location: ".$backtopage);
     //    header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$ref);
@@ -677,7 +678,7 @@ function reloadpage($backtopage, $id)
  */
 function Timesheetuser_prepare_head($object)
 {
-    global $langs, $conf, $user;
+    global $langs, $conf, $user, $token;
     $h = 0;
     $head = array();
     $head[$h][0] = $_SERVER["PHP_SELF"].'?action=view&id='.$object->id;

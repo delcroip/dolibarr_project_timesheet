@@ -319,7 +319,7 @@ class TimesheetFavourite extends CommonObject
      */
     public function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
     {
-        global $langs;
+        global $langs, $token;
         $result = '';
         if (empty($ref) && $id == 0) {
             if (!empty($this->id)) {
@@ -335,7 +335,7 @@ class TimesheetFavourite extends CommonObject
                 .'/timesheet/timesheetFavouriteAdmin.php?id='.$id.'&action=view">';
         } elseif (!empty($ref)) {
             $lien = '<a href = "'.DOL_URL_ROOT
-                .'/timesheet/timesheetFavouriteAdmin.php?ref='.$ref.'&action=view">';
+                .'/timesheet/timesheetFavouriteAdmin.php?ref='.$ref.'&action=view"&token='.$token.'>';
         } else{
             $lien = "";
         }
