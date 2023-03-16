@@ -290,7 +290,7 @@ switch($action) {
         $edit = 1;
     case 'delete';
         if ($action == 'delete' && ($id>0 || $ref!="")) {
-            $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&id='.$id, 
+            $ret = $form->form_confirm($PHP_SELF.'?action=confirm_delete&token='.$token.'&id='.$id, 
                 $langs->trans('DeleteTimesheetwhitelist'), $langs->trans('ConfirmDeleteTimesheetwhitelist'), 
                 'confirm_delete', '', 0, 1);
             if ($ret == 'html') print '<br />';
@@ -492,9 +492,9 @@ switch($action) {
             $userId = (is_object($user)?$user->id:$user);
             if (empty($reshook) && ($admin || $userId == $object->user)) {
                 print '<div class = "tabsAction">';
-                print '<a href = "'.$PHP_SELF.'?id='.$id.'&action=edit" class = "butAction">'
+                print '<a href = "'.$PHP_SELF.'?id='.$id.'&action=edit&token='.$token.'" class = "butAction">'
                     .$langs->trans('Update').'</a>';
-                print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action=delete">'
+                print '<a class = "butActionDelete" href = "'.$PHP_SELF.'?id='.$id.'&action=delete&token='.$token.'">'
                     .$langs->trans('Delete').'</a>';
                 print '</div>';
             }
@@ -502,7 +502,7 @@ switch($action) {
         break;
     case 'delete':
         if (($id>0 || $ref!='')) {
-            $ret = $form->form_confirm('?action=confirm_delete&id='.$id, 
+            $ret = $form->form_confirm('?action=confirm_delete&token='.$token.'&id='.$id, 
                 $langs->trans('DeleteTimesheetwhitelist'), 
                 $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
             if ($ret == 'html') print '<br />';
@@ -709,7 +709,7 @@ switch($action) {
                     print "<td>".$obj->subtask."</td>";
                     print "<td>".dol_print_date($obj->date_start, 'day')."</td>";
                     print "<td>".dol_print_date($obj->date_end, 'day')."</td>";
-                    print '<td><a href = "?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
+                    print '<td><a href = "?action=delete&token='.$token.'&id='.$obj->rowid.'">'.img_delete().'</a></td>';
                     print "</tr>";
                 }
                 $i++;
@@ -721,7 +721,7 @@ switch($action) {
         print '</table>'."\n";
         print '</from>'."\n";
         // new button
-        print '<a href="?action=create" class = "butAction" role = "button">'.$langs->trans('New');
+        print '<a href="?action=create&token='.$token.'" class = "butAction" role = "button">'.$langs->trans('New');
         print ' '.$langs->trans('Timesheetwhitelist')."</a>\n";
         break;
 }
@@ -735,15 +735,15 @@ dol_fiche_end();
  */
 function reloadpage($backtopage = "", $id = "", $ref = "")
 {
-        if (!empty($backtopage)) {
-            header("Location: ".$backtopage);
-        } elseif (!empty($ref)) {
-            header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$id);
-        } elseif ($id>0) {
-            header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);
-        } else{
-            header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
-        }
+    if (!empty($backtopage)) {
+        header("Location: ".$backtopage);
+    } elseif (!empty($ref)) {
+        header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$id);
+    } elseif ($id>0) {
+        header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);
+    } else{
+        header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
+    }
 ob_end_flush();
 exit();
 }

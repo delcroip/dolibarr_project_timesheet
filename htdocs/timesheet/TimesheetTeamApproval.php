@@ -245,7 +245,7 @@ if (is_object($firstTimesheetUser)) {
     }
 } else{
     
-    $Form .= '<h1>'.$langs->trans('NothingToValidate').'</h1>';
+    $Form = '<h1>'.$langs->trans('NothingToValidate').'</h1>';
     $staticTs = new TimesheetUserTasks($db);
     $staticTs->token = $token;
     $Form .= $staticTs->getHTMLFooterAp($current);
@@ -366,18 +366,18 @@ function getHTMLNavigation($optioncss, $selectList, $token, $current = 0)
     $form = new Form($db);
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
     if ($current!=0) {
-        $Nav .= '<a href="?action=goTo&target='.($current-1).'"';
+        $Nav .= '<a href="?action=goTo&token='.$token.'&target='.($current-1).'"';
         if ($optioncss != '')$Nav .= '&amp;optioncss='.$optioncss;
         $Nav .= '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
     }
     $Nav .= "</th>\n\t\t<th>\n\t\t\t";
-    $Nav .= '<form name = "goTo" action="?action=goTo" method = "POST" >'."\n\t\t\t";
+    $Nav .= '<form name = "goTo" action="?action=goTo&token='.$token.'" method = "POST" >'."\n\t\t\t";
     $Nav .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
 
     $Nav .= $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";;
     $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
     if ($current<count($selectList)) {
-        $Nav .= '<a href="?action=goTo&target='.($current+1);
+        $Nav .= '<a href="?action=goTo&token='.$token.'&target='.($current+1);
         if ($optioncss != '') $Nav .= '&amp;optioncss='.$optioncss;
         $Nav .= '">'.$langs->trans("Next").' &gt;&gt;</a>';
     }

@@ -269,7 +269,7 @@ public $date_time_event_start;
      */
     public function getNomUrl($withpicto = 0, $id = 0, $ref = '' )
     {
-        global $conf, $langs;
+        global $conf, $langs,$token;
         if (! empty($conf->dol_no_mouse_hover)) $notooltip = 1;// Force disable tooltips
         $result = '';
         if (empty($ref) && $id == 0) {
@@ -750,9 +750,9 @@ public $date_time_event_start;
 */
 public function getHTMLGetOtherUserTs($idsList, $selected, $admin)
 {
-    global $langs;
+    global $langs,$token;
     $form = new Form($this->db);
-    $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs" method = "POST">';
+    $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&token='.$token.'" method = "POST">';
     if (!$admin) {
         $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
     } else{
@@ -885,7 +885,7 @@ public function createTimeSpend($user, $token = '')
             $tasksList[$i]->id = $obj->taskid;
             $tasksList[$i]->userId = $this->userid;
             $tasksList[$i]->getTaskInfo();
-            $tasksList[$i]->listed = is_array($whiteList)?$whiteList[$obj->taskid]:null;
+            $tasksList[$i]->listed = (is_array($whiteList) && array_key_exists($obj->taskid, $whiteList) )?$whiteList[$obj->taskid]:null;
             $i++;
         }
         $this->db->free($resql);

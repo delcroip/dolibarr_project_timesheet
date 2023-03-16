@@ -561,7 +561,7 @@ public function fetchTaskTimesheet($userid = '')
                 $tasksList[$i]->date_end_approval = $this->date_end;
                 $tasksList[$i]->task_timesheet = $this->id;
                 $tasksList[$i]->progress = $obj->progress;
-                $tasksList[$i]->listed = is_array($whiteList)?$whiteList[$obj->taskid]:null;
+                $tasksList[$i]->listed =  (is_array($whiteList) && array_key_exists($obj->taskid, $whiteList) )?$whiteList[$obj->taskid]:null;
                // $tasksList[$i]->pStatus = $obj->p_status;
 
                 $i++;
@@ -845,12 +845,12 @@ public function getHTMLHeader($search = false)
  */
 public function getHTMLFormHeader($ajax = false)
 {
-     global $langs, $conf;
+     global $langs, $conf, $token;
     $html = '<form id = "timesheetForm" name = "timesheet" onSubmit="removeUnchanged();" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
     if ($ajax)$html .= ' onsubmit = " return submitTimesheet(0);"';
     $html .= '>';
     if($conf->agenda->enabled && getConf('TIMESHEET_IMPORT_AGENDA')){
-        $html .= '<a class = "butAction" href="?action=importCalandar&startDate='.$this->date_start.'">'.$langs->trans('ImportCalandar').'</a>';
+        $html .= '<a class = "butAction" href="?action=importCalandar&token='.$token.'&startDate='.$this->date_start.'">'.$langs->trans('ImportCalandar').'</a>';
     }
     return $html;
 }
@@ -898,7 +898,7 @@ public function getHTMLFooter($ajax = false)
  */
 
 public function getHTMLActions(){
-    global $langs, $apflows;
+    global $langs, $apflows, $token;
     $html = '<div class = "tabsAction">';
     $isOpenSatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED));
     if ($isOpenSatus) {
@@ -1053,7 +1053,7 @@ public function getHTMLPublicHolidayLines($ajax = false)
  *  @param     object              $form                form object
  *  @return     string                                       HTML
  */
-public function getHTMLNavigation($optioncss, $ajax = false)
+public function getHTMLNavigation($optioncss, $token, $ajax = false)
 {
     global $langs, $conf;
     $form = new Form($this->db);
@@ -1068,7 +1068,7 @@ public function getHTMLNavigation($optioncss, $ajax = false)
     }
     if ($optioncss != '')$Nav .= '&amp;optioncss='.$optioncss;
     $Nav .= '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-    $Nav .= '<form name = "goToDate" action="?action=goToDate'.$tail.'" method = "POST" >'."\n\t\t\t";
+    $Nav .= '<form name = "goToDate" action="?action=goToDate&token='.$token.''.$tail.'" method = "POST" >'."\n\t\t\t";
     //FIXME should take token as input
     $token = getToken();
     $Nav .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
@@ -1091,7 +1091,7 @@ public function getHTMLNavigation($optioncss, $ajax = false)
      */
     public function getNomUrl($htmlcontent, $id = 0, $ref = '', $withpicto = 0)
     {
-        global $langs;
+        global $langs,$token;
         $result = '';
         if (empty($ref) && $id == 0) {
             if (isset($this->id)) {
@@ -1137,7 +1137,7 @@ public function getHTMLNavigation($optioncss, $ajax = false)
     {
         global $langs;
         $form = new Form($this->db);
-        $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'&token='.$this->token.'" method = "POST">';
+        $HTML = '<form id = "timesheetForm" name = "OtherUser" action="?action=getOtherTs&wlm='.$this->whitelistmode.'" method = "POST">';
         if (!$admin) {
             $HTML .= $form->select_dolusers($selected, 'userid', 0, null, 0, $idsList);
         } else{

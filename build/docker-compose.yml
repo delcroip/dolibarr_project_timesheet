@@ -12,8 +12,7 @@ services:
       - ..\..\dolibarr_page_from_SQLtable\page_from_table:/var/www/build
     ports:
       - 18080:80
-    env_file:
-      .env
+    env_file: .env
     links:
       - database
   database:
@@ -22,15 +21,14 @@ services:
     volumes:
       - mysql_data_10:/var/lib/mysql
       - ./mount:/docker-entrypoint-initdb.d
-## How to reset database
-# 1 on the host download the right db (ver 9 bellow) because  the container doesn't have wget
-#wget https://github.com/Dolibarr/dolibarr/raw/develop/dev/initdemo/mysqldump_dolibarr_9.0.0.sql -o dump.sql
-# 2 uncomment the line - ./dump.sql:/var/www/html/dump.sql
-# 3 Attach shell to db containter and run those two commands
-#mysql -u root -p -e "SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;') FROM information_schema.tables WHERE table_schema = 'dolibarr';"
-#mysql -u root -p dolibarr < /var/www/html/dump.sql
-    env_file:
-      .env
+    ## How to reset database
+    # 1 on the host download the right db (ver 9 bellow) because  the container doesn't have wget
+    #wget https://github.com/Dolibarr/dolibarr/raw/develop/dev/initdemo/mysqldump_dolibarr_9.0.0.sql -o dump.sql
+    # 2 uncomment the line - ./dump.sql:/var/www/html/dump.sql
+    # 3 Attach shell to db containter and run those two commands
+    #mysql -u root -p -e "SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;') FROM information_schema.tables WHERE table_schema = 'dolibarr';"
+    #mysql -u root -p dolibarr < /var/www/html/dump.sql
+    env_file: .env
     environment:
       MYSQL_ROOT_PASSWORD: ${DOLI_DB_PASSWORD}
       MYSQL_DATABASE: ${DOLI_DB_NAME}
@@ -39,5 +37,4 @@ services:
 #    ports:
 #      - 3306:3306
 volumes:
-  mysql_data_10:
-  # password admin adminadmin
+  mysql_data_10: # password admin adminadmin

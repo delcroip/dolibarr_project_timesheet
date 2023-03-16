@@ -569,7 +569,7 @@ class TimesheetTask extends Task
         $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
         $sql .= " WHERE ";
         if ($this->id == -1 && is_array($this->exclusionlist)){
-            $sql .= " ptt.fk_task not in  '".implode("','",$this->exclusionlist)."' ";
+            $sql .= " ptt.fk_task not in  ('".implode("','",$this->exclusionlist)."') ";
             $sql .= " AND (ptt.fk_user = '".$userid."') ";
             $sql .= " AND (DATE(ptt.task_datehour) >= '".$this->db->idate($timeStart)."') ";
             $sql .= " AND (DATE(ptt.task_datehour)<'".$this->db->idate($timeEnd)."')";

@@ -222,7 +222,7 @@ if (getConf('TIMESHEET_ADD_FOR_OTHER') == 1
     print $task_timesheet->getHTMLGetOtherUserTs($SubordiateIds, $userid, $admin, $token);
 }
 //$ajax = false;
-$Form = $task_timesheet->getHTMLNavigation($optioncss);
+$Form = $task_timesheet->getHTMLNavigation($optioncss, $token);
 $Form .= $task_timesheet->getHTMLFormHeader();
 $Form .= $task_timesheet->getHTMLActions();
      if (getConf('TIMESHEET_WHITELIST') == 1) {

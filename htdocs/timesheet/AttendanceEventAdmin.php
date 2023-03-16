@@ -505,7 +505,7 @@ if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
                 $duration = ($obj->date_time_event_start <> "")
                     ?$db->jdate($obj->date_time_event)-$db->jdate($obj->date_time_event_start):'';
                 print "<td>".formatTime($duration, 0)."</td>";
-                print '<td><a href = "AttendanceEventAdmin.php?action=delete&id='.$obj->rowid.'">'
+                print '<td><a href = "AttendanceEventAdmin.php?action=delete&token='.$token.'&id='.$obj->rowid.'">'
                     .img_delete().'</a></td>';
                 print "</tr>";
             }
