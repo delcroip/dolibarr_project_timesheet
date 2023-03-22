@@ -56,6 +56,10 @@ $langs->load("timesheet@timesheet");
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
+$view = GETPOST('view', 'alpha');
+if ($view != ''){
+    $action = $view;
+}
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -182,7 +186,7 @@ switch($action) {
     case 'delete':
         if (isset($_GET['urlfile'])) $action = 'deletefile';
         //fallthrough
-    case 'view':
+    case 'card':
     case 'viewinfo':
     case 'viewdoc':
     case 'edit':
@@ -301,7 +305,7 @@ switch($action) {
         if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
-    case 'view':
+    case 'card':
     {
         // tabs
         if ($edit == 0 && $new == 0) { //show tabs
@@ -321,7 +325,7 @@ switch($action) {
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
         } else {// show the nav bar
             $basedurltab = explode("?", $PHP_SELF);
-            $basedurl = $basedurltab[0].'?action=list';
+            $basedurl = $basedurltab[0].'?view=list';
             $linkback = '<a href = "'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'
                 .$langs->trans("BackToList").'</a>';
             if (!isset($object->ref))//save ref if any
@@ -548,14 +552,14 @@ switch($action) {
     dol_syslog($sql, LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql) {
-        if (!empty($ls_userId))        $param .= '&ls_userId='.urlencode($ls_userId);
-            if (!empty($ls_date_start_month))        $param .= '&ls_date_start_month='.urlencode($ls_date_start_month);
-            if (!empty($ls_date_start_year))        $param .= '&ls_date_start_year='.urlencode($ls_date_start_year);
-            if (!empty($ls_status))        $param .= '&ls_status='.urlencode($ls_status);
-            if (!empty($ls_target))        $param .= '&ls_target='.urlencode($ls_target);
-            if (!empty($ls_project_tasktime_list))        $param .= '&ls_project_tasktime_list='.urlencode($ls_project_tasktime_list);
-            if (!empty($ls_user_approval))        $param .= '&ls_user_approval='.urlencode($ls_user_approval);
-            if ($filter && $filter != -1) $param .= '&filtre='.urlencode($filter);
+        if (!empty($ls_userId))$param .= '&ls_userId='.urlencode($ls_userId);
+            if (!empty($ls_date_start_month))$param .= '&ls_date_start_month='.urlencode($ls_date_start_month);
+            if (!empty($ls_date_start_year))$param .= '&ls_date_start_year='.urlencode($ls_date_start_year);
+            if (!empty($ls_status))$param .= '&ls_status='.urlencode($ls_status);
+            if (!empty($ls_target))$param .= '&ls_target='.urlencode($ls_target);
+            if (!empty($ls_project_tasktime_list))$param .= '&ls_project_tasktime_list='.urlencode($ls_project_tasktime_list);
+            if (!empty($ls_user_approval))$param .= '&ls_user_approval='.urlencode($ls_user_approval);
+            if ($filter && $filter != -1)$param .= '&filtre='.urlencode($filter);
             $num = $db->num_rows($resql);
             //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
             print_barre_liste($langs->trans("Timesheetuser"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
@@ -619,7 +623,7 @@ switch($action) {
             print '</tr>'."\n";
             $i = 0;
             $basedurltab = explode("?", $PHP_SELF);
-            $basedurl = $basedurltab[0].'?action=view&id=';
+            $basedurl = $basedurltab[0].'?view=card&id=';
             while($i < $num && $i<$limit)
             {
                     $obj = $db->fetch_object($resql);
@@ -659,11 +663,11 @@ function reloadpage($backtopage, $id)
     global $token;
     if (!empty($backtopage)) {
         header("Location: ".$backtopage);
-    //    header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$ref);
+    //    header("Location: ".$_SERVER["PHP_SELF"].'?view=card&ref='.$ref);
     } elseif ($id>0) {
-        header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);
+        header("Location: ".$_SERVER["PHP_SELF"].'?view=card&id='.$id);
     } else{
-        header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
+        header("Location: ".$_SERVER["PHP_SELF"].'?view=list');
     }
     ob_end_flush();
     exit();
@@ -681,7 +685,7 @@ function Timesheetuser_prepare_head($object)
     global $langs, $conf, $user, $token;
     $h = 0;
     $head = array();
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=view&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?view=card&id='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
@@ -691,11 +695,11 @@ function Timesheetuser_prepare_head($object)
     // $this->tabs = array('entity:-tabname);                                                                                                to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet');
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet', 'remove');
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewdoc&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?view=carddoc&id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
     $head[$h][2] = 'documents';
     $h++;
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewinfo&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?view=cardinfo&id='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;

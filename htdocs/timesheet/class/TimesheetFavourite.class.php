@@ -332,10 +332,10 @@ class TimesheetFavourite extends CommonObject
         }
         if ($id) {
             $lien = '<a href = "'.DOL_URL_ROOT
-                .'/timesheet/timesheetFavouriteAdmin.php?id='.$id.'&action=view">';
+                .'/timesheet/timesheetFavouriteAdmin.php?id='.$id.'&view=card">';
         } elseif (!empty($ref)) {
             $lien = '<a href = "'.DOL_URL_ROOT
-                .'/timesheet/timesheetFavouriteAdmin.php?ref='.$ref.'&action=view"&token='.$token.'>';
+                .'/timesheet/timesheetFavouriteAdmin.php?ref='.$ref.'&view=card"&token='.$token.'>';
         } else{
             $lien = "";
         }

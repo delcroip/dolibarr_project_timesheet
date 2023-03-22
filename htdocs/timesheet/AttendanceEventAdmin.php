@@ -54,6 +54,10 @@ $PHP_SELF = $_SERVER['PHP_SELF'];
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
+$view = GETPOST('view', 'alpha');
+if ($view != ''){
+    $action = $view;
+}
 $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
@@ -458,7 +462,7 @@ if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
         print '</td>';
         print '</tr>'."\n";
         $i = 0;
-       // $basedurl = dirname($PHP_SELF).'/attendanceeventCard.php?action=view&id=';
+       // $basedurl = dirname($PHP_SELF).'/attendanceeventCard.php?view=card&id=';
         while($i < $num && $i<$limit)
         {
             $obj = $db->fetch_object($resql);

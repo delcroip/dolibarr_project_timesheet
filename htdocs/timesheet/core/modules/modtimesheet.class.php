@@ -54,7 +54,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_name = 'Patrick Delcroix';
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-                $this->version = '4.6.2';
+                $this->version = '4.6.3';
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
@@ -501,7 +501,7 @@ class modTimesheet extends DolibarrModules
                         'titre' => 'Adminapproval',
                         'mainmenu' => 'timesheet',
                         'leftmenu' => 'timesheetapproval',
-                        'url' => '/timesheet/TimesheetUserTasksAdmin.php?action=list&sortfield=t.date_start&sortorder=desc',
+                        'url' => '/timesheet/TimesheetUserTasksAdmin.php?view=list&sortfield=t.date_start&sortorder=desc',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 310,
                         'enabled' => '$conf->global->TIMESHEET_APPROVAL_FLOWS != "_00000"', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.

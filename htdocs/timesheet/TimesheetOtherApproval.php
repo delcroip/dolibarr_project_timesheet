@@ -47,6 +47,10 @@ if (!$role) {
 // end find the role
 // get other param
 $action = GETPOST('action', 'alpha');
+$view = GETPOST('view', 'alpha');
+if ($view != ''){
+    $action = $view;
+}
 $offset = GETPOST('offset', 'int');
 if (!is_numeric($offset))$offset = 0;
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -204,20 +208,20 @@ function getHTMLNavigation($role, $optioncss, $selectList,$token, $current = 0)
     $form = new Form($db);
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
     if ($current!=0) {
-        $Nav .= '<a href="?action=goTo&token='.$token.'&target='.($current-1);
+        $Nav .= '<a href="?view=goto&token='.$token.'&target='.($current-1);
         $Nav .= '&role='.($role);
         if ($optioncss != '')$Nav .= '&amp;optioncss='.$optioncss;
         $Nav .= '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t";
     }
     $Nav .= "</th>\n\t\t<th>\n\t\t\t";
-    $Nav .= '<form name = "goTo" action="?action=goTo&role='.$role.'" method = "POST" >'."\n\t\t\t";
+    $Nav .= '<form name = "goTo" action="?view=goto&role='.$role.'" method = "POST" >'."\n\t\t\t";
     $Nav .= $langs->trans("GoTo").': '.$htmlSelect."\n\t\t\t";
     $Nav .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
     $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
    
 
     if ($current<count($selectList)) {
-        $Nav .= '<a href="?action=goTo&token='.$token.'&target='.($current+1);
+        $Nav .= '<a href="?view=goto&token='.$token.'&target='.($current+1);
         $Nav .= '&role='.($role);
         if ($optioncss != '') $Nav .= '&amp;optioncss='.$optioncss;
         $Nav .= '">'.$langs->trans("Next").' &gt;&gt;</a>';

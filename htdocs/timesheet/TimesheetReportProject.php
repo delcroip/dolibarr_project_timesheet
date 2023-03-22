@@ -29,6 +29,10 @@ $htmlother = new FormOther($db);
 //$objmodelexport = new ModeleExports($db);
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
+$view = GETPOST('view', 'alpha');
+if ($view != ''){
+    $action = $view;
+}
 //$dateStart = GETPOST('dateStart', 'alpha');
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -71,12 +75,12 @@ $langs->loadLangs(
 
 //find the right week
 $dateStart = strtotime(GETPOST('dateStart', 'alpha'));
-$dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goTodate
+$dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goToDate
 $dateStartmonth = GETPOST('dateStartmonth', 'int');
 $dateStartyear = GETPOST('dateStartyear', 'int');
 $dateStart = parseDate($dateStartday, $dateStartmonth, $dateStartyear, $dateStart);
 $dateEnd = strtotime(GETPOST('dateEnd', 'alpha'));
-$dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goTodate
+$dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goToDate
 $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $hidetab = GETPOST('hidetab', 'int');
