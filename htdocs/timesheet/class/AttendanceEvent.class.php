@@ -307,10 +307,10 @@ public $date_time_event_start;
         } else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
         if ($id) {
             $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceEventCard.php', 1)
-                .'id='.$id.'&action=view"'.$linkclose.'>';
+                .'id='.$id.'&view=card"'.$linkclose.'>';
         } elseif (!empty($ref)) {
             $lien = '<a href = "'.dol_buildpath('/timesheet/AttendanceEventCard.php', 1)
-                .'?ref='.$ref.'&action=view"'.$linkclose.'>';
+                .'?ref='.$ref.'&view=card"'.$linkclose.'>';
         } else{
             $lien = "";
         }

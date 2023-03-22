@@ -849,7 +849,7 @@ public function getHTMLFormHeader($ajax = false)
     $html = '<form id = "timesheetForm" name = "timesheet" onSubmit="removeUnchanged();" action="?action=submit&wlm='.$this->whitelistmode.'&userid='.$this->userId.'" method = "POST"';
     if ($ajax)$html .= ' onsubmit = " return submitTimesheet(0);"';
     $html .= '>';
-    if($conf->agenda->enabled && getConf('TIMESHEET_IMPORT_AGENDA')){
+    if($conf->agenda && getConf('TIMESHEET_IMPORT_AGENDA')){
         $html .= '<a class = "butAction" href="?action=importCalandar&token='.$token.'&startDate='.$this->date_start.'">'.$langs->trans('ImportCalandar').'</a>';
     }
     return $html;
@@ -910,7 +910,7 @@ public function getHTMLActions(){
         }else{
             $html .= '<input type = "submit"  class = "butAction" name = "save_next"  value = "'.$langs->trans('SaveNext')."\" />\n";
         }
-        $html .= '<a class = "butActionDelete" href="?action=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
+        $html .= '<a class = "butActionDelete" href="?view=list&startDate='.$this->date_start.'">'.$langs->trans('Cancel').'</a>';
     } elseif ($this->status == SUBMITTED)$html .= '<input type = "submit" class = "butAction" name = "recall" " value = "'.$langs->trans('Recall')."\" />\n";
     $html .= '</div>';
     return $html;
@@ -1068,7 +1068,7 @@ public function getHTMLNavigation($optioncss, $token, $ajax = false)
     }
     if ($optioncss != '')$Nav .= '&amp;optioncss='.$optioncss;
     $Nav .= '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-    $Nav .= '<form name = "goToDate" action="?action=goToDate&token='.$token.''.$tail.'" method = "POST" >'."\n\t\t\t";
+    $Nav .= '<form name = "goToDate" action="?view=goToDate&token='.$token.''.$tail.'" method = "POST" >'."\n\t\t\t";
     //FIXME should take token as input
     $token = getToken();
     $Nav .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token.'"/>';
@@ -1103,9 +1103,9 @@ public function getHTMLNavigation($optioncss, $token, $ajax = false)
             }
         }
         if ($id) {
-            $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?id='.$id.'&action=view">';
+            $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?id='.$id.'&view=card">';
         } elseif (!empty($ref)) {
-            $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?ref='.$ref.'&action=view">';
+            $lien = '<a href = "'.DOL_URL_ROOT.'/timesheet/timesheetuser.php?ref='.$ref.'&view=card">';
         } else{
             $lien = "";
         }

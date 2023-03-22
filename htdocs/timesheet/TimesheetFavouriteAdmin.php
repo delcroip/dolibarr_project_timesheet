@@ -84,6 +84,10 @@ if (!$removefilter) {
     $ls_date_end_year = GETPOST('ls_date_end_year', 'int');
 }
 $page = GETPOST('page', 'int');
+$view = GETPOST('view', 'alpha');
+if ($view != ''){
+    $action = $view;
+}
 if ($page <= 0){
     $page = 0;
 }
@@ -171,7 +175,7 @@ switch($action) {
         }
     case 'delete':
         if (isset($_GET['urlfile'])) $action = 'deletefile';
-    case 'view':
+    case 'card':
     case 'viewinfo':
     case 'viewdoc':
     case 'edit':
@@ -203,7 +207,8 @@ switch($action) {
 
 
             if ($ajax == 1) {
-                   echo json_encode(array('id'=> $result));
+                    ob_flush();
+                   echo @json_encode(array('id'=> $result));
                    ob_end_flush();
                     exit();
             } else{
@@ -296,7 +301,7 @@ switch($action) {
             if ($ret == 'html') print '<br />';
             //to have the object to be deleted in the background\
         }
-    case 'view':
+    case 'card':
         // tabs
         if ($edit == 0 && $new == 0) {
             //show tabs
@@ -317,7 +322,7 @@ switch($action) {
         } else {
             // show the nav bar
             $basedurltab = explode("?", $PHP_SELF);
-            $basedurl = $basedurltab[0].'?action=list';
+            $basedurl = $basedurltab[0].'?view=list';
             $linkback = '<a href = "'.$basedurl.(! empty($socid)?'?socid='.$socid:'').'">'
                 .$langs->trans("BackToList").'</a>';
             if (!isset($object->ref))//save ref if any
@@ -694,7 +699,7 @@ switch($action) {
             print '</tr>'."\n";
             $i = 0;
             $basedurltab = explode("?", $PHP_SELF);
-            $basedurl = $basedurltab[0].'?action=view&id=';
+            $basedurl = $basedurltab[0].'?view=card&id=';
             while($i < $num && $i<$limit)
             {
                 $obj = $db->fetch_object($resql);
@@ -738,11 +743,11 @@ function reloadpage($backtopage = "", $id = "", $ref = "")
     if (!empty($backtopage)) {
         header("Location: ".$backtopage);
     } elseif (!empty($ref)) {
-        header("Location: ".$_SERVER["PHP_SELF"].'?action=view&ref='.$id);
+        header("Location: ".$_SERVER["PHP_SELF"].'?view=card&ref='.$id);
     } elseif ($id>0) {
-        header("Location: ".$_SERVER["PHP_SELF"].'?action=view&id='.$id);
+        header("Location: ".$_SERVER["PHP_SELF"].'?view=card&id='.$id);
     } else{
-        header("Location: ".$_SERVER["PHP_SELF"].'?action=list');
+        header("Location: ".$_SERVER["PHP_SELF"].'?view=list');
     }
 ob_end_flush();
 exit();
@@ -760,7 +765,7 @@ function timesheetFavourite_prepare_head($object)
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=view&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?view=card&id='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
@@ -771,11 +776,11 @@ function timesheetFavourite_prepare_head($object)
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet');
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'timesheet', 'remove');
     /*
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewdoc&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?view=carddoc&id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
     $head[$h][2] = 'documents';
     $h++;
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?action=viewinfo&id='.$object->id;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?view=cardinfo&id='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;

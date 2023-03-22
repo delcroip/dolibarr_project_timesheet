@@ -88,7 +88,7 @@ function select_sellist(
         return 'error, one of the mandatory field of the function  select_sellist is missing';
     }
     $htmlName = $htmlarray['name'];
-    $ajaxNbChar = $htmlarray['ajaxNbChar'];
+    $ajaxNbChar = array_key_exists('ajaxNbChar',$htmlarray) ? $htmlarray['ajaxNbChar']:null;
     $listFields = explode(',', $sqlarray['fields']);
     $fields = array();
     foreach ($listFields as $item) {

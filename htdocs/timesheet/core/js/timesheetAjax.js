@@ -172,7 +172,7 @@ $.ajax({
 //function called to load new timesheet based on a date
 function loadXMLTimesheetFromDate(toDate, user)
 {
-    var Url="timesheet.php?action=goToDate&xml=1&toDate="+toDate;
+    var Url="timesheet.php?view=goToDate&xml=1&toDate="+toDate;
     if (user!==0) Url+="&user="+user;
     var token=$("#token").serialize();
     if (token!==undefined)Url+="&"+token;

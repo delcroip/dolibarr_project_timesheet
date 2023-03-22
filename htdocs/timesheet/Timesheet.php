@@ -28,6 +28,12 @@ include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
 $action = GETPOST('action', 'alpha');
+$view = GETPOST('view', 'alpha');
+
+if ($view != ''){
+    $action = $view;
+}
+
 $datestart = GETPOST('dateStart', 'int');
 //should return the XMLDoc
 $ajax = GETPOST('ajax', 'int');
@@ -37,9 +43,10 @@ $id = GETPOST('id', 'int');
 //$toDate = GETPOST('toDate');
 $toDate = GETPOST('toDate', 'alpha')?:'';
 
-$toDateday = (!empty($toDate) && $action == 'goToDate')?GETPOST('toDateday', 'int') :0;// to not look for the date if action not goTodate
+$toDateday = (!empty($toDate) && $action == 'goToDate')?GETPOST('toDateday', 'int') :0;// to not look for the date if action not goToDate
 $toDatemonth = (!empty($toDate) && $action == 'goToDate')?GETPOST('toDatemonth', 'int'):0;
 $toDateyear = (!empty($toDate) && $action == 'goToDate')?GETPOST('toDateyear', 'int'):0;
+
 
 $token = GETPOST('token', 'alpha');
 $whitelistmode = GETPOST('wlm', 'int');
@@ -76,15 +83,16 @@ if ( getConf('TIMESHEET_ADD_FOR_OTHER') == 1) {
     }
 }
 $confirm = GETPOST('confirm', 'alpha');
-$dateStart = intval(GETPOST('startDate', 'int'));
+$dateStart = intval(GETPOST('dateStart', 'int'));
 if ($dateStart == 0){
     if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
         $dateStart = $_SESSION["dateStart"];
     } else{
-        $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear, $datestart);
-        if ($dateStart == 0)$dateStart = getStartDate(time(), 0);
+        $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear);
+        
     }
 }
+if ($dateStart == 0)$dateStart = getStartDate(time(), 0);
 $_SESSION["dateStart"] = $dateStart ;
 
 // Load traductions files requiredby by page

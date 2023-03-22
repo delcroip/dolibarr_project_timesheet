@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+$PHP_SELF = $_SERVER['PHP_SELF'];
 //get param
 $staticProject = new Project($db);
 $projectId = GETPOST('projectid', 'int');
@@ -45,12 +46,16 @@ $userid = is_object($user)?$user->id:$user;
 //init handling object
 $form = new Form($db);
 $dateStart = strtotime(GETPOST('dateStart', 'alpha'));
-$dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goTodate
+$dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goToDate
 $dateStartmonth = GETPOST('dateStartmonth', 'int');
 $dateStartyear = GETPOST('dateStartyear', 'int');
+
+
 $dateStart = parseDate($dateStartday, $dateStartmonth, $dateStartyear, $dateStart);
+
+
 $dateEnd = strtotime(GETPOST('dateEnd', 'alpha'));
-$dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goTodate
+$dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goToDate
 $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
@@ -70,7 +75,7 @@ $langs->load("projects");
 $langs->load('timesheet@timesheet');
 //steps
     switch($step) {
-        case 2:{
+        case 2:
            $fields = ($mode == 'user')?'fk_user':(($mode == 'taskUser')?'fk_user, fk_task':'fk_task');
             $sql = 'SELECT  '.$fields.', SUM(tt.task_duration) as duration, ';
             if ($db->type!='pgsql') {
@@ -170,7 +175,7 @@ $langs->load('timesheet@timesheet');
             }
             $Form .= '</table>';
             $Form .= '<input type = "submit"  class = "butAction" value = "'.$langs->trans('Next')."\">\n</form>";
-             break;}
+            break;
         case 3: // review choice and list of item + quantity(editable)
             require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
             require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -306,8 +311,9 @@ $langs->load('timesheet@timesheet');
                     if ($result>0)$propallines[$lineCount] = $result;
                 }                                
             }
-            
+            echo "step 3<br>";
             if ($id > 0  && is_array($resArray)) {
+                echo "step 3.1<br>";
                 $db->commit();
                 $invoicecard = str_replace(
                                 array("require '../../main.inc.php';","<?php","\$db->close();"),
@@ -623,7 +629,7 @@ $project = new Project($db);
 $project->fetch($projectId);
 $headProject = project_prepare_head($project);
 dol_fiche_head($headProject, 'invoice', $langs->trans("Project"), 0, 'project');
-
+$ref = GETPOST('ref', 'alpha');
 // Load object
 if ($projectId > 0 || !empty($ref))
 {
@@ -634,7 +640,7 @@ if ($projectId > 0 || !empty($ref))
 		$id = $project->id;
 	}
 }
-$ref = GETPOST('ref', 'alpha');
+
 $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref = '<div class="refidno">';
@@ -698,7 +704,7 @@ function htmlPrintServiceChoice($user, $task, $class, $duration, $tasktimelist, 
         $objtemp = new Task($db);
         $objtemp->fetch($task);
         $taskLabel = $objtemp->label ;
-        $taskHTML .= str_replace('classfortooltip', 'classfortooltip colTasks', 
+        $taskHTML = str_replace('classfortooltip', 'classfortooltip colTasks', 
             $objtemp->getNomUrl(0, "withproject", "task", getConf('TIMESHEET_HIDE_REF')));
     }
 

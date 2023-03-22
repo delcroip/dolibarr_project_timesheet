@@ -29,6 +29,10 @@ $htmlother = new FormOther($db);
 $userid = is_object($user)?$user->id:$user;
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
+$view = GETPOST('view', 'alpha');
+if ($view != ''){
+    $action = $view;
+}
 $userIdSelected = GETPOST('userSelected', 'int');
 $exportFriendly = GETPOST('exportFriendly', 'alpha');
 if (empty($userIdSelected))$userIdSelected = $userid;
@@ -51,7 +55,7 @@ $langs->loadLangs(
 
 //find the right week
 //$toDate = GETPOST('toDate', 'alpha');
-//$toDateday = (!empty($toDate) && $action == 'goToDate')? GETPOST('toDateday', 'int'):0;// to not look for the date if action not goTodate
+//$toDateday = (!empty($toDate) && $action == 'goToDate')? GETPOST('toDateday', 'int'):0;// to not look for the date if action not goToDate
 //$toDatemonth = GETPOST('toDatemonth', 'int');
 //$toDateyear = GETPOST('toDateyear', 'int');
 $mode = GETPOST('mode', 'alpha');
@@ -75,12 +79,12 @@ $year = GETPOST('year', 'int');
 //$firstDay = ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
 //$lastDay = ($month)?strtotime('last day of this month', $firstDay):strtotime('last day of previous month');
 $dateStart = strtotime(GETPOST('dateStart', 'alpha'));
-$dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goTodate
+$dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goToDate
 $dateStartmonth = GETPOST('dateStartmonth', 'int');
 $dateStartyear = GETPOST('dateStartyear', 'int');
 $dateStart = parseDate($dateStartday, $dateStartmonth, $dateStartyear, $dateStart);
 $dateEnd = strtotime(GETPOST('dateEnd', 'alpha'));
-$dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goTodate
+$dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goToDate
 $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $reporttab = GETPOST('reporttab', 'alpha');
 $dateEndyear = GETPOST('dateEndyear', 'int');

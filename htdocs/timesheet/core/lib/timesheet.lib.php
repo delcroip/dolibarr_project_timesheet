@@ -18,7 +18,7 @@
 //const STATUS = [
 require_once 'generic.lib.php';
 
-Define("NULL", 0);
+//Define("NULL", 0);
 Define("DRAFT", 1);
 Define("SUBMITTED", 2);
 Define("APPROVED", 3);
@@ -476,7 +476,7 @@ function parseDate($day = 0, $month = 0, $year = 0, $date = 0)
     }
     $datetime = time();
     $splitWeek = 0;
-    if ($day!=0 && $month!=0 && $year!= 0) {
+    if ($day!=0 && $month!=0 && $year!= 0 && $day!='' && $month!='' && $year!= '') {
         $datetime = dol_mktime(0, 0, 0, $month, $day, $year);
     // the date is already in linux format
     } elseif (is_numeric($date) && $date!=0) {  // if date is a datetime
