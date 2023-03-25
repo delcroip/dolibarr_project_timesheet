@@ -113,7 +113,7 @@ class Stopwatch {
         if (play==false){
 
              if (this.event.project==0 && this.event.third_party==0 && this.event.task==0)
-                 document.getElementById("mainPlayStop").src= 'img/tinyblack.gif';
+                 document.getElementById("mainPlayStop").src= 'img/tinyblack.png';
              else
                  document.getElementById("mainPlayStop").src= 'img/play-arrow.png';
          }else{
