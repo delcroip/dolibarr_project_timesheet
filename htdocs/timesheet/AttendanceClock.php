@@ -184,7 +184,7 @@ $html .= "</table>";
 $html .= '<script type = "text/javascript">'."\n\t";
 $html .= "let stopwatch = new Stopwatch(document.getElementById('stopwatch'),".$userid.", '".$token."');stopwatch.load();";
 $html .= "updateAllProgress();\n";
-$html .= "document.getElementById('defaultOpen').click();\n";
+$html .= "var _eldo = document.getElementById('defaultOpen'); if(_eldo) _eldo.click();\n";
 $html .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $html;
