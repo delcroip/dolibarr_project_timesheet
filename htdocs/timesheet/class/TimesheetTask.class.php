@@ -1381,7 +1381,6 @@ class TimesheetTask extends Task
                     } else {
                         $resArray['updateError']++;
                     }
-                }
             }
         } elseif ($duration>0 || !empty($daynote)) {
             $this->timespent_note = $daynote;
