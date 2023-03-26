@@ -258,6 +258,7 @@ if ($ajax == 1) {
     ob_end_flush();
     exit();
 }
+$token = getToken();
 /***************************************************
 * VIEW
 *
@@ -505,14 +506,7 @@ switch($action) {
             }
         }
         break;
-    case 'delete':
-        if (($id>0 || $ref!='')) {
-            $ret = $form->form_confirm('?action=confirm_delete&token='.$token.'&id='.$id, 
-                $langs->trans('DeleteTimesheetwhitelist'), 
-                $langs->trans('ConfirmDeleteTimesheetwhitelist'), 'confirm_delete', '', 0, 1);
-            if ($ret == 'html') print '<br />';
-            //to have the object to be deleted in the background
-        }
+
     case 'list':
     default:
         $sql = 'SELECT';
@@ -612,6 +606,8 @@ switch($action) {
             //print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
             print_barre_liste($langs->trans("Timesheetwhitelist"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
             print '<form method = "POST" action = "'.$_SERVER["PHP_SELF"].'">';
+            print '<input type = "hidden" name = "token" value = "'.$token.'">';
+
             print '<table class = "liste" width = "100%">'."\n";
             //TITLE
             print '<tr class = "liste_titre">';
