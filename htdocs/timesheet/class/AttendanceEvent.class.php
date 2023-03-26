@@ -670,7 +670,7 @@ public $date_time_event_start;
             $ret = $this->create($user);
             if ($ret>0 && getConf('TIMESHEET_EVENT_NOT_CREATE_TIMESPENT') == 0) {
                 $this->createTimeSpend($user, $tokenDb);
-            } else{
+            } else if ($ret<0) {
                 $this->initAsSpecimen();
                 $arrayRes = array();
                 $this->status = $arrayRes["DbError"]++ ;
