@@ -670,7 +670,7 @@ public $date_time_event_start;
             $ret = $this->create($user);
             if ($ret>0 && getConf('TIMESHEET_EVENT_NOT_CREATE_TIMESPENT') == 0) {
                 $this->createTimeSpend($user, $tokenDb);
-            } else{
+            } else if ($ret<0) {
                 $this->initAsSpecimen();
                 $arrayRes = array();
                 $this->status = $arrayRes["DbError"]++ ;
@@ -809,7 +809,7 @@ public function createTimeSpend($user, $token = '')
     {
         global $langs;
         print '<div>';
-        print '<div style = "width:50px%;height:60px;float:left;vertical-align:middle" >';
+        print '<div style = "width:50px;height:60px;float:left;vertical-align:middle" >';
         print '<img height = "64px" id = "mainPlayStop" src = "img/'
             .(($this->id == 0)?'play-arrow':'stop-square');
         print '.png" onClick = startStop(event,'.$this->userid

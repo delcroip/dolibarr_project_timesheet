@@ -258,10 +258,12 @@ if (isset($_SESSION['timesheet'][$token])) {
     unset($_SESSION['timesheet'][$token]);
 }
 if (($action == 'create') || ($action == 'edit' && ($id>0 || !empty($ref)))) {
-    $token = getToken();
+    
     $_SESSION['timesheet'][$token] = array();
     $_SESSION['timesheet'][$token]['action'] = $action;
 }
+// new token
+$token = getToken();
 /***************************************************
 * VIEW
 *
@@ -321,7 +323,7 @@ switch($action) {
             } else{
                 print '<form method = "POST" action = "'.$PHP_SELF.'?action=update&id='.$id.'">';
             }
-            print '<input type = "hidden" name = "$token" value = "'.$token.'">';
+            print '<input type = "hidden" name = "token" value = "'.$token.'">';
             print '<input type = "hidden" name = "backtopage" value = "'.$backtopage.'">';
         } else {// show the nav bar
             $basedurltab = explode("?", $PHP_SELF);

@@ -1349,15 +1349,31 @@ class TimesheetTask extends Task
                 $this->timespent_note = $daynote;
                 $this->timespent_duration = $duration;
             }
-            if ($item['duration']!=$this->timespent_duration || $this->timespent_note!=$item['note']) {
-                if ($this->timespent_duration>0 || !empty($daynote)) {
-                    dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
-                    if ($this->updateTimeSpent($Submitter, 0) >= 0) {
-                        $resArray['timeSpendModified']++;
-                    } else {
-                        $resArray['updateError']++;
-                    }
+        }
+        if ($item['duration']!=$this->timespent_duration || $this->timespent_note!=$item['note']) {
+            if ($this->timespent_duration>0 || !empty($daynote)) {
+
+                if($this->timespent_note != $item['note']) {
+                  $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
+                  $sql .= " note = ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
+                  $sql .= " WHERE rowid = ".((int) $this->timespent_id);
+                 if ($this->db->query($sql)) {
+                        //OK
+                        }
+                }
+                if ($item['duration']!=$this->timespent_duration ){
+                     $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
+                     $sql .= " task_duration = ".$duration;
+                    $sql .= " WHERE rowid = ".((int) $this->timespent_id);
+                }
+                
+                dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
+                if ($this->db->query($sql)) {
+                    $resArray['timeSpendModified']++;
                 } else {
+                    $resArray['updateError']++;
+                }
+            } else {
                     dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
                     if ($this->delTimeSpent($Submitter, 0) >= 0) {
                         $resArray['timeSpendDeleted']++;
@@ -1365,11 +1381,14 @@ class TimesheetTask extends Task
                     } else {
                         $resArray['updateError']++;
                     }
-                }
             }
         } elseif ($duration>0 || !empty($daynote)) {
             $this->timespent_note = $daynote;
             $this->timespent_duration = $duration;
+            if($duration > 0 ){
+                $this->timespent_withhour = '1';
+                $this->timespent_datehour = (time() - $this->timespent_duration);
+            }
             $newId = $this->addTimeSpent($Submitter, 0);
             if ($newId >= 0) {
 
