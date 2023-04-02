@@ -1359,7 +1359,7 @@ class TimesheetTask extends Task
                 $this->timespent_note = $daynote;
                 $this->timespent_duration = $duration;
             }
- 
+
             if ($item['duration']!=$this->timespent_duration ||$item_note_old!=$item_note) {
                 if ($this->timespent_duration>0 || !empty($item_note)) {
                     dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
@@ -1368,7 +1368,11 @@ class TimesheetTask extends Task
                     } else {
                         $resArray['updateError']++;
                     }
+
                 } else {
+                    $resArray['updateError']++;
+                }
+            } else {
                     dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
                     if ($this->delTimeSpent($Submitter, 0) >= 0) {
                         $resArray['timeSpendDeleted']++;
@@ -1376,11 +1380,11 @@ class TimesheetTask extends Task
                     } else {
                         $resArray['updateError']++;
                     }
-                }
             }
         } elseif ($duration>0 || !empty($daynote)) {
             $this->timespent_note = $daynote;
             $this->timespent_duration = $duration;
+
             if (property_exists($this, 'timespent_datehour') && $duration>0 ) {
                 $this->timespent_withhour = '1';
                 if ($is_today) {
