@@ -455,7 +455,7 @@ class TimesheetUserTasks extends CommonObject
        $this->fetch($id);
        $this->token = $token;
        $this->userId = $_SESSION['timesheet'][$token][$id]['userId'];
-       $this->date_start = $_SESSION['timesheet'][$token][$id]['dateStart'];
+       $this->date_start = $_SESSION['timesheet'][$token][$id]['startDate'];
        $this->date_end = $_SESSION['timesheet'][$token][$id]['dateEnd'];
        $this->ref = $_SESSION['timesheet'][$token][$id]['ref'];
        $this->note = $_SESSION['timesheet'][$token][$id]['note'];
@@ -471,7 +471,7 @@ public function saveInSession()
 {
     $_SESSION['timesheet'][$this->token][$this->id]['userId'] = $this->userId;
     $_SESSION['timesheet'][$this->token][$this->id]['ref'] = $this->ref;
-    $_SESSION['timesheet'][$this->token][$this->id]['dateStart'] = $this->date_start;
+    $_SESSION['timesheet'][$this->token][$this->id]['startDate'] = $this->date_start;
     $_SESSION['timesheet'][$this->token][$this->id]['dateEnd'] = $this->date_end;
     $_SESSION['timesheet'][$this->token][$this->id]['note'] = $this->note;
     $_SESSION['timesheet'][$this->token][$this->id]['holiday'] = serialize($this->holidays);
@@ -806,7 +806,7 @@ public function getHTMLHeader($search = false)
     $weeklength = getDayInterval($this->date_start, $this->date_end);
     $maxColSpan = $weeklength+count($this->headers);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
-    $html = '<input type = "hidden" name = "dateStart" value = "'.$this->date_start.'" />';
+    $html = '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
     $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
     if ($search) {
@@ -1064,7 +1064,7 @@ public function getHTMLNavigation($optioncss, $token, $ajax = false)
     $Nav = '<table class = "noborder" width = "50%">'."\n\t".'<tr>'."\n\t\t".'<th>'."\n\t\t\t";
     if ($ajax) {
     } else{
-        $Nav .= '<a href="?dateStart='.getStartDate($this->date_start, -1).$tail;
+        $Nav .= '<a href="?startDate='.getStartDate($this->date_start, -1).$tail;
     }
     if ($optioncss != '')$Nav .= '&amp;optioncss='.$optioncss;
     $Nav .= '">  &lt;&lt;'.$langs->trans("Previous").' </a>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
@@ -1075,7 +1075,7 @@ public function getHTMLNavigation($optioncss, $token, $ajax = false)
 
     $Nav .= $langs->trans("GoTo").': '.$form->select_date(-1, 'toDate', 0, 0, 0, "", 1, 1, 1)."\n\t\t\t";;
     $Nav .= '<input type = "submit" value = "Go" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-    $Nav .= '<a href="?dateStart='.getStartDate($this->date_start, 1).$tail;
+    $Nav .= '<a href="?startDate='.getStartDate($this->date_start, 1).$tail;
     if ($optioncss != '') $Nav .= '&amp;optioncss='.$optioncss;
     $Nav .= '">'.$langs->trans("Next").' &gt;&gt;</a>'."\n\t\t</th>\n\t</tr>\n </table>\n";
     return $Nav;
@@ -1359,7 +1359,7 @@ public function GetTimeSheetXML()
         if ($ret != false) {
             foreach ($emails as $email => $data) {
             //get the list of user that have the ts right
-                $$url .= '/timesheet/Timesheet.php?dateStart='.$date_start;
+                $$url .= '/timesheet/Timesheet.php?startDate='.$date_start;
                 $message = $langs->trans(
                     'YouHaveMissingTimesheetMsg', 
                     date(' d', $date_start), 
@@ -1406,7 +1406,7 @@ public function GetTimeSheetXML()
         if (strpos($dolibarr_main_url_root_alt, $_SERVER['PHP_SELF'])>0) {
             $url .= $dolibarr_main_url_root_alt;
         }
-        $url .= '/timesheet/Timesheet.php?dateStart='.$this->date_start;
+        $url .= '/timesheet/Timesheet.php?startDate='.$this->date_start;
         $message = $langs->trans(
             'YouHaveTimesheetRejectedMsg', 
             date(' d', $this->date_start), 

@@ -34,7 +34,7 @@ if ($view != ''){
     $action = $view;
 }
 
-$datestart = GETPOST('dateStart', 'int');
+$datestart = GETPOST('startDate', 'int');
 //should return the XMLDoc
 $ajax = GETPOST('ajax', 'int');
 $xml = GETPOST('xml', 'int');
@@ -83,17 +83,17 @@ if ( getConf('TIMESHEET_ADD_FOR_OTHER') == 1) {
     }
 }
 $confirm = GETPOST('confirm', 'alpha');
-$dateStart = intval(GETPOST('dateStart', 'int'));
+$dateStart = intval(GETPOST('startDate', 'int'));
 if ($dateStart == 0){
-    if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["dateStart"])) {
-        $dateStart = $_SESSION["dateStart"];
+    if ($toDateday == 0 && $datestart == 0 && isset($_SESSION["startDate"])) {
+        $dateStart = $_SESSION["startDate"];
     } else{
         $dateStart = parseDate($toDateday, $toDatemonth, $toDateyear);
         
     }
 }
 if ($dateStart == 0)$dateStart = getStartDate(time(), 0);
-$_SESSION["dateStart"] = $dateStart ;
+$_SESSION["startDate"] = $dateStart ;
 
 // Load traductions files requiredby by page
 //$langs->load("companies");
@@ -178,7 +178,7 @@ if (!empty($token)) {
 $token = getToken();
 if ($submitted_next ||$saved_next ){
     $dateStart = getStartDate($dateStart+1, 1);
-    $_SESSION["dateStart"] = $dateStart ;
+    $_SESSION["startDate"] = $dateStart ;
 }
 
 

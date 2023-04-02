@@ -33,7 +33,7 @@ $view = GETPOST('view', 'alpha');
 if ($view != ''){
     $action = $view;
 }
-//$dateStart = GETPOST('dateStart', 'alpha');
+//$dateStart = GETPOST('startDate', 'alpha');
 $exportfriendly = GETPOST('exportfriendly', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $short = GETPOST('short', 'int');
@@ -74,10 +74,10 @@ $langs->loadLangs(
 );
 
 //find the right week
-$dateStart = strtotime(GETPOST('dateStart', 'alpha'));
-$dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goToDate
-$dateStartmonth = GETPOST('dateStartmonth', 'int');
-$dateStartyear = GETPOST('dateStartyear', 'int');
+$dateStart = strtotime(GETPOST('startDate', 'alpha'));
+$dateStartday = GETPOST('startDateday', 'int');// to not look for the date if action not goToDate
+$dateStartmonth = GETPOST('startDatemonth', 'int');
+$dateStartyear = GETPOST('startDateyear', 'int');
 $dateStart = parseDate($dateStartday, $dateStartmonth, $dateStartyear, $dateStart);
 $dateEnd = strtotime(GETPOST('dateEnd', 'alpha'));
 $dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goToDate
@@ -161,7 +161,7 @@ if ($action == 'getpdf') {
     ob_end_flush();
     exit();
 }
-//$_SESSION["dateStart"] = $dateStart ;
+//$_SESSION["startDate"] = $dateStart ;
 llxHeader('', $langs->trans('projectReport'), '');
 
 // Load project
@@ -255,7 +255,7 @@ if($hidetab == 1){
 }
 //}
 // select start date
-$form_output .= '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
+$form_output .= '<td>'.$form->select_date($dateStart, 'startDate', 0, 0, 0, "", 1, 1, 1)."</td>";
 // select end date
 $form_output .= '<td>'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
 //$form_output .= '<td> '.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year, 'year', 0, 10, 3)
@@ -291,25 +291,25 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
  $form_output .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
 if (!empty($querryRes) && ($user->rights->facture->creer
     || version_compare(DOL_VERSION, "3.7") <= 0))
-        $form_output .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&dateStart='
+        $form_output .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&startDate='
             .dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='
             .$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard')
             .'&projectid='.$projectSelectedId.'" >'.$langs->trans('Invoice').'</a>';
 
 if (!empty($querryRes))$form_output .=
-    '<a class = "butAction" href="?action=getpdf&dateStart='
+    '<a class = "butAction" href="?action=getpdf&startDate='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='
     .$projectSelectedId.'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly
     ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'&token='.$token.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if (!empty($querryRes) && getConf('MAIN_MODULE_EXPORT'))$form_output .=
-    '<a class = "butAction" href="?action=getExport&dateStart='
+    '<a class = "butAction" href="?action=getExport&startDate='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&model='.$model.'&invoicabletaskOnly='.$invoicabletaskOnly
     ."&hidetab=".$hidetab.'&ungroup='.$ungroup.'&token='.$token.'" >'.$langs->trans('Export').'</a>';
 if (!empty($querryRes))$form_output .=
-    '<a class = "butAction" href="?action=reportproject&dateStart='
+    '<a class = "butAction" href="?action=reportproject&startDate='
     .dol_print_date($dateStart, 'dayxcard').'&dateEnd='
     .dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId
     .'&mode='.$mode.'&invoicabletaskOnly='.$invoicabletaskOnly

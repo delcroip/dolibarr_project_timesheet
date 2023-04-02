@@ -1008,10 +1008,10 @@ class TimesheetTask extends Task
         $xml .= "<Project id = \"{$this->fk_project}\">{$this->ProjectTitle} </Project>";
         $xml .= "<TaskParent id = \"{$this->fk_task_parent}\">{$this->taskParentDesc} </TaskParent>";
         //$xml .= "<task id = \"{$this->id}\" name = \"{$this->description}\">\n";
-        $xml .= "<DateStart unix = \"$this->date_start\">";
+        $xml .= "<startDate unix = \"$this->date_start\">";
         if ($this->date_start)
             $xml .= dol_mktime($this->date_start);
-        $xml .= " </DateStart>";
+        $xml .= " </startDate>";
         $xml .= "<DateEnd unix = \"$this->date_end\">";
         if ($this->date_end)
             $xml .= dol_mktime($this->date_end);
@@ -1149,8 +1149,8 @@ class TimesheetTask extends Task
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task AS pt ";
         $sql .= "SET duration_effective = (SELECT SUM(ptt.task_duration) ";
         $sql .= "FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt ";
-        $sql .= "WHERE ptt.fk_task = '".$this->id."'), ";
-        if (isset($this->progress) && $this->progress != '') $sql .= " progress = '".$this->progress."'";
+        $sql .= "WHERE ptt.fk_task = '".$this->id."') ";
+        if (isset($this->progress) && $this->progress != '') $sql .= " , progress = '".$this->progress."'";
         $sql .= " WHERE pt.rowid = '".$this->id."' ";
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -1328,18 +1328,27 @@ class TimesheetTask extends Task
     public function saveTaskTime($Submitter, $duration, $daynote, $dayKey, $addmode = false)
     {
         $item = $this->tasklist[$dayKey];
-        $item_note = array_key_exists('note',$item ) ? $item['note']: '';
         $resArray = ['timeSpendDeleted'=>0, 'timeSpendModified' => 0, 'timeSpendCreated'=>0, 'updateError'=> 0, ];
+        $item_note = array_key_exists('note',$item ) ? $item['note']: '';
+        $item_note_old = $this->timespent_note;
+        $is_today=date("Y-m-d") == date("Y-m-d",$item['date']);
         $this->timespent_fk_user = $this->userId;
         dol_syslog(__METHOD__."   duration Old=".$item['duration']." New="
-            .$duration." Id=".$item['id'].", date=".$item['date'], LOG_DEBUG);
+            .$duration." Id=".$item['id'].", date=".$item['date'].",".$is_today, LOG_DEBUG);
         $this->timespent_date = $item['date'];
-        if (isset($this->timespent_datehour)) {
-            $this->timespent_datehour = $item['date'];
+        if (property_exists($this, 'timespent_datehour')) {
+            $this->timespent_withhour = '1';
+            if ($is_today) {
+                // use current time is saved same day
+                $this->timespent_datehour = (time() - $this->timespent_duration);
+                dol_syslog("TRACE".$this->timespent_datehour, LOG_DEBUG);
+            } else {
+                $this->timespent_datehour = $item['date'];
+            }
         }
         if ($item['id']>0) {
             $this->timespent_id = $item['id'];
-            $this->timespent_old_duration = $item['duration'];  
+            $this->timespent_old_duration = $item['duration']; 
             $this->timespent_note .= $item_note;
             if ($addmode) {
                 if (!empty($daynote)){
@@ -1350,32 +1359,16 @@ class TimesheetTask extends Task
                 $this->timespent_note = $daynote;
                 $this->timespent_duration = $duration;
             }
-        }
-       
-        if ($item['duration']!=$this->timespent_duration || $this->timespent_note!=$item_note) {
-            if ($this->timespent_duration>0 || !empty($daynote)) {
-
-                if($this->timespent_note != $item_note) {
-                  $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
-                  $sql .= " note = ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
-                  $sql .= " WHERE rowid = ".((int) $this->timespent_id);
-                 if ($this->db->query($sql)) {
-                        //OK
-                        }
-                }
-                if ($item['duration']!=$this->timespent_duration ){
-                     $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
-                     $sql .= " task_duration = ".$duration;
-                    $sql .= " WHERE rowid = ".((int) $this->timespent_id);
-                }
-                
-                dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
-                if ($this->db->query($sql)) {
-                    $resArray['timeSpendModified']++;
+ 
+            if ($item['duration']!=$this->timespent_duration ||$item_note_old!=$item_note) {
+                if ($this->timespent_duration>0 || !empty($item_note)) {
+                    dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
+                    if ($this->updateTimeSpent($Submitter, 0) >= 0) {
+                        $resArray['timeSpendModified']++;
+                    } else {
+                        $resArray['updateError']++;
+                    }
                 } else {
-                    $resArray['updateError']++;
-                }
-            } else {
                     dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
                     if ($this->delTimeSpent($Submitter, 0) >= 0) {
                         $resArray['timeSpendDeleted']++;
@@ -1383,13 +1376,19 @@ class TimesheetTask extends Task
                     } else {
                         $resArray['updateError']++;
                     }
+                }
             }
         } elseif ($duration>0 || !empty($daynote)) {
             $this->timespent_note = $daynote;
             $this->timespent_duration = $duration;
-            if($duration > 0 ){
+            if (property_exists($this, 'timespent_datehour') && $duration>0 ) {
                 $this->timespent_withhour = '1';
-                $this->timespent_datehour = (time() - $this->timespent_duration);
+                if ($is_today) {
+                    // use current time is saved same day
+                    $this->timespent_datehour = (time() - $this->timespent_duration);
+                } else {
+                    $this->timespent_datehour = $item['date'];
+                }
             }
             $newId = $this->addTimeSpent($Submitter, 0);
             if ($newId >= 0) {

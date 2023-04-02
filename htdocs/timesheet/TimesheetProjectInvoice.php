@@ -45,10 +45,10 @@ $tsNotInvoiced = GETPOST('tsNotInvoiced', 'alpha');
 $userid = is_object($user)?$user->id:$user;
 //init handling object
 $form = new Form($db);
-$dateStart = strtotime(GETPOST('dateStart', 'alpha'));
-$dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goToDate
-$dateStartmonth = GETPOST('dateStartmonth', 'int');
-$dateStartyear = GETPOST('dateStartyear', 'int');
+$dateStart = strtotime(GETPOST('startDate', 'alpha'));
+$dateStartday = GETPOST('startDateday', 'int');// to not look for the date if action not goToDate
+$dateStartmonth = GETPOST('startDatemonth', 'int');
+$dateStartyear = GETPOST('startDateyear', 'int');
 
 
 $dateStart = parseDate($dateStartday, $dateStartmonth, $dateStartyear, $dateStart);
@@ -106,7 +106,7 @@ $langs->load('timesheet@timesheet');
             $Form = '<form name = "settings" action="?step=3" method = "POST" >'."\n\t";
             $Form .= '<input type = "hidden" name = "propalid" value = "'.$propalId.'">';
             $Form .= '<input type = "hidden" name = "projectid" value = "'.$projectId.'">';
-            $Form .= '<input type = "hidden" name = "dateStart" value = "'.dol_print_date($dateStart, 'dayxcard').'">';
+            $Form .= '<input type = "hidden" name = "startDate" value = "'.dol_print_date($dateStart, 'dayxcard').'">';
             $Form .= '<input type = "hidden" name = "dateEnd" value = "'.dol_print_date($dateEnd, 'dayxcard').'">';
             $Form .= '<input type = "hidden" name = "socid" value = "'.$socid.'">';
             $Form .= '<input type = "hidden" name = "invoicingMethod" value = "'.$mode.'">';
@@ -517,7 +517,7 @@ $langs->load('timesheet@timesheet');
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
                 .$langs->trans('DateStart').'</th>';
             $Form .= '<th align = "left" width = "80%">'
-                .$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
+                .$form->select_date($dateStart, 'startDate', 0, 0, 0, "", 1, 1, 1)."</th></tr>";
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
                 .$langs->trans('DateEnd').'</th>';
             $Form .= '<th align = "left" width = "80%">'
@@ -567,9 +567,9 @@ $langs->load('timesheet@timesheet');
                 var soc =  socSelect.id;
                 var socElement = document.getElementById("socid");
                 var socOld = (typeof(socElement.defaultSelected) === \'undefined\')?0:socElement.defaultSelected ;
-                var dateStartday = "&dateStartday="+document.getElementById("dateStartday").value;
-                var dateStartmonth = "&dateStartmonth="+document.getElementById("dateStartmonth").value;
-                var dateStartyear = "&dateStartyear="+document.getElementById("dateStartyear").value;
+                var dateStartday = "&dateStartday="+document.getElementById("startDateday").value;
+                var dateStartmonth = "&dateStartmonth="+document.getElementById("startDatemonth").value;
+                var dateStartyear = "&dateStartyear="+document.getElementById("startDateyear").value;
 
                 var dateEndday = "&dateEndday="+document.getElementById("dateEndday").value;
                 var dateEndmonth = "&dateEndmonth="+document.getElementById("dateEndmonth").value;
@@ -578,7 +578,7 @@ $langs->load('timesheet@timesheet');
                 if ( soc != null && soc != socOld){
                     self.location = "'.$PHP_SELF
                         .'?" + id  + "&socid=" + soc +  dateStartday + dateStartmonth + '
-                        .'dateStartyear + dateEndday + dateEndmonth + dateEndyear;
+                        .'startDateyear + dateEndday + dateEndmonth + dateEndyear;
                 }
             });
          </script>';

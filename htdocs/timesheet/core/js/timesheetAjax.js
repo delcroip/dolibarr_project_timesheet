@@ -25,7 +25,7 @@ function refreshTimesheet(Wlmode,hidezero){
         var timesheet=xmlDoc.getElementsByTagName("timesheet");
         if (timesheet.length==0)throw "Bad XML: no timesheet Node";
         var token=timesheet[0].getAttribute('token');
-        var dateStart=timesheet[0].getAttribute('dateStart');
+        var startDate=timesheet[0].getAttribute('startDate');
         var id=timesheet[0].getAttribute('id');/*FIXME not returned yet*/
         var prevDate=timesheet[0].getAttribute('prevDate');
         var nextDate=timesheet[0].getAttribute('nextDate');
@@ -106,7 +106,7 @@ function generateHeader(headers,days){
 
 function generateHiddenParam(token,dateStart){
     var hiddenParam='<input type="hidden" id="token" name="token" value="'+token+"\"/>\n";
-    hiddenParam+= '<input type="hidden" name="dateStart" value="'+dateStart+'" />';
+    hiddenParam+= '<input type="hidden" name="startDate" value="'+dateStart+'" />';
     return hiddenParam;
 }
 
@@ -156,7 +156,7 @@ function UpdateNavigation(nextDate,prevDate){
 
 function loadXMLTimesheet(dateStart, user)
 {
-    var Url="timesheet.php?xml=1&dateStart="+dateStart;
+    var Url="timesheet.php?xml=1&startDate="+dateStart;
     if (user!==0) Url+="&user="+user;
     var token=$("#token").serialize();
     if (token!==undefined)Url+="&"+token;
