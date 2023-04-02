@@ -78,10 +78,10 @@ $year = GETPOST('year', 'int');
 //$month = GETPOST('month', 'int');;//strtotime(str_replace('/', '-', $_POST['Date']));
 //$firstDay = ($month)?strtotime('01-'.$month.'-'. $year):strtotime('first day of previous month');
 //$lastDay = ($month)?strtotime('last day of this month', $firstDay):strtotime('last day of previous month');
-$dateStart = strtotime(GETPOST('dateStart', 'alpha'));
-$dateStartday = GETPOST('dateStartday', 'int');// to not look for the date if action not goToDate
-$dateStartmonth = GETPOST('dateStartmonth', 'int');
-$dateStartyear = GETPOST('dateStartyear', 'int');
+$dateStart = strtotime(GETPOST('startDate', 'alpha'));
+$dateStartday = GETPOST('startDateday', 'int');// to not look for the date if action not goToDate
+$dateStartmonth = GETPOST('startDatemonth', 'int');
+$dateStartyear = GETPOST('startDateyear', 'int');
 $dateStart = parseDate($dateStartday, $dateStartmonth, $dateStartyear, $dateStart);
 $dateEnd = strtotime(GETPOST('dateEnd', 'alpha'));
 $dateEndday = GETPOST('dateEndday', 'int');// to not look for the date if action not goToDate
@@ -197,7 +197,7 @@ if (!empty($userIdSelected)
     }
 }
 
-$form_output .= '<td>'.$form->select_date($dateStart, 'dateStart', 0, 0, 0, "", 1, 1, 1)."</td>";
+$form_output .= '<td>'.$form->select_date($dateStart, 'startDate', 0, 0, 0, "", 1, 1, 1)."</td>";
 // select end date
 $form_output .= '<td>'.$form->select_date($dateEnd, 'dateEnd', 0, 0, 0, "", 1, 1, 1)."</td>";
 //$form_output .= '<td>'.$htmlother->select_month($month, 'month').' - '.$htmlother->selectyear($year, 'year', 0, 10, 3).' </td>';
@@ -235,9 +235,9 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
 $form_output  .= '<div class="tabsAction"><div class="center">';
 $form_output  .= '<input class="butAction" type="submit" value="' . $langs->trans( 'getReport' ) . '">';
 $model = getConf('TIMESHEET_EXPORT_FORMAT');
-//if(!empty($querryRes))$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
+//if(!empty($querryRes))$form_output .= '<a class = "butAction" href="?action=getpdf&startDate='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';
 if ( ! empty( $querryRes ) && getConf('MAIN_MODULE_EXPORT') ) {
-	$form_output .= '<a class = "butAction" href="?action=getExport&dateStart=' 
+	$form_output .= '<a class = "butAction" href="?action=getExport&startDate=' 
         .dol_print_date( $dateStart, 'dayxcard' ) 
         .'&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) 
         .'&userSelected=' . $userIdSelected 
@@ -248,7 +248,7 @@ if ( ! empty( $querryRes ) && getConf('MAIN_MODULE_EXPORT') ) {
         . '&token='.$token.'" >' . $langs->trans( 'Export' ) . '</a>';
 }
 if ( ! empty( $querryRes ) ) {
-	$form_output .= '<a class = "butAction" href="?action=getpdf&dateStart=' 
+	$form_output .= '<a class = "butAction" href="?action=getpdf&startDate=' 
     . dol_print_date( $dateStart, 'dayxcard' ) 
     . '&dateEnd=' . dol_print_date( $dateEnd, 'dayxcard' ) 
     . '&userSelected=' . $userIdSelected 

@@ -664,29 +664,29 @@ function timesheet_report_prepare_head( $mode, $item_id , $hidetab=0) {
 		$item = "projectSelected=" . $item_id;;
 	}
 
-	$head[$h][0] = "?".$item."&reporttab=showthisweek&hidetab=".$hidetab."&dateStart=".dol_print_date(strtotime("monday this week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard');
+	$head[$h][0] = "?".$item."&reporttab=showthisweek&hidetab=".$hidetab."&startDate=".dol_print_date(strtotime("monday this week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard');
 	$head[$h][1] = $langs->trans('thisWeek');
 	$head[$h][2] = 'showthisweek';
 	$h++;
 
-	$head[$h][0] = "?".$item."&reporttab=showthismonth&hidetab=".$hidetab."&dateStart=".dol_print_date(strtotime("first day of this month"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard');
+	$head[$h][0] = "?".$item."&reporttab=showthismonth&hidetab=".$hidetab."&startDate=".dol_print_date(strtotime("first day of this month"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("last day of this month"), 'dayxcard');
 	$head[$h][1] = $langs->trans('thisMonth');
 	$head[$h][2] = 'showthismonth';
 	$h++;
 
-	$head[$h][0] = "?".$item."&reporttab=showlastweek&hidetab=".$hidetab."&dateStart=".dol_print_date(strtotime("monday last week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard');
+	$head[$h][0] = "?".$item."&reporttab=showlastweek&hidetab=".$hidetab."&startDate=".dol_print_date(strtotime("monday last week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard');
 	$head[$h][1] = $langs->trans('lastWeek');
 	$head[$h][2] = 'showlastweek';
 	$h++;
 
-	$head[$h][0] = "?".$item."&reporttab=showlastmonth&hidetab=".$hidetab."&dateStart=".dol_print_date(strtotime("first day of previous month"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("last day of previous month"), 'dayxcard');
+	$head[$h][0] = "?".$item."&reporttab=showlastmonth&hidetab=".$hidetab."&startDate=".dol_print_date(strtotime("first day of previous month"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("last day of previous month"), 'dayxcard');
 	$head[$h][1] = $langs->trans('lastMonth');
 	$head[$h][2] = 'showlastmonth';
 	$h++;
 
 	$today = dol_print_date(time(), 'dayxcard');
 
-	$head[$h][0] = "?".$item."&reporttab=showtoday&hidetab=".$hidetab."&dateStart=".$today."&dateEnd=".$today;
+	$head[$h][0] = "?".$item."&reporttab=showtoday&hidetab=".$hidetab."&startDate=".$today."&dateEnd=".$today;
 	$head[$h][1] = $langs->trans('Today');
 	$head[$h][2] = 'showtoday';
 
