@@ -1150,7 +1150,7 @@ class TimesheetTask extends Task
         $sql .= "SET duration_effective = (SELECT SUM(ptt.task_duration) ";
         $sql .= "FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt ";
         $sql .= "WHERE ptt.fk_task = '".$this->id."'), ";
-        $sql .= " progress = '".$this->progress."'";
+        if (isset($this->progress) && $this->progress != '') $sql .= " progress = '".$this->progress."'";
         $sql .= " WHERE pt.rowid = '".$this->id."' ";
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -1328,6 +1328,7 @@ class TimesheetTask extends Task
     public function saveTaskTime($Submitter, $duration, $daynote, $dayKey, $addmode = false)
     {
         $item = $this->tasklist[$dayKey];
+        $item_note = array_key_exists('note',$item ) ? $item['note']: '';
         $resArray = ['timeSpendDeleted'=>0, 'timeSpendModified' => 0, 'timeSpendCreated'=>0, 'updateError'=> 0, ];
         $this->timespent_fk_user = $this->userId;
         dol_syslog(__METHOD__."   duration Old=".$item['duration']." New="
@@ -1339,7 +1340,7 @@ class TimesheetTask extends Task
         if ($item['id']>0) {
             $this->timespent_id = $item['id'];
             $this->timespent_old_duration = $item['duration'];  
-            $this->timespent_note .= $item['note'];
+            $this->timespent_note .= $item_note;
             if ($addmode) {
                 if (!empty($daynote)){
                     $this->timespent_note .= "\n".$daynote;
@@ -1350,10 +1351,11 @@ class TimesheetTask extends Task
                 $this->timespent_duration = $duration;
             }
         }
-        if ($item['duration']!=$this->timespent_duration || $this->timespent_note!=$item['note']) {
+       
+        if ($item['duration']!=$this->timespent_duration || $this->timespent_note!=$item_note) {
             if ($this->timespent_duration>0 || !empty($daynote)) {
 
-                if($this->timespent_note != $item['note']) {
+                if($this->timespent_note != $item_note) {
                   $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
                   $sql .= " note = ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
                   $sql .= " WHERE rowid = ".((int) $this->timespent_id);
