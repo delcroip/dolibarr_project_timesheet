@@ -806,7 +806,7 @@ public function getHTMLHeader($search = false)
     $weeklength = getDayInterval($this->date_start, $this->date_end);
     $maxColSpan = $weeklength+count($this->headers);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
-    $html = '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
+    $html = '<input type = "hidden" name = "dateStart" value = "'.$this->date_start.'" />';
     $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
     if ($search) {
