@@ -61,6 +61,7 @@ class TimesheetTask extends Task
     public $duration;
     public $weekDays;
     public $userName;
+    public $isOpen;
 
     /**
      *  init the static variable
@@ -682,13 +683,13 @@ class TimesheetTask extends Task
         * Open task ?
         */
         if ($this->status == INVOICED)$blockOveride = 1;// once invoice it should not change
-        $isOpenStatus = in_array($this->status, array(DRAFT, CANCELLED, REJECTED, PLANNED));
-        
+        $isOpenStatus = $this->isOpen && in_array($this->status, array(DRAFT, CANCELLED, REJECTED, PLANNED));
         if( $blockOveride == 1){
             $isOpenStatus = false;
         }else if ($blockOveride == -1){
-            $isOpenStatus = true;
+            $isOpenStatus = true && $isOpenStatus;
         }
+        
         /*
          * info section
          */
@@ -1083,6 +1084,9 @@ class TimesheetTask extends Task
         $arRet['sender'] = $this->sender;
         $arRet['task_timesheet'] = $this->task_timesheet;
         $arRet['progress'] = $this->progress;
+        $arRet['isOpen'] = $this->isOpen;
+        $arRet['timespent_note'] = $this->timespent_note;
+        
         switch($mode) {
             default:
             case 0:
@@ -1329,8 +1333,8 @@ class TimesheetTask extends Task
     {
         $item = $this->tasklist[$dayKey];
         $resArray = ['timeSpendDeleted'=>0, 'timeSpendModified' => 0, 'timeSpendCreated'=>0, 'updateError'=> 0, ];
-        $item_note = array_key_exists('note',$item ) ? $item['note']: '';
-        $item_note_old = $this->timespent_note;
+        $daynote_old = array_key_exists('note', $item) ? $item['note']:'';
+
         $is_today=date("Y-m-d") == date("Y-m-d",$item['date']);
         $this->timespent_fk_user = $this->userId;
         dol_syslog(__METHOD__."   duration Old=".$item['duration']." New="
@@ -1349,7 +1353,6 @@ class TimesheetTask extends Task
         if ($item['id']>0) {
             $this->timespent_id = $item['id'];
             $this->timespent_old_duration = $item['duration']; 
-            $this->timespent_note .= $item_note;
             if ($addmode) {
                 if (!empty($daynote)){
                     $this->timespent_note .= "\n".$daynote;
@@ -1360,19 +1363,17 @@ class TimesheetTask extends Task
                 $this->timespent_duration = $duration;
             }
 
-            if ($item['duration']!=$this->timespent_duration ||$item_note_old!=$item_note) {
-                if ($this->timespent_duration>0 || !empty($item_note)) {
+
+            if (($this->timespent_duration >0 && $this->timespent_old_duration!=$this->timespent_duration )|| $daynote_old!=$daynote && (!empty($daynote) || $this->timespent_duration >0)) {
                     dol_syslog(__METHOD__."  taskTimeUpdate", LOG_DEBUG);
                     if ($this->updateTimeSpent($Submitter, 0) >= 0) {
                         $resArray['timeSpendModified']++;
-                    } else {
+                    }else {
                         $resArray['updateError']++;
                     }
+                
+            } else if($this->timespent_duration == 0 && empty($daynote) ) {
 
-                } else {
-                    $resArray['updateError']++;
-                }
-            } else {
                     dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
                     if ($this->delTimeSpent($Submitter, 0) >= 0) {
                         $resArray['timeSpendDeleted']++;
@@ -1381,7 +1382,7 @@ class TimesheetTask extends Task
                         $resArray['updateError']++;
                     }
             }
-        } elseif ($duration>0 || !empty($daynote)) {
+        } elseif ($duration>0 || $daynote!='') {
             $this->timespent_note = $daynote;
             $this->timespent_duration = $duration;
 

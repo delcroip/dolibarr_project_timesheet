@@ -1,4 +1,15 @@
 # dolibarr_project_timesheet changelog
+4.6.6
+- support php 8
+- show task even if not assigned anymore but with time
+- fix chrono icon for apple
+- add startime for chrono
+- fix filer timesheet
+- fix CSRF tocken issues
+- fix js error element cannot be null
+- fix css error
+
+
 4.6.0
 - fix missing line in approvals
 - fix php _ errors

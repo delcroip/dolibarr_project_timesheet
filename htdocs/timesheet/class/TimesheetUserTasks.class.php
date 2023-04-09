@@ -500,12 +500,17 @@ public function fetchTaskTimesheet($userid = '')
     $whiteList = $staticWhiteList->fetchUserList($userid, $datestart, $datestop);
      // Save the param in the SeSSION
     $tasksList = array();
-    $sql = 'SELECT DISTINCT element_id as taskid, prj.fk_soc, tsk.fk_projet, tsk.progress, ';
+    $sql = 'SELECT DISTINCT tsk.rowid as taskid, prj.fk_soc, tsk.fk_projet, tsk.progress, ctc.element as ectype, ';
     $sql .= 'tsk.fk_task_parent, tsk.rowid, app.rowid as appid, prj.ref as prjRef, tsk.ref as tskRef, prj.fk_statut as p_status';
-    $sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
+    //$sql .= '(CASE   WHEN ctc.element=\'project_task\' THEN 1 else 2 END) as prio';
+    $sql .= " FROM ".MAIN_DB_PREFIX."projet_task as tsk";
+    //$sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ec ON tsk.rowid = ec.element_id and ec.fk_socpeople = '.$userid;
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact  AND ctc.active = \'1\') ';
-    $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as tsk ON tsk.rowid = ec.element_id ';
-    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ';
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_time as tskt ON tsk.rowid = tskt.fk_task and tskt.fk_user = '.$userid;
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ' ;
+
+
     //approval
     if ($this->status == DRAFT || $this->status == REJECTED) {
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'project_task_time_approval as app ';
@@ -517,12 +522,14 @@ public function fetchTaskTimesheet($userid = '')
     $sql .= ' AND app.date_end = \''.$this->db->idate($datestop).'\'';
     //end approval
     $sql .= " WHERE ((ec.fk_socpeople = '".$userid."' AND ctc.element = 'project_task') ";
+
     // SHOW TASK ON PUBLIC PROEJCT
     if (getConf('TIMESHEET_ALLOW_PUBLIC') == '1') {
-        $sql .= '  OR  prj.public =  \'1\')';
-    }else{
-        $sql .= ' )';
+        $sql .= '  OR  prj.public =  \'1\'';
     }
+    $sql .= '  OR  tskt.task_duration >  0';
+    $sql .= ' )';
+    
     if (getConf('TIMESHEET_HIDE_DRAFT') == '1') {
         $sql .= ' AND prj.fk_statut !=  \'0\'';
     }
@@ -533,11 +540,11 @@ public function fetchTaskTimesheet($userid = '')
     // show task only of people on the same project (not used for team leader)
     if ( !$user->admin && $userid != $user->id && !in_array($userid, $user->getAllChildIds())){
         $sql .= " AND ((tsk.rowid in (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
-        $sql .= " WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project_task' AND element_id = tsk.rowid ))";
+        $sql .= " WHERE  ctc.element = 'project_task' AND element_id = tsk.rowid ))";
         $sql .= " OR (prj.rowid in (SELECT element_id FROM ".MAIN_DB_PREFIX."element_contact as ec LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact AND ctc.active = '1')";
         $sql .= " WHERE ec.fk_socpeople = '".$user->id."' AND ctc.element = 'project'  AND element_id = prj.rowid )))";
     }
-    $sql .= '  ORDER BY prj.fk_soc, prjRef, tskRef ';
+    $sql .= '  ORDER BY prj.fk_soc, prjRef, tskRef';
     dol_syslog(__METHOD__, LOG_DEBUG);
     $resql = $this->db->query($sql);
     if ($resql) {
@@ -551,21 +558,24 @@ public function fetchTaskTimesheet($userid = '')
             {
                 $error = 0;
                 $obj = $this->db->fetch_object($resql);
-                $tasksList[$i] = NEW TimesheetTask($this->db, $obj->taskid);
-                //$tasksList[$i]->id = $obj->taskid;
-                if ($obj->appid) {
-                    $tasksList[$i]->fetch($obj->appid);
-                }
-                $tasksList[$i]->userId = $this->userId;
-                $tasksList[$i]->date_start_approval = $this->date_start;
-                $tasksList[$i]->date_end_approval = $this->date_end;
-                $tasksList[$i]->task_timesheet = $this->id;
-                $tasksList[$i]->progress = $obj->progress;
-                $tasksList[$i]->listed =  (is_array($whiteList) && array_key_exists($obj->taskid, $whiteList) )?$whiteList[$obj->taskid]:null;
-               // $tasksList[$i]->pStatus = $obj->p_status;
+                if (!(array_key_exists($obj->taskid,$tasksList) && $tasksList[$obj->taskid]->isOpen )) {
+                    $tasksList[$obj->taskid] = NEW TimesheetTask($this->db, $obj->taskid);
+                    //$tasksList[$obj->taskid]->id = $obj->taskid;
+                    if ($obj->appid) {
+                        $tasksList[$obj->taskid]->fetch($obj->appid);
+                    }
+                    $tasksList[$obj->taskid]->userId = $this->userId;
+                    $tasksList[$obj->taskid]->date_start_approval = $this->date_start;
+                    $tasksList[$obj->taskid]->date_end_approval = $this->date_end;
+                    $tasksList[$obj->taskid]->task_timesheet = $this->id;
+                    $tasksList[$obj->taskid]->progress = $obj->progress;
+                    $tasksList[$obj->taskid]->isOpen = $obj->ectype == 'project_task' ? true : false;
+                    $tasksList[$obj->taskid]->listed =  (is_array($whiteList) && array_key_exists($obj->taskid, $whiteList) )?$whiteList[$obj->taskid]:null;
+                // $tasksList[$obj->taskid]->pStatus = $obj->p_status;
 
+                    $ret[$obj->taskid] = $obj->appid;
+                }
                 $i++;
-                $ret[$obj->taskid] = $obj->appid;
 
             }
             $this->db->free($resql);
