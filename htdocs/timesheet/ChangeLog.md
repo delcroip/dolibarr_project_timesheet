@@ -1,4 +1,9 @@
 # dolibarr_project_timesheet changelog
+4.6.7
+ - support chrono on PSQL
+ - better chrono error management
+ - holiday error in timesheet page   #226
+
 4.6.6
 - support php 8
 - show task even if not assigned anymore but with time
