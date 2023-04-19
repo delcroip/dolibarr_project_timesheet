@@ -55,7 +55,7 @@ if ( getConf('TIMESHEET_ADD_FOR_OTHER') == 1) {
     }else{
         $newuserid =$user->id;
     }
-    
+
     $SubordiateIds = getSubordinates($db, $user->id, 2, array(), ALL, $entity = '1');
     //$SubordiateIds[] = $user->id;
     if (in_array($newuserid, $SubordiateIds) || $admin) {
@@ -65,7 +65,7 @@ if ( getConf('TIMESHEET_ADD_FOR_OTHER') == 1) {
         setEventMessage($langs->transnoentitiesnoconv("NotAllowed"), 'errors');
         unset($action);
     }
-    
+
 }
 $timesheet_attendance = new Attendanceevent($db, $userid);
 
@@ -114,7 +114,7 @@ $_SESSION['timesheet'][$token] = array();
 *
 * Put here all code to build page
 ****************************************************/
-$morejs = array("/timesheet/core/js/stopWatch.js?".getConf('TIMESHEET_VERSION'), 
+$morejs = array("/timesheet/core/js/stopWatch.js?".getConf('TIMESHEET_VERSION'),
     "/timesheet/core/js/timesheet.js?".getConf('TIMESHEET_VERSION'));
 $morecss = array("/timesheet/core/css/stopWatch.css");
 llxHeader('', $langs->trans('Attendance'), '', '', '', "", $morejs, $morecss);
@@ -122,8 +122,8 @@ llxHeader('', $langs->trans('Attendance'), '', '', '', "", $morejs, $morecss);
 //calculate the week days
 // clock
 $timesheet_attendance->fetch('', $user);
-$timesheet_attendance->token = $token;
-if (getConf('TIMESHEET_ADD_FOR_OTHER') == 1 
+$timesheet_attendance->csrf_token = $token;
+if (getConf('TIMESHEET_ADD_FOR_OTHER') == 1
     && (  $SubordiateIds > 0 ||  $admin)) {
         print $timesheet_attendance->getHTMLGetOtherUserTs($SubordiateIds, $userid, $admin);
 }
@@ -170,7 +170,7 @@ if (getConf('TIMESHEET_WHITELIST') == 1) {
         .' class = "inline-block tabsElem"  onclick = "showFavoris(event,\'blacklist\')">'
         .'<a href = "javascript:void(0);" class = "tabunactive tab inline-block" data-role = "button">'
         .$langs->trans('Others').'</a></div>';
-   $html .= '</div>';       
+   $html .= '</div>';
 }
 $html .= '<td span = "0"><input type = "texte" name = "taskSearch" onkeyup = "searchTask(this)"></td></tr>';
 $html .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$token."\"/>\n";

@@ -29,7 +29,7 @@ class event{
 	this.third_party='';
 	this.task='';
 	this.project='';
-	this.token='';
+	this.csrf_token='';
 	this.status='';
         // working var
         this.taskLabel='';
@@ -47,7 +47,7 @@ class Stopwatch {
         this.display = display;
         this.times = [ 0, 0, 0,0];
         this.event = new event();
-        this.token= token;
+        this.csrf_token= token;
         //this.reset();
         this.animationframeID=null;
         this.userid = user;
@@ -104,7 +104,7 @@ class Stopwatch {
     }
      // funciton to handle error while parsing the Json answer
     loadError(ErrMsg){
-         $.jnotify("Error:"+ErrMsg,'error',true);
+         $.jnotify("Error:"+ErrMsg.stringify(),'error',true);
 	// location = location.href;
      }
      // place the play Icone
@@ -142,7 +142,7 @@ class Stopwatch {
  //       this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
         var Url="AttendanceClock.php?action=start"
         if (taskid!==0) Url+="&taskid="+taskid;
-        Url+="&token="+this.token;
+        Url+="&token="+this.csrf_token;
         $.ajax({
             type: "POST",
             url: Url,
@@ -156,7 +156,7 @@ class Stopwatch {
 //        this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
         var Url="AttendanceClock.php?action=heartbeat"
         Url+="&eventToken="+this.event.token;
-        Url+="&token="+this.token;
+        Url+="&token="+this.csrf_token;
         $.ajax({
             type: "POST",
             url: Url,
@@ -180,7 +180,7 @@ class Stopwatch {
             this.event.userid=this.userid;
 
             return 'json='+JSON.stringify(this.event) + "\ntoken=" + document.getElementById('csrf-token').value;
-        }else return 'token='+ document.getElementById('csrf-token').value;
+        }else return 'token='+this.csrf_token
     }
     //sent a POST request to create a stop event
     stop() {
@@ -189,7 +189,7 @@ class Stopwatch {
  //       this.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
         var Url="AttendanceClock.php?action=stop"
         Url+="&eventToken="+this.event.token;
-        Url+="&token="+this.token;
+        Url+="&token="+this.csrf_token;
         this.event_type=3;
         $.ajax({
             type: "POST",

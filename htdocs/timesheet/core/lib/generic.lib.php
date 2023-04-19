@@ -336,14 +336,14 @@ function crypto_rand_secure($min, $max)
  *  @param    int             $lentgh                lentgh of the random string
  *  @return   int                                  random sting
  */
-function getToken($length = 32)
+function getToken($length = 32, $forceNew = False)
 {
     $token = "";
 
-    if (function_exists("newToken")) {
+    if (function_exists("newToken") && !$forceNew) {
         # use the CSRF from the core
         $token = newToken();
-    } else if (key_exists("token", $_SESSION)) {
+    } else if (key_exists("token", $_SESSION) && !$forceNew) {
         $token = $_SESSION["token"];
     } else {
         $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
