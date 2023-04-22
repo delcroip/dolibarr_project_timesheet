@@ -55,7 +55,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 
-                $this->version = '4.6.6';
+                $this->version = '4.6.7';
 
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -216,7 +216,7 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_TIMESHEET_IMPORT_AGENDA", "int", "0", "Enable the import agenda button");// hours or days
                 $r++;
-                
+
                  //$this->const[2] = array("CONST3", "chaine", "valeur3", "Libelle3");
                 // Array to add new pages in new tabs
                 // Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@timesheet:$user->rights->timesheet->read:/timesheet/mynewtab1.php?id=__ID__',        // To add a new tab identified by code tabname1
