@@ -778,7 +778,7 @@ public function createTimeSpend($user, $token = '')
     //if (empty($token))$token = $this->token;
     if (!empty($token)) {
         $this->fetch('', '', $token);
-        if ($this->event_type == EVENT_STOP && $this->task>0) {
+        if (($this->event_type == EVENT_STOP || $this->event_type == EVENT_AUTO_STOP) && $this->task>0) {
             $start = strtotime("midnight", (int) $this->date_time_event);
             $end = strtotime("tomorrow", (int) $this->date_time_event)-1;
             $duration = $this->date_time_event -$this->date_time_event_start;
