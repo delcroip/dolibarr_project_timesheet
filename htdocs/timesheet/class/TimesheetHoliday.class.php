@@ -192,10 +192,13 @@ class TimesheetHoliday extends Holiday implements 	Serializable
     }
 
 	public function unserialize($data) {
-        $unserialized = unserialize($data);
-        $this->holidaylist=unserialize($unserialized['holidaylist']);
-        $this->holidayPresent = $unserialized['holidaylist'];
-        return $this;
+            if (isset($data['holidaylist'])) {
+                $this->holidaylist = unserialize($data['holidaylist']);
+            }
+            if (isset($data['holidaylist'])) {
+                $this->holidayPresent = $data['holidaylist'];
+            }
+		return $this;
 }
 
 

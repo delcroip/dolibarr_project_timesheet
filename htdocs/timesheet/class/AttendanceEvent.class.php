@@ -196,7 +196,9 @@ public $date_time_event_start;
             $this->date_time_event = $this->db->jdate($obj->date_time_event);
             $this->event_location_ref = $obj->event_location_ref;
             $this->event_type = $obj->event_type;
-            $this->note = $obj->note;
+            if (!empty($obj->note) && $obj->note !== null) {
+                $this->note = $obj->note;
+            }
             $this->date_modification = $this->db->jdate($obj->date_modification);
             $this->userid = $obj->fk_userid;
             $this->user_modification = $obj->fk_user_modification;
@@ -805,7 +807,7 @@ public function createTimeSpend($user, $token = '')
         $tasksList = $this->fetchTasks($userid);
         $html = '';
         if (is_array($tasksList))foreach ($tasksList as $task) {
-            $html .= $task->getAttendanceLine($headers, ($task->id == $this->task));
+            $html .= $task->getAttendanceLine($headers, ($task->id == $this->task && $this->event_type < 3 ));
         }
         return $html;
     }
@@ -818,12 +820,12 @@ public function createTimeSpend($user, $token = '')
         print '<div>';
         print '<div style = "width:50px;height:60px;float:left;vertical-align:middle" >';
         print '<img height = "64px" id = "mainPlayStop" src = "img/'
-            .(($this->id == 0)?'play-arrow':'stop-square');
+            .(($this->id == 0 || $this->event_type >= 3)?'play-arrow':'stop-square');
         print '.png" onClick = startStop(event,'.$this->userid
             .',null) style = "cursor:pointer;vertical-align:middle">  ';
         print '</div>';
         print '<div style = "width:40%;height:60px;float:left" >';
-        print '<textarea name = "eventNote" id = "eventNote" style = "width:80%;height:100%"></textarea>';
+        print '<textarea name = "eventNote" id = "eventNote" style = "width:80%;height:100%;visibility:hidden;"></textarea>';
         print '</div>';
         print '<div style = "width:40%;float:left">';
         print '<span id = "stopwatch"></span>';
@@ -970,10 +972,12 @@ public function serialize($mode = 0)
                 break;*/
         }
         // automatic unserialisation based on match between property name and key value
-        foreach ($array as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $value;
-            }
+        if (isset($array) && is_array($array) && !is_null($array)) {
+			foreach ($array as $key => $value) {
+				if (property_exists($this, $key)) {
+					$this->{$key} = $value;
+				}
+			}
         }
     }
     /*fucntion to get the labels

@@ -27,6 +27,7 @@
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/TimesheetUserTasks.class.php';
+require_once 'core/lib/generic.lib.php';
 $action = GETPOST('action', 'alpha');
 $view = GETPOST('view', 'alpha');
 
@@ -221,6 +222,7 @@ $morejs = array("/timesheet/core/js/jsparameters.php",
     "/timesheet/core/js/timesheet.js?"
     .getConf('TIMESHEET_VERSION'));
 llxHeader('', $langs->trans('Timesheet'), '', '', '', '', $morejs);
+echo '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">';
 //calculate the week days
 //tokentp = time();
 //fetch ts for others
@@ -232,7 +234,7 @@ if (getConf('TIMESHEET_ADD_FOR_OTHER') == 1
 //$ajax = false;
 $Form = $task_timesheet->getHTMLNavigation($optioncss, $token);
 $Form .= $task_timesheet->getHTMLFormHeader();
-$Form .= $task_timesheet->getHTMLActions();
+//$Form .= $task_timesheet->getHTMLActions();
      if (getConf('TIMESHEET_WHITELIST') == 1) {
         $Form .= '<div class="tabs" data-role="controlgroup" data-type = "horizontal"  >';
         $Form .= '  <div '.(($task_timesheet->whitelistmode == 2)?'id = "defaultOpen"':'')
@@ -255,6 +257,137 @@ $Form .= '<script>document.getElementById("defaultOpen").click()</script>';
 //Javascript
 //$Form .= ' <script type = "text/javascript" src = "core/js/timesheet.js"></script>'."\n";
 $Form .= '<script type = "text/javascript">'."\n\t";
+/* ios fix because iphone safari does not cache js in php */
+$Form .= 'var day_max_hours = '.null2zero(getConf('TIMESHEET_DAY_MAX_DURATION')).";\n";
+$Form .= 'var day_hours = '.null2zero(getConf('TIMESHEET_DAY_DURATION',8)).";\n";
+$Form .= 'var time_type = "'.getConf('TIMESHEET_TIME_TYPE','hours')."\";\n";
+$Form .= 'var hide_zero = '.null2zero(getConf('TIMESHEET_HIDE_ZEROS')).";\n";
+$Form .= 'var err_msg_max_hours_exceded = "'.rtrim($langs->transnoentitiesnoconv('errMsgMaxHoursExceded'))."\";\n";//FIXTRAD
+$Form .= 'var wng_msg_hours_exceded = "'.rtrim($langs->transnoentitiesnoconv('wngMsgHoursExceded'))."\";\n";//FIXTRAD
+// start hamburger
+$hm_title= $langs->trans('Timesheet');
+$pam='';
+$startDate = date('Ym01');
+$endDate = date('Ymt');
+$pam .= '?reporttab=showthismonth&mode=DPT';
+$pam .=  '&startDate=' . $startDate;
+$pam .= '&dateEnd=' . $endDate ;
+$pam .= '&short=1' ;
+$Form .= "
+    var items = [
+      { text: '".$langs->trans('userReport')."', href: 'TimesheetReportUser.php".$pam."' },
+      { text: '".$langs->trans('Attendance')."', href: 'AttendanceClock.php' },
+      { text: '".$langs->trans('Terminate')."', href: 'javascript:window.close()' }
+    ];
+
+    window.addEventListener('DOMContentLoaded', function() {
+      var isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        var menu = document.createElement('div');
+        menu.id = 'hm-menu';
+        
+        var hamburgerMenu = document.createElement('div');
+        hamburgerMenu.id = 'hm-hamburger-menu';
+        
+        var hamburgerIcon = document.createElement('div');
+        hamburgerIcon.id = 'hm-hamburger-icon';
+        hamburgerIcon.innerHTML = '&#x2630;';
+        
+        var menuTitle = document.createElement('div');
+        menuTitle.id = 'hm-menu-title';
+        menuTitle.textContent = '".$hm_title."';
+        
+        var menuLinks = document.createElement('div');
+        menuLinks.id = 'hm-menu-links';
+
+        items.forEach(function(item) {
+          var link = document.createElement('a');
+          link.classList.add('hm-items');
+          link.href = item.href;
+          link.textContent = item.text;
+          menuLinks.appendChild(link);
+        });
+
+        hamburgerMenu.appendChild(hamburgerIcon);
+        hamburgerMenu.appendChild(menuTitle);
+        menu.appendChild(hamburgerMenu);
+        menu.appendChild(menuLinks);
+        document.body.insertBefore(menu, document.body.firstChild);
+
+        var menuStyles = `
+          #hm-hamburger-menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+            background-color: #f1f1f1;
+            padding: 0 10px;
+          }
+
+          #hm-hamburger-icon {
+            font-size: 24px;
+            cursor: pointer;
+          }
+
+          #hm-menu-title {
+            font-size: 18px;
+            text-align: center;
+            flex-grow: 1;
+            margin-right: 20px;
+          }
+
+          #hm-menu-links {
+            display: none;
+            padding: 10px;
+            background-color: #f1f1f1;
+          }
+
+          #hm-menu-links.show {
+            display: block;
+          }
+
+          .hm-items {
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            color: #666666;
+             font-size:20px;
+          }
+
+          .hm-items:hover {
+            text-decoration: none; 
+            background-color: #cccccc;
+          }
+        `;
+
+        var styleElement = document.createElement('style');
+        styleElement.textContent = menuStyles;
+        document.head.appendChild(styleElement);
+
+        var toggleMenu = function() {
+          menuLinks.classList.toggle('show');
+        };
+
+        hamburgerIcon.addEventListener('click', toggleMenu);
+        menuTitle.addEventListener('click', toggleMenu);
+        
+      }
+    });";
+// end hamburger
+
+
+/** function to avoid null returned for an int
+ *
+ * @param int $value int to check
+ * @return int int value or 0 if int is null
+ */
+function null2zero($value = '')
+{
+    return (empty($value))?0:$value;
+}
+
+
 $Form .= 'updateAll('.getConf('TIMESHEET_HIDE_ZEROS').');closeNotes();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage

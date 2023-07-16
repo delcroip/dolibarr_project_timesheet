@@ -64,6 +64,7 @@ class Stopwatch {
          this.timestampHeartbeart=performance.now();
          this.timestampClock=performance.now();
          if(typeof this.time === 'undefined' ||  this.time == 0) {
+            if(this.event.date_time_event_start == null) { return; }
             this.time = (this.event.date_time_event_start-this.event.processedTime)*1000;
          }else{
             this.time = performance.now();
@@ -87,9 +88,11 @@ class Stopwatch {
          document.getElementById('eventNote').value = this.event.note;
 
      }else{ // load without data
-          this.running = false;
+         location.reload();
+         return;
+          /* this.running = false;
           this.reset();
-          this.updatePlayStopIcon(this.running,this.event.task);
+         this.updatePlayStopIcon(this.running,this.event.task); */
      }
 
 
@@ -104,11 +107,13 @@ class Stopwatch {
     }
      // funciton to handle error while parsing the Json answer
     loadError(ErrMsg){
-         $.jnotify("Error:"+ErrMsg.stringify(),'error',true);
+         $.jnotify("Error:"+ErrMsg /*.stringify() */,'error',true);
 	// location = location.href;
      }
      // place the play Icone
     updatePlayStopIcon(play,taskid){
+        var element = document.getElementById('eventNote'); if (element) element.style.visibility = play ? 'visible' : 'hidden';
+
         //update the main play
         if (play==false){
 
@@ -178,7 +183,6 @@ class Stopwatch {
             this.event.note=document.getElementById("eventNote").value;
             this.event.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
             this.event.userid=this.userid;
-
             return 'json='+JSON.stringify(this.event) + "\ntoken=" + document.getElementById('csrf-token').value;
         }else return 'token='+this.csrf_token
     }
@@ -190,7 +194,9 @@ class Stopwatch {
         var Url="AttendanceClock.php?action=stop"
         Url+="&eventToken="+this.event.token;
         Url+="&token="+this.csrf_token;
+        Url+="&note="+document.getElementById("eventNote").value;  
         this.event_type=3;
+        this.event.event_type=3;
         $.ajax({
             type: "POST",
             url: Url,

@@ -798,7 +798,8 @@ public function getHTML( $ajax = false, $Approval = false)
     $Form .= $this->getHTMLtaskLines( $ajax);
     //$Form .= '</tbody>';// overflow div
     //$Form .= $this->getHTMLTotal();
-    $Form .= '</table>';
+    $Form .= '</table></div>';
+    
     $Form .= $this->getHTMLNote($ajax);
     if (!$Approval) {
         $Form .= $this->getHTMLFooter($ajax);
@@ -816,7 +817,8 @@ public function getHTMLHeader($search = false)
     $weeklength = getDayInterval($this->date_start, $this->date_end);
     $maxColSpan = $weeklength+count($this->headers);
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
-    $html = '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
+    $html = "<div class = \"tsheetcontainer\" >\n";
+    $html .= '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
     $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
     if ($search) {

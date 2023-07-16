@@ -642,12 +642,13 @@ function closeNotes(){
 
 
 // When the user clicks anywhere outside of the modal, close it
+/*
 window.onclick = function(event) {
 
     if (!event.target.classList.contains('modal')) {
         //closeNotes();
     }
-}
+} */
 
 // https://www.w3schools.com/howto/howto_js_sort_table.asp
 function sortTable(table,col,sort) {

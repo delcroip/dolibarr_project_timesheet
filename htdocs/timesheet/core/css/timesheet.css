@@ -81,3 +81,182 @@ input[type="checkbox"][readonly] {
     text-decoration: none;
     cursor: pointer;
 }
+
+
+
+
+
+
+
+/* this file is direct linked */
+
+/*timeshett start */
+@media only screen and (max-width: 767px) and (orientation: portrait) {
+#chronoTable tr td {
+ max-width:170px;
+}
+
+#offeventNote {
+ display:none;
+}
+#offmainPlayStop  {
+padding-top: 30px;
+padding-left: 50px;
+}
+
+#mainPlayStop  {
+margin-top: 15px;
+}
+
+#eventNote {
+margin-top:5px;
+margin-left:10px;
+height:20vw !important;
+  font-size: 16px; /* Hier kannst du die gewünschte Schriftgröße angeben */
+  -webkit-text-size-adjust: none; /* Hinzufügen des Attributs für Safari */
+}
+
+div.tabsElem a.tab {
+display:none;
+}
+
+#searchline {
+display:none;
+}
+
+#chronoTable th {
+  display: none;
+}
+
+}
+@media only screen and (max-width: 767px) and (orientation: landscape) {
+#eventNote {
+    width: 60%;
+    height: 100%;
+    left: 40px;
+    position: relative;
+}
+
+}
+
+/* mobile view fix */
+@media only screen and (max-width: 767px) {
+#id-top  {
+display: none !important;
+}
+
+#id-left  {
+display: none !important;
+}
+
+
+div.fiche{
+margin: 0 !important;
+padding: 0 !important;
+}
+
+}
+
+
+#id-right  {
+max-width:80vw;
+}
+
+[name^="noteTaskApproval"] {
+width:97vw ;
+max-width:99% ;
+min-height:100px;
+
+  /* Ihre CSS-Regeln hier */
+}
+
+table[id^="timesheetTable_"] tr:last-child {
+  position: sticky;
+  bottom: 0;
+}
+
+#timesheetForm > div.tsheetcontainer {
+  position: relative;
+  overflow-x: auto;
+}
+
+table[id^="timesheetTable_"] {
+  table-layout: fixed;
+  width: auto;
+}
+
+table[id^="timesheetTable_"] tr:not([id="publicholiday"]) td:nth-child(1),
+table[id^="timesheetTable_"] tr:not([id="publicholiday"]) th:nth-child(1),
+table[id^="timesheetTable_"] tr:not([id="publicholiday"]) td:nth-child(2),
+table[id^="timesheetTable_"] tr:not([id="publicholiday"]) th:nth-child(2) {
+  position: sticky;
+  left: 0;
+ /*  z-index: 2; */
+  background-color: #aaa;
+  line-height:normal ;
+}
+
+
+@media (max-width: 767px) {
+table[id^="timesheetTable_"] tr:nth-child(-n+2) td:nth-child(1),
+table[id^="timesheetTable_"] tr:nth-child(-n+2) th:nth-child(1) {
+    text-align: left;
+    background-color: #888;
+}
+
+table[id^="timesheetTable_"] tr:nth-child(-n+2) td:nth-child(1) a {
+      position: sticky !important;
+    left: 10px;
+    z-index: 2;
+}
+}
+
+table[id^="timesheetTable_"] tr td div input {
+ border : 1px solid black;
+ min-width: 38px;
+}
+
+
+[class^="TotalColumn_"] {
+  text-align: center;
+}
+
+[id^="userTask_"] > td {
+    padding: 0 !important;
+    height: unset !important;
+}
+
+
+table[id^="timesheetTable_"]  > tbody > tr.lineDynTotal > td > div,
+[id^="userTask_"] > td >div {
+text-align:center;
+}
+
+
+
+.xnoborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre), div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre), div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre) {
+    background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+    background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+    background: -moz-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+    background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
+    background-color: var(--colorbacklineimpair2)  !important;
+}
+
+#timesheetForm > div.noborder > div.tabsAction {
+display:flex;
+    justify-content: flex-end;
+}
+
+#timesheetForm > div.noborder > div.tabsAction > input,
+#timesheetForm > div.noborder > div.tabsAction > a,
+#timesheetForm > div.tabsAction a {
+margin-bottom:0px !important;
+padding:7px !important;
+margin-right: 10px !important;
+}
+
+
+/* timesheet end */
+
+
+

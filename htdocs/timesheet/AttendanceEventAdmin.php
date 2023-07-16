@@ -244,19 +244,20 @@ jQuery(document).ready(function()
             }
     }
     //pass the search criteria
+
         if ($ls_date_time_event_month)
-            $sqlwhere .= ' AND MONTH(t.date_time_event) = "'.$ls_date_time_event_month."'";
+            $sqlwhere .= ' AND MONTH(t.date_time_event) = "'.$ls_date_time_event_month.'"';
         if ($ls_date_time_event_year)
-            $sqlwhere .= ' AND YEAR(t.date_time_event) = "'.$ls_date_time_event_year."'";
+            $sqlwhere .= ' AND YEAR(t.date_time_event) = "'.$ls_date_time_event_year.'"';
         if ($ls_event_location_ref) 
             $sqlwhere .= natural_search('t.event_location_ref', $ls_event_location_ref);
         if ($ls_event_type) 
             $sqlwhere .= natural_search(array('t.event_type'), $ls_event_type);
         if ($ls_note) 
             $sqlwhere .= natural_search('t.note', $ls_note);
-        if ($ls_userid) 
+        if ($ls_userid && $ls_userid >=0 )
             $sqlwhere .= natural_search(array('t.fk_userid'), $ls_userid);
-        if ($ls_third_party) 
+        if ($ls_third_party && $ls_third_party > 0) 
             $sqlwhere .= natural_search(array('t.fk_third_party'), $ls_third_party);
         if ($ls_task) 
             $sqlwhere .= natural_search(array('t.fk_task'), $ls_task);
@@ -266,6 +267,7 @@ jQuery(document).ready(function()
             $sqlwhere .= natural_search(array('t.token'), $ls_token);
 
     //list limit
+
     if (!empty($sqlwhere))
         $sql .= ' WHERE '.substr($sqlwhere, 5);
 // Count total nb of records
@@ -286,6 +288,7 @@ if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
             $sql .= $db->plimit($limit+1, $offset);
     }
     //execute SQL
+        //print '<script>alert("'.$sql.'")</script>';
     dol_syslog($sql, LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql) {
@@ -414,7 +417,8 @@ if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
         print '</td>';
 //Search field forevent_type
         print '<td class = "liste_titre" colspan = "1" >';
-        print '<input class = "flat" size = "16" type = "text" name = "ls_event_type" value = "'.$ls_event_type.'">';
+        //print '<input class = "flat" size = "16" type = "text" name = "ls_event_type" value = "'.$ls_event_type.'">';
+        print $form->selectarray('ls_event_type', $attendanceeventStatusArray,$ls_event_type);
         print '</td>';
 //Search field fornote
         print '<td class = "liste_titre" colspan = "1" >';
@@ -422,7 +426,9 @@ if (getConf('MAIN_DISABLE_FULL_SCANLIST') != false) {
         print '</td>';
 //Search field foruserid
         print '<td class = "liste_titre" colspan = "1" >';
-                print $form->select_dolusers('userid', $ls_userid);
+        //print $form->select_dolusers('userid', $ls_userid);
+        
+        print $form->select_dolusers($ls_userid, 'ls_userid', 1, '', 0);
         print '</td>';
 //Search field forthird_party
         print '<td class = "liste_titre" colspan = "1" >';

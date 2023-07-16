@@ -53,11 +53,10 @@ class TimesheetPublicHolidays extends CommonObject implements 	Serializable
     }
 
     public function unserialize($data) {
-        $unserialized = unserialize($data);
-        $this->holidaylist=unserialize($unserialized['holidaylist']);
-        $this->holidayPresent = $unserialized['holidaylist'];
-        $this->userCountryId = $unserialized['userCountryId'];
-        return $this;
+            $this->holidaylist=unserialize($data['holidaylist']);
+            $this->holidayPresent = $data['holidayPresent'];
+            $this->userCountryId = $data['userCountryId'];
+			return $this;
     }
 
 

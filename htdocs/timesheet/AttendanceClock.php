@@ -24,6 +24,7 @@
 // hide left menu
 //$_POST['dol_hide_leftmenu'] = 1;
 // Change this following line to use the correct relative path (../, ../../, etc)
+
 include 'core/lib/includeMain.lib.php';
 require_once 'core/lib/timesheet.lib.php';
 require_once 'class/AttendanceEvent.class.php';
@@ -47,6 +48,7 @@ $langs->load("projects");
 $langs->load('timesheet@timesheet');
 $userid = $user->id;
 $postUserId = GETPOST('userid', 'int');
+//$_SESSION["urlfrom"] = '/custom/timesheet/AttendanceClock.php';
 
 // if the user can enter ts for other the user id is diferent
 if ( getConf('TIMESHEET_ADD_FOR_OTHER') == 1) {
@@ -81,14 +83,16 @@ switch($action) {
         $json = $timesheet_attendance->ajaxStart($user, $json, $customer, $project, $task);
        // ob_clean();
         ob_clean();
-        header("Content-type: text/json;charset = utf-8");
+        header("Content-type: text/json;charset=utf-8");
         echo $json;
         ob_end_flush();
         exit();
     case 'stop':
+      //  $timesheet_attendance->event_type=3;
+       $timesheet_attendance->note = $_GET['note'];
         $json = $timesheet_attendance->ajaxStop($user, $json);
        // ob_clean();
-        header("Content-type: text/json;charset = utf-8");
+        header("Content-type: text/json;charset=utf-8");
         ob_clean();
         echo $json;
         ob_end_flush();
@@ -96,7 +100,7 @@ switch($action) {
     case 'heartbeat':
         $json = $timesheet_attendance->ajaxheartbeat($user, $json);
        // ob_clean();
-        header("Content-type: text/json;charset = utf-8");
+        header("Content-type: text/json;charset=utf-8");
         ob_clean();
         echo $json;
         ob_end_flush();
@@ -118,7 +122,7 @@ $morejs = array("/timesheet/core/js/stopWatch.js?".getConf('TIMESHEET_VERSION'),
     "/timesheet/core/js/timesheet.js?".getConf('TIMESHEET_VERSION'));
 $morecss = array("/timesheet/core/css/stopWatch.css");
 llxHeader('', $langs->trans('Attendance'), '', '', '', "", $morejs, $morecss);
-
+echo '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">';
 //calculate the week days
 // clock
 $timesheet_attendance->fetch('', $user);
@@ -190,5 +194,120 @@ $html .= "\n\t".'</script>'."\n";
 print $html;
 //add attachement
 // End of page
+
+// start hamburger
+$hm_title= $langs->trans('Attendance');
+$pam='';
+$startDate = date('Ym01');
+$endDate = date('Ymt');
+$pam .= '?reporttab=showthismonth&mode=DPT';
+$pam .=  '&startDate=' . $startDate;
+$pam .= '&dateEnd=' . $endDate ;
+$pam .= '&short=1' ;
+echo "<script>
+    var items = [
+      { text: '".$langs->trans('userReport')."', href: 'TimesheetReportUser.php".$pam."' },
+      { text: '".$langs->trans('Timesheet')."', href: 'Timesheet.php' },
+      { text: '".$langs->trans('Terminate')."', href: 'javascript:window.close()' }
+    ];
+
+    window.addEventListener('DOMContentLoaded', function() {
+      var isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        var menu = document.createElement('div');
+        menu.id = 'hm-menu';
+        
+        var hamburgerMenu = document.createElement('div');
+        hamburgerMenu.id = 'hm-hamburger-menu';
+        
+        var hamburgerIcon = document.createElement('div');
+        hamburgerIcon.id = 'hm-hamburger-icon';
+        hamburgerIcon.innerHTML = '&#x2630;';
+        
+        var menuTitle = document.createElement('div');
+        menuTitle.id = 'hm-menu-title';
+        menuTitle.textContent = '".$hm_title."';
+        
+        var menuLinks = document.createElement('div');
+        menuLinks.id = 'hm-menu-links';
+
+        items.forEach(function(item) {
+          var link = document.createElement('a');
+          link.classList.add('hm-items');
+          link.href = item.href;
+          link.textContent = item.text;
+          menuLinks.appendChild(link);
+        });
+
+        hamburgerMenu.appendChild(hamburgerIcon);
+        hamburgerMenu.appendChild(menuTitle);
+        menu.appendChild(hamburgerMenu);
+        menu.appendChild(menuLinks);
+        document.body.insertBefore(menu, document.body.firstChild);
+
+        var menuStyles = `
+          #hm-hamburger-menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+            background-color: #f1f1f1;
+            padding: 0 10px;
+          }
+
+          #hm-hamburger-icon {
+            font-size: 24px;
+            cursor: pointer;
+          }
+
+          #hm-menu-title {
+            font-size: 18px;
+            text-align: center;
+            flex-grow: 1;
+            margin-right: 20px;
+          }
+
+          #hm-menu-links {
+            display: none;
+            padding: 10px;
+            background-color: #f1f1f1;
+          }
+
+          #hm-menu-links.show {
+            display: block;
+          }
+
+          .hm-items {
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            color: #666666;
+            font-size:20px;
+          }
+
+          .hm-items:hover {
+            background-color: #cccccc;
+            text-decoration: none; 
+          }
+        `;
+
+        var styleElement = document.createElement('style');
+        styleElement.textContent = menuStyles;
+        document.head.appendChild(styleElement);
+
+        var toggleMenu = function() {
+          menuLinks.classList.toggle('show');
+        };
+
+        hamburgerIcon.addEventListener('click', toggleMenu);
+        menuTitle.addEventListener('click', toggleMenu);
+        
+      }
+    });
+    </script>";
+// end hamburger
+
+
 llxFooter();
 $db->close();

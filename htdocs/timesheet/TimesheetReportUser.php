@@ -25,6 +25,7 @@ require_once 'class/TimesheetReport.class.php';
 require_once './core/modules/pdf/pdf_rat.modules.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $form_output = new Form($db);
+$form = $form_output;
 $htmlother = new FormOther($db);
 $userid = is_object($user)?$user->id:$user;
 $id = GETPOST('id', 'int');
@@ -150,13 +151,15 @@ if ($action == 'getpdf') {
 
 
 llxHeader('', $langs->trans('userReport'), '');
-
+echo '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">';
 $head = timesheet_report_prepare_head( 'user', $user->id );
 print dol_get_fiche_head( $head, $reporttab, $langs->trans( 'TimeSpent' ), - 1, 'clock' );
 
 $form_output = '';
 
-$form_output .= '<form action="?action=reportUser'.(($optioncss != '')?'&amp;optioncss='.$optioncss:'').'" method = "POST">
+$form_output .= '<form action="?action=reportUser'
+$form_output .= (($optioncss != '')?'&amp;optioncss='.$optioncss:'')
+$form_output .= '" method = "POST">
         <table class = "noborder"  width = "100%">
         <tr>
         <td>'.$langs->trans('User').'</td>
@@ -173,9 +176,9 @@ $form_output .= '<input type = "hidden" id="csrf-token" name = "token" value = "
 
 if($admin){
     $form_output .= $form->select_dolusers($userIdSelected, 'userSelected');
-
 } else {
-    $form_output .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null, 0, $userIdlistfull);
+    $userIdSelected = $user->id; 
+   // $form_output .= $form->select_dolusers($userIdSelected, 'userSelected', 0, null, 0, $userIdlistfull);
 }
 if (count($userIdlistfull)>1) {
     $form_output .= ' <br><input type = "checkbox" name = "showAll" value = "1" ';
@@ -191,8 +194,10 @@ if (!empty($userIdSelected)
     if ($exportfriendly){
         $querryRes .= $reportStatic->getHTMLreportExport();
     }else {
-        $querryRes .= $reportStatic->getHTMLreport($short,
-            "User report ".dol_print_date($dateStart, 'day').'-'
+        $reportStatic->short = $short;
+
+        $querryRes .= $reportStatic->getHTMLreport("User report "
+                .dol_print_date($dateStart, 'day').'-'
                 .dol_print_date($dateEnd, 'day'));
     }
 }
@@ -267,6 +272,121 @@ if ( ! ( $optioncss != '' && ! empty( $userIdSelected ) ) ) {
 if ( ! empty( $querryRes ) ) {
 	echo $querryRes;
 }
+
+
+// start hamburger
+$hm_title= $langs->trans('userReport');
+$pam='';
+$startDate = date('Ym01');
+$endDate = date('Ymt');
+$pam .= '?reporttab=showthismonth&mode=DPT';
+$pam .=  '&startDate=' . $startDate;
+$pam .= '&dateEnd=' . $endDate ;
+$pam .= '&short=1' ;
+echo "<script>
+    var items = [
+      { text: '".$langs->trans('Timesheet')."', href: 'Timesheet.php' },
+      { text: '".$langs->trans('Attendance')."', href: 'AttendanceClock.php' },
+      { text: '".$langs->trans('Terminate')."', href: 'javascript:window.close()' }
+    ];
+
+    window.addEventListener('DOMContentLoaded', function() {
+      var isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        var menu = document.createElement('div');
+        menu.id = 'hm-menu';
+        
+        var hamburgerMenu = document.createElement('div');
+        hamburgerMenu.id = 'hm-hamburger-menu';
+        
+        var hamburgerIcon = document.createElement('div');
+        hamburgerIcon.id = 'hm-hamburger-icon';
+        hamburgerIcon.innerHTML = '&#x2630;';
+        
+        var menuTitle = document.createElement('div');
+        menuTitle.id = 'hm-menu-title';
+        menuTitle.textContent = '".$hm_title."';
+        
+        var menuLinks = document.createElement('div');
+        menuLinks.id = 'hm-menu-links';
+
+        items.forEach(function(item) {
+          var link = document.createElement('a');
+          link.classList.add('hm-items');
+          link.href = item.href;
+          link.textContent = item.text;
+          menuLinks.appendChild(link);
+        });
+
+        hamburgerMenu.appendChild(hamburgerIcon);
+        hamburgerMenu.appendChild(menuTitle);
+        menu.appendChild(hamburgerMenu);
+        menu.appendChild(menuLinks);
+        document.body.insertBefore(menu, document.body.firstChild);
+
+        var menuStyles = `
+          #hm-hamburger-menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+            background-color: #f1f1f1;
+            padding: 0 10px;
+          }
+
+          #hm-hamburger-icon {
+            font-size: 24px;
+            cursor: pointer;
+          }
+
+          #hm-menu-title {
+            font-size: 18px;
+            text-align: center;
+            flex-grow: 1;
+            margin-right: 20px;
+          }
+
+          #hm-menu-links {
+            display: none;
+            padding: 10px;
+            background-color: #f1f1f1;
+          }
+
+          #hm-menu-links.show {
+            display: block;
+          }
+
+          .hm-items {
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            color: #666666;
+             font-size:20px;
+          }
+
+          .hm-items:hover {
+            background-color: #cccccc;
+            text-decoration: none; 
+          }
+        `;
+
+        var styleElement = document.createElement('style');
+        styleElement.textContent = menuStyles;
+        document.head.appendChild(styleElement);
+
+        var toggleMenu = function() {
+          menuLinks.classList.toggle('show');
+        };
+
+        hamburgerIcon.addEventListener('click', toggleMenu);
+        menuTitle.addEventListener('click', toggleMenu);
+        
+      }
+    });
+    </script>";
+// end hamburger
+
 
 llxFooter();
 $db->close();
