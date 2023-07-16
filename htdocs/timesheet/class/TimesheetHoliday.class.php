@@ -24,7 +24,7 @@
          *   5) RefuseCP
          */
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-class TimesheetHoliday extends Holiday
+class TimesheetHoliday extends Holiday implements 	Serializable
 {
         public $holidaylist;
         public $holidayPresent;
@@ -44,7 +44,7 @@ class TimesheetHoliday extends Holiday
      * @param   int|timestamp   $datestart begining of the period
      * @param   int|timestamp   $datestop end of the period
      * @return  int (object updated or not)
-     * 
+     *
      */
     public function fetchUserWeek($userId, $datestart, $datestop)
     {
@@ -66,8 +66,8 @@ class TimesheetHoliday extends Holiday
         for($day = 0;$day<$timespan;$day++)
         {
                 $curDay = strtotime(' + '.$day.' days', $datestart);
-                $this->holidaylist[$day] = array('amId' => '0', 
-                    'pmId' => '0', 'prev' => false, 'am' => false, 'pm' => false, 
+                $this->holidaylist[$day] = array('amId' => '0',
+                    'pmId' => '0', 'prev' => false, 'am' => false, 'pm' => false,
                     'next' => false, 'amStatus' => 0, 'pmStatus' => 0);
                 foreach ($this->holiday as $record) {
                     if ($record['date_debut'] <= $curDay && $record['date_fin'] >= $curDay) {
@@ -96,11 +96,11 @@ class TimesheetHoliday extends Holiday
                      }
                      // in case of 2 holiday present in the half day order 3, 2, 1, 5, 4
                      $oldSatus = $this->holidaylist[$day]['amStatus'];
-                     $amOverride = ($this->holidaylist[$day]['amId'] == 0) 
+                     $amOverride = ($this->holidaylist[$day]['amId'] == 0)
                         || (($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)
                         ||($record['statut'] <= 3 && ($record['statut']>$oldSatus || $oldSatus >3)));
                      $oldSatus = $this->holidaylist[$day]['amStatus'];
-                     $pmOverride = ($this->holidaylist[$day]['pmId'] == 0) 
+                     $pmOverride = ($this->holidaylist[$day]['pmId'] == 0)
                         ||(($record['statut']>3 && $oldSatus >3 && $record['statut']>$oldSatus)
                         ||($record['statut'] <= 3 && ($record['statut']>$oldSatus || $oldSatus >3)));
                      if ($am && $amOverride) {
@@ -148,7 +148,7 @@ class TimesheetHoliday extends Holiday
             $pmId = $holiday['pmId'];
             $amValue = ($holiday['amStatus'] == 3);
             $pmValue = ($holiday['pmStatus'] == 3);
-            $value = ($timetype == "hours")?date('H:i', 
+            $value = ($timetype == "hours")?date('H:i',
                 mktime(0, 0, ($amValue+$pmValue)*$dayshours*1800)):($amValue+$pmValue)/2;
             $html .= '<th style = "margin: 0;padding: 0;">';
             $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_holiday";
@@ -182,4 +182,21 @@ class TimesheetHoliday extends Holiday
         $html .= '</tr>';
         return $html;
     }
+
+    public function serialize() {
+        $data = array(
+            'holidaylist' => serialize($this->holidaylist),
+            'holidayPresent' => $this->holidayPresent
+		);
+		return serialize($data);
+    }
+
+	public function unserialize($data) {
+        $unserialized = unserialize($data);
+        $this->holidaylist=unserialize($unserialized['holidaylist']);
+        $this->holidayPresent = $unserialized['holidaylist'];
+        return $this;
+}
+
+
 }

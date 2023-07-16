@@ -59,6 +59,7 @@ class Attendanceevent extends CommonObject
         public $task;
         public $project;
         public $token;
+		public $csrf_token;
         public $status;
         // working var
         public $taskLabel;
@@ -176,7 +177,7 @@ public $date_time_event_start;
         $sql .= '  st.date_time_event  as date_time_event_start ';
         $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element
-            ." as st ON t.token = st.token AND ABS(st.event_type = 2)";
+            ." as st ON t.token = st.token AND ABS(st.event_type) = 2";
         $sql .= " WHERE ";
         if (!empty($id))$sql .= "t.rowid = '".$id;
         elseif (!empty($user))$sql .= " t.fk_userid = '".$user->id;
@@ -316,11 +317,11 @@ public $date_time_event_start;
         }
         $lienfin = empty($lien)?'':'</a>';
         $picto = 'generic';
-    	if ($withpicto == 1){ 
+    	if ($withpicto == 1){
             $result .= $lien.img_object(''.$picto).$label.$lienfin;
         }else if ($withpicto == 2) {
             $result .= ($lien.img_object($label, $picto).$lienfin);
-        }else{  
+        }else{
             $result .= $lien.$label.$lienfin;
         }
         return $result;
@@ -412,10 +413,10 @@ public $date_time_event_start;
         $sql .= " WHERE rowid=".$this->id;
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
-            if (! $resql) 
-            { 
+            if (! $resql)
+            {
                 $error++;$this->errors[] = "Error ".$this->db->lasterror();
-            } elseif ($this->db->affected_rows($resql) == 0) 
+            } elseif ($this->db->affected_rows($resql) == 0)
             {
                 $error++;$this->errors[] = "Item no found in database";
             }
@@ -567,7 +568,7 @@ public $date_time_event_start;
      */
     public function ajaxStart($user, $json = '', $customer = '', $project = '', $task = '')
     {
-        if (empty($task) && empty($project) && empty($customer)) 
+        if (empty($task) && empty($project) && empty($customer))
             return '{"errorType":"startError", "error":"no event to start"}';
         $location_ref = '';
         //load old if any
@@ -577,7 +578,7 @@ public $date_time_event_start;
             $location_ref = $this->event_location_ref;
             //close the most recent one if any
             $this->ajaxStop($user, $json, true);
-            //$this->status = 
+            //$this->status =
         }
 //erase the data
         $status = $this->status;
@@ -592,7 +593,7 @@ public $date_time_event_start;
         }
         if (!empty($project)) $this->project = trim($project);
         if (!empty($customer)) $this->third_party = trim($customer);
-        $this->token = getToken();
+        $this->token = getToken(32,True);
         $this->event_type = EVENT_START;
         $this->date_time_event = time()+1;
         $this->date_time_event_start = $this->date_time_event;
@@ -618,65 +619,69 @@ public $date_time_event_start;
         $tokenJson = '';
         $retJson = '';
         $arrayRes = array();
+		$ret = 0;
         if (!empty($json)) {
             $this->unserialize($json, 1);
             $this->status = "";
             $location_ref = $this->event_location_ref;
             $note = $this->note;
             $tokenJson = $this->token;
-            $this->fetch('', '', $tokenJson);
+            $ret = $this->fetch('', '', $tokenJson);
         } else {
-             $this->fetch('');
+			$ret = $this->fetch('');
         }
-        $ret = 0;
         $tokenDb = $this->token;
-        if (empty($tokenDb)) {  // 00 01 no db record found by token or user
-            $this->initAsSpecimen();
-            if (!$auto){
-                $arrayRes["NoActiveEvent"]++ ;
-                $this->status = TimesheetsetEventMessage($arrayRes, true);
-            }
-            // AUTO START ?
-        } elseif ($this->event_type >= EVENT_STOP) { // found but already stopped
-            $this->initAsSpecimen();
-            $arrayRes["EventNotActive"]++;
-            $this->status = TimesheetsetEventMessage($arrayRes, true);
-        } else{// 11 && 10 found and active
-            if (!empty($tokenJson)) { //11
-                $this->event_location_ref = $location_ref;
-                $this->note = $note;
-            }
-            $this->event_type = EVENT_STOP;
-            $this->date_time_event = time();
-            $duration = $this->date_time_event-$this->date_time_event_start;
-            //if the max time is breach
-            if ((getConf('TIMESHEET_EVENT_MAX_DURATION')>0 &&
-                $duration>getConf('TIMESHEET_EVENT_MAX_DURATION',0)*3600))
-                {
-                // put the max time per default
-                    $this->date_time_event = 
-                        getConf('TIMESHEET_EVENT_DEFAULT_DURATION',0)*3600
-                        +$this->date_time_event_start;
-                    if (empty($tokenJson) && $auto) { // if it's auto close but without json sent
-                        $this->event_type = EVENT_AUTO_STOP;
-                    }
-            }else { //there is a start time and it's in the acceptable limit
-                if ($duration < getConf('TIMESHEET_EVENT_MIN_DURATION',0)){
-                    $this->date_time_event = $this->date_time_event_start 
-                        + getConf('TIMESHEET_EVENT_MIN_DURATION');
-                }
-                $this->event_type = EVENT_STOP;
-            }
-            $ret = $this->create($user);
-            if ($ret>0 && getConf('TIMESHEET_EVENT_NOT_CREATE_TIMESPENT') == 0) {
-                $this->createTimeSpend($user, $tokenDb);
-            } else if ($ret<0) {
-                $this->initAsSpecimen();
-                $arrayRes = array();
-                $this->status = $arrayRes["DbError"]++ ;
-                $this->status = TimesheetsetEventMessage($arrayRes, true);
-            }
-        }
+		if ($ret >= 0) {
+			if (empty($tokenDb)) {  // 00 01 no db record found by token or user
+				$this->initAsSpecimen();
+				if (!$auto){
+					$arrayRes["NoActiveEvent"]++ ;
+					$this->status = TimesheetsetEventMessage($arrayRes, true);
+				}
+				// AUTO START ?
+			} elseif ($this->event_type >= EVENT_STOP) { // found but already stopped
+				$this->initAsSpecimen();
+				$arrayRes["EventNotActive"]++;
+				$this->status = TimesheetsetEventMessage($arrayRes, true);
+			} else{// 11 && 10 found and active
+				if (!empty($tokenJson)) { //11
+					$this->event_location_ref = $location_ref;
+					$this->note = $note;
+				}
+				$this->event_type = EVENT_STOP;
+				$this->date_time_event = time();
+				$duration = $this->date_time_event-$this->date_time_event_start;
+				//if the max time is breach
+				if ((getConf('TIMESHEET_EVENT_MAX_DURATION')>0 &&
+					$duration>getConf('TIMESHEET_EVENT_MAX_DURATION',0)*3600))
+					{
+					// put the max time per default
+						$this->date_time_event =
+							getConf('TIMESHEET_EVENT_DEFAULT_DURATION',0)*3600
+							+$this->date_time_event_start;
+						if (empty($tokenJson) && $auto) { // if it's auto close but without json sent
+							$this->event_type = EVENT_AUTO_STOP;
+						}
+				}else { //there is a start time and it's in the acceptable limit
+					if ($duration < getConf('TIMESHEET_EVENT_MIN_DURATION',0)){
+						$this->date_time_event = $this->date_time_event_start
+							+ getConf('TIMESHEET_EVENT_MIN_DURATION');
+					}
+					$this->event_type = EVENT_STOP;
+				}
+				$ret = $this->create($user);
+				if ($ret>0 && getConf('TIMESHEET_EVENT_NOT_CREATE_TIMESPENT') == 0) {
+					$this->createTimeSpend($user, $tokenDb);
+				}
+			}
+		}
+		if ($ret<0) {
+			$this->initAsSpecimen();
+			$arrayRes = array();
+			$this->status = $arrayRes["DbError"]++ ;
+			$this->status = TimesheetsetEventMessage($arrayRes, true);
+		}
+
         return $this->serialize(2);
     }
 
@@ -701,38 +706,40 @@ public $date_time_event_start;
             $note = $this->note;
             $tokenJson = $this->token;
         }
-        $this->fetch('');
-        $tokenDb = $this->token;
-        if ((empty($tokenJson) && empty($tokenDb))||
-                (!empty($tokenDb) && $this->event_type >= EVENT_STOP))
-        {
-            //00
-            $this->initAsSpecimen();
-            if ($this->userid)$arrayRes["NoActiveEvent"]++ ;
-            $this->status = TimesheetsetEventMessage($arrayRes, true);
-        } elseif (empty($tokenDb) && !empty($tokenJson)) { // json recieved with token //01
-            $arrayRes["EventNotActive"]++;
-            $this->status = TimesheetsetEventMessage($arrayRes, true);
-        } elseif (!empty($tokenDb)) {
-            // 11 && 10
-            if (!empty($tokenJson)) {
-                //11
-                $this->event_location_ref = $location_ref;
-                $this->note = $note;
-            } else{
-                // info not already loaded 10
-                $this->getInfo();
-            }
-            // update the required fields
-            $this->date_time_event = time();
-            if ($this->event_type!=EVENT_HEARTBEAT) {
-                // create an heartbeat only if there is none
-                $this->event_type = EVENT_HEARTBEAT;
-                $this->create($user);
-            } else {
-                $this->update($user);
-            }
-        }
+        $ret = $this->fetch('');
+		if ($ret >= 0) {
+        	$tokenDb = $this->token;
+			if ((empty($tokenJson) && empty($tokenDb))||
+					(!empty($tokenDb) && $this->event_type >= EVENT_STOP))
+			{
+				//00
+				$this->initAsSpecimen();
+				if ($this->userid)$arrayRes["NoActiveEvent"]++ ;
+				$this->status = TimesheetsetEventMessage($arrayRes, true);
+			} elseif (empty($tokenDb) && !empty($tokenJson)) { // json recieved with token //01
+				$arrayRes["EventNotActive"]++;
+				$this->status = TimesheetsetEventMessage($arrayRes, true);
+			} elseif (!empty($tokenDb)) {
+				// 11 && 10
+				if (!empty($tokenJson)) {
+					//11
+					$this->event_location_ref = $location_ref;
+					$this->note = $note;
+				} else{
+					// info not already loaded 10
+					$this->getInfo();
+				}
+				// update the required fields
+				$this->date_time_event = time();
+				if ($this->event_type!=EVENT_HEARTBEAT) {
+					// create an heartbeat only if there is none
+					$this->event_type = EVENT_HEARTBEAT;
+					$this->create($user);
+				} else {
+					$this->update($user);
+				}
+			}
+		}
         return $this->serialize(2);
     }
  /** create timespend on the user
@@ -771,7 +778,7 @@ public function createTimeSpend($user, $token = '')
     //if (empty($token))$token = $this->token;
     if (!empty($token)) {
         $this->fetch('', '', $token);
-        if ($this->event_type == EVENT_STOP && $this->task>0) {
+        if (($this->event_type == EVENT_STOP || $this->event_type == EVENT_AUTO_STOP) && $this->task>0) {
             $start = strtotime("midnight", (int) $this->date_time_event);
             $end = strtotime("tomorrow", (int) $this->date_time_event)-1;
             $duration = $this->date_time_event -$this->date_time_event_start;
@@ -779,7 +786,7 @@ public function createTimeSpend($user, $token = '')
             $tta->getActuals($start, $end, $this->userid);
             $arrayRes = $tta->saveTaskTime($user, $duration, $this->note, 0, true);
             $this->status = TimesheetsetEventMessage($arrayRes, true);
-            if (is_array($arrayRes) && array_sum($arrayRes)-$arrayRes['updateError']>0) 
+            if (is_array($arrayRes) && array_sum($arrayRes)-$arrayRes['updateError']>0)
                 $tta->updateTimeUsed();
             //TimesheetsetEventMessage($arrayRes);
         }
@@ -987,11 +994,11 @@ public function serialize($mode = 0)
             $this->third_partyLabel = $staticTask->companyName;
         } else {
             if (!empty($this->project) && empty($this->projectLabel)) {
-                $this->projectLabel = print_sellist(array('table'=>"projet", 
+                $this->projectLabel = print_sellist(array('table'=>"projet",
                     'keyfield'=> 'rowid', 'fields'=>'title'), $this->project);
             }
             if (!empty($this->third_party) && empty($this->third_partyLabel)) {
-                $this->third_partyLabel = print_sellist(array('table'=>"societe", 
+                $this->third_partyLabel = print_sellist(array('table'=>"societe",
                     'keyfield'=> 'rowid', 'fields'=>'nom'), $this->third_party);
             }
         }
@@ -1002,12 +1009,12 @@ public function serialize($mode = 0)
      *  @param int $selected rowid to be preselected
      *  @return string HTML select list
      */
-    
-    Public function sellist($htmlname = '', $selected = ''){    
-        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid', 
-            'fields' => $this->getLabel('sql'), 'join' =>  $this->getLabel('join'), 
+
+    Public function sellist($htmlname = '', $selected = ''){
+        $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid',
+            'fields' => $this->getLabel('sql'), 'join' =>  $this->getLabel('join'),
             'where' => '', 'tail' => '');
-        $html = array('name' => (($htmlname == '')?'AttendanceEvent':$htmlname), 
+        $html = array('name' => (($htmlname == '')?'AttendanceEvent':$htmlname),
             'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
         $addChoices = null;
 		return select_sellist($sql, $html, $selected, $addChoices );
@@ -1025,13 +1032,13 @@ public function serialize($mode = 0)
             break;
             case 'join':
                 $ret = "";
-            break;                
+            break;
             case 'text':
             default:
                 $ret = $this->userid.': '.$this->date_time_event;
             break;
 
-        } 
+        }
         return $ret;
     }
 

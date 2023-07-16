@@ -1,40 +1,83 @@
 version: "3"
 services:
-  web:
+  web-psql:
     #image: monogramm/docker-dolibarr:latest
-    container_name: dolibarr_web
-    image: tuxgasy/dolibarr
+    image: tuxgasy/dolibarr:${DOLI_TAG}
+    environment:
+      DOLI_DB_TYPE: pgsql
+      DOLI_DB_HOST: database-psql
+      DOLI_DB_HOST_PORT: 5432
+      DOLI_DB_USER: ${DOLI_DB_USER}
+      DOLI_DB_PASSWORD: ${DOLI_DB_PASSWORD}
+      DOLI_DB_NAME: ${DOLI_DB_NAME}
+      DOLI_INSTALL_AUTO: 1
+      #DOLI_ADMIN_LOGIN: admin 
+      #DOLI_ADMIN_PASSWORD: admin
     #build: 
     #  context: ../
     #  dockerfile: ./build/Dockerfile
     volumes:
       - ../htdocs:/var/www/html/custom:rw
-      - ..\..\dolibarr_page_from_SQLtable\page_from_table:/var/www/build
     ports:
-      - 18080:80
-    env_file: .env
-    links:
-      - database
-  database:
+      - 83:80
+    depends_on:
+      - database-psql
+  web-mysql:
+    #image: monogramm/docker-dolibarr:latest
+    image: tuxgasy/dolibarr:${DOLI_TAG}
+    environment:
+      DOLI_DB_TYPE: mysqli
+      DOLI_DB_HOST: database-mysql
+      #DOLI_DB_HOST_PORT: 5432
+      DOLI_DB_USER: ${DOLI_DB_USER}
+      DOLI_DB_PASSWORD: ${DOLI_DB_PASSWORD}
+      DOLI_DB_NAME: ${DOLI_DB_NAME}
+      DOLI_INSTALL_AUTO: 1
+      #DOLI_ADMIN_LOGIN: admin 
+      #DOLI_ADMIN_PASSWORD: admin
+    #build: 
+    #  context: ../
+    #  dockerfile: ./build/Dockerfile
+    volumes:
+      - ../htdocs:/var/www/html/custom:rw
+    ports:
+      - 81:80
+    depends_on:
+      - database-mysql
+  database-mysql:
     image: mariadb:10.3
-    container_name: dolibarr_db
     volumes:
       - mysql_data_10:/var/lib/mysql
-      - ./mount:/docker-entrypoint-initdb.d
-    ## How to reset database
-    # 1 on the host download the right db (ver 9 bellow) because  the container doesn't have wget
-    #wget https://github.com/Dolibarr/dolibarr/raw/develop/dev/initdemo/mysqldump_dolibarr_9.0.0.sql -o dump.sql
-    # 2 uncomment the line - ./dump.sql:/var/www/html/dump.sql
-    # 3 Attach shell to db containter and run those two commands
-    #mysql -u root -p -e "SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;') FROM information_schema.tables WHERE table_schema = 'dolibarr';"
-    #mysql -u root -p dolibarr < /var/www/html/dump.sql
-    env_file: .env
+#      - ./mount:/docker-entrypoint-initdb.d
+## How to reset database
+# 1 on the host download the right db (ver 9 bellow) because  the container doesn't have wget
+#wget https://github.com/Dolibarr/dolibarr/raw/develop/dev/initdemo/mysqldump_dolibarr_9.0.0.sql -o dump.sql
+# 2 uncomment the line - ./dump.sql:/var/www/html/dump.sql
+# 3 Attach shell to db containter and run those two commands
+#mysql -u root -p -e "SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;') FROM information_schema.tables WHERE table_schema = 'dolibarr';"
+#mysql -u root -p dolibarr < /var/www/html/dump.sql    
     environment:
       MYSQL_ROOT_PASSWORD: ${DOLI_DB_PASSWORD}
       MYSQL_DATABASE: ${DOLI_DB_NAME}
       MYSQL_USER: ${DOLI_DB_USER}
       MYSQL_PASSWORD: ${DOLI_DB_PASSWORD}
-#    ports:
+
+#   ports:
 #      - 3306:3306
+
+  database-psql:
+    image: postgres:latest
+#    volumes:
+#       - postgres-db:/data/postgres
+#    ports:
+#      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ${DOLI_DB_PASSWORD}
+      POSTGRES_DB: ${DOLI_DB_NAME}
+      POSTGRES_USER: ${DOLI_DB_USER}
+      PGDATA: /data/postgres
+
 volumes:
-  mysql_data_10: # password admin adminadmin
+  mysql_data_10:
+  postgres-db:
+  # password admin adminadmin

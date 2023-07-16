@@ -26,7 +26,7 @@
 //require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-class TimesheetPublicHolidays extends CommonObject
+class TimesheetPublicHolidays extends CommonObject implements 	Serializable
 {
         public $holidaylist;
         public $holidayPresent;
@@ -43,8 +43,25 @@ class TimesheetPublicHolidays extends CommonObject
     }
 
 
+    public function serialize() {
+        $data = array(
+            'holidaylist' => serialize($this->holidaylist),
+            'holidayPresent' => $this->holidayPresent, // or omit password
+            'userCountryId' => $this->userCountryId
+		);
+		return serialize($data);
+    }
 
-    
+    public function unserialize($data) {
+        $unserialized = unserialize($data);
+        $this->holidaylist=unserialize($unserialized['holidaylist']);
+        $this->holidayPresent = $unserialized['holidaylist'];
+        $this->userCountryId = $unserialized['userCountryId'];
+        return $this;
+    }
+
+
+
     /**  Function to get the user contry code
      * @param int $userId
      * @return int ok/ko
@@ -71,7 +88,7 @@ class TimesheetPublicHolidays extends CommonObject
      * @param int|timestamp $datestart begining of the period
      * @param int|timestamp $datestop end of the period
      * @return error/success (object updated or not)
-     * 
+     *
      */
     public function fetchUserWeek($userId, $datestart, $datestop)
     {
@@ -89,8 +106,8 @@ class TimesheetPublicHolidays extends CommonObject
         if(date('H', $datestop) == 0){
             $datestop = $datestop -1;
         }
-        
-        
+
+
         $sameYear = $yearStart == $yearStop;
         $this->holidayPresent = false;
 
@@ -174,8 +191,9 @@ class TimesheetPublicHolidays extends CommonObject
                     $this->holidaylist[$day+1]['prev'] = true;
                 }
             }
-            
+
             $this->db->free($resql);
+			return 1;
         } else {
             $this->error = "Error ".$this->db->lasterror();
             return -1;
@@ -203,7 +221,7 @@ class TimesheetPublicHolidays extends CommonObject
         $html .= '<th colspan = "'.($nbHeader == 1 ? 2 : $nbHeader).'" align = "right" > '.$langs->trans('PublicHoliday').' </th>';
         $i = 0;
         foreach ($this->holidaylist as $day => $holiday) {
-            $value = ($timetype == "hours")?date('H:i', 
+            $value = ($timetype == "hours")?date('H:i',
                 mktime(0, 0, $holiday['dayoff']*$dayshours*3600)):$holiday['dayoff'];
             $html .= '<th style = "margin: 0;padding: 0;">';
             $class = "column_${tsUserId}_${day} user_${userId} line_${tsUserId}_publicholiday";

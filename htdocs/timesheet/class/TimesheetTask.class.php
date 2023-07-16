@@ -72,7 +72,7 @@ class TimesheetTask extends Task
     {
         /* key used upon update of the TS via the TTA
          * canceled or planned shouldn't affect the TS status update
-         * draft will be stange at this stage but could be retrieved automatically 
+         * draft will be stange at this stage but could be retrieved automatically
          * invoiced should appear when there is no Submitted, underapproval, Approved, challenged, rejected
          * Approved should apear when there is no Submitted, underapproval, challenged, rejected left
          * Submitted should appear when no approval action is started: underapproval, Approved, challenged, rejected
@@ -280,7 +280,7 @@ class TimesheetTask extends Task
             return -1;
         }
     }
- 
+
     /**
      *  Update object into database
      *
@@ -420,13 +420,13 @@ class TimesheetTask extends Task
         if ($status<0 || $status>STATUSMAX) return -1;// role not valide
         //Update the the fk_tta in the project task time
         $idList = array();
-        if (!is_array($this->tasklist)) $this->getActuals($this->date_start_approval, 
+        if (!is_array($this->tasklist)) $this->getActuals($this->date_start_approval,
             $this->date_end_approval, $this->userId);
         if (is_array($this->tasklist))foreach ($this->tasklist as $item) {
             if ($item['id']!='')$idList[] = $item['id'];
             if (is_array($item['other'])){
                 $idList = array_merge($idList, array_column($item['other'], 'id'));
-            } 
+            }
         }
         $ids = implode(', ', $idList);
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET fk_task_time_approval = \'';
@@ -586,12 +586,12 @@ class TimesheetTask extends Task
         $other = array();
         for($i = 0;$i<$dayelapsed;$i++)
         {
-            $other[$i] = array();    
-            $this->tasklist[$i] = array('id' => 0, 'duration' => 0, 
+            $other[$i] = array();
+            $this->tasklist[$i] = array('id' => 0, 'duration' => 0,
                 'date'=>$timeStart+SECINDAY*$i+SECINDAY/4, 'other' => null);
         }
         $resql = $this->db->query($sql);
-        
+
         if ($resql) {
             $num = $this->db->num_rows($resql);
             $i = 0;
@@ -609,12 +609,12 @@ class TimesheetTask extends Task
                 }
                 // put the other timesheet on the "other" list
                 if ($this->tasklist[$day]['duration'] > 0 || strlen($this->tasklist[$day]['note']) > 0){
-                    $other[$day][] = array( 'duration' => $this->tasklist[$day]['duration'], 
+                    $other[$day][] = array( 'duration' => $this->tasklist[$day]['duration'],
                         'id' => $this->tasklist[$day]['id'], 'note' => $this->tasklist[$day]['note']);
                 }
-                
-                $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur, 
-                    'duration'=> $obj->task_duration, 'note'=>$obj->note, 
+
+                $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur,
+                    'duration'=> $obj->task_duration, 'note'=>$obj->note,
                 'invoiced' => $obj->invoiced);
                 if (is_array($other[$day]) > 0)
                     $this->tasklist[$day]['other'] = $other[$day];
@@ -632,7 +632,7 @@ class TimesheetTask extends Task
 
     /**
      * funciton get_week_total
-     * 
+     *
      * @return number of second
      */
 
@@ -653,7 +653,7 @@ class TimesheetTask extends Task
      *
      *  @param      array(string)       $headers             Headers to display
      *  @param      string              $tsUserId            id that will be used for the total
-     *  @param      int|array           $blockOveride         0- no effect;-1 - force edition;(1) - block edition 
+     *  @param      int|array           $blockOveride         0- no effect;-1 - force edition;(1) - block edition
      *  @param      array|null          $holiday                list of holiday
      *  @return     string                                   HTML result containing the timesheet info
      */
@@ -689,7 +689,8 @@ class TimesheetTask extends Task
         }else if ($blockOveride == -1){
             $isOpenStatus = true && $isOpenStatus;
         }
-        
+
+      
         /*
          * info section
          */
@@ -712,7 +713,7 @@ class TimesheetTask extends Task
     * function to generate the day cell content for HTML Display
     *
     *  @param      int               $isOpenStatus            is the line open for time entry
-    *  @param      array             $holidayList  
+    *  @param      array             $holidayList
     *  @return     string                                         HTML result containing the timesheet info
     */
     public function getHTMLLineDayCell($isOpenStatus, $holidayList=array())
@@ -740,14 +741,14 @@ class TimesheetTask extends Task
             // to avoid editing if the task is closed
             $dayWorkLoadSec = isset($this->tasklist[$dayCur])?$this->tasklist[$dayCur]['duration']:0;
             $dayWorkLoad = formatTime($dayWorkLoadSec, -1);
-            
-            
+
+
             $startDates = ($this->date_start>$this->startDatePjct)?$this->date_start:$this->startDatePjct;
 
-            $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0) 
+            $stopDates = (($this->date_end<$this->stopDatePjct && $this->date_end!=0)
                 || $this->stopDatePjct == 0)?$this->date_end:$this->stopDatePjct;
             //take the end of the day
-            
+
             $noteother = '';
             $otherSec = 0;
             if (is_array($this->tasklist[$dayCur]['other'])){
@@ -755,7 +756,7 @@ class TimesheetTask extends Task
                 $otherSec = array_sum(array_column($this->tasklist[$dayCur]['other'], 'duration'));
             }
             $other = formatTime($otherSec, -1);
-            
+
             if ($isOpenStatus && $this->id>0) {
                 $isOpen = $isOpenStatus && (($startDates == 0) || ($startDates <= $today_end ));
                 $isOpen = $isOpen && (empty($stopDates) ||($stopDates >= $today));
@@ -765,9 +766,9 @@ class TimesheetTask extends Task
                 if ($unblockClosedDay == 0) $isOpen = $isOpen  && $isOpenDay;
                 if ($unblockInvoiced == 0) $isOpen = $isOpen  && !$isInvoiced;
                 if (isset($holidayList[$dayCur])){
-                    $isOpen = $isOpen && 
+                    $isOpen = $isOpen &&
                     !($blockholiday == 1 && array_key_exists('am',$holidayList[$dayCur]) && $holidayList[$dayCur]['am'] == true && array_key_exists('pm',$holidayList[$dayCur]) && $holidayList[$dayCur]['pm'] == true) &&
-                    !($blockPublicHoliday == 1 && $holidayList[$dayCur]['dayoff']);
+                    !($blockPublicHoliday == 1 && array_key_exists('dayoff', $holidayList[$dayCur]) && $holidayList[$dayCur]['dayoff']);
 
                 }
 
@@ -786,7 +787,7 @@ class TimesheetTask extends Task
                 if ($isInvoiced){
                     $bkcolor = 'background:#'.$statusColor[INVOICED];
                 }
-                
+
                 $html .= "<td>\n";
                 // add note popup
                 if ($isOpen && getConf('TIMESHEET_SHOW_TIMESPENT_NOTE')) {
@@ -857,13 +858,13 @@ class TimesheetTask extends Task
         foreach ($headers as $key => $title) {
             $html = '';
             if($this->id == -1){
-                $html .= '<div class="colOther">'.$langs->trans('Other').' </div>';    
+                $html .= '<div class="colOther">'.$langs->trans('Other').' </div>';
             }else switch($title) {
                 case 'Project':
                     $html .= '<div class="colProject">';
                     $objtemp = new Project($this->db);
                     $objtemp->fetch($this->fk_project);
-                    $html .= str_replace('classfortooltip', 'classfortooltip colProject', 
+                    $html .= str_replace('classfortooltip', 'classfortooltip colProject',
                         $objtemp->getNomUrl(0, '', getConf('TIMESHEET_HIDE_REF')));
                     $html .= '</div>';
                     break;
@@ -871,7 +872,7 @@ class TimesheetTask extends Task
                     $html .= '<div class="colTaskParent">';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->fk_task_parent);
-                    $html .= str_replace('classfortooltip', 'classfortooltip colTaskParent', 
+                    $html .= str_replace('classfortooltip', 'classfortooltip colTaskParent',
                         $objtemp->getNomUrl(0, "withproject", "task", getConf('TIMESHEET_HIDE_REF')));
                     $html .= '</div>';
                     break;
@@ -882,7 +883,7 @@ class TimesheetTask extends Task
                         .$this->id.') style = "cursor:pointer;">  ';
                     $objtemp = new Task($this->db);
                     $objtemp->fetch($this->id);
-                    $html .= str_replace('classfortooltip', 'classfortooltip colTasks', 
+                    $html .= str_replace('classfortooltip', 'classfortooltip colTasks',
                         $objtemp->getNomUrl(0, "withproject", "task", getConf('TIMESHEET_HIDE_REF')));
                     break;
                 case 'DateStart':
@@ -916,7 +917,7 @@ class TimesheetTask extends Task
                 case 'ProgressDeclared':
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
                     $formother = new FormOther($db);
-                    $html .= $formother->select_percent($this->progress, 
+                    $html .= $formother->select_percent($this->progress,
                         'progressTask['.$this->userId.']['.$this->id.']', 0, 5, 0, 100, 1);
                     break;
                 case 'User':
@@ -1086,7 +1087,7 @@ class TimesheetTask extends Task
         $arRet['progress'] = $this->progress;
         $arRet['isOpen'] = $this->isOpen;
         $arRet['timespent_note'] = $this->timespent_note;
-        
+
         switch($mode) {
             default:
             case 0:
@@ -1102,7 +1103,7 @@ class TimesheetTask extends Task
         }
         return $ret;
     }
-    
+
   /** function to load a skeleton as a string
      * @param   string    $str   serialized object
      * @param    int     $mode   0 => serialize, 1 => json_encode, 2 => json_encode PRETTY PRINT
@@ -1259,7 +1260,7 @@ class TimesheetTask extends Task
         global $conf, $user;
         $ret = 0;
         $noteUpdate = 0;
-        
+
         dol_syslog(__METHOD__." taskTimeId=".$this->id, LOG_DEBUG);
         $this->timespent_fk_user = $userId;
         if ($note != $this->note) {
@@ -1293,21 +1294,21 @@ class TimesheetTask extends Task
                 $_SESSION['timesheet'][$token]['timeSpendDeleted'] += array_key_exists('timeSpendDeleted', $lineresult) ? $lineresult['timeSpendDeleted'] : 0;
                 $_SESSION['timesheet'][$token]['timeSpendCreated'] += array_key_exists('timeSpendCreated', $lineresult) ? $lineresult['timeSpendCreated'] : 0;
             }
-        $nbUpdate = ($_SESSION['timesheet'][$token]['timeSpendModified'] 
-            + $_SESSION['timesheet'][$token]['timeSpendDeleted'] 
+        $nbUpdate = ($_SESSION['timesheet'][$token]['timeSpendModified']
+            + $_SESSION['timesheet'][$token]['timeSpendDeleted']
             + $_SESSION['timesheet'][$token]['timeSpendCreated']) ;
         # update the time used on the task level
         if (($nbUpdate + $progressUpdate) > 0) {
             $this->updateTimeUsed();
             if ($progressUpdate)$_SESSION['timesheet'][$token]['ProgressUpdate']++;
         }
-        
-        
+
+
         if ( $noteUpdate ) {
             $retNote = ($this->appId>0)?$this->update($user):$this->create($user);
             if ($retNote  ) {
                 $_SESSION['timesheet'][$token]['NoteUpdated']++;
-                
+
             }else{
                 $_SESSION['timesheet'][$token]['updateError']++;
             }
@@ -1315,7 +1316,7 @@ class TimesheetTask extends Task
 
         $ret = 0;
         if (is_array($_SESSION['timesheet'][$token]))
-            $ret = $_SESSION['timesheet'][$token]['ProgressUpdate'] 
+            $ret = $_SESSION['timesheet'][$token]['ProgressUpdate']
             + $nbUpdate -$_SESSION['timesheet'][$token]['updateError'];
         return $ret;
         //return $idList;
@@ -1352,7 +1353,9 @@ class TimesheetTask extends Task
         }
         if ($item['id']>0) {
             $this->timespent_id = $item['id'];
-            $this->timespent_old_duration = $item['duration']; 
+
+            $this->timespent_old_duration = $item['duration'];
+
             if ($addmode) {
                 if (!empty($daynote)){
                     $this->timespent_note .= "\n".$daynote;
@@ -1373,6 +1376,7 @@ class TimesheetTask extends Task
                     }
                 
             } else if($this->timespent_duration == 0 && empty($daynote) ) {
+
 
                     dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
                     if ($this->delTimeSpent($Submitter, 0) >= 0) {
@@ -1411,7 +1415,7 @@ class TimesheetTask extends Task
         if(!array_key_exists('note', $this->tasklist[$dayKey]) || $this->tasklist[$dayKey]['note'] != $this->timespent_note){
             $this->tasklist[$dayKey]['note'] = $this->timespent_note;
         }
-        
+
         return $resArray;
     }
     /**
@@ -1574,7 +1578,7 @@ class TimesheetTask extends Task
     }
 
     /***
-     * 
+     *
      */
     public function getSumDay(){
         $ttaDuration = array();

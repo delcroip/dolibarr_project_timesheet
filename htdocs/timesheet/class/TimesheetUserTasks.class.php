@@ -493,7 +493,7 @@ public function fetchTaskTimesheet($userid = '')
     }
 
     $whiteList = array();
-    
+
     $datestart = $this->date_start;
     $datestop = $this->date_end;
     $staticWhiteList = new TimesheetFavourite($this->db);
@@ -529,7 +529,7 @@ public function fetchTaskTimesheet($userid = '')
     }
     $sql .= '  OR  tskt.task_duration >  0';
     $sql .= ' )';
-    
+
     if (getConf('TIMESHEET_HIDE_DRAFT') == '1') {
         $sql .= ' AND prj.fk_statut !=  \'0\'';
     }
@@ -618,7 +618,7 @@ public function fetchTaskTimesheet($userid = '')
  */
 public function updateActuals($tabPost, $notes = array(), $progresses = array())
 {
-    
+
      //FIXME, tta should be creted
     if ($this->status == APPROVED)return -1;
 
@@ -632,14 +632,14 @@ public function updateActuals($tabPost, $notes = array(), $progresses = array())
         /*
          * For each task store in matching the session token
          */
-        if (is_array($this->taskTimesheet)){ 
-            foreach ($this->taskTimesheet as $key => $row) { 
+        if (is_array($this->taskTimesheet)){
+            foreach ($this->taskTimesheet as $key => $row) {
                 $tasktime = new TimesheetTask($this->db);
                 $tasktime->unserialize($row);
                 if (isset($tabPost[$tasktime->id])){
                     $note = array_key_exists($tasktime->id,$notes)?$notes[$tasktime->id]:null;
                     $progress = array_key_exists($tasktime->id,$progresses)?$progresses[$tasktime->id]:null;
-                    $ret += $tasktime->postTaskTimeActual($tabPost[$tasktime->id], 
+                    $ret += $tasktime->postTaskTimeActual($tabPost[$tasktime->id],
                         $this->userId, $this->user, $this->token, $note, $progress);
                 }
                 $this->taskTimesheet[$key] = $tasktime->serialize();
@@ -832,7 +832,7 @@ public function getHTMLHeader($search = false)
         $html .= '</tr>';
     }
     $html .= '<tr class = "liste_titre" id = "">'."\n";
-    
+
     foreach ($this->headers as $key => $value) {
         $html .= "\t<th ";
         if (count($this->headers) == 1) {
@@ -903,8 +903,8 @@ public function getHTMLFooter($ajax = false)
 }
 
 /**
- * 
- * 
+ *
+ *
  */
 
 public function getHTMLActions(){
@@ -973,8 +973,8 @@ public function getHTMLtaskLines( $ajax = false)
     }else if(is_array($publicHoliday)){
         $holiday = $publicHoliday;
     }
-  
-    
+
+
     if (!$ajax & is_array($this->taskTimesheet)) {
         $nbline = count($this->taskTimesheet);
         foreach ($this->taskTimesheet as $timesheet) {
@@ -991,7 +991,7 @@ public function getHTMLtaskLines( $ajax = false)
             if ($row->id != -1 or $row->getSavedTimeTotal() != 0){
                 $Lines .= $row->getTimesheetLine($this->headers, $this->id, $blockOveride, $holiday);
             }
-                
+
 
                 //if ($i%10 == 0 &&  $nbline-$i >5) $Lines .= $this->getHTMLTotal();
             $i++;
@@ -1156,7 +1156,7 @@ public function getHTMLNavigation($optioncss, $token, $ajax = false)
         $HTML .= '<input type = "hidden" id="csrf-token" name = "token" value = "'.$this->token.'"/>';
 
         $HTML .= '<input type = "submit" value = "'.$langs->trans('Submit').'"/></form> ';
-        
+
         return $HTML;
     }
     /**
@@ -1292,7 +1292,7 @@ public function GetTimeSheetXML()
             foreach ($emails as $tm_email => $user_approuvals) {
                 foreach ($user_approuvals as $w_email => $dates) {
                     $message = str_replace(
-                        "__NB_TS__", count($dates), 
+                        "__NB_TS__", count($dates),
                         str_replace('\n', "\n", $langs->trans('YouHaveApprovalPendingMsg'))
                     );
                     foreach ($dates as $date) {
@@ -1342,9 +1342,9 @@ public function GetTimeSheetXML()
            LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON ctc.rowid = fk_c_type_contact
             LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time pt ON  pt.fk_user = fk_socpeople
             LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = fk_socpeople
-            WHERE  (ctc.element in (\'project\') 
+            WHERE  (ctc.element in (\'project\')
             and pt.task_date BETWEEN $date_start AND $date_end
-            GROUP BY u.rowid "; 
+            GROUP BY u.rowid ";
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $emails = array();
@@ -1371,12 +1371,12 @@ public function GetTimeSheetXML()
             //get the list of user that have the ts right
                 $$url .= '/timesheet/Timesheet.php?startDate='.$date_start;
                 $message = $langs->trans(
-                    'YouHaveMissingTimesheetMsg', 
-                    date(' d', $date_start), 
+                    'YouHaveMissingTimesheetMsg',
+                    date(' d', $date_start),
                     $url
                 );
                 $sendto = $email;
-        
+
                 $subject = $langs->transnoentities("YouHaveMissingTimesheet");
                 if (!empty($sendto) && $sendto!="NULL") {
                     include_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
@@ -1418,8 +1418,8 @@ public function GetTimeSheetXML()
         }
         $url .= '/timesheet/Timesheet.php?startDate='.$this->date_start;
         $message = $langs->trans(
-            'YouHaveTimesheetRejectedMsg', 
-            date(' d', $this->date_start), 
+            'YouHaveTimesheetRejectedMsg',
+            date(' d', $this->date_start),
             $url
         );
         $sendto = $tsUser->email;
@@ -1443,12 +1443,12 @@ public function GetTimeSheetXML()
         }
     }
 
-        
+
     /**
      * Function to import the calandar item into the timesheets
      * @param int $userid user to import calcandar
      * @param date $dateStart datestart to use for the import
-     * @param date $dateEnd dateEnd to use for the import 
+     * @param date $dateEnd dateEnd to use for the import
      */
     function importCalandar($userid = '', $dateStart = '', $dateEnd = ''){
         global $conf, $user;
@@ -1461,7 +1461,7 @@ public function GetTimeSheetXML()
         }
         if(!is_a($dateStart,'DateTime') && !is_a($dateStart,'Date' && !is_numeric($dateStart))){
             $dateStart = $this->date_start;
-        }        
+        }
         if(!is_a($dateEnd,'DateTime')  && !is_a($dateEnd,'Date') && !is_numeric($dateEnd) ){
             $dateEnd = $this->date_end;
         }
@@ -1487,14 +1487,14 @@ public function GetTimeSheetXML()
         // local list of tasktime
         $dayDuration = array();
         $tasktime = array();
-        // execute the fuction only if there is querry results    
+        // execute the fuction only if there is querry results
         if ($resql && $this->db->num_rows($resql) > 0) {
             //load already saved tasktime
             foreach($this->taskTimesheet as $taskid => $taskline){
                 $tasktime[$taskid] = new TimesheetTask($this->db, $taskid);
                 $tasktime[$taskid]->unserialize($taskline);
             }
-            // go through all querry result    
+            // go through all querry result
             while ($obj = $this->db->fetch_object($resql)) {
                 //create a tasktime object if not yet present on local liss
                 if(!array_key_exists($obj->taskid, $tasktime)){
@@ -1502,7 +1502,7 @@ public function GetTimeSheetXML()
                     $tasktime[$obj->taskid]->userId = $userid;
                     $tasktime[$obj->taskid]->date_start_approval = $dateStart;
                     $tasktime[$obj->taskid]->date_end_approval = $dateEnd;
-                    // search if there is a tasktime for this event 
+                    // search if there is a tasktime for this event
                 }
                 $action_date_end = $this->db->jdate($obj->dateend);
                 $action_date_start = $this->db->jdate($obj->datestart);
@@ -1510,32 +1510,32 @@ public function GetTimeSheetXML()
                 for($daykey = 0; $daykey < $nbDay; $daykey++){
                     // init the dayduration for later
                     $dayDuration[$daykey] = 0;
-                    $duration = 0;  
-                    //is the event in day y       
-                    if( $action_date_end > ($dateStart + $daykey * SECINDAY +1 ) 
+                    $duration = 0;
+                    //is the event in day y
+                    if( $action_date_end > ($dateStart + $daykey * SECINDAY +1 )
                         &&  $action_date_start <= ($dateStart + ($daykey+1) * SECINDAY )) {
                         if($obj->fulldayevent == 0){
-                            //foreach task that are not "all day" define duration as 
+                            //foreach task that are not "all day" define duration as
                             // duration = cal_duration>MAx? STD:cal_duration
                             $duration = $action_date_end - $action_date_start;
                             $max_dur_day = getConf('TIMESHEET_DAY_MAX_DURATION') * 3600;
                             $duration = min( $duration , $max_dur_day);
                             // write in database the new TS
-                            $daynote = $obj->code." - ".$obj->label.": ".formatTime($duration, -1); 
+                            $daynote = $obj->code." - ".$obj->label.": ".formatTime($duration, -1);
                             // check and update only ifthe meeting is note already in noted
-                            if(!is_array($tasktime[$obj->taskid]->tasklist) 
+                            if(!is_array($tasktime[$obj->taskid]->tasklist)
                                 || !array_key_exists($daykey, $tasktime[$obj->taskid]->tasklist)
                                 || (strpos($tasktime[$obj->taskid]->tasklist[$daykey]['note'], $daynote) === false))  {
-                                    $tasktime[$obj->taskid]->saveTaskTime($user, 
+                                    $tasktime[$obj->taskid]->saveTaskTime($user,
                                     $duration,  $daynote, $daykey, true);
                             }
-    
+
                         }else{
-                            $days[$daykey][$obj->taskid] = array('id' => $obj->taskid, 
-                                'title' => ($obj->code.' - '.$obj->label), 
+                            $days[$daykey][$obj->taskid] = array('id' => $obj->taskid,
+                                'title' => ($obj->code.' - '.$obj->label),
                             'duration' => 0);
-                        }                            
-                    } 
+                        }
+                    }
                 }
             }
             // generate the total per day
@@ -1551,15 +1551,15 @@ public function GetTimeSheetXML()
             foreach($days as $daykey => $day ){
                 $nbFullDayCurDay = count($day);
                 $duration = (getConf('TIMESHEET_DAY_DURATION',0) * 3600
-                    - $dayDuration[$daykey]) / $nbFullDayCurDay ; 
+                    - $dayDuration[$daykey]) / $nbFullDayCurDay ;
                 //for eachfull day event
                 foreach($day as $taskid => $tasktimeDetails){
-                    $daynote = $tasktimeDetails['title'].": ".formatTime($duration, -1); 
+                    $daynote = $tasktimeDetails['title'].": ".formatTime($duration, -1);
                     // check and update only ifthe meeting is note already in noted
-                    if(!is_array($tasktime[$obj->taskid]->tasklist) 
+                    if(!is_array($tasktime[$obj->taskid]->tasklist)
                         || !array_key_exists($daykey, $tasktime[$obj->taskid]->tasklist)
                         || (strpos($tasktime[$obj->taskid]->tasklist[$daykey]['note'], $daynote) === false))  {
-                        $tasktime[$taskid]->saveTaskTime($user, $duration, 
+                        $tasktime[$taskid]->saveTaskTime($user, $duration,
                                     $daynote, $daykey, true);
                     }
                 }
