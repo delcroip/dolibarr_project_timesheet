@@ -690,6 +690,7 @@ class TimesheetTask extends Task
             $isOpenStatus = true && $isOpenStatus;
         }
 
+      
         /*
          * info section
          */
@@ -1352,7 +1353,9 @@ class TimesheetTask extends Task
         }
         if ($item['id']>0) {
             $this->timespent_id = $item['id'];
+
             $this->timespent_old_duration = $item['duration'];
+
             if ($addmode) {
                 if (!empty($daynote)){
                     $this->timespent_note .= "\n".$daynote;
@@ -1371,8 +1374,9 @@ class TimesheetTask extends Task
                     }else {
                         $resArray['updateError']++;
                     }
-
+                
             } else if($this->timespent_duration == 0 && empty($daynote) ) {
+
 
                     dol_syslog(__METHOD__."  taskTimeDelete", LOG_DEBUG);
                     if ($this->delTimeSpent($Submitter, 0) >= 0) {
