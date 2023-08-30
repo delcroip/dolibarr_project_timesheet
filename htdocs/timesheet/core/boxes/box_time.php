@@ -75,21 +75,21 @@ class box_time extends ModeleBoxes
                         digit d
                     order by 1        
                 )
-                SELECT SUM(pt.task_duration)/3600 as duration, 
+                SELECT SUM(pt.element_duration)/3600 as duration, 
                 w.week, u.weeklyhours
                 FROM (SELECT YEARWEEK(DATE_ADD(NOW(), INTERVAL - num WEEK)) as week 
                     FROM seq WHERE num <= ".getConf('TIMESHEET_OVERTIME_CHECK_WEEKS',4)."
                     AND num > 1 ) as w 
-                LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time pt ON YEARWEEK(pt.task_date) = w.week
+                LEFT JOIN ".MAIN_DB_PREFIX."element_time pt ON YEARWEEK(pt.element_date) = w.week
                 LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid =  ".$userid."
                 
                 WHERE pt.fk_user =  ".$userid." OR pt.fk_user is null
                 GROUP BY w.week;";
             }else {
                 // to be validated
-                $sqlweek = "SELECT SUM(pt.task_duration)/3600 as duration, TO_CHAR(generate_series, 'YYYYWW') as week, u.weeklyhours 
+                $sqlweek = "SELECT SUM(pt.element_duration)/3600 as duration, TO_CHAR(generate_series, 'YYYYWW') as week, u.weeklyhours 
                 FROM generate_series(DATE_TRUNC('week', (now() - INTERVAL '".getConf('TIMESHEET_OVERTIME_CHECK_WEEKS',4)." week'))::timestamp, DATE_TRUNC('week', (now() - INTERVAL '1 WEEK' ))::timestamp, interval '1 week') 
-                LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time pt ON (generate_series = DATE_TRUNC('week',pt.task_date)) 
+                LEFT JOIN ".MAIN_DB_PREFIX."element_time pt ON (generate_series = DATE_TRUNC('week',pt.element_date)) 
                 LEFT JOIN ".MAIN_DB_PREFIX."user u on (pt.fk_user = ".$userid.") WHERE pt.fk_user = ".$userid." OR pt.fk_user is null 
                 GROUP BY generate_series, u.weeklyhours;";
             }

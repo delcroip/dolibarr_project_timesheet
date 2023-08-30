@@ -76,18 +76,18 @@ $langs->load('timesheet@timesheet');
 //steps
     switch($step) {
         case 2:
-           $fields = ($mode == 'user')?'fk_user':(($mode == 'taskUser')?'fk_user, fk_task':'fk_task');
-            $sql = 'SELECT  '.$fields.', SUM(tt.task_duration) as duration, ';
+           $fields = ($mode == 'user')?'fk_user':(($mode == 'taskUser')?'fk_user, fk_element':'fk_element');
+            $sql = 'SELECT  '.$fields.', SUM(tt.element_duration) as duration, ';
             if ($db->type!='pgsql') {
                 $sql .= " GROUP_CONCAT(tt.rowid  SEPARATOR ', ') as task_time_list";
             } else{
                 $sql .= " STRING_AGG(to_char(tt.rowid, '9999999999999999'), ', ') as task_time_list";
             }
-             $sql .= ' From '.MAIN_DB_PREFIX.'projet_task_time as tt';
-            $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_task = t.rowid';
+             $sql .= ' From '.MAIN_DB_PREFIX.'element_time as tt';
+            $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_element = t.rowid';
             if ($invoicabletaskOnly == 1)$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
-            $sql .= ' WHERE t.fk_projet='.$projectId;
-                $sql .= " AND DATE(tt.task_datehour) BETWEEN '".$db->idate($dateStart);
+            $sql .= ' WHERE tt.elementtype = 'task' and t.fk_projet='.$projectId;
+                $sql .= " AND DATE(tt.element_datehour) BETWEEN '".$db->idate($dateStart);
                 $sql .= "' AND '".$db->idate($dateEnd)."'";
              if ($invoicabletaskOnly == 1)$sql .= ' AND tske.invoiceable = \'1\'';
             if ($ts2Invoice!='all') {
@@ -132,12 +132,12 @@ $langs->load('timesheet@timesheet');
                             break;
                         case 'taskUser':
                              //step 2.3 get the list of taskUser  (all or approved)
-                            $resArray[] = array("USER" => $obj->fk_user, "TASK" =>$obj->fk_task, "DURATION"=>$duration, 'LIST'=>$obj->task_time_list);
+                            $resArray[] = array("USER" => $obj->fk_user, "TASK" =>$obj->fk_element, "DURATION"=>$duration, 'LIST'=>$obj->task_time_list);
                             break;
                         default:
                         case 'task':
                              //step 2.1 get the list of task  (all or approved)
-                            $resArray[] = array("USER" => "any", "TASK" =>$obj->fk_task, "DURATION"=>$duration, 'LIST'=>$obj->task_time_list);
+                            $resArray[] = array("USER" => "any", "TASK" =>$obj->fk_element, "DURATION"=>$duration, 'LIST'=>$obj->task_time_list);
                           break;
                     }
                     $i++;
@@ -816,7 +816,7 @@ function Update_task_time_invoice($idInvoice, $idLine, $task_time_list)
 {
     global $db;
     $res = false;
-    $sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time';
+    $sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time';
     $sql .= " SET invoice_id = '{$idInvoice}', invoice_line_id = '{$idLine}'";
     $sql .= " WHERE rowid in ({$task_time_list})";
     dol_syslog("ProjectInvoice::setnvoice", LOG_DEBUG);
