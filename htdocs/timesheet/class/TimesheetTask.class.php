@@ -577,7 +577,7 @@ class TimesheetTask extends Task
         }elseif (in_array($this->status, array(SUBMITTED, UNDERAPPROVAL, APPROVED, CHALLENGED, INVOICED))) {
             $sql .= ' ptt.fk_task_time_approval = \''.$this->appId.'\'';
         } else {
-            $sql .= " ptt.fk_element = '".$this->id."' ";
+            $sql .= " ptt.fk_element = '".$this->id."' and ptt.elementtype = 'task' ";
             $sql .= " AND (ptt.fk_user = '".$userid."') ";
             $sql .= " AND (DATE(ptt.element_datehour) >= '".$this->db->idate($timeStart)."') ";
             $sql .= " AND (DATE(ptt.element_datehour)<'".$this->db->idate($timeEnd)."')";
