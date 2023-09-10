@@ -83,11 +83,11 @@ $langs->load('timesheet@timesheet');
             } else{
                 $sql .= " STRING_AGG(to_char(tt.rowid, '9999999999999999'), ', ') as task_time_list";
             }
-             $sql .= ' From '.MAIN_DB_PREFIX.'element_time as tt';
+            $sql .= ' From '.MAIN_DB_PREFIX.'element_time as tt';
             $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_element = t.rowid';
             if ($invoicabletaskOnly == 1)$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
-            $sql .= ' WHERE tt.elementtype = 'task' and t.fk_projet='.$projectId;
-                $sql .= " AND DATE(tt.element_datehour) BETWEEN '".$db->idate($dateStart);
+            $sql .= " WHERE tt.elementtype = 'task' and t.fk_projet=".$projectId;
+            $sql .= " AND DATE(tt.element_datehour) BETWEEN '".$db->idate($dateStart);
                 $sql .= "' AND '".$db->idate($dateEnd)."'";
              if ($invoicabletaskOnly == 1)$sql .= ' AND tske.invoiceable = \'1\'';
             if ($ts2Invoice!='all') {

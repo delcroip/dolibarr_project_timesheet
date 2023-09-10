@@ -507,7 +507,7 @@ public function fetchTaskTimesheet($userid = '')
     //$sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ec ON tsk.rowid = ec.element_id and ec.fk_socpeople = '.$userid;
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact  AND ctc.active = \'1\') ';
-    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_time as tskt ON tsk.rowid = tskt.fk_element and tskt.elementtype = 'task' and tskt.fk_user = '.$userid;
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."element_time as tskt ON tsk.rowid = tskt.fk_element and tskt.elementtype = 'task' and tskt.fk_user = ".$userid;
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ' ;
 
 
