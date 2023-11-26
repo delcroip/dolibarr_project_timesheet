@@ -247,11 +247,7 @@ if (getConf('TIMESHEET_ADD_DOCS') && $id>0) {
     $ref = dol_sanitizeFileName($object->ref);
     $upload_dir = $conf->timesheet->dir_output.'/tasks/'
         .get_exdir($object->id, 2, 0, 0, $object, 'timesheet').$ref;
-    if (version_compare(DOL_VERSION, "4.0") >= 0) {
-       include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
-    } else{
-       include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-    }
+    include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 }
 //Removing the $token array so the order can't be submitted two times
 if (isset($_SESSION['timesheet'][$token])) {

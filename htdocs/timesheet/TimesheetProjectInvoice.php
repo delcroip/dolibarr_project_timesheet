@@ -464,7 +464,6 @@ $langs->load('timesheet@timesheet');
 
                 // End of object creation, we show it
                 if (1) {
-                    if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
                         foreach ($task_time_array AS $idLine => $task_time_list) {
                                 //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
                             Update_task_time_invoice($id, $idLine, $task_time_list);
@@ -472,7 +471,6 @@ $langs->load('timesheet@timesheet');
                         foreach ($task_time_array_never AS $idLine => $task_time_list) {
                             //dol_syslog("ProjectInvoice::setnvoice".$idLine.' '.$task_time_list, LOG_DEBUG);
                         Update_task_time_invoice(-1, -1, $task_time_list);
-                    }
                     }
                     ob_start();
                     header('Location: ' . $object->getNomUrl(0, '', 0, 1, ''));
@@ -594,14 +592,11 @@ $langs->load('timesheet@timesheet');
             $Form .= ($ts2Invoice == "all"?"checked":"").'> '
                 .$langs->trans("All")."</th></tr>";
     // not alreqdy invoice
-            if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
-                    $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
-                        .$langs->trans('TimesheetNotInvoiced');
-                    $Form .= '</th><th align = "left">'
-                        .'<input type = "checkbox" name = "tsNotInvoiced" value = "1" ></th></tr>';
-            } else{
-                $Form .= '<input type = "hidden" name = "tsNotInvoiced" value = "0">';
-            }
+            $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'
+                .$langs->trans('TimesheetNotInvoiced');
+            $Form .= '</th><th align = "left">'
+                .'<input type = "checkbox" name = "tsNotInvoiced" value = "1" ></th></tr>';
+
             //$invoicabletaskOnly
             $Form .= '<tr class = "oddeven"><th align = "left" width = "80%">'.$langs->trans('InvoicableOnly');
             $Form .= '</th><th align = "left"><input type = "checkbox" name = "invoicabletaskOnly" value = "1" '

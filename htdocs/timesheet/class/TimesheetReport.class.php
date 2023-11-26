@@ -235,11 +235,7 @@ class TimesheetReport
         $first = true;
 
         $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.rowid as taskid, ';
-        if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
-            $sql .= ' (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced,';
-        }else{
-            $sql .= ' 0 AS invoiced,';
-        }
+        $sql .= ' (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced,';
         if ($forceGroup == 1){
             if ($this->db->type!='pgsql') {
                 $sql .= " MAX(ptt.rowid) as id, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";

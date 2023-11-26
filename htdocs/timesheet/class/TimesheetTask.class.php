@@ -562,11 +562,7 @@ class TimesheetTask extends Task
         $dayelapsed = getDayInterval($timeStart, $timeEnd);
         if ($dayelapsed<1)return -1;
         $sql = "SELECT ptt.rowid, ptt.element_duration, DATE(ptt.element_datehour) AS element_date, ptt.note";
-         if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
-            $sql .= ', (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced';
-        }else{
-            $sql .= ', 0 AS invoiced';
-        }
+        $sql .= ', (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced';
         $sql .= " FROM ".MAIN_DB_PREFIX."element_time AS ptt";
         $sql .= " WHERE ";
         if ($this->id == -1 && is_array($this->exclusionlist)){
