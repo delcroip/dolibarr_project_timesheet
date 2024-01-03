@@ -611,6 +611,7 @@ class TimesheetTask extends Task
 
                 $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur,
                     'duration'=> $obj->element_duration, 'note'=>$obj->note,
+
                 'invoiced' => $obj->invoiced);
                 if (is_array($other[$day]) > 0)
                     $this->tasklist[$day]['other'] = $other[$day];

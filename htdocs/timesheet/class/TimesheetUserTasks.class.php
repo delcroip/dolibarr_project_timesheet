@@ -1344,6 +1344,7 @@ public function GetTimeSheetXML()
             LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = fk_socpeople
             WHERE  (ctc.element in (\'project\')
             and pt.element_date BETWEEN $date_start AND $date_end
+            and pt.task_date BETWEEN $date_start AND $date_end
             GROUP BY u.rowid ";
 
         dol_syslog(__METHOD__, LOG_DEBUG);

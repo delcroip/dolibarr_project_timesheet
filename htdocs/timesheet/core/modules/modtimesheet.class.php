@@ -58,6 +58,7 @@ class modTimesheet extends DolibarrModules
                 $this->version = '5.0.0';
 
 
+
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
                 $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
                 // Where to store the module in setup page(0=common, 1=interface, 2=others, 3=very specific)
