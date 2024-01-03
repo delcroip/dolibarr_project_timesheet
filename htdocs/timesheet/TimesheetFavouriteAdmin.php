@@ -245,11 +245,7 @@ switch($action) {
     case 'create':
     default:
         //document handling
-        if (version_compare(DOL_VERSION, "4.0") >= 0) {
-            include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
-        } else{
-            include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-        }
+        include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
         if (isset($_GET['urlfile'])) $action = 'viewdoc';
         break;
 }

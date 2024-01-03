@@ -55,7 +55,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 
-                $this->version = '4.6.7';
+                $this->version = '5.0.0';
 
 
                 // Key used in llx_cons table to save module status enabled/disabled(where timesheet is value of property name of module in uppercase)
@@ -100,7 +100,7 @@ class modTimesheet extends DolibarrModules
                 $this->requiredby = array();        // List of modules id to disable if this one is disabled
                 $this->conflictwith = array();        // List of modules id this module is in conflict with
                 $this->phpmin = array(5, 0);                                        // Minimum version of PHP required by module
-                $this->need_dolibarr_version = array(3, 5);        // Minimum version of Dolibarr required by module
+                $this->need_dolibarr_version = array(18, 0);        // Minimum version of Dolibarr required by module
                 $this->langfiles = array("timesheet@timesheet");
                 // Constants
                 // List of particular constants to add when module is enabled(key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)

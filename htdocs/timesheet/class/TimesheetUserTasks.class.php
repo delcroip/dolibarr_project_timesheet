@@ -507,7 +507,7 @@ public function fetchTaskTimesheet($userid = '')
     //$sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ec ON tsk.rowid = ec.element_id and ec.fk_socpeople = '.$userid;
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON(ctc.rowid = ec.fk_c_type_contact  AND ctc.active = \'1\') ';
-    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_time as tskt ON tsk.rowid = tskt.fk_task and tskt.fk_user = '.$userid;
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."element_time as tskt ON tsk.rowid = tskt.fk_element and tskt.elementtype = 'task' and tskt.fk_user = ".$userid;
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as prj ON prj.rowid = tsk.fk_projet ' ;
 
 
@@ -527,7 +527,7 @@ public function fetchTaskTimesheet($userid = '')
     if (getConf('TIMESHEET_ALLOW_PUBLIC') == '1') {
         $sql .= '  OR  prj.public =  \'1\'';
     }
-    $sql .= '  OR  tskt.task_duration >  0';
+    $sql .= '  OR  tskt.element_duration >  0';
     $sql .= ' )';
 
     if (getConf('TIMESHEET_HIDE_DRAFT') == '1') {
@@ -1336,14 +1336,14 @@ public function GetTimeSheetXML()
     $date_start = getStartDate(time(), -1);
     $date_end = getEndDate($date_start);
         $ret = true;
-        $sql = "SELECT SUM(pt.task_duration)/3600 as duration,  u.weeklyhours
+        $sql = "SELECT SUM(pt.element_duration)/3600 as duration,  u.weeklyhours
             u.email, u.weeklyhours
             FROM ".MAIN_DB_PREFIX."element_contact  as ec ON t.rowid = ec.element_id
            LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as ctc ON ctc.rowid = fk_c_type_contact
-            LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time pt ON  pt.fk_user = fk_socpeople
+            LEFT JOIN ".MAIN_DB_PREFIX."element_time pt ON  pt.fk_user = fk_socpeople
             LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = fk_socpeople
             WHERE  (ctc.element in (\'project\')
-            and pt.task_date BETWEEN $date_start AND $date_end
+            and pt.element_date BETWEEN $date_start AND $date_end
             GROUP BY u.rowid ";
 
         dol_syslog(__METHOD__, LOG_DEBUG);
