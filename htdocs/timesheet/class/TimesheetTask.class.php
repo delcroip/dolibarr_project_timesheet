@@ -429,7 +429,7 @@ class TimesheetTask extends Task
             }
         }
         $ids = implode(', ', $idList);
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET fk_task_time_approval = \'';
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time SET fk_task_time_approval = \'';
         $sql .= $this->appId.'\', status = \''.$status.'\' WHERE rowid in ('.$ids.')';
         // SQL start
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -561,26 +561,22 @@ class TimesheetTask extends Task
         $this->timespent_fk_user = $userid;
         $dayelapsed = getDayInterval($timeStart, $timeEnd);
         if ($dayelapsed<1)return -1;
-        $sql = "SELECT ptt.rowid, ptt.task_duration, DATE(ptt.task_datehour) AS task_date, ptt.note";
-         if (version_compare(DOL_VERSION, "4.9.9") >= 0) {
-            $sql .= ', (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced';
-        }else{
-            $sql .= ', 0 AS invoiced';
-        }
-        $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
+        $sql = "SELECT ptt.rowid, ptt.element_duration, DATE(ptt.element_datehour) AS element_date, ptt.note";
+        $sql .= ', (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced';
+        $sql .= " FROM ".MAIN_DB_PREFIX."element_time AS ptt";
         $sql .= " WHERE ";
         if ($this->id == -1 && is_array($this->exclusionlist)){
-            $sql .= " ptt.fk_task not in  ('".implode("','",$this->exclusionlist)."') ";
+            $sql .= " ptt.elementtype = 'task' and ptt.fk_element not in  ('".implode("','",$this->exclusionlist)."') ";
             $sql .= " AND (ptt.fk_user = '".$userid."') ";
-            $sql .= " AND (DATE(ptt.task_datehour) >= '".$this->db->idate($timeStart)."') ";
-            $sql .= " AND (DATE(ptt.task_datehour)<'".$this->db->idate($timeEnd)."')";
+            $sql .= " AND (DATE(ptt.element_datehour) >= '".$this->db->idate($timeStart)."') ";
+            $sql .= " AND (DATE(ptt.element_datehour)<'".$this->db->idate($timeEnd)."')";
         }elseif (in_array($this->status, array(SUBMITTED, UNDERAPPROVAL, APPROVED, CHALLENGED, INVOICED))) {
             $sql .= ' ptt.fk_task_time_approval = \''.$this->appId.'\'';
         } else {
-            $sql .= " ptt.fk_task = '".$this->id."' ";
+            $sql .= " ptt.fk_element = '".$this->id."' and ptt.elementtype = 'task' ";
             $sql .= " AND (ptt.fk_user = '".$userid."') ";
-            $sql .= " AND (DATE(ptt.task_datehour) >= '".$this->db->idate($timeStart)."') ";
-            $sql .= " AND (DATE(ptt.task_datehour)<'".$this->db->idate($timeEnd)."')";
+            $sql .= " AND (DATE(ptt.element_datehour) >= '".$this->db->idate($timeStart)."') ";
+            $sql .= " AND (DATE(ptt.element_datehour)<'".$this->db->idate($timeEnd)."')";
         }
         dol_syslog(__METHOD__, LOG_DEBUG);
         $other = array();
@@ -602,7 +598,7 @@ class TimesheetTask extends Task
                 $error = 0;
 
                 $obj = $this->db->fetch_object($resql);
-                $dateCur = $this->db->jdate($obj->task_date);
+                $dateCur = $this->db->jdate($obj->element_date);
                 $day = getDayInterval($timeStart, $dateCur);
                 if(!isset($this->tasklist[$day]['note'])){
                     $this->tasklist[$day]['note'] = '';
@@ -614,11 +610,12 @@ class TimesheetTask extends Task
                 }
 
                 $this->tasklist[$day] = array('id'=>$obj->rowid, 'date'=>$dateCur,
-                    'duration'=> $obj->task_duration, 'note'=>$obj->note,
+                    'duration'=> $obj->element_duration, 'note'=>$obj->note,
+
                 'invoiced' => $obj->invoiced);
                 if (is_array($other[$day]) > 0)
                     $this->tasklist[$day]['other'] = $other[$day];
- //               $this->tasklistAll[] =  array('day' => $day, 'id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=>$obj->task_duration, 'note'=>$obj->note, 'invoiced' => $obj->invoiced);
+ //               $this->tasklistAll[] =  array('day' => $day, 'id'=>$obj->rowid, 'date'=>$dateCur, 'duration'=>$obj->element_duration, 'note'=>$obj->note, 'invoiced' => $obj->invoiced);
                 $i++;
             }
             $this->db->free($resql);
@@ -1152,9 +1149,9 @@ class TimesheetTask extends Task
         $this->db->begin();
         $error = 0;
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task AS pt ";
-        $sql .= "SET duration_effective = (SELECT SUM(ptt.task_duration) ";
-        $sql .= "FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt ";
-        $sql .= "WHERE ptt.fk_task = '".$this->id."') ";
+        $sql .= "SET duration_effective = (SELECT SUM(ptt.element_duration) ";
+        $sql .= "FROM ".MAIN_DB_PREFIX."element_time AS ptt ";
+        $sql .= "WHERE ptt.elementtype = 'task' and  ptt.fk_element = '".$this->id."') ";
         if (isset($this->progress) && $this->progress != '') $sql .= " , progress = '".$this->progress."'";
         $sql .= " WHERE pt.rowid = '".$this->id."' ";
         dol_syslog(__METHOD__, LOG_DEBUG);

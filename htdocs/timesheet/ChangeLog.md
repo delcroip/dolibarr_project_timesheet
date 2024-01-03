@@ -1,4 +1,8 @@
 # dolibarr_project_timesheet changelog
+5.0.0
+ - Support Dolibarr 18
+
+
 4.6.7
  - support chrono on PSQL
  - better chrono error management
