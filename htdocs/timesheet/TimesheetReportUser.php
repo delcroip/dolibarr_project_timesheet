@@ -59,9 +59,9 @@ $langs->loadLangs(
 //$toDatemonth = GETPOST('toDatemonth', 'int');
 //$toDateyear = GETPOST('toDateyear', 'int');
 $mode = GETPOST('mode', 'alpha');
-$short = GETPOST('short', 'int');
-$invoicedCol = GETPOST('invoicedcol', 'int');
-$ungroup = GETPOST('ungroup', 'int');
+// $short = GETPOST('short', 'int'); // duplicated, see above
+// $invoicedCol = GETPOST('invoicedcol', 'int');// duplicated, see above
+// $ungroup = GETPOST('ungroup', 'int');// duplicated, see above
 $model = GETPOST('model', 'alpha');
 if (empty($mode)){
     $mode = 'PTD';
@@ -69,6 +69,7 @@ if (empty($mode)){
     $invoicedCol = getConf('TIMESHEET_REPORT_INVOICED_COL');
 }
 $short = GETPOST('short', 'int');
+$short = !empty($short) ? 1 : 0; // necessary, make some display bugs in dolibarr >=18 php >=8
 $invoicedCol = GETPOST('invoicedcol', 'int');
 $ungroup = GETPOST('ungroup', 'int');
 $show_all = GETPOST('showAll', 'int');
