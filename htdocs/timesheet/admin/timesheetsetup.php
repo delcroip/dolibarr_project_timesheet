@@ -464,10 +464,20 @@ echo "</table><br>";
 
 print load_fiche_titre( $langs->trans("OpenDays"), '', '' );
 echo '<table class="noborder" width = "100%">';
-echo '<tr class="liste_titre" width = "100%" ><th>'.$langs->trans("Monday").'</th><th>';
-echo $langs->trans("Tuesday").'</th><th>'.$langs->trans("Wednesday").'</th><th>';
-echo $langs->trans("Thursday").'</th><th>'.$langs->trans("Friday").'</th><th>';
-echo $langs->trans("Saturday").'</th><th>'.$langs->trans("Sunday").'</th>';
+
+echo '<tr class="liste_titre" width = "100%" >';
+
+// Ordering of day names based on FIRST_DAY_OF_THE_WEEK, 
+// which is getConfig('MAIN_START_WEEK')
+
+$fdotw = (int) getConf('MAIN_START_WEEK');
+
+// Iterate 7 = NB of days in a week times
+$NB_OF_WEEK_DAYS = 7;
+for($i=0;$i<$NB_OF_WEEK_DAYS;$i++) {
+    echo '<th>'.$langs->trans(ucfirst($ARR_OF_DAY_NAMES_BY_ORDER[($fdotw+$i)%$NB_OF_WEEK_DAYS])).'</th>';
+}
+
 echo '<input type = "hidden" name = "opendays[0]" value="_">';
 echo "</tr><tr>";
 for ($i = 1; $i<8; $i++) {

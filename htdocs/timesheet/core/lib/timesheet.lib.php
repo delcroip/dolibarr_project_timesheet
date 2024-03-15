@@ -65,6 +65,13 @@ define('EVENT_AUTO_STOP', 4);
 // number of second in a day, used to make the code readable
 define('SECINDAY', 86400);
 
+// Day names for starting date calculation
+$ARR_OF_DAY_NAMES_BY_ORDER = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+// Get first day of week from Configuration > Display > Other : First day of the week 
+// from main Dolibarr configuration.    
+$fdotw = $ARR_OF_DAY_NAMES_BY_ORDER[getConf('MAIN_START_WEEK')]; // First day of the week from config
+if(empty($fdotw)) { $fdotw = 'monday'; } // Monday by default
+Define('FIRST_DAY_OF_THE_WEEK', $fdotw);
 
 // for display trads
 global $langs;
@@ -372,7 +379,8 @@ function getStartDate($datetime, $prevNext = 0)
    } elseif ($prevNext == -1) {
        $prefix = 'previous';
    }
- */
+ */    
+
     /**************************
      * calculate the start date form php date
      ***************************/
@@ -392,27 +400,27 @@ function getStartDate($datetime, $prevNext = 0)
                     //     $startDate = strtotime('first day of '.$prefix.' month midnight', $datetime);
         //     break;
             if ($prevNext == 1) {
-                $startDate = strtotime('monday next week midnight', $datetime);
+                $startDate = strtotime(FIRST_DAY_OF_THE_WEEK." next week midnight", $datetime);
             } elseif ($prevNext == 0) {
-                $startDate = strtotime('monday this week midnight', $datetime);
+                $startDate = strtotime(FIRST_DAY_OF_THE_WEEK." this week midnight", $datetime);
             } elseif ($prevNext == -1) {
-                $startDate = strtotime('monday previous week midnight', $datetime);
+                $startDate = strtotime(FIRST_DAY_OF_THE_WEEK." previous week midnight", $datetime);
             }
             break;
         case 'splitedWeek': //by week
         default:
             if ($prevNext == 1) {
                 $startDateMonth = strtotime('first day of next month  midnight', $datetime);
-                $startDateWeek = strtotime('monday next week midnight', $datetime);
+                $startDateWeek = strtotime(FIRST_DAY_OF_THE_WEEK." next week midnight", $datetime);
                 $startDate = MIN($startDateMonth, $startDateWeek);
             } elseif ($prevNext == 0) {
                 $startDateMonth = strtotime('first day of this month midnight', $datetime);
-                $startDateWeek = strtotime('monday this week  midnight', $datetime);
+                $startDateWeek = strtotime(FIRST_DAY_OF_THE_WEEK." this week  midnight", $datetime);
                 $startDate = MAX($startDateMonth, $startDateWeek);
             } elseif ($prevNext == -1) {
                 $startDateMonth = strtotime('first day of this month  midnight', $datetime);
-                $startDateWeek = strtotime('monday this week  midnight', $datetime);
-                $startDatePrevWeek = strtotime('monday previous week  midnight', $datetime);
+                $startDateWeek = strtotime(FIRST_DAY_OF_THE_WEEK." this week  midnight", $datetime);
+                $startDatePrevWeek = strtotime(FIRST_DAY_OF_THE_WEEK." previous week  midnight", $datetime);
                 if ($startDateMonth>$startDateWeek) {
                     $startDate = $startDateWeek;
                 } elseif ($startDateMonth == $startDateWeek){
@@ -444,7 +452,7 @@ function getEndDate($datetime)
             $endDate = strtotime('first day of next month midnight', $datetime);
             break;
         case 'week':
-            $endDate = strtotime('monday next week midnight', $datetime);
+            $endDate = strtotime(FIRST_DAY_OF_THE_WEEK." next week midnight", $datetime);
             break;
         case 'splitedWeek':
         default:
@@ -454,7 +462,7 @@ function getEndDate($datetime)
             if ($dayInMonth<$day+(7-$dayOfWeek)) {
                 $endDate = strtotime('first day of next month midnight', $datetime);
             } else{
-                $endDate = strtotime('monday next week midnight', $datetime);
+                $endDate = strtotime(FIRST_DAY_OF_THE_WEEK." next week midnight", $datetime);
             }
             break;
     }
@@ -664,7 +672,7 @@ function timesheet_report_prepare_head( $mode, $item_id , $hidetab=0) {
 		$item = "projectSelected=" . $item_id;;
 	}
 
-	$head[$h][0] = "?".$item."&reporttab=showthisweek&hidetab=".$hidetab."&startDate=".dol_print_date(strtotime("monday this week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard');
+	$head[$h][0] = "?".$item."&reporttab=showthisweek&hidetab=".$hidetab."&startDate=".dol_print_date(strtotime(FIRST_DAY_OF_THE_WEEK." this week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday this week"), 'dayxcard');
 	$head[$h][1] = $langs->trans('thisWeek');
 	$head[$h][2] = 'showthisweek';
 	$h++;
@@ -674,7 +682,7 @@ function timesheet_report_prepare_head( $mode, $item_id , $hidetab=0) {
 	$head[$h][2] = 'showthismonth';
 	$h++;
 
-	$head[$h][0] = "?".$item."&reporttab=showlastweek&hidetab=".$hidetab."&startDate=".dol_print_date(strtotime("monday last week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard');
+	$head[$h][0] = "?".$item."&reporttab=showlastweek&hidetab=".$hidetab."&startDate=".dol_print_date(strtotime(FIRST_DAY_OF_THE_WEEK." last week"), 'dayxcard')."&dateEnd=".dol_print_date(strtotime("sunday last week"), 'dayxcard');
 	$head[$h][1] = $langs->trans('lastWeek');
 	$head[$h][2] = 'showlastweek';
 	$h++;
