@@ -1187,8 +1187,8 @@ public function getHTMLNavigation($optioncss, $token, $ajax = false)
         $this->note = '';
         if ($test) {
             $this->userId = 1;
-            $this->date_start = srttotime('this monday', dol_time());
-            $this->date_end = srttotime('next monday', dol_time())-1;
+            $this->date_start = srttotime('this '.FIRST_DAY_OF_THE_WEEK, dol_time());
+            $this->date_end = srttotime('next '.FIRST_DAY_OF_THE_WEEK, dol_time())-1;
             $this->task = 1;
             $this->note = 'this is a test usertasktime';
         }
