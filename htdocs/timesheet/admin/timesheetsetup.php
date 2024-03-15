@@ -473,9 +473,10 @@ echo '<tr class="liste_titre" width = "100%" >';
 $fdotw = (int) getConf('MAIN_START_WEEK');
 
 // Iterate 7 = NB of days in a week times
-$NB_OF_WEEK_DAYS = 7;
-for($i=0;$i<$NB_OF_WEEK_DAYS;$i++) {
-    echo '<th>'.$langs->trans(ucfirst($ARR_OF_DAY_NAMES_BY_ORDER[($fdotw+$i)%$NB_OF_WEEK_DAYS])).'</th>';
+for($i=0;$i<NB_OF_DAYS_PER_WEEK;$i++) {
+    echo '<th>'.$langs->trans(
+        ucfirst($ARR_OF_DAY_NAMES_BY_ORDER[
+            ($fdotw+$i)%NB_OF_DAYS_PER_WEEK])).'</th>';
 }
 
 echo '<input type = "hidden" name = "opendays[0]" value="_">';
