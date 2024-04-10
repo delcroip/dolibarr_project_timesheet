@@ -818,6 +818,7 @@ public function getHTMLHeader($search = false)
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
     $html = '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
     $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
+    $html .= '<input type = "hidden" name = "token" value = "'.newToken().'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
     if ($search) {
         $html .= '<tr  id = "searchline">';
