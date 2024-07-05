@@ -818,6 +818,7 @@ public function getHTMLHeader($search = false)
     $format = ($langs->trans("FormatDateShort")!="FormatDateShort"?$langs->trans("FormatDateShort"):$conf->format_date_short);
     $html = '<input type = "hidden" name = "startDate" value = "'.$this->date_start.'" />';
     $html .= '<input type = "hidden" name = "tsUserId" value = "'.$this->id.'" />';
+    $html .= '<input type = "hidden" name = "token" value = "'.newToken().'" />';
     $html .= "\n<table id = \"timesheetTable_{$this->id}\" class = \"noborder\" width = \"100%\">\n";
     if ($search) {
         $html .= '<tr  id = "searchline">';
@@ -1187,8 +1188,8 @@ public function getHTMLNavigation($optioncss, $token, $ajax = false)
         $this->note = '';
         if ($test) {
             $this->userId = 1;
-            $this->date_start = srttotime('this monday', dol_time());
-            $this->date_end = srttotime('next monday', dol_time())-1;
+            $this->date_start = srttotime('this '.FIRST_DAY_OF_THE_WEEK, dol_time());
+            $this->date_end = srttotime('next '.FIRST_DAY_OF_THE_WEEK, dol_time())-1;
             $this->task = 1;
             $this->note = 'this is a test usertasktime';
         }
