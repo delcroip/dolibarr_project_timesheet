@@ -131,7 +131,7 @@ class TimesheetPublicHolidays extends CommonObject implements 	Serializable
             $sql .= ')';
         }else{
             $sql = 'SELECT code, dayrule, year, month, day  FROM '.MAIN_DB_PREFIX.'c_hrm_public_holiday';
-            $sql .= ' WHERE (fk_country=0 or fk_country='.$this->userCountryId;
+            $sql .= ' WHERE (fk_country=0 or fk_country='.($this->userCountryId ?? 0);
             $sql .= ') AND active=1';
             // if year is not 0
             $sql .= ' AND (( year != 0 AND STR_TO_DATE';
