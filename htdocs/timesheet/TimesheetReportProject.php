@@ -85,6 +85,11 @@ $dateEndmonth = GETPOST('dateEndmonth', 'int');
 $dateEndyear = GETPOST('dateEndyear', 'int');
 $hidetab = GETPOST('hidetab', 'int');
 $reporttab = GETPOST('reporttab', 'alpha');
+$pjt_status = GETPOST('status', 'int');
+if($pjt_status == ''){
+    $pjt_status = 1;
+}
+$ref = GETPOST('ref', 'alpha');
 $dateEnd = parseDate($dateEndday, $dateEndmonth, $dateEndyear, $dateEnd);
 $invoicabletaskOnly = GETPOST('invoicabletaskOnly', 'int');
 if (empty($dateStart) || empty($dateEnd) || empty($projectSelectedId)) {
@@ -99,10 +104,10 @@ if (!$admin) {
     $sql .= ' JOIN '.MAIN_DB_PREFIX.'element_contact AS ec ON pjt.rowid = element_id ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON ctc.rowid = ec.fk_c_type_contact';
     $sql .= ' WHERE (ctc.element in (\'project\') AND (ctc.code LIKE \'%LEADER%\' OR  ctc.code LIKE \'%BILLING%\')) AND ctc.active = \'1\'  ';
-    $sql .= ' AND fk_socpeople = \''.$userid.'\' and fk_statut = \'1\'';
+    $sql .= ' AND fk_socpeople = \''.$userid.'\' and fk_statut = \''.($pjt_status).'\'';
     $sql .= " AND pjt.entity IN (".getEntity('projet').")";
 } else{
-    $sql .= ' WHERE fk_statut = \'1\' ';
+    $sql .= ' WHERE fk_statut = \''.($pjt_status).'\'';
     $sql .= " AND pjt.entity IN (".getEntity('projet').")";
 }
 dol_syslog('timesheet::report::projectList ', LOG_DEBUG);
@@ -127,9 +132,11 @@ if ($resql) {
 } else {
     dol_print_error($db);
 }
+
+
 $projectIdlist = array();
 $reportName = $langs->trans('ReportProject');
-if ($projectSelectedId<>-999){
+if ( array_key_exists($projectSelectedId, $projectList) ){
     $projectIdlist[]=$projectSelectedId;
     $reportName = $projectList[$projectSelectedId]['label'];
 } else {
@@ -137,7 +144,7 @@ if ($projectSelectedId<>-999){
 }
 $reportStatic = new TimesheetReport($db);
 $reportStatic->initBasic($projectIdlist, '', $reportName, $dateStart, $dateEnd, $mode, $invoicabletaskOnly,$short,$invoicedCol,$ungroup);
-if ($action == 'getpdf') {
+if ($action == 'getpdf' and count($projectIdlist)>0) {
     $pdf = new pdf_rat($db);
     //$outputlangs = $langs;
     if ($pdf->writeFile($reportStatic, $langs)>0) {
@@ -190,7 +197,7 @@ if ($projectSelectedId > 0 || !empty($ref))
 	// Title
 	$morehtmlref .= $project->title;
 	// Thirdparty
-	if ($project->thirdparty->id > 0)
+	if ($project->thirdparty != null && $project->thirdparty->id > 0)
 	{
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
 	}
@@ -289,8 +296,7 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
  //submit
  $model = getConf('TIMESHEET_EXPORT_FORMAT');
  $form_output .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
-if (!empty($querryRes) && ($user->rights->facture->creer
-    || version_compare(DOL_VERSION, "3.7") <= 0))
+if (!empty($querryRes) && $user->rights != null && $user->rights->facture != null  && $user->rights->facture->creer)
         $form_output .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&startDate='
             .dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='
             .$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard')

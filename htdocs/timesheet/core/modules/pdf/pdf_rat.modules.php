@@ -149,10 +149,18 @@ public function writeFile($object, $outputlangs)
             $tasktimearray = $object->getReportArray(!($object->ungroup == 1));
             $TotalLines = array();
             $userTaskArray = array();
+
             //order data per project/user id and calc total per user
             foreach ($tasktimearray as $line) {
                 $projectid = $line['projectId'];
+                if (!array_key_exists($projectid, $TotalLines)){
+                    $TotalLines[$projectid] = array('Total'=> 0 );
+                }
+                if (!array_key_exists($line['userId'], $userTaskArray[$projectid])) {
+                    $TotalLines[$projectid][$line['userId']]  = 0;
+                }
                 $userTaskArray[$projectid][$line['userId']]['lines'][] = $line;
+
                 $TotalLines[$projectid][$line['userId']] += $line['duration'];
                 $TotalLines[$projectid]['Total'] += $line['duration'];
             }
@@ -506,7 +514,7 @@ public function pageHead(&$pdf, $object, $showaddress, $outputlangs, $projectid,
         $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
         if ($showaddress == true){   
             $pdf->MultiCell(100, $pdf->GetY() + 1, $outputlangs->transnoentities($mysoc->address), 0, 'L');
-            $pdf->MultiCell(100, $$pdf->GetY() + 1, $outputlangs->transnoentities($mysoc->zip.' - '.$mysoc->town), 0, 'L');
+            $pdf->MultiCell(100, $pdf->GetY() + 1, $outputlangs->transnoentities($mysoc->zip.' - '.$mysoc->town), 0, 'L');
         }
         $posy_l =  $pdf->GetY() + 1 ;
     }

@@ -26,18 +26,14 @@ $currentTimesheetPath = dirname(__FILE__);
 if (! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
     include $currentTimesheetPath.'/dev.inc.php';
 }
-//if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-if (! $res && file_exists($currentTimesheetPath."/../../../main.inc.php")) {
-    $res = @include $currentTimesheetPath.'/../../../main.inc.php';// in HTdocs
-    //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../../");
-}
-if (! $res && file_exists($currentTimesheetPath."/../../../../main.inc.php")) {
-    $res = @include $currentTimesheetPath.'/../../../../main.inc.php';//in custom
-    //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../../../");
-}
-if (! $res && file_exists($currentTimesheetPath."/../../../../../main.inc.php")) {
-    $res = @include $currentTimesheetPath.'/../../../../../main.inc.php';//in custom
-    //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($currentTimesheetPath."/../../");
+$maxDepth = 6;
+for ($i = 3; $i <= $maxDepth && !$res; $i++) {
+    $dirPath = $currentTimesheetPath . str_repeat("/..", $i) . "/";
+    $filePath = $dirPath . "main.inc.php";
+    if (! $res && file_exists($filePath)) {
+        $res = @include $filePath;
+        //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($dirPath);
+    }
 }
 if (! $res) die("Include of main fails") ;
 
