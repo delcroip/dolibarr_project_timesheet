@@ -10,7 +10,7 @@ Module to increase time registration efficiency for Dolibarr, well suited for co
 DON'T use GITHUB version on dolibarr, there is files that shoudn't be in PROD, also it keep changing (it's a dev respo) and it might not work at all.
 
 ## Useful links
-* Manual (English): https://cloud.pmpd.eu/index.php/s/MArFKsQxCcTGxKM
+* Manual (English): https://readthedocs.org/projects/dolibarr-timesheet
 * DoliStore: https://www.dolistore.com/fr/gestion-produits-ou-services/419-Feuille-de-temps.html
 * Free download: https://sourceforge.net/projects/dolibarr-timesheet
 * Github: https://github.com/delcroip/dolibarr_project_timesheet
