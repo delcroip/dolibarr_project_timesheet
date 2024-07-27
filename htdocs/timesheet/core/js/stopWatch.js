@@ -179,8 +179,8 @@ class Stopwatch {
             this.event.event_location_ref="Browser:"+window.navigator.userAgent.replace(/\D+/g, '');
             this.event.userid=this.userid;
 
-            return 'json='+JSON.stringify(this.event) + "\ntoken=" + document.getElementById('csrf-token').value;
-        }else return 'token='+this.csrf_token
+            return  'json='+JSON.stringify(this.event);
+        }
     }
     //sent a POST request to create a stop event
     stop() {

@@ -532,7 +532,7 @@ $langs->load('timesheet@timesheet');
     //cust list
             $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Customer')
                 .'</th><th  align = "left">'.$form->select_company($socid, 'socid', 
-                    '(s.client = 1 OR s.client = 2 OR s.client = 3)', 1).'</th></tr>';
+                    '((s.client:IN:1,2,3) AND (status:=:1))', 1).'</th></tr>';
     //propal
    
         if (getConf('MAIN_MODULE_PROPALE')){
@@ -642,7 +642,7 @@ $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $project->title;
 // Thirdparty
-if ($project->thirdparty->id > 0)
+if ($project->thirdparty > 0 && $project->thirdparty->id > 0)
 {
     $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
 }
