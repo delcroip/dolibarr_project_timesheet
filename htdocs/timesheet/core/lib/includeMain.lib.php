@@ -28,7 +28,7 @@ if (! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
 }
 
 $root = dirname($_SERVER["DOCUMENT_ROOT"]);
-$filePath = $root . "/html/main.inc.php";
+$filePath = $root . "/htdocs/main.inc.php";
 if (! $res && file_exists($filePath)) {
     $res = @include $filePath;
 } else {
