@@ -233,18 +233,18 @@ class TimesheetReport
         global $conf;
         $resArray = array();
         $first = true;
-
+        $INVOICABLE_SQL= version_compare(DOL_VERSION, 21, '>=') ? 't.billable' : 'tske.invoiceable';
         $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.rowid as taskid, ';
         $sql .= ' (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced,';
         if ($forceGroup == 1){
             if ($this->db->type!='pgsql') {
-                $sql .= " MAX(ptt.rowid) as id, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX(tske.invoiceable) as invoicable, ";
+                $sql .= " MAX(ptt.rowid) as id, GROUP_CONCAT(ptt.note SEPARATOR '. ') as note, MAX($INVOICABLE_SQL) as invoicable, ";
             } else {
-                $sql .= " MAX(ptt.rowid) as id, STRING_AGG(ptt.note, '. ') as note, MAX(tske.invoiceable) as invoicable, ";
+                $sql .= " MAX(ptt.rowid) as id, STRING_AGG(ptt.note, '. ') as note, MAX($INVOICABLE_SQL) as invoicable, ";
             }
             $sql .= ' DATE(ptt.element_datehour) AS element_date, SUM(ptt.element_duration) as duration ';
         }else{
-            $sql .= " ptt.rowid as id, ptt.note  as note, tske.invoiceable as invoicable, ";
+            $sql .= " ptt.rowid as id, ptt.note  as note, $INVOICABLE_SQL as invoicable, ";
             $sql .= ' DATE(ptt.element_datehour) AS element_date, ptt.element_duration as duration ';
         } 
         $sql .= ' FROM '.MAIN_DB_PREFIX.'element_time as ptt ';
