@@ -48,11 +48,30 @@ class TimesheetHoliday extends Holiday implements 	Serializable
      */
     public function fetchUserWeek($userId, $datestart, $datestop)
     {
+        global $mysoc, $db;
         $SQLfilter = " AND (cp.date_fin >= '".$this->db->idate($datestart)."') ";
         $SQLfilter .= " AND (cp.date_debut<'".$this->db->idate($datestop)."')";
         $ret = $this->fetchByUser($userId, '', $SQLfilter);
         $this->holidayPresent = ($ret == 1);
         $this->holidaylist = array();
+        // get the holiday label
+        $holyday_type_sql = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
+        $resql = $db->query($holyday_type_sql);
+        if (!$resql) {
+          dol_print_error($db);
+          exit;
+        }
+        $num = $db->num_rows($resql);
+        $i = 0;
+        $holiday_type = array();
+        while($i < $num)
+        { 
+            $error = 0;
+            $obj = $this->db->fetch_object($resql);
+            $holiday_type[$obj->rowid] = $obj->label; 
+            $i++;
+        }
+        
         //fixme fill the holiday list
         /*
          * id       --> id of the holiday task if any
@@ -108,12 +127,15 @@ class TimesheetHoliday extends Holiday implements 	Serializable
                          $this->holidaylist[$day]['amId'] = $record['rowid'];
                          $this->holidaylist[$day]['prev'] = $prev;
                          $this->holidaylist[$day]['amStatus'] = $record['statut'];
+                         $this->holidaylist[$day]['amLabel'] = $holiday_type[$record['fk_type']];
+
                      }
                      if ($pm && $pmOverride) {
                          $this->holidaylist[$day]['pm'] = true;
                          $this->holidaylist[$day]['pmId'] = $record['rowid'];
                          $this->holidaylist[$day]['next'] = $next;
                          $this->holidaylist[$day]['pmStatus'] = $record['statut'];
+                         $this->holidaylist[$day]['pmLabel'] = $holiday_type[$record['fk_type']];
                      }
                      //$this->holidaylist[$dayOfWeek] = array('idam'=>$record['rowid'], 'idpm'=>$record['rowid'], 'prev'=>$prev, 'am'=>$am, 'pm'=>$pm, 'next'=>$next, 'status'=>$record['statut']);
                     }
@@ -162,7 +184,7 @@ class TimesheetHoliday extends Holiday implements 	Serializable
                 $amColor = ($am?'background-color:#'.$statusColor[$holiday['amStatus']].'':'');
                 $amClass = ($holiday['prev'])?'':' noPrevHoliday';
                 $amClass .= ($pm && $pmId == $amId)?'':' noNextHoliday';
-                $html .= ' class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
+                $html .= ' title = "'.$holiday['amLabel'].'" class = "holiday'.$amClass.'" style = "'.$amColor.'">&nbsp;</a></li>';
             } else {
                 $html .= ' class = "holiday" >&nbsp;</a></li>';
             }
@@ -172,7 +194,7 @@ class TimesheetHoliday extends Holiday implements 	Serializable
                 $pmColor = ($pm?'background-color:#'.$statusColor[$holiday['pmStatus']].'':'');
                 $pmClass = ($am && $pmId == $amId)?'':' noPrevHoliday';
                 $pmClass .= ($holiday['next'])?'':' noNextHoliday';
-                $html .= ' class = "holiday'.$pmClass.'" style = "'.$pmColor.'">&nbsp;</a></li>';
+                $html .= ' title = "'.$holiday['amLabel'].'" class = "holiday'.$pmClass.'" style = "'.$pmColor.'">&nbsp;</a></li>';
             } else {
                 $html .= ' class = "holiday" >&nbsp;</a></li>';
             }
