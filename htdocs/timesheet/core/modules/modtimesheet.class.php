@@ -55,7 +55,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 
-                $this->version = '5.0.2';
+                $this->version = '5.0.3';
 
 
 
@@ -101,7 +101,7 @@ class modTimesheet extends DolibarrModules
                 $this->requiredby = array();        // List of modules id to disable if this one is disabled
                 $this->conflictwith = array();        // List of modules id this module is in conflict with
                 $this->phpmin = array(5, 0);                                        // Minimum version of PHP required by module
-                $this->need_dolibarr_version = array(18, 0);        // Minimum version of Dolibarr required by module
+                $this->need_dolibarr_version = array(20, 0);        // Minimum version of Dolibarr required by module
                 $this->langfiles = array("timesheet@timesheet");
                 // Constants
                 // List of particular constants to add when module is enabled(key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -372,25 +372,27 @@ class modTimesheet extends DolibarrModules
                 $this->menu[$r]=array('fk_menu' => 0, // Put 0 if this is a top menu
                         'type' => 'top',                                        // This is a Top menu entry
                         'titre' => 'Timesheet',
+                        'picto' => 'timesheet@timesheet',
                         'mainmenu' => 'timesheet',
                         'leftmenu' => 'timesheet',
                         'url' => '/timesheet/Timesheet.php',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 100,
-                        'enabled' => '$conf->timesheet->enabled && !($user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE==1)',        // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled.
-                        'perms' => '$user->rights->timesheet->timesheet->user || $user->rights->timesheet->timesheet->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'enabled' =>'( get$user->rights->timesheet->->user || $user->rights->timesheet->timesheet->admin) && ($conf->global->TIMESHEET_ATTENDANCE!=1)',        // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled.
+                        'perms' => '$user->rights->timesheet->->user || $user->rights->timesheet->timesheet->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);                                                // 0=Menu for internal users, 1=external users, 2=both
                 $r++;
                 $this->menu[$r]=array('fk_menu' => 0,                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
                         'type' => 'top',                                // This is a Left menu entry
                         'titre' => 'Attendance',
-                        'mainmenu' => 'timesheet',
+                        'mainmenu' => 'attendance',
                         'leftmenu' => 'attendance',
+                        'picto' => 'timesheet@timesheet',
                         'url' => '/timesheet/AttendanceClock.php',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 100,
-                        'enabled' => '$conf->timesheet->enabled && $user->rights->timesheet->attendance->user && $conf->global->TIMESHEET_ATTENDANCE==1',
+                        'enabled' => '($user->rights->timesheet->attendance->admin || $user->rights->timesheet->attendance->user)',
                         'perms' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
@@ -408,28 +410,28 @@ class modTimesheet extends DolibarrModules
                         'target' => '',
                         'user' => 2);                                                // 0=Menu for internal users, 1=external users, 2=both
                 $r++;
-                $this->menu[$r]=array('fk_menu' => 'fk_mainmenu=timesheet',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                $this->menu[$r]=array('fk_menu' => 'fk_mainmenu=attendance',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
                         'type' => 'left',                                        // This is a Left menu entry
                         'titre' => 'Attendance',
-                        'mainmenu' => 'timesheet',
+                        'mainmenu' => 'attendance',
                         'leftmenu' => 'attendance',
                         'url' => '/timesheet/AttendanceClock.php?#',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 200,
-                        'enabled' => '$conf->global->TIMESHEET_ATTENDANCE==1',
+                        'enabled' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin', 
                         'perms' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
                 $r++;
-                $this->menu[$r]=array('fk_menu' => 'fk_mainmenu=timesheet,fk_leftmenu=attendance',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                $this->menu[$r]=array('fk_menu' => 'fk_mainmenu=attendance,fk_leftmenu=attendance',                    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx, fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
                         'type' => 'left',                                        // This is a Left menu entry
                         'titre' => 'AttendanceAdmin',
-                        'mainmenu' => 'timesheet',
+                        'mainmenu' => 'attendance',
                         'leftmenu' => 'Attendance',
                         'url' => '/timesheet/AttendanceEventAdmin.php',
-                        'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
+                        'langs' => 'attendance@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 210,
-                        'enabled' => '$conf->global->TIMESHEET_ATTENDANCE',
+                        'enabled' => '$user->rights->timesheet->attendance->admin',
                         'perms' => '$user->rights->timesheet->attendance->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
@@ -442,7 +444,7 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/TimesheetReportUser.php',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 130,
-                        'enabled' => '$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'enabled' => '$user->rights->timesheet->report->admin || $user->rights->timesheet->report->user', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                         'perms' => '$user->rights->timesheet->report->admin || $user->rights->timesheet->report->user',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
@@ -469,7 +471,7 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/TimesheetReportProject.php?hidetab=1',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 120,
-                        'enabled' => '$conf->timesheet->enabled', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
+                        'enabled' => '$user->rights->timesheet->report->admin || $user->rights->timesheet->report->project', // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled. Use '$leftmenu == \'system\'' to show if leftmenu system is selected.
                         'perms' => '$user->rights->timesheet->report->admin || $user->rights->timesheet->report->project',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
