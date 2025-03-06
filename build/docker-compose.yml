@@ -10,6 +10,8 @@ services:
       DOLI_DB_USER: ${DOLI_DB_USER}
       DOLI_DB_PASSWORD: ${DOLI_DB_PASSWORD}
       DOLI_DB_NAME: ${DOLI_DB_NAME}
+      DOLI_PROD: ${DOLI_PROD}
+
       DOLI_INSTALL_AUTO: 1
       #DOLI_ADMIN_LOGIN: admin 
       #DOLI_ADMIN_PASSWORD: admin
@@ -32,6 +34,7 @@ services:
       DOLI_DB_USER: ${DOLI_DB_USER}
       DOLI_DB_PASSWORD: ${DOLI_DB_PASSWORD}
       DOLI_DB_NAME: ${DOLI_DB_NAME}
+      DOLI_PROD: ${DOLI_PROD}
       DOLI_INSTALL_AUTO: 1
       #DOLI_ADMIN_LOGIN: admin 
       #DOLI_ADMIN_PASSWORD: admin

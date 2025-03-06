@@ -187,7 +187,6 @@ public $date_time_event_start;
         }
         $sql .= "' ORDER BY date_time_event DESC" ;
         $this->db->plimit(1, 0);
-        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql && $this->db->num_rows($resql)) {
             $obj = $this->db->fetch_object($resql);
@@ -972,7 +971,7 @@ public function serialize($mode = 0)
         // automatic unserialisation based on match between property name and key value
         foreach ($array as $key => $value) {
             if (property_exists($this, $key)) {
-                $this->{$key} = $value;
+                $this->$key = $value;
             }
         }
     }
@@ -1009,8 +1008,7 @@ public function serialize($mode = 0)
      *  @param int $selected rowid to be preselected
      *  @return string HTML select list
      */
-
-    Public function sellist($htmlname = '', $selected = ''){
+    public function sellist($htmlname = '', $selected = ''){
         $sql = array('table' => $this->table_element , 'keyfield' => 't.rowid',
             'fields' => $this->getLabel('sql'), 'join' =>  $this->getLabel('join'),
             'where' => '', 'tail' => '');

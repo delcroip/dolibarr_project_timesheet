@@ -55,7 +55,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 
-                $this->version = '5.0.0';
+                $this->version = '5.0.4';
 
 
 
@@ -559,13 +559,22 @@ class modTimesheet extends DolibarrModules
             include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
             // add the "Default server" select list to the user
-            $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'user', 0, 0, '', array('options' => array("product:ref|label:rowid::tosell='1' AND fk_product_type='1'" => 'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+            $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'user', 0, 0, '', array('options' => array("product:ref|label:rowid::((tosell:=:'1') AND (fk_product_type:=:'1'))" => 'N')), 1, 1, 3, 0, '', 0, 'timesheet@timesheet', '$conf->timesheet->enabled');
             // add the "Default server" select list to the task
-            $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'projet_task', 0, 0, '', array('options' => array("product:ref|label:rowid::tosell='1' AND fk_product_type='1'" => 'N')), 1, 1, 3, 0, '', 0, 'timesheet@ptimesheet', '$conf->timesheet->enabled');
+            $extrafields->addExtraField('fk_service', "DefaultService", 'sellist', 1, '', 'projet_task', 0, 0, '', array('options' => array("product:ref|label:rowid::((tosell:=:'1') AND (fk_product_type:=:'1'))" => 'N')), 1, 1, 3, 0, '', 0, 'timesheet@timesheet', '$conf->timesheet->enabled');
             // allow ext id of 32 char
-           // $extrafields->addExtraField('external_id', "ExternalId", 'varchar', 100, 32, 'user', 1, 0, '', '', 1, '$user->rights->timesheet->AttendanceAdmin', 3, 'specify the id of the external system', '', 0, 'timesheet@ptimesheet', '$conf->global->ATTENDANCE_EXT_SYSTEM');
+            // $extrafields->addExtraField('external_id', "ExternalId", 'varchar', 100, 32, 'user', 1, 0, '', '', 1, '$user->rights->timesheet->AttendanceAdmin', 3, 'specify the id of the external system', '', 0, 'timesheet@ptimesheet', '$conf->global->ATTENDANCE_EXT_SYSTEM');
             // add the "invoicable" bool to the task
-            $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean', 1, '', 'projet_task', 0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@timesheet', '$conf->timesheet->enabled');
+            if (version_compare(DOL_VERSION, 21, '<')) {
+                // Dolibarr Version < 21
+                $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean', 1, '', 'projet_task', 0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@timesheet', '$conf->timesheet->enabled');
+            } else {
+                // Dolibarr Version >= 21
+                // A. Extrafield invoiceable is migrated to task->billable attribute
+                $sql[3] = "UPDATE ".MAIN_DB_PREFIX."projet_task pt,".MAIN_DB_PREFIX."projet_task_extrafields pte SET pt.billable = 1 WHERE pte.invoiceable = 1 AND pt.rowid = pte.fk_object";
+                // B. Extrafield is disabled (but not deleted)
+                $sql[4] = "UPDATE ".MAIN_DB_PREFIX."extrafields SET enabled = 'false' WHERE name='invoiceable'";
+            }
             return $this->_init($sql, $options);
         }
         /**
@@ -578,7 +587,6 @@ class modTimesheet extends DolibarrModules
          */
         public function remove($options = '')
         {
-
                 $sql = array();
                 return $this->_remove($sql, $options);
         }

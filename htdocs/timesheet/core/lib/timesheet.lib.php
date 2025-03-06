@@ -71,7 +71,7 @@ define('NB_OF_DAYS_PER_WEEK', 7);
 $ARR_OF_DAY_NAMES_BY_ORDER = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
 // Get first day of week from Configuration > Display > Other : First day of the week 
 // from main Dolibarr configuration.    
-$fdotw = $ARR_OF_DAY_NAMES_BY_ORDER[getConf('MAIN_START_WEEK')]; // First day of the week from config
+$fdotw = $ARR_OF_DAY_NAMES_BY_ORDER[getConf('MAIN_START_WEEK',1)]; // First day of the week from config
 if(empty($fdotw)) { $fdotw = 'monday'; } // Monday by default
 Define('FIRST_DAY_OF_THE_WEEK', $fdotw);
 $lastday_index = (int) getConf('MAIN_START_WEEK')==0?NB_OF_DAYS_PER_WEEK-1:getConf('MAIN_START_WEEK')-1;

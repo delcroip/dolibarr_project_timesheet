@@ -26,13 +26,21 @@ $currentTimesheetPath = dirname(__FILE__);
 if (! $res && file_exists($currentTimesheetPath."/dev.inc.php")) {
     include $currentTimesheetPath.'/dev.inc.php';
 }
-$maxDepth = 6;
-for ($i = 3; $i <= $maxDepth && !$res; $i++) {
-    $dirPath = $currentTimesheetPath . str_repeat("/..", $i) . "/";
-    $filePath = $dirPath . "main.inc.php";
-    if (! $res && file_exists($filePath)) {
-        $res = @include $filePath;
-        //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($dirPath);
+
+$root = dirname($_SERVER["DOCUMENT_ROOT"]);
+$filePath = $root . "/html/main.inc.php";
+if (! $res && file_exists($filePath)) {
+    $res = @include $filePath;
+} else {
+    $maxDepth = 6;
+    for ($i = 3; $i <= $maxDepth && !$res; $i++) {
+        $dirPath = $currentTimesheetPath . str_repeat("/..", $i) . "/";
+        $filePath = $dirPath . "main.inc.php";
+        if (! $res && file_exists($filePath)) {
+            $res = @include $filePath;
+            break;
+            //$_SERVER["CONTEXT_DOCUMENT_ROOT"] = realpath($dirPath);
+        }
     }
 }
 if (! $res) die("Include of main fails") ;

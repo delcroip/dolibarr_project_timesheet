@@ -1,4 +1,17 @@
 # dolibarr_project_timesheet changelog
+5.0.2
+ - fix: reports errors
+ - fix: monday as default start day
+
+5.0.1
+ - fix: holidaz without country seleted
+ - feat: week start alligned with core config
+ - fix: CSRF token issues
+ - fix: reports
+ - fix: note not displayed with PHP 8.1
+ - fix: include main.inc.php when installed outside htdocs
+
+
 5.0.0
  - Support Dolibarr 18
 
