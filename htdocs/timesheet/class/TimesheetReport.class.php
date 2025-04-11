@@ -233,7 +233,7 @@ class TimesheetReport
         global $conf;
         $resArray = array();
         $first = true;
-        $INVOICABLE_SQL= version_compare(DOL_VERSION, 21, '>=') ? 't.billable' : 'tske.invoiceable';
+        $INVOICABLE_SQL= version_compare(DOL_VERSION, 21, '>=') ? 'tsk.billable' : 'tske.invoiceable';
         $sql = 'SELECT tsk.fk_projet as projectid, ptt.fk_user  as userid, tsk.rowid as taskid, ';
         $sql .= ' (ptt.invoice_id > 0 or ptt.invoice_line_id>0)  AS invoiced,';
         if ($forceGroup == 1){
