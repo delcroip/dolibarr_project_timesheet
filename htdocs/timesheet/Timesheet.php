@@ -111,11 +111,18 @@ if ($user->societe_id > 0) {
 }
 */
 $task_timesheet = new TimesheetUserTasks($db, $userid);
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('timesheet_timesheet'));
 /*******************************************************************
 * ACTIONS
 *
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
+$parameters = array('userid'=>$postUserId);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $task_timesheet, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 $status = '';
 $update = false;
 switch($action) {
@@ -254,6 +261,7 @@ $Form .= 'updateAll('.getConf('TIMESHEET_HIDE_ZEROS').');closeNotes();';
 $Form .= "\n\t".'</script>'."\n";
 // $Form .= '</div>';//TimesheetPage
 print $Form;
+$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $task_timesheet, $action); // Note that $action and $object may have been modified by some hooks
 //add attachement
 if (getConf('TIMESHEET_ADD_DOCS') == 1) {
         $object = $task_timesheet;
