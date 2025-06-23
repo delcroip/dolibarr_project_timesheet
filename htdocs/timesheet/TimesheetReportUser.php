@@ -150,6 +150,7 @@ if ($action == 'getpdf') {
     exit();
 }
 
+$hookmanager->initHooks(array('timesheet_reportuser'));
 
 llxHeader('', $langs->trans('userReport'), '');
 
@@ -235,6 +236,10 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
 
 
 $form_output  .= '<div class="tabsAction"><div class="center">';
+$parameters = array('userIdList' => $userIdlist, 'dateStart' => $dateStart, 'dateEnd' => $dateEnd);
+// Note that $action and $object may be modified by hook
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $reportStatic, $action);
+if (!empty($hookmanager->resPrint)) $form_output  .= $hookmanager->resPrint;
 $form_output  .= '<input class="butAction" type="submit" value="' . $langs->trans( 'getReport' ) . '">';
 $model = getConf('TIMESHEET_EXPORT_FORMAT');
 //if(!empty($querryRes))$form_output .= '<a class = "butAction" href="?action=getpdf&startDate='.dol_print_date($dateStart, 'dayxcard').'&dateEnd='.dol_print_date($dateEnd, 'dayxcard').'&projectSelected='.$projectSelectedId.'&mode=DTU&invoicabletaskOnly='.$invoicabletaskOnly.'" >'.$langs->trans('TimesheetPDF').'</a>';

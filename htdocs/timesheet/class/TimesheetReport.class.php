@@ -265,11 +265,11 @@ class TimesheetReport
         if ($this->invoiceableOnly == 1) {
             $sql .= ($first?'':'AND ').'tske.invoiceable = \'1\'';
         }
-
+        $sql .= ' AND tsk.entity = '. (int) getEntity('project',0). ' ';
         $sql .= ($first?'':'AND ').' DATE(element_datehour) >= \''.$this->db->idate($this->startDate).'\'';
         $sql .= ' AND DATE(element_datehour) <= \''.$this->db->idate($this->stopDate).'\'';
         $sql .= ' AND (ptt.element_duration > 0 or LENGTH(ptt.note)>0)';
-        if ($forceGroup == 1)$sql .= ' GROUP BY ptt.fk_user,  tsk.fk_projet, tsk.rowid, DATE(ptt.element_datehour), (ptt.invoice_id > 0 or ptt.invoice_line_id>0)';
+        if ($forceGroup == 1) $sql .= ' GROUP BY ptt.fk_user,  tsk.fk_projet, tsk.rowid, DATE(ptt.element_datehour), (ptt.invoice_id > 0 or ptt.invoice_line_id>0)';
         $sql .= $this->modeSQLOrder;
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql = $this->db->query($sql);
