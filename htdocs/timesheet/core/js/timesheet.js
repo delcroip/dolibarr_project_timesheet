@@ -636,7 +636,9 @@ function closeNotes(){
         modalbox.style.display = "none";
         var icon = (modalbox.firstChild.lastChild.value.length>0)?"file":"filenew";
         var imgnote = document.getElementById("img_"+modalbox.id);
-        imgnote.src = imgnote.src.replace(patt,"$'"+icon+".png");
+        if (imgnote && typeof imgnote.src === 'string') {
+            imgnote.src = imgnote.src.replace(patt,"$'"+icon+".png");
+        }
     };
 }
 
