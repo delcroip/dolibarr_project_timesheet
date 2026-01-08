@@ -70,7 +70,7 @@ if (empty($dateStart) || empty($dateEnd) ||$dateStart == $dateEnd) {
     $dateStart = strtotime("first day of previous month", time());
     $dateEnd = strtotime("last day of previous month", time());
 }
- $langs->load("main");
+$langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
 //steps
@@ -81,7 +81,7 @@ $langs->load('timesheet@timesheet');
             if ($db->type!='pgsql') {
                 $sql .= " GROUP_CONCAT(tt.rowid  SEPARATOR ', ') as task_time_list";
             } else{
-                $sql .= " STRING_AGG(to_char(tt.rowid, '9999999999999999'), ', ') as task_time_list";
+                $sql .= " STRING_AGG(tt.rowid::TEXT, ', ') as task_time_list";
             }
             $sql .= ' From '.MAIN_DB_PREFIX.'element_time as tt';
             $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_element = t.rowid';
