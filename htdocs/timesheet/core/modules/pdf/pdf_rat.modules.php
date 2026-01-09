@@ -156,6 +156,9 @@ public function writeFile($object, $outputlangs)
                 if (!array_key_exists($projectid, $TotalLines)){
                     $TotalLines[$projectid] = array('Total'=> 0 );
                 }
+                if (!isset($userTaskArray[$projectid]) || !is_array($userTaskArray[$projectid])) {
+                    $userTaskArray[$projectid] = array();
+                }
                 if (!array_key_exists($line['userId'], $userTaskArray[$projectid])) {
                     $TotalLines[$projectid][$line['userId']]  = 0;
                 }

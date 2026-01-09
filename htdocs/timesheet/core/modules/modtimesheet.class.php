@@ -55,7 +55,7 @@ class modTimesheet extends DolibarrModules
 		        $this->editor_url = 'https://github.com/delcroip';
                 // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 
-                $this->version = '5.0.4';
+                $this->version = '5.0.1';
 
 
 
@@ -572,10 +572,26 @@ class modTimesheet extends DolibarrModules
                 $extrafields->addExtraField('invoiceable', "Invoiceable", 'boolean', 1, '', 'projet_task', 0, 0, '', '', 1, 1, 1, 0, '', 0, 'timesheet@timesheet', '$conf->timesheet->enabled');
             } else {
                 // Dolibarr Version >= 21
-                // A. Extrafield invoiceable is migrated to task->billable attribute
-                $sql[3] = "UPDATE ".MAIN_DB_PREFIX."projet_task pt,".MAIN_DB_PREFIX."projet_task_extrafields pte SET pt.billable = 1 WHERE pte.invoiceable = 1 AND pt.rowid = pte.fk_object";
-                // B. Extrafield is disabled (but not deleted)
-                $sql[4] = "UPDATE ".MAIN_DB_PREFIX."extrafields SET enabled = 'false' WHERE name='invoiceable'";
+                // Check if invoiceable column exists before migration
+                $columnExists = false;
+                if ($db->type=='pgsql') {
+                    $result = $db->query("SELECT 1 FROM information_schema.columns WHERE table_name = '".MAIN_DB_PREFIX."projet_task_extrafields' AND column_name = 'invoiceable'");
+                    $columnExists = ($result && $db->num_rows($result) > 0);
+                } else {
+                    $result = $db->query("SHOW COLUMNS FROM ".MAIN_DB_PREFIX."projet_task_extrafields LIKE 'invoiceable'");
+                    $columnExists = ($result && $db->num_rows($result) > 0);
+                }
+
+                if ($columnExists) {
+                    // A. Extrafield invoiceable is migrated to task->billable attribute
+                    if ($db->type=='pgsql') {
+                        $sql[3] = "UPDATE ".MAIN_DB_PREFIX."projet_task pt SET billable = 1 FROM ".MAIN_DB_PREFIX."projet_task_extrafields pte WHERE pte.invoiceable = 1 AND pt.rowid = pte.fk_object";
+                    } else {
+                        $sql[3] = "UPDATE ".MAIN_DB_PREFIX."projet_task pt,".MAIN_DB_PREFIX."projet_task_extrafields pte SET pt.billable = 1 WHERE pte.invoiceable = 1 AND pt.rowid = pte.fk_object";
+                    }
+                    // B. Extrafield is disabled (but not deleted)
+                    $sql[4] = "UPDATE ".MAIN_DB_PREFIX."extrafields SET enabled = 'false' WHERE name='invoiceable'";
+                }
             }
             return $this->_init($sql, $options);
         }

@@ -1,23 +1,25 @@
-version: "3"
 services:
   web-psql:
     #image: monogramm/docker-dolibarr:latest
-    image: tuxgasy/dolibarr:${DOLI_TAG}
+    image: dolibarr/dolibarr:${DOLI_TAG}
     environment:
-      DOLI_DB_TYPE: pgsql
-      DOLI_DB_HOST: database-psql
-      DOLI_DB_HOST_PORT: 5432
-      DOLI_DB_USER: ${DOLI_DB_USER}
-      DOLI_DB_PASSWORD: ${DOLI_DB_PASSWORD}
-      DOLI_DB_NAME: ${DOLI_DB_NAME}
-      DOLI_PROD: ${DOLI_PROD}
+        DOLI_DB_TYPE: pgsql
+        DOLI_DB_HOST: database-psql
+        DOLI_INIT_DEMO: ${DOLI_INIT_DEMO:-1}
+        DOLI_DB_NAME: ${DOLI_DB_NAME:-dolidb}
+        DOLI_DB_USER: ${DOLI_DB_USER:-dolidbuser}
+        DOLI_DB_PASSWORD: ${DOLI_DB_PASSWORD:-dolidbpass}
+        DOLI_URL_ROOT: "${DOLI_URL_ROOT:-http://0.0.0.0}"
 
-      DOLI_INSTALL_AUTO: 1
-      #DOLI_ADMIN_LOGIN: admin 
-      #DOLI_ADMIN_PASSWORD: admin
-    #build: 
-    #  context: ../
-    #  dockerfile: ./build/Dockerfile
+        DOLI_DB_HOST_PORT: 5432
+        DOLI_ADMIN_LOGIN: "${DOLI_ADMIN_LOGIN:-admin}"
+        DOLI_ADMIN_PASSWORD: "${DOLI_ADMIN_PASSWORD:-admin}"
+        DOLI_CRON: ${DOLI_CRON:-0}
+        DOLI_CRON_KEY: ${DOLI_CRON_KEY:-mycronsecurekey}
+        DOLI_COMPANY_NAME: ${DOLI_COMPANY_NAME:-MyBigCompany}
+        WWW_USER_ID: ${WWW_USER_ID:-1000}
+        WWW_GROUP_ID: ${WWW_GROUP_ID:-1000}
+        DOLI_INSTALL_AUTO: 1
     volumes:
       - ../htdocs:/var/www/html/custom:rw
     ports:
@@ -26,18 +28,25 @@ services:
       - database-psql
   web-mysql:
     #image: monogramm/docker-dolibarr:latest
-    image: tuxgasy/dolibarr:${DOLI_TAG}
+    image: dolibarr/dolibarr:${DOLI_TAG}
     environment:
       DOLI_DB_TYPE: mysqli
       DOLI_DB_HOST: database-mysql
-      #DOLI_DB_HOST_PORT: 5432
-      DOLI_DB_USER: ${DOLI_DB_USER}
-      DOLI_DB_PASSWORD: ${DOLI_DB_PASSWORD}
-      DOLI_DB_NAME: ${DOLI_DB_NAME}
-      DOLI_PROD: ${DOLI_PROD}
+      DOLI_INIT_DEMO: ${DOLI_INIT_DEMO:-1}
+      DOLI_DB_NAME: ${DOLI_DB_NAME:-dolidb}
+      DOLI_DB_USER: ${DOLI_DB_USER:-dolidbuser}
+      DOLI_DB_PASSWORD: ${DOLI_DB_PASSWORD:-dolidbpass}
+      DOLI_URL_ROOT: "${DOLI_URL_ROOT:-http://0.0.0.0}"
+
+      DOLI_DB_HOST_PORT: 3306
+      DOLI_ADMIN_LOGIN: "${DOLI_ADMIN_LOGIN:-admin}"
+      DOLI_ADMIN_PASSWORD: "${DOLI_ADMIN_PASSWORD:-admin}"
+      DOLI_CRON: ${DOLI_CRON:-0}
+      DOLI_CRON_KEY: ${DOLI_CRON_KEY:-mycronsecurekey}
+      DOLI_COMPANY_NAME: ${DOLI_COMPANY_NAME:-MyBigCompany}
+      WWW_USER_ID: ${WWW_USER_ID:-1000}
+      WWW_GROUP_ID: ${WWW_GROUP_ID:-1000}
       DOLI_INSTALL_AUTO: 1
-      #DOLI_ADMIN_LOGIN: admin 
-      #DOLI_ADMIN_PASSWORD: admin
     #build: 
     #  context: ../
     #  dockerfile: ./build/Dockerfile
