@@ -296,7 +296,7 @@ $form_output .= (($ungroup == 1)?'checked>':'>').$langs->trans('reportUngroup').
  //submit
  $model = getConf('TIMESHEET_EXPORT_FORMAT');
  $form_output .= '<input class = "butAction" type = "submit" value = "'.$langs->trans('getReport').'">';
-if (!empty($querryRes) && $user->rights != null && $user->rights->facture != null  && $user->rights->facture->creer)
+if (!empty($querryRes) && isset($user->rights->facture) && $user->rights->facture->creer)
         $form_output .= '<a class = "butAction" href = "TimesheetProjectInvoice.php?step=0&startDate='
             .dol_print_date($dateStart, 'dayxcard').'&invoicabletaskOnly='
             .$invoicabletaskOnly.'&dateEnd='.dol_print_date($dateEnd, 'dayxcard')

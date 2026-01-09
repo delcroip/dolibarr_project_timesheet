@@ -73,6 +73,7 @@ if (empty($dateStart) || empty($dateEnd) ||$dateStart == $dateEnd) {
  $langs->load("main");
 $langs->load("projects");
 $langs->load('timesheet@timesheet');
+$DOL_VERSION_SUP_21 = version_compare(DOL_VERSION, '21', '>=');
 //steps
     switch($step) {
         case 2:
@@ -85,11 +86,18 @@ $langs->load('timesheet@timesheet');
             }
             $sql .= ' From '.MAIN_DB_PREFIX.'element_time as tt';
             $sql .= ' JOIN '.MAIN_DB_PREFIX.'projet_task as t ON tt.fk_element = t.rowid';
-            if ($invoicabletaskOnly == 1)$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
+            if ($invoicabletaskOnly == 1 && !$DOL_VERSION_SUP_21)$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as tske ON tske.fk_object = t.rowid ';
             $sql .= " WHERE tt.elementtype = 'task' and t.fk_projet=".$projectId;
             $sql .= " AND DATE(tt.element_datehour) BETWEEN '".$db->idate($dateStart);
                 $sql .= "' AND '".$db->idate($dateEnd)."'";
-             if ($invoicabletaskOnly == 1)$sql .= ' AND tske.invoiceable = \'1\'';
+             if ($invoicabletaskOnly == 1){
+                if ($DOL_VERSION_SUP_21){
+                    $sql .= ' AND t.billable = \'1\'';
+                }
+                else {
+                    $sql .= ' AND tske.invoiceable = \'1\'';
+                }
+             }
             if ($ts2Invoice!='all') {
                 /*$sql .= ' AND tt.rowid IN(SELECT GROUP_CONCAT(fk_project_s SEPARATOR ", ")';
                 $sql .= ' FROM '.MAIN_DB_PREFIX.'project_task_time_approval';
@@ -532,7 +540,7 @@ $langs->load('timesheet@timesheet');
     //cust list
             $Form .= '<tr class = "oddeven"><th  align = "left">'.$langs->trans('Customer')
                 .'</th><th  align = "left">'.$form->select_company($socid, 'socid', 
-                    '(s.client = 1 OR s.client = 2 OR s.client = 3)', 1).'</th></tr>';
+                    '((s.client:IN:1,2,3) AND (status:=:1))', 1).'</th></tr>';
     //propal
    
         if (getConf('MAIN_MODULE_PROPALE')){
@@ -642,7 +650,7 @@ $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $project->title;
 // Thirdparty
-if ($project->thirdparty->id > 0)
+if ($project->thirdparty > 0 && $project->thirdparty->id > 0)
 {
     $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
 }

@@ -970,7 +970,7 @@ public function serialize($mode = 0)
                 break;*/
         }
         // automatic unserialisation based on match between property name and key value
-        foreach ($array as $key => $value) {
+        if (isset($array) && is_array($array) && !is_null($array)) foreach ($array as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $value;
             }

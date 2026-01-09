@@ -1332,7 +1332,6 @@ class TimesheetTask extends Task
         $item = $this->tasklist[$dayKey];
         $resArray = ['timeSpendDeleted'=>0, 'timeSpendModified' => 0, 'timeSpendCreated'=>0, 'updateError'=> 0, ];
         $daynote_old = array_key_exists('note', $item) ? $item['note']:'';
-
         $is_today=date("Y-m-d") == date("Y-m-d",$item['date']);
         $this->timespent_fk_user = $this->userId;
         dol_syslog(__METHOD__."   duration Old=".$item['duration']." New="
@@ -1352,10 +1351,9 @@ class TimesheetTask extends Task
             $this->timespent_id = $item['id'];
 
             $this->timespent_old_duration = $item['duration'];
-
-            if ($addmode) {
+            if ($addmode) {     
                 if (!empty($daynote)){
-                    $this->timespent_note .= "\n".$daynote;
+                    $this->timespent_note = $daynote_old."\n".$daynote;
                 }
                 $this->timespent_duration = $duration+$this->timespent_old_duration;
             } else{
