@@ -296,7 +296,7 @@ function generateDynTotal(userId)
     for (var r = 0, row; row = table.rows[r]; r++) {
         //iterate through rows
         //rows would be accessed using the "row" variable assigned in the for loop
-        if (row.style.display != 'None' && row.classList.contains('timesheet_line')){
+        if (row.style.display != 'none' && row.classList.contains('timesheet_line')){
             // generate the line
             if ( nld % 10 == 0 && nld < table.rows.length ){
                 var newRow = table.insertRow(r);
