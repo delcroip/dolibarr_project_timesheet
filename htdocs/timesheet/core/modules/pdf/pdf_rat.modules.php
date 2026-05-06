@@ -141,6 +141,7 @@ public function writeFile($object, $outputlangs)
             }
             $pdf->SetFont(pdf_getPDFFont($outputlangs));
             // Set path to the background PDF File
+			$tplidx = null;
             if (getConf('MAIN_DISABLE_FPDI') == false && getConf('MAIN_ADD_PDF_BACKGROUND') == 1) {
                 $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.getConf('MAIN_ADD_PDF_BACKGROUND'));
                 $tplidx = $pdf->importPage(1);
