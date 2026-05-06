@@ -153,36 +153,32 @@ function removeUnchanged(){
     total=0;
     var nbUser=tsUser.length;
     for(j=0;j<nbUser;j++){
-        
+
         var lineClass="line_"+tsUser[j].value;
         //foreach task
         var task = document.getElementsByClassName(lineClass);
         var nbTask = task.length;
-        for(i=0;i<nbTask;i++){
-            changed=0;
+        for (i=nbTask-1;i>=0;i--){
+            let changed = 0;
             var inputs = task[i].getElementsByTagName( 'input' );
             var textarea = task[i].getElementsByTagName( 'textarea' );
             var select = task[i].getElementsByTagName( 'select' );
             var nbInputs = inputs.length;
             var nbTextarea = textarea.length;
             var nbSelect = select.length;
-            for(k=0;k<nbInputs;k++){
+            for(let k=0;k<nbInputs;k++){
                 if (inputs[k].defaultValue!=inputs[k].value)changed++
             }
-            for(k=0;k<nbTextarea;k++){
+            for(let k=0;k<nbTextarea;k++){
                 if (textarea[k].defaultValue!=textarea[k].value)changed++
             }
-            for(k=0;k<nbSelect;k++){
+            for(let k=0;k<nbSelect;k++){
                 if (select[k].defaultValue!=select[k].value)changed++
             }
-            if (changed==0){
+            if (changed === 0){
                 task[i].parentNode.removeChild(task[i]);
-                i--;
-                nbUser--;
             }
         }
-        
-
     }
 }
 
