@@ -134,7 +134,7 @@ class modTimesheet extends DolibarrModules
                 $r++;
                 $this->const[$r] = array("TIMESHEET_ADD_DOCS", "int", 0, "Allow to join files to timesheets");
                 $r++;
-               $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER", "int", 0, "enable to time spent entry for subordinates");// hours or days
+                $this->const[$r] = array("TIMESHEET_ADD_FOR_OTHER", "int", 0, "enable to time spent entry for subordinates");// hours or days
                 $r++;
                 $this->const[$r] = array("TIMESHEET_WHITELIST_MODE", "int", 0, "Option to change the behaviour of the whitelist:-whiteliste, 1-blackliste, 2-no impact ");
                 $r++;
@@ -332,7 +332,7 @@ class modTimesheet extends DolibarrModules
                 $this->rights[$r][4] = 'report';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
                 $this->rights[$r][5] = 'user';
                 $r++;
-                $this->rights[$r][0] = 86100241;                                // Permission id(must not be already used)
+                $this->rights[$r][0] = 86100241;                           // Permission id(must not be already used)
                 $this->rights[$r][1] = 'ReportProject';        // Permission label
                 $this->rights[$r][3] = 0;                                        // Permission by default for new user(0/1)
                 $this->rights[$r][4] = 'report';                                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
@@ -378,8 +378,8 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/Timesheet.php',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 100,
-                        'enabled' =>'( get$user->rights->timesheet->->user || $user->rights->timesheet->timesheet->admin) && ($conf->global->TIMESHEET_ATTENDANCE!=1)',        // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled.
-                        'perms' => '$user->rights->timesheet->->user || $user->rights->timesheet->timesheet->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'enabled' =>'($user->hasRight("timesheet","timesheet","user") || $user->hasRight("timesheet","timesheet","admin")) && (getDolGlobalInt("TIMESHEET_ATTENDANCE")!=1)',        // Define condition to show or hide menu entry. Use '$conf->timesheet->enabled' if entry must be visible if module is enabled.
+                        'perms' => '$user->hasRight("timesheet","timesheet","user") || $user->hasRight("timesheet","timesheet","admin")',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);                                                // 0=Menu for internal users, 1=external users, 2=both
                 $r++;
@@ -392,8 +392,8 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/AttendanceClock.php',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 100,
-                        'enabled' => '($user->rights->timesheet->attendance->admin || $user->rights->timesheet->attendance->user)',
-                        'perms' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
+                        'enabled' => '($user->hasRight("timesheet","attendance","user") || $user->hasRight("timesheet","attendance","admin")) && (getDolGlobalInt("TIMESHEET_ATTENDANCE")==1)',
+                        'perms' => '$user->hasRight("timesheet","attendance","user") || $user->hasRight("timesheet","attendance","admin")',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);
                 $r++;
@@ -418,7 +418,7 @@ class modTimesheet extends DolibarrModules
                         'url' => '/timesheet/AttendanceClock.php?#',
                         'langs' => 'timesheet@timesheet',                // Lang file to use(without .lang) by module. File must be in langs/code_CODE/ directory.
                         'position' => 200,
-                        'enabled' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin', 
+                        'enabled' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin',
                         'perms' => '$user->rights->timesheet->attendance->user || $user->rights->timesheet->attendance->admin',                                        // Use 'perms' => '$user->rights->timesheet->level1->level2' if you want your menu with a permission rules
                         'target' => '',
                         'user' => 2);

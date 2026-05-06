@@ -687,7 +687,7 @@ class TimesheetTask extends Task
             $isOpenStatus = true && $isOpenStatus;
         }
 
-      
+
         /*
          * info section
          */
@@ -788,7 +788,7 @@ class TimesheetTask extends Task
                 $html .= "<td>\n";
                 // add note popup
                 if ($isOpen && getConf('TIMESHEET_SHOW_TIMESPENT_NOTE')) {
-                    $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'filenew':'file', '  id="img_note_'
+                    $html .= img_picto('Note', empty($this->tasklist[$dayCur]['note'])?'file-alt':'file', '  id="img_note_'
                         .$this->userId.'_'.$this->id.'_'.$dayCur.
                         '" style = "display:inline-block;float:right;" onClick = "openNote(\'note_'
                         .$this->userId.'_'.$this->id.'_'.$dayCur.'\')"');
@@ -934,7 +934,7 @@ class TimesheetTask extends Task
                         ." onclick = 'tristate_Marks(this)' />\n";
                     break;
                 case 'Note':
-                    $html .= img_picto('Note', empty($this->note)?'filenew':'file',
+                    $html .= img_picto('Note', empty($this->note)?'file':'file-alt',
                          ' id="img_noteTask_'.$this->userId
                         .'_'.$this->id.'" onClick = "openNote(\'noteTask_'.$this->userId.'_'.$this->id.'\');"');
                     $html .= '<div class = "modal" id = "noteTask_'.$this->userId.'_'.$this->id.'" >';
@@ -1351,7 +1351,7 @@ class TimesheetTask extends Task
             $this->timespent_id = $item['id'];
 
             $this->timespent_old_duration = $item['duration'];
-            if ($addmode) {     
+            if ($addmode) {
                 if (!empty($daynote)){
                     $this->timespent_note = $daynote_old."\n".$daynote;
                 }
@@ -1369,7 +1369,7 @@ class TimesheetTask extends Task
                     }else {
                         $resArray['updateError']++;
                     }
-                
+
             } else if($this->timespent_duration == 0 && empty($daynote) ) {
 
 
