@@ -38,9 +38,9 @@ function submitTs(){
         if ((charCode >= 48) && (charCode <= 57)) return true;
         else if (charCode===46) return true; // comma
         else if (charCode===8) return true;// periode
-        else if (charCode === 58)  return true; // : 
+        else if (charCode === 58)  return true; // :
         else if (ctrlDown && charCode == 86) return true; //Ctrl + V
-        else return false;      
+        else return false;
 
   }
 
@@ -113,7 +113,7 @@ function updateAll(){
         for(i=0;i<nbDays;i++){
             total+=updateTotals('column_'+days[i].id,'TotalColumn_'+days[i].id);
         }
-        
+
         var TotalList=document.getElementsByClassName('TotalUser_'+tsUser[j].value);
         var nblineTotal = TotalList.length;
           for (var i=0;i<nblineTotal;i++)
@@ -144,7 +144,7 @@ function updateTotals(classSource,classTarget){
 }
 
 /** function to remove the task not changed
- * 
+ *
  * @returns {undefined}
  */
 function removeUnchanged(){
@@ -206,7 +206,7 @@ function validateTime(object,col_id){
                 //var regex=/^([0-5]{1}([.,]{1}[0-9]{1,3})?|[.,]{1}[0-9]{1,3}|)$/;
                 var regex=/^([0-2]{0,1})?([:,.]([0-9]{0,3}))?$/
                 if (regex.test(object.value)){
-                    object.value=object.value.replace(/:|\,/g,'.'); 
+                    object.value=object.value.replace(/:|\,/g,'.');
                 }else {
                       object.style.backgroundColor = "red";
                       object.value= object.defaultValue;
@@ -218,7 +218,7 @@ function validateTime(object,col_id){
                   object.style.backgroundColor = "lightgreen";
                   var regex= /^(([0-1]{0,1}[0-9]{1})|([2]{1}[0-4]{0,1}))?([:,.]([0-9]{0,2}))?$/;
                   var regex_format= /^0*([0-9]{2,}):([0-9]{2})0*$/;
-                  
+
                   if (regex.test(object.value))
                   {
                       tmp=object.value.replace(regex,'00$01:$0500');
@@ -287,7 +287,7 @@ function generateDynTotal(userId)
         if (col.classList.contains('daysClass')){
             DCl++;
         }
-    }  */  
+    }  */
     var daysLenth = DCl.length;
     var headerLenth = header.cells.length - daysLenth;
 
@@ -518,7 +518,7 @@ function checkEmptyFormFields(even,Myform,msg){
     }
     var selects=curform.getElementsByTagName("select");
     for(select in selects){
-        if (selects[select].value=='-1' && fields[field].name!='' 
+        if (selects[select].value=='-1' && fields[field].name!=''
             && !selects[select].classList.contains('not_mandatory'))error++;
     }
 
@@ -630,14 +630,19 @@ function openNote(noteid){
 //function to close note
 function closeNotes(){
     var modals = document.getElementsByClassName("modal");
-    var patt = /(\w+)\.png$/gi 
     for(var i=0;i<modals.length;i+=1){
         var modalbox = modals[i];
         modalbox.style.display = "none";
-        var icon = (modalbox.firstChild.lastChild.value.length>0)?"file":"filenew";
-        var imgnote = document.getElementById("img_"+modalbox.id);
-        imgnote.src = imgnote.src.replace(patt,"$'"+icon+".png");
-    };
+        const imgnote = document.getElementById("img_"+modalbox.id);
+		if (modalbox.firstChild.lastChild.value.length > 0) {
+			imgnote.classList.remove('fa-file');
+			imgnote.classList.add('fa-file-alt');
+		} else {
+			imgnote.classList.remove('fa-file-alt');
+			imgnote.classList.add('fa-file');
+		}
+
+    }
 }
 
 
@@ -678,7 +683,7 @@ function sortTable(table,col,sort) {
             }else if (sort == "asc" && (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())){
                 // If so, mark as a switch and break the loop:
                 shouldSwitch = true;
-                break;                
+                break;
             }
         }
       }
@@ -690,7 +695,7 @@ function sortTable(table,col,sort) {
       }
     }
   }
-  
+
 
 
 function updateProgress(event){
@@ -706,7 +711,7 @@ function updateProgressElement(element){
         taskid : element.name.match(/progressTask\[[0-9]*\]\[([0-9]+)\]/)[1],
         progress : element.value,
         status : null};
-    
+
     var Url="ajax.php?action=updateprogress"
     $.ajax({
         type: "POST",
@@ -719,7 +724,7 @@ function updateProgressElement(element){
   }
 
   function updateProgressSuccess(data){
-        
+
         if (typeof data.status!== 'undefined' && data.status && data.status!=""){ //  display status
             var obj=JSON.parse(data.status);
             Object.keys(obj).forEach (function(key){
@@ -745,7 +750,7 @@ function updateProgressElement(element){
             }
         }
     )
-    
+
   }
 
 
